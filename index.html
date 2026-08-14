@@ -1,11 +1,330 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SnoreRecorder</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snore Tracker & Recorder</title>
+<meta name="description" content="Understand your sleep. Snore Tracker & Recorder detects, records, and analyzes your snoring overnight.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-deep: #0a0f24;
+    --navy: #10163a;
+    --navy-soft: #232c5c;
+    --moon: #8b93c4;
+    --gold: #f0b429;
+    --gold-soft: #f7d488;
+    --cream: #f3f1e7;
+    --line: rgba(243,241,231,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy-deep);
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ---- Ambient night sky ---- */
+  #sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 15%, rgba(35,44,92,0.55), transparent 55%),
+      radial-gradient(ellipse at 85% 75%, rgba(35,44,92,0.4), transparent 50%),
+      linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 60%, var(--navy-deep) 100%);
+  }
+  .star {
+    position: fixed;
+    border-radius: 50%;
+    background: var(--cream);
+    z-index: 0;
+    opacity: 0.5;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.75; }
+  }
+  .drift-z {
+    position: fixed;
+    z-index: 0;
+    color: var(--gold-soft);
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    opacity: 0;
+    animation: driftUp 12s ease-in infinite;
+    user-select: none;
+  }
+  @keyframes driftUp {
+    0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
+    10%  { opacity: 0.55; }
+    85%  { opacity: 0.35; }
+    100% { opacity: 0; transform: translateY(-140px) rotate(-8deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .star, .drift-z { animation: none; opacity: 0.3; }
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---- Hero ---- */
+  header.hero {
+    padding: 96px 0 64px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    font-weight: 600;
+    margin-bottom: 28px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: var(--gold-soft);
+    opacity: 0.6;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .sub {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--moon);
+    max-width: 480px;
+    margin: 0 auto 40px;
+  }
+
+  .art-frame {
+    margin: 0 auto 44px;
+    max-width: 380px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6), 0 0 0 1px var(--line);
+  }
+  .art-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold);
+    color: #1a1305;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 15px 30px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 30px -8px rgba(240,180,41,0.5);
+  }
+  .cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px -8px rgba(240,180,41,0.65);
+  }
+  .cta:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 3px;
+  }
+  .cta svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  .cta-note {
+    display: block;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--moon);
+    opacity: 0.8;
+  }
+
+  /* ---- Features ---- */
+  section.features {
+    padding: 40px 0 90px;
+    border-top: 1px solid var(--line);
+  }
+
+  .features-head {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+  .features-head h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+    margin-bottom: 12px;
+  }
+  .features-head p {
+    color: var(--moon);
+    font-size: 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; gap: 20px; }
+    header.hero { padding: 64px 0 48px; }
+  }
+
+  .card {
+    background: linear-gradient(180deg, rgba(35,44,92,0.35), rgba(35,44,92,0.12));
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px 24px;
+  }
+  .card .mark {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 22px;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .card p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--moon);
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 24px 56px;
+    color: var(--moon);
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+  }
+  footer a { color: var(--gold-soft); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
 </head>
 <body>
-  <h1>SnoreRecorder</h1>
-  <p>Android app for recording and analyzing overnight snoring.</p>
+
+<div id="sky"></div>
+
+<main>
+  <header class="hero">
+    <p class="eyebrow">Snore Tracker &amp; Recorder</p>
+    <h1>Understand your sleep,<br><em>one night</em> at a time.</h1>
+    <p class="sub">Silent when you're silent. It wakes up the moment you don't &mdash; capturing, scoring, and replaying every snore so you know exactly what happened after lights out.</p>
+
+    <div class="art-frame">
+      <img src="hero.png" alt="Snore Tracker & Recorder app graphic showing a person sleeping beside a glowing microphone">
+    </div>
+
+    <a class="cta" href="https://play.google.com/store/apps/details?id=com.snorerecorder&hl=en_US">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.6 2.6c-.4.3-.6.8-.6 1.4v16c0 .6.2 1.1.6 1.4l.1.1L13 12.5v-.1L3.7 2.5l-.1.1z" fill="#1a1305"/><path d="M16.1 15.5 13 12.4v-.1l3.1-3.1 4.4 2.5c1.3.7 1.3 1.9 0 2.6l-4.4 2.2z" fill="#1a1305"/><path d="M16.1 15.5 13 12.4 3.6 21.8c.4.4.9.4 1.6.1l10.9-6.4z" fill="#1a1305"/><path d="M16.1 9.3 5.2 3c-.7-.4-1.2-.3-1.6.1L13 12.4l3.1-3.1z" fill="#1a1305"/></svg>
+      Get it on Google Play
+    </a>
+    <span class="cta-note">Free to install &middot; Android</span>
+  </header>
+
+  <section class="features">
+    <div class="features-head">
+      <h2>Built for the hours you don't remember</h2>
+      <p>Three things it does while you sleep.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="mark">Listens</span>
+        <h3>Snore-gated recording</h3>
+        <p>Stays quiet through the quiet parts. Recording only kicks in when it actually detects snoring, so you're not left combing through hours of silence.</p>
+      </div>
+      <div class="card">
+        <span class="mark">Scores</span>
+        <h3>A number for the night</h3>
+        <p>Every session gets a snore intensity score and a heatmap, so you can see at a glance whether last night was rough or restful.</p>
+      </div>
+      <div class="card">
+        <span class="mark">Plays back</span>
+        <h3>Hear it for yourself</h3>
+        <p>Jump straight to the moments that mattered. Full in-app playback means you don't have to take our word &mdash; or anyone else's &mdash; for it.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Snore Tracker &amp; Recorder &middot; <a href="https://play.google.com/store/apps/details?id=com.snorerecorder&hl=en_US">View on Google Play</a></p>
+</footer>
+
+<script>
+  // Ambient starfield
+  const sky = document.getElementById('sky');
+  const starCount = window.innerWidth < 720 ? 26 : 46;
+  for (let i = 0; i < starCount; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2 + 1;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top = Math.random() * 100 + 'vh';
+    s.style.animationDelay = (Math.random() * 4) + 's';
+    document.body.appendChild(s);
+  }
+
+  // Drifting Zzz glyphs, echoing the app icon
+  const glyphs = ['z', 'Z', 'z'];
+  const zCount = window.innerWidth < 720 ? 5 : 9;
+  for (let i = 0; i < zCount; i++) {
+    const z = document.createElement('div');
+    z.className = 'drift-z';
+    z.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+    z.style.left = Math.random() * 100 + 'vw';
+    z.style.top = (60 + Math.random() * 35) + 'vh';
+    z.style.fontSize = (14 + Math.random() * 16) + 'px';
+    z.style.animationDuration = (9 + Math.random() * 7) + 's';
+    z.style.animationDelay = (Math.random() * 10) + 's';
+    document.body.appendChild(z);
+  }
+</script>
+
 </body>
 </html>
