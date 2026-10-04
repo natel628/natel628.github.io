@@ -1299,127 +1299,144 @@ function addCalItem(dateStr, label, cssClass, tooltip, onClick) {
 }
 
 async function populateCalendar() {
-  const yr   = state.calYear;
-  const mo   = String(state.calMonth + 1).padStart(2, '0');
-  const dateFrom = `${yr}-${mo}-01`;
-  const dateTo   = `${yr}-${mo}-31`;
+  const yr      = state.calYear;
+  const mo      = state.calMonth; // 0-indexed
+  const moStr   = String(mo + 1).padStart(2, '0');
+  const dateFrom = `${yr}-${moStr}-01`;
+  const dateTo   = `${yr}-${moStr}-31`;
   const loading  = document.getElementById('cal-loading');
   if (loading) loading.textContent = 'Loading…';
 
+  // Date range for "is this episode in our calendar month?"
+  const rangeStart = new Date(yr, mo, 1);
+  const rangeEnd   = new Date(yr, mo + 1, 0, 23, 59, 59);
+
+  function inRange(dateStr) {
+    if (!dateStr) return false;
+    const d = new Date(dateStr + 'T12:00:00');
+    return d >= rangeStart && d <= rangeEnd;
+  }
+
   let itemCount = 0;
 
-  // ── 1. TMDB movie releases for this month ──────────────────────────
+  // ── 1. TMDB movie releases this month ─────────────────────────────
   try {
-    const movies = await tmdb('/discover/movie', {
-      'primary_release_date.gte': dateFrom,
-      'primary_release_date.lte': dateTo,
-      sort_by: 'popularity.desc',
-      'vote_count.gte': 10,
-      page: 1,
-    });
-    (movies.results || []).forEach(m => {
-      if (!m.release_date) return;
-      addCalItem(
-        m.release_date,
-        m.title,
-        'movie',
-        `🎬 ${m.title} — ${formatDate(m.release_date)}`,
-        () => openModal('movie', m.id, m)
-      );
+    const [pg1, pg2] = await Promise.all([
+      tmdb('/discover/movie', {
+        'primary_release_date.gte': dateFrom,
+        'primary_release_date.lte': dateTo,
+        sort_by: 'popularity.desc',
+        'vote_count.gte': 5,
+        page: 1,
+      }),
+      tmdb('/discover/movie', {
+        'primary_release_date.gte': dateFrom,
+        'primary_release_date.lte': dateTo,
+        sort_by: 'popularity.desc',
+        'vote_count.gte': 5,
+        page: 2,
+      }),
+    ]);
+    [...(pg1.results||[]), ...(pg2.results||[])].forEach(m => {
+      if (!m.release_date || !inRange(m.release_date)) return;
+      addCalItem(m.release_date, m.title, 'movie',
+        `🎬 ${m.title}`, () => openModal('movie', m.id, m));
       itemCount++;
     });
-  } catch(e) { console.warn('TMDB movies calendar failed:', e); }
+  } catch(e) { console.warn('TMDB movies failed:', e); }
 
-  // ── 2. Simkl CDN calendar — no auth needed, has episode air dates ──
-  // Simkl calendar endpoint: /calendar/{year}/{month}/tv.json
+  // ── 2. TMDB TV episodes airing this month (popular shows) ─────────
   try {
-    const simklCalUrl = `https://api.simkl.com/calendar/${yr}/${mo}/tv.json?client_id=${SIMKL_CLIENT_ID}`;
-    const res = await fetch(simklCalUrl);
-    if (res.ok) {
-      const calData = await res.json();
-      // Response is an array of { date, episodes: [{ show, episode }] }
-      (calData || []).forEach(dayEntry => {
-        const dateStr = dayEntry.date ? dayEntry.date.slice(0, 10) : null;
-        if (!dateStr) return;
-        (dayEntry.episodes || []).forEach(ep => {
-          const showTitle = ep.show?.title || ep.title || 'Unknown Show';
-          const epNum     = ep.episode ? `S${String(ep.episode.season||0).padStart(2,'0')}E${String(ep.episode.episode||0).padStart(2,'0')}` : '';
+    const tvDiscover = await tmdb('/discover/tv', {
+      'air_date.gte': dateFrom,
+      'air_date.lte': dateTo,
+      sort_by: 'popularity.desc',
+      'vote_count.gte': 20,
+      page: 1,
+    });
+    (tvDiscover.results || []).forEach(show => {
+      // Use first_air_date as a fallback date for the calendar
+      const d = show.first_air_date;
+      if (!d || !inRange(d)) return;
+      addCalItem(d, show.name, 'tv',
+        `📺 ${show.name}`, () => openModal('tv', show.id, show));
+      itemCount++;
+    });
+  } catch(e) { console.warn('TMDB TV discover failed:', e); }
+
+  // ── 3. Your Simkl library shows — fetch current season episodes ────
+  // Combines: local watchlist + Simkl connected library
+  const myShowIds = new Set();
+
+  // From local watchlist
+  Object.keys(state.watchlist)
+    .filter(k => k.startsWith('tv_'))
+    .forEach(k => myShowIds.add(parseInt(k.replace('tv_', ''))));
+
+  // From Simkl library
+  if (state.simklToken && state.simklLibrary.length) {
+    state.simklLibrary
+      .filter(i => i.media_type === 'tv' && i.show?.ids?.tmdb)
+      .forEach(i => myShowIds.add(i.show.ids.tmdb));
+  }
+
+  if (myShowIds.size > 0) {
+    if (loading) loading.textContent = `Loading your ${myShowIds.size} shows…`;
+
+    await Promise.allSettled([...myShowIds].map(async (showId) => {
+      try {
+        const detail = await tmdb(`/tv/${showId}`);
+        const showName = detail.name;
+        const currentSeason = detail.number_of_seasons;
+        if (!currentSeason) return;
+
+        // Fetch the current season's episodes
+        const seasonData = await tmdb(`/tv/${showId}/season/${currentSeason}`);
+        const episodes = seasonData.episodes || [];
+
+        episodes.forEach(ep => {
+          if (!ep.air_date || !inRange(ep.air_date)) return;
+          const epLabel = `S${String(ep.season_number).padStart(2,'0')}E${String(ep.episode_number).padStart(2,'0')}`;
           addCalItem(
-            dateStr,
-            showTitle,
-            'tv',
-            `📺 ${showTitle} ${epNum}`,
-            null
+            ep.air_date,
+            showName,
+            'tv my-show',
+            `⭐ ${showName} ${epLabel}: ${ep.name || ''}`,
+            () => openModal('tv', showId, detail)
           );
           itemCount++;
         });
-      });
-    }
-  } catch(e) { console.warn('Simkl public calendar failed:', e); }
 
-  // ── 3. Personal watchlist shows — pull episode schedule from TMDB ──
-  // For each show in the user's watchlist, fetch upcoming episodes
-  if (Object.keys(state.watchlist).length > 0) {
-    const watchedShows = Object.entries(state.watchlist)
-      .filter(([key]) => key.startsWith('tv_'))
-      .map(([key]) => parseInt(key.replace('tv_', '')));
-
-    await Promise.allSettled(watchedShows.map(async (showId) => {
-      try {
-        // Get the next episode to air
-        const detail = await tmdb(`/tv/${showId}`);
+        // Also check next_episode_to_air in case it's a future episode
         const next = detail.next_episode_to_air;
-        if (next && next.air_date) {
-          const cell = document.querySelector(`.cal-day[data-date="${next.air_date}"]`);
-          if (cell) {
-            const epLabel = `S${String(next.season_number).padStart(2,'0')}E${String(next.episode_number).padStart(2,'0')}`;
+        if (next && next.air_date && inRange(next.air_date)) {
+          const epLabel = `S${String(next.season_number).padStart(2,'0')}E${String(next.episode_number).padStart(2,'0')}`;
+          // Only add if not already added from season fetch
+          const alreadyAdded = document.querySelector(
+            `.cal-day[data-date="${next.air_date}"] .my-show`
+          );
+          if (!alreadyAdded) {
             addCalItem(
               next.air_date,
-              detail.name,
+              showName,
               'tv my-show',
-              `⭐ ${detail.name} ${epLabel} — ${next.name || ''}`,
+              `⭐ ${showName} ${epLabel} (next)`,
               () => openModal('tv', showId, detail)
             );
             itemCount++;
           }
         }
-      } catch {}
-    }));
-  }
-
-  // ── 4. Simkl library shows (when connected) ────────────────────────
-  // Pull next episode dates for shows in your Simkl library
-  if (state.simklToken && state.simklLibrary.length) {
-    const simklShows = state.simklLibrary
-      .filter(i => i.media_type === 'tv' && i.show?.ids?.tmdb)
-      .slice(0, 30); // cap to avoid rate limiting
-
-    await Promise.allSettled(simklShows.map(async (libItem) => {
-      const tmdbId = libItem.show.ids.tmdb;
-      // Skip if already added via personal watchlist
-      if (state.watchlist[`tv_${tmdbId}`]) return;
-      try {
-        const detail = await tmdb(`/tv/${tmdbId}`);
-        const next = detail.next_episode_to_air;
-        if (next && next.air_date) {
-          const epLabel = `S${String(next.season_number).padStart(2,'0')}E${String(next.episode_number).padStart(2,'0')}`;
-          addCalItem(
-            next.air_date,
-            detail.name,
-            'tv my-show',
-            `⭐ ${detail.name} ${epLabel} (Simkl)`,
-            () => openModal('tv', tmdbId, detail)
-          );
-          itemCount++;
-        }
-      } catch {}
+      } catch(e) { console.warn(`Failed to load show ${showId}:`, e); }
     }));
   }
 
   if (loading) {
-    loading.textContent = itemCount > 0
-      ? `${itemCount} events loaded`
-      : 'No events found for this month. Connect Simkl or add shows to your watchlist to see episode air dates.';
+    if (itemCount > 0) {
+      const myCount = document.querySelectorAll('.cal-item.my-show').length;
+      loading.textContent = `${itemCount} events — ${myCount} from your watchlist`;
+    } else {
+      loading.innerHTML = `No events found. <a href="#" onclick="document.querySelector('[data-view=trending]').click();return false" style="color:var(--accent)">Browse Trending</a> and add shows to your watchlist to see their episodes here.`;
+    }
   }
 }
 
