@@ -36,14 +36,6 @@ jobs:
       - name: Install pagecrypt
         run: npm install -g pagecrypt
 
-      # ── Inject TMDB token into shows.html ─────────────────────────
-      #    The placeholder __TMDB_TOKEN__ is replaced before encryption
-      - name: Inject API token
-        env:
-          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
-        run: |
-          sed -i "s|__TMDB_TOKEN__|${TMDB_TOKEN}|g" shows.html
-
       # ── Encrypt shows.html with pagecrypt ─────────────────────────
       - name: Encrypt shows.html
         env:

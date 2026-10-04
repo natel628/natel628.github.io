@@ -560,6 +560,19 @@
     <option value="release_date.desc">Newest</option>
     <option value="release_date.asc">Oldest</option>
   </select>
+  <select class="filter-select" id="provider-filter">
+    <option value="">Any Streaming Service</option>
+    <option value="8">Netflix</option>
+    <option value="9">Amazon Prime</option>
+    <option value="337">Disney+</option>
+    <option value="1899">Max (HBO)</option>
+    <option value="15">Hulu</option>
+    <option value="386">Peacock</option>
+    <option value="387">Peacock Premium</option>
+    <option value="531">Paramount+</option>
+    <option value="350">Apple TV+</option>
+    <option value="2">Apple TV</option>
+  </select>
 </div>
 
 <!-- ═══ MAIN CONTENT ══════════════════════════════════════════════════ -->
@@ -580,15 +593,17 @@
 
 <script>
 /* ─────────────────────────────────────────────────────────────────────
-   CONFIG  (keys are baked in at build time via GitHub Actions)
+   CONFIG
    ───────────────────────────────────────────────────────────────────── */
-const TMDB_TOKEN = '__TMDB_TOKEN__';          // replaced by CI
+const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZWU1ZDFiZjBhMTZjZTA1ZGVmYTE4MmM4ODU5ZTNkZCIsIm5iZiI6MTc0MjI1NTc4NS4yNTIsInN1YiI6IjY3ZDhiNmE5YzRjMmI1MjBhMDg1OTM0ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-8KBcmQh9AQ4ZAG41T3PXcWqj-lKtXT32pYVWhzvT64';
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
 const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
 
 const SIMKL_CLIENT_ID  = '823280121411d86d7f3bd2491cc84db961e50d16416f6d5afe53d8dd7a07dcda';
-const SIMKL_REDIRECT   = window.location.origin + window.location.pathname;
+// Simkl requires an exact registered redirect URI — set this to your GitHub Pages URL
+// Register the same URL at: https://simkl.com/settings/developer/
+const SIMKL_REDIRECT   = 'https://natel628.github.io/shows.html';
 const SIMKL_AUTH_URL   = 'https://simkl.com/oauth2/authorize';
 const SIMKL_TOKEN_URL  = 'https://api.simkl.com/oauth2/token';
 const SIMKL_API        = 'https://api.simkl.com';
@@ -606,10 +621,11 @@ let state = {
   filterType: 'all',
   genre: '',
   sort: 'popularity.desc',
+  provider: '',
   simklToken: LS.get('simkl_token'),
   simklUser: LS.get('simkl_user'),
-  ratings: LS.get('my_ratings') || {},      // { "movie_123": 8, "tv_456": 7, ... }
-  watchlist: LS.get('my_watchlist') || {},   // { "movie_123": "watching", ... }
+  ratings: LS.get('my_ratings') || {},
+  watchlist: LS.get('my_watchlist') || {},
   simklLibrary: LS.get('simkl_library') || [],
   calYear: new Date().getFullYear(),
   calMonth: new Date().getMonth(),
@@ -624,12 +640,28 @@ function saveSimkl()     { LS.set('simkl_token',   state.simklToken); LS.set('si
    ───────────────────────────────────────────────────────────────────── */
 async function tmdb(path, params = {}) {
   const url = new URL(TMDB_BASE + path);
+  url.searchParams.set('language', 'en-US');
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${TMDB_TOKEN}`, 'Content-Type': 'application/json' }
+    headers: { Authorization: `Bearer ${TMDB_TOKEN}` }
   });
-  if (!res.ok) throw new Error(`TMDB ${res.status}`);
+  if (!res.ok) throw new Error(`TMDB ${res.status}: ${path}`);
   return res.json();
+}
+
+// Fetch streaming providers for a title (US region)
+async function getProviders(type, id) {
+  try {
+    const data = await tmdb(`/${type}/${id}/watch/providers`);
+    const us = data.results && data.results.US;
+    if (!us) return null;
+    return {
+      flatrate: us.flatrate || [],   // subscription (Netflix, Hulu, etc.)
+      rent:     us.rent     || [],
+      buy:      us.buy      || [],
+      link:     us.link     || '',
+    };
+  } catch { return null; }
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -971,18 +1003,19 @@ async function openModal(type, id, basicItem = {}) {
   `;
 
   try {
-    const path   = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
-    const [detail, credits] = await Promise.all([
-      tmdb(path),
-      tmdb(`${path}/credits`).catch(() => ({ cast: [] })),
+    const apiPath = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
+    const [detail, credits, providers] = await Promise.all([
+      tmdb(apiPath),
+      tmdb(`${apiPath}/credits`).catch(() => ({ cast: [] })),
+      getProviders(type, id),
     ]);
-    renderModal(type, detail, credits);
+    renderModal(type, detail, credits, providers);
   } catch (e) {
-    document.getElementById('modal-inner').innerHTML = `<p style="padding:20px;color:var(--text-muted)">Could not load details.</p>`;
+    document.getElementById('modal-inner').innerHTML = `<p style="padding:20px;color:var(--text-muted)">Could not load details: ${e.message}</p>`;
   }
 }
 
-function renderModal(type, d, credits) {
+function renderModal(type, d, credits, providers) {
   const id       = d.id;
   const title    = d.title || d.name;
   const poster   = d.poster_path ? IMG_ORIG + d.poster_path : null;
@@ -1044,6 +1077,30 @@ function renderModal(type, d, credits) {
         ${wlStat ? `<button class="modal-btn" onclick="removeFromWatchlist('${type}', ${id})">🗑 Remove</button>` : ''}
       </div>
       ${wlStat ? `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">Status: ${wlStatusLabel(wlStat)}</p>` : ''}
+
+      <!-- Streaming Providers -->
+      ${providers && (providers.flatrate.length || providers.rent.length) ? `
+        <div style="margin-bottom:16px">
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:8px;color:var(--text-muted)">Where to Watch ${providers.link ? `<a href="${providers.link}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:400;font-size:.78rem;margin-left:6px">View all ↗</a>` : ''}</div>
+          ${providers.flatrate.length ? `
+            <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:5px">Stream</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+              ${providers.flatrate.map(p => `
+                <div title="${p.provider_name}" style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.75rem">
+                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${p.provider_name}" style="width:20px;height:20px;border-radius:3px" />` : ''}
+                  ${p.provider_name}
+                </div>`).join('')}
+            </div>` : ''}
+          ${providers.rent.length ? `
+            <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:5px">Rent / Buy</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+              ${providers.rent.slice(0,6).map(p => `
+                <div title="${p.provider_name}" style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.75rem">
+                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${p.provider_name}" style="width:20px;height:20px;border-radius:3px" />` : ''}
+                  ${p.provider_name}
+                </div>`).join('')}
+            </div>` : ''}
+        </div>` : providers ? '<p style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px">No US streaming info available.</p>' : ''}
 
       <!-- Similar -->
       <div id="modal-similar"></div>
@@ -1141,18 +1198,26 @@ async function renderTrending(main) {
   addSkeletonRow(main, 'Popular Movies 🎬');
   addSkeletonRow(main, 'Popular TV Shows 📺');
 
-  const [trending, popMovies, popTV, onAir] = await Promise.all([
-    tmdb('/trending/all/week'),
-    tmdb('/movie/popular'),
-    tmdb('/tv/popular'),
-    tmdb('/tv/on_the_air'),
-  ]);
+  try {
+    const providerParam = state.provider
+      ? { watch_region: 'US', with_watch_providers: state.provider }
+      : {};
 
-  main.innerHTML = '';
-  renderRow(main, 'Trending This Week 🔥', trending.results || []);
-  renderRow(main, 'Popular Movies 🎬', filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'}))));
-  renderRow(main, 'Popular TV Shows 📺', filterResults((popTV.results  || []).map(t => ({...t, media_type:'tv'}))));
-  renderRow(main, 'Currently On Air 📡', filterResults((onAir.results  || []).map(t => ({...t, media_type:'tv'}))));
+    const [trending, popMovies, popTV, onAir] = await Promise.all([
+      tmdb('/trending/all/week'),
+      tmdb('/discover/movie', { sort_by: state.sort, 'vote_count.gte': 100, ...providerParam, ...(state.genre ? { with_genres: state.genre } : {}) }),
+      tmdb('/discover/tv',    { sort_by: state.sort, 'vote_count.gte': 50,  ...providerParam, ...(state.genre ? { with_genres: state.genre } : {}) }),
+      tmdb('/tv/on_the_air'),
+    ]);
+
+    main.innerHTML = '';
+    renderRow(main, 'Trending This Week 🔥', trending.results || []);
+    renderRow(main, 'Popular Movies 🎬',     filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'}))));
+    renderRow(main, 'Popular TV Shows 📺',   filterResults((popTV.results    || []).map(t => ({...t, media_type:'tv'}))));
+    renderRow(main, 'Currently On Air 📡',   filterResults((onAir.results    || []).map(t => ({...t, media_type:'tv'}))));
+  } catch(e) {
+    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${e.message}</p><p style="margin-top:8px;font-size:.8rem">Check that your TMDB token is valid.</p></div>`;
+  }
 }
 
 /* ── CALENDAR ─────────────────────────────────────────────────────── */
@@ -1514,6 +1579,10 @@ document.getElementById('sort-filter').addEventListener('change', e => {
   state.sort = e.target.value;
   if (['trending','upcoming'].includes(state.view)) renderView();
 });
+document.getElementById('provider-filter').addEventListener('change', e => {
+  state.provider = e.target.value;
+  if (['trending','upcoming'].includes(state.view)) renderView();
+});
 
 /* ─────────────────────────────────────────────────────────────────────
    NAV EVENTS
@@ -1529,8 +1598,23 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
    INIT
    ───────────────────────────────────────────────────────────────────── */
 (async function init() {
-  updateSimklUI();
-  await handleSimklCallback();
+  // Hide Simkl connect button when running from local filesystem
+  // (OAuth redirect won't work without a real HTTPS URL)
+  const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (isLocal) {
+    const btn  = document.getElementById('simkl-btn');
+    const user = document.getElementById('simkl-user');
+    btn.textContent   = 'Simkl (deploy to enable)';
+    btn.style.opacity = '0.4';
+    btn.style.cursor  = 'not-allowed';
+    btn.onclick       = () => toast('Connect Simkl after deploying to GitHub Pages');
+    user.textContent  = '⚠ Running locally';
+    user.style.color  = 'var(--text-muted)';
+  } else {
+    updateSimklUI();
+    await handleSimklCallback();
+  }
+
   renderView();
 })();
 </script>
