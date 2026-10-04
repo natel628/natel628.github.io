@@ -32,25 +32,86 @@ jobs:
         with:
           node-version: '20'
 
-      # ── Install pagecrypt ─────────────────────────────────────────
-      - name: Install pagecrypt
-        run: npm install -g pagecrypt
+      # ── Diagnostics: confirm files exist pre-encrypt ───────────────
+      - name: Pre-encrypt diagnostics
+        run: |
+          echo "=== Working directory ==="
+          pwd
+          echo "=== Files present ==="
+          ls -lh
+          echo "=== shows.html size ==="
+          wc -c shows.html
+          echo "=== First 3 lines of shows.html ==="
+          head -3 shows.html
+          echo "=== PAGE_PASSWORD set? ==="
+          if [ -z "$PAGE_PASSWORD" ]; then
+            echo "NO - PAGE_PASSWORD is empty or not set"
+          else
+            echo "YES - PAGE_PASSWORD is set (length: ${#PAGE_PASSWORD})"
+          fi
+        env:
+          PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
 
-      # ── Encrypt shows.html with pagecrypt ─────────────────────────
+      # ── Install pagecrypt ──────────────────────────────────────────
+      - name: Install pagecrypt
+        run: |
+          npm install -g pagecrypt
+          echo "=== pagecrypt version ==="
+          pagecrypt --version
+          echo "=== pagecrypt location ==="
+          which pagecrypt
+
+      # ── Encrypt shows.html ─────────────────────────────────────────
       - name: Encrypt shows.html
         env:
           PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
         run: |
           if [ -z "$PAGE_PASSWORD" ]; then
-            echo "ERROR: PAGE_PASSWORD secret is not set. Add it in Settings → Secrets → Actions."
+            echo "ERROR: PAGE_PASSWORD secret is not set!"
+            echo "Go to: Settings > Secrets and variables > Actions > New repository secret"
+            echo "Name: PAGE_PASSWORD  Value: your chosen password"
             exit 1
           fi
-          echo "Encrypting shows.html..."
-          pagecrypt shows.html shows_encrypted.html "$PAGE_PASSWORD"
-          mv shows_encrypted.html shows.html
-          echo "Done. Encrypted size: $(wc -c < shows.html) bytes"
 
-      # ── Upload artifact for Pages ─────────────────────────────────
+          echo "Input file size: $(wc -c < shows.html) bytes"
+          echo "Running: pagecrypt shows.html shows_encrypted.html [password]"
+
+          pagecrypt shows.html shows_encrypted.html "$PAGE_PASSWORD"
+          EXIT_CODE=$?
+
+          echo "pagecrypt exit code: $EXIT_CODE"
+
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "ERROR: pagecrypt failed with exit code $EXIT_CODE"
+            exit 1
+          fi
+
+          if [ ! -f shows_encrypted.html ]; then
+            echo "ERROR: shows_encrypted.html was not created"
+            exit 1
+          fi
+
+          echo "Encrypted file size: $(wc -c < shows_encrypted.html) bytes"
+          echo "=== First 3 lines of encrypted output ==="
+          head -3 shows_encrypted.html
+
+          mv shows_encrypted.html shows.html
+          echo "=== DONE. Final shows.html size: $(wc -c < shows.html) bytes ==="
+
+      # ── Confirm encryption worked ──────────────────────────────────
+      - name: Verify encryption
+        run: |
+          echo "=== Checking shows.html is encrypted ==="
+          # Encrypted pagecrypt file starts with <!DOCTYPE html> but should NOT contain raw script tags from original
+          if grep -q "const TMDB_TOKEN" shows.html; then
+            echo "WARNING: shows.html still appears to be unencrypted (TMDB_TOKEN visible)"
+          else
+            echo "OK: shows.html appears encrypted (TMDB_TOKEN not visible in plaintext)"
+          fi
+          echo "Final file size: $(wc -c < shows.html) bytes"
+          head -5 shows.html
+
+      # ── Upload artifact for Pages ──────────────────────────────────
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -59,7 +120,7 @@ jobs:
         with:
           path: '.'
 
-      # ── Deploy to GitHub Pages ────────────────────────────────────
+      # ── Deploy to GitHub Pages ─────────────────────────────────────
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
