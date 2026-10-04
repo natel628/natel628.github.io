@@ -279,6 +279,7 @@
     .cal-item:hover { background: var(--accent); }
     .cal-item.movie { border-left: 3px solid var(--accent); }
     .cal-item.tv { border-left: 3px solid #1a6ef5; }
+    .cal-item.my-show { border-left: 3px solid #1ce783; background: rgba(28,231,131,.12); }
     .cal-month-nav {
       display: flex;
       align-items: center;
@@ -1222,12 +1223,23 @@ async function renderTrending(main) {
 
 /* ── CALENDAR ─────────────────────────────────────────────────────── */
 async function renderCalendar(main) {
-  main.innerHTML = `<div class="section"><div class="cal-month-nav">
-    <button onclick="calPrev()">◀ Prev</button>
-    <span id="cal-month-label"></span>
-    <button onclick="calNext()">Next ▶</button>
-  </div>
-  <div class="cal-grid" id="cal-grid"></div></div>`;
+  main.innerHTML = `
+    <div class="section">
+      <div class="cal-month-nav">
+        <button onclick="calPrev()">◀ Prev</button>
+        <span id="cal-month-label"></span>
+        <button onclick="calNext()">Next ▶</button>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:.78rem;color:var(--text-muted);align-items:center">
+        <span>Legend:</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#1a6ef5;border-radius:2px;margin-right:4px"></span>TV Episode</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px"></span>Movie Release</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#1ce783;border-radius:2px;margin-right:4px"></span>My Watchlist</span>
+        ${!state.simklToken ? `<span style="margin-left:auto;color:var(--accent)">⚠ <a href="#" onclick="simklAuth();return false" style="color:var(--accent)">Connect Simkl</a> to see your shows</span>` : '<span style="margin-left:auto;color:#1ce783">✓ Simkl connected</span>'}
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div id="cal-loading" style="text-align:center;padding:20px;color:var(--text-muted);font-size:.85rem"></div>
+    </div>`;
 
   buildCalendarGrid();
   await populateCalendar();
@@ -1266,49 +1278,149 @@ function buildCalendarGrid() {
     const isToday = today.getFullYear() === state.calYear &&
                     today.getMonth() === state.calMonth &&
                     today.getDate() === d;
-    html += `<div class="cal-day${isToday ? ' today' : ''}" data-date="${state.calYear}-${String(state.calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}">
+    const dateStr = `${state.calYear}-${String(state.calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    html += `<div class="cal-day${isToday ? ' today' : ''}" data-date="${dateStr}">
       <div class="cal-day-num">${d}</div>
     </div>`;
   }
   grid.innerHTML = html;
 }
 
+// Place an item pill on the calendar grid
+function addCalItem(dateStr, label, cssClass, tooltip, onClick) {
+  const cell = document.querySelector(`.cal-day[data-date="${dateStr}"]`);
+  if (!cell) return;
+  const div = document.createElement('div');
+  div.className = `cal-item ${cssClass}`;
+  div.textContent = label;
+  div.title = tooltip || label;
+  if (onClick) div.addEventListener('click', e => { e.stopPropagation(); onClick(); });
+  cell.appendChild(div);
+}
+
 async function populateCalendar() {
-  const yr = state.calYear;
-  const mo = String(state.calMonth + 1).padStart(2, '0');
+  const yr   = state.calYear;
+  const mo   = String(state.calMonth + 1).padStart(2, '0');
+  const dateFrom = `${yr}-${mo}-01`;
+  const dateTo   = `${yr}-${mo}-31`;
+  const loading  = document.getElementById('cal-loading');
+  if (loading) loading.textContent = 'Loading…';
 
+  let itemCount = 0;
+
+  // ── 1. TMDB movie releases for this month ──────────────────────────
   try {
-    const [movies, tv] = await Promise.all([
-      tmdb('/discover/movie', {
-        'primary_release_date.gte': `${yr}-${mo}-01`,
-        'primary_release_date.lte': `${yr}-${mo}-31`,
-        sort_by: 'popularity.desc', page: 1
-      }),
-      tmdb('/discover/tv', {
-        'air_date.gte': `${yr}-${mo}-01`,
-        'air_date.lte': `${yr}-${mo}-31`,
-        sort_by: 'popularity.desc', page: 1
-      }),
-    ]);
-
-    const allItems = [
-      ...(movies.results || []).map(m => ({ ...m, media_type: 'movie', _date: m.release_date })),
-      ...(tv.results || []).map(t => ({ ...t, media_type: 'tv', _date: t.first_air_date })),
-    ];
-
-    allItems.forEach(item => {
-      if (!item._date) return;
-      const cell = document.querySelector(`.cal-day[data-date="${item._date}"]`);
-      if (!cell) return;
-      const title = item.title || item.name || '';
-      const div = document.createElement('div');
-      div.className = `cal-item ${item.media_type}`;
-      div.textContent = title;
-      div.title = title;
-      div.addEventListener('click', e => { e.stopPropagation(); openModal(item.media_type, item.id, item); });
-      cell.appendChild(div);
+    const movies = await tmdb('/discover/movie', {
+      'primary_release_date.gte': dateFrom,
+      'primary_release_date.lte': dateTo,
+      sort_by: 'popularity.desc',
+      'vote_count.gte': 10,
+      page: 1,
     });
-  } catch {}
+    (movies.results || []).forEach(m => {
+      if (!m.release_date) return;
+      addCalItem(
+        m.release_date,
+        m.title,
+        'movie',
+        `🎬 ${m.title} — ${formatDate(m.release_date)}`,
+        () => openModal('movie', m.id, m)
+      );
+      itemCount++;
+    });
+  } catch(e) { console.warn('TMDB movies calendar failed:', e); }
+
+  // ── 2. Simkl CDN calendar — no auth needed, has episode air dates ──
+  // Simkl calendar endpoint: /calendar/{year}/{month}/tv.json
+  try {
+    const simklCalUrl = `https://api.simkl.com/calendar/${yr}/${mo}/tv.json?client_id=${SIMKL_CLIENT_ID}`;
+    const res = await fetch(simklCalUrl);
+    if (res.ok) {
+      const calData = await res.json();
+      // Response is an array of { date, episodes: [{ show, episode }] }
+      (calData || []).forEach(dayEntry => {
+        const dateStr = dayEntry.date ? dayEntry.date.slice(0, 10) : null;
+        if (!dateStr) return;
+        (dayEntry.episodes || []).forEach(ep => {
+          const showTitle = ep.show?.title || ep.title || 'Unknown Show';
+          const epNum     = ep.episode ? `S${String(ep.episode.season||0).padStart(2,'0')}E${String(ep.episode.episode||0).padStart(2,'0')}` : '';
+          addCalItem(
+            dateStr,
+            showTitle,
+            'tv',
+            `📺 ${showTitle} ${epNum}`,
+            null
+          );
+          itemCount++;
+        });
+      });
+    }
+  } catch(e) { console.warn('Simkl public calendar failed:', e); }
+
+  // ── 3. Personal watchlist shows — pull episode schedule from TMDB ──
+  // For each show in the user's watchlist, fetch upcoming episodes
+  if (Object.keys(state.watchlist).length > 0) {
+    const watchedShows = Object.entries(state.watchlist)
+      .filter(([key]) => key.startsWith('tv_'))
+      .map(([key]) => parseInt(key.replace('tv_', '')));
+
+    await Promise.allSettled(watchedShows.map(async (showId) => {
+      try {
+        // Get the next episode to air
+        const detail = await tmdb(`/tv/${showId}`);
+        const next = detail.next_episode_to_air;
+        if (next && next.air_date) {
+          const cell = document.querySelector(`.cal-day[data-date="${next.air_date}"]`);
+          if (cell) {
+            const epLabel = `S${String(next.season_number).padStart(2,'0')}E${String(next.episode_number).padStart(2,'0')}`;
+            addCalItem(
+              next.air_date,
+              detail.name,
+              'tv my-show',
+              `⭐ ${detail.name} ${epLabel} — ${next.name || ''}`,
+              () => openModal('tv', showId, detail)
+            );
+            itemCount++;
+          }
+        }
+      } catch {}
+    }));
+  }
+
+  // ── 4. Simkl library shows (when connected) ────────────────────────
+  // Pull next episode dates for shows in your Simkl library
+  if (state.simklToken && state.simklLibrary.length) {
+    const simklShows = state.simklLibrary
+      .filter(i => i.media_type === 'tv' && i.show?.ids?.tmdb)
+      .slice(0, 30); // cap to avoid rate limiting
+
+    await Promise.allSettled(simklShows.map(async (libItem) => {
+      const tmdbId = libItem.show.ids.tmdb;
+      // Skip if already added via personal watchlist
+      if (state.watchlist[`tv_${tmdbId}`]) return;
+      try {
+        const detail = await tmdb(`/tv/${tmdbId}`);
+        const next = detail.next_episode_to_air;
+        if (next && next.air_date) {
+          const epLabel = `S${String(next.season_number).padStart(2,'0')}E${String(next.episode_number).padStart(2,'0')}`;
+          addCalItem(
+            next.air_date,
+            detail.name,
+            'tv my-show',
+            `⭐ ${detail.name} ${epLabel} (Simkl)`,
+            () => openModal('tv', tmdbId, detail)
+          );
+          itemCount++;
+        }
+      } catch {}
+    }));
+  }
+
+  if (loading) {
+    loading.textContent = itemCount > 0
+      ? `${itemCount} events loaded`
+      : 'No events found for this month. Connect Simkl or add shows to your watchlist to see episode air dates.';
+  }
 }
 
 /* ── UPCOMING ─────────────────────────────────────────────────────── */
