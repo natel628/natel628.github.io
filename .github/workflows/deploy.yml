@@ -1,0 +1,66 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Node.js setup ─────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ── Install pagecrypt ─────────────────────────────────────────
+      - name: Install pagecrypt
+        run: npm install -g pagecrypt
+
+      # ── Inject TMDB token into shows.html ─────────────────────────
+      #    The placeholder __TMDB_TOKEN__ is replaced before encryption
+      - name: Inject API token
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: |
+          sed -i "s|__TMDB_TOKEN__|${TMDB_TOKEN}|g" shows.html
+
+      # ── Encrypt shows.html with pagecrypt ─────────────────────────
+      - name: Encrypt shows.html
+        env:
+          PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
+        run: |
+          pagecrypt shows.html shows.html -- "$PAGE_PASSWORD"
+
+      # ── Upload artifact for Pages ─────────────────────────────────
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      # ── Deploy to GitHub Pages ────────────────────────────────────
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
