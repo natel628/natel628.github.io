@@ -36,10 +36,6 @@ jobs:
       - name: Install pagecrypt
         run: npm install -g pagecrypt
 
-      # ── Verify pagecrypt installed and check version ───────────────
-      - name: Verify pagecrypt
-        run: pagecrypt --version || pagecrypt --help || true
-
       # ── Encrypt shows.html with pagecrypt ─────────────────────────
       - name: Encrypt shows.html
         env:
@@ -50,11 +46,9 @@ jobs:
             exit 1
           fi
           echo "Encrypting shows.html..."
-          # Copy to temp, encrypt from temp to final
-          cp shows.html shows_src.html
-          pagecrypt shows_src.html shows.html "$PAGE_PASSWORD"
-          rm shows_src.html
-          echo "Encryption complete. Output size: $(wc -c < shows.html) bytes"
+          pagecrypt shows.html shows_encrypted.html "$PAGE_PASSWORD"
+          mv shows_encrypted.html shows.html
+          echo "Done. Encrypted size: $(wc -c < shows.html) bytes"
 
       # ── Upload artifact for Pages ─────────────────────────────────
       - name: Setup Pages
