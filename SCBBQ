@@ -1,0 +1,481 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>October Event Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: red header band echoing the flyer (black disc, white stars), then calendar + detail on the left, map + venue list on the right. */
+:root {
+  --bg: #F4F2F1;
+  --surface: #FFFFFF;
+  --ink: #1A1313;
+  --muted: #6A5E5C;
+  --line: #E1D8D6;
+  --red: #B0141E;
+  --band: #B0141E;
+  --band-ink: #FFFFFF;
+  --disc: #120D0D;
+  --water: #D9E4E9;
+  --land: #F3EDEA;
+  --land-hi: #FFFFFF;
+  --land-line: #A99A96;
+  --map-label: #7C8D95;
+  --land-label: #A49390;
+  --on-v: #FFFFFF;
+  --v1: #946200; --v2: #1F6FB2; --v3: #2E7D32; --v4: #8E3FA8; --v5: #B84A00;
+  --v6: #00796B; --v7: #A0316B; --v8: #5D4037; --v9: #455A64;
+  --display: "Alfa Slab One", "Rockwell", "Georgia", serif;
+  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --label: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F0C0C; --surface: #1A1515; --ink: #F3ECEA; --muted: #A89A98; --line: #342C2B;
+    --red: #F2616A; --band: #8E111B; --band-ink: #FFFFFF; --disc: #050303;
+    --water: #121B20; --land: #231D1D; --land-hi: #2D2525; --land-line: #5B4E4C;
+    --map-label: #50646E; --land-label: #66585A; --on-v: #150F0F;
+    --v1: #E2B64F; --v2: #6DB3F2; --v3: #7BC47F; --v4: #C58BE0; --v5: #F0925A;
+    --v6: #4DC3B0; --v7: #E88DB8; --v8: #C2A89F; --v9: #9FB3BF;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F0C0C; --surface: #1A1515; --ink: #F3ECEA; --muted: #A89A98; --line: #342C2B;
+  --red: #F2616A; --band: #8E111B; --band-ink: #FFFFFF; --disc: #050303;
+  --water: #121B20; --land: #231D1D; --land-hi: #2D2525; --land-line: #5B4E4C;
+  --map-label: #50646E; --land-label: #66585A; --on-v: #150F0F;
+  --v1: #E2B64F; --v2: #6DB3F2; --v3: #7BC47F; --v4: #C58BE0; --v5: #F0925A;
+  --v6: #4DC3B0; --v7: #E88DB8; --v8: #C2A89F; --v9: #9FB3BF;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.45 var(--body);
+  padding-inline: 16px; padding-block: 16px 40px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.nums { font-variant-numeric: tabular-nums; }
+
+/* header band */
+.band {
+  position: relative; overflow: hidden; background: var(--band); color: var(--band-ink);
+  border-radius: 6px; padding: 28px clamp(18px, 4vw, 36px); min-height: 150px;
+}
+.band .disc {
+  position: absolute; right: -90px; top: -60px; width: 300px; height: 300px; border-radius: 50%;
+  background: var(--disc); pointer-events: none;
+}
+.band .star { position: absolute; color: #fff; line-height: 1; pointer-events: none; }
+.band .s1 { right: 150px; top: 26px; font-size: 26px; }
+.band .s2 { right: 70px; top: 96px; font-size: 38px; }
+.band .s3 { right: 188px; top: 112px; font-size: 18px; }
+.band .s4 { right: 30px; top: 20px; font-size: 16px; }
+.band-text { position: relative; display: flex; flex-direction: column; gap: 6px; max-width: 34rem; }
+.eyebrow { font: 600 13px/1 var(--label); letter-spacing: .16em; text-transform: uppercase; opacity: .9; }
+h1 { margin: 0; font: 400 clamp(46px, 9vw, 84px)/.95 var(--display); letter-spacing: .01em; text-wrap: balance; }
+.facts { display: flex; flex-wrap: wrap; gap: 4px 16px; font: 600 15px/1.3 var(--label); letter-spacing: .06em; text-transform: uppercase; }
+
+/* controls */
+.layout { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 980px) {
+  .layout { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: start; }
+  .side { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+}
+.main, .side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.controls { display: flex; flex-direction: column; gap: 12px; }
+.row-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.seg button { border: 0; background: transparent; padding: 7px 16px; font: 600 14px/1 var(--label); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.hint { color: var(--muted); font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.fchip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px 4px 4px; min-height: 32px;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 14px; line-height: 1;
+}
+.fchip.all { padding-left: 12px; }
+.fchip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.fchip:hover { border-color: var(--ink); }
+
+.disc-n {
+  display: inline-grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--c); color: var(--on-v); font: 700 13px/1 var(--label);
+}
+
+/* calendar */
+.cal { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.cal-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; }
+.cal-head h2 { margin: 0; font: 400 24px/1 var(--display); }
+.cal-head span { color: var(--muted); font: 600 13px/1 var(--label); letter-spacing: .1em; text-transform: uppercase; }
+.dow, .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.dow div { padding: 6px 4px; text-align: center; font: 600 12px/1 var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); border-top: 1px solid var(--line); }
+.grid { gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
+.blank { background: var(--bg); min-height: 78px; }
+.day {
+  position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-width: 0;
+  min-height: 78px; padding: 6px 6px 7px; border: 0; border-radius: 0; background: var(--surface); text-align: left;
+}
+.day:hover { background: color-mix(in srgb, var(--surface) 90%, var(--red)); }
+.day .n { font: 500 15px/1 var(--body); color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.day.has .n { color: var(--ink); font-weight: 600; }
+.day .tdy { color: var(--red); font-size: 12px; }
+.day.sel { outline: 2px solid var(--red); outline-offset: -2px; z-index: 1; background: var(--surface); }
+.dchip { display: flex; align-items: center; gap: 5px; min-width: 0; font-size: 12px; line-height: 1.1; }
+.dchip .disc-n { width: 20px; height: 20px; font-size: 12px; }
+.dchip b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+@media (max-width: 720px) {
+  .dchip b { display: none; }
+  .day { align-items: center; min-height: 62px; padding: 6px 2px; }
+  .blank { min-height: 62px; }
+  .day .n { justify-content: center; }
+}
+
+/* day detail */
+.detail { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.detail h3 { margin: 0; font: 400 22px/1.15 var(--display); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.pill { font: 600 12px/1 var(--label); letter-spacing: .12em; text-transform: uppercase; background: var(--red); color: #fff; padding: 5px 8px; border-radius: 3px; }
+:root[data-theme="dark"] .pill { color: #150F0F; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pill { color: #150F0F; } }
+.ev { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; }
+.ev .disc-n { width: 34px; height: 34px; font-size: 17px; grid-row: span 3; }
+.ev .vname { font: 600 19px/1.2 var(--body); overflow-wrap: anywhere; }
+.ev .tag { align-self: start; justify-self: start; font: 600 12px/1 var(--label); letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--c); color: var(--ink); padding: 4px 7px; border-radius: 3px; }
+.ev .addr { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.btn { display: inline-flex; align-items: center; min-height: 36px; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--ink); background: var(--ink); color: var(--bg); font: 600 14px/1 var(--label); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--ink); }
+.dates { display: flex; flex-direction: column; gap: 6px; }
+.dates .lab { font: 600 12px/1 var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.dates .list { display: flex; flex-wrap: wrap; gap: 6px; }
+.dpill { border: 1px solid var(--line); background: transparent; border-radius: 4px; padding: 6px 10px; font-size: 14px; line-height: 1; }
+.dpill[aria-pressed="true"] { border-color: var(--c); background: var(--c); color: var(--on-v); font-weight: 600; }
+.empty { color: var(--muted); display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.divider { border: 0; border-top: 1px solid var(--line); margin: 0; }
+
+/* agenda */
+.agenda { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.arow { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; align-items: center; width: 100%; text-align: left; padding: 10px 14px; border: 0; border-top: 1px solid var(--line); background: transparent; }
+.arow:first-child { border-top: 0; }
+.arow:hover { background: color-mix(in srgb, var(--surface) 92%, var(--red)); }
+.arow.sel { box-shadow: inset 4px 0 0 var(--red); background: color-mix(in srgb, var(--surface) 94%, var(--red)); }
+.adate { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.adate small { font: 600 12px/1 var(--label); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.adate b { font: 400 24px/1.1 var(--display); }
+.ainfo { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ainfo .t { display: flex; flex-direction: column; min-width: 0; }
+.ainfo .t span:first-child { font-weight: 600; overflow-wrap: anywhere; }
+.ainfo .t span:last-child { color: var(--muted); font-size: 13px; }
+
+/* map */
+.mapcard { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.mapcard header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; flex-wrap: wrap; }
+.mapcard h2 { margin: 0; font: 400 24px/1 var(--display); }
+.mapcard header span { color: var(--muted); font-size: 13px; }
+.mapwrap { border-top: 1px solid var(--line); }
+svg.map { display: block; width: 100%; height: auto; max-width: 100%; }
+.map .water { fill: var(--water); }
+.map .st { fill: var(--land); stroke: var(--land-line); stroke-width: 1; stroke-linejoin: round; }
+.map .st.ri { fill: var(--land-hi); }
+.map text.land { fill: var(--land-label); font: 600 12px var(--label); letter-spacing: .3em; text-anchor: middle; }
+.map text.water { fill: var(--map-label); font: italic 400 12px var(--body); letter-spacing: .08em; text-anchor: middle; }
+.pin { cursor: pointer; outline: none; }
+.pin .ring { fill: none; stroke: var(--red); stroke-width: 3; opacity: 0; transition: opacity .15s; }
+.pin .dot { fill: var(--c); stroke: var(--surface); stroke-width: 2; }
+.pin .pn { fill: var(--on-v); font: 700 13px var(--label); text-anchor: middle; pointer-events: none; }
+.pin .lbl { fill: var(--ink); font: 600 13px var(--body); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; opacity: 0; pointer-events: none; transition: opacity .15s; }
+.pin.on .ring, .pin.sel .ring, .pin:focus-visible .ring { opacity: 1; }
+.pin.on .lbl, .pin.sel .lbl, .pin:hover .lbl, .pin:focus-visible .lbl { opacity: 1; }
+.pin.dim { opacity: .35; }
+.pin:hover { opacity: 1; }
+.legend { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.legend li + li { border-top: 1px solid var(--line); }
+.lrow { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; width: 100%; padding: 9px 14px; border: 0; background: transparent; text-align: left; }
+.lrow:hover { background: color-mix(in srgb, var(--surface) 92%, var(--red)); }
+.lrow[aria-pressed="true"] { box-shadow: inset 4px 0 0 var(--c); background: color-mix(in srgb, var(--surface) 92%, var(--c)); }
+.lrow .t { display: flex; flex-direction: column; min-width: 0; }
+.lrow .t b { font-weight: 600; overflow-wrap: anywhere; }
+.lrow .t span { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.note { color: var(--muted); font-size: 13px; max-width: 70ch; }
+
+@media (prefers-reduced-motion: reduce) { .pin .ring, .pin .lbl { transition: none; } }
+</style>
+
+<div class="wrap">
+  <div class="band">
+    <div class="disc" aria-hidden="true"></div>
+    <span class="star s1" aria-hidden="true">★</span>
+    <span class="star s2" aria-hidden="true">★</span>
+    <span class="star s3" aria-hidden="true">★</span>
+    <span class="star s4" aria-hidden="true">★</span>
+    <div class="band-text">
+      <div class="eyebrow">Rhode Island &amp; Connecticut · 2026</div>
+      <h1>October</h1>
+      <div class="facts nums" id="facts"></div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="controls">
+        <div class="row-top">
+          <div class="seg" role="group" aria-label="View">
+            <button type="button" id="vMonth" aria-pressed="true">Month</button>
+            <button type="button" id="vList" aria-pressed="false">List</button>
+          </div>
+          <span class="hint" id="hint">Pick a venue to see just its dates.</span>
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Filter by venue"></div>
+      </div>
+
+      <section id="view" aria-label="Schedule"></section>
+      <section class="detail" id="detail" aria-live="polite"></section>
+    </main>
+
+    <aside class="side">
+      <section class="mapcard" aria-label="Map of venues">
+        <header>
+          <h2>Map</h2>
+          <span id="mapsub"></span>
+        </header>
+        <div class="mapwrap"><svg class="map" id="map" role="group" aria-label="Venue locations in Rhode Island and Connecticut"></svg></div>
+        <ul class="legend" id="legend"></ul>
+      </section>
+      <p class="note">Schedule from the October flyer. It lists no times, so check with each venue before you go. Map pins are approximate; use Directions for the exact address.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+const MAP = {"w":640,"h":600,"states":{"New York":"M2.9,602L5.6,593.3L13.3,593.9L18.5,602L2.9,602ZM19.3,602L22.7,595.9L25.6,587.4L37.8,585.9L54.1,584.0L64.2,578.8L77.7,579.6L72.5,588.5L59.3,593.6L42.6,596.4L36.9,602L19.3,602Z","Connecticut":"M163.8,-2L163.9,5.2L164.3,60.4L164.7,115.4L165.1,170.5L165.5,225.4L166.0,280.4L166.4,335.3L166.6,363.9L164.1,403.2L160.4,461.8L151.1,464.2L146.6,471.7L142.3,484.5L136.0,532.4L131.6,551.0L121.0,552.1L120.6,552.0L123.4,550.1L119.2,540.6L112.3,534.2L102.9,529.1L93.8,527.4L47.5,528.5L40.6,530.0L-2,553.2L-2,-2Z","Rhode Island":"M462.7,-2L462.9,-0.5L465.1,4.6L470.7,6.1L484.2,5.3L489.9,6.4L492.4,10.0L493.8,20.8L493.5,27.7L492.7,33.5L490.9,41.7L491.0,46.2L492.1,55.8L488.7,88.1L488.9,93.2L490.2,99.3L494.1,106.5L502.2,117.5L513.8,126.5L521.9,131.1L528.9,133.4L542.0,144.2L564.0,182.5L564.0,182.5L562.9,184.6L561.4,193.5L561.6,206.2L561.0,209.5L558.3,210.4L547.3,238.2L529.3,230.1L517.8,230.1L512.8,219.4L514.3,206.2L518.0,189.1L523.3,172.4L532.7,152.2L531.2,145.1L526.4,140.1L520.0,138.2L517.7,142.4L516.0,163.0L512.8,170.7L506.2,168.0L492.8,159.4L479.6,147.5L473.6,134.6L472.5,117.6L469.1,103.9L463.1,91.5L454.2,78.4L451.5,90.8L450.6,112.3L451.5,134.9L454.2,151.1L458.8,157.6L465.4,162.5L471.1,168.9L473.6,180.1L471.6,188.2L462.0,207.2L459.1,216.2L454.1,207.8L449.1,201.4L443.1,197.5L434.8,196.7L426.5,200.1L418.4,206.8L414.7,213.3L431.4,221.9L438.2,236.5L440.7,255.4L439.1,274.7L431.1,292.2L421.4,301.3L417.6,310.9L427.0,330.1L430.5,344.9L431.4,394.7L429.4,411.5L409.0,470.9L398.5,484.9L388.3,495.7L385.2,504.6L378.5,508.6L371.3,506.9L355.3,499.0L337.2,500.5L306.6,507.5L196.4,542.0L143.0,555.3L112.7,569.0L108.2,560.5L120.6,552.0L121.0,552.1L131.6,551.0L136.0,532.4L142.3,484.5L146.6,471.7L151.1,464.2L160.4,461.8L164.1,403.2L166.6,363.9L166.4,335.3L166.0,280.4L165.5,225.4L165.1,170.5L164.7,115.4L164.3,60.4L163.9,5.2L163.8,-2L462.7,-2ZM642,372.9L600.2,411.5L590.8,389.3L588.8,379.3L592.8,369.1L593.3,362.0L585.3,326.6L582.7,284.7L583.3,261.9L585.3,242.8L594.5,213.7L604.1,216.9L615.8,220.8L627.5,224.7L639.2,228.6L637.3,241.7L635.3,254.7L633.4,267.7L631.4,280.7L633.4,283.3L635.3,285.9L637.3,288.5L639.2,291.1L641.1,314.6L642,324.9L642,372.9ZM508.4,305.0L497.3,310.0L492.6,303.8L492.6,293.9L497.3,276.6L493.6,261.7L478.7,256.8L476.9,246.8L479.7,229.5L488.0,219.6L493.6,232.0L497.3,241.9L506.5,255.5L516.7,261.7L515.8,282.8ZM478.0,326.6L478.4,347.1L476.1,368.0L472.4,386.2L468.3,398.5L465.0,403.6L459.3,410.8L453.2,416.7L448.9,418.0L447.3,411.8L451.4,390.4L448.9,379.1L453.5,376.2L455.5,373.1L456.7,369.6L459.1,365.5L451.3,356.7L453.2,341.3L463.9,307.8L470.5,309.4L474.7,313.0L477.1,318.7ZM529.4,304.2L533.7,293.4L537.9,266.8L542,255.7L549.1,248.1L566.9,236.6L575.6,229.2L575.6,248.7L567.1,281.2L566.3,352.5L565.3,363.8L563.5,372.8L563.2,381.5L566.3,392.1L544.1,385.5L529.1,398.9L516.8,413.7L502.7,411.5L494.3,420.7L486.3,424.8L480.3,421.4L478.0,407.9L482.6,402.8L504.9,392.8L512.8,386.1L503.9,373.7L500.9,362.8L503.3,352.9L510.2,343.1L512.6,338.0L513.3,331.3L512.8,317.4L515.0,313.7L525.5,307.4Z","Massachusetts":"M642,104.7L634.2,115.4L611.9,159.9L607.1,166.3L600.2,170.7L584.5,163.8L575.2,161.7L571.1,167.1L569.6,171.7L564.0,182.5L542.0,144.2L528.9,133.4L521.9,131.1L513.8,126.5L502.2,117.5L494.1,106.5L490.2,99.3L488.9,93.2L488.7,88.1L492.1,55.8L491.0,46.2L490.9,41.7L492.7,33.5L493.5,27.7L493.8,20.8L492.4,10.0L489.9,6.4L484.2,5.3L470.7,6.1L465.1,4.6L462.9,-0.5L462.7,-2L642,-2ZM642,324.9L641.1,314.6L639.2,291.1L637.3,288.5L635.3,285.9L633.4,283.3L631.4,280.7L633.4,267.7L635.3,254.7L637.3,241.7L639.2,228.6L627.5,224.7L615.8,220.8L604.1,216.9L594.5,213.7L594.5,213.7L597.2,205.3L636.0,138.7L642,125.3L642,324.9Z"},"pins":{"1":[349.2,485.7],"2":[297.2,324.8],"3":[547.2,255.9],"4":[89.6,526.4],"5":[374.8,436.4],"6":[429.4,92],"7":[414.9,313.9],"8":[93.2,505.1],"9":[458,379]},"labels":[{"t":"RHODE ISLAND","x":234.7,"y":172.6,"cls":"land"},{"t":"CONNECTICUT","x":56.9,"y":229.7,"cls":"land"},{"t":"Block Island Sound","x":177.8,"y":576.1,"cls":"water"},{"t":"Rhode Island Sound","x":519.1,"y":571.4,"cls":"water"}]};
+
+const V = [
+  { id: 1, short: "Clarks Farm",  name: "Clarks Farm",  place: "Clark Farms",            town: "Wakefield, RI",    addr: "2984 Commodore Perry Hwy, Wakefield, RI 02879" },
+  { id: 2, short: "Tilted Barn",  name: "Tilted Barn",  place: "Tilted Barn Brewery",    town: "Exeter, RI",       addr: "1 Hemsley Pl, Exeter, RI 02822" },
+  { id: 3, short: "Ragged Island",name: "Ragged Island",place: "Ragged Island Brewing",  town: "Portsmouth, RI",   addr: "54 Bristol Ferry Rd, Portsmouth, RI 02871" },
+  { id: 4, short: "Saltwater Farm", name: "Saltwater Farm Vineyard", place: "Saltwater Farm Vineyard", town: "Stonington, CT", addr: "349 Elm St, Stonington, CT 06378" },
+  { id: 5, short: "Whaler's",     name: "Whaler's Tap Room", place: "Whalers Brewing Company", town: "Wakefield, RI", addr: "1174 Kingstown Rd, Wakefield, RI 02879" },
+  { id: 6, short: "Longlive",     name: "Longlive Beer Works Prov City", place: "Long Live Beerworks", town: "Providence, RI", addr: "40R Sprague St, Providence, RI 02907" },
+  { id: 7, short: "Wickford",     name: "Wickford Harbor Fire", place: "Wickford Village", town: "North Kingstown, RI", addr: "Wickford Village, North Kingstown, RI 02852" },
+  { id: 8, short: "Stonington",   name: "Stonington Vineyard", place: "Stonington Vineyards", town: "Stonington, CT", addr: "523 Taugwonk Rd, Stonington, CT 06378" },
+  { id: 9, short: "Jamestown",    name: "The Town Jamestown", place: "Fort Getty Park", town: "Jamestown, RI", addr: "1050 Fort Getty Rd, Jamestown, RI 02835" }
+];
+const VB = Object.fromEntries(V.map(v => [v.id, v]));
+
+// [date, venue id, tag]  (from the flyer)
+const EV = [
+  ["2026-10-03", 1, "Fall Fest"],
+  ["2026-10-04", 1, "Fall Fest"],
+  ["2026-10-07", 5, "Wednesday Trivia"],
+  ["2026-10-08", 3, "Thursday Trivia"],
+  ["2026-10-09", 4, ""],
+  ["2026-10-10", 2, "Octoberfest"],
+  ["2026-10-11", 1, "Fall Fest"],
+  ["2026-10-14", 5, "Wednesday Trivia"],
+  ["2026-10-15", 6, ""],
+  ["2026-10-16", 7, "Pack 5 NK Fundraiser"],
+  ["2026-10-17", 3, ""],
+  ["2026-10-18", 1, "Fall Fest"],
+  ["2026-10-21", 5, "Wednesday Trivia"],
+  ["2026-10-22", 6, ""],
+  ["2026-10-23", 8, "Movie Night"],
+  ["2026-10-24", 9, "Fright Night at Fort Getty"],
+  ["2026-10-25", 4, ""]
+].map(([date, v, tag]) => ({ date, v, tag }));
+
+const DOW = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DOW3 = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MON = "October";
+const $ = (id) => document.getElementById(id);
+const pad = (n) => String(n).padStart(2, "0");
+const iso = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const dayNum = (s) => Number(s.slice(8));
+const longDate = (s) => { const d = parse(s); return DOW[d.getDay()] + ", " + MON + " " + d.getDate(); };
+const shortDate = (s) => { const d = parse(s); return DOW3[d.getDay()] + " " + MON.slice(0, 3) + " " + d.getDate(); };
+const dirUrl = (v) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(v.place + ", " + v.addr);
+
+const TODAY = iso(new Date());
+const inMonth = TODAY.startsWith("2026-10");
+const state = { date: inMonth ? TODAY : EV[0].date, venue: null, view: "month" };
+
+function visible() { return EV.filter(e => !state.venue || e.v === state.venue); }
+function eventsOn(date, all) { return (all ? EV : visible()).filter(e => e.date === date); }
+function nextAfter(date) { return visible().find(e => e.date > date) || null; }
+function venueDates(id) { return EV.filter(e => e.v === id).map(e => e.date); }
+
+function disc(id, extra) { return '<span class="disc-n ' + (extra || "") + '" style="--c:var(--v' + id + ')">' + id + '</span>'; }
+
+/* header facts */
+$("facts").innerHTML = [EV.length + " dates", V.length + " venues", "Oct " + dayNum(EV[0].date) + " – " + dayNum(EV[EV.length - 1].date)].map(t => "<span>" + t + "</span>").join("");
+
+/* filter chips */
+function renderChips() {
+  let h = '<button type="button" class="fchip all" data-v="0" aria-pressed="' + (!state.venue) + '">All venues</button>';
+  for (const v of V) {
+    h += '<button type="button" class="fchip" data-v="' + v.id + '" aria-pressed="' + (state.venue === v.id) + '">' + disc(v.id) + v.short + "</button>";
+  }
+  $("chips").innerHTML = h;
+  $("hint").textContent = state.venue
+    ? VB[state.venue].name + ": " + venueDates(state.venue).length + " date" + (venueDates(state.venue).length > 1 ? "s" : "")
+    : "Pick a venue to see just its dates.";
+}
+
+/* month grid */
+function renderMonth() {
+  const first = new Date(2026, 9, 1).getDay();
+  let h = '<div class="cal"><div class="cal-head"><h2>October 2026</h2><span class="nums">' + visible().length + " stops</span></div>";
+  h += '<div class="dow">' + DOW3.map(d => "<div>" + d + "</div>").join("") + "</div><div class=\"grid\" role=\"grid\">";
+  for (let i = 0; i < first; i++) h += '<div class="blank"></div>';
+  for (let d = 1; d <= 31; d++) {
+    const date = "2026-10-" + pad(d);
+    const evs = eventsOn(date);
+    const label = longDate(date) + (evs.length ? ", " + evs.map(e => VB[e.v].name + (e.tag ? " " + e.tag : "")).join(", ") : ", nothing scheduled");
+    h += '<button type="button" class="day nums' + (evs.length ? " has" : "") + (date === state.date ? " sel" : "") + '" data-d="' + date + '" aria-label="' + label + '" aria-pressed="' + (date === state.date) + '">';
+    h += '<span class="n">' + d + (date === TODAY ? '<span class="tdy" title="Today">★</span>' : "") + "</span>";
+    for (const e of evs) h += '<span class="dchip">' + disc(e.v) + "<b>" + VB[e.v].short + "</b></span>";
+    h += "</button>";
+  }
+  const total = first + 31, trail = (7 - (total % 7)) % 7;
+  for (let i = 0; i < trail; i++) h += '<div class="blank"></div>';
+  h += "</div></div>";
+  $("view").innerHTML = h;
+}
+
+/* agenda list */
+function renderList() {
+  const evs = visible();
+  let h = '<div class="agenda">';
+  if (!evs.length) h += '<div class="arow">Nothing here.</div>';
+  for (const e of evs) {
+    const d = parse(e.date), v = VB[e.v];
+    h += '<button type="button" class="arow nums' + (e.date === state.date ? " sel" : "") + '" data-d="' + e.date + '" data-v="' + e.v + '">';
+    h += '<span class="adate"><small>' + DOW3[d.getDay()] + "</small><b>" + d.getDate() + "</b></span>";
+    h += '<span class="ainfo">' + disc(v.id) + '<span class="t"><span>' + v.name + "</span><span>" + (e.tag ? e.tag + " · " : "") + v.town + "</span></span></span></button>";
+  }
+  h += "</div>";
+  $("view").innerHTML = h;
+}
+
+/* day detail */
+function renderDetail() {
+  const date = state.date;
+  const evs = eventsOn(date);
+  let h = "<h3>" + longDate(date) + (date === TODAY ? '<span class="pill">Today</span>' : "") + "</h3>";
+  if (!evs.length) {
+    const other = eventsOn(date, true);
+    const nx = nextAfter(date);
+    h += '<div class="empty"><span>' + (state.venue && other.length
+      ? "No " + VB[state.venue].short + " stop this day. " + VB[other[0].v].name + " is on the schedule."
+      : state.venue ? "No " + VB[state.venue].short + " stop this day." : "Nothing on the schedule this day.") + "</span>";
+    if (nx) h += '<button type="button" class="btn ghost" data-jump="' + nx.date + '">Next: ' + shortDate(nx.date) + " · " + VB[nx.v].short + " →</button>";
+    h += "</div>";
+  }
+  evs.forEach((e, i) => {
+    const v = VB[e.v];
+    if (i) h += '<hr class="divider">';
+    h += '<div class="ev" style="--c:var(--v' + v.id + ')">' + disc(v.id);
+    h += '<div class="vname">' + v.name + "</div>";
+    h += (e.tag ? '<span class="tag">' + e.tag + "</span>" : "<span></span>");
+    h += '<div class="addr">' + v.place + " · " + v.addr + "</div></div>";
+    h += '<div class="actions"><a class="btn" href="' + dirUrl(v) + '" target="_blank" rel="noopener">Directions</a>';
+    h += '<button type="button" class="btn ghost" data-venue="' + v.id + '">' + (state.venue === v.id ? "Show all venues" : "Only " + v.short) + "</button></div>";
+    const ds = venueDates(v.id);
+    if (ds.length > 1) {
+      h += '<div class="dates"><span class="lab">All dates here</span><div class="list nums">';
+      for (const d of ds) h += '<button type="button" class="dpill" style="--c:var(--v' + v.id + ')" data-jump="' + d + '" aria-pressed="' + (d === date) + '">' + DOW3[parse(d).getDay()] + " " + dayNum(d) + "</button>";
+      h += "</div></div>";
+    }
+  });
+  $("detail").innerHTML = h;
+}
+
+/* map */
+function buildMap() {
+  const svg = $("map");
+  svg.setAttribute("viewBox", "0 0 " + MAP.w + " " + MAP.h);
+  let h = '<rect class="water" width="' + MAP.w + '" height="' + MAP.h + '"></rect>';
+  for (const [name, d] of Object.entries(MAP.states)) h += '<path class="st' + (name === "Rhode Island" ? " ri" : "") + '" d="' + d + '"></path>';
+  for (const l of MAP.labels) h += '<text class="' + l.cls + '" x="' + l.x + '" y="' + l.y + '">' + l.t + "</text>";
+  for (const v of V) {
+    const [x, y] = MAP.pins[v.id];
+    const right = x < 430;
+    h += '<g class="pin" data-v="' + v.id + '" tabindex="0" role="button" aria-label="' + v.name + ", " + v.town + '" style="--c:var(--v' + v.id + ')" transform="translate(' + x + " " + y + ')">';
+    h += '<circle class="ring" r="16"></circle><circle class="dot" r="11"></circle><text class="pn" y="4.5">' + v.id + "</text>";
+    h += '<text class="lbl" x="' + (right ? 19 : -19) + '" y="4.5" text-anchor="' + (right ? "start" : "end") + '">' + v.short + "</text></g>";
+  }
+  svg.innerHTML = h;
+}
+function renderMap() {
+  const onIds = new Set(eventsOn(state.date).map(e => e.v));
+  document.querySelectorAll("#map .pin").forEach(p => {
+    const id = Number(p.dataset.v);
+    p.classList.toggle("on", onIds.has(id));
+    p.classList.toggle("sel", state.venue === id);
+    p.classList.toggle("dim", !!state.venue && state.venue !== id);
+  });
+  const names = [...onIds].map(id => VB[id].short);
+  $("mapsub").textContent = names.length ? shortDate(state.date) + ": " + names.join(", ") : shortDate(state.date) + ": no stop";
+}
+function renderLegend() {
+  let h = "";
+  for (const v of V) {
+    const ds = venueDates(v.id).map(dayNum).join(", ");
+    h += '<li><button type="button" class="lrow" data-v="' + v.id + '" style="--c:var(--v' + v.id + ')" aria-pressed="' + (state.venue === v.id) + '">' + disc(v.id);
+    h += '<span class="t"><b>' + v.name + "</b><span>" + v.town + " · Oct " + ds + "</span></span></button></li>";
+  }
+  $("legend").innerHTML = h;
+}
+
+/* state changes */
+function setVenue(id) {
+  state.venue = (id === 0 || state.venue === id) ? null : id;
+  if (state.venue && !eventsOn(state.date).length) {
+    const ds = venueDates(state.venue);
+    state.date = ds.find(d => d >= state.date) || ds[0];
+  }
+  render();
+}
+function setDate(d) { state.date = d; render(); }
+function render() {
+  const a = document.activeElement;
+  let back = null;
+  if (a && a.dataset) {
+    if (a.classList.contains("day")) back = '.day[data-d="' + a.dataset.d + '"]';
+    else if (a.classList.contains("arow")) back = '.arow[data-d="' + a.dataset.d + '"]';
+    else if (a.classList.contains("fchip")) back = '.fchip[data-v="' + a.dataset.v + '"]';
+  }
+  renderChips();
+  state.view === "month" ? renderMonth() : renderList();
+  renderDetail();
+  renderMap();
+  renderLegend();
+  $("vMonth").setAttribute("aria-pressed", state.view === "month");
+  $("vList").setAttribute("aria-pressed", state.view === "list");
+  if (back) { const n = document.querySelector(back); if (n) n.focus(); }
+}
+
+document.addEventListener("click", (ev) => {
+  const t = ev.target.closest("button, .pin");
+  if (!t) return;
+  if (t.id === "vMonth") { state.view = "month"; render(); return; }
+  if (t.id === "vList") { state.view = "list"; render(); return; }
+  if (t.dataset.jump) { setDate(t.dataset.jump); return; }
+  if (t.dataset.venue) { setVenue(Number(t.dataset.venue)); return; }
+  if (t.classList.contains("fchip") || t.classList.contains("lrow") || t.classList.contains("pin")) { setVenue(Number(t.dataset.v)); return; }
+  if (t.dataset.d) { setDate(t.dataset.d); }
+});
+document.addEventListener("keydown", (ev) => {
+  const p = ev.target.closest && ev.target.closest(".pin");
+  if (p && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); setVenue(Number(p.dataset.v)); }
+});
+
+buildMap();
+render();
+</script>
+
+</body></html>
