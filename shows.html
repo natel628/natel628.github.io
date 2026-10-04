@@ -453,6 +453,21 @@
       border-radius: 4px;
       font-weight: 700;
     }
+    /* Content rating badge */
+    .rating-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 1px solid currentColor;
+      margin-left: 4px;
+      vertical-align: middle;
+      line-height: 1.4;
+    }
+    .rating-badge.adult { color: var(--accent); }
+    .rating-badge.teen  { color: var(--accent2); }
+    .rating-badge.family{ color: #1ce783; }
 
     /* ─── Section tabs (TV / Movies / Both) ─────────────────────────── */
     .type-pills { display: flex; gap: 6px; }
@@ -574,6 +589,18 @@
     <option value="350">Apple TV+</option>
     <option value="2">Apple TV</option>
   </select>
+  <select class="filter-select" id="rating-filter">
+    <option value="">Any Rating</option>
+    <option value="NR">NR / Unrated</option>
+    <option value="G">G</option>
+    <option value="PG">PG</option>
+    <option value="PG-13">PG-13</option>
+    <option value="R">R</option>
+    <option value="TV-G">TV-G</option>
+    <option value="TV-PG">TV-PG</option>
+    <option value="TV-14">TV-14</option>
+    <option value="TV-MA">TV-MA</option>
+  </select>
 </div>
 
 <!-- ═══ MAIN CONTENT ══════════════════════════════════════════════════ -->
@@ -623,10 +650,13 @@ let state = {
   genre: '',
   sort: 'popularity.desc',
   provider: '',
+  contentRating: '',
   simklToken: LS.get('simkl_token'),
   simklUser: LS.get('simkl_user'),
   ratings: LS.get('my_ratings') || {},
   watchlist: LS.get('my_watchlist') || {},
+  // mediaDetails: title/poster cache keyed by "type_id"
+  mediaDetails: LS.get('media_details_cache') || {},
   simklLibrary: LS.get('simkl_library') || [],
   calYear: new Date().getFullYear(),
   calMonth: new Date().getMonth(),
@@ -635,11 +665,55 @@ let state = {
 function saveRatings()   { LS.set('my_ratings',    state.ratings); }
 function saveWatchlist() { LS.set('my_watchlist',  state.watchlist); }
 function saveSimkl()     { LS.set('simkl_token',   state.simklToken); LS.set('simkl_user', state.simklUser); }
+function saveMediaDetails() { LS.set('media_details_cache', state.mediaDetails); }
 
 /* ─────────────────────────────────────────────────────────────────────
-   TMDB API
+   API CACHE — in-memory with TTL, persisted to localStorage for details
+   ───────────────────────────────────────────────────────────────────── */
+const _cache = new Map(); // in-memory: key → { data, expires }
+const CACHE_TTL = {
+  trending: 5 * 60 * 1000,       // 5 min
+  discover: 10 * 60 * 1000,      // 10 min
+  detail:   60 * 60 * 1000,      // 1 hr
+  season:   24 * 60 * 60 * 1000, // 24 hr
+  search:   2 * 60 * 1000,       // 2 min
+  providers:60 * 60 * 1000,      // 1 hr
+};
+
+function cacheTTL(path) {
+  if (path.includes('/trending/')) return CACHE_TTL.trending;
+  if (path.includes('/discover/')) return CACHE_TTL.discover;
+  if (path.includes('/season/'))   return CACHE_TTL.season;
+  if (path.includes('/watch/providers')) return CACHE_TTL.providers;
+  if (path.includes('/search/'))   return CACHE_TTL.search;
+  if (path.match(/\/(movie|tv)\/\d+$/)) return CACHE_TTL.detail;
+  return CACHE_TTL.discover;
+}
+
+function cacheKey(path, params) {
+  const sorted = Object.entries(params).sort(([a],[b]) => a.localeCompare(b));
+  return path + '?' + sorted.map(([k,v]) => `${k}=${v}`).join('&');
+}
+
+function cacheGet(key) {
+  const entry = _cache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expires) { _cache.delete(key); return null; }
+  return entry.data;
+}
+
+function cacheSet(key, data, ttl) {
+  _cache.set(key, { data, expires: Date.now() + ttl });
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   TMDB API  (with cache)
    ───────────────────────────────────────────────────────────────────── */
 async function tmdb(path, params = {}) {
+  const key = cacheKey(path, params);
+  const cached = cacheGet(key);
+  if (cached) return cached;
+
   const url = new URL(TMDB_BASE + path);
   url.searchParams.set('language', 'en-US');
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
@@ -647,7 +721,28 @@ async function tmdb(path, params = {}) {
     headers: { Authorization: `Bearer ${TMDB_TOKEN}` }
   });
   if (!res.ok) throw new Error(`TMDB ${res.status}: ${path}`);
-  return res.json();
+  const data = await res.json();
+  cacheSet(key, data, cacheTTL(path));
+  return data;
+}
+
+// Fetch content rating for a title (US region)
+async function getContentRating(type, id) {
+  try {
+    if (type === 'movie') {
+      const data = await tmdb(`/movie/${id}/release_dates`);
+      const us = (data.results || []).find(r => r.iso_3166_1 === 'US');
+      if (us && us.release_dates) {
+        const rated = us.release_dates.find(r => r.certification);
+        return rated?.certification || '';
+      }
+    } else {
+      const data = await tmdb(`/tv/${id}/content_ratings`);
+      const us = (data.results || []).find(r => r.iso_3166_1 === 'US');
+      return us?.rating || '';
+    }
+  } catch {}
+  return '';
 }
 
 // Fetch streaming providers for a title (US region)
@@ -657,12 +752,20 @@ async function getProviders(type, id) {
     const us = data.results && data.results.US;
     if (!us) return null;
     return {
-      flatrate: us.flatrate || [],   // subscription (Netflix, Hulu, etc.)
+      flatrate: us.flatrate || [],
       rent:     us.rent     || [],
       buy:      us.buy      || [],
       link:     us.link     || '',
     };
   } catch { return null; }
+}
+
+// Rating badge helper
+function ratingBadgeHTML(rating) {
+  if (!rating) return '';
+  const cls = ['TV-MA','R','NC-17'].includes(rating) ? 'adult'
+            : ['TV-14','PG-13'].includes(rating) ? 'teen' : 'family';
+  return `<span class="rating-badge ${cls}">${rating}</span>`;
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -788,14 +891,38 @@ async function syncSimklLibrary() {
     state.simklLibrary = lib;
     LS.set('simkl_library', lib);
 
-    // Mirror Simkl ratings into local ratings
+    // Mirror Simkl ratings AND statuses into local state
+    const simklToLocal = { watching: 'watching', completed: 'completed', plantowatch: 'plantowatch', hold: 'hold', dropped: 'dropped', notinteresting: 'dropped' };
     lib.forEach(item => {
-      if (item.user_rating) {
-        const key = mediaKey(item.media_type, item.movie?.ids?.tmdb || item.show?.ids?.tmdb);
-        if (key) state.ratings[key] = item.user_rating;
+      const tmdbId = item.movie?.ids?.tmdb || item.show?.ids?.tmdb;
+      if (!tmdbId) return;
+      const type = item.media_type;
+      const key  = mediaKey(type, tmdbId);
+
+      // Mirror rating
+      if (item.user_rating) state.ratings[key] = item.user_rating;
+
+      // Mirror watchlist status (#5)
+      const simklStatus = item.status;
+      if (simklStatus && simklToLocal[simklStatus]) {
+        state.watchlist[key] = simklToLocal[simklStatus];
+      }
+
+      // Cache title + poster for watchlist display (#1, #3)
+      const src = item.movie || item.show;
+      if (src?.title && !state.mediaDetails[key]) {
+        state.mediaDetails[key] = {
+          title: src.title,
+          poster_path: src.poster || src.poster_path || null,
+          media_type: type,
+          id: tmdbId,
+        };
       }
     });
+
     saveRatings();
+    saveWatchlist();
+    saveMediaDetails();
     toast(`Synced ${lib.length} items from Simkl`);
   } catch (e) {
     toast('Simkl sync failed: ' + e.message);
@@ -923,6 +1050,7 @@ function buildCard(item, opts = {}) {
   const myRating = getRating(type, id);
   const wlStatus = getWlStatus(type, id);
   const sc       = score(item);
+  const cr       = item._contentRating || '';  // set by enrichCard if available
 
   const card = document.createElement('div');
   card.className = 'card';
@@ -942,6 +1070,7 @@ function buildCard(item, opts = {}) {
       <div class="card-meta">
         ${year ? `<span>${year}</span>` : ''}
         ${sc ? `<span class="card-score">⭐ ${sc}</span>` : ''}
+        ${cr ? ratingBadgeHTML(cr) : ''}
       </div>
       <div class="card-stars" role="group" aria-label="My rating">
         ${[1,2,3,4,5].map(n => `
@@ -952,7 +1081,6 @@ function buildCard(item, opts = {}) {
     </div>
   `;
 
-  // Click → open modal
   card.addEventListener('click', e => {
     if (!e.target.classList.contains('star')) openModal(type, id, item);
   });
@@ -960,14 +1088,12 @@ function buildCard(item, opts = {}) {
     if (e.key === 'Enter') openModal(type, id, item);
   });
 
-  // Stars
   card.querySelectorAll('.card-stars .star').forEach(star => {
     star.addEventListener('click', e => {
       e.stopPropagation();
       const val = parseInt(star.dataset.val);
       setRating(type, id, val, item.genre_ids);
-      // re-render stars
-      card.querySelectorAll('.card-stars .star').forEach((s, i) => {
+      card.querySelectorAll('.card-stars .star').forEach(s => {
         s.classList.toggle('on', val >= parseInt(s.dataset.val));
       });
       if (state.simklToken) pushRatingToSimkl(type, id, val);
@@ -1005,18 +1131,35 @@ async function openModal(type, id, basicItem = {}) {
 
   try {
     const apiPath = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
-    const [detail, credits, providers] = await Promise.all([
+    const [detail, credits, providers, contentRating] = await Promise.all([
       tmdb(apiPath),
       tmdb(`${apiPath}/credits`).catch(() => ({ cast: [] })),
       getProviders(type, id),
+      getContentRating(type, id),
     ]);
-    renderModal(type, detail, credits, providers);
+
+    // Cache title/poster for watchlist display (#1, #3)
+    const key = mediaKey(type, id);
+    state.mediaDetails[key] = {
+      title: detail.title || detail.name,
+      poster_path: detail.poster_path,
+      media_type: type,
+      id,
+      vote_average: detail.vote_average,
+      release_date: detail.release_date,
+      first_air_date: detail.first_air_date,
+      genre_ids: (detail.genres || []).map(g => g.id),
+      contentRating,
+    };
+    saveMediaDetails();
+
+    renderModal(type, detail, credits, providers, contentRating);
   } catch (e) {
     document.getElementById('modal-inner').innerHTML = `<p style="padding:20px;color:var(--text-muted)">Could not load details: ${e.message}</p>`;
   }
 }
 
-function renderModal(type, d, credits, providers) {
+function renderModal(type, d, credits, providers, contentRating) {
   const id       = d.id;
   const title    = d.title || d.name;
   const poster   = d.poster_path ? IMG_ORIG + d.poster_path : null;
@@ -1028,6 +1171,7 @@ function renderModal(type, d, credits, providers) {
   const wlStat   = getWlStatus(type, id);
   const cast     = (credits.cast || []).slice(0, 5).map(c => c.name).join(', ');
   const sc       = d.vote_average ? d.vote_average.toFixed(1) : '—';
+  const cr       = contentRating || '';
 
   document.getElementById('modal-inner').innerHTML = `
     ${backdrop ? `<img src="${backdrop}" alt="" style="width:100%;border-radius:8px 8px 0 0;display:block;object-fit:cover;max-height:200px" />` : ''}
@@ -1041,6 +1185,7 @@ function renderModal(type, d, credits, providers) {
         <div class="modal-meta">
           ${year ? `<span>📅 ${year}</span>` : ''}
           ${runtime ? `<span>⏱ ${runtime}min</span>` : ''}
+          ${cr ? ratingBadgeHTML(cr) : ''}
           ${d.status ? `<span>📡 ${d.status}</span>` : ''}
           ${type === 'tv' && d.number_of_seasons ? `<span>📺 ${d.number_of_seasons} season${d.number_of_seasons > 1 ? 's' : ''}</span>` : ''}
           ${d.networks && d.networks[0] ? `<span>🌐 ${d.networks[0].name}</span>` : ''}
@@ -1187,7 +1332,7 @@ async function renderView() {
     case 'trending':   await renderTrending(main);   break;
     case 'calendar':   await renderCalendar(main);   break;
     case 'upcoming':   await renderUpcoming(main);   break;
-    case 'watchlist':  renderWatchlist(main);         break;
+    case 'watchlist':  await renderWatchlist(main);    break;
     case 'recommended':await renderRecommended(main); break;
     case 'search':     await renderSearch(main);      break;
   }
@@ -1203,19 +1348,30 @@ async function renderTrending(main) {
     const providerParam = state.provider
       ? { watch_region: 'US', with_watch_providers: state.provider }
       : {};
+    const genreParam = state.genre ? { with_genres: state.genre } : {};
+
+    // When a streaming provider is selected, use discover (supports provider filter)
+    // Otherwise use trending for the top row
+    const trendingOrDiscover = state.provider
+      ? tmdb('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, ...providerParam, ...genreParam })
+      : tmdb('/trending/all/week');
 
     const [trending, popMovies, popTV, onAir] = await Promise.all([
-      tmdb('/trending/all/week'),
-      tmdb('/discover/movie', { sort_by: state.sort, 'vote_count.gte': 100, ...providerParam, ...(state.genre ? { with_genres: state.genre } : {}) }),
-      tmdb('/discover/tv',    { sort_by: state.sort, 'vote_count.gte': 50,  ...providerParam, ...(state.genre ? { with_genres: state.genre } : {}) }),
+      trendingOrDiscover,
+      tmdb('/discover/movie', { sort_by: state.sort, 'vote_count.gte': 100, ...providerParam, ...genreParam }),
+      tmdb('/discover/tv',    { sort_by: state.sort, 'vote_count.gte': 50,  ...providerParam, ...genreParam }),
       tmdb('/tv/on_the_air'),
     ]);
 
     main.innerHTML = '';
-    renderRow(main, 'Trending This Week 🔥', trending.results || []);
-    renderRow(main, 'Popular Movies 🎬',     filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'}))));
-    renderRow(main, 'Popular TV Shows 📺',   filterResults((popTV.results    || []).map(t => ({...t, media_type:'tv'}))));
-    renderRow(main, 'Currently On Air 📡',   filterResults((onAir.results    || []).map(t => ({...t, media_type:'tv'}))));
+    const trendingLabel = state.provider
+      ? `🎬 Movies on ${document.getElementById('provider-filter').selectedOptions[0]?.text || 'Service'}`
+      : 'Trending This Week 🔥';
+
+    renderRow(main, trendingLabel, (trending.results || []).map(m => state.provider ? {...m, media_type:'movie'} : m));
+    renderRow(main, 'Popular Movies 🎬',   filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'}))));
+    renderRow(main, 'Popular TV Shows 📺', filterResults((popTV.results    || []).map(t => ({...t, media_type:'tv'}))));
+    renderRow(main, 'Currently On Air 📡', filterResults((onAir.results    || []).map(t => ({...t, media_type:'tv'}))));
   } catch(e) {
     main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${e.message}</p><p style="margin-top:8px;font-size:.8rem">Check that your TMDB token is valid.</p></div>`;
   }
@@ -1287,15 +1443,67 @@ function buildCalendarGrid() {
 }
 
 // Place an item pill on the calendar grid
-function addCalItem(dateStr, label, cssClass, tooltip, onClick) {
+// epLabel: optional episode label shown in the pill (e.g. "S27E03")
+// showId: optional TMDB show ID for mark-watched functionality
+// episodeData: optional { season_number, episode_number } for Simkl history write
+function addCalItem(dateStr, label, cssClass, tooltip, onClick, epLabel, showId, episodeData) {
   const cell = document.querySelector(`.cal-day[data-date="${dateStr}"]`);
   if (!cell) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position:relative;margin-bottom:3px';
+
   const div = document.createElement('div');
   div.className = `cal-item ${cssClass}`;
-  div.textContent = label;
-  div.title = tooltip || label;
+  const displayLabel = epLabel ? `${epLabel} ${label}` : label;
+  div.textContent = displayLabel;
+  div.title = tooltip || displayLabel;
   if (onClick) div.addEventListener('click', e => { e.stopPropagation(); onClick(); });
-  cell.appendChild(div);
+
+  wrapper.appendChild(div);
+
+  // Mark Watched button — only for personal shows when Simkl is connected
+  if (showId && episodeData && state.simklToken && cssClass.includes('my-show')) {
+    const watchedKey = `watched_${showId}_s${episodeData.season_number}e${episodeData.episode_number}`;
+    const alreadyWatched = LS.get(watchedKey);
+
+    const btn = document.createElement('button');
+    btn.title = alreadyWatched ? 'Marked as watched' : 'Mark as watched';
+    btn.textContent = alreadyWatched ? '✅' : '○';
+    btn.style.cssText = `position:absolute;top:1px;right:2px;background:none;border:none;font-size:.65rem;cursor:pointer;color:${alreadyWatched ? '#1ce783' : 'var(--text-muted)'};padding:0;line-height:1`;
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (alreadyWatched) return;
+      btn.textContent = '⏳';
+      await markEpisodeWatched(showId, episodeData.season_number, episodeData.episode_number);
+      LS.set(watchedKey, true);
+      btn.textContent = '✅';
+      btn.style.color = '#1ce783';
+      btn.title = 'Marked as watched';
+      toast(`✅ Marked S${String(episodeData.season_number).padStart(2,'0')}E${String(episodeData.episode_number).padStart(2,'0')} as watched`);
+    });
+    wrapper.appendChild(btn);
+  }
+
+  cell.appendChild(wrapper);
+}
+
+// Write watch history to Simkl
+async function markEpisodeWatched(showTmdbId, season, episode) {
+  if (!state.simklToken) return;
+  try {
+    await simklPost('/sync/history', {
+      shows: [{
+        ids: { tmdb: showTmdbId },
+        seasons: [{
+          number: season,
+          episodes: [{ number: episode }]
+        }]
+      }]
+    });
+  } catch(e) {
+    console.warn('Mark watched failed:', e);
+  }
 }
 
 async function populateCalendar() {
@@ -1402,7 +1610,10 @@ async function populateCalendar() {
             showName,
             'tv my-show',
             `⭐ ${showName} ${epLabel}: ${ep.name || ''}`,
-            () => openModal('tv', showId, detail)
+            () => openModal('tv', showId, detail),
+            epLabel,
+            showId,
+            { season_number: ep.season_number, episode_number: ep.episode_number }
           );
           itemCount++;
         });
@@ -1421,7 +1632,10 @@ async function populateCalendar() {
               showName,
               'tv my-show',
               `⭐ ${showName} ${epLabel} (next)`,
-              () => openModal('tv', showId, detail)
+              () => openModal('tv', showId, detail),
+              epLabel,
+              showId,
+              { season_number: next.season_number, episode_number: next.episode_number }
             );
             itemCount++;
           }
@@ -1445,43 +1659,89 @@ async function renderUpcoming(main) {
   addSkeletonRow(main, 'Upcoming Movies 🎬');
   addSkeletonRow(main, 'New TV Premieres 📺');
 
+  const today     = new Date();
+  const todayStr  = today.toISOString().slice(0, 10);
+  const future    = new Date(today); future.setDate(today.getDate() + 60);
+  const futureStr = future.toISOString().slice(0, 10);
+
+  const providerParam = state.provider
+    ? { watch_region: 'US', with_watch_providers: state.provider }
+    : {};
+
   const [upMovies, tvPrem] = await Promise.all([
-    tmdb('/movie/upcoming'),
-    tmdb('/tv/on_the_air'),
+    tmdb('/discover/movie', {
+      'primary_release_date.gte': todayStr,
+      'primary_release_date.lte': futureStr,
+      sort_by: 'popularity.desc',
+      'vote_count.gte': 0,
+      ...providerParam,
+      ...(state.genre ? { with_genres: state.genre } : {}),
+    }),
+    tmdb('/discover/tv', {
+      'air_date.gte': todayStr,
+      'air_date.lte': futureStr,
+      sort_by: 'popularity.desc',
+      'vote_count.gte': 10,
+      ...providerParam,
+      ...(state.genre ? { with_genres: state.genre } : {}),
+    }),
   ]);
 
   main.innerHTML = '';
   const movies = (upMovies.results || []).map(m => ({...m, media_type:'movie'}));
-  const shows  = (tvPrem.results  || []).map(t => ({...t, media_type:'tv'}));
+  const shows  = (tvPrem.results   || []).map(t => ({...t, media_type:'tv'}));
 
   renderRow(main, 'Upcoming Movies 🎬', filterResults(movies));
-  renderRow(main, 'Shows On Air 📺', filterResults(shows));
+  renderRow(main, 'Premiering / On Air Soon 📺', filterResults(shows));
 
-  // Release schedule list
+  // Release schedule — only items with dates within next 60 days
   const listSection = document.createElement('div');
   listSection.className = 'section';
   listSection.innerHTML = `
-    <div class="section-header"><span class="section-title">Release Schedule</span></div>
+    <div class="section-header"><span class="section-title">Release Schedule — Next 60 Days</span></div>
     <div style="display:flex;flex-direction:column;gap:8px" id="release-list"></div>
   `;
   main.appendChild(listSection);
   const releaseList = document.getElementById('release-list');
+
+  const nowMs  = today.getTime();
+  const endMs  = future.getTime();
+
   const sorted = [...movies, ...shows]
-    .filter(i => i.release_date || i.first_air_date)
+    .filter(i => {
+      const d = new Date((i.release_date || i.first_air_date) + 'T12:00:00').getTime();
+      return d >= nowMs && d <= endMs;
+    })
     .sort((a, b) => {
-      const da = new Date(a.release_date || a.first_air_date);
-      const db = new Date(b.release_date || b.first_air_date);
+      const da = new Date((a.release_date || a.first_air_date) + 'T12:00:00');
+      const db = new Date((b.release_date || b.first_air_date) + 'T12:00:00');
       return da - db;
     });
-  sorted.slice(0, 20).forEach(item => {
-    const title = item.title || item.name;
-    const date  = formatDate(item.release_date || item.first_air_date);
-    const el    = document.createElement('div');
-    el.style.cssText = 'display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer';
+
+  if (!sorted.length) {
+    releaseList.innerHTML = `<p style="color:var(--text-muted);font-size:.85rem;padding:8px 0">No upcoming releases found for the selected filters.</p>`;
+  }
+
+  sorted.slice(0, 30).forEach(item => {
+    const title    = item.title || item.name;
+    const dateStr  = item.release_date || item.first_air_date;
+    const date     = formatDate(dateStr);
+    const daysAway = Math.ceil((new Date(dateStr + 'T12:00:00') - today) / 86400000);
+    const daysLabel = daysAway === 0 ? 'Today!' : daysAway === 1 ? 'Tomorrow' : `in ${daysAway}d`;
+
+    const el = document.createElement('div');
+    el.style.cssText = 'display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;transition:border-color .15s';
+    el.onmouseover = () => el.style.borderColor = 'var(--accent)';
+    el.onmouseout  = () => el.style.borderColor = 'var(--border)';
     el.innerHTML = `
-      <span style="font-size:.75rem;color:var(--accent);font-weight:700;min-width:90px">${date}</span>
-      <span style="font-size:.85rem;font-weight:600;flex:1">${title}</span>
-      <span style="font-size:.75rem;color:var(--text-muted)">${item.media_type === 'movie' ? '🎬' : '📺'} ${score(item) ? '⭐' + score(item) : ''}</span>
+      <div style="min-width:90px;text-align:right">
+        <div style="font-size:.75rem;color:var(--accent);font-weight:700">${date}</div>
+        <div style="font-size:.68rem;color:var(--text-muted)">${daysLabel}</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${title}</div>
+        <div style="font-size:.73rem;color:var(--text-muted)">${item.media_type === 'movie' ? '🎬 Movie' : '📺 TV'} ${score(item) ? '· ⭐ ' + score(item) : ''}</div>
+      </div>
     `;
     el.addEventListener('click', () => openModal(item.media_type, item.id, item));
     releaseList.appendChild(el);
@@ -1489,7 +1749,7 @@ async function renderUpcoming(main) {
 }
 
 /* ── WATCHLIST ────────────────────────────────────────────────────── */
-function renderWatchlist(main) {
+async function renderWatchlist(main) {
   const statuses = ['watching', 'plantowatch', 'completed', 'hold', 'dropped'];
 
   if (!state.simklToken) {
@@ -1505,8 +1765,34 @@ function renderWatchlist(main) {
 
   const entries = Object.entries(state.watchlist);
   if (!entries.length) {
-    main.innerHTML += `<div class="empty-state"><div class="icon">📋</div>Your list is empty. Browse Trending or Upcoming and add items!</div>`;
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.innerHTML = '<div class="icon">📋</div>Your list is empty. Browse Trending or Upcoming and add items!';
+    main.appendChild(empty);
     return;
+  }
+
+  // Pre-fetch TMDB details for any items not yet cached
+  const missing = entries.filter(([key]) => !state.mediaDetails[key]).map(([key]) => key);
+  if (missing.length) {
+    await Promise.allSettled(missing.map(async key => {
+      const [type, idStr] = key.split('_');
+      const id = parseInt(idStr);
+      try {
+        const detail = await tmdb(`/${type}/${id}`);
+        state.mediaDetails[key] = {
+          title: detail.title || detail.name,
+          poster_path: detail.poster_path,
+          media_type: type,
+          id,
+          vote_average: detail.vote_average,
+          release_date: detail.release_date,
+          first_air_date: detail.first_air_date,
+          genre_ids: (detail.genres || []).map(g => g.id),
+        };
+      } catch {}
+    }));
+    saveMediaDetails();
   }
 
   statuses.forEach(status => {
@@ -1515,25 +1801,14 @@ function renderWatchlist(main) {
 
     const sec = document.createElement('div');
     sec.className = 'section';
-    sec.innerHTML = `<div class="section-header"><span class="section-title">${wlStatusLabel(status)}</span></div><div class="watchlist-grid" id="wl-${status}"></div>`;
+    sec.innerHTML = `<div class="section-header"><span class="section-title">${wlStatusLabel(status)} <span style="color:var(--text-muted);font-size:.8rem;font-weight:400">(${items.length})</span></span></div><div class="watchlist-grid" id="wl-${status}"></div>`;
     main.appendChild(sec);
 
     const grid = sec.querySelector('.watchlist-grid');
     items.forEach(([key]) => {
-      const [type, idStr] = key.split('_');
-      const id = parseInt(idStr);
-      // Build a minimal placeholder card; detail loads on click
-      const fake = { id, media_type: type };
-      const card = buildCard(fake);
-      // Try to enrich from Simkl library
-      const libItem = state.simklLibrary.find(li =>
-        (li.movie?.ids?.tmdb === id || li.show?.ids?.tmdb === id)
-      );
-      if (libItem) {
-        const src = libItem.movie || libItem.show;
-        const titleEl = card.querySelector('.card-title');
-        if (titleEl && src?.title) titleEl.textContent = src.title;
-      }
+      const cached = state.mediaDetails[key];
+      const item = cached ? { ...cached } : { id: parseInt(key.split('_')[1]), media_type: key.split('_')[0] };
+      const card = buildCard(item);
       grid.appendChild(card);
     });
   });
@@ -1591,21 +1866,33 @@ async function renderRecommended(main) {
   renderRow(main, recMovies.label, recMovies.results, true);
   renderRow(main, recTV.label,    recTV.results,    true);
 
-  // Also show highly-rated similar items
+  // Also show highly-rated similar items using real cached titles
   const topRated = Object.entries(state.ratings)
     .sort(([,a],[,b]) => b - a)
     .slice(0, 3);
 
   for (const [key] of topRated) {
     const [type, idStr] = key.split('_');
+    const cached = state.mediaDetails[key];
+    const displayTitle = cached?.title || null;
+
     try {
+      // Fetch title if not cached
+      let title = displayTitle;
+      if (!title) {
+        const detail = await tmdb(`/${type}/${idStr}`);
+        title = detail.title || detail.name;
+        state.mediaDetails[key] = { ...state.mediaDetails[key], title, media_type: type, id: parseInt(idStr) };
+        saveMediaDetails();
+      }
+
       const data = await tmdb(`/${type}/${idStr}/similar`);
       const results = (data.results || [])
         .map(i => ({ ...i, media_type: type }))
         .filter(i => !state.ratings[mediaKey(type, i.id)])
         .slice(0, 10);
       if (results.length) {
-        renderRow(main, `Because you liked ${type === 'movie' ? '🎬' : '📺'} #${idStr}`, results);
+        renderRow(main, `Because you liked ${type === 'movie' ? '🎬' : '📺'} ${title}`, results);
       }
     } catch {}
   }
@@ -1710,6 +1997,10 @@ document.getElementById('sort-filter').addEventListener('change', e => {
 });
 document.getElementById('provider-filter').addEventListener('change', e => {
   state.provider = e.target.value;
+  if (['trending','upcoming'].includes(state.view)) renderView();
+});
+document.getElementById('rating-filter').addEventListener('change', e => {
+  state.contentRating = e.target.value;
   if (['trending','upcoming'].includes(state.view)) renderView();
 });
 
