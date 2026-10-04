@@ -1709,9 +1709,32 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
 /* ─────────────────────────────────────────────────────────────────────
    INIT
    ───────────────────────────────────────────────────────────────────── */
+// Check Simkl activities and re-sync if anything changed since last sync
+async function refreshSimklIfNeeded() {
+  if (!state.simklToken) return;
+  try {
+    const lastSync = LS.get('simkl_last_sync') || '2000-01-01T00:00:00.000Z';
+    const activities = await simklGet('/sync/activities');
+    // Check if any TV/movie activity is newer than our last sync
+    const latest = [
+      activities?.tv?.all,
+      activities?.movies?.all,
+      activities?.tv?.rated_at,
+      activities?.movies?.rated_at,
+    ].filter(Boolean).sort().pop();
+
+    if (latest && latest > lastSync) {
+      console.log('Simkl changes detected, resyncing…');
+      await syncSimklLibrary();
+      LS.set('simkl_last_sync', new Date().toISOString());
+    }
+  } catch(e) {
+    console.warn('Simkl activity check failed:', e);
+  }
+}
+
 (async function init() {
   // Hide Simkl connect button when running from local filesystem
-  // (OAuth redirect won't work without a real HTTPS URL)
   const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (isLocal) {
     const btn  = document.getElementById('simkl-btn');
@@ -1725,6 +1748,8 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
   } else {
     updateSimklUI();
     await handleSimklCallback();
+    // Auto-refresh Simkl library if anything changed since last visit
+    await refreshSimklIfNeeded();
   }
 
   renderView();
