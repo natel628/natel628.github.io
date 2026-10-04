@@ -36,12 +36,25 @@ jobs:
       - name: Install pagecrypt
         run: npm install -g pagecrypt
 
+      # ── Verify pagecrypt installed and check version ───────────────
+      - name: Verify pagecrypt
+        run: pagecrypt --version || pagecrypt --help || true
+
       # ── Encrypt shows.html with pagecrypt ─────────────────────────
       - name: Encrypt shows.html
         env:
           PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
         run: |
-          pagecrypt shows.html shows.html -- "$PAGE_PASSWORD"
+          if [ -z "$PAGE_PASSWORD" ]; then
+            echo "ERROR: PAGE_PASSWORD secret is not set. Add it in Settings → Secrets → Actions."
+            exit 1
+          fi
+          echo "Encrypting shows.html..."
+          # Copy to temp, encrypt from temp to final
+          cp shows.html shows_src.html
+          pagecrypt shows_src.html shows.html "$PAGE_PASSWORD"
+          rm shows_src.html
+          echo "Encryption complete. Output size: $(wc -c < shows.html) bytes"
 
       # ── Upload artifact for Pages ─────────────────────────────────
       - name: Setup Pages
