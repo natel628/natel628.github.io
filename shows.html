@@ -166,9 +166,15 @@
     .see-all:hover { text-decoration: underline; }
 
     /* ─── Horizontal scroll row ─────────────────────────────────────── */
-    .row-wrap { position: relative; }
+    .row-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .card-row {
       display: flex;
+      flex: 1;
       gap: 14px;
       overflow-x: auto;
       padding-bottom: 10px;
@@ -179,27 +185,24 @@
     .card-row::-webkit-scrollbar-track { background: var(--surface); }
     .card-row::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     .row-scroll-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
+      flex-shrink: 0;
       background: var(--surface2);
       border: 1px solid var(--border);
       color: var(--text);
       border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      font-size: 1rem;
+      width: 32px;
+      height: 32px;
+      font-size: 1.1rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background .15s, opacity .15s;
-      opacity: 0.85;
+      transition: background .15s;
+      padding: 0;
+      align-self: center;
+      margin-bottom: 10px;
     }
-    .row-scroll-btn:hover { background: var(--accent); border-color: var(--accent); opacity: 1; }
-    .row-scroll-btn.left  { left: -14px; }
-    .row-scroll-btn.right { right: -14px; }
+    .row-scroll-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
 
     /* ─── Card ──────────────────────────────────────────────────────── */
     .card {
@@ -214,6 +217,8 @@
       position: relative;
     }
     .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+    .card.rated { opacity: 0.5; }
+    .card.rated:hover { opacity: 1; transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.5); }
     .card-poster {
       width: 100%;
       aspect-ratio: 2/3;
@@ -1173,6 +1178,7 @@ function buildCard(item, opts = {}) {
 
   const card = document.createElement('div');
   card.className = 'card';
+  if (myRating > 0) card.classList.add('rated');
   card.dataset.id = id;
   card.dataset.type = type;
   card.setAttribute('tabindex', '0');
@@ -1215,6 +1221,7 @@ function buildCard(item, opts = {}) {
       card.querySelectorAll('.card-stars .star').forEach(s => {
         s.classList.toggle('on', val >= parseInt(s.dataset.val));
       });
+      card.classList.add('rated');
       if (state.simklToken) pushRatingToSimkl(type, id, val);
     });
   });
