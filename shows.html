@@ -2387,45 +2387,95 @@ async function renderSearch(main, token) {
 }
 
 /* ── QUICK RATE ─────────────────────────────────────────────────────── */
+// Rated titles disappear; the grid tops itself up from further TMDB pages.
+const qrPage = { movie: 0, tv: 0 };
+const qrSeen = new Set(); // titles already shown this visit (dedupe across batches)
+
+async function fetchQuickRateBatch(type, want = 20) {
+  const out = [];
+  const path = type === 'movie' ? '/discover/movie' : '/discover/tv';
+  const minVotes = type === 'movie' ? 100 : 50;
+  let tries = 0;
+  while (out.length < want && tries < 5 && qrPage[type] < 500) {
+    qrPage[type]++; tries++;
+    const data = await tmdb(path, { sort_by: 'popularity.desc', 'vote_count.gte': minVotes, page: qrPage[type] });
+    const results = data.results || [];
+    if (!results.length) break;
+    results.forEach(i => {
+      const key = mediaKey(type, i.id);
+      if (qrSeen.has(key) || state.ratings[key]) return; // skip dupes and already-rated
+      qrSeen.add(key);
+      out.push({ ...i, media_type: type });
+    });
+  }
+  return out;
+}
+
 async function renderQuickRate(main, token) {
   addSkeletonRow(main, 'Popular Movies 🎬');
   addSkeletonRow(main, 'Popular TV Shows 📺');
 
   try {
-    const page = Math.floor(Math.random() * 5) + 1; // different titles each visit
-    const [movies, shows] = await Promise.all([
-      tmdb('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, page }),
-      tmdb('/discover/tv', { sort_by: 'popularity.desc', 'vote_count.gte': 50, page }),
+    qrSeen.clear();
+    // random starting page so each visit surfaces different titles
+    qrPage.movie = Math.floor(Math.random() * 4);
+    qrPage.tv    = Math.floor(Math.random() * 4);
+
+    const [movieItems, tvItems] = await Promise.all([
+      fetchQuickRateBatch('movie'),
+      fetchQuickRateBatch('tv'),
     ]);
     if (token !== renderToken) return;
 
     main.innerHTML = '';
-    const movieItems = (movies.results || []).map(m => ({ ...m, media_type: 'movie' }));
-    const tvItems = (shows.results || []).map(t => ({ ...t, media_type: 'tv' }));
-
-    renderQuickRateRow(main, 'Popular Movies 🎬', movieItems);
-    renderQuickRateRow(main, 'Popular TV Shows 📺', tvItems);
+    renderQuickRateRow(main, 'Popular Movies 🎬', 'movie', movieItems);
+    renderQuickRateRow(main, 'Popular TV Shows 📺', 'tv', tvItems);
   } catch(e) {
     if (token !== renderToken) return;
     main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${esc(e.message)}</p></div>`;
   }
 }
 
-function renderQuickRateRow(container, title, items) {
+function renderQuickRateRow(container, title, type, items) {
   const sec = document.createElement('div');
   sec.className = 'section';
-  sec.innerHTML = `<div class="section-header"><span class="section-title">${title}</span></div><div class="card-row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px"></div>`;
-  const row = sec.querySelector('.card-row');
+  sec.innerHTML = `
+    <div class="section-header"><span class="section-title">${title}</span></div>
+    <div class="card-row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px"></div>
+    <div class="qr-empty" style="display:none;color:var(--text-muted);font-size:.85rem;padding:8px 0">Nothing left to rate here — hit Load more.</div>
+    <button class="modal-btn qr-more" style="display:block;margin:16px auto 0">Load more</button>`;
+  const grid  = sec.querySelector('.card-row');
+  const empty = sec.querySelector('.qr-empty');
+  const more  = sec.querySelector('.qr-more');
 
-  if (!items.length) {
-    row.outerHTML = `<p style="color:var(--text-muted);font-size:.85rem">No results found.</p>`;
-  } else {
-    items.forEach(item => row.appendChild(buildQuickRateCard(item)));
+  let loading = false;
+  const syncEmpty = () => { empty.style.display = grid.children.length ? 'none' : 'block'; };
+  const addItems = list => list.forEach(item => grid.appendChild(buildQuickRateCard(item, onGone)));
+
+  async function loadMore(want) {
+    if (loading) return;
+    loading = true;
+    more.disabled = true;
+    try { addItems(await fetchQuickRateBatch(type, want)); }
+    catch (e) { console.warn('Quick rate load more failed:', e); toast('Failed to load more'); }
+    loading = false;
+    more.disabled = false;
+    syncEmpty();
   }
+
+  // Called when a card is rated/skipped and has faded away: refill if running low
+  function onGone() {
+    syncEmpty();
+    if (grid.children.length < 6) loadMore(12);
+  }
+
+  more.addEventListener('click', () => loadMore(20));
+  addItems(items);
+  syncEmpty();
   container.appendChild(sec);
 }
 
-function buildQuickRateCard(item) {
+function buildQuickRateCard(item, onGone) {
   const type = item.media_type;
   const title = item.title || item.name;
   const poster = item.poster_path ? `${IMG_BASE}${item.poster_path}` : '';
@@ -2435,7 +2485,7 @@ function buildQuickRateCard(item) {
   card.className = 'card';
   card.dataset.id = item.id;
   card.dataset.type = type;
-  card.style.cssText = 'display:flex;flex-direction:column;gap:8px;flex:initial';
+  card.style.cssText = 'display:flex;flex-direction:column;gap:8px;flex:initial;transition:opacity .3s, transform .3s';
 
   card.innerHTML = `
     <div class="qr-poster" style="position:relative;aspect-ratio:2/3;background:var(--surface2);overflow:hidden;cursor:pointer">
@@ -2447,30 +2497,26 @@ function buildQuickRateCard(item) {
       <div style="display:flex;gap:8px;align-items:center">
         <button class="thumbs-btn" data-r="10" title="👍 Loved it (10)">👍</button>
         <button class="thumbs-btn" data-r="2" title="👎 Not for me (2)">👎</button>
-        <button class="thumbs-btn" data-r="0" title="Clear rating">✕</button>
+        <button class="thumbs-btn" data-r="skip" title="Skip — hide without rating">⏭</button>
       </div>
     </div>
   `;
 
-  const buttons = [...card.querySelectorAll('.thumbs-btn')];
-  const paint = () => {
-    const r = getRating(type, item.id);
-    buttons.forEach(b => {
-      const v = Number(b.dataset.r);
-      b.classList.toggle('active',
-        v === 10 ? r >= 7 :
-        v === 2  ? (r > 0 && r <= 4) :
-        false);
-    });
+  // Fade the card out, then remove it and let the row refill
+  const dismiss = () => {
+    card.style.pointerEvents = 'none';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(.92)';
+    setTimeout(() => { card.remove(); if (onGone) onGone(); }, 300);
   };
-  paint();
 
   card.querySelector('.qr-poster').addEventListener('click', () => openModal(type, item.id, item));
-  buttons.forEach(b => b.addEventListener('click', async () => {
+  card.querySelectorAll('.thumbs-btn').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.r === 'skip') { dismiss(); return; }
     const val = Number(b.dataset.r);
     setRating(type, item.id, val, item.genre_ids || [], item);
-    paint();
-    if (state.simklToken) await pushRatingToSimkl(type, item.id, val);
+    if (state.simklToken) pushRatingToSimkl(type, item.id, val); // background, don't block the UI
+    dismiss();
   }));
 
   return card;
