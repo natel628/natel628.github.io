@@ -22,6 +22,19 @@
       --radius: 10px;
       --card-w: 160px;
     }
+    [data-theme="light"] {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface2: #e8e8ed;
+      --border: #d1d1d6;
+      --accent: #e50914;
+      --accent2: #f5a623;
+      --text: #1d1d1f;
+      --text-muted: #6e6e73;
+      --tag-bg: #e8e8ed;
+      --star-on: #f5a623;
+      --star-off: #c7c7cc;
+    }
     html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
@@ -496,9 +509,11 @@
       width: 100%;
       text-align: left;
     }
-    .wl-status.watching { color: #1ce783; border-color: #1ce783; }
-    .wl-status.completed { color: var(--accent2); border-color: var(--accent2); }
-    .wl-status.plantowatch { color: #1a6ef5; border-color: #1a6ef5; }
+    .wl-status.watching { color: #1ce783; border-color: #1ce783; border-style: solid; border-width: 2px; }
+    .wl-status.completed { color: var(--accent2); border-color: var(--accent2); border-style: double; }
+    .wl-status.plantowatch { color: #1a6ef5; border-color: #1a6ef5; border-style: dashed; }
+    .wl-status.hold { color: #f5a623; border-color: #f5a623; border-style: dotted; }
+    .wl-status.dropped { color: var(--accent); border-color: var(--accent); text-decoration: line-through; }
 
     /* ─── Empty state ───────────────────────────────────────────────── */
     .empty-state {
@@ -535,8 +550,11 @@
     <button class="nav-tab" data-view="upcoming">🎬 Upcoming</button>
     <button class="nav-tab" data-view="watchlist">⭐ My List</button>
     <button class="nav-tab" data-view="recommended">✨ For You</button>
+    <button class="nav-tab" data-view="stats">📊 Stats</button>
   </div>
   <div class="nav-right">
+    <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;color:var(--text);font-size:1.2rem;padding:4px 8px;cursor:pointer" title="Toggle theme">🌙</button>
+    <button onclick="surpriseMe()" style="background:var(--accent);border:none;color:#fff;border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:600;cursor:pointer">🎲 Surprise Me</button>
     <span id="simkl-user"></span>
     <button id="simkl-btn" onclick="simklAuth()">
       <span>▶</span> Connect Simkl
@@ -559,16 +577,6 @@
   <span class="filter-label" style="margin-left:12px">Genre:</span>
   <select class="filter-select" id="genre-filter">
     <option value="">Any Genre</option>
-    <option value="28">Action</option>
-    <option value="35">Comedy</option>
-    <option value="18">Drama</option>
-    <option value="27">Horror</option>
-    <option value="878">Sci-Fi</option>
-    <option value="10749">Romance</option>
-    <option value="53">Thriller</option>
-    <option value="16">Animation</option>
-    <option value="12">Adventure</option>
-    <option value="99">Documentary</option>
   </select>
   <select class="filter-select" id="sort-filter">
     <option value="popularity.desc">Most Popular</option>
@@ -600,6 +608,9 @@
     <option value="TV-PG">TV-PG</option>
     <option value="TV-14">TV-14</option>
     <option value="TV-MA">TV-MA</option>
+  </select>
+  <select class="filter-select" id="year-filter">
+    <option value="">Any Year</option>
   </select>
 </div>
 
@@ -637,6 +648,29 @@ const SIMKL_TOKEN_URL  = 'https://api.simkl.com/oauth2/token';
 const SIMKL_API        = 'https://api.simkl.com';
 
 /* ─────────────────────────────────────────────────────────────────────
+   CONSTANTS
+   ───────────────────────────────────────────────────────────────────── */
+const GENRE_MAP = {
+  28: 'Action', 35: 'Comedy', 18: 'Drama', 27: 'Horror', 878: 'Sci-Fi',
+  10749: 'Romance', 53: 'Thriller', 16: 'Animation', 12: 'Adventure',
+  99: 'Documentary', 10765: 'Sci-Fi & Fantasy', 10759: 'Action & Adventure',
+  10768: 'War & Politics', 37: 'Western', 10402: 'Music', 9648: 'Mystery',
+  10751: 'Family', 10762: 'Kids', 10763: 'News', 10764: 'Reality',
+  10766: 'Soap', 10767: 'Talk', 80: 'Crime', 14: 'Fantasy'
+};
+
+const VOTE_THRESHOLDS = {
+  trending: 100,
+  popular_movies: 100,
+  popular_tv: 50,
+  discover_movie: 5,
+  discover_tv: 20,
+  upcoming_movie: 0,
+  upcoming_tv: 10,
+  recommended: 100
+};
+
+/* ─────────────────────────────────────────────────────────────────────
    STATE
    ───────────────────────────────────────────────────────────────────── */
 const LS = {
@@ -651,6 +685,7 @@ let state = {
   sort: 'popularity.desc',
   provider: '',
   contentRating: '',
+  year: '',
   simklToken: LS.get('simkl_token'),
   simklUser: LS.get('simkl_user'),
   ratings: LS.get('my_ratings') || {},
@@ -660,12 +695,15 @@ let state = {
   simklLibrary: LS.get('simkl_library') || [],
   calYear: new Date().getFullYear(),
   calMonth: new Date().getMonth(),
+  searchPage: 1,
+  theme: LS.get('theme') || 'dark',
 };
 
 function saveRatings()   { LS.set('my_ratings',    state.ratings); }
 function saveWatchlist() { LS.set('my_watchlist',  state.watchlist); }
 function saveSimkl()     { LS.set('simkl_token',   state.simklToken); LS.set('simkl_user', state.simklUser); }
 function saveMediaDetails() { LS.set('media_details_cache', state.mediaDetails); }
+function saveTheme()     { LS.set('theme', state.theme); }
 
 /* ─────────────────────────────────────────────────────────────────────
    API CACHE — in-memory with TTL, persisted to localStorage for details
@@ -741,7 +779,7 @@ async function getContentRating(type, id) {
       const us = (data.results || []).find(r => r.iso_3166_1 === 'US');
       return us?.rating || '';
     }
-  } catch {}
+  } catch (e) { console.warn('Content rating fetch failed:', e); }
   return '';
 }
 
@@ -757,7 +795,7 @@ async function getProviders(type, id) {
       buy:      us.buy      || [],
       link:     us.link     || '',
     };
-  } catch { return null; }
+  } catch (e) { console.warn('Providers fetch failed:', e); return null; }
 }
 
 // Rating badge helper
@@ -874,7 +912,7 @@ async function loadSimklUser() {
     state.simklUser = data.user?.name || 'Simkl User';
     saveSimkl();
     updateSimklUI();
-  } catch {}
+  } catch (e) { console.warn('Simkl user load failed:', e); }
 }
 
 async function syncSimklLibrary() {
@@ -954,7 +992,7 @@ async function pushRatingToSimkl(mediaType, tmdbId, rating) {
   else body.shows = [item];
   try {
     await simklPost('/sync/ratings', body);
-  } catch {}
+  } catch (e) { console.warn('Push rating to Simkl failed:', e); }
 }
 
 async function pushWatchlistToSimkl(mediaType, tmdbId, status) {
@@ -966,7 +1004,7 @@ async function pushWatchlistToSimkl(mediaType, tmdbId, status) {
   else body.shows = [item];
   try {
     await simklPost('/sync/add-to-list', body);
-  } catch {}
+  } catch (e) { console.warn('Push watchlist to Simkl failed:', e); }
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -999,6 +1037,41 @@ function toast(msg, duration = 3000) {
   el.textContent = msg;
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', state.theme);
+  document.getElementById('theme-toggle').textContent = state.theme === 'dark' ? '🌙' : '☀️';
+  saveTheme();
+}
+
+async function surpriseMe() {
+  toast('Finding something random for you...');
+  try {
+    // Get a random page from discover with high vote count
+    const randomPage = Math.floor(Math.random() * 50) + 1;
+    const [movie, tv] = await Promise.all([
+      tmdb('/discover/movie', { sort_by: 'vote_count.desc', 'vote_count.gte': 500, page: randomPage }),
+      tmdb('/discover/tv', { sort_by: 'vote_count.desc', 'vote_count.gte': 200, page: randomPage }),
+    ]);
+
+    const all = [
+      ...(movie.results || []).map(m => ({ ...m, media_type: 'movie' })),
+      ...(tv.results || []).map(t => ({ ...t, media_type: 'tv' })),
+    ];
+
+    if (all.length === 0) {
+      toast('No random items found');
+      return;
+    }
+
+    const random = all[Math.floor(Math.random() * all.length)];
+    openModal(random.media_type, random.id, random);
+  } catch (e) {
+    console.warn('Surprise me failed:', e);
+    toast('Failed to find random item');
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -1283,7 +1356,7 @@ async function loadSimilar(type, id) {
       item.media_type = type;
       row.appendChild(buildCard(item));
     });
-  } catch {}
+  } catch (e) { console.warn('Load similar failed:', e); }
 }
 
 function closeModal() {
@@ -1292,7 +1365,41 @@ function closeModal() {
 document.getElementById('modal-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+
+  // Keyboard shortcuts
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if (e.key === '/' || e.key === 's') {
+    e.preventDefault();
+    document.getElementById('search-input').focus();
+  }
+  if (e.key === 't') {
+    e.preventDefault();
+    document.querySelector('[data-view="trending"]').click();
+  }
+  if (e.key === 'c') {
+    e.preventDefault();
+    document.querySelector('[data-view="calendar"]').click();
+  }
+  if (e.key === 'u') {
+    e.preventDefault();
+    document.querySelector('[data-view="upcoming"]').click();
+  }
+  if (e.key === 'w') {
+    e.preventDefault();
+    document.querySelector('[data-view="watchlist"]').click();
+  }
+  if (e.key === 'r') {
+    e.preventDefault();
+    document.querySelector('[data-view="recommended"]').click();
+  }
+  if (e.key === 'd') {
+    e.preventDefault();
+    toggleTheme();
+  }
+});
 
 /* ─────────────────────────────────────────────────────────────────────
    WATCHLIST MANAGEMENT
@@ -1308,6 +1415,8 @@ function addToWatchlist(type, id, status) {
 
 function removeFromWatchlist(type, id) {
   const key = mediaKey(type, id);
+  const title = state.mediaDetails[key]?.title || 'this item';
+  if (!confirm(`Remove "${title}" from your watchlist?`)) return;
   delete state.watchlist[key];
   saveWatchlist();
   toast('Removed from list');
@@ -1326,7 +1435,8 @@ async function renderView() {
     t.classList.toggle('active', t.dataset.view === state.view);
   });
 
-  main.innerHTML = '';
+  // Show loading indicator
+  main.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading…</p></div>';
 
   switch (state.view) {
     case 'trending':   await renderTrending(main);   break;
@@ -1335,6 +1445,7 @@ async function renderView() {
     case 'watchlist':  await renderWatchlist(main);    break;
     case 'recommended':await renderRecommended(main); break;
     case 'search':     await renderSearch(main);      break;
+    case 'stats':      renderStats(main);             break;
   }
 }
 
@@ -1369,9 +1480,9 @@ async function renderTrending(main) {
       : 'Trending This Week 🔥';
 
     renderRow(main, trendingLabel, (trending.results || []).map(m => state.provider ? {...m, media_type:'movie'} : m));
-    renderRow(main, 'Popular Movies 🎬',   filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'}))));
-    renderRow(main, 'Popular TV Shows 📺', filterResults((popTV.results    || []).map(t => ({...t, media_type:'tv'}))));
-    renderRow(main, 'Currently On Air 📡', filterResults((onAir.results    || []).map(t => ({...t, media_type:'tv'}))));
+    renderRow(main, 'Popular Movies 🎬',   await filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'}))));
+    renderRow(main, 'Popular TV Shows 📺', await filterResults((popTV.results    || []).map(t => ({...t, media_type:'tv'}))));
+    renderRow(main, 'Currently On Air 📡', await filterResults((onAir.results    || []).map(t => ({...t, media_type:'tv'}))));
   } catch(e) {
     main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${e.message}</p><p style="margin-top:8px;font-size:.8rem">Check that your TMDB token is valid.</p></div>`;
   }
@@ -1391,7 +1502,7 @@ async function renderCalendar(main) {
         <span><span style="display:inline-block;width:10px;height:10px;background:#1a6ef5;border-radius:2px;margin-right:4px"></span>TV Episode</span>
         <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px"></span>Movie Release</span>
         <span><span style="display:inline-block;width:10px;height:10px;background:#1ce783;border-radius:2px;margin-right:4px"></span>My Watchlist</span>
-        ${!state.simklToken ? `<span style="margin-left:auto;color:var(--accent)">⚠ <a href="#" onclick="simklAuth();return false" style="color:var(--accent)">Connect Simkl</a> to see your shows</span>` : '<span style="margin-left:auto;color:#1ce783">✓ Simkl connected</span>'}
+        ${state.simklToken ? `<button class="modal-btn" onclick="markAllEpisodesWatched()" style="margin-left:auto;font-size:.75rem;padding:4px 10px">✓ Mark All Watched</button>` : `<span style="margin-left:auto;color:var(--accent)">⚠ <a href="#" onclick="simklAuth();return false" style="color:var(--accent)">Connect Simkl</a> to mark episodes</span>`}
       </div>
       <div class="cal-grid" id="cal-grid"></div>
       <div id="cal-loading" style="text-align:center;padding:20px;color:var(--text-muted);font-size:.85rem"></div>
@@ -1460,6 +1571,13 @@ function addCalItem(dateStr, label, cssClass, tooltip, onClick, epLabel, showId,
   div.title = tooltip || displayLabel;
   if (onClick) div.addEventListener('click', e => { e.stopPropagation(); onClick(); });
 
+  // Store episode data for bulk mark function
+  if (showId && episodeData) {
+    div.dataset.showId = showId;
+    div.dataset.season = episodeData.season_number;
+    div.dataset.episode = episodeData.episode_number;
+  }
+
   wrapper.appendChild(div);
 
   // Mark Watched button — only for personal shows when Simkl is connected
@@ -1503,7 +1621,47 @@ async function markEpisodeWatched(showTmdbId, season, episode) {
     });
   } catch(e) {
     console.warn('Mark watched failed:', e);
+    toast('Failed to mark as watched');
   }
+}
+
+// Mark all unwatched episodes in current calendar month as watched
+async function markAllEpisodesWatched() {
+  if (!state.simklToken) return;
+  const unwatchedBtns = document.querySelectorAll('.cal-item.my-show button:not([style*="color: #1ce783"])');
+  if (unwatchedBtns.length === 0) {
+    toast('No unwatched episodes this month');
+    return;
+  }
+
+  if (!confirm(`Mark ${unwatchedBtns.length} episodes as watched?`)) return;
+
+  toast(`Marking ${unwatchedBtns.length} episodes as watched...`);
+  let marked = 0;
+
+  for (const btn of unwatchedBtns) {
+    try {
+      const wrapper = btn.parentElement;
+      const div = wrapper.querySelector('.cal-item');
+      const showId = parseInt(div.dataset.showId);
+      const season = parseInt(div.dataset.season);
+      const episode = parseInt(div.dataset.episode);
+
+      if (showId && season && episode) {
+        await markEpisodeWatched(showId, season, episode);
+        const watchedKey = `watched_${showId}_s${season}e${episode}`;
+        LS.set(watchedKey, true);
+        btn.textContent = '✅';
+        btn.style.color = '#1ce783';
+        btn.title = 'Marked as watched';
+        marked++;
+      }
+    } catch (e) {
+      console.warn('Failed to mark episode:', e);
+    }
+  }
+
+  toast(`✅ Marked ${marked} episodes as watched`);
 }
 
 async function populateCalendar() {
@@ -1551,7 +1709,7 @@ async function populateCalendar() {
         `🎬 ${m.title}`, () => openModal('movie', m.id, m));
       itemCount++;
     });
-  } catch(e) { console.warn('TMDB movies failed:', e); }
+  } catch(e) { console.warn('TMDB movies failed:', e); toast('Failed to load movie releases'); }
 
   // ── 2. TMDB TV episodes airing this month (popular shows) ─────────
   try {
@@ -1570,7 +1728,7 @@ async function populateCalendar() {
         `📺 ${show.name}`, () => openModal('tv', show.id, show));
       itemCount++;
     });
-  } catch(e) { console.warn('TMDB TV discover failed:', e); }
+  } catch(e) { console.warn('TMDB TV discover failed:', e); toast('Failed to load TV shows'); }
 
   // ── 3. Your Simkl library shows — fetch current season episodes ────
   // Combines: local watchlist + Simkl connected library
@@ -1691,8 +1849,8 @@ async function renderUpcoming(main) {
   const movies = (upMovies.results || []).map(m => ({...m, media_type:'movie'}));
   const shows  = (tvPrem.results   || []).map(t => ({...t, media_type:'tv'}));
 
-  renderRow(main, 'Upcoming Movies 🎬', filterResults(movies));
-  renderRow(main, 'Premiering / On Air Soon 📺', filterResults(shows));
+  renderRow(main, 'Upcoming Movies 🎬', await filterResults(movies));
+  renderRow(main, 'Premiering / On Air Soon 📺', await filterResults(shows));
 
   // Release schedule — only items with dates within next 60 days
   const listSection = document.createElement('div');
@@ -1790,7 +1948,7 @@ async function renderWatchlist(main) {
           first_air_date: detail.first_air_date,
           genre_ids: (detail.genres || []).map(g => g.id),
         };
-      } catch {}
+      } catch (e) { console.warn('Cache fetch failed:', e); }
     }));
     saveMediaDetails();
   }
@@ -1894,15 +2052,17 @@ async function renderRecommended(main) {
       if (results.length) {
         renderRow(main, `Because you liked ${type === 'movie' ? '🎬' : '📺'} ${title}`, results);
       }
-    } catch {}
+    } catch (e) { console.warn('Similar items fetch failed:', e); }
   }
 }
 
 /* ── SEARCH ──────────────────────────────────────────────────────── */
 let searchQuery = '';
+let searchResults = [];
 async function doSearch() {
   searchQuery = document.getElementById('search-input').value.trim();
   if (!searchQuery) return;
+  state.searchPage = 1;
   state.view = 'search';
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   renderView();
@@ -1911,38 +2071,253 @@ document.getElementById('search-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
 });
 
+async function loadMoreSearchResults() {
+  state.searchPage++;
+  try {
+    const [movies, shows] = await Promise.all([
+      tmdb('/search/movie', { query: searchQuery, page: state.searchPage }),
+      tmdb('/search/tv',    { query: searchQuery, page: state.searchPage }),
+    ]);
+    const newResults = [
+      ...(movies.results || []).map(m => ({ ...m, media_type: 'movie' })),
+      ...(shows.results  || []).map(t => ({ ...t, media_type: 'tv' })),
+    ].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+    searchResults.push(...newResults);
+    const main = document.getElementById('main-content');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) loadMoreBtn.remove();
+    renderRow(main, `Search results for "${searchQuery}" (page ${state.searchPage})`, newResults);
+    if (newResults.length > 0) {
+      addLoadMoreButton(main);
+    }
+  } catch (e) {
+    console.warn('Load more failed:', e);
+    toast('Failed to load more results');
+  }
+}
+
+function addLoadMoreButton(main) {
+  const btn = document.createElement('button');
+  btn.id = 'load-more-btn';
+  btn.className = 'modal-btn';
+  btn.style.cssText = 'display:block;margin:20px auto;padding:10px 24px';
+  btn.textContent = 'Load More Results';
+  btn.onclick = loadMoreSearchResults;
+  main.appendChild(btn);
+}
+
 async function renderSearch(main) {
   main.innerHTML = '<div class="empty-state"><div class="icon">🔍</div>Searching…</div>';
   try {
     const [movies, shows] = await Promise.all([
-      tmdb('/search/movie', { query: searchQuery }),
-      tmdb('/search/tv',    { query: searchQuery }),
+      tmdb('/search/movie', { query: searchQuery, page: state.searchPage }),
+      tmdb('/search/tv',    { query: searchQuery, page: state.searchPage }),
     ]);
-    const results = [
+    searchResults = [
       ...(movies.results || []).map(m => ({ ...m, media_type: 'movie' })),
       ...(shows.results  || []).map(t => ({ ...t, media_type: 'tv' })),
     ].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
 
     main.innerHTML = '';
-    if (!results.length) {
+    if (!searchResults.length) {
       main.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>No results for "${searchQuery}"</div>`;
       return;
     }
-    renderRow(main, `Search results for "${searchQuery}"`, results);
-  } catch {
+    renderRow(main, `Search results for "${searchQuery}"`, searchResults);
+    addLoadMoreButton(main);
+  } catch (e) {
+    console.warn('Search failed:', e);
     main.innerHTML = '<div class="empty-state">Search failed. Try again.</div>';
+    toast('Search failed');
   }
+}
+
+/* ── STATS ───────────────────────────────────────────────────────── */
+function renderStats(main) {
+  const totalRatings = Object.keys(state.ratings).length;
+  const totalWatchlist = Object.keys(state.watchlist).length;
+  const avgRating = totalRatings > 0
+    ? (Object.values(state.ratings).reduce((a, b) => a + b, 0) / totalRatings / 2).toFixed(1)
+    : '0';
+
+  // Count by status
+  const statusCounts = {};
+  Object.values(state.watchlist).forEach(s => {
+    statusCounts[s] = (statusCounts[s] || 0) + 1;
+  });
+
+  // Count by type
+  const movieCount = Object.keys(state.ratings).filter(k => k.startsWith('movie_')).length;
+  const tvCount = Object.keys(state.ratings).filter(k => k.startsWith('tv_')).length;
+
+  // Genre distribution
+  const genreCounts = {};
+  Object.entries(state.mediaDetails).forEach(([key, item]) => {
+    if (item.genre_ids) {
+      item.genre_ids.forEach(gid => {
+        genreCounts[gid] = (genreCounts[gid] || 0) + 1;
+      });
+    }
+  });
+  const topGenres = Object.entries(genreCounts)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 5)
+    .map(([id, count]) => ({ name: GENRE_MAP[id] || `Genre ${id}`, count }));
+
+  main.innerHTML = `
+    <div class="section">
+      <div class="section-header"><span class="section-title">Your Viewing Stats</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:2.5rem;font-weight:700;color:var(--accent)">${totalRatings}</div>
+          <div style="font-size:0.85rem;color:var(--text-muted)">Items Rated</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:2.5rem;font-weight:700;color:var(--accent2)">${avgRating}</div>
+          <div style="font-size:0.85rem;color:var(--text-muted)">Average Rating</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:2.5rem;font-weight:700;color:#1ce783">${totalWatchlist}</div>
+          <div style="font-size:0.85rem;color:var(--text-muted)">In Watchlist</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:2.5rem;font-weight:700;color:#1a6ef5">${movieCount}</div>
+          <div style="font-size:0.85rem;color:var(--text-muted)">Movies Rated</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:2.5rem;font-weight:700;color:#f5a623">${tvCount}</div>
+          <div style="font-size:0.85rem;color:var(--text-muted)">TV Shows Rated</div>
+        </div>
+      </div>
+
+      ${Object.keys(statusCounts).length > 0 ? `
+      <div style="margin-bottom:24px">
+        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Watchlist Status</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          ${Object.entries(statusCounts).map(([status, count]) => `
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 16px;display:flex;align-items:center;gap:8px">
+              <span style="font-weight:700">${count}</span>
+              <span style="color:var(--text-muted)">${wlStatusLabel(status)}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
+
+      ${topGenres.length > 0 ? `
+      <div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Top Genres</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          ${topGenres.map(g => `
+            <span class="genre-tag">${g.name} (${g.count})</span>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
+
+      ${totalRatings === 0 && totalWatchlist === 0 ? `
+      <div class="empty-state">
+        <div class="icon">📊</div>
+        <p>No stats yet! Start rating and adding items to your watchlist.</p>
+      </div>
+      ` : ''}
+
+      <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
+        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Data Management</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="modal-btn" onclick="exportData()">📥 Export Data</button>
+          <button class="modal-btn" onclick="document.getElementById('import-file').click()">📤 Import Data</button>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)" />
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function exportData() {
+  const data = {
+    ratings: state.ratings,
+    watchlist: state.watchlist,
+    mediaDetails: state.mediaDetails,
+    genreAffinity: LS.get('genre_affinity') || {},
+    exportDate: new Date().toISOString(),
+    version: '1.0'
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `media-calendar-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Data exported successfully');
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!confirm(`Import ${Object.keys(data.ratings || {}).length} ratings and ${Object.keys(data.watchlist || {}).length} watchlist items? This will merge with existing data.`)) return;
+
+      // Merge data
+      state.ratings = { ...state.ratings, ...(data.ratings || {}) };
+      state.watchlist = { ...state.watchlist, ...(data.watchlist || {}) };
+      state.mediaDetails = { ...state.mediaDetails, ...(data.mediaDetails || {}) };
+      if (data.genreAffinity) {
+        const existing = LS.get('genre_affinity') || {};
+        Object.entries(data.genreAffinity).forEach(([k, v]) => {
+          existing[k] = (existing[k] || 0) + v;
+        });
+        LS.set('genre_affinity', existing);
+      }
+
+      saveRatings();
+      saveWatchlist();
+      saveMediaDetails();
+      toast('Data imported successfully');
+      renderView();
+    } catch (err) {
+      toast('Failed to import: Invalid file format');
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
 }
 
 /* ─────────────────────────────────────────────────────────────────────
    HELPERS — row builder, filter, skeletons
    ───────────────────────────────────────────────────────────────────── */
-function filterResults(items) {
-  return items.filter(i => {
+async function filterResults(items) {
+  const filtered = items.filter(i => {
     if (state.filterType !== 'all' && i.media_type !== state.filterType) return false;
     if (state.genre && !(i.genre_ids || []).includes(parseInt(state.genre))) return false;
     return true;
   });
+
+  // Apply content rating filter if set
+  if (state.contentRating) {
+    const withRatings = await Promise.all(filtered.map(async (item) => {
+      if (item._contentRating) return item;
+      const rating = await getContentRating(item.media_type, item.id);
+      item._contentRating = rating;
+      return item;
+    }));
+    return withRatings.filter(i => i._contentRating === state.contentRating);
+  }
+
+  // Apply year filter if set
+  if (state.year) {
+    return filtered.filter(i => {
+      const date = i.release_date || i.first_air_date;
+      return date && date.startsWith(state.year);
+    });
+  }
+
+  return filtered;
 }
 
 function renderRow(container, title, items, recBadge = false) {
@@ -2004,6 +2379,31 @@ document.getElementById('rating-filter').addEventListener('change', e => {
   if (['trending','upcoming'].includes(state.view)) renderView();
 });
 
+// Populate year filter
+const yearFilter = document.getElementById('year-filter');
+const currentYear = new Date().getFullYear();
+for (let y = currentYear; y >= 1950; y--) {
+  const opt = document.createElement('option');
+  opt.value = y;
+  opt.textContent = y;
+  yearFilter.appendChild(opt);
+}
+document.getElementById('year-filter').addEventListener('change', e => {
+  state.year = e.target.value;
+  if (['trending','upcoming'].includes(state.view)) renderView();
+});
+
+// Populate genre filter from GENRE_MAP
+const genreFilter = document.getElementById('genre-filter');
+Object.entries(GENRE_MAP)
+  .sort(([,a], [,b]) => a.localeCompare(b))
+  .forEach(([id, name]) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = name;
+    genreFilter.appendChild(opt);
+  });
+
 /* ─────────────────────────────────────────────────────────────────────
    NAV EVENTS
    ───────────────────────────────────────────────────────────────────── */
@@ -2042,6 +2442,10 @@ async function refreshSimklIfNeeded() {
 }
 
 (async function init() {
+  // Initialize theme
+  document.documentElement.setAttribute('data-theme', state.theme);
+  document.getElementById('theme-toggle').textContent = state.theme === 'dark' ? '🌙' : '☀️';
+
   // Hide Simkl connect button when running from local filesystem
   const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (isLocal) {
