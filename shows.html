@@ -1222,6 +1222,11 @@ function buildCard(item, opts = {}) {
         s.classList.toggle('on', val >= parseInt(s.dataset.val));
       });
       card.classList.add('rated');
+      // Animate out and remove from the row
+      card.style.transition = 'opacity .3s, transform .3s';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.85)';
+      setTimeout(() => card.remove(), 320);
       if (state.simklToken) pushRatingToSimkl(type, id, val);
     });
   });
