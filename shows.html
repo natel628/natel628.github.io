@@ -265,15 +265,37 @@
     }
     .card-badge.tv { background: #1a6ef5; }
     .card-badge.movie { background: var(--accent); }
-    /* My rating stars on card */
-    .card-stars { display: flex; gap: 2px; margin-top: 5px; }
-    .card-stars .star {
-      font-size: 0.82rem;
-      color: var(--star-off);
+    /* My rating on card — slider style */
+    .card-rate-wrap { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+    .card-rate-row  { display: flex; align-items: center; gap: 5px; }
+    .card-rate-label{ font-size: 0.7rem; color: var(--text-muted); min-width: 22px; text-align: right; }
+    .card-rate-bar  {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
       cursor: pointer;
-      transition: color .1s;
     }
-    .card-stars .star.on { color: var(--star-on); }
+    .card-rate-bar::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--accent2);
+      cursor: pointer;
+      transition: transform .1s;
+    }
+    .card-rate-bar::-webkit-slider-thumb:hover { transform: scale(1.3); }
+    .card-rate-bar::-moz-range-thumb {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--accent2);
+      border: none;
+      cursor: pointer;
+    }
+    .card-rate-emoji { font-size: 0.9rem; min-width: 20px; text-align: center; }
 
     /* ─── Calendar grid ─────────────────────────────────────────────── */
     .cal-grid {
@@ -1129,36 +1151,93 @@ async function surpriseMe() {
    RECOMMENDATION ENGINE
    Weighted score = TMDB popularity + vote_avg + genre affinity from ratings
    ───────────────────────────────────────────────────────────────────── */
-function buildGenreAffinityMap() {
-  // Already cached genre details stored on items in the library/ratings
-  const affinity = {};
-  const stored   = LS.get('genre_affinity') || {};
-  return stored; // populated as user rates items
+/* ─────────────────────────────────────────────────────────────────────
+   RATING & RECOMMENDATION ENGINE
+   Uses a weighted genre affinity map + exponential decay on old ratings
+   Scale: 0–10 (0=hate, 5=neutral, 10=love)
+   ───────────────────────────────────────────────────────────────────── */
+
+// Emoji feedback for 0-10 scale
+function ratingEmoji(val) {
+  if (val === 0)  return '🚫';
+  if (val <= 2)   return '👎';
+  if (val <= 4)   return '😐';
+  if (val === 5)  return '🤷';
+  if (val <= 7)   return '👍';
+  if (val <= 9)   return '🔥';
+  return '🏆';
 }
 
-function updateGenreAffinity(genres, rating) {
+// Genre affinity: each rating pushes genres toward liked (+) or disliked (-)
+// Uses exponential moving average so recent ratings matter more
+function updateGenreAffinity(genreIds, rating) {
   const affinity = LS.get('genre_affinity') || {};
-  genres.forEach(g => {
-    affinity[g.id] = (affinity[g.id] || 0) + (rating - 5); // +/- from neutral
+  const counts   = LS.get('genre_counts')   || {};
+  const alpha    = 0.3; // EMA weight — higher = more responsive to new ratings
+  const delta    = rating - 5; // -5 to +5 around neutral
+
+  genreIds.forEach(gid => {
+    const prev  = affinity[gid] || 0;
+    const count = (counts[gid] || 0) + 1;
+    // EMA: new = alpha * delta + (1-alpha) * prev
+    affinity[gid] = alpha * delta + (1 - alpha) * prev;
+    counts[gid]   = count;
   });
+
   LS.set('genre_affinity', affinity);
+  LS.set('genre_counts',   counts);
 }
 
+// Collaborative-style score for a candidate item
 function recScore(item) {
   const affinity = LS.get('genre_affinity') || {};
-  const myKey    = mediaKey(item.media_type || (item.title ? 'movie' : 'tv'), item.id);
-  const myRating = state.ratings[myKey] || 0;
+  const type     = item.media_type || (item.title ? 'movie' : 'tv');
+  const key      = mediaKey(type, item.id);
+  const myRating = state.ratings[key] || 0;
 
-  let genreBoost = 0;
-  if (item.genre_ids) {
-    item.genre_ids.forEach(gid => { genreBoost += (affinity[gid] || 0); });
-  }
+  // Don't recommend already rated or watchlisted items
+  if (myRating > 0) return -999;
+  if (state.watchlist[key]) return -998;
 
-  const pop   = (item.popularity || 0) / 100;
-  const vote  = (item.vote_average || 0) * 10;
-  const rated = myRating > 0 ? myRating * 5 : 0;
+  // Genre affinity score
+  let genreScore = 0;
+  let genreCount = 0;
+  (item.genre_ids || []).forEach(gid => {
+    if (affinity[gid] !== undefined) {
+      genreScore += affinity[gid];
+      genreCount++;
+    }
+  });
+  const avgGenre = genreCount > 0 ? genreScore / genreCount : 0;
 
-  return pop + vote + genreBoost * 3 + rated;
+  // Normalize TMDB signals
+  const popScore  = Math.log1p(item.popularity || 0) / 10; // log scale, 0-~1
+  const voteScore = ((item.vote_average || 0) - 5) / 5;    // -1 to +1 from neutral
+  const voteConf  = Math.min((item.vote_count || 0) / 1000, 1); // confidence 0-1
+
+  // Weighted composite
+  return (avgGenre * 4)               // genre fit is the primary signal
+       + (voteScore * voteConf * 2)   // quality, weighted by confidence
+       + (popScore * 0.5);            // popularity is a tiebreaker only
+}
+
+// Get top genre names for display
+function topGenreNames(n = 3) {
+  const affinity = LS.get('genre_affinity') || {};
+  return Object.entries(affinity)
+    .filter(([, v]) => v > 0)
+    .sort(([,a],[,b]) => b - a)
+    .slice(0, n)
+    .map(([id]) => GENRE_MAP[id] || `#${id}`)
+    .join(', ');
+}
+
+// Get disliked genre IDs (to exclude from discover)
+function dislikedGenres() {
+  const affinity = LS.get('genre_affinity') || {};
+  return Object.entries(affinity)
+    .filter(([, v]) => v < -1)
+    .map(([id]) => id);
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -1197,39 +1276,58 @@ function buildCard(item, opts = {}) {
         ${sc ? `<span class="card-score">⭐ ${sc}</span>` : ''}
         ${cr ? ratingBadgeHTML(cr) : ''}
       </div>
-      <div class="card-stars" role="group" aria-label="My rating">
-        ${[1,2,3,4,5].map(n => `
-          <span class="star${myRating >= n*2 ? ' on' : ''}" data-val="${n*2}" aria-label="${n*2} stars">★</span>
-        `).join('')}
+      <div class="card-rate-wrap">
+        <div class="card-rate-row">
+          <span class="card-rate-emoji">${myRating > 0 ? ratingEmoji(myRating) : '·'}</span>
+          <input type="range" class="card-rate-bar" min="0" max="10" step="1"
+            value="${myRating}" aria-label="Rate 0-10" />
+          <span class="card-rate-label">${myRating > 0 ? myRating : '—'}</span>
+        </div>
       </div>
       ${wlStatus ? `<div class="wl-status ${wlStatus}" title="${wlStatus}">${wlStatusLabel(wlStatus)}</div>` : ''}
     </div>
   `;
 
   card.addEventListener('click', e => {
-    if (!e.target.classList.contains('star')) openModal(type, id, item);
+    if (!e.target.classList.contains('card-rate-bar')) openModal(type, id, item);
   });
   card.addEventListener('keydown', e => {
     if (e.key === 'Enter') openModal(type, id, item);
   });
 
-  card.querySelectorAll('.card-stars .star').forEach(star => {
-    star.addEventListener('click', e => {
-      e.stopPropagation();
-      const val = parseInt(star.dataset.val);
-      setRating(type, id, val, item.genre_ids);
-      card.querySelectorAll('.card-stars .star').forEach(s => {
-        s.classList.toggle('on', val >= parseInt(s.dataset.val));
-      });
-      card.classList.add('rated');
-      // Animate out and remove from the row
-      card.style.transition = 'opacity .3s, transform .3s';
-      card.style.opacity = '0';
-      card.style.transform = 'scale(0.85)';
-      setTimeout(() => card.remove(), 320);
-      if (state.simklToken) pushRatingToSimkl(type, id, val);
-    });
+  // Slider rating
+  const slider = card.querySelector('.card-rate-bar');
+  const emoji  = card.querySelector('.card-rate-emoji');
+  const label  = card.querySelector('.card-rate-label');
+
+  slider.addEventListener('click', e => e.stopPropagation());
+  slider.addEventListener('input', e => {
+    e.stopPropagation();
+    const val = parseInt(slider.value);
+    emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
+    label.textContent = val > 0 ? val : '—';
+    // Color the track
+    const pct = val * 10;
+    slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
   });
+  slider.addEventListener('change', e => {
+    e.stopPropagation();
+    const val = parseInt(slider.value);
+    if (val === 0) return; // ignore drag-back to 0
+    setRating(type, id, val, item.genre_ids || []);
+    // Animate out
+    card.style.transition = 'opacity .3s, transform .3s';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(0.85)';
+    setTimeout(() => card.remove(), 320);
+    if (state.simklToken) pushRatingToSimkl(type, id, val);
+  });
+
+  // Init track color for existing rating
+  if (myRating > 0) {
+    const pct = myRating * 10;
+    slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
+  }
 
   return card;
 }
@@ -1242,11 +1340,10 @@ function setRating(type, id, val, genreIds) {
   const key = mediaKey(type, id);
   state.ratings[key] = val;
   saveRatings();
-  if (genreIds) {
-    // Convert genre_ids to genre objects (minimal)
-    updateGenreAffinity(genreIds.map(gid => ({ id: gid })), val);
+  if (genreIds && genreIds.length) {
+    updateGenreAffinity(genreIds, val);
   }
-  toast(`Rated ${val / 2}/5 ⭐`);
+  toast(`${ratingEmoji(val)} Rated ${val}/10`);
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -1335,15 +1432,13 @@ function renderModal(type, d, credits, providers, contentRating) {
       ${d.overview ? `<p class="modal-overview">${d.overview}</p>` : ''}
       ${cast ? `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">🎭 <strong>Cast:</strong> ${cast}</p>` : ''}
 
-      <!-- My Rating -->
+      <!-- My Rating — 0-10 slider -->
       <div class="my-rating-row">
         <span class="my-rating-label">My Rating:</span>
-        <div class="rating-stars" role="group" aria-label="Rate this title">
-          ${[1,2,3,4,5].map(n => `
-            <span class="star${myR >= n*2 ? ' on' : ''}" data-val="${n*2}" aria-label="Rate ${n*2} out of 10">★</span>
-          `).join('')}
-        </div>
-        <span class="rating-val" id="modal-rating-val">${myR ? myR/2 + '/5' : 'Not rated'}</span>
+        <span id="modal-rating-emoji" style="font-size:1.2rem;min-width:24px">${myR > 0 ? ratingEmoji(myR) : '·'}</span>
+        <input type="range" id="modal-rating-slider" min="0" max="10" step="1"
+          value="${myR}" style="flex:1;accent-color:var(--accent2);cursor:pointer" aria-label="Rate 0-10" />
+        <span class="rating-val" id="modal-rating-val">${myR ? myR + '/10' : 'Not rated'}</span>
       </div>
 
       <!-- Watchlist Actions -->
@@ -1384,18 +1479,23 @@ function renderModal(type, d, credits, providers, contentRating) {
     </div>
   `;
 
-  // Bind rating stars
-  document.querySelectorAll('.rating-stars .star').forEach(star => {
-    star.addEventListener('click', () => {
-      const val = parseInt(star.dataset.val);
+  // Bind modal rating slider
+  const modalSlider = document.getElementById('modal-rating-slider');
+  const modalEmoji  = document.getElementById('modal-rating-emoji');
+  const modalValEl  = document.getElementById('modal-rating-val');
+  if (modalSlider) {
+    modalSlider.addEventListener('input', () => {
+      const val = parseInt(modalSlider.value);
+      modalEmoji.textContent = val > 0 ? ratingEmoji(val) : '·';
+      modalValEl.textContent = val > 0 ? val + '/10' : 'Not rated';
+    });
+    modalSlider.addEventListener('change', () => {
+      const val = parseInt(modalSlider.value);
+      if (val === 0) return;
       setRating(type, id, val, genres.map(g => g.id));
-      document.querySelectorAll('.rating-stars .star').forEach(s => {
-        s.classList.toggle('on', val >= parseInt(s.dataset.val));
-      });
-      document.getElementById('modal-rating-val').textContent = val/2 + '/5';
       if (state.simklToken) pushRatingToSimkl(type, id, val);
     });
-  });
+  }
 
   // Load similar
   loadSimilar(type, id);
@@ -2033,85 +2133,117 @@ async function renderWatchlist(main) {
 
 /* ── RECOMMENDED ──────────────────────────────────────────────────── */
 async function renderRecommended(main) {
-  const affinity = LS.get('genre_affinity') || {};
-  const myRatings = state.ratings;
-  const hasData = Object.keys(myRatings).length > 0;
+  const affinity  = LS.get('genre_affinity') || {};
+  const hasRatings = Object.keys(state.ratings).length > 0;
 
-  if (!hasData) {
-    main.innerHTML = `<div class="empty-state"><div class="icon">✨</div><p>Rate some movies and shows to get personalized recommendations!</p><p style="margin-top:8px;font-size:.8rem">Browse Trending and click the ★ stars to rate items.</p></div>`;
+  if (!hasRatings) {
+    main.innerHTML = `<div class="empty-state"><div class="icon">✨</div>
+      <p>Rate some movies and shows to get personalized recommendations!</p>
+      <p style="margin-top:8px;font-size:.8rem">Drag the slider on any card to rate 0–10.</p></div>`;
     return;
   }
 
   addSkeletonRow(main, 'Recommended For You ✨');
+  addSkeletonRow(main, 'More Like Your Favorites');
 
-  // Get top genres from affinity
+  // Top liked genres (positive affinity)
   const topGenres = Object.entries(affinity)
+    .filter(([, v]) => v > 0)
     .sort(([,a],[,b]) => b - a)
     .slice(0, 3)
     .map(([id]) => id);
 
+  // Genres to exclude (strongly disliked)
+  const badGenres = dislikedGenres();
+
+  // Fetch 3 pages per type for a large candidate pool, then sort by recScore
   const fetchRec = async (mediaType, label) => {
-    const params = { sort_by: 'popularity.desc', page: 1, 'vote_count.gte': 100 };
-    if (topGenres.length) params.with_genres = topGenres.slice(0, 2).join(',');
+    const params = {
+      sort_by: 'vote_average.desc',
+      'vote_count.gte': 200,
+      page: 1,
+    };
+    if (topGenres.length)  params.with_genres    = topGenres.slice(0, 2).join(',');
+    if (badGenres.length)  params.without_genres = badGenres.slice(0, 3).join(',');
+
     const path = mediaType === 'movie' ? '/discover/movie' : '/discover/tv';
-    const data = await tmdb(path, params);
-    const results = (data.results || [])
+    const pages = await Promise.all([
+      tmdb(path, { ...params, page: 1 }),
+      tmdb(path, { ...params, page: 2 }),
+      tmdb(path, { ...params, sort_by: 'popularity.desc', page: 1 }),
+    ]);
+
+    const seen = new Set();
+    const results = pages
+      .flatMap(p => p.results || [])
       .map(i => ({ ...i, media_type: mediaType }))
-      .filter(i => !state.watchlist[mediaKey(mediaType, i.id)])
-      .filter(i => !state.ratings[mediaKey(mediaType, i.id)])
+      .filter(i => {
+        const key = mediaKey(mediaType, i.id);
+        if (seen.has(i.id)) return false;
+        seen.add(i.id);
+        if (state.ratings[key]) return false;   // already rated
+        if (state.watchlist[key]) return false; // already in list
+        return true;
+      })
       .sort((a, b) => recScore(b) - recScore(a))
       .slice(0, 20);
+
     return { label, results };
   };
 
   const [recMovies, recTV] = await Promise.all([
-    fetchRec('movie', '🎬 Recommended Movies'),
-    fetchRec('tv',    '📺 Recommended Shows'),
+    fetchRec('movie', '🎬 Movies For You'),
+    fetchRec('tv',    '📺 Shows For You'),
   ]);
 
   main.innerHTML = '';
 
-  if (topGenres.length) {
-    const genreNames = { 28:'Action', 35:'Comedy', 18:'Drama', 27:'Horror', 878:'Sci-Fi', 10749:'Romance', 53:'Thriller', 16:'Animation', 12:'Adventure', 99:'Documentary', 10765:'Sci-Fi & Fantasy', 10759:'Action & Adventure', 10768:'War & Politics', 37:'Western' };
-    const genreLabel = topGenres.map(id => genreNames[id] || `Genre ${id}`).join(', ');
-    const info = document.createElement('p');
-    info.style.cssText = 'font-size:.83rem;color:var(--text-muted);padding:0 0 12px';
-    info.textContent = `Recommendations based on your top genres: ${genreLabel}`;
-    main.appendChild(info);
-  }
+  // Header summary
+  const liked  = topGenreNames(3);
+  const disliked = Object.entries(affinity).filter(([,v]) => v < -1).map(([id]) => GENRE_MAP[id]).filter(Boolean).slice(0,2).join(', ');
+  const summary = document.createElement('div');
+  summary.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;display:flex;gap:16px;flex-wrap:wrap';
+  summary.innerHTML = `
+    <span>📊 <strong>${Object.keys(state.ratings).length}</strong> ratings</span>
+    ${liked    ? `<span>❤️ Loves: <strong>${liked}</strong></span>` : ''}
+    ${disliked ? `<span>👎 Avoids: <strong>${disliked}</strong></span>` : ''}
+    <button onclick="LS.set('genre_affinity',{});LS.set('genre_counts',{});toast('Preferences reset');renderView();"
+      style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer">
+      Reset preferences
+    </button>
+  `;
+  main.appendChild(summary);
 
   renderRow(main, recMovies.label, recMovies.results, true);
-  renderRow(main, recTV.label,    recTV.results,    true);
+  renderRow(main, recTV.label, recTV.results, true);
 
-  // Also show highly-rated similar items using real cached titles
+  // "Because you liked X" rows for top 3 rated items (rating >= 7)
   const topRated = Object.entries(state.ratings)
+    .filter(([, v]) => v >= 7)
     .sort(([,a],[,b]) => b - a)
     .slice(0, 3);
 
   for (const [key] of topRated) {
     const [type, idStr] = key.split('_');
     const cached = state.mediaDetails[key];
-    const displayTitle = cached?.title || null;
-
     try {
-      // Fetch title if not cached
-      let title = displayTitle;
+      let title = cached?.title;
       if (!title) {
         const detail = await tmdb(`/${type}/${idStr}`);
         title = detail.title || detail.name;
         state.mediaDetails[key] = { ...state.mediaDetails[key], title, media_type: type, id: parseInt(idStr) };
         saveMediaDetails();
       }
-
-      const data = await tmdb(`/${type}/${idStr}/similar`);
+      const data = await tmdb(`/${type}/${idStr}/recommendations`);
       const results = (data.results || [])
         .map(i => ({ ...i, media_type: type }))
         .filter(i => !state.ratings[mediaKey(type, i.id)])
-        .slice(0, 10);
+        .filter(i => !state.watchlist[mediaKey(type, i.id)])
+        .slice(0, 12);
       if (results.length) {
-        renderRow(main, `Because you liked ${type === 'movie' ? '🎬' : '📺'} ${title}`, results);
+        renderRow(main, `Because you loved ${type === 'movie' ? '🎬' : '📺'} ${title}`, results);
       }
-    } catch (e) { console.warn('Similar items fetch failed:', e); }
+    } catch (e) { console.warn('Recommendations fetch failed:', e); }
   }
 }
 
