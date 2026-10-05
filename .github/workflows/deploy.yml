@@ -61,6 +61,19 @@ jobs:
           echo "=== pagecrypt location ==="
           which pagecrypt
 
+      # ── Inject secrets into shows.html ────────────────────────────
+      - name: Inject TMDB token
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: |
+          if [ -z "$TMDB_TOKEN" ]; then
+            echo "ERROR: TMDB_TOKEN secret is not set!"
+            exit 1
+          fi
+          sed -i "s|__TMDB_TOKEN__|${TMDB_TOKEN}|g" shows.html
+          echo "Token injected. Verifying placeholder is gone:"
+          grep -c "__TMDB_TOKEN__" shows.html && echo "ERROR: placeholder still present" && exit 1 || echo "OK: placeholder replaced"
+
       # ── Encrypt shows.html ─────────────────────────────────────────
       - name: Encrypt shows.html
         env:
