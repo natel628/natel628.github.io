@@ -166,16 +166,40 @@
     .see-all:hover { text-decoration: underline; }
 
     /* ─── Horizontal scroll row ─────────────────────────────────────── */
+    .row-wrap { position: relative; }
     .card-row {
       display: flex;
       gap: 14px;
       overflow-x: auto;
       padding-bottom: 10px;
       scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
     }
     .card-row::-webkit-scrollbar { height: 4px; }
     .card-row::-webkit-scrollbar-track { background: var(--surface); }
     .card-row::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .row-scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s, opacity .15s;
+      opacity: 0.85;
+    }
+    .row-scroll-btn:hover { background: var(--accent); border-color: var(--accent); opacity: 1; }
+    .row-scroll-btn.left  { left: -14px; }
+    .row-scroll-btn.right { right: -14px; }
 
     /* ─── Card ──────────────────────────────────────────────────────── */
     .card {
@@ -2451,10 +2475,25 @@ async function filterResults(items) {
 function renderRow(container, title, items, recBadge = false) {
   const sec = document.createElement('div');
   sec.className = 'section';
-  sec.innerHTML = `<div class="section-header"><span class="section-title">${title}</span></div><div class="card-row"></div>`;
-  const row = sec.querySelector('.card-row');
+  sec.innerHTML = `
+    <div class="section-header"><span class="section-title">${title}</span></div>
+    <div class="row-wrap">
+      <button class="row-scroll-btn left" aria-label="Scroll left">&#8249;</button>
+      <div class="card-row"></div>
+      <button class="row-scroll-btn right" aria-label="Scroll right">&#8250;</button>
+    </div>`;
+
+  const row  = sec.querySelector('.card-row');
+  const btnL = sec.querySelector('.row-scroll-btn.left');
+  const btnR = sec.querySelector('.row-scroll-btn.right');
+
+  // Scroll by ~4 cards worth
+  const scrollAmt = () => (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--card-w')) || 160) * 4 + 56;
+  btnL.addEventListener('click', () => row.scrollBy({ left: -scrollAmt(), behavior: 'smooth' }));
+  btnR.addEventListener('click', () => row.scrollBy({ left:  scrollAmt(), behavior: 'smooth' }));
+
   if (!items.length) {
-    sec.querySelector('.card-row').outerHTML = `<p style="color:var(--text-muted);font-size:.85rem">No results found.</p>`;
+    sec.querySelector('.row-wrap').outerHTML = `<p style="color:var(--text-muted);font-size:.85rem">No results found.</p>`;
   } else {
     items.forEach(item => {
       const card = buildCard(item);
