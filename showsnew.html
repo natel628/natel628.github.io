@@ -152,6 +152,22 @@
       outline: none;
       cursor: pointer;
     }
+    label.filter-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      transition: all .15s;
+    }
+    label.filter-toggle:hover { border-color: var(--accent); color: var(--text); }
+    label.filter-toggle input { accent-color: var(--accent); cursor: pointer; }
 
     /* ─── Main layout ───────────────────────────────────────────────── */
     .main { padding: 16px 24px 40px; }
@@ -482,6 +498,20 @@
       margin-bottom: 14px;
     }
 
+    /* ─── Stats: rating histogram ───────────────────────────────────── */
+    .hist-row {
+      display: grid;
+      grid-template-columns: 32px 1fr 48px;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+    }
+    .hist-label { color: var(--text-muted); font-weight: 600; text-align: right; }
+    .hist-bar-wrap { background: var(--surface2); border-radius: 4px; height: 20px; overflow: hidden; position: relative; }
+    .hist-bar { height: 100%; border-radius: 4px; transition: width .4s ease; min-width: 2px; }
+    .hist-count { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
     /* ─── Notifications toast ───────────────────────────────────────── */
     #toast {
       position: fixed;
@@ -698,6 +728,10 @@
   <select class="filter-select" id="year-filter">
     <option value="">Any Year</option>
   </select>
+  <label class="filter-toggle" title="Hide items you've already rated">
+    <input type="checkbox" id="hide-rated-toggle" />
+    <span>Hide rated</span>
+  </label>
 </div>
 
 <main class="main" id="main-content"></main>
@@ -721,13 +755,11 @@ const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
 
 const SIMKL_CLIENT_ID = '823280121411d86d7f3bd2491cc84db961e50d16416f6d5afe53d8dd7a07dcda';
-const SIMKL_REDIRECT  = 'https://natel628.github.io/shows.html';
+const SIMKL_REDIRECT  = 'https://natel628.github.io/shows.html'; // ← UPDATE THIS to match your deployed URL and Simkl OAuth app's redirect
 const SIMKL_AUTH_URL  = 'https://simkl.com/oauth2/authorize';
 const SIMKL_TOKEN_URL = 'https://api.simkl.com/oauth2/token';
 const SIMKL_API       = 'https://api.simkl.com';
 
-/* Max mediaDetails entries kept in localStorage. Older entries are pruned on
-   write when the cap is exceeded. The in-memory map is not pruned. */
 const MEDIA_DETAILS_CAP = 500;
 
 const GENRE_MAP = {
@@ -780,6 +812,7 @@ let state = {
   provider: '',
   contentRating: '',
   year: '',
+  hideRated: !!LS.get('hide_rated'),
   wlFilterStatus: 'all',
   simklToken: LS.get('simkl_token'),
   simklUser: LS.get('simkl_user'),
@@ -815,6 +848,7 @@ function saveMediaDetails() {
   LS.set('media_details_cache', state.mediaDetails);
 }
 function saveTheme()        { LS.set('theme',               state.theme); }
+function saveHideRated()    { LS.set('hide_rated',          state.hideRated); }
 
 let renderToken = 0;
 let calToken = 0;
@@ -1204,6 +1238,14 @@ function ratingEmoji(val) {
   return '🏆';
 }
 
+function ratingColor(val) {
+  if (val <= 2)   return '#e50914';
+  if (val <= 4)   return '#f5a623';
+  if (val <= 6)   return '#8888a0';
+  if (val <= 8)   return '#1ce783';
+  return '#1a6ef5';
+}
+
 function recomputeAffinity() {
   const sums = {}, counts = {};
   Object.entries(state.ratings).forEach(([key, r]) => {
@@ -1419,8 +1461,6 @@ document.getElementById('main-content').addEventListener('change', e => {
 
 /* ─────────────────────────────────────────────────────────────────────
    MODAL CARD DELEGATION
-   Cards built inside #modal-overlay ("Similar" rows) are outside
-   #main-content, so the main delegated listeners don't reach them.
    ───────────────────────────────────────────────────────────────────── */
 document.getElementById('modal-overlay').addEventListener('click', e => {
   if (e.target.closest('.thumbs-btn') || e.target.classList.contains('card-rate-bar')) return;
@@ -2727,7 +2767,7 @@ function renderStats(main) {
   const mine = new Set([...Object.keys(state.ratings), ...Object.keys(state.watchlist)]);
   mine.forEach(key => {
     (state.mediaDetails[key]?.genre_ids || []).forEach(gid => {
-      genreCounts[gid] = (genreCounts[gid] || 0) + 1;
+      if (GENRE_MAP[gid]) genreCounts[gid] = (genreCounts[gid] || 0) + 1;
     });
   });
 
@@ -2735,6 +2775,14 @@ function renderStats(main) {
     .sort(([,a], [,b]) => b - a)
     .slice(0, 5)
     .map(([id, count]) => ({ name: GENRE_MAP[id] || `Genre ${id}`, count }));
+
+  // Rating histogram — buckets 1..10
+  const buckets = Array.from({ length: 10 }, (_, i) => ({ rating: i + 1, count: 0 }));
+  rated.forEach(([, v]) => {
+    const idx = Math.max(1, Math.min(10, Math.round(v))) - 1;
+    buckets[idx].count++;
+  });
+  const maxBucket = Math.max(1, ...buckets.map(b => b.count));
 
   const storage = getStorageUsage();
 
@@ -2763,6 +2811,23 @@ function renderStats(main) {
           <div style="font-size:0.85rem;color:var(--text-muted)">TV Shows Rated</div>
         </div>
       </div>
+
+      ${totalRatings > 0 ? `
+      <div style="margin-bottom:24px">
+        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Rating Distribution</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+          ${buckets.map(b => `
+            <div class="hist-row">
+              <span class="hist-label">${b.rating}</span>
+              <div class="hist-bar-wrap">
+                <div class="hist-bar" style="width:${(b.count / maxBucket) * 100}%;background:${ratingColor(b.rating)}"></div>
+              </div>
+              <span class="hist-count">${b.count}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
 
       ${Object.keys(statusCounts).length > 0 ? `
       <div style="margin-bottom:24px">
@@ -2862,6 +2927,7 @@ async function filterResults(items) {
   let out = items.filter(i => {
     if (state.filterType !== 'all' && i.media_type !== state.filterType) return false;
     if (state.genre && !(i.genre_ids || []).includes(parseInt(state.genre))) return false;
+    if (state.hideRated && state.ratings[mediaKey(i.media_type, i.id)]) return false;
     return true;
   });
 
@@ -2957,6 +3023,11 @@ document.getElementById('rating-filter').addEventListener('change', e => {
   state.contentRating = e.target.value;
   renderView();
 });
+document.getElementById('hide-rated-toggle').addEventListener('change', e => {
+  state.hideRated = e.target.checked;
+  saveHideRated();
+  renderView();
+});
 
 const yearFilter = document.getElementById('year-filter');
 const currentYear = new Date().getFullYear();
@@ -2977,6 +3048,7 @@ function updateFilterVisibility() {
   const provUses = ['trending', 'upcoming', 'recommended'];
   const rateUses = ['trending', 'upcoming'];
   const genreUses = ['trending', 'upcoming', 'recommended'];
+  const hideRatedUses = ['trending', 'upcoming', 'recommended'];
   const show = (id, on) => {
     const el = document.getElementById(id);
     if (el) el.style.display = on ? '' : 'none';
@@ -2986,6 +3058,8 @@ function updateFilterVisibility() {
   show('provider-filter',provUses.includes(state.view));
   show('rating-filter',  rateUses.includes(state.view));
   show('genre-filter',   genreUses.includes(state.view));
+  const hideRatedLbl = document.getElementById('hide-rated-toggle')?.closest('label');
+  if (hideRatedLbl) hideRatedLbl.style.display = hideRatedUses.includes(state.view) ? '' : 'none';
   document.querySelectorAll('#filter-row [data-filter-type]').forEach(chip => {
     chip.style.display = ['trending', 'upcoming'].includes(state.view) ? '' : 'none';
   });
@@ -3060,6 +3134,9 @@ async function refreshSimklIfNeeded() {
     await handleSimklCallback();
     await refreshSimklIfNeeded();
   }
+
+  // Restore "Hide rated" toggle state to the checkbox
+  document.getElementById('hide-rated-toggle').checked = state.hideRated;
 
   renderView();
 })();
