@@ -1299,7 +1299,7 @@ function setRating(type, id, val, genreIds, item) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   GLOBAL EVENT DELEGATION
+   GLOBAL EVENT DELEGATION (FIXED FOR QUICK RATE THUMBS)
    ───────────────────────────────────────────────────────────────────── */
 document.getElementById('main-content').addEventListener('click', e => {
   const scrollBtn = e.target.closest('.row-scroll-btn');
@@ -1312,8 +1312,13 @@ document.getElementById('main-content').addEventListener('click', e => {
     return;
   }
 
+  // FIXED: Ignore clicks on thumbs buttons or rating sliders (don't open modal)
+  if (e.target.closest('.thumbs-btn') || e.target.classList.contains('card-rate-bar')) {
+    return;
+  }
+
   const card = e.target.closest('.card');
-  if (card && !e.target.classList.contains('card-rate-bar')) {
+  if (card) {
     const type = card.dataset.type;
     const id = Number(card.dataset.id);
     if (type && id) openModal(type, id);
@@ -2509,7 +2514,7 @@ function getStorageUsage() {
       totalBytes += ((localStorage[key].length + key.length) * 2);
     }
   }
-  const maxBytes = 5 * 1024 * 1024; // Standard ~5MB limit
+  const maxBytes = 5 * 1024 * 1024;
   return {
     bytes: totalBytes,
     kb: (totalBytes / 1024).toFixed(1),
