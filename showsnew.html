@@ -163,8 +163,6 @@
       margin-bottom: 14px;
     }
     .section-title { font-size: 1.05rem; font-weight: 700; }
-    .see-all { font-size: 0.8rem; color: var(--accent); margin-left: auto; cursor: pointer; }
-    .see-all:hover { text-decoration: underline; }
 
     /* ─── Horizontal scroll row ─────────────────────────────────────── */
     .row-wrap {
@@ -599,36 +597,28 @@
     }
     .simkl-prompt p { flex: 1; font-size: 0.88rem; color: var(--text-muted); }
 
-    /* ─── Fatal error overlay ───────────────────────────────────────── */
-    #fatal-error {
+    /* ─── Soft warning banner (non-blocking) ─────────────────────────── */
+    #config-warning {
       display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 500;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    #fatal-error.show { display: flex; }
-    #fatal-error .box {
-      max-width: 520px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      border-radius: 12px;
-      padding: 28px 32px;
-    }
-    #fatal-error h2 { font-size: 1.2rem; margin-bottom: 10px; color: var(--accent); }
-    #fatal-error p  { font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px; }
-    #fatal-error code {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1px 6px;
+      background: #3a2a00;
+      border-bottom: 1px solid var(--accent2);
+      color: var(--accent2);
+      padding: 8px 16px;
       font-size: 0.82rem;
-      color: var(--text);
+      text-align: center;
     }
+    #config-warning.show { display: block; }
+    [data-theme="light"] #config-warning {
+      background: #fff4e0;
+      color: #7a5200;
+    }
+    #config-warning code {
+      background: rgba(0,0,0,.2);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.78rem;
+    }
+    [data-theme="light"] #config-warning code { background: rgba(0,0,0,.08); }
   </style>
 </head>
 <body>
@@ -654,6 +644,11 @@
     </button>
   </div>
 </nav>
+
+<div id="config-warning" role="status">
+  Running with an unreplaced <code>__TMDB_TOKEN__</code> placeholder.
+  API calls will fail until the token is injected at build time.
+</div>
 
 <div class="search-wrap">
   <input id="search-input" type="text" placeholder="Search movies & shows…" />
@@ -716,13 +711,6 @@
 
 <div id="toast" role="status" aria-live="polite"></div>
 
-<div id="fatal-error" role="alert">
-  <div class="box">
-    <h2>⚠ Configuration Error</h2>
-    <p id="fatal-error-msg"></p>
-  </div>
-</div>
-
 <script>
 /* ─────────────────────────────────────────────────────────────────────
    CONFIG & CONSTANTS
@@ -737,6 +725,10 @@ const SIMKL_REDIRECT  = 'https://natel628.github.io/shows.html';
 const SIMKL_AUTH_URL  = 'https://simkl.com/oauth2/authorize';
 const SIMKL_TOKEN_URL = 'https://api.simkl.com/oauth2/token';
 const SIMKL_API       = 'https://api.simkl.com';
+
+/* Max mediaDetails entries kept in localStorage. Older entries are pruned on
+   write when the cap is exceeded. The in-memory map is not pruned. */
+const MEDIA_DETAILS_CAP = 500;
 
 const GENRE_MAP = {
   28: 'Action', 35: 'Comedy', 18: 'Drama', 27: 'Horror', 878: 'Sci-Fi',
@@ -805,7 +797,23 @@ let state = {
 function saveRatings()      { LS.set('my_ratings',          state.ratings); }
 function saveWatchlist()    { LS.set('my_watchlist',        state.watchlist); }
 function saveSimkl()        { LS.set('simkl_token',         state.simklToken); LS.set('simkl_user', state.simklUser); }
-function saveMediaDetails() { LS.set('media_details_cache', state.mediaDetails); }
+function saveMediaDetails() {
+  const entries = Object.entries(state.mediaDetails);
+  if (entries.length > MEDIA_DETAILS_CAP) {
+    const mustKeep = new Set([
+      ...Object.keys(state.ratings),
+      ...Object.keys(state.watchlist),
+    ]);
+    entries.sort((a, b) => {
+      const aKeep = mustKeep.has(a[0]) || a[1]._full ? 1 : 0;
+      const bKeep = mustKeep.has(b[0]) || b[1]._full ? 1 : 0;
+      if (aKeep !== bKeep) return bKeep - aKeep;
+      return (b[1]._ts || 0) - (a[1]._ts || 0);
+    });
+    state.mediaDetails = Object.fromEntries(entries.slice(0, MEDIA_DETAILS_CAP));
+  }
+  LS.set('media_details_cache', state.mediaDetails);
+}
 function saveTheme()        { LS.set('theme',               state.theme); }
 
 let renderToken = 0;
@@ -900,7 +908,7 @@ async function getContentRating(type, id) {
       const us = (data.results || []).find(r => r.iso_3166_1 === 'US');
       cert = us?.rating || '';
     }
-    state.mediaDetails[cacheKeyStr] = { ...(state.mediaDetails[cacheKeyStr] || {}), contentRating: cert };
+    state.mediaDetails[cacheKeyStr] = { ...(state.mediaDetails[cacheKeyStr] || {}), contentRating: cert, _ts: Date.now() };
     saveMediaDetails();
     return cert;
   } catch (e) { console.warn('Content rating fetch error:', e); }
@@ -1065,7 +1073,7 @@ async function syncSimklLibrary() {
         if (item.user_rating) state.ratings[key] = item.user_rating;
         if (item.status && simklToLocal[item.status]) state.watchlist[key] = simklToLocal[item.status];
         if (src?.title && !state.mediaDetails[key]) {
-          state.mediaDetails[key] = { title: src.title, media_type: type, id: tmdbId };
+          state.mediaDetails[key] = { title: src.title, media_type: type, id: tmdbId, _ts: Date.now() };
         }
       });
 
@@ -1341,7 +1349,7 @@ function setRating(type, id, val, genreIds, item) {
   if (val > 0) state.ratings[key] = val; else delete state.ratings[key];
 
   const prev = state.mediaDetails[key] || {};
-  const patch = { media_type: type, id };
+  const patch = { media_type: type, id, _ts: Date.now() };
   if (genreIds && genreIds.length) patch.genre_ids = genreIds;
   if (item && (item.title || item.name) && !prev.title) patch.title = item.title || item.name;
   if (item && item.poster_path && !prev.poster_path) patch.poster_path = item.poster_path;
@@ -1499,6 +1507,7 @@ async function openModal(type, id, basicItem = {}) {
       genre_ids: (detail.genres || []).map(g => g.id),
       contentRating,
       _full: true,
+      _ts: Date.now(),
     };
     saveMediaDetails();
     if (getRating(type, id) > 0) recomputeAffinity();
@@ -2049,38 +2058,69 @@ async function populateCalendar() {
   if (myShowIds.length > 0) {
     if (loading && myTok === calToken) loading.textContent = `Loading your ${myShowIds.length} shows…`;
 
-    await promiseAllChunked(myShowIds, async showId => {
-      if (stale()) return;
+    const showDetails = await promiseAllChunked(myShowIds, async showId => {
+      if (stale()) return null;
       try {
         const detail = await tmdb(`/tv/${showId}`);
-        if (stale()) return;
-        const showName = detail.name;
-        const currentSeason = detail.number_of_seasons;
-        if (!currentSeason) return;
+        return { showId, detail };
+      } catch (e) {
+        console.warn(`Failed loading show ${showId}:`, e);
+        return null;
+      }
+    }, 8);
+    if (stale()) return;
 
-        const seasonData = await tmdb(`/tv/${showId}/season/${currentSeason}`);
-        if (stale()) return;
-        (seasonData.episodes || []).forEach(ep => {
-          if (!inRange(ep.air_date)) return;
-          const epLabel = `S${pad2(ep.season_number)}E${pad2(ep.episode_number)}`;
-          add(ep.air_date, showName, 'tv my-show',
-            `⭐ ${showName} ${epLabel}: ${ep.name || ''}`,
-            () => openModal('tv', showId, detail),
-            { pk: `ep_${showId}_${epLabel}`, epLabel, showId, airDate: ep.air_date,
-              episode: { season_number: ep.season_number, episode_number: ep.episode_number } });
-        });
+    const validShows = showDetails.filter(Boolean);
+    const seasonJobs = [];
+    validShows.forEach(({ showId, detail }) => {
+      const seasonCount = detail.number_of_seasons || 0;
+      const seasonsToCheck = new Set();
+      if (seasonCount > 0) seasonsToCheck.add(seasonCount);
+      (detail.seasons || []).forEach(s => {
+        if (!s.air_date) return;
+        if (s.air_date <= dateTo) seasonsToCheck.add(s.season_number);
+      });
+      seasonsToCheck.forEach(seasonNumber => {
+        seasonJobs.push({ showId, detail, seasonNumber });
+      });
+    });
 
-        const next = detail.next_episode_to_air;
-        if (next && inRange(next.air_date)) {
-          const epLabel = `S${pad2(next.season_number)}E${pad2(next.episode_number)}`;
-          add(next.air_date, showName, 'tv my-show',
-            `⭐ ${showName} ${epLabel} (next)`,
-            () => openModal('tv', showId, detail),
-            { pk: `ep_${showId}_${epLabel}`, epLabel, showId, airDate: next.air_date,
-              episode: { season_number: next.season_number, episode_number: next.episode_number } });
-        }
-      } catch(e) { console.warn(`Failed loading show ${showId}:`, e); }
-    }, 5);
+    const seasonResults = await promiseAllChunked(seasonJobs, async job => {
+      if (stale()) return null;
+      try {
+        const data = await tmdb(`/tv/${job.showId}/season/${job.seasonNumber}`);
+        return { ...job, data };
+      } catch (e) {
+        console.warn(`Failed loading S${job.seasonNumber} of ${job.showId}:`, e);
+        return null;
+      }
+    }, 8);
+    if (stale()) return;
+
+    seasonResults.filter(Boolean).forEach(({ showId, detail, data }) => {
+      const showName = detail.name;
+      (data.episodes || []).forEach(ep => {
+        if (!inRange(ep.air_date)) return;
+        const epLabel = `S${pad2(ep.season_number)}E${pad2(ep.episode_number)}`;
+        add(ep.air_date, showName, 'tv my-show',
+          `⭐ ${showName} ${epLabel}: ${ep.name || ''}`,
+          () => openModal('tv', showId, detail),
+          { pk: `ep_${showId}_${epLabel}`, epLabel, showId, airDate: ep.air_date,
+            episode: { season_number: ep.season_number, episode_number: ep.episode_number } });
+      });
+    });
+
+    validShows.forEach(({ showId, detail }) => {
+      const next = detail.next_episode_to_air;
+      if (next && inRange(next.air_date)) {
+        const epLabel = `S${pad2(next.season_number)}E${pad2(next.episode_number)}`;
+        add(next.air_date, detail.name, 'tv my-show',
+          `⭐ ${detail.name} ${epLabel} (next)`,
+          () => openModal('tv', showId, detail),
+          { pk: `ep_${showId}_${epLabel}`, epLabel, showId, airDate: next.air_date,
+            episode: { season_number: next.season_number, episode_number: next.episode_number } });
+      }
+    });
   }
 
   if (loading && !stale()) {
@@ -2241,6 +2281,7 @@ async function renderWatchlist(main, token) {
           first_air_date: detail.first_air_date,
           genre_ids: (detail.genres || []).map(g => g.id),
           _full: true,
+          _ts: Date.now(),
         };
       } catch (e) { console.warn('Cache fetch error:', e); }
     }, 5);
@@ -2298,6 +2339,7 @@ async function renderRecommended(main, token) {
           id: parseInt(idStr),
           genre_ids: (detail.genres || []).map(g => g.id),
           _full: true,
+          _ts: Date.now(),
         };
       } catch (e) { console.warn('Genre backfill error:', e); }
     }, 5);
@@ -2433,18 +2475,25 @@ async function loadMoreSearchResults() {
 
     searchResults.push(...newResults);
     const main = document.getElementById('main-content');
-    document.getElementById('load-more-btn')?.remove();
-
     if (!newResults.length) { toast('No more results'); return; }
-    renderRow(main, `Search results for "${esc(searchQuery)}" (page ${state.searchPage})`, newResults);
-    addLoadMoreButton(main);
+
+    const existingRow = main.querySelector('.card-row[data-search-row]');
+    if (existingRow) {
+      newResults.forEach(item => existingRow.appendChild(buildCard(item)));
+      const meta = main.querySelector('.search-meta');
+      if (meta) meta.textContent = `${searchResults.length} results (through page ${state.searchPage})`;
+    } else {
+      renderSearchRow(main);
+    }
+    positionLoadMoreButton(main);
   } catch (e) {
     console.warn('Load more search error:', e);
     toast('Failed to load more results');
   }
 }
 
-function addLoadMoreButton(main) {
+function positionLoadMoreButton(main) {
+  document.getElementById('load-more-btn')?.remove();
   const btn = document.createElement('button');
   btn.id = 'load-more-btn';
   btn.className = 'modal-btn';
@@ -2452,6 +2501,24 @@ function addLoadMoreButton(main) {
   btn.textContent = 'Load More Results';
   btn.onclick = loadMoreSearchResults;
   main.appendChild(btn);
+}
+
+function renderSearchRow(main) {
+  const sec = document.createElement('div');
+  sec.className = 'section';
+  sec.innerHTML = `
+    <div class="section-header">
+      <span class="section-title">Search results for "${esc(searchQuery)}"</span>
+      <span class="search-meta" style="margin-left:auto;font-size:.78rem;color:var(--text-muted)">${searchResults.length} results</span>
+    </div>
+    <div class="row-wrap">
+      <button class="row-scroll-btn left" aria-label="Scroll left">&#8249;</button>
+      <div class="card-row" data-search-row></div>
+      <button class="row-scroll-btn right" aria-label="Scroll right">&#8250;</button>
+    </div>`;
+  const row = sec.querySelector('.card-row');
+  searchResults.forEach(item => row.appendChild(buildCard(item)));
+  main.appendChild(sec);
 }
 
 async function renderSearch(main, token) {
@@ -2472,8 +2539,8 @@ async function renderSearch(main, token) {
       main.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>No results for "${esc(searchQuery)}"</div>`;
       return;
     }
-    renderRow(main, `Search results for "${esc(searchQuery)}"`, searchResults);
-    addLoadMoreButton(main);
+    renderSearchRow(main);
+    positionLoadMoreButton(main);
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('Search error:', e);
@@ -2806,12 +2873,18 @@ async function filterResults(items) {
   }
 
   if (state.contentRating) {
-    out = await promiseAllChunked(out, async item => {
+    const need = out.filter(i => {
+      const cached = state.mediaDetails[mediaKey(i.media_type, i.id)]?.contentRating;
+      return cached === undefined;
+    });
+    await promiseAllChunked(need, async item => {
+      item._contentRating = await getContentRating(item.media_type, item.id);
+    }, 8);
+    out.forEach(item => {
       if (item._contentRating === undefined) {
-        item._contentRating = await getContentRating(item.media_type, item.id);
+        item._contentRating = state.mediaDetails[mediaKey(item.media_type, item.id)]?.contentRating || '';
       }
-      return item;
-    }, 10);
+    });
     out = out.filter(i => (i._contentRating || 'NR') === state.contentRating);
   }
 
@@ -2966,12 +3039,10 @@ async function refreshSimklIfNeeded() {
   document.getElementById('theme-toggle').textContent = state.theme === 'dark' ? '🌙' : '☀️';
 
   if (TMDB_TOKEN.startsWith('__TMDB')) {
-    document.getElementById('fatal-error-msg').innerHTML =
-      'The <code>TMDB_TOKEN</code> placeholder in <code>shows.html</code> has not been replaced. ' +
-      'Get a free API token from <code>themoviedb.org/settings/api</code>, ' +
-      'then replace <code>__TMDB_TOKEN__</code> in the source and redeploy.';
-    document.getElementById('fatal-error').classList.add('show');
-    return;
+    document.getElementById('config-warning').classList.add('show');
+    console.warn('[Media Calendar] TMDB_TOKEN placeholder still present. ' +
+      'This is expected if you opened the raw source locally. ' +
+      'The CI workflow injects the real token before deploy.');
   }
 
   const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
