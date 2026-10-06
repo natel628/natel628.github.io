@@ -235,7 +235,10 @@
       justify-content: center;
       font-size: 2.5rem;
     }
-    .card-body { padding: 8px 10px 10px; }
+    .card-body { 
+      padding: 8px 10px 10px; 
+      overflow: hidden; 
+    }
     .card-title {
       font-size: 0.82rem;
       font-weight: 600;
@@ -267,11 +270,12 @@
     .card-badge.tv { background: #1a6ef5; }
     .card-badge.movie { background: var(--accent); }
     
-    .card-rate-wrap { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
-    .card-rate-row  { display: flex; align-items: center; gap: 6px; }
+    .card-rate-wrap { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; width: 100%; }
+    .card-rate-row  { display: flex; align-items: center; gap: 6px; width: 100%; padding-right: 4px; }
     .card-rate-label{ font-size: 0.75rem; color: var(--text-muted); min-width: 24px; text-align: right; font-weight: 600; }
     .card-rate-bar  {
       flex: 1;
+      min-width: 0;
       -webkit-appearance: none;
       appearance: none;
       height: 6px;
@@ -610,6 +614,7 @@
     <button class="nav-tab" data-view="stats">📊 Stats</button>
   </div>
   <div class="nav-right">
+    <button onclick="openHelpModal()" style="background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;font-size:0.8rem" title="Hotkeys (?)">❓</button>
     <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;color:var(--text);font-size:1.2rem;padding:4px 8px;cursor:pointer" title="Toggle theme">🌙</button>
     <button onclick="surpriseMe()" style="background:var(--accent);border:none;color:#fff;border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:600;cursor:pointer">🎲 Surprise Me</button>
     <span id="simkl-user"></span>
@@ -745,6 +750,7 @@ let state = {
   provider: '',
   contentRating: '',
   year: '',
+  wlFilterStatus: 'all',
   simklToken: LS.get('simkl_token'),
   simklUser: LS.get('simkl_user'),
   ratings: LS.get('my_ratings') || {},
@@ -1345,8 +1351,26 @@ document.getElementById('main-content').addEventListener('change', e => {
 });
 
 /* ─────────────────────────────────────────────────────────────────────
-   MODAL CONTROLLER
+   MODAL CONTROLLER & HELP MODAL
    ───────────────────────────────────────────────────────────────────── */
+function openHelpModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-inner').innerHTML = `
+    <h3 style="font-size:1.2rem;margin-bottom:12px">⌨️ Keyboard Shortcuts</h3>
+    <table style="width:100%;font-size:0.85rem;border-collapse:collapse;color:var(--text-muted)">
+      <tr><td style="padding:4px 0"><strong>/</strong> or <strong>s</strong></td><td>Focus Search Bar</td></tr>
+      <tr><td style="padding:4px 0"><strong>t</strong></td><td>Trending View</td></tr>
+      <tr><td style="padding:4px 0"><strong>c</strong></td><td>Calendar View</td></tr>
+      <tr><td style="padding:4px 0"><strong>u</strong></td><td>Upcoming View</td></tr>
+      <tr><td style="padding:4px 0"><strong>w</strong></td><td>My List View</td></tr>
+      <tr><td style="padding:4px 0"><strong>r</strong></td><td>For You View</td></tr>
+      <tr><td style="padding:4px 0"><strong>q</strong></td><td>Quick Rate View</td></tr>
+      <tr><td style="padding:4px 0"><strong>d</strong></td><td>Toggle Light/Dark Theme</td></tr>
+      <tr><td style="padding:4px 0"><strong>Esc</strong></td><td>Close Modal</td></tr>
+    </table>
+  `;
+}
+
 async function openModal(type, id, basicItem = {}) {
   document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('modal-inner').innerHTML = `
@@ -1546,7 +1570,8 @@ document.addEventListener('keydown', e => {
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
   const go = v => { e.preventDefault(); document.querySelector(`[data-view="${v}"]`)?.click(); };
-  if (e.key === '/' || e.key === 's') { e.preventDefault(); document.getElementById('search-input').focus(); }
+  if (e.key === '?' || (e.shiftKey && e.key === '?')) { e.preventDefault(); openHelpModal(); }
+  else if (e.key === '/' || e.key === 's') { e.preventDefault(); document.getElementById('search-input').focus(); }
   else if (e.key === 't') go('trending');
   else if (e.key === 'c') go('calendar');
   else if (e.key === 'u') go('upcoming');
@@ -2067,6 +2092,14 @@ async function renderWatchlist(main, token) {
     main.appendChild(prompt);
   }
 
+  const filterRow = document.createElement('div');
+  filterRow.style.cssText = 'display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap';
+  filterRow.innerHTML = `
+    <button class="filter-chip${state.wlFilterStatus === 'all' ? ' active' : ''}" onclick="state.wlFilterStatus='all';renderView()">All</button>
+    ${statuses.map(s => `<button class="filter-chip${state.wlFilterStatus === s ? ' active' : ''}" onclick="state.wlFilterStatus='${s}';renderView()">${wlStatusLabel(s)}</button>`).join('')}
+  `;
+  main.appendChild(filterRow);
+
   const entries = Object.entries(state.watchlist);
   if (!entries.length) {
     const empty = document.createElement('div');
@@ -2101,12 +2134,8 @@ async function renderWatchlist(main, token) {
     if (token !== renderToken) return;
   }
 
-  const summary = document.createElement('p');
-  summary.style.cssText = 'font-size:.82rem;color:var(--text-muted);margin-bottom:16px';
-  summary.textContent = `${entries.length} title${entries.length > 1 ? 's' : ''} on your list`;
-  main.appendChild(summary);
-
-  statuses.forEach(status => {
+  const renderStatuses = state.wlFilterStatus === 'all' ? statuses : [state.wlFilterStatus];
+  renderStatuses.forEach(status => {
     const items = entries.filter(([, s]) => s === status);
     if (!items.length) return;
 
@@ -2384,7 +2413,7 @@ async function renderQuickRate(main, token) {
     renderQuickRateRow(main, 'Popular TV Shows 📺', 'tv', tvItems);
   } catch(e) {
     if (token !== renderToken) return;
-    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️️</div><p>Failed to load: ${esc(e.message)}</p></div>`;
+    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${esc(e.message)}</p></div>`;
   }
 }
 
@@ -2472,7 +2501,30 @@ function buildQuickRateCard(item, onGone) {
   return card;
 }
 
-/* ── STATS ───────────────────────────────────────────────────────── */
+/* ── STATS & STORAGE ─────────────────────────────────────────────── */
+function getStorageUsage() {
+  let totalBytes = 0;
+  for (let key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      totalBytes += ((localStorage[key].length + key.length) * 2);
+    }
+  }
+  const maxBytes = 5 * 1024 * 1024; // Standard ~5MB limit
+  return {
+    bytes: totalBytes,
+    kb: (totalBytes / 1024).toFixed(1),
+    percent: Math.min(100, ((totalBytes / maxBytes) * 100)).toFixed(1)
+  };
+}
+
+function clearCache() {
+  _cache.clear();
+  state.mediaDetails = {};
+  saveMediaDetails();
+  toast('Cache cleared successfully');
+  renderView();
+}
+
 function renderStats(main) {
   const rated = Object.entries(state.ratings).filter(([, v]) => v > 0);
   const totalRatings = rated.length;
@@ -2501,6 +2553,8 @@ function renderStats(main) {
     .sort(([,a], [,b]) => b - a)
     .slice(0, 5)
     .map(([id, count]) => ({ name: GENRE_MAP[id] || `Genre ${id}`, count }));
+
+  const storage = getStorageUsage();
 
   main.innerHTML = `
     <div class="section">
@@ -2543,7 +2597,7 @@ function renderStats(main) {
       ` : ''}
 
       ${topGenres.length > 0 ? `
-      <div>
+      <div style="margin-bottom:24px">
         <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Top Genres</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           ${topGenres.map(g => `<span class="genre-tag">${esc(g.name)} (${g.count})</span>`).join('')}
@@ -2551,18 +2605,21 @@ function renderStats(main) {
       </div>
       ` : ''}
 
-      ${totalRatings === 0 && totalWatchlist === 0 ? `
-      <div class="empty-state">
-        <div class="icon">📊</div>
-        <p>No stats yet! Start rating and adding items to your watchlist.</p>
-      </div>
-      ` : ''}
-
       <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
-        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Data Management</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Data & Storage Management</div>
+        <div style="background:var(--surface2);padding:12px;border-radius:8px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:6px">
+            <span>Local Storage Used</span>
+            <span>${storage.kb} KB (${storage.percent}%)</span>
+          </div>
+          <div style="background:var(--border);height:6px;border-radius:3px;overflow:hidden">
+            <div style="background:var(--accent);width:${storage.percent}%;height:100%"></div>
+          </div>
+        </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <button class="modal-btn" onclick="exportData()">📥 Export Data</button>
           <button class="modal-btn" onclick="document.getElementById('import-file').click()">📤 Import Data</button>
+          <button class="modal-btn" onclick="clearCache()">🧹 Clear Cache</button>
           <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)" />
         </div>
       </div>
