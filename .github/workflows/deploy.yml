@@ -22,33 +22,35 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # ── Checkout ──────────────────────────────────────────────────
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ── Node.js setup ─────────────────────────────────────────────
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # ── Diagnostics: confirm files exist pre-encrypt ───────────────
-      - name: Pre-encrypt diagnostics
+      # ── Preflight: confirm source file and secrets ─────────────────
+      - name: Preflight checks
         run: |
           echo "=== Working directory ==="
           pwd
           echo "=== Files present ==="
           ls -lh
-          echo "=== shows.html size ==="
-          wc -c shows.html
-          echo "=== First 3 lines of shows.html ==="
-          head -3 shows.html
-          echo "=== PAGE_PASSWORD set? ==="
-          if [ -z "$PAGE_PASSWORD" ]; then
-            echo "NO - PAGE_PASSWORD is empty or not set"
-          else
-            echo "YES - PAGE_PASSWORD is set (length: ${#PAGE_PASSWORD})"
+
+          if [ ! -f showsnew.html ]; then
+            echo "::error::showsnew.html not found in repo root."
+            exit 1
           fi
+          echo "OK: showsnew.html present ($(wc -c < showsnew.html) bytes)"
+          echo "=== First 3 lines ==="
+          head -3 showsnew.html
+
+          if [ -z "$PAGE_PASSWORD" ]; then
+            echo "::error::PAGE_PASSWORD secret is not set."
+            exit 1
+          fi
+          echo "PAGE_PASSWORD is set (length: ${#PAGE_PASSWORD})"
         env:
           PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
 
@@ -56,75 +58,64 @@ jobs:
       - name: Install pagecrypt
         run: |
           npm install -g pagecrypt
-          echo "=== pagecrypt version ==="
           pagecrypt --version
-          echo "=== pagecrypt location ==="
-          which pagecrypt
 
-      # ── Inject secrets into shows.html ────────────────────────────
+      # ── Inject TMDB token ──────────────────────────────────────────
       - name: Inject TMDB token
         env:
           TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
         run: |
           if [ -z "$TMDB_TOKEN" ]; then
-            echo "ERROR: TMDB_TOKEN secret is not set!"
+            echo "::error::TMDB_TOKEN secret is not set."
             exit 1
           fi
-          sed -i "s|__TMDB_TOKEN__|${TMDB_TOKEN}|g" shows.html
-          echo "Token injected. Verifying placeholder is gone:"
-          grep -c "__TMDB_TOKEN__" shows.html && echo "ERROR: placeholder still present" && exit 1 || echo "OK: placeholder replaced"
 
-      # ── Encrypt shows.html ─────────────────────────────────────────
-      - name: Encrypt shows.html
+          if ! grep -q '__TMDB_TOKEN__' showsnew.html; then
+            echo "::error::Placeholder __TMDB_TOKEN__ not found in showsnew.html."
+            exit 1
+          fi
+
+          sed -i "s|__TMDB_TOKEN__|${TMDB_TOKEN}|g" showsnew.html
+
+          if grep -q '__TMDB_TOKEN__' showsnew.html; then
+            echo "::error::Placeholder still present in showsnew.html after sed."
+            exit 1
+          fi
+
+          if ! grep -q "TMDB_TOKEN = 'eyJ" showsnew.html; then
+            echo "::error::Substituted value does not look like a TMDB JWT."
+            exit 1
+          fi
+
+          echo "OK: token injected into showsnew.html."
+
+      # ── Encrypt showsnew.html ──────────────────────────────────────
+      - name: Encrypt showsnew.html
         env:
           PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
         run: |
-          if [ -z "$PAGE_PASSWORD" ]; then
-            echo "ERROR: PAGE_PASSWORD secret is not set!"
-            echo "Go to: Settings > Secrets and variables > Actions > New repository secret"
-            echo "Name: PAGE_PASSWORD  Value: your chosen password"
+          echo "Input size: $(wc -c < showsnew.html) bytes"
+          pagecrypt showsnew.html showsnew.html.enc "$PAGE_PASSWORD"
+
+          if [ ! -f showsnew.html.enc ]; then
+            echo "::error::pagecrypt produced no output."
             exit 1
           fi
 
-          echo "Input file size: $(wc -c < shows.html) bytes"
-          echo "Running: pagecrypt shows.html shows_encrypted.html [password]"
+          echo "Encrypted size: $(wc -c < showsnew.html.enc) bytes"
+          mv showsnew.html.enc showsnew.html
+          echo "Final size: $(wc -c < showsnew.html) bytes"
 
-          pagecrypt shows.html shows_encrypted.html "$PAGE_PASSWORD"
-          EXIT_CODE=$?
-
-          echo "pagecrypt exit code: $EXIT_CODE"
-
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo "ERROR: pagecrypt failed with exit code $EXIT_CODE"
-            exit 1
-          fi
-
-          if [ ! -f shows_encrypted.html ]; then
-            echo "ERROR: shows_encrypted.html was not created"
-            exit 1
-          fi
-
-          echo "Encrypted file size: $(wc -c < shows_encrypted.html) bytes"
-          echo "=== First 3 lines of encrypted output ==="
-          head -3 shows_encrypted.html
-
-          mv shows_encrypted.html shows.html
-          echo "=== DONE. Final shows.html size: $(wc -c < shows.html) bytes ==="
-
-      # ── Confirm encryption worked ──────────────────────────────────
+      # ── Verify encryption ──────────────────────────────────────────
       - name: Verify encryption
         run: |
-          echo "=== Checking shows.html is encrypted ==="
-          # Encrypted pagecrypt file starts with <!DOCTYPE html> but should NOT contain raw script tags from original
-          if grep -q "const TMDB_TOKEN" shows.html; then
-            echo "WARNING: shows.html still appears to be unencrypted (TMDB_TOKEN visible)"
-          else
-            echo "OK: shows.html appears encrypted (TMDB_TOKEN not visible in plaintext)"
+          if grep -q "const TMDB_TOKEN" showsnew.html; then
+            echo "::error::showsnew.html still contains plaintext JS — encryption failed."
+            exit 1
           fi
-          echo "Final file size: $(wc -c < shows.html) bytes"
-          head -5 shows.html
+          echo "OK: showsnew.html is encrypted ($(wc -c < showsnew.html) bytes)."
 
-      # ── Upload artifact for Pages ──────────────────────────────────
+      # ── Upload & deploy ────────────────────────────────────────────
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -133,7 +124,6 @@ jobs:
         with:
           path: '.'
 
-      # ── Deploy to GitHub Pages ─────────────────────────────────────
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
