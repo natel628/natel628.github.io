@@ -46,6 +46,7 @@
     a { color: inherit; text-decoration: none; }
     button { cursor: pointer; font-family: inherit; }
     img { display: block; }
+    :focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; border-radius: 4px; }
 
     /* ─── Top Nav ───────────────────────────────────────────────────── */
     .topnav {
@@ -117,6 +118,41 @@
       font-weight: 600;
     }
     #search-btn:hover { filter: brightness(1.15); }
+    #search-clear {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: .85rem;
+      display: none;
+    }
+    #search-clear:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ─── Recent searches ───────────────────────────────────────────── */
+    .recent-searches {
+      display: none;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 8px 24px 0;
+      font-size: .75rem;
+      color: var(--text-muted);
+    }
+    .recent-searches.show { display: flex; }
+    .recent-chip {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: .76rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .recent-chip:hover { border-color: var(--accent); color: var(--text); }
+    .recent-chip .x { margin-left: 6px; opacity: .6; }
+    .recent-chip .x:hover { opacity: 1; color: var(--accent); }
 
     /* ─── Filter row ────────────────────────────────────────────────── */
     .filter-row {
@@ -152,6 +188,7 @@
       outline: none;
       cursor: pointer;
     }
+    select.filter-select.filtered { border-color: var(--accent2); color: var(--accent2); font-weight: 600; }
     label.filter-toggle {
       display: inline-flex;
       align-items: center;
@@ -168,6 +205,18 @@
     }
     label.filter-toggle:hover { border-color: var(--accent); color: var(--text); }
     label.filter-toggle input { accent-color: var(--accent); cursor: pointer; }
+    label.filter-toggle.active { border-color: var(--accent2); color: var(--accent2); }
+    #filter-reset {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: .78rem;
+      display: none;
+    }
+    #filter-reset.show { display: inline-block; }
+    #filter-reset:hover { border-color: var(--accent); color: var(--text); }
 
     /* ─── Main layout ───────────────────────────────────────────────── */
     .main { padding: 16px 24px 40px; }
@@ -179,6 +228,44 @@
       margin-bottom: 14px;
     }
     .section-title { font-size: 1.05rem; font-weight: 700; }
+
+    /* ─── Notices & empty rows ──────────────────────────────────────── */
+    .notice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+    .notice .notice-icon { font-size: 1.1rem; flex: 0 0 auto; }
+    .notice .notice-body { flex: 1; min-width: 0; }
+    .notice button { flex: 0 0 auto; }
+    .row-empty {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--text-muted);
+      font-size: .85rem;
+      padding: 4px 0;
+    }
+    .link-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: .78rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .link-btn:hover { border-color: var(--accent); background: var(--surface2); }
 
     /* ─── Horizontal scroll row ─────────────────────────────────────── */
     .row-wrap {
@@ -301,6 +388,7 @@
       transition: opacity 0.2s;
     }
     .card:hover .card-rate-bar { opacity: 1; }
+    .card:focus-within .card-rate-bar { opacity: 1; }
     .card.rated .card-rate-bar { opacity: 1; }
     .card-rate-bar::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -321,7 +409,6 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
     .card-rate-emoji { font-size: 1rem; min-width: 22px; text-align: center; }
-
     /* ─── Calendar grid ─────────────────────────────────────────────── */
     .cal-grid {
       display: grid;
@@ -395,6 +482,13 @@
       grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
       gap: 14px;
     }
+    .watchlist-toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
 
     /* ─── Modal / detail overlay ────────────────────────────────────── */
     #modal-overlay {
@@ -459,6 +553,8 @@
       border-radius: 12px;
       font-size: 0.78rem;
     }
+    .genre-tag.clickable { cursor: pointer; transition: all .15s; }
+    .genre-tag.clickable:hover { border-color: var(--accent); color: var(--accent); }
     .modal-overview { font-size: 0.88rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 16px; }
     .modal-scores { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
     .score-box {
@@ -520,7 +616,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 12px 20px;
+      padding: 12px 16px;
       border-radius: 10px;
       font-size: 0.88rem;
       z-index: 300;
@@ -528,8 +624,24 @@
       transform: translateY(16px);
       transition: opacity .3s, transform .3s;
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: min(420px, calc(100vw - 48px));
     }
-    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    #toast-msg { flex: 1; min-width: 0; }
+    .undo-btn {
+      background: var(--accent2);
+      border: none;
+      color: #1d1d1f;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: .78rem;
+      flex: 0 0 auto;
+    }
+    .undo-btn:hover { filter: brightness(1.1); }
 
     /* ─── Skeleton loader ───────────────────────────────────────────── */
     .skeleton {
@@ -547,7 +659,7 @@
     /* ─── Responsiveness ────────────────────────────────────────────── */
     @media (max-width: 700px) {
       :root { --card-w: 130px; }
-      .topnav, .search-wrap, .filter-row, .main { padding-left: 14px; padding-right: 14px; }
+      .topnav, .search-wrap, .filter-row, .main, .recent-searches { padding-left: 14px; padding-right: 14px; }
       .cal-grid { grid-template-columns: repeat(3, 1fr); }
       .cal-day-header:nth-child(n+4) { display: none; }
     }
@@ -613,6 +725,7 @@
       font-size: 0.9rem;
     }
     .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state .empty-actions { margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
     .simkl-prompt {
       background: var(--surface);
@@ -649,6 +762,18 @@
       font-size: 0.78rem;
     }
     [data-theme="light"] #config-warning code { background: rgba(0,0,0,.08); }
+
+    /* ─── Reduced motion ─────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+      html { scroll-behavior: auto; }
+      .card-row { scroll-behavior: auto; }
+      .card:hover { transform: none; }
+    }
   </style>
 </head>
 <body>
@@ -676,21 +801,23 @@
 </nav>
 
 <div id="config-warning" role="status">
-  Running with an unreplaced <code>__TMDB_TOKEN__</code> placeholder.
+  Running with an unreplaced <code>TMDB_TOKEN</code> placeholder.
   API calls will fail until the token is injected at build time.
 </div>
 
 <div class="search-wrap">
-  <input id="search-input" type="text" placeholder="Search movies & shows…" />
+  <input id="search-input" type="text" placeholder="Search movies & shows…" autocomplete="off" />
   <button id="search-btn" onclick="doSearch()">Search</button>
+  <button id="search-clear" onclick="clearSearch()" title="Clear search">✕</button>
 </div>
+<div class="recent-searches" id="recent-searches"></div>
 
 <div class="filter-row" id="filter-row">
-  <span class="filter-label">Type:</span>
+  <span class="filter-label" id="type-label">Type:</span>
   <span class="filter-chip active" data-filter-type="all">All</span>
   <span class="filter-chip" data-filter-type="movie">Movies</span>
   <span class="filter-chip" data-filter-type="tv">TV</span>
-  <span class="filter-label" style="margin-left:12px">Genre:</span>
+  <span class="filter-label" id="genre-label" style="margin-left:12px">Genre:</span>
   <select class="filter-select" id="genre-filter">
     <option value="">Any Genre</option>
   </select>
@@ -700,7 +827,7 @@
     <option value="release_date.desc">Newest</option>
     <option value="release_date.asc">Oldest</option>
   </select>
-  <select class="filter-select" id="provider-filter">
+  <select class="filter-select" id="provider-filter" title="Streaming service">
     <option value="">Any Streaming Service</option>
     <option value="8">Netflix</option>
     <option value="9">Amazon Prime</option>
@@ -711,9 +838,25 @@
     <option value="387">Peacock Premium</option>
     <option value="531">Paramount+</option>
     <option value="350">Apple TV+</option>
-    <option value="2">Apple TV</option>
+    <option value="2">Apple TV (store)</option>
   </select>
-  <select class="filter-select" id="rating-filter">
+  <select class="filter-select" id="region-filter" title="Streaming region for availability lookups">
+    <option value="US">🇺🇸 US</option>
+    <option value="GB">🇬🇧 UK</option>
+    <option value="CA">🇨🇦 Canada</option>
+    <option value="AU">🇦🇺 Australia</option>
+    <option value="DE">🇩🇪 Germany</option>
+    <option value="FR">🇫🇷 France</option>
+    <option value="ES">🇪🇸 Spain</option>
+    <option value="IT">🇮🇹 Italy</option>
+    <option value="BR">🇧🇷 Brazil</option>
+    <option value="MX">🇲🇽 Mexico</option>
+    <option value="IN">🇮🇳 India</option>
+    <option value="JP">🇯🇵 Japan</option>
+    <option value="NL">🇳🇱 Netherlands</option>
+    <option value="SE">🇸🇪 Sweden</option>
+  </select>
+  <select class="filter-select" id="rating-filter" title="Content rating">
     <option value="">Any Rating</option>
     <option value="NR">NR / Unrated</option>
     <option value="G">G</option>
@@ -728,10 +871,11 @@
   <select class="filter-select" id="year-filter">
     <option value="">Any Year</option>
   </select>
-  <label class="filter-toggle" title="Hide items you've already rated">
+  <label class="filter-toggle" id="hide-rated-label" title="Hide items you've already rated">
     <input type="checkbox" id="hide-rated-toggle" />
     <span>Hide rated</span>
   </label>
+  <button id="filter-reset" onclick="resetFilters()" title="Clear all filters">✕ Clear filters</button>
 </div>
 
 <main class="main" id="main-content"></main>
@@ -743,7 +887,7 @@
   </div>
 </div>
 
-<div id="toast" role="status" aria-live="polite"></div>
+<div id="toast" role="status" aria-live="polite"><span id="toast-msg"></span></div>
 
 <script>
 /* ─────────────────────────────────────────────────────────────────────
@@ -755,12 +899,14 @@ const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
 
 const SIMKL_CLIENT_ID = '823280121411d86d7f3bd2491cc84db961e50d16416f6d5afe53d8dd7a07dcda';
-const SIMKL_REDIRECT  = 'https://natel628.github.io/shows.html'; // ← UPDATE THIS to match your deployed URL and Simkl OAuth app's redirect
+const SIMKL_REDIRECT  = 'https://natel628.github.io/showsnew.html'; // must match the deployed filename and the Simkl OAuth app
 const SIMKL_AUTH_URL  = 'https://simkl.com/oauth2/authorize';
 const SIMKL_TOKEN_URL = 'https://api.simkl.com/oauth2/token';
 const SIMKL_API       = 'https://api.simkl.com';
 
 const MEDIA_DETAILS_CAP = 500;
+const API_CACHE_MAX     = 400;
+const RECENT_SEARCH_MAX = 8;
 
 const GENRE_MAP = {
   28: 'Action', 35: 'Comedy', 18: 'Drama', 27: 'Horror', 878: 'Sci-Fi',
@@ -773,6 +919,27 @@ const GENRE_MAP = {
 
 const WL_STATUSES = ['plantowatch', 'watching', 'completed', 'hold', 'dropped'];
 
+const REGIONS = [
+  ['US', 'United States'], ['GB', 'United Kingdom'], ['CA', 'Canada'],
+  ['AU', 'Australia'], ['DE', 'Germany'], ['FR', 'France'], ['ES', 'Spain'],
+  ['IT', 'Italy'], ['BR', 'Brazil'], ['MX', 'Mexico'], ['IN', 'India'],
+  ['JP', 'Japan'], ['NL', 'Netherlands'], ['SE', 'Sweden'],
+];
+
+/* Which filters are meaningful in which view. Single source of truth for
+   both the control visibility and the client-side filter pipeline, so a
+   control can never be shown while silently doing nothing. */
+const FILTER_VIEWS = {
+  type:          ['trending', 'upcoming'],
+  genre:         ['trending', 'upcoming', 'recommended'],
+  sort:          ['trending', 'upcoming'],
+  provider:      ['trending', 'upcoming', 'recommended'],
+  region:        ['trending', 'upcoming', 'recommended'],
+  contentRating: ['trending', 'upcoming'],
+  year:          ['trending', 'upcoming'],
+  hideRated:     ['trending', 'upcoming', 'recommended'],
+};
+
 /* ─────────────────────────────────────────────────────────────────────
    UTILITIES
    ───────────────────────────────────────────────────────────────────── */
@@ -782,8 +949,16 @@ function esc(s) {
   }[c]));
 }
 const pad2 = n => String(n).padStart(2, '0');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 function localISO(d) {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+function todayISO() { return localISO(new Date()); }
+function shiftDaysISO(base, days) {
+  const d = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+  d.setDate(d.getDate() + days);
+  return localISO(d);
 }
 
 async function promiseAllChunked(items, fn, chunkSize = 5) {
@@ -796,6 +971,17 @@ async function promiseAllChunked(items, fn, chunkSize = 5) {
   return results;
 }
 
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 /* ─────────────────────────────────────────────────────────────────────
    STATE MANAGEMENT
    ───────────────────────────────────────────────────────────────────── */
@@ -806,18 +992,22 @@ const LS = {
 
 let state = {
   view: 'trending',
-  filterType: 'all',
-  genre: '',
-  sort: 'popularity.desc',
-  provider: '',
-  contentRating: '',
-  year: '',
+  filterType: LS.get('f_type') || 'all',
+  genre: LS.get('f_genre') || '',
+  sort: LS.get('f_sort') || 'popularity.desc',
+  provider: LS.get('f_provider') || '',
+  region: LS.get('f_region') || 'US',
+  contentRating: LS.get('f_rating') || '',
+  year: LS.get('f_year') || '',
   hideRated: !!LS.get('hide_rated'),
   wlFilterStatus: 'all',
+  wlSort: LS.get('wl_sort') || 'added',
+  wlQuery: '',
   simklToken: LS.get('simkl_token'),
   simklUser: LS.get('simkl_user'),
   ratings: LS.get('my_ratings') || {},
   watchlist: LS.get('my_watchlist') || {},
+  wlAdded: LS.get('wl_added') || {},
   mediaDetails: LS.get('media_details_cache') || {},
   simklLibrary: [],
   calYear: new Date().getFullYear(),
@@ -828,8 +1018,17 @@ let state = {
 };
 
 function saveRatings()      { LS.set('my_ratings',          state.ratings); }
-function saveWatchlist()    { LS.set('my_watchlist',        state.watchlist); }
+function saveWatchlist()    { LS.set('my_watchlist',        state.watchlist); LS.set('wl_added', state.wlAdded); }
 function saveSimkl()        { LS.set('simkl_token',         state.simklToken); LS.set('simkl_user', state.simklUser); }
+function savePrefs() {
+  LS.set('f_type',     state.filterType);
+  LS.set('f_genre',    state.genre);
+  LS.set('f_sort',     state.sort);
+  LS.set('f_provider', state.provider);
+  LS.set('f_region',   state.region);
+  LS.set('f_rating',   state.contentRating);
+  LS.set('f_year',     state.year);
+}
 function saveMediaDetails() {
   const entries = Object.entries(state.mediaDetails);
   if (entries.length > MEDIA_DETAILS_CAP) {
@@ -855,9 +1054,93 @@ let calToken = 0;
 let calGridToken = 0;
 
 /* ─────────────────────────────────────────────────────────────────────
+   FILTER MODEL
+   ───────────────────────────────────────────────────────────────────── */
+function filterVisible(name, view = state.view) {
+  return (FILTER_VIEWS[name] || []).includes(view);
+}
+function providerParams() {
+  return state.provider
+    ? { watch_region: state.region, with_watch_providers: state.provider }
+    : {};
+}
+function providerLabel() {
+  const sel = document.getElementById('provider-filter');
+  return (sel && sel.selectedOptions && sel.selectedOptions[0] && sel.selectedOptions[0].text) || 'this service';
+}
+function regionLabel() {
+  const found = REGIONS.find(([code]) => code === state.region);
+  return found ? found[1] : state.region;
+}
+function activeFilterCount() {
+  let n = 0;
+  if (state.filterType !== 'all') n++;
+  if (state.genre)         n++;
+  if (state.provider)      n++;
+  if (state.contentRating) n++;
+  if (state.year)          n++;
+  if (state.hideRated)     n++;
+  if (state.sort !== 'popularity.desc') n++;
+  return n;
+}
+function resetFilters() {
+  state.filterType     = 'all';
+  state.genre          = '';
+  state.sort           = 'popularity.desc';
+  state.provider       = '';
+  state.contentRating  = '';
+  state.year           = '';
+  state.hideRated      = false;
+  savePrefs();
+  saveHideRated();
+  syncFilterControls();
+  renderView();
+}
+
+/* Reflect state back into the controls (used on init and after a reset). */
+function syncFilterControls() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  set('genre-filter', state.genre);
+  set('sort-filter', state.sort);
+  set('provider-filter', state.provider);
+  set('region-filter', state.region);
+  set('rating-filter', state.contentRating);
+  set('year-filter', state.year);
+
+  document.querySelectorAll('[data-filter-type]').forEach(c => {
+    c.classList.toggle('active', c.dataset.filterType === state.filterType);
+  });
+
+  const hideEl = document.getElementById('hide-rated-toggle');
+  if (hideEl) hideEl.checked = state.hideRated;
+  document.getElementById('hide-rated-label')?.classList.toggle('active', state.hideRated);
+
+  document.getElementById('filter-reset')?.classList.toggle('show', activeFilterCount() > 0);
+
+  ['genre-filter', 'sort-filter', 'provider-filter', 'rating-filter', 'year-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const def = { 'sort-filter': 'popularity.desc' }[id] ?? '';
+    el.classList.toggle('filtered', el.value !== def);
+  });
+}
+
+function addNotice(html, id) {
+  const main = document.getElementById('main-content');
+  if (!main) return;
+  if (id && main.querySelector(`.notice[data-notice="${id}"]`)) return;
+  const el = document.createElement('div');
+  el.className = 'notice';
+  if (id) el.dataset.notice = id;
+  el.innerHTML = `<span class="notice-icon">ℹ️</span><div class="notice-body">${html}</div>`;
+  main.prepend(el);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
    API CACHE LAYER
    ───────────────────────────────────────────────────────────────────── */
 const _cache = new Map();
+const _inflight = new Map();
 const CACHE_TTL = {
   trending: 5 * 60 * 1000,
   discover: 10 * 60 * 1000,
@@ -878,8 +1161,10 @@ function cacheTTL(path) {
 }
 
 function cacheKey(path, params) {
-  const sorted = Object.entries(params).sort(([a],[b]) => a.localeCompare(b));
-  return path + '?' + sorted.map(([k,v]) => `${k}=${v}`).join('&');
+  const sorted = Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== null && v !== '')
+    .sort(([a], [b]) => a.localeCompare(b));
+  return path + '?' + sorted.map(([k, v]) => `${k}=${v}`).join('&');
 }
 
 function cacheGet(key) {
@@ -890,6 +1175,14 @@ function cacheGet(key) {
 }
 
 function cacheSet(key, data, ttl) {
+  // Bound the cache so a long-lived tab cannot grow it without limit.
+  if (!_cache.has(key) && _cache.size >= API_CACHE_MAX) {
+    let soonestKey = null, soonest = Infinity;
+    for (const [k, v] of _cache) {
+      if (v.expires < soonest) { soonest = v.expires; soonestKey = k; }
+    }
+    if (soonestKey !== null) _cache.delete(soonestKey);
+  }
   _cache.set(key, { data, expires: Date.now() + ttl });
 }
 
@@ -901,16 +1194,63 @@ async function tmdb(path, params = {}) {
   const cached = cacheGet(key);
   if (cached) return cached;
 
-  const url = new URL(TMDB_BASE + path);
-  url.searchParams.set('language', 'en-US');
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${TMDB_TOKEN}` }
-  });
-  if (!res.ok) throw new Error(`TMDB ${res.status}: ${path}`);
-  const data = await res.json();
-  cacheSet(key, data, cacheTTL(path));
-  return data;
+  // Coalesce identical concurrent requests instead of firing duplicates.
+  if (_inflight.has(key)) return _inflight.get(key);
+
+  const promise = (async () => {
+    const url = new URL(TMDB_BASE + path);
+    url.searchParams.set('language', 'en-US');
+    Object.entries(params).forEach(([k, v]) => {
+      if (v === undefined || v === null || v === '') return;
+      url.searchParams.set(k, v);
+    });
+
+    let lastError = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) await sleep(500 * 2 ** (attempt - 1));
+      let res;
+      try {
+        res = await fetch(url, { headers: { Authorization: `Bearer ${TMDB_TOKEN}` } });
+      } catch (netErr) {
+        lastError = netErr;
+        continue;
+      }
+      // Retry transient throttling and server errors; fail fast on real 4xx.
+      if (res.status === 429 || res.status >= 500) {
+        lastError = new Error(`TMDB ${res.status}: ${path}`);
+        continue;
+      }
+      if (!res.ok) throw new Error(`TMDB ${res.status}: ${path}`);
+      const data = await res.json();
+      cacheSet(key, data, cacheTTL(path));
+      return data;
+    }
+    throw lastError || new Error(`TMDB request failed: ${path}`);
+  })();
+
+  _inflight.set(key, promise);
+  try { return await promise; } finally { _inflight.delete(key); }
+}
+
+/* Discover, but never let a streaming filter produce an empty row.
+   Future/unreleased titles frequently have no provider listings published
+   yet, which is what made "select a service -> no shows" happen. If the
+   provider-filtered query comes back empty we retry unfiltered and report
+   that we did, so the user sees content plus an explanation. */
+async function discoverSafe(path, baseParams) {
+  if (!state.provider) {
+    const data = await tmdb(path, baseParams);
+    return { items: data.results || [], providerApplied: false };
+  }
+  try {
+    const filtered = await tmdb(path, { ...baseParams, ...providerParams() });
+    const items = filtered.results || [];
+    if (items.length) return { items, providerApplied: true };
+  } catch (e) {
+    console.warn('Provider-filtered discover failed, retrying unfiltered:', e);
+  }
+  const data = await tmdb(path, baseParams);
+  return { items: data.results || [], providerApplied: false, fellBack: true };
 }
 
 function sortFor(type) {
@@ -922,11 +1262,10 @@ function yearParams(type) {
   if (!state.year) return {};
   return type === 'movie' ? { primary_release_year: state.year } : { first_air_date_year: state.year };
 }
-
 async function getContentRating(type, id) {
-  const cacheKeyStr = mediaKey(type, id);
-  if (state.mediaDetails[cacheKeyStr]?.contentRating !== undefined) {
-    return state.mediaDetails[cacheKeyStr].contentRating;
+  const k = mediaKey(type, id);
+  if (state.mediaDetails[k]?.contentRating !== undefined) {
+    return state.mediaDetails[k].contentRating;
   }
   try {
     let cert = '';
@@ -942,8 +1281,9 @@ async function getContentRating(type, id) {
       const us = (data.results || []).find(r => r.iso_3166_1 === 'US');
       cert = us?.rating || '';
     }
-    state.mediaDetails[cacheKeyStr] = { ...(state.mediaDetails[cacheKeyStr] || {}), contentRating: cert, _ts: Date.now() };
-    saveMediaDetails();
+    // Persisting is batched by the caller so we don't reserialize the whole
+    // media-details blob once per title.
+    state.mediaDetails[k] = { ...(state.mediaDetails[k] || {}), contentRating: cert, _ts: Date.now() };
     return cert;
   } catch (e) { console.warn('Content rating fetch error:', e); }
   return '';
@@ -952,13 +1292,14 @@ async function getContentRating(type, id) {
 async function getProviders(type, id) {
   try {
     const data = await tmdb(`/${type}/${id}/watch/providers`);
-    const us = data.results && data.results.US;
-    if (!us) return null;
+    const country = data.results && (data.results[state.region] || data.results.US);
+    if (!country) return null;
     return {
-      flatrate: us.flatrate || [],
-      rent:     us.rent     || [],
-      buy:      us.buy      || [],
-      link:     us.link     || '',
+      flatrate: country.flatrate || [],
+      rent:     country.rent     || [],
+      buy:      country.buy      || [],
+      link:     country.link     || '',
+      region:   data.results[state.region] ? state.region : 'US',
     };
   } catch (e) { console.warn('Providers fetch error:', e); return null; }
 }
@@ -1105,7 +1446,10 @@ async function syncSimklLibrary() {
         const key  = mediaKey(type, tmdbId);
 
         if (item.user_rating) state.ratings[key] = item.user_rating;
-        if (item.status && simklToLocal[item.status]) state.watchlist[key] = simklToLocal[item.status];
+        if (item.status && simklToLocal[item.status]) {
+          if (!state.watchlist[key]) state.wlAdded[key] = Date.now();
+          state.watchlist[key] = simklToLocal[item.status];
+        }
         if (src?.title && !state.mediaDetails[key]) {
           state.mediaDetails[key] = { title: src.title, media_type: type, id: tmdbId, _ts: Date.now() };
         }
@@ -1114,6 +1458,7 @@ async function syncSimklLibrary() {
       saveRatings();
       saveWatchlist();
       saveMediaDetails();
+      recomputeAffinity();
       toast(`Synced ${lib.length} items from Simkl`);
     } catch (e) {
       toast('Simkl sync failed: ' + e.message);
@@ -1183,12 +1528,28 @@ function posterUrl(path) {
 }
 
 let _toastTimer = null;
-function toast(msg, duration = 3000) {
+function toast(msg, opts = 3000) {
+  const o = typeof opts === 'number' ? { duration: opts } : (opts || {});
   const el = document.getElementById('toast');
-  el.textContent = msg;
+  if (!el) return;
+  el.querySelectorAll('.undo-btn').forEach(b => b.remove());
+  document.getElementById('toast-msg').textContent = msg;
+
+  if (o.actionLabel && typeof o.onAction === 'function') {
+    const btn = document.createElement('button');
+    btn.className = 'undo-btn';
+    btn.textContent = o.actionLabel;
+    btn.addEventListener('click', () => {
+      clearTimeout(_toastTimer);
+      el.classList.remove('show');
+      o.onAction();
+    });
+    el.appendChild(btn);
+  }
+
   el.classList.add('show');
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), duration);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), o.duration ?? 3000);
 }
 
 function toggleTheme() {
@@ -1332,7 +1693,7 @@ function buildCard(item) {
   card.innerHTML = `
     <span class="card-badge ${type}">${type === 'movie' ? '🎬' : '📺'}</span>
     ${poster
-      ? `<img class="card-poster" src="${esc(poster)}" alt="${esc(title)}" loading="lazy" />`
+      ? `<img class="card-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" />`
       : `<div class="card-poster-placeholder">🎬</div>`}
     <div class="card-body">
       <div class="card-title">${esc(title)}</div>
@@ -1345,7 +1706,7 @@ function buildCard(item) {
         <div class="card-rate-row">
           <span class="card-rate-emoji">${myRating > 0 ? ratingEmoji(myRating) : '·'}</span>
           <input type="range" class="card-rate-bar" min="0" max="10" step="1"
-            value="${myRating}" aria-label="Rate 0-10" ${rangeStyle} />
+            value="${myRating}" aria-label="Rate ${esc(title)} from 0 to 10" ${rangeStyle} />
           <span class="card-rate-label">${myRating > 0 ? myRating : '—'}</span>
         </div>
       </div>
@@ -1358,6 +1719,34 @@ function buildCard(item) {
 
 function wlStatusLabel(s) {
   return { watching: '▶ Watching', completed: '✅ Completed', plantowatch: '🔖 Plan to Watch', hold: '⏸ On Hold', dropped: '❌ Dropped' }[s] || s;
+}
+
+/* Push a rating into every rendered copy of a title (cards + open modal). */
+function applyRatingToDom(type, id, val) {
+  document.querySelectorAll(`.card[data-type="${type}"][data-id="${id}"]`).forEach(card => {
+    const slider = card.querySelector('.card-rate-bar');
+    const emoji  = card.querySelector('.card-rate-emoji');
+    const label  = card.querySelector('.card-rate-label');
+    card.classList.toggle('rated', val > 0);
+    if (slider) {
+      slider.value = val;
+      slider.style.background = val > 0
+        ? `linear-gradient(to right, var(--accent2) ${val * 10}%, var(--border) ${val * 10}%)`
+        : '';
+    }
+    if (emoji) emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
+    if (label) label.textContent = val > 0 ? val : '—';
+  });
+
+  const inner = document.getElementById('modal-inner');
+  if (inner && inner.dataset.key === mediaKey(type, id)) {
+    const ms = document.getElementById('modal-rating-slider');
+    const me = document.getElementById('modal-rating-emoji');
+    const mv = document.getElementById('modal-rating-val');
+    if (ms) ms.value = val;
+    if (me) me.textContent = val > 0 ? ratingEmoji(val) : '·';
+    if (mv) mv.textContent = val > 0 ? val + '/10' : 'Not rated';
+  }
 }
 
 function updateCardStatus(type, id) {
@@ -1388,6 +1777,8 @@ function updateCardStatus(type, id) {
 
 function setRating(type, id, val, genreIds, item) {
   const key = mediaKey(type, id);
+  const prevVal = state.ratings[key] || 0;
+
   if (val > 0) state.ratings[key] = val; else delete state.ratings[key];
 
   const prev = state.mediaDetails[key] || {};
@@ -1400,7 +1791,52 @@ function setRating(type, id, val, genreIds, item) {
   saveRatings();
   saveMediaDetails();
   recomputeAffinity();
-  toast(val > 0 ? `${ratingEmoji(val)} Rated ${val}/10` : 'Rating removed');
+  applyRatingToDom(type, id, val);
+
+  if (val === prevVal) return;
+
+  toast(val > 0 ? `${ratingEmoji(val)} Rated ${val}/10` : 'Rating removed', {
+    duration: 6000,
+    actionLabel: 'Undo',
+    onAction: () => {
+      if (prevVal > 0) state.ratings[key] = prevVal; else delete state.ratings[key];
+      saveRatings();
+      recomputeAffinity();
+      applyRatingToDom(type, id, prevVal);
+      if (state.simklToken) pushRatingToSimkl(type, id, prevVal);
+      toast('Rating restored');
+    },
+  });
+}
+/* ─────────────────────────────────────────────────────────────────────
+   ACTION DISPATCH (used by dynamically rendered markup)
+   ───────────────────────────────────────────────────────────────────── */
+function handleAction(action, el) {
+  switch (action) {
+    case 'trending':    document.querySelector('[data-view="trending"]')?.click(); break;
+    case 'upcoming':    document.querySelector('[data-view="upcoming"]')?.click(); break;
+    case 'quickrate':   document.querySelector('[data-view="quickrate"]')?.click(); break;
+    case 'watchlist':   document.querySelector('[data-view="watchlist"]')?.click(); break;
+    case 'reset-filters': resetFilters(); break;
+    case 'export-ics':  exportCalendarICS(); break;
+    case 'simkl-auth':  simklAuth(); break;
+    case 'retry':       renderView(); break;
+    case 'dismiss-notice': el.closest('.notice')?.remove(); break;
+    case 'clear-provider':
+      state.provider = '';
+      savePrefs();
+      syncFilterControls();
+      renderView();
+      break;
+    case 'genre':
+      state.genre = el.dataset.genre || '';
+      savePrefs();
+      syncFilterControls();
+      closeModal();
+      document.querySelector('[data-view="trending"]')?.click();
+      break;
+    default: console.warn('Unknown action:', action);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -1417,6 +1853,9 @@ document.getElementById('main-content').addEventListener('click', e => {
     return;
   }
 
+  const actionEl = e.target.closest('[data-action]');
+  if (actionEl) { handleAction(actionEl.dataset.action, actionEl); return; }
+
   if (e.target.closest('.thumbs-btn') || e.target.classList.contains('card-rate-bar')) {
     return;
   }
@@ -1429,40 +1868,51 @@ document.getElementById('main-content').addEventListener('click', e => {
   }
 });
 
-document.getElementById('main-content').addEventListener('input', e => {
-  if (e.target.classList.contains('card-rate-bar')) {
-    const slider = e.target;
-    const card = slider.closest('.card');
-    const emoji = card.querySelector('.card-rate-emoji');
-    const label = card.querySelector('.card-rate-label');
-    const val = parseInt(slider.value);
+// Keyboard activation for cards (they carry role=button + tabindex).
+document.getElementById('main-content').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const card = e.target.closest('.card');
+  // Only when the card itself is focused, not its inner slider/handles.
+  if (!card || e.target !== card) return;
+  e.preventDefault();
+  const type = card.dataset.type;
+  const id = Number(card.dataset.id);
+  if (type && id) openModal(type, id);
+});
 
-    emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
-    label.textContent = val > 0 ? val : '—';
-    const pct = val * 10;
-    slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
-  }
+document.getElementById('main-content').addEventListener('input', e => {
+  if (!e.target.classList.contains('card-rate-bar')) return;
+  const slider = e.target;
+  const card = slider.closest('.card');
+  const emoji = card.querySelector('.card-rate-emoji');
+  const label = card.querySelector('.card-rate-label');
+  const val = parseInt(slider.value);
+
+  emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
+  label.textContent = val > 0 ? val : '—';
+  const pct = val * 10;
+  slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
 });
 
 document.getElementById('main-content').addEventListener('change', e => {
-  if (e.target.classList.contains('card-rate-bar')) {
-    const slider = e.target;
-    const card = slider.closest('.card');
-    const type = card.dataset.type;
-    const id = Number(card.dataset.id);
-    const val = parseInt(slider.value);
-    const genreIds = card.dataset.genres ? card.dataset.genres.split(',').map(Number) : [];
+  if (!e.target.classList.contains('card-rate-bar')) return;
+  const slider = e.target;
+  const card = slider.closest('.card');
+  const type = card.dataset.type;
+  const id = Number(card.dataset.id);
+  const val = parseInt(slider.value);
+  const genreIds = card.dataset.genres ? card.dataset.genres.split(',').map(Number) : [];
 
-    setRating(type, id, val, genreIds, { title: card.querySelector('.card-title')?.textContent });
-    card.classList.toggle('rated', val > 0);
-    if (state.simklToken) pushRatingToSimkl(type, id, val);
-  }
+  setRating(type, id, val, genreIds, { title: card.querySelector('.card-title')?.textContent });
+  if (state.simklToken) pushRatingToSimkl(type, id, val);
 });
 
 /* ─────────────────────────────────────────────────────────────────────
    MODAL CARD DELEGATION
    ───────────────────────────────────────────────────────────────────── */
 document.getElementById('modal-overlay').addEventListener('click', e => {
+  const actionEl = e.target.closest('[data-action]');
+  if (actionEl) { handleAction(actionEl.dataset.action, actionEl); return; }
   if (e.target.closest('.thumbs-btn') || e.target.classList.contains('card-rate-bar')) return;
   const card = e.target.closest('.card');
   if (!card) return;
@@ -1470,6 +1920,7 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
   const id   = Number(card.dataset.id);
   if (type && id) openModal(type, id);
 });
+
 document.getElementById('modal-overlay').addEventListener('input', e => {
   if (!e.target.classList.contains('card-rate-bar')) return;
   const slider = e.target;
@@ -1482,6 +1933,7 @@ document.getElementById('modal-overlay').addEventListener('input', e => {
   const pct = val * 10;
   slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
 });
+
 document.getElementById('modal-overlay').addEventListener('change', e => {
   if (!e.target.classList.contains('card-rate-bar')) return;
   const slider = e.target;
@@ -1491,7 +1943,6 @@ document.getElementById('modal-overlay').addEventListener('change', e => {
   const val    = parseInt(slider.value);
   const genreIds = card.dataset.genres ? card.dataset.genres.split(',').map(Number) : [];
   setRating(type, id, val, genreIds, { title: card.querySelector('.card-title')?.textContent });
-  card.classList.toggle('rated', val > 0);
   if (state.simklToken) pushRatingToSimkl(type, id, val);
 });
 
@@ -1499,8 +1950,10 @@ document.getElementById('modal-overlay').addEventListener('change', e => {
    MODAL CONTROLLER & HELP MODAL
    ───────────────────────────────────────────────────────────────────── */
 function openHelpModal() {
+  const inner = document.getElementById('modal-inner');
+  delete inner.dataset.key;
   document.getElementById('modal-overlay').classList.add('open');
-  document.getElementById('modal-inner').innerHTML = `
+  inner.innerHTML = `
     <h3 style="font-size:1.2rem;margin-bottom:12px">⌨️ Keyboard Shortcuts</h3>
     <table style="width:100%;font-size:0.85rem;border-collapse:collapse;color:var(--text-muted)">
       <tr><td style="padding:4px 0"><strong>/</strong> or <strong>s</strong></td><td>Focus Search Bar</td></tr>
@@ -1511,6 +1964,8 @@ function openHelpModal() {
       <tr><td style="padding:4px 0"><strong>r</strong></td><td>For You View</td></tr>
       <tr><td style="padding:4px 0"><strong>q</strong></td><td>Quick Rate View</td></tr>
       <tr><td style="padding:4px 0"><strong>d</strong></td><td>Toggle Light/Dark Theme</td></tr>
+      <tr><td style="padding:4px 0"><strong>Enter</strong> / <strong>Space</strong></td><td>Open focused card</td></tr>
+      <tr><td style="padding:4px 0"><strong>0–9</strong></td><td>Rate the first Quick Rate card</td></tr>
       <tr><td style="padding:4px 0"><strong>Esc</strong></td><td>Close Modal</td></tr>
     </table>
   `;
@@ -1518,11 +1973,16 @@ function openHelpModal() {
 
 async function openModal(type, id, basicItem = {}) {
   document.getElementById('modal-overlay').classList.add('open');
-  document.getElementById('modal-inner').innerHTML = `
+  const inner = document.getElementById('modal-inner');
+  delete inner.dataset.key;
+  inner.innerHTML = `
     <div class="skeleton" style="height:200px;border-radius:8px;margin-bottom:16px"></div>
     <div class="skeleton" style="height:20px;width:60%;border-radius:4px;margin-bottom:8px"></div>
     <div class="skeleton" style="height:80px;border-radius:4px"></div>
   `;
+
+  // If we already have a full record, render immediately and refresh in place.
+  const cached = state.mediaDetails[mediaKey(type, id)];
 
   try {
     const apiPath = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
@@ -1554,7 +2014,11 @@ async function openModal(type, id, basicItem = {}) {
 
     renderModal(type, detail, credits, providers, contentRating, videos);
   } catch (e) {
-    document.getElementById('modal-inner').innerHTML = `<p style="padding:20px;color:var(--text-muted)">Could not load details: ${esc(e.message)}</p>`;
+    const fallbackTitle = cached?.title || basicItem.title || basicItem.name;
+    inner.innerHTML = `<p style="padding:20px;color:var(--text-muted)">
+      Could not load details${fallbackTitle ? ` for <strong>${esc(fallbackTitle)}</strong>` : ''}: ${esc(e.message)}.
+      <button class="link-btn" style="margin-left:8px" data-action="retry">Try again</button>
+    </p>`;
   }
 }
 
@@ -1585,11 +2049,13 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
     `<button class="modal-btn${s === wlStat ? ' active' : ''}${(!wlStat && s === 'plantowatch') ? ' primary' : ''}" onclick="addToWatchlist('${type}', ${id}, '${s}')">${wlStatusLabel(s)}</button>`
   ).join('');
 
-  document.getElementById('modal-inner').innerHTML = `
+  const inner = document.getElementById('modal-inner');
+  inner.dataset.key = mediaKey(type, id);
+  inner.innerHTML = `
     ${backdrop ? `<img src="${esc(backdrop)}" alt="" style="width:100%;border-radius:8px 8px 0 0;display:block;object-fit:cover;max-height:200px" />` : ''}
     <div class="modal-hero" style="${backdrop ? 'margin-top:-50px;padding:0 20px' : ''}">
       ${poster
-        ? `<img class="modal-poster" src="${esc(poster)}" alt="${esc(title)}" />`
+        ? `<img class="modal-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" />`
         : `<div class="modal-poster" style="display:flex;align-items:center;justify-content:center;font-size:3rem">🎬</div>`}
       <div class="modal-info">
         <div class="modal-title">${esc(title)}</div>
@@ -1603,7 +2069,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
           ${d.networks && d.networks[0] ? `<span>🌐 ${esc(d.networks[0].name)}</span>` : ''}
         </div>
         <div class="modal-genres">
-          ${genres.map(g => `<span class="genre-tag">${esc(g.name)}</span>`).join('')}
+          ${genres.map(g => `<span class="genre-tag clickable" data-action="genre" data-genre="${g.id}" title="Filter by ${esc(g.name)}">${esc(g.name)}</span>`).join('')}
         </div>
         <div class="modal-scores">
           <div class="score-box"><div class="score-val">${sc}</div><div class="score-lbl">TMDB Score</div></div>
@@ -1633,13 +2099,13 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
 
       ${providers && (providers.flatrate.length || providers.rent.length) ? `
         <div style="margin-bottom:16px">
-          <div style="font-size:.85rem;font-weight:700;margin-bottom:8px;color:var(--text-muted)">Where to Watch ${providers.link ? `<a href="${esc(providers.link)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:400;font-size:.78rem;margin-left:6px">View all ↗</a>` : ''}</div>
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:8px;color:var(--text-muted)">Where to Watch — ${esc(providers.region)} ${providers.link ? `<a href="${esc(providers.link)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:400;font-size:.78rem;margin-left:6px">View all ↗</a>` : ''}</div>
           ${providers.flatrate.length ? `
             <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:5px">Stream</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
               ${providers.flatrate.map(p => `
                 <div title="${esc(p.provider_name)}" style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.75rem">
-                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${esc(p.provider_name)}" style="width:20px;height:20px;border-radius:3px" />` : ''}
+                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="" loading="lazy" style="width:20px;height:20px;border-radius:3px" />` : ''}
                   ${esc(p.provider_name)}
                 </div>`).join('')}
             </div>` : ''}
@@ -1648,11 +2114,11 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
               ${providers.rent.slice(0,6).map(p => `
                 <div title="${esc(p.provider_name)}" style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.75rem">
-                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${esc(p.provider_name)}" style="width:20px;height:20px;border-radius:3px" />` : ''}
+                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="" loading="lazy" style="width:20px;height:20px;border-radius:3px" />` : ''}
                   ${esc(p.provider_name)}
                 </div>`).join('')}
             </div>` : ''}
-        </div>` : providers ? '<p style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px">No US streaming info available.</p>' : ''}
+        </div>` : providers ? `<p style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px">No streaming info published for ${esc(regionLabel())}.</p>` : ''}
 
       <div id="modal-similar"></div>
     </div>
@@ -1671,15 +2137,6 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
       const val = parseInt(modalSlider.value);
       setRating(type, id, val, genres.map(g => g.id), d);
       if (state.simklToken) pushRatingToSimkl(type, id, val);
-      document.querySelectorAll(`.card[data-type="${type}"][data-id="${id}"]`).forEach(c => {
-        c.classList.toggle('rated', val > 0);
-        const s = c.querySelector('.card-rate-bar');
-        const em = c.querySelector('.card-rate-emoji');
-        const lb = c.querySelector('.card-rate-label');
-        if (s) { s.value = val; s.style.background = val > 0 ? `linear-gradient(to right, var(--accent2) ${val * 10}%, var(--border) ${val * 10}%)` : ''; }
-        if (em) em.textContent = val > 0 ? ratingEmoji(val) : '·';
-        if (lb) lb.textContent = val > 0 ? val : '—';
-      });
     });
   }
 
@@ -1704,17 +2161,39 @@ async function loadSimilar(type, id) {
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
+  const inner = document.getElementById('modal-inner');
+  if (inner) { delete inner.dataset.key; inner.innerHTML = ''; }
 }
+
 document.getElementById('modal-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 });
+
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  const overlayOpen = document.getElementById('modal-overlay').classList.contains('open');
+
+  if (e.key === 'Escape') {
+    // Escape always dismisses an open modal, even from inside an input.
+    if (overlayOpen) closeModal();
+    return;
+  }
 
   if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (overlayOpen) return;
+
   const tag = e.target.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-  if (document.getElementById('modal-overlay').classList.contains('open')) return;
+  if (e.target.isContentEditable) return;
+
+  // Quick Rate: number keys rate the first card on screen (0 = 10).
+  if (state.view === 'quickrate' && /^[0-9]$/.test(e.key)) {
+    const card = document.querySelector('#main-content .card');
+    if (card && typeof card._qrRate === 'function') {
+      e.preventDefault();
+      card._qrRate(e.key === '0' ? 10 : Number(e.key));
+    }
+    return;
+  }
 
   const go = v => { e.preventDefault(); document.querySelector(`[data-view="${v}"]`)?.click(); };
   if (e.key === '?' || (e.shiftKey && e.key === '?')) { e.preventDefault(); openHelpModal(); }
@@ -1733,6 +2212,7 @@ document.addEventListener('keydown', e => {
    ───────────────────────────────────────────────────────────────────── */
 function addToWatchlist(type, id, status) {
   const key = mediaKey(type, id);
+  if (!state.watchlist[key]) state.wlAdded[key] = Date.now();
   state.watchlist[key] = status;
   saveWatchlist();
   toast(`${wlStatusLabel(status)}`);
@@ -1746,13 +2226,13 @@ function removeFromWatchlist(type, id) {
   const title = state.mediaDetails[key]?.title || 'this item';
   if (!confirm(`Remove "${title}" from your watchlist?`)) return;
   delete state.watchlist[key];
+  delete state.wlAdded[key];
   saveWatchlist();
   toast('Removed from list');
   updateCardStatus(type, id);
   closeModal();
   if (state.view === 'watchlist') renderView();
 }
-
 /* ─────────────────────────────────────────────────────────────────────
    VIEWS RENDERER
    ───────────────────────────────────────────────────────────────────── */
@@ -1760,6 +2240,7 @@ async function renderView() {
   const token = ++renderToken;
   updateSimklUI();
   updateFilterVisibility();
+  syncFilterControls();
   const main = document.getElementById('main-content');
 
   document.querySelectorAll('.nav-tab').forEach(t => {
@@ -1782,8 +2263,20 @@ async function renderView() {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('Render error:', e);
-    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Error loading view: ${esc(e.message)}</p></div>`;
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load this view', esc(e.message), 'retry');
   }
+}
+
+function emptyStateHTML(icon, title, detail = '', action = '') {
+  const actions = action === 'retry'
+    ? `<div class="empty-actions"><button class="modal-btn" data-action="retry">Try again</button></div>`
+    : (action || '');
+  return `<div class="empty-state">
+    <div class="icon">${icon}</div>
+    <p><strong>${title}</strong></p>
+    ${detail ? `<p style="margin-top:6px;font-size:.85rem">${detail}</p>` : ''}
+    ${actions}
+  </div>`;
 }
 
 /* ── TRENDING ─────────────────────────────────────────────────────── */
@@ -1793,44 +2286,90 @@ async function renderTrending(main, token) {
   addSkeletonRow(main, 'Popular TV Shows 📺');
 
   try {
-    const providerParam = state.provider ? { watch_region: 'US', with_watch_providers: state.provider } : {};
-    const genreParam = state.genre ? { with_genres: state.genre } : {};
+    const gp = state.genre ? { with_genres: state.genre } : {};
+    const wantMovie = state.filterType !== 'tv';
+    const wantTV    = state.filterType !== 'movie';
 
-    const trendingOrDiscover = state.provider
-      ? tmdb('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, ...providerParam, ...genreParam, ...yearParams('movie') })
-      : tmdb('/trending/all/week');
+    // When a service is selected the top row has to come from discover
+    // (the /trending endpoint can't be filtered by provider) - but it must
+    // match the selected type, otherwise a TV-only filter empties a row
+    // that is entirely movies.
+    const row1IsTV = state.provider && !wantMovie;
+    const row1 = state.provider
+      ? (row1IsTV
+          ? discoverSafe('/discover/tv',    { sort_by: 'popularity.desc', 'vote_count.gte': 50,  ...gp, ...yearParams('tv') })
+          : discoverSafe('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, ...gp, ...yearParams('movie') }))
+      : tmdb('/trending/all/week').then(r => ({
+          items: (r.results || []).filter(i => i.media_type === 'movie' || i.media_type === 'tv'),
+          providerApplied: false,
+        }));
 
-    const [trending, popMovies, popTV, onAir] = await Promise.all([
-      trendingOrDiscover,
-      tmdb('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 100, ...providerParam, ...genreParam, ...yearParams('movie') }),
-      tmdb('/discover/tv',    { sort_by: sortFor('tv'),    'vote_count.gte': 50,  ...providerParam, ...genreParam, ...yearParams('tv') }),
-      tmdb('/tv/on_the_air'),
+    const [trendingRes, popMovieRes, popTVRes, onAirRes] = await Promise.all([
+      row1,
+      wantMovie
+        ? discoverSafe('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 100, ...gp, ...yearParams('movie') })
+        : Promise.resolve({ items: [] }),
+      wantTV
+        ? discoverSafe('/discover/tv', { sort_by: sortFor('tv'), 'vote_count.gte': 50, ...gp, ...yearParams('tv') })
+        : Promise.resolve({ items: [] }),
+      wantTV
+        ? (state.provider
+            ? discoverSafe('/discover/tv', {
+                sort_by: 'popularity.desc',
+                'vote_count.gte': 20,
+                'air_date.gte': todayISO(),
+                'air_date.lte': shiftDaysISO(new Date(), 30),
+                ...gp,
+              })
+            : tmdb('/tv/on_the_air').then(r => ({ items: r.results || [], providerApplied: false })))
+        : Promise.resolve({ items: [] }),
     ]);
     if (token !== renderToken) return;
 
-    const trendingItems = (trending.results || [])
-      .map(m => state.provider ? { ...m, media_type: 'movie' } : m)
-      .filter(m => m.media_type === 'movie' || m.media_type === 'tv');
+    const fellBack = [trendingRes, popMovieRes, popTVRes, onAirRes].some(r => r.fellBack);
 
-    const rows = [
-      [state.provider
-        ? `🎬 Movies on ${esc(document.getElementById('provider-filter').selectedOptions[0]?.text || 'Service')}`
-        : 'Trending This Week 🔥', await filterResults(trendingItems)],
-      ['Popular Movies 🎬',   await filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'})))],
-      ['Popular TV Shows 📺', await filterResults((popTV.results    || []).map(t => ({...t, media_type:'tv'})))],
-      ['Currently On Air 📡', await filterResults((onAir.results    || []).map(t => ({...t, media_type:'tv'})))],
-    ];
+    const rows = [];
+    rows.push([
+      state.provider
+        ? `${row1IsTV ? '📺' : '🎬'} Popular on ${esc(providerLabel())}`
+        : 'Trending This Week 🔥',
+      await filterResults(trendingRes.items.map(i => ({
+        ...i,
+        media_type: state.provider ? (row1IsTV ? 'tv' : 'movie') : i.media_type,
+      })), { yearServerSide: !!state.provider }),
+    ]);
+    // Rows a type filter structurally excludes are omitted outright rather
+    // than rendered as a permanent "no results" placeholder.
+    if (wantMovie) {
+      rows.push(['Popular Movies 🎬',
+        await filterResults(popMovieRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true })]);
+    }
+    if (wantTV) {
+      rows.push(['Popular TV Shows 📺',
+        await filterResults(popTVRes.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: true })]);
+      rows.push(['Currently On Air 📡',
+        await filterResults(onAirRes.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: false })]);
+    }
     if (token !== renderToken) return;
 
     main.innerHTML = '';
+    if (fellBack) {
+      addNotice(
+        `No <strong>${esc(providerLabel())}</strong> titles were found for these rows, so they are showing everything. ` +
+        `Streaming listings are often unpublished for new and upcoming releases.`,
+        'provider-fallback');
+    }
     rows.forEach(([label, items]) => renderRow(main, label, items));
-  } catch(e) {
+  } catch (e) {
     if (token !== renderToken) return;
-    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${esc(e.message)}</p></div>`;
+    console.warn('renderTrending error:', e);
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load trending', esc(e.message), 'retry');
   }
 }
 
 /* ── CALENDAR ─────────────────────────────────────────────────────── */
+let calEvents = [];
+
 async function renderCalendar(main, token) {
   main.innerHTML = `
     <div class="section">
@@ -1839,6 +2378,7 @@ async function renderCalendar(main, token) {
         <span id="cal-month-label"></span>
         <button onclick="calNext()">Next ▶</button>
         <button onclick="calToday()">Today</button>
+        <button onclick="exportCalendarICS()" title="Download this month as an .ics calendar file">📆 Export .ics</button>
         <label class="cal-toggle"><input type="checkbox" id="cal-my-only" ${state.calMyOnly ? 'checked' : ''} /> My list only</label>
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:.78rem;color:var(--text-muted);align-items:center">
@@ -1846,7 +2386,9 @@ async function renderCalendar(main, token) {
         <span><span style="display:inline-block;width:10px;height:10px;background:#1a6ef5;border-radius:2px;margin-right:4px"></span>TV Premiere</span>
         <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px"></span>Movie Release</span>
         <span><span style="display:inline-block;width:10px;height:10px;background:#1ce783;border-radius:2px;margin-right:4px"></span>My List</span>
-        ${state.simklToken ? `<button class="modal-btn" onclick="markAllEpisodesWatched()" style="margin-left:auto;font-size:.75rem;padding:4px 10px">✓ Mark All Aired Watched</button>` : `<span style="margin-left:auto;color:var(--accent)">⚠ <a href="#" onclick="simklAuth();return false" style="color:var(--accent)">Connect Simkl</a> to mark episodes</span>`}
+        ${state.simklToken
+          ? `<button class="modal-btn" onclick="markAllEpisodesWatched()" style="margin-left:auto;font-size:.75rem;padding:4px 10px">✓ Mark All Aired Watched</button>`
+          : `<span style="margin-left:auto;color:var(--accent)">⚠ <button class="link-btn" data-action="simkl-auth" style="color:var(--accent)">Connect Simkl</button> to mark episodes</span>`}
       </div>
       <div class="cal-grid" id="cal-grid"></div>
       <div id="cal-loading" style="text-align:center;padding:20px;color:var(--text-muted);font-size:.85rem"></div>
@@ -1939,6 +2481,7 @@ function addCalItem(dateStr, label, cssClass, tooltip, onClick, opts = {}) {
     btn.dataset.episode = ep.episode_number;
     btn.dataset.watched = already ? '1' : '0';
     btn.title = already ? 'Marked as watched' : 'Mark as watched';
+    btn.setAttribute('aria-label', `${already ? 'Already watched' : 'Mark as watched'}: ${tooltip || displayLabel}`);
     btn.textContent = already ? '✅' : '○';
     btn.style.cssText = `position:absolute;top:1px;right:2px;background:none;border:none;font-size:.65rem;color:${already ? '#1ce783' : 'var(--text-muted)'};padding:0;line-height:1.6`;
     btn.addEventListener('click', async e => {
@@ -2031,6 +2574,7 @@ async function populateCalendar() {
   const loading  = document.getElementById('cal-loading');
   if (loading) loading.textContent = 'Loading…';
 
+  calEvents = [];
   const inRange = ds => !!ds && ds >= dateFrom && ds <= dateTo;
   const placed = new Set();
   let itemCount = 0;
@@ -2044,6 +2588,7 @@ async function populateCalendar() {
     if (placed.has(pk)) return;
     placed.add(pk);
     addCalItem(date, label, cls, tip, onClick, opts);
+    calEvents.push({ date, label: opts.epLabel ? `${opts.epLabel} ${label}` : label, description: tip || label, key: opts.pk || label });
     itemCount++;
     if (cls.includes('my-show')) myCount++;
   };
@@ -2113,15 +2658,14 @@ async function populateCalendar() {
     const validShows = showDetails.filter(Boolean);
     const seasonJobs = [];
     validShows.forEach(({ showId, detail }) => {
-      const seasonCount = detail.number_of_seasons || 0;
-      const seasonsToCheck = new Set();
-      if (seasonCount > 0) seasonsToCheck.add(seasonCount);
       (detail.seasons || []).forEach(s => {
         if (!s.air_date) return;
-        if (s.air_date <= dateTo) seasonsToCheck.add(s.season_number);
-      });
-      seasonsToCheck.forEach(seasonNumber => {
-        seasonJobs.push({ showId, detail, seasonNumber });
+        // Only seasons that could actually overlap the visible month.
+        // (The previous version pulled in every season that had ever aired,
+        // which meant fetching the full back-catalogue on every navigation.)
+        const startsBeforeEnd = s.air_date <= dateTo;
+        const endsAfterStart = !s.last_air_date || s.last_air_date >= dateFrom;
+        if (startsBeforeEnd && endsAfterStart) seasonJobs.push({ showId, detail, seasonNumber: s.season_number });
       });
     });
 
@@ -2167,9 +2711,61 @@ async function populateCalendar() {
     if (itemCount > 0) {
       loading.textContent = `${itemCount} events — ${myCount} from your list`;
     } else {
-      loading.innerHTML = `No events found. <a href="#" onclick="document.querySelector('[data-view=trending]').click();return false" style="color:var(--accent)">Browse Trending</a> to add shows.`;
+      loading.innerHTML = `No events found in this month.
+        <button class="link-btn" data-action="trending">Browse Trending</button>`;
     }
   }
+}
+
+/* ── CALENDAR EXPORT (.ics) ───────────────────────────────────────── */
+function icsEscape(s) {
+  return String(s ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\r?\n/g, '\\n');
+}
+function icsFold(line) {
+  if (line.length <= 73) return line;
+  const parts = [];
+  for (let i = 0; i < line.length; i += 73) parts.push(line.slice(i, i + 73));
+  return parts.join('\r\n ');
+}
+function nextDayISO(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return localISO(new Date(y, m - 1, d + 1));
+}
+
+function exportCalendarICS() {
+  if (!calEvents.length) {
+    toast('Nothing in this month to export');
+    return;
+  }
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'CALSCALE:GREGORIAN',
+    'PRODID:-//Media Calendar//TV and Movie Calendar//EN',
+  ];
+  calEvents.forEach((ev, i) => {
+    const safeKey = String(ev.key || 'item').replace(/[^\w-]/g, '');
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:mc-${ev.date}-${i}-${safeKey}@media-calendar`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${ev.date.replace(/-/g, '')}`,
+      `DTEND;VALUE=DATE:${nextDayISO(ev.date).replace(/-/g, '')}`,
+      icsFold(`SUMMARY:${icsEscape(ev.label)}`),
+      icsFold(`DESCRIPTION:${icsEscape(ev.description || ev.label)}`),
+      'END:VEVENT',
+    );
+  });
+  lines.push('END:VCALENDAR');
+
+  const blob = new Blob([lines.join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' });
+  downloadBlob(blob, `media-calendar-${state.calYear}-${pad2(state.calMonth + 1)}.ics`);
+  toast(`📆 Exported ${calEvents.length} events`);
 }
 
 /* ── UPCOMING ─────────────────────────────────────────────────────── */
@@ -2178,99 +2774,124 @@ async function renderUpcoming(main, token) {
   addSkeletonRow(main, 'New TV Premieres 📺');
 
   try {
-  const today     = new Date();
-  const todayStr  = localISO(today);
-  const future    = new Date(today); future.setDate(today.getDate() + 60);
-  const futureStr = localISO(future);
-  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayStr  = todayISO();
+    const futureStr = shiftDaysISO(new Date(), 60);
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
 
-  const providerParam = state.provider ? { watch_region: 'US', with_watch_providers: state.provider } : {};
-  const genreParam = state.genre ? { with_genres: state.genre } : {};
+    const gp = state.genre ? { with_genres: state.genre } : {};
 
-  const [upMovies, tvPrem] = await Promise.all([
-    tmdb('/discover/movie', {
-      'primary_release_date.gte': todayStr,
-      'primary_release_date.lte': futureStr,
-      sort_by: 'popularity.desc',
-      'vote_count.gte': 0,
-      ...providerParam,
-      ...genreParam,
-    }),
-    tmdb('/discover/tv', {
-      'air_date.gte': todayStr,
-      'air_date.lte': futureStr,
-      sort_by: 'popularity.desc',
-      'vote_count.gte': 10,
-      ...providerParam,
-      ...genreParam,
-    }),
-  ]);
-  if (token !== renderToken) return;
+    const [movieRes, tvRes] = await Promise.all([
+      discoverSafe('/discover/movie', {
+        'primary_release_date.gte': todayStr,
+        'primary_release_date.lte': futureStr,
+        sort_by: 'popularity.desc',
+        'vote_count.gte': 0,
+        ...gp,
+      }),
+      discoverSafe('/discover/tv', {
+        'air_date.gte': todayStr,
+        'air_date.lte': futureStr,
+        sort_by: 'popularity.desc',
+        'vote_count.gte': 10,
+        ...gp,
+      }),
+    ]);
+    if (token !== renderToken) return;
 
-  const movies = (upMovies.results || []).map(m => ({...m, media_type:'movie'}));
-  const shows  = (tvPrem.results   || []).map(t => ({...t, media_type:'tv'}));
+    const fMovies = await filterResults(movieRes.items.map(m => ({ ...m, media_type: 'movie' })));
+    const fShows  = await filterResults(tvRes.items.map(t => ({ ...t, media_type: 'tv' })));
+    if (token !== renderToken) return;
 
-  const fMovies = await filterResults(movies);
-  const fShows  = await filterResults(shows);
-  if (token !== renderToken) return;
+    main.innerHTML = '';
+    if (movieRes.fellBack || tvRes.fellBack) {
+      addNotice(
+        `No <strong>${esc(providerLabel())}</strong> listings are published for these upcoming dates yet, so everything is shown. ` +
+        `Availability usually appears closer to release.`,
+        'provider-fallback');
+    }
 
-  main.innerHTML = '';
-  renderRow(main, 'Upcoming Movies 🎬', fMovies);
-  renderRow(main, 'Premiering / On Air Soon 📺', fShows);
+    renderRow(main, 'Upcoming Movies 🎬', fMovies);
+    renderRow(main, 'Premiering / On Air Soon 📺', fShows);
 
-  const listSection = document.createElement('div');
-  listSection.className = 'section';
-  listSection.innerHTML = `
-    <div class="section-header"><span class="section-title">Release Schedule — Next 60 Days</span></div>
-    <div style="display:flex;flex-direction:column;gap:8px" id="release-list"></div>
-  `;
-  main.appendChild(listSection);
-  const releaseList = document.getElementById('release-list');
-
-  const sorted = [...fMovies, ...fShows]
-    .filter(i => {
-      const d = i.release_date || i.first_air_date;
-      return d && d >= todayStr && d <= futureStr;
-    })
-    .sort((a, b) => (a.release_date || a.first_air_date).localeCompare(b.release_date || b.first_air_date));
-
-  if (!sorted.length) {
-    releaseList.innerHTML = `<p style="color:var(--text-muted);font-size:.85rem;padding:8px 0">No upcoming releases found for the selected filters.</p>`;
-  }
-
-  sorted.slice(0, 30).forEach(item => {
-    const title    = item.title || item.name;
-    const dateStr  = item.release_date || item.first_air_date;
-    const date     = formatDate(dateStr);
-    const daysAway = Math.round((new Date(dateStr + 'T00:00:00') - startOfToday) / 86400000);
-    const daysLabel = daysAway <= 0 ? 'Today!' : daysAway === 1 ? 'Tomorrow' : `in ${daysAway}d`;
-
-    const el = document.createElement('div');
-    el.style.cssText = 'display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;transition:border-color .15s';
-    el.onmouseover = () => el.style.borderColor = 'var(--accent)';
-    el.onmouseout  = () => el.style.borderColor = 'var(--border)';
-    el.innerHTML = `
-      <div style="min-width:90px;text-align:right">
-        <div style="font-size:.75rem;color:var(--accent);font-weight:700">${esc(date)}</div>
-        <div style="font-size:.68rem;color:var(--text-muted)">${daysLabel}</div>
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(title)}</div>
-        <div style="font-size:.73rem;color:var(--text-muted)">${item.media_type === 'movie' ? '🎬 Movie' : '📺 TV'} ${score(item) ? '· ⭐ ' + score(item) : ''}</div>
-      </div>
+    const listSection = document.createElement('div');
+    listSection.className = 'section';
+    listSection.innerHTML = `
+      <div class="section-header"><span class="section-title">Release Schedule — Next 60 Days</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px" id="release-list"></div>
     `;
-    el.addEventListener('click', () => openModal(item.media_type, item.id, item));
-    releaseList.appendChild(el);
-  });
+    main.appendChild(listSection);
+    const releaseList = document.getElementById('release-list');
+
+    // The row above is driven by episode air dates; the schedule list is
+    // driven by premiere dates, so keep them consistent by including both.
+    const sorted = [...fMovies, ...fShows]
+      .filter(i => {
+        const d = i.release_date || i.first_air_date;
+        return d && d >= todayStr && d <= futureStr;
+      })
+      .sort((a, b) => (a.release_date || a.first_air_date).localeCompare(b.release_date || b.first_air_date));
+
+    if (!sorted.length) {
+      releaseList.innerHTML = `<p style="color:var(--text-muted);font-size:.85rem;padding:8px 0">No upcoming releases found for the selected filters.</p>`;
+    }
+
+    sorted.slice(0, 30).forEach(item => {
+      const title    = item.title || item.name;
+      const dateStr  = item.release_date || item.first_air_date;
+      const date     = formatDate(dateStr);
+      const daysAway = Math.round((new Date(dateStr + 'T00:00:00') - startOfToday) / 86400000);
+      const daysLabel = daysAway <= 0 ? 'Today!' : daysAway === 1 ? 'Tomorrow' : `in ${daysAway}d`;
+
+      const el = document.createElement('div');
+      el.style.cssText = 'display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;transition:border-color .15s';
+      el.onmouseover = () => el.style.borderColor = 'var(--accent)';
+      el.onmouseout  = () => el.style.borderColor = 'var(--border)';
+      el.innerHTML = `
+        <div style="min-width:90px;text-align:right">
+          <div style="font-size:.75rem;color:var(--accent);font-weight:700">${esc(date)}</div>
+          <div style="font-size:.68rem;color:var(--text-muted)">${daysLabel}</div>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(title)}</div>
+          <div style="font-size:.73rem;color:var(--text-muted)">${item.media_type === 'movie' ? '🎬 Movie' : '📺 TV'} ${score(item) ? '· ⭐ ' + score(item) : ''}</div>
+        </div>
+      `;
+      el.addEventListener('click', () => openModal(item.media_type, item.id, item));
+      releaseList.appendChild(el);
+    });
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('renderUpcoming error:', e);
-    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load upcoming: ${esc(e.message)}</p></div>`;
-    toast('Failed to load upcoming releases');
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load upcoming releases', esc(e.message), 'retry');
   }
 }
+function debounce(fn, ms = 250) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+}
 
-/* ── WATCHLIST ────────────────────────────────────────────────────── */
+const WL_SORTS = {
+  added:   ['Recently added', (a, b) => (b.added || 0) - (a.added || 0)],
+  title:   ['Title A–Z',      (a, b) => (a.title || '').localeCompare(b.title || '')],
+  rating:  ['My rating',      (a, b) => (b.rating || 0) - (a.rating || 0)],
+  tmdb:    ['TMDB score',     (a, b) => (b.score || 0) - (a.score || 0)],
+  release: ['Release date',   (a, b) => (b.date || '').localeCompare(a.date || '')],
+};
+
+function buildWatchlistSection(container, title, items) {
+  const sec = document.createElement('div');
+  sec.className = 'section';
+  sec.innerHTML = `<div class="section-header"><span class="section-title">${title} <span style="color:var(--text-muted);font-size:.8rem;font-weight:400">(${items.length})</span></span></div><div class="watchlist-grid"></div>`;
+  const grid = sec.querySelector('.watchlist-grid');
+  items.forEach(item => grid.appendChild(buildCard(item)));
+  container.appendChild(sec);
+}
+
+/* ── MY LIST ──────────────────────────────────────────────────────── */
 async function renderWatchlist(main, token) {
   const statuses = ['watching', 'plantowatch', 'completed', 'hold', 'dropped'];
   main.innerHTML = '';
@@ -2286,22 +2907,43 @@ async function renderWatchlist(main, token) {
     main.appendChild(prompt);
   }
 
-  const filterRow = document.createElement('div');
-  filterRow.style.cssText = 'display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap';
-  filterRow.innerHTML = `
-    <button class="filter-chip${state.wlFilterStatus === 'all' ? ' active' : ''}" onclick="state.wlFilterStatus='all';renderView()">All</button>
-    ${statuses.map(s => `<button class="filter-chip${state.wlFilterStatus === s ? ' active' : ''}" onclick="state.wlFilterStatus='${s}';renderView()">${wlStatusLabel(s)}</button>`).join('')}
-  `;
-  main.appendChild(filterRow);
-
   const entries = Object.entries(state.watchlist);
   if (!entries.length) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    empty.innerHTML = '<div class="icon">📋</div>Your list is empty. Browse Trending or Upcoming and add items!';
-    main.appendChild(empty);
+    main.insertAdjacentHTML('beforeend', emptyStateHTML(
+      '📋',
+      'Your list is empty',
+      'Add movies and shows from Trending or Upcoming.',
+      `<div class="empty-actions">
+        <button class="modal-btn primary" data-action="trending">Browse Trending</button>
+        <button class="modal-btn" data-action="upcoming">Browse Upcoming</button>
+      </div>`
+    ));
     return;
   }
+
+  const toolbar = document.createElement('div');
+  toolbar.className = 'watchlist-toolbar';
+  toolbar.innerHTML = `
+    <button class="filter-chip${state.wlFilterStatus === 'all' ? ' active' : ''}" data-wl-status="all">All</button>
+    ${statuses.map(s => `<button class="filter-chip${state.wlFilterStatus === s ? ' active' : ''}" data-wl-status="${s}">${wlStatusLabel(s)}</button>`).join('')}
+    <select class="filter-select" id="wl-sort" title="Sort my list">
+      ${Object.entries(WL_SORTS).map(([k, [label]]) => `<option value="${k}"${state.wlSort === k ? ' selected' : ''}>${label}</option>`).join('')}
+    </select>
+    <input id="wl-search" class="filter-select" type="search" placeholder="Filter my list…" value="${esc(state.wlQuery)}" style="min-width:180px;cursor:text" />
+  `;
+  main.appendChild(toolbar);
+
+  toolbar.querySelectorAll('[data-wl-status]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.wlFilterStatus = btn.dataset.wlStatus;
+      renderView();
+    });
+  });
+  toolbar.querySelector('#wl-sort').addEventListener('change', e => {
+    state.wlSort = e.target.value;
+    LS.set('wl_sort', state.wlSort);
+    renderView();
+  });
 
   const missing = entries.filter(([key]) => !state.mediaDetails[key]?._full).map(([key]) => key);
   if (missing.length) {
@@ -2329,33 +2971,70 @@ async function renderWatchlist(main, token) {
     if (token !== renderToken) return;
   }
 
-  const renderStatuses = state.wlFilterStatus === 'all' ? statuses : [state.wlFilterStatus];
-  renderStatuses.forEach(status => {
-    const items = entries.filter(([, s]) => s === status);
-    if (!items.length) return;
-
-    const sec = document.createElement('div');
-    sec.className = 'section';
-    sec.innerHTML = `<div class="section-header"><span class="section-title">${wlStatusLabel(status)} <span style="color:var(--text-muted);font-size:.8rem;font-weight:400">(${items.length})</span></span></div><div class="watchlist-grid"></div>`;
-    main.appendChild(sec);
-
-    const grid = sec.querySelector('.watchlist-grid');
-    items.forEach(([key]) => {
-      const cached = state.mediaDetails[key];
-      const item = cached ? { ...cached } : { id: parseInt(key.split('_')[1]), media_type: key.split('_')[0] };
-      grid.appendChild(buildCard(item));
-    });
+  const rows = entries.map(([key, status]) => {
+    const d = state.mediaDetails[key] || {};
+    const [t, idStr] = key.split('_');
+    return {
+      key,
+      status,
+      item:   { ...d, id: d.id || parseInt(idStr), media_type: d.media_type || t },
+      title:  d.title || '',
+      rating: state.ratings[key] || 0,
+      score:  d.vote_average || 0,
+      date:   d.release_date || d.first_air_date || '',
+      added:  state.wlAdded[key] || 0,
+    };
   });
+
+  const sections = document.createElement('div');
+  main.appendChild(sections);
+
+  const rebuild = () => {
+    sections.innerHTML = '';
+    const q = state.wlQuery.toLowerCase();
+    const visible = rows.filter(r => {
+      if (state.wlFilterStatus !== 'all' && r.status !== state.wlFilterStatus) return false;
+      if (q && !r.title.toLowerCase().includes(q)) return false;
+      return true;
+    });
+
+    if (!visible.length) {
+      sections.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>Nothing in your list matches those filters.</p></div>`;
+      return;
+    }
+
+    if (state.wlSort === 'added') {
+      // Default view keeps the familiar grouping by status.
+      statuses.forEach(status => {
+        const items = visible.filter(r => r.status === status);
+        if (!items.length) return;
+        buildWatchlistSection(sections, wlStatusLabel(status), items.map(r => r.item));
+      });
+    } else {
+      const sorter = (WL_SORTS[state.wlSort] || WL_SORTS.added)[1];
+      buildWatchlistSection(sections, 'My List', [...visible].sort(sorter).map(r => r.item));
+    }
+  };
+
+  toolbar.querySelector('#wl-search').addEventListener('input', debounce(e => {
+    state.wlQuery = e.target.value.trim();
+    rebuild();
+  }, 180));
+
+  rebuild();
 }
 
-/* ── RECOMMENDED ──────────────────────────────────────────────────── */
+/* ── FOR YOU ──────────────────────────────────────────────────────── */
 async function renderRecommended(main, token) {
   const hasRatings = Object.keys(state.ratings).length > 0;
 
   if (!hasRatings) {
-    main.innerHTML = `<div class="empty-state"><div class="icon">✨</div>
-      <p>Rate some movies and shows to get personalized recommendations!</p>
-      <p style="margin-top:8px;font-size:.8rem">Drag the slider on any card to rate 0–10, or try ⚡ Quick Rate.</p></div>`;
+    main.innerHTML = emptyStateHTML('✨', 'No taste profile yet',
+      'Rate some movies and shows and this view fills in. Drag the slider on any card, or try Quick Rate.',
+      `<div class="empty-actions">
+        <button class="modal-btn primary" data-action="quickrate">Start Quick Rate</button>
+        <button class="modal-btn" data-action="trending">Browse Trending</button>
+      </div>`);
     return;
   }
 
@@ -2397,25 +3076,30 @@ async function renderRecommended(main, token) {
     .map(([id]) => id);
   const badGenres = dislikedGenres();
 
+  let fellBack = false;
   const fetchRec = async (mediaType, label) => {
     const params = {
       sort_by: 'vote_average.desc',
       'vote_count.gte': 200,
       page: 1,
     };
-    if (topGenres.length)  params.with_genres    = topGenres.slice(0, 2).join('|');
-    if (badGenres.length)  params.without_genres = badGenres.slice(0, 3).join(',');
+    // The genre control is visible on this view, so it must do something:
+    // an explicit choice wins over the inferred taste profile.
+    const genreParam = state.genre ? state.genre : topGenres.slice(0, 2).join('|');
+    if (genreParam) params.with_genres = genreParam;
+    if (badGenres.length) params.without_genres = badGenres.slice(0, 3).join(',');
 
     const path = mediaType === 'movie' ? '/discover/movie' : '/discover/tv';
     const pages = await Promise.all([
-      tmdb(path, { ...params, page: 1 }),
-      tmdb(path, { ...params, page: 2 }),
-      tmdb(path, { ...params, sort_by: 'popularity.desc', page: 1 }),
+      discoverSafe(path, { ...params, page: 1 }),
+      discoverSafe(path, { ...params, page: 2 }),
+      discoverSafe(path, { ...params, sort_by: 'popularity.desc', page: 1 }),
     ]);
+    if (pages.some(p => p.fellBack)) fellBack = true;
 
     const seen = new Set();
     const results = pages
-      .flatMap(p => p.results || [])
+      .flatMap(p => p.items || [])
       .map(i => ({ ...i, media_type: mediaType }))
       .filter(i => {
         const key = mediaKey(mediaType, i.id);
@@ -2437,6 +3121,10 @@ async function renderRecommended(main, token) {
 
   main.innerHTML = '';
 
+  if (fellBack) {
+    addNotice(`No <strong>${esc(providerLabel())}</strong> titles matched, so these picks are unfiltered by service.`, 'provider-fallback');
+  }
+
   const liked    = topGenreNames(3);
   const disliked = Object.entries(affinity).filter(([,v]) => v < -1).map(([id]) => GENRE_MAP[id]).filter(Boolean).slice(0,2).join(', ');
   const summary = document.createElement('div');
@@ -2445,7 +3133,8 @@ async function renderRecommended(main, token) {
     <span>📊 <strong>${Object.keys(state.ratings).length}</strong> ratings</span>
     ${liked    ? `<span>❤️ Loves: <strong>${esc(liked)}</strong></span>` : ''}
     ${disliked ? `<span>👎 Avoids: <strong>${esc(disliked)}</strong></span>` : ''}
-    <button onclick="recomputeAffinity();toast('Taste profile refreshed');renderView();"
+    ${state.genre ? `<span>🎯 Genre: <strong>${esc(GENRE_MAP[state.genre] || state.genre)}</strong></span>` : ''}
+    <button data-action="reset-filters"
       style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer">
       Refresh taste profile
     </button>
@@ -2487,18 +3176,90 @@ async function renderRecommended(main, token) {
 /* ── SEARCH ──────────────────────────────────────────────────────── */
 let searchQuery = '';
 let searchResults = [];
+let recentSearches = LS.get('recent_searches') || [];
 
-async function doSearch() {
-  searchQuery = document.getElementById('search-input').value.trim();
-  if (!searchQuery) return;
+function updateSearchChrome() {
+  const input = document.getElementById('search-input');
+  const clearBtn = document.getElementById('search-clear');
+  if (clearBtn) clearBtn.style.display = input && input.value ? 'inline-block' : 'none';
+
+  const el = document.getElementById('recent-searches');
+  if (!el) return;
+  if (!recentSearches.length) {
+    el.classList.remove('show');
+    el.innerHTML = '';
+    return;
+  }
+  el.classList.add('show');
+  el.innerHTML = '<span>Recent:</span>' + recentSearches.map((q, i) =>
+    `<span class="recent-chip" data-recent="${esc(q)}" role="button" tabindex="0">${esc(q)}` +
+    `<span class="x" data-recent-remove="${i}" role="button" tabindex="0" aria-label="Remove ${esc(q)}">✕</span></span>`
+  ).join('');
+}
+
+function rememberSearch(q) {
+  const t = (q || '').trim();
+  if (!t) return;
+  recentSearches = [t, ...recentSearches.filter(x => x.toLowerCase() !== t.toLowerCase())]
+    .slice(0, RECENT_SEARCH_MAX);
+  LS.set('recent_searches', recentSearches);
+  updateSearchChrome();
+}
+
+function clearSearch() {
+  const input = document.getElementById('search-input');
+  if (input) { input.value = ''; input.focus(); }
+  searchQuery = '';
+  searchResults = [];
+  updateSearchChrome();
+  if (state.view === 'search') {
+    state.view = 'trending';
+    renderView();
+  }
+}
+
+function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  rememberSearch(q);
+  searchQuery = q;
   state.searchPage = 1;
   state.view = 'search';
   window.scrollTo({ top: 0, behavior: 'smooth' });
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   renderView();
 }
+
+// Type-to-search: only kicks in after a short pause and 2+ characters.
+const searchAsYouType = debounce(() => {
+  const q = document.getElementById('search-input').value.trim();
+  if (q.length < 2) return;
+  if (q === searchQuery && state.view === 'search') return;
+  doSearch();
+}, 450);
+
+document.getElementById('search-input').addEventListener('input', () => {
+  updateSearchChrome();
+  searchAsYouType();
+});
 document.getElementById('search-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doSearch();
+  if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+  else if (e.key === 'Escape') { e.preventDefault(); clearSearch(); }
+});
+
+document.getElementById('recent-searches').addEventListener('click', e => {
+  const removeEl = e.target.closest('[data-recent-remove]');
+  if (removeEl) {
+    e.stopPropagation();
+    recentSearches.splice(Number(removeEl.dataset.recentRemove), 1);
+    LS.set('recent_searches', recentSearches);
+    updateSearchChrome();
+    return;
+  }
+  const chip = e.target.closest('[data-recent]');
+  if (!chip) return;
+  document.getElementById('search-input').value = chip.dataset.recent;
+  doSearch();
 });
 
 async function loadMoreSearchResults() {
@@ -2515,7 +3276,7 @@ async function loadMoreSearchResults() {
 
     searchResults.push(...newResults);
     const main = document.getElementById('main-content');
-    if (!newResults.length) { toast('No more results'); return; }
+    if (!newResults.length) { toast('No more results'); document.getElementById('load-more-btn')?.remove(); return; }
 
     const existingRow = main.querySelector('.card-row[data-search-row]');
     if (existingRow) {
@@ -2576,7 +3337,10 @@ async function renderSearch(main, token) {
 
     main.innerHTML = '';
     if (!searchResults.length) {
-      main.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>No results for "${esc(searchQuery)}"</div>`;
+      main.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>
+        <p><strong>No results for "${esc(searchQuery)}"</strong></p>
+        <p style="margin-top:6px;font-size:.85rem">Check the spelling, or try a shorter phrase.</p>
+      </div>`;
       return;
     }
     renderSearchRow(main);
@@ -2584,8 +3348,7 @@ async function renderSearch(main, token) {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('Search error:', e);
-    main.innerHTML = '<div class="empty-state">Search failed. Try again.</div>';
-    toast('Search failed');
+    main.innerHTML = emptyStateHTML('⚠️', 'Search failed', esc(e.message), 'retry');
   }
 }
 
@@ -2601,7 +3364,13 @@ async function fetchQuickRateBatch(type, want = 20) {
 
   while (out.length < want && tries < 5 && qrPage[type] < 500) {
     qrPage[type]++; tries++;
-    const data = await tmdb(path, { sort_by: 'popularity.desc', 'vote_count.gte': minVotes, page: qrPage[type] });
+    let data;
+    try {
+      data = await tmdb(path, { sort_by: 'popularity.desc', 'vote_count.gte': minVotes, page: qrPage[type] });
+    } catch (e) {
+      console.warn('Quick rate batch error:', e);
+      break;
+    }
     const results = data.results || [];
     if (!results.length) break;
 
@@ -2633,9 +3402,11 @@ async function renderQuickRate(main, token) {
     main.innerHTML = '';
     renderQuickRateRow(main, 'Popular Movies 🎬', 'movie', movieItems);
     renderQuickRateRow(main, 'Popular TV Shows 📺', 'tv', tvItems);
+
+    addNotice('Tip: press <strong>1–9</strong> to rate the first card here, <strong>0</strong> for a 10. On a card, <strong>👍</strong> rates it 10 and <strong>👎</strong> rates it 2.', 'qr-tip');
   } catch(e) {
     if (token !== renderToken) return;
-    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${esc(e.message)}</p></div>`;
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load Quick Rate', esc(e.message), 'retry');
   }
 }
 
@@ -2687,19 +3458,20 @@ function buildQuickRateCard(item, onGone) {
   card.className = 'card';
   card.dataset.id = item.id;
   card.dataset.type = type;
+  if (item.genre_ids) card.dataset.genres = item.genre_ids.join(',');
   card.style.cssText = 'display:flex;flex-direction:column;gap:8px;flex:initial;transition:opacity .3s, transform .3s';
 
   card.innerHTML = `
     <div class="qr-poster" style="position:relative;aspect-ratio:2/3;background:var(--surface2);overflow:hidden;cursor:pointer">
-      ${poster ? `<img src="${esc(poster)}" alt="${esc(title)}" style="width:100%;height:100%;object-fit:cover" loading="lazy">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted)">🎬</div>'}
+      ${poster ? `<img src="${esc(poster)}" alt="" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted)">🎬</div>'}
     </div>
     <div style="padding:0 10px 10px">
       <div style="font-weight:600;font-size:0.85rem;line-height:1.3;margin-bottom:4px">${esc(title)}</div>
       <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px">${esc(year)} • ${type === 'movie' ? 'Movie' : 'TV'}</div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="thumbs-btn" data-r="10" title="👍 Loved it (10)">👍</button>
-        <button class="thumbs-btn" data-r="2" title="👎 Not for me (2)">👎</button>
-        <button class="thumbs-btn" data-r="skip" title="Skip — hide without rating">⏭</button>
+        <button class="thumbs-btn" data-r="10" title="👍 Loved it (10)" aria-label="Rate ${esc(title)} 10">👍</button>
+        <button class="thumbs-btn" data-r="2" title="👎 Not for me (2)" aria-label="Rate ${esc(title)} 2">👎</button>
+        <button class="thumbs-btn" data-r="skip" title="Skip — hide without rating" aria-label="Skip ${esc(title)}">⏭</button>
       </div>
     </div>
   `;
@@ -2711,23 +3483,28 @@ function buildQuickRateCard(item, onGone) {
     setTimeout(() => { card.remove(); if (onGone) onGone(); }, 300);
   };
 
-  card.querySelector('.qr-poster').addEventListener('click', () => openModal(type, item.id, item));
-  card.querySelectorAll('.thumbs-btn').forEach(b => b.addEventListener('click', () => {
-    if (b.dataset.r === 'skip') { dismiss(); return; }
-    const val = Number(b.dataset.r);
+  const rate = (val, skip = false) => {
+    if (skip) { dismiss(); return; }
     setRating(type, item.id, val, item.genre_ids || [], item);
     if (state.simklToken) pushRatingToSimkl(type, item.id, val);
     dismiss();
+  };
+  // Exposed so the number keys can rate the first card on screen.
+  card._qrRate = rate;
+
+  card.querySelector('.qr-poster').addEventListener('click', () => openModal(type, item.id, item));
+  card.querySelectorAll('.thumbs-btn').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.r === 'skip') rate(0, true);
+    else rate(Number(b.dataset.r));
   }));
 
   return card;
 }
-
-/* ── STATS & STORAGE ─────────────────────────────────────────────── */
+/* ── STATS & STORAGE ───────────────────────────────────────────────── */
 function getStorageUsage() {
   let totalBytes = 0;
-  for (let key in localStorage) {
-    if (localStorage.hasOwnProperty(key)) {
+  for (const key in localStorage) {
+    if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
       totalBytes += ((localStorage[key].length + key.length) * 2);
     }
   }
@@ -2741,6 +3518,7 @@ function getStorageUsage() {
 
 function clearCache() {
   _cache.clear();
+  _inflight.clear();
   state.mediaDetails = {};
   saveMediaDetails();
   toast('Cache cleared successfully');
@@ -2776,7 +3554,6 @@ function renderStats(main) {
     .slice(0, 5)
     .map(([id, count]) => ({ name: GENRE_MAP[id] || `Genre ${id}`, count }));
 
-  // Rating histogram — buckets 1..10
   const buckets = Array.from({ length: 10 }, (_, i) => ({ rating: i + 1, count: 0 }));
   rated.forEach(([, v]) => {
     const idx = Math.max(1, Math.min(10, Math.round(v))) - 1;
@@ -2878,17 +3655,13 @@ function exportData() {
   const data = {
     ratings: state.ratings,
     watchlist: state.watchlist,
+    wlAdded: state.wlAdded,
     mediaDetails: state.mediaDetails,
     exportDate: new Date().toISOString(),
-    version: '1.1'
+    version: '1.2'
   };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `media-calendar-backup-${localISO(new Date())}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
+    `media-calendar-backup-${localISO(new Date())}.json`);
   toast('Data exported successfully');
 }
 
@@ -2903,6 +3676,7 @@ function importData(input) {
 
       state.ratings = { ...state.ratings, ...(data.ratings || {}) };
       state.watchlist = { ...state.watchlist, ...(data.watchlist || {}) };
+      state.wlAdded = { ...state.wlAdded, ...(data.wlAdded || {}) };
       state.mediaDetails = { ...state.mediaDetails, ...(data.mediaDetails || {}) };
 
       saveRatings();
@@ -2923,29 +3697,30 @@ function importData(input) {
 /* ─────────────────────────────────────────────────────────────────────
    HELPER UTILITIES: RENDER & FILTER PIPELINES
    ───────────────────────────────────────────────────────────────────── */
-async function filterResults(items) {
+async function filterResults(items, opts = {}) {
+  const { yearServerSide = false } = opts;
+
   let out = items.filter(i => {
-    if (state.filterType !== 'all' && i.media_type !== state.filterType) return false;
-    if (state.genre && !(i.genre_ids || []).includes(parseInt(state.genre))) return false;
-    if (state.hideRated && state.ratings[mediaKey(i.media_type, i.id)]) return false;
+    if (filterVisible('type') && state.filterType !== 'all' && i.media_type !== state.filterType) return false;
+    if (filterVisible('genre') && state.genre && !(i.genre_ids || []).includes(parseInt(state.genre, 10))) return false;
+    if (filterVisible('hideRated') && state.hideRated && state.ratings[mediaKey(i.media_type, i.id)]) return false;
+    // Only re-check the year when the request itself could not express it,
+    // otherwise the two checks disagree for re-releases and drop valid items.
+    if (filterVisible('year') && state.year && !yearServerSide) {
+      const date = i.release_date || i.first_air_date;
+      if (!date || !date.startsWith(state.year)) return false;
+    }
     return true;
   });
 
-  if (state.year) {
-    out = out.filter(i => {
-      const date = i.release_date || i.first_air_date;
-      return date && date.startsWith(state.year);
-    });
-  }
-
-  if (state.contentRating) {
-    const need = out.filter(i => {
-      const cached = state.mediaDetails[mediaKey(i.media_type, i.id)]?.contentRating;
-      return cached === undefined;
-    });
-    await promiseAllChunked(need, async item => {
-      item._contentRating = await getContentRating(item.media_type, item.id);
-    }, 8);
+  if (filterVisible('contentRating') && state.contentRating) {
+    const need = out.filter(i => state.mediaDetails[mediaKey(i.media_type, i.id)]?.contentRating === undefined);
+    if (need.length) {
+      await promiseAllChunked(need, async item => {
+        item._contentRating = await getContentRating(item.media_type, item.id);
+      }, 8);
+      saveMediaDetails(); // single write for the whole batch
+    }
     out.forEach(item => {
       if (item._contentRating === undefined) {
         item._contentRating = state.mediaDetails[mediaKey(item.media_type, item.id)]?.contentRating || '';
@@ -2971,7 +3746,11 @@ function renderRow(container, title, items, recBadge = false) {
   const row = sec.querySelector('.card-row');
 
   if (!items.length) {
-    sec.querySelector('.row-wrap').outerHTML = `<p style="color:var(--text-muted);font-size:.85rem">No results found.</p>`;
+    const hasFilters = activeFilterCount() > 0;
+    sec.querySelector('.row-wrap').outerHTML = `<div class="row-empty">
+      <span>No results found${hasFilters ? ' for the current filters' : ''}.</span>
+      ${hasFilters ? '<button class="link-btn" data-action="reset-filters">Clear filters</button>' : ''}
+    </div>`;
   } else {
     items.forEach(item => {
       const card = buildCard(item);
@@ -3001,31 +3780,46 @@ function addSkeletonRow(container, title) {
    ───────────────────────────────────────────────────────────────────── */
 document.querySelectorAll('[data-filter-type]').forEach(chip => {
   chip.addEventListener('click', () => {
-    document.querySelectorAll('[data-filter-type]').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
     state.filterType = chip.dataset.filterType;
+    savePrefs();
+    syncFilterControls();
     renderView();
   });
 });
 document.getElementById('genre-filter').addEventListener('change', e => {
   state.genre = e.target.value;
+  savePrefs();
+  syncFilterControls();
   renderView();
 });
 document.getElementById('sort-filter').addEventListener('change', e => {
   state.sort = e.target.value;
+  savePrefs();
+  syncFilterControls();
   renderView();
 });
 document.getElementById('provider-filter').addEventListener('change', e => {
   state.provider = e.target.value;
+  savePrefs();
+  syncFilterControls();
+  renderView();
+});
+document.getElementById('region-filter').addEventListener('change', e => {
+  state.region = e.target.value;
+  savePrefs();
+  syncFilterControls();
   renderView();
 });
 document.getElementById('rating-filter').addEventListener('change', e => {
   state.contentRating = e.target.value;
+  savePrefs();
+  syncFilterControls();
   renderView();
 });
 document.getElementById('hide-rated-toggle').addEventListener('change', e => {
   state.hideRated = e.target.checked;
   saveHideRated();
+  syncFilterControls();
   renderView();
 });
 
@@ -3039,30 +3833,35 @@ for (let y = currentYear + 1; y >= 1950; y--) {
 }
 yearFilter.addEventListener('change', e => {
   state.year = e.target.value;
-  if (['trending', 'upcoming'].includes(state.view)) renderView();
+  savePrefs();
+  syncFilterControls();
+  if (filterVisible('year')) renderView();
 });
 
+/* Single source of truth for which controls are shown, derived from the same
+   map the filter pipeline uses so the two can never disagree. */
 function updateFilterVisibility() {
-  const yearUses = ['trending', 'upcoming'];
-  const sortUses = ['trending', 'upcoming'];
-  const provUses = ['trending', 'upcoming', 'recommended'];
-  const rateUses = ['trending', 'upcoming'];
-  const genreUses = ['trending', 'upcoming', 'recommended'];
-  const hideRatedUses = ['trending', 'upcoming', 'recommended'];
   const show = (id, on) => {
     const el = document.getElementById(id);
     if (el) el.style.display = on ? '' : 'none';
   };
-  show('year-filter',    yearUses.includes(state.view));
-  show('sort-filter',    sortUses.includes(state.view));
-  show('provider-filter',provUses.includes(state.view));
-  show('rating-filter',  rateUses.includes(state.view));
-  show('genre-filter',   genreUses.includes(state.view));
-  const hideRatedLbl = document.getElementById('hide-rated-toggle')?.closest('label');
-  if (hideRatedLbl) hideRatedLbl.style.display = hideRatedUses.includes(state.view) ? '' : 'none';
+  show('year-filter',     filterVisible('year'));
+  show('sort-filter',     filterVisible('sort'));
+  show('provider-filter', filterVisible('provider'));
+  show('region-filter',   filterVisible('region'));
+  show('rating-filter',   filterVisible('contentRating'));
+  show('genre-filter',    filterVisible('genre'));
+  show('type-label',      filterVisible('type'));
+  show('genre-label',     filterVisible('genre'));
+  show('hide-rated-label',filterVisible('hideRated'));
+
   document.querySelectorAll('#filter-row [data-filter-type]').forEach(chip => {
-    chip.style.display = ['trending', 'upcoming'].includes(state.view) ? '' : 'none';
+    chip.style.display = filterVisible('type') ? '' : 'none';
   });
+
+  const anyVisible = ['type','genre','provider','contentRating','year','sort','hideRated']
+    .some(n => filterVisible(n));
+  if (!anyVisible) document.getElementById('filter-reset')?.classList.remove('show');
 }
 
 const genreFilter = document.getElementById('genre-filter');
@@ -3119,6 +3918,9 @@ async function refreshSimklIfNeeded() {
       'The CI workflow injects the real token before deploy.');
   }
 
+  syncFilterControls();
+  updateSearchChrome();
+
   const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (isLocal) {
     const btn  = document.getElementById('simkl-btn');
@@ -3134,9 +3936,6 @@ async function refreshSimklIfNeeded() {
     await handleSimklCallback();
     await refreshSimklIfNeeded();
   }
-
-  // Restore "Hide rated" toggle state to the checkbox
-  document.getElementById('hide-rated-toggle').checked = state.hideRated;
 
   renderView();
 })();
