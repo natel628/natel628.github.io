@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Crown of Britain — An Interactive Royal Lineage</title>
+<meta name="description" content="An interactive map of the Plantagenet, Tudor, Stuart and Windsor monarchies — click any reign to explore.">
+<style>
+/* ============================================================
+   THE CROWN OF BRITAIN — design system
+   ============================================================ */
+:root{
+  --bg:#06070b;
+  --bg-2:#0b0d14;
+  --panel:rgba(255,255,255,.035);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --line-2:rgba(255,255,255,.16);
+  --ink:#f4efe4;
+  --ink-2:#b9b3a6;
+  --ink-3:#7d786e;
+  --gold:#d9b45b;
+  --gold-lite:#f6e6b6;
+  --gold-deep:#8a6a22;
+  --gold-grad:linear-gradient(135deg,#f9eec6 0%,#e2c579 30%,#a9862f 62%,#f0dcab 100%);
+  --serif:"Cormorant Garamond","Playfair Display","Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --r:16px;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.9);
+  --maxw:1280px;
+  /* width of the monarch-name column, shared by the axis, the bars,
+     the century gridlines and the year marker so they all line up */
+  --labw:min(28vw,190px);
+}
+@media(max-width:720px){:root{--labw:0px}}
+/* house palettes */
+[data-house="plantagenet"]{--c:#e2583c;--c2:#8f2b1c;--c-soft:rgba(226,88,60,.16);}
+[data-house="tudor"]      {--c:#2ec294;--c2:#12634b;--c-soft:rgba(46,194,148,.16);}
+[data-house="stuart"]     {--c:#9b85f5;--c2:#4b3a9e;--c-soft:rgba(155,133,245,.16);}
+[data-house="hanover"]    {--c:#7f94a8;--c2:#3d4b58;--c-soft:rgba(127,148,168,.14);}
+[data-house="windsor"]    {--c:#e0bb63;--c2:#8a6a22;--c-soft:rgba(224,187,99,.16);}
+[data-house="all"]        {--c:#d9b45b;--c2:#8a6a22;--c-soft:rgba(217,180,91,.16);}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body.noscroll{overflow:hidden}
+img,svg{display:block}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+a{color:var(--gold);text-decoration:none}
+
+/* ---------- animated backdrop ---------- */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.bg::after{ /* fine grid */
+  content:"";position:absolute;inset:-10%;
+  background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:74px 74px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 20%,transparent 78%);
+}
+/* faint, cheap ambience: three painted glows, no blend modes (they wreck compositing) */
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.42;will-change:transform}
+.b1{width:46vw;height:46vw;left:-12vw;top:-18vw;background:radial-gradient(circle,#6b2114,transparent 70%);animation:drift1 34s ease-in-out infinite}
+.b2{width:42vw;height:42vw;right:-10vw;top:2vw;background:radial-gradient(circle,#0d4a3a,transparent 70%);animation:drift2 41s ease-in-out infinite}
+.b3{width:38vw;height:38vw;left:24vw;bottom:-20vw;background:radial-gradient(circle,#2a2166,transparent 70%);animation:drift3 47s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+@keyframes drift1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(6vw,4vw,0) scale(1.12)}}
+@keyframes drift2{0%,100%{transform:translate3d(0,0,0) scale(1.06)}50%{transform:translate3d(-7vw,6vw,0) scale(.94)}}
+@keyframes drift3{0%,100%{transform:translate3d(0,0,0) scale(.98)}50%{transform:translate3d(5vw,-5vw,0) scale(1.14)}}
+
+/* ---------- shell ---------- */
+.wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 20px 90px}
+
+/* ---------- hero ---------- */
+.hero{padding:76px 0 34px;text-align:center;position:relative}
+.crown{width:92px;margin:0 auto 20px;filter:drop-shadow(0 8px 22px rgba(217,180,91,.35))}
+.crown svg{width:100%;height:auto}
+.kicker{
+  font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);
+  margin:0 0 14px;opacity:.85;font-weight:600;
+}
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(40px,8.4vw,88px);
+  line-height:.98;margin:0 0 18px;font-weight:600;letter-spacing:-.015em;
+}
+.hero h1 em{
+  font-style:italic;
+  background:var(--gold-grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  padding-right:.06em;
+}
+.lede{max-width:640px;margin:0 auto;color:var(--ink-2);font-size:clamp(15px,1.9vw,17.5px);line-height:1.65}
+.hero-stats{
+  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+  margin:34px auto 0;max-width:880px;
+}
+.stat{
+  flex:1 1 150px;min-width:132px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:14px 12px;backdrop-filter:blur(8px);
+}
+.stat b{display:block;font-family:var(--serif);font-size:27px;color:var(--gold-lite);line-height:1.1}
+.stat span{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ---------- control deck ---------- */
+.deck{
+  position:sticky;top:0;z-index:40;margin:38px 0 26px;
+  background:linear-gradient(180deg,rgba(6,7,11,.94),rgba(6,7,11,.78));
+  backdrop-filter:blur(16px) saturate(140%);
+  border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:14px;
+}
+/* on a phone the deck would swallow half the viewport — let it scroll away */
+@media(max-width:720px){.deck{position:static}}
+.deck-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.deck-row + .deck-row{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;flex:1 1 auto}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 14px;border-radius:999px;
+  border:1px solid var(--line-2);
+  background:rgba(255,255,255,.03);
+  font-size:12.5px;font-weight:600;letter-spacing:.03em;
+  transition:.22s ease;white-space:nowrap;
+}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c)}
+.chip:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
+.chip.on{
+  background:color-mix(in srgb,var(--c) 20%,transparent);
+  border-color:var(--c);color:#fff;
+  box-shadow:0 0 0 3px var(--c-soft),0 6px 18px -8px var(--c);
+}
+.chip .n{opacity:.5;font-size:11px;font-variant-numeric:tabular-nums}
+.search{position:relative;flex:1 1 240px;max-width:330px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;opacity:.45}
+.search input{
+  width:100%;padding:10px 14px 10px 34px;border-radius:999px;
+  background:rgba(255,255,255,.05);border:1px solid var(--line-2);
+  color:var(--ink);font-size:13.5px;outline:none;transition:.2s;
+}
+.search input::placeholder{color:var(--ink-3)}
+.search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(217,180,91,.16);background:rgba(255,255,255,.07)}
+.seg{display:flex;background:rgba(255,255,255,.045);border:1px solid var(--line-2);border-radius:999px;padding:3px;gap:3px}
+.seg button{
+  padding:7px 15px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--ink-2);transition:.2s;
+}
+.seg button.on{background:var(--gold);color:#20180a;box-shadow:0 4px 14px -5px rgba(217,180,91,.8)}
+select{
+  padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line-2);color:var(--ink);font-size:12.5px;outline:none;cursor:pointer;
+}
+select option{background:#12141b}
+
+/* scrubber */
+.scrub{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.scrub-lab{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:700;white-space:nowrap}
+.scrub-year{
+  font-family:var(--serif);font-size:26px;color:var(--gold-lite);
+  min-width:78px;text-align:center;font-variant-numeric:tabular-nums;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;flex:1 1 220px;height:26px;background:transparent;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:5px;border-radius:99px;
+  background:linear-gradient(90deg,#e2583c,#2ec294 34%,#9b85f5 55%,#7f94a8 66%,#e0bb63);
+  opacity:.85;
+}
+input[type=range]::-moz-range-track{
+  height:5px;border-radius:99px;
+  background:linear-gradient(90deg,#e2583c,#2ec294 34%,#9b85f5 55%,#7f94a8 66%,#e0bb63);
+  opacity:.85;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;margin-top:-7.5px;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--gold) 60%,#7a5d1c);
+  border:1px solid #fff3;box-shadow:0 3px 14px rgba(217,180,91,.75);
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border:1px solid #fff3;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--gold) 60%,#7a5d1c);
+  box-shadow:0 3px 14px rgba(217,180,91,.75);
+}
+.scrub-who{
+  flex:1 1 100%;margin:2px 0 0;font-size:13.5px;color:var(--ink-2);
+  min-height:20px;border-left:2px solid var(--gold);padding-left:10px;
+}
+.scrub-who b{color:var(--ink);font-weight:600}
+.scrub-who .h{color:var(--c);font-weight:600}
+
+/* ---------- views ---------- */
+.view{display:none}.view.on{display:block;animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.section-head{display:flex;align-items:baseline;gap:14px;margin:34px 0 14px;flex-wrap:wrap}
+.section-head h2{font-family:var(--serif);font-size:clamp(23px,3.6vw,34px);margin:0;font-weight:600}
+.section-head p{margin:0;color:var(--ink-3);font-size:13px}
+
+/* ---------- timeline (reign map) ---------- */
+.axis{position:relative;height:34px;margin-left:var(--labw);border-bottom:1px solid var(--line)}
+.axis .tk{position:absolute;top:0;height:100%;border-left:1px solid var(--line);padding-left:6px}
+.axis .tk span{font-size:10.5px;color:var(--ink-3);font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.axis .tk.edge span{color:var(--gold);opacity:.8;font-weight:600}
+.axis .tk.end{border-left:0;border-right:1px solid var(--line);padding-left:0;padding-right:6px;transform:translateX(-100%);text-align:right}
+.axis .zoomtag{
+  position:absolute;right:0;top:-19px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);opacity:.75;font-weight:700;
+}
+.lanes{position:relative;margin-top:8px}
+.gridlines{position:absolute;top:0;bottom:0;left:var(--labw);right:0;pointer-events:none;z-index:0}
+.gridlines i{position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.07) 12%,rgba(255,255,255,.07) 88%,transparent)}
+#marker{
+  position:absolute;top:0;bottom:0;left:var(--labw);right:0;z-index:5;pointer-events:none;
+  opacity:0;transition:opacity .3s;
+}
+#marker::after{
+  content:"";position:absolute;top:0;bottom:0;width:2px;left:var(--mx,0%);transform:translateX(-1px);
+  background:linear-gradient(180deg,transparent,var(--gold) 10%,#fff 50%,var(--gold) 90%,transparent);
+  box-shadow:0 0 14px 2px rgba(217,180,91,.75);
+}
+#marker::before{
+  content:"";position:absolute;top:-6px;left:var(--mx,0%);
+  width:9px;height:9px;background:var(--gold);transform:translateX(-50%) rotate(45deg);
+  box-shadow:0 0 12px rgba(217,180,91,.9);
+}
+#marker.on{opacity:1}
+.house-band{
+  position:relative;margin:26px 0 8px;padding:9px 14px;border-radius:12px;
+  border:1px solid color-mix(in srgb,var(--c) 34%,transparent);
+  background:linear-gradient(90deg,var(--c-soft),transparent 70%);
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;z-index:1;
+}
+.house-band h3{font-family:var(--serif);font-size:21px;margin:0;color:var(--c);letter-spacing:.01em;font-weight:600}
+.house-band span{font-size:11.5px;color:var(--ink-3);letter-spacing:.14em;text-transform:uppercase}
+.house-band .blurb{font-size:12.5px;color:var(--ink-2);text-transform:none;letter-spacing:0;flex:1 1 220px}
+.lane{
+  position:relative;display:grid;grid-template-columns:var(--labw) 1fr;
+  align-items:center;gap:0;min-height:38px;z-index:1;
+}
+@media(max-width:720px){.lane{grid-template-columns:1fr}}
+/* a reign interrupted by a rival — hatched so the bar reads honestly */
+.bar-gap{
+  position:absolute;top:9px;height:20px;border-radius:6px;z-index:3;pointer-events:none;
+  border:1px dashed color-mix(in srgb,var(--c) 60%,transparent);
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.55) 0 3px,rgba(255,255,255,.1) 3px 6px);
+}
+.lane-label{
+  display:flex;flex-direction:column;padding:4px 12px 4px 0;line-height:1.25;
+}
+@media(max-width:720px){.lane-label{flex-direction:row;gap:8px;align-items:baseline;padding:8px 0 2px}}
+.lane-name{font-size:13.5px;font-weight:600;color:var(--ink)}
+.lane-reign{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.lane-track{position:relative;height:38px}
+.bar{
+  position:absolute;top:9px;height:20px;min-width:5px;border-radius:99px;
+  display:block;overflow:hidden;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c) 92%,#fff),var(--c2));
+  border:1px solid color-mix(in srgb,var(--c) 60%,#fff 12%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 16px -6px var(--c);
+  transition:transform .18s ease,box-shadow .25s ease,filter .25s;
+}
+.bar:hover{transform:scaleY(1.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 2px var(--c),0 8px 26px -6px var(--c);z-index:6}
+/* The name is always laid out (hidden) so JS can measure its true width, and is
+   revealed only when it genuinely fits inside the bar. */
+.bar .bt{
+  position:absolute;left:0;top:0;height:100%;line-height:18px;visibility:hidden;
+  font-size:10.5px;font-weight:700;letter-spacing:.03em;color:#0d0a04;
+  padding:0 8px;white-space:nowrap;
+  text-shadow:0 1px 0 rgba(255,255,255,.35);
+}
+.bar.lab .bt{visibility:visible}
+.bar.tiny{border-radius:6px;min-width:7px}
+
+.lane.hit .lane-name{color:var(--gold-lite)}
+.lane.hit .bar{box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 2px #fff,0 0 22px 2px var(--c)}
+.lane.dim{opacity:.22;filter:saturate(.35)}
+.lane{cursor:pointer}
+.lane:hover .lane-name{color:var(--c)}
+
+/* tooltip */
+#tip{
+  position:fixed;z-index:120;pointer-events:none;opacity:0;transform:translateY(6px);
+  transition:opacity .16s ease,transform .16s ease;
+  background:rgba(10,11,16,.96);border:1px solid var(--line-2);border-radius:12px;
+  padding:10px 13px;max-width:250px;box-shadow:0 16px 40px -14px #000;backdrop-filter:blur(10px);
+}
+#tip.on{opacity:1;transform:none}
+#tip b{display:block;font-family:var(--serif);font-size:17px;color:var(--c);line-height:1.15}
+#tip i{display:block;font-style:normal;font-size:12px;color:var(--ink-2);margin-top:3px}
+#tip u{display:block;text-decoration:none;font-size:11px;color:var(--ink-3);margin-top:5px;letter-spacing:.06em;text-transform:uppercase}
+
+/* ---------- gallery ---------- */
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.card{
+  position:relative;overflow:hidden;text-align:left;
+  background:linear-gradient(165deg,var(--c-soft),rgba(255,255,255,.028) 42%,rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:var(--r);
+  padding:20px 18px 17px;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s;
+  animation:rise .55s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+.card::before{
+  content:"";position:absolute;inset:0;border-radius:var(--r);pointer-events:none;
+  background:radial-gradient(120% 80% at 100% 0%,var(--c-soft),transparent 60%);
+  opacity:.7;
+}
+.card::after{
+  content:"";position:absolute;left:0;top:0;height:3px;width:100%;
+  background:linear-gradient(90deg,var(--c),transparent 85%);opacity:.9;
+}
+.card:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--c) 55%,transparent);box-shadow:0 26px 50px -24px var(--c),0 0 0 1px var(--c-soft)}
+.card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.card-top{display:flex;align-items:center;gap:13px;margin-bottom:13px}
+.mono{
+  width:58px;height:58px;flex:0 0 58px;border-radius:50%;
+  display:grid;place-items:center;position:relative;
+  background:radial-gradient(circle at 32% 26%,color-mix(in srgb,var(--c) 42%,#0a0b10),#0a0b10 78%);
+  border:1px solid color-mix(in srgb,var(--c) 45%,transparent);
+  box-shadow:inset 0 0 22px var(--c-soft),0 6px 18px -10px var(--c);
+}
+.mono span{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--c);letter-spacing:-.02em;text-shadow:0 0 18px var(--c-soft)}
+.mono::after{
+  content:"";position:absolute;inset:-5px;border-radius:50%;
+  border:1px dashed color-mix(in srgb,var(--c) 40%,transparent);opacity:.55;
+}
+.card h3{font-family:var(--serif);font-size:21px;margin:0;font-weight:600;line-height:1.1}
+.card .ep{font-size:12px;color:var(--c);font-style:italic;margin-top:2px}
+.card .rl{font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums;letter-spacing:.06em;margin-top:5px}
+.card .facts{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.tag{font-size:10.5px;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink-2);letter-spacing:.04em}
+.card .peek{font-size:12.8px;color:var(--ink-2);line-height:1.55;margin:0;min-height:40px}
+.card .open{
+  margin-top:14px;display:flex;align-items:center;gap:7px;font-size:11.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--c);font-weight:700;
+}
+.card .open svg{width:13px;height:13px;transition:transform .3s}
+.card:hover .open svg{transform:translateX(4px)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:200;display:none}
+.modal.on{display:grid;place-items:center}
+.scrim{position:absolute;inset:0;background:rgba(3,4,7,.78);backdrop-filter:blur(9px);animation:fade .3s both}
+.sheet{
+  position:relative;width:min(920px,94vw);max-height:90vh;overflow-y:auto;overscroll-behavior:contain;
+  background:linear-gradient(170deg,color-mix(in srgb,var(--c) 12%,#0a0b10),#08090d 55%);
+  border:1px solid color-mix(in srgb,var(--c) 34%,var(--line));
+  border-radius:22px;box-shadow:0 40px 90px -30px #000,0 0 0 1px var(--c-soft);
+  animation:pop .42s cubic-bezier(.2,.9,.25,1) both;
+}
+@keyframes pop{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
+.sheet::-webkit-scrollbar{width:9px}
+.sheet::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--c) 45%,transparent);border-radius:9px}
+.sheet-head{
+  position:relative;padding:34px 34px 24px;
+  border-bottom:1px solid var(--line);
+  background:radial-gradient(120% 130% at 12% 0%,var(--c-soft),transparent 62%);
+  display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;
+}
+.sheet-head .mono{width:96px;height:96px;flex-basis:96px}
+.sheet-head .mono span{font-size:36px}
+.sheet-head .htxt{flex:1 1 300px;min-width:220px}
+.sheet-head .hk{font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--c);font-weight:700;margin:0 0 8px}
+.sheet-head h2{font-family:var(--serif);font-size:clamp(30px,5vw,46px);line-height:1;margin:0;font-weight:600;letter-spacing:-.015em}
+.sheet-head .he{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink-2);margin:8px 0 0}
+.sheet-head .hr{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pill{font-size:11.5px;padding:5px 12px;border-radius:99px;border:1px solid color-mix(in srgb,var(--c) 40%,transparent);background:var(--c-soft);color:var(--ink)}
+.close{
+  position:absolute;right:14px;top:14px;width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--line-2);background:rgba(0,0,0,.35);font-size:17px;color:var(--ink-2);
+  display:grid;place-items:center;transition:.2s;z-index:3;
+}
+.close:hover{background:var(--c);color:#0b0a06;border-color:var(--c);transform:rotate(90deg)}
+.sheet-body{padding:26px 34px 30px}
+.quick{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-bottom:14px;align-items:start}
+.qi{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:13px;padding:12px 13px}
+.qi .wtag{
+  display:inline-block;font-style:normal;font-size:12.5px;font-weight:500;
+  padding:4px 11px;margin:2px 5px 2px 0;border-radius:99px;
+  background:color-mix(in srgb,var(--c) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--c) 32%,transparent);color:var(--ink);
+}
+.qi.spouses{margin-bottom:26px}
+.qi span{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+.qi b{font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.3}
+.qi b.serif{font-family:var(--serif);font-size:22px;color:var(--gold-lite)}
+.ctx{margin-bottom:28px}
+.ctx h4{margin:0 0 12px;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.ctx-track{position:relative;height:46px;border-radius:8px;background:rgba(255,255,255,.035);border:1px solid var(--line);overflow:hidden}
+.ctx-bar{position:absolute;top:6px;height:15px;border-radius:5px;z-index:2;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 80%,#fff),var(--c));box-shadow:0 0 18px -2px var(--c);min-width:3px}
+.ctx-band{
+  position:absolute;bottom:0;height:20px;display:flex;align-items:center;overflow:hidden;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c) 40%,transparent),color-mix(in srgb,var(--c) 14%,transparent));
+  border-right:1px solid rgba(0,0,0,.55);
+}
+.ctx-band span{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 30%,#fff);padding-left:7px;white-space:nowrap;font-weight:700}
+.ctx-band.on{background:linear-gradient(180deg,color-mix(in srgb,var(--c) 72%,transparent),color-mix(in srgb,var(--c) 32%,transparent))}
+.ctx-scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-3);margin-top:7px;font-variant-numeric:tabular-nums}
+.ev{margin-bottom:28px}
+.ev h4{margin:0 0 14px;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.ev ol{list-style:none;margin:0;padding:0 0 0 20px;border-left:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.ev li{position:relative;padding:0 0 16px 18px}
+.ev li:last-child{padding-bottom:0}
+.ev li::before{
+  content:"";position:absolute;left:-25px;top:6px;width:9px;height:9px;border-radius:50%;
+  background:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 20%,transparent),0 0 12px var(--c);
+}
+.ev .y{font-family:var(--serif);font-size:17px;color:var(--gold-lite);font-weight:600;margin-right:9px}
+.ev .t{font-size:14px;color:var(--ink-2);line-height:1.55}
+.fact{
+  border-left:3px solid var(--c);background:linear-gradient(90deg,var(--c-soft),transparent 80%);
+  border-radius:0 12px 12px 0;padding:15px 18px;margin-bottom:26px;
+}
+.fact h4{margin:0 0 7px;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--c);font-weight:700}
+.fact p{margin:0;font-family:var(--serif);font-size:17.5px;line-height:1.5;color:var(--ink);font-style:italic}
+.sheet-foot{
+  display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;
+  padding:16px 34px 24px;border-top:1px solid var(--line);
+}
+.nav-btn{
+  display:inline-flex;align-items:center;gap:9px;padding:10px 16px;border-radius:99px;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.04);font-size:12.5px;font-weight:600;
+  transition:.2s;max-width:44%;
+}
+.nav-btn:hover{background:rgba(255,255,255,.1);border-color:var(--gold);color:var(--gold-lite)}
+.nav-btn small{display:block;font-size:10px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+.nav-btn b{font-family:var(--serif);font-size:15px;font-weight:600}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* ---------- misc ---------- */
+.empty{text-align:center;padding:70px 20px;color:var(--ink-3)}
+.empty b{display:block;font-family:var(--serif);font-size:26px;color:var(--ink-2);margin-bottom:8px}
+.note{
+  margin:26px 0 0;font-size:12.5px;color:var(--ink-3);line-height:1.7;
+  border:1px dashed var(--line);border-radius:14px;padding:16px 18px;background:rgba(255,255,255,.02);
+}
+.note b{color:var(--ink-2)}
+footer{margin-top:56px;text-align:center;color:var(--ink-3);font-size:12px;line-height:1.9}
+footer .rule{width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 22px}
+kbd{
+  background:rgba(255,255,255,.08);border:1px solid var(--line-2);border-bottom-width:2px;
+  border-radius:5px;padding:1px 6px;font-size:11px;font-family:var(--sans);color:var(--ink-2)
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="crown" aria-hidden="true">
+      <svg viewBox="0 0 100 74" fill="none">
+        <defs>
+          <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f9eec6"/><stop offset=".42" stop-color="#e2c579"/>
+            <stop offset=".72" stop-color="#a9862f"/><stop offset="1" stop-color="#f0dcab"/>
+          </linearGradient>
+        </defs>
+        <path d="M50 4 60 24 50 20 40 24Z" fill="url(#gg)"/>
+        <circle cx="50" cy="4" r="4.6" fill="url(#gg)"/>
+        <circle cx="10" cy="20" r="4.2" fill="url(#gg)"/>
+        <circle cx="90" cy="20" r="4.2" fill="url(#gg)"/>
+        <path d="M10 24 20 46h60l10-22-16 9-10-15-14 16-14-16-10 15Z" fill="url(#gg)"/>
+        <rect x="16" y="52" width="68" height="7" rx="3.5" fill="url(#gg)"/>
+        <path d="M20 63h60l-6 9H26Z" fill="url(#gg)" opacity=".75"/>
+        <circle cx="50" cy="34" r="3" fill="#0a0b10"/><circle cx="30" cy="38" r="2.1" fill="#0a0b10"/><circle cx="70" cy="38" r="2.1" fill="#0a0b10"/>
+      </svg>
+    </div>
+    <p class="kicker" id="kicker">1154 &nbsp;—&nbsp; today</p>
+    <h1>The Crown of <em>Britain</em></h1>
+    <p class="lede">Every monarch of the Plantagenet, Tudor, Stuart and Windsor dynasties — mapped reign by reign. Drag the year, scan the timeline, and click any king or queen to open their story.</p>
+    <div class="hero-stats" id="heroStats"></div>
+  </header>
+
+  <nav class="deck" aria-label="Controls">
+    <div class="deck-row">
+      <div class="chips" id="chips"></div>
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search a monarch, a queen, a battle…" autocomplete="off" aria-label="Search monarchs">
+      </label>
+      <div class="seg" id="viewSeg" role="group" aria-label="View">
+        <button data-view="timeline" class="on">Reign map</button>
+        <button data-view="gallery">Gallery</button>
+      </div>
+      <select id="sort" aria-label="Sort gallery">
+        <option value="chrono">Sort: chronology</option>
+        <option value="longest">Sort: longest reign</option>
+        <option value="shortest">Sort: shortest reign</option>
+        <option value="alpha">Sort: A–Z</option>
+      </select>
+    </div>
+    <div class="deck-row scrub">
+      <span class="scrub-lab">Who ruled in</span>
+      <span class="scrub-year" id="scrubYear">1215</span>
+      <input type="range" id="year" min="1154" max="2026" value="1215" step="1" aria-label="Year">
+      <p class="scrub-who" id="scrubWho"></p>
+    </div>
+  </nav>
+
+  <main>
+    <section class="view on" id="view-timeline" aria-label="Reign map">
+      <div class="axis" id="axis"></div>
+      <div class="lanes" id="lanes">
+        <div class="gridlines" id="gridlines" aria-hidden="true"></div>
+        <div id="marker" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-gallery" aria-label="Gallery">
+      <div class="section-head">
+        <h2 id="galleryTitle">The Gallery</h2>
+        <p id="galleryCount"></p>
+      </div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <div class="note">
+      <b>On the houses.</b> The four dynasties you asked for sit either side of two others. Between the Stuarts and the Windsors came the <b>Hanoverians</b> (1714–1901) and the short <b>House of Saxe-Coburg-Gotha</b>, renamed <b>Windsor</b> by George V in 1917 amid anti-German feeling in the First World War. The Hanoverians are shown here in muted steel so the line stays unbroken. And yes — the "Stewards" are properly the <b>Stuarts</b>, from the French spelling of the Scottish surname <i>Stewart</i>; Mary, Queen of Scots brought the name south in 1603.
+    </div>
+  </main>
+
+  <footer>
+    <div class="rule"></div>
+    <p>An interactive lineage of the English &amp; British crown · 1154 – present</p>
+    <p><kbd>←</kbd> <kbd>→</kbd> move between monarchs in an open portrait · <kbd>Esc</kbd> to close · <kbd>/</kbd> to search</p>
+  </footer>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="scrim" data-close></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="mTitle"></div>
+</div>
+
+<script>
+/* ============================================================================
+   DATASET — every monarch of the five mapped houses.
+   events are [year, text] pairs so they can render as a dated timeline.
+   ========================================================================== */
+const SPAN_START = 1154, SPAN_END = 2026;
+
+const HOUSES = {
+  plantagenet:{name:"Plantagenet", years:"1154–1485", blurb:"The Angevins and their branches — Lancaster and York — who built the common law, conquered Wales and tore themselves apart in the Wars of the Roses."},
+  tudor:{name:"Tudor", years:"1485–1603", blurb:"A Welsh-Welsh line of five monarchs who broke with Rome, founded the Royal Navy and turned England into a Protestant sea power."},
+  stuart:{name:"Stuart", years:"1603–1714", blurb:"Union of the crowns, civil war, a republic, a restoration and a revolution that handed power to Parliament."},
+  hanover:{name:"Hanover", years:"1714–1901", blurb:"Shown briefly for continuity: German-speaking kings who left government to Parliament, and Victoria, who gave her name to an age."},
+  windsor:{name:"Windsor", years:"1910–present", blurb:"The house renamed in 1917 — through two world wars, the abdication, the Blitz, a 70-year reign and the newest king."}
+};
+
+const DATA = [
+/* ---------------------------- PLANTAGENET ---------------------------- */
+{id:"henry2",name:"Henry II",epithet:"Curtmantle",house:"plantagenet",mono:"HII",start:1154,end:1189,reign:"1154–1189",
+ born:"1133, Le Mans",died:"1189, Chinon",age:"21",spouse:"Eleanor of Aquitaine",issue:"8 surviving",
+ events:[[1154,"Crowned at Westminster after the chaos of the Anarchy — his mother Matilda's 19-year war with Stephen."],
+         [1166,"Begins the legal reforms — assizes, juries and circuit judges — that grow into English common law."],
+         [1170,"Thomas Becket, Archbishop of Canterbury, is murdered in his cathedral by four of the king's knights."],
+         [1173,"His own sons, backed by the King of France, rebel against him. Henry wins — barely."]],
+ fact:"Henry ruled more of France than the French king did: his 'Angevin Empire' stretched from the Scottish border to the Pyrenees.",
+ peek:"Built the common law and the Angevin Empire — then spent his last years at war with his own sons."},
+
+{id:"richard1",name:"Richard I",epithet:"the Lionheart",house:"plantagenet",mono:"RI",start:1189,end:1199,reign:"1189–1199",
+ born:"1157, Oxford",died:"1199, Châlus, France",age:"31",spouse:"Berengaria of Navarre",issue:"None legitimate",
+ events:[[1190,"Sets out on the Third Crusade; takes Cyprus and wins the siege of Acre."],
+         [1192,"Defeats Saladin at Arsuf and negotiates the Treaty of Jaffa, guaranteeing pilgrims access to Jerusalem."],
+         [1193,"Shipwrecked and captured by the Duke of Austria; England is taxed to the bone to pay a ransom of 100,000 marks."],
+         [1199,"Killed by a crossbow bolt while besieging a minor French castle. He had spent barely six months of his reign in England."]],
+ fact:"The great warrior king of English legend spoke almost no English, and reportedly visited his kingdom only twice.",
+ peek:"The crusading king who saw England mostly as a bank — and spent only months of his reign in it."},
+
+{id:"john",name:"John",epithet:"Lackland",house:"plantagenet",mono:"J",start:1199,end:1216,reign:"1199–1216",
+ born:"1166, Oxford",died:"1216, Newark Castle",age:"33",spouse:"Isabella of Angoulême",issue:"5",
+ events:[[1204,"Loses Normandy to the French — the empire's richest province — and never recovers it."],
+         [1209,"Quarrels with the Pope; England is placed under interdict and John is excommunicated."],
+         [1215,"The barons force him to seal Magna Carta at Runnymede — the charter that puts even the king beneath the law."],
+         [1216,"Magna Carta is annulled and the First Barons' War begins; John dies of dysentery in the middle of it."]],
+ fact:"The 'worst king in English history' is also the accidental author of the rule of law — Magna Carta's clause 40 is still quoted in courtrooms.",
+ peek:"Lost Normandy, fought the Pope, and sealed Magna Carta — the charter that outlived him by eight centuries."},
+
+{id:"henry3",name:"Henry III",epithet:"the Builder",house:"plantagenet",mono:"HIII",start:1216,end:1272,reign:"1216–1272",
+ born:"1207, Winchester",died:"1272, Westminster",age:"9",spouse:"Eleanor of Provence",issue:"5",
+ events:[[1216,"Crowned at Gloucester at nine years old while a French army held London."],
+         [1258,"The Provisions of Oxford force him to accept a council of barons — England's first written constitution."],
+         [1264,"Simon de Montfort defeats him at Lewes and takes him prisoner; the Second Barons' War follows."],
+         [1269,"Consecrates the rebuilt Westminster Abbey, his great obsession and the finest Gothic church in England."]],
+ fact:"He reigned 56 years — longer than any English king for the next 600 years, until George III.",
+ peek:"The king who rebuilt Westminster Abbey — and lost a war with his own barons."},
+
+{id:"edward1",name:"Edward I",epithet:"Longshanks, Hammer of the Scots",house:"plantagenet",mono:"EI",start:1272,end:1307,reign:"1272–1307",
+ born:"1239, Westminster",died:"1307, Burgh by Sands",age:"33",spouse:"Eleanor of Castile; Margaret of France",issue:"19",
+ events:[[1277,"Conquers Wales; the castles of Conwy, Caernarfon and Harlech rise to hold it."],
+         [1290,"Expels the Jews from England — an act not formally reversed for 365 years."],
+         [1295,"Summons the Model Parliament: nobles, clergy and commoners together for the first time."],
+         [1296,"Strips Scotland of the Stone of Destiny and its crown; the wars of independence ignite under William Wallace."]],
+ fact:"At six-foot-two he towered over his contemporaries, and he was the first king since 1066 to be buried in a plain, unadorned tomb — as he asked.",
+ peek:"Conqueror of Wales, hammer of the Scots, and the king who made Parliament."},
+
+{id:"edward2",name:"Edward II",epithet:"the Caernarfon",house:"plantagenet",mono:"EII",start:1307,end:1327,reign:"1307–1327",lost:true,
+ born:"1284, Caernarfon",died:"1327, Berkeley Castle",age:"23",spouse:"Isabella of France",issue:"4",
+ events:[[1314,"Crushed by Robert the Bruce at Bannockburn — the worst defeat ever suffered by an English army in Scotland."],
+         [1322,"After years of favourites and baronial revolt, he finally crushes the opposition at Boroughbridge."],
+         [1326,"His queen Isabella invades with her lover Mortimer; the Despensers are executed."],
+         [1327,"Deposed by Parliament — the first English king removed by his subjects — and dies in Berkeley Castle months later."]],
+ fact:"The first king of England to be formally deposed by Parliament, establishing a precedent nobody forgot.",
+ peek:"A reluctant king, undone by favourites and Bannockburn."},
+
+{id:"edward3",name:"Edward III",epithet:"of Windsor",house:"plantagenet",mono:"EIII",start:1327,end:1377,reign:"1327–1377",
+ born:"1312, Windsor",died:"1377, Sheen",age:"14",spouse:"Philippa of Hainault",issue:"12",
+ events:[[1330,"Seizes Mortimer at Nottingham Castle and takes personal rule at seventeen."],
+         [1337,"Claims the French throne — the Hundred Years' War begins."],
+         [1346,"Wins Crécy with the longbow, and takes Calais the following year."],
+         [1348,"Founds the Order of the Garter, then loses perhaps half of England to the Black Death."]],
+ fact:"He created the Order of the Garter and fathered 12 children — the ancestor of every English monarch since.",
+ peek:"Started the Hundred Years' War, won Crécy, and founded the Order of the Garter."},
+
+{id:"richard2",name:"Richard II",epithet:"the Boy King",house:"plantagenet",mono:"RII",start:1377,end:1399,reign:"1377–1399",lost:true,
+ born:"1367, Bordeaux",died:"1400, Pontefract Castle",age:"10",spouse:"Anne of Bohemia; Isabella of Valois",issue:"None",
+ events:[[1381,"Aged fourteen, rides out to meet the Peasants' Revolt at Smithfield and defuses it face to face."],
+         [1397,"Takes revenge on the Lords Appellant and rules as an absolute monarch, 'tyranny' by his own admission."],
+         [1399,"Seized by his cousin Henry Bolingbroke while returning from Ireland; abdicates under pressure."],
+         [1400,"Dies a prisoner at Pontefract. Shakespeare gave him the most lyrical speech in the history plays."]],
+ fact:"The first English king to insist on being addressed as 'Majesty' and 'Highness' — and the last to be allowed to rule that way.",
+ peek:"The golden boy king who became an absolute monarch, and was starved back into an ordinary man."},
+
+{id:"henry4",name:"Henry IV",epithet:"Bolingbroke",house:"plantagenet",mono:"HIV",start:1399,end:1413,reign:"1399–1413",
+ born:"1367, Bolingbroke Castle",died:"1413, Westminster",age:"32",spouse:"Mary de Bohun; Joan of Navarre",issue:"7",
+ events:[[1399,"Deposes his cousin Richard II and takes the throne — the first Lancastrian king, and a usurper."],
+         [1403,"Fights the Percys at Shrewsbury, where the young Prince Henry (later Henry V) is nearly killed by an arrow in the face."],
+         [1405,"Defeats the Welsh revolt of Owain Glyndŵr and the Archbishop of York's rebellion."],
+         [1413,"Dies at Westminster, reportedly of leprosy or another wasting illness, worn out by perpetual rebellion."]],
+ fact:"He never stopped fighting to keep a crown he had no proper right to — and passed it on to the greatest warrior king of the age.",
+ peek:"The usurper king who spent his whole reign suppressing the rebellions his own rise set off."},
+
+{id:"henry5",name:"Henry V",epithet:"the Star of England",house:"plantagenet",mono:"HV",start:1413,end:1422,reign:"1413–1422",
+ born:"1386, Monmouth",died:"1422, Vincennes, France",age:"26",spouse:"Catherine of Valois",issue:"1",
+ events:[[1415,"Outnumbered five to one, smashes the French at Agincourt — the most famous victory in English military history."],
+         [1419,"Takes Rouen and brings Normandy back under English rule."],
+         [1420,"Treaty of Troyes: he is named heir to the French throne and marries Catherine of Valois."],
+         [1422,"Dies of dysentery weeks before the French king — so his nine-month-old son inherits two crowns at once."]],
+ fact:"Shakespeare's 'band of brothers' speech is fiction, but the muddy, archer-dominated slaughter at Agincourt was brutally real.",
+ peek:"Agincourt, Troyes, and a death at 35 that left a baby holding two crowns."},
+
+{id:"henry6",name:"Henry VI",epithet:"the Pious",house:"plantagenet",mono:"HVI",start:1422,end:1471,reign:"1422–1461 · 1470–1471",gap:[[1461,1470]],lost:true,
+ born:"1421, Windsor",died:"1471, Tower of London",age:"9 months",spouse:"Margaret of Anjou",issue:"1",
+ events:[[1429,"Crowned King of France at Notre-Dame — the only English king to be crowned there."],
+         [1453,"The French reconquer everything but Calais; Henry suffers his first mental collapse."],
+         [1455,"The Wars of the Roses begin at St Albans between his own nobles."],
+         [1470,"Briefly restored to the throne by Warwick 'the Kingmaker', then murdered in the Tower a year later."]],
+ fact:"He was crowned king of England at eight months old and king of France at ten — the youngest monarch in English history.",
+ peek:"Crowned twice as a baby, then lost France, his mind and finally his life in the Tower."},
+
+{id:"edward4",name:"Edward IV",epithet:"the Sun in Splendour",house:"plantagenet",mono:"EIV",start:1461,end:1483,reign:"1461–1470 · 1471–1483",gap:[[1470,1471]],
+ born:"1442, Rouen",died:"1483, Westminster",age:"18",spouse:"Elizabeth Woodville",issue:"10",
+ events:[[1461,"Wins the bloodiest battle ever fought on English soil at Towton, in a snowstorm."],
+         [1470,"Deposed and flees to Burgundy; returns the next year to win Barnet and Tewkesbury and retake the crown."],
+         [1478,"Has his brother Clarence drowned in a butt of Malmsey wine — so the story goes."],
+         [1483,"Dies suddenly at 40, leaving a 12-year-old heir and his brother Richard as protector."]],
+ fact:"Six-foot-four, handsome, and the first English king since 1066 to owe his crown to a foreign loan rather than inheritance.",
+ peek:"The Yorkist sun in splendour — twice crowned, and dead just as his sons needed him most."},
+
+{id:"edward5",name:"Edward V",epithet:"the Prince in the Tower",house:"plantagenet",mono:"EV",start:1483,end:1483,reign:"1483 · 78 days",
+ born:"1470, Westminster",died:"c.1483, Tower of London",age:"12",spouse:"Never married",issue:"None",
+ events:[[1483,"Accedes in April as a 12-year-old and is taken to the Tower of London 'for his protection'."],
+         [1483,"His uncle Richard takes the throne; Edward and his brother vanish and are never seen again."],
+         [1483,"Parliament declares him illegitimate and his brief reign is struck from the record."],
+         [1674,"Workmen rebuilding the Tower find two small skeletons under a staircase — the mystery never quite closes."]],
+ fact:"He is the only English king since the Conquest never to be crowned, and one of the great unsolved crimes of history.",
+ peek:"Together with his brother, the most famous missing children in history."},
+
+{id:"richard3",name:"Richard III",epithet:"the Last Plantagenet",house:"plantagenet",mono:"RIII",start:1483,end:1485,reign:"1483–1485",
+ born:"1452, Fotheringhay",died:"1485, Bosworth Field",age:"30",spouse:"Anne Neville",issue:"1",
+ events:[[1483,"Deposes his nephew and takes the crown; the Yorkist claim to innocence dies with him."],
+         [1484,"His only son Edward dies at eleven; his wife Anne follows the next year."],
+         [1485,"Torrented by the Tudors as a hunchbacked child-murderer — the caricature Shakespeare made immortal."],
+         [1485,"Charges into Henry Tudor's ranks at Bosworth and is cut down — the last English king to die in battle."]],
+ fact:"His body was dumped in a Leicester friary, lost for 500 years, and dug up in 2012 under a council car park — then reburied with full honours.",
+ peek:"Charged headlong at Bosworth, and so ended 331 years of Plantagenet rule."},
+
+/* ------------------------------- TUDOR ------------------------------- */
+{id:"henry7",name:"Henry VII",epithet:"the Winter King",house:"tudor",mono:"HVII",start:1485,end:1509,reign:"1485–1509",
+ born:"1457, Pembroke Castle",died:"1509, Richmond Palace",age:"28",spouse:"Elizabeth of York",issue:"7",
+ events:[[1485,"Wins the crown at Bosworth after 14 years of exile in Brittany — the thinnest of dynastic threads."],
+         [1486,"Marries Elizabeth of York and fuses the rival roses into the Tudor badge."],
+         [1487,"Crushes the Lambert Simnel rebellion at Stoke Field, securing the new dynasty."],
+         [1502,"Loses his eldest son Arthur, then his wife; he becomes a lonely, ferociously rich accountant-king."]],
+ fact:"He died leaving £1.25 million — the equivalent of perhaps a billion pounds — a thrift that his son spent in spectacular fashion.",
+ peek:"Took the crown at Bosworth, married the two roses, and left his son a fortune."},
+
+{id:"henry8",name:"Henry VIII",epithet:"Bluff King Hal",house:"tudor",mono:"HVIII",start:1509,end:1547,reign:"1509–1547",
+ born:"1491, Greenwich",died:"1547, Whitehall",age:"17",spouse:"Catherine of Aragon · Anne Boleyn · Jane Seymour · Anne of Cleves · Catherine Howard · Catherine Parr",issue:"3",
+ events:[[1521,"Named 'Defender of the Faith' by the Pope for attacking Luther — a title the crown still keeps."],
+         [1533,"Breaks with Rome to annul his first marriage; marries Anne Boleyn, who gives birth to Elizabeth."],
+         [1536,"Dissolves the monasteries — the greatest transfer of wealth in English history — and executes Anne."],
+         [1537,"Jane Seymour dies after giving him the son he craved: Edward VI."],
+         [1541,"His fifth wife Catherine Howard is executed; the ageing king becomes vast, ulcerated and savage."],
+         [1546,"Founds the Royal Navy's first permanent dockyards and warships with heavy guns — the seed of a sea power."]],
+ fact:"Six wives, two of them beheaded, and a religious revolution made almost entirely to solve one man's marital problem.",
+ peek:"Six wives, the break with Rome, the monasteries dissolved — the most consequential reign in English history."},
+
+{id:"edward6",name:"Edward VI",epithet:"the Boy King",house:"tudor",mono:"EVI",start:1547,end:1553,reign:"1547–1553",
+ born:"1537, Hampton Court",died:"1553, Greenwich",age:"9",spouse:"Never married",issue:"None",
+ events:[[1547,"Crowned at nine; real power sits with his uncle Somerset and then the ruthless Northumberland."],
+         [1549,"The Book of Common Prayer is imposed — English, not Latin, in every church. The Prayer Book Rebellion follows."],
+         [1549,"Kett's Rebellion in Norfolk is crushed with thousands dead."],
+         [1553,"Dies of tuberculosis at fifteen, having named Lady Jane Grey his heir to keep England Protestant."]],
+ fact:"He was the first English king raised fully Protestant, and his brief reign gave the Church of England the services it still uses.",
+ peek:"A prodigy king dead at fifteen — and the Book of Common Prayer that outlived him."},
+
+{id:"janegrey",name:"Lady Jane Grey",epithet:"the Nine Days' Queen",house:"tudor",mono:"JG",start:1553,end:1553,reign:"1553 · 9 days",lost:true,
+ born:"1537, Bradgate Park",died:"1554, Tower of London",age:"15",spouse:"Lord Guildford Dudley",issue:"None",
+ events:[[1553,"Proclaimed queen on 10 July, four days after Edward VI's death, by the Duke of Northumberland."],
+         [1553,"Mary I is proclaimed instead on 19 July; the country never really accepted Jane."],
+         [1554,"Found guilty of high treason and beheaded on Tower Green at sixteen."],
+         [1554,"Her blind, serene dignity on the scaffold made her the most sympathetic figure of the Tudor succession."]],
+ fact:"Never crowned, never wanted the crown, and executed anyway — a teenager used as a pawn by men playing for a kingdom.",
+ peek:"Reigned nine days, died on the scaffold at sixteen."},
+
+{id:"mary1",name:"Mary I",epithet:"Bloody Mary",house:"tudor",mono:"MI",start:1553,end:1558,reign:"1553–1558",
+ born:"1516, Greenwich",died:"1558, St James's Palace",age:"37",spouse:"Philip II of Spain",issue:"None",
+ events:[[1553,"Reverses Jane Grey's coup and restores Catholicism, to genuine popular applause."],
+         [1554,"Marries Philip of Spain, dragging England into Spain's wars against France."],
+         [1555,"The Marian persecutions begin: around 280 Protestants burned at the stake, including bishops Cranmer and Ridley."],
+         [1558,"Calais, England's last foothold in France, is lost — 'the Calais in my heart' she said she would find written on her heart when she died."]],
+ fact:"Pregnant twice, and twice it turned out to be illness — a phantom pregnancy that helped break her health and her reign.",
+ peek:"Restored Rome, burned bishops, lost Calais — and died without the heir she ached for."},
+
+{id:"elizabeth1",name:"Elizabeth I",epithet:"the Virgin Queen",house:"tudor",mono:"EI",start:1558,end:1603,reign:"1558–1603",
+ born:"1533, Greenwich",died:"1603, Richmond Palace",age:"25",spouse:"Never married",issue:"None",
+ events:[[1559,"Settles the Church of England as a Protestant compromise — a settlement that still shapes it."],
+         [1587,"Her cousin Mary, Queen of Scots, is executed after 19 years of imprisonment."],
+         [1588,"Drake and the English fleet scatter the Spanish Armada in the Channel."],
+         [1590,"The golden age of English letters: Spenser, Marlowe, Shakespeare writing for her stage."],
+         [1600,"Grants a charter to the East India Company, seeding the empire her successors would inherit."]],
+ fact:"She refused to name an heir until her last breath, keeping England guessing for forty years and preserving her own power.",
+ peek:"Gloriana: the Armada scattered, Shakespeare writing, and the question of the succession unanswered to the end."},
+
+/* ------------------------------- STUART ------------------------------ */
+{id:"james1",name:"James I",epithet:"& VI of Scotland",house:"stuart",mono:"JI",start:1603,end:1625,reign:"1603–1625",
+ born:"1566, Edinburgh Castle",died:"1625, Theobalds",age:"36",spouse:"Anne of Denmark",issue:"7",
+ events:[[1603,"Union of the Crowns — one king now rules England, Scotland and Ireland, though they stay separate states."],
+         [1605,"The Gunpowder Plot is uncovered; Guy Fawkes is caught beneath the House of Lords."],
+         [1611,"The King James Bible is published — the most influential English translation ever made."],
+         [1618,"Authorises the plantation of Ulster, embedding a conflict that lasts three centuries."]],
+ fact:"He wrote books on kingship, witchcraft and tobacco, and believed a king ruled by divine right — an idea that killed his son.",
+ peek:"United the crowns, delivered the King James Bible, and believed kings answered only to God."},
+
+{id:"charles1",name:"Charles I",epithet:"the Martyr King",house:"stuart",mono:"CI",start:1625,end:1649,reign:"1625–1649",lost:true,
+ born:"1600, Dunfermline",died:"1649, Whitehall",age:"24",spouse:"Henrietta Maria of France",issue:"9",
+ events:[[1629,"Dissolves Parliament and begins eleven years of Personal Rule, raising money by forgotten taxes."],
+         [1637,"Tries to force a new prayer book on Scotland; the Bishops' Wars begin."],
+         [1642,"Raises his standard at Nottingham — the English Civil War starts."],
+         [1645,"The New Model Army destroys his forces at Naseby."],
+         [1649,"Beheaded outside the Banqueting House on 30 January before a stunned crowd."]],
+ fact:"He wore two shirts on the scaffold, so the crowd would not think he was shivering from fear.",
+ peek:"Believed there was no law above him — and became the only English king tried and executed by his own subjects."},
+
+{id:"cromwell",name:"Oliver Cromwell",epithet:"Lord Protector",house:"stuart",mono:"OC",start:1649,end:1660,reign:"1649–1660",interregnum:true,
+ born:"1599, Huntingdon",died:"1658, Whitehall",age:"50",spouse:"Elizabeth Bourchier",issue:"9",
+ events:[[1649,"The monarchy and the House of Lords are abolished; England becomes a republic, the Commonwealth."],
+         [1649,"Brutally suppresses Ireland at Drogheda and Wexford — a wound still felt today."],
+         [1653,"Dismisses Parliament ('in the name of God, go!') and is installed as Lord Protector."],
+         [1658,"Dies in power; his son Richard cannot hold it, and the monarchy returns two years later."],
+         [1661,"His corpse is dug up and his severed head displayed on a spike for 24 years."]],
+ fact:"The only commoner ever to rule England — and the reason the Stuarts came back so quietly the second time.",
+ peek:"The republic between the kings: a soldier, a regicide and a Lord Protector."},
+
+{id:"charles2",name:"Charles II",epithet:"the Merry Monarch",house:"stuart",mono:"CII",start:1660,end:1685,reign:"1660–1685",
+ born:"1630, St James's Palace",died:"1685, Whitehall",age:"30",spouse:"Catherine of Braganza",issue:"No legitimate heir",
+ events:[[1660,"The Restoration: he rides into London on his birthday to cheering crowds, promising to leave plague, war and rebellion behind."],
+         [1665,"The Great Plague kills around 100,000 Londoners."],
+         [1666,"The Great Fire destroys 13,000 houses and old St Paul's — and rebuilds the city in stone."],
+         [1670,"The secret Treaty of Dover with France brings money and a promise of Catholic sympathies."],
+         [1679,"The Exclusion Crisis: Parliament tries to block his Catholic brother James from the throne."]],
+ fact:"He fathered no legitimate heir but at least a dozen illegitimate children — and founded the Royal Observatory along the way.",
+ peek:"Brought the crown back to a relieved nation, then survived plague, fire and every plot against him."},
+
+{id:"james2",name:"James II",epithet:"the Last Catholic King",house:"stuart",mono:"JII",start:1685,end:1688,reign:"1685–1688",lost:true,
+ born:"1633, St James's Palace",died:"1701, Saint-Germain, France",age:"51",spouse:"Anne Hyde; Mary of Modena",issue:"13",
+ events:[[1685,"Survives the Monmouth Rebellion; the Bloody Assizes hang 200 and transport 800 to the colonies."],
+         [1687,"Issues a Declaration of Indulgence to grant Catholics freedom of worship — and fills the army with Catholic officers."],
+         [1688,"His son James is born, raising the prospect of a Catholic dynasty; seven nobles invite William of Orange to invade."],
+         [1688,"The Glorious Revolution: he flees to France, dropping the Great Seal in the Thames."]],
+ fact:"He was the last British monarch to be overthrown by invasion, and the throne passed to his own daughter and son-in-law.",
+ peek:"Fled to France in 1688 and lost the crown to his own daughter — the Revolution settlement."},
+
+{id:"williammary",name:"William III & Mary II",epithet:"the Joint Sovereigns",house:"stuart",mono:"W·M",start:1689,end:1702,reign:"1689–1702",
+ born:"Mary: 1662, London · William: 1650, The Hague",died:"Mary: 1694, Kensington · William: 1702, Kensington",age:"Mary 26 · William 38",spouse:"Each other",issue:"None surviving",
+ events:[[1689,"Accept the throne and the Bill of Rights: no taxation, no army and no law without Parliament's consent."],
+         [1690,"William defeats James at the Boyne in Ireland — commemorated to this day."],
+         [1694,"Mary dies of smallpox at 32, mourned as England's most beloved queen, leaving William to rule alone."],
+         [1694,"The Bank of England is founded to fund the war against France — the birth of the national debt."],
+         [1701,"The Act of Settlement bars Catholics from the throne forever."]],
+ fact:"The Bill of Rights they accepted in 1689 is the foundation of British constitutional monarchy — the crown has ruled with Parliament's consent ever since.",
+ peek:"The revolution that made the crown Parliament's partner — and the Bill of Rights that outlasted them all."},
+
+{id:"anne",name:"Anne",epithet:"the Last Stuart",house:"stuart",mono:"A",start:1702,end:1714,reign:"1702–1714",
+ born:"1665, St James's Palace",died:"1714, Kensington Palace",age:"37",spouse:"George of Denmark",issue:"17 pregnancies, none surviving",
+ events:[[1702,"Accedes just as the War of the Spanish Succession begins."],
+         [1704,"Marlborough's victory at Blenheim is fought, as she wrote, 'in her name'."],
+         [1707,"Acts of Union create Great Britain — England and Scotland join one Parliament at Westminster."],
+         [1711,"The great Baroque of Blenheim Palace, St Paul's and the new London goes up around her."],
+         [1714,"Dies having outlived every one of her children; the crown passes to a German cousin, George I."]],
+ fact:"She mourned 17 pregnancies. Though none of her children lived, the period takes her name as the most brilliant of the Baroque age.",
+ peek:"United England and Scotland, and died the last of the Stuarts."},
+
+/* ------------------------------ HANOVER ------------------------------ */
+{id:"george1",name:"George I",epithet:"the Founder",house:"hanover",mono:"GI",start:1714,end:1727,reign:"1714–1727",
+ born:"1660, Hanover",died:"1727, Osnabrück",age:"54",spouse:"Sophia Dorothea of Celle",issue:"2",
+ events:[[1714,"Arrives from Hanover at 54, speaking barely any English, and is met with a polite shrug from London."],
+         [1715,"The Jacobite rising fails at Sheriffmuir and Preston."],
+         [1720,"The South Sea Bubble bursts and ruins thousands; Walpole's rescue makes him the first prime minister in all but name."],
+         [1727,"Dies on a visit home to Hanover."]],
+ fact:"He brought with him a taste for Handel and a distaste for parties — so he left government to Robert Walpole, and Cabinet government was born.",
+ peek:"The first Hanoverian: a German king who accidentally invented the office of prime minister."},
+
+{id:"george2",name:"George II",epithet:"the Soldier King",house:"hanover",mono:"GII",start:1727,end:1760,reign:"1727–1760",
+ born:"1683, Hanover",died:"1760, Kensington Palace",age:"43",spouse:"Caroline of Ansbach",issue:"8",
+ events:[[1743,"Leads his troops at Dettingen — the last British monarch to command an army in battle."],
+         [1745,"Bonnie Prince Charlie's Jacobite army reaches Derby before turning back — and is broken at Culloden the next year."],
+         [1756,"The Seven Years' War begins; it will end with Britain taking Canada and much of India."],
+         [1760,"Dies, reportedly from a fall after breakfast."]],
+ fact:"He complained about his son and squabbled with his wife, but under him the British Empire's foundations were laid in Canada and India.",
+ peek:"The last king to lead troops in battle — and the first of a truly global empire."},
+
+{id:"george3",name:"George III",epithet:"Farmer George",house:"hanover",mono:"GIII",start:1760,end:1820,reign:"1760–1820",
+ born:"1738, London",died:"1820, Windsor Castle",age:"22",spouse:"Charlotte of Mecklenburg-Strelitz",issue:"15",
+ events:[[1776,"The American colonies declare independence; Britain loses them by 1783."],
+         [1788,"Suffers the first of the attacks now thought to be porphyria, which lead to the Regency crisis."],
+         [1801,"Acts of Union with Ireland; he never travels there again."],
+         [1811,"Declared permanently insane; his son rules as Prince Regent for the last nine years of his reign."]],
+ fact:"He reigned 59 years and kept 15 children — but lost America, lost his mind, and lost the ability to see the Regency he lived through.",
+ peek:"Lost America, then his mind — and reigned longer than any king before him."},
+
+{id:"george4",name:"George IV",epithet:"the Prince Regent",house:"hanover",mono:"GIV",start:1820,end:1830,reign:"1820–1830",
+ born:"1762, St James's Palace",died:"1830, Windsor Castle",age:"57",spouse:"Caroline of Brunswick",issue:"1",
+ events:[[1811,"Begins the Regency — the age of Beau Brummell, Brighton Pavilion and Jane Austen."],
+         [1820,"Becomes king and instantly tries to divorce his wife, whom he barred from his coronation."],
+         [1825,"Rebuilds the Royal Pavilion in Brighton and pours money into the National Gallery and London's squares."],
+         [1830,"Dies hugely obese and detested by his people, but remembered as the greatest patron of the age."]],
+ fact:"He was called 'the First Gentleman of Europe' and, by his own people, everything less flattering you can imagine.",
+ peek:"The Prince Regent: magnificent taste, disastrous debts."},
+
+{id:"william4",name:"William IV",epithet:"the Sailor King",house:"hanover",mono:"WIV",start:1830,end:1837,reign:"1830–1837",
+ born:"1765, Buckingham House",died:"1837, Windsor Castle",age:"64",spouse:"Adelaide of Saxe-Meiningen",issue:"10 illegitimate, 2 legitimate",
+ events:[[1831,"Rides to Parliament to prorogue it and let the Reform Act through, handing seats to the new industrial cities."],
+         [1833,"Slavery is abolished throughout the British Empire — the largest act of emancipation of its age."],
+         [1837,"Dies weeks after Victoria turns eighteen, cutting off any chance of a regency."]],
+ fact:"He arrived as a bluff, erratic sailor and left a genuine reformer — and was the last monarch to appoint a prime minister against Parliament's will.",
+ peek:"A bluff sailor who pushed the Great Reform Act through Parliament."},
+
+{id:"victoria",name:"Victoria",epithet:"Empress of India",house:"hanover",mono:"V",start:1837,end:1901,reign:"1837–1901",
+ born:"1819, Kensington Palace",died:"1901, Osborne House",age:"18",spouse:"Albert of Saxe-Coburg and Gotha",issue:"9",
+ events:[[1837,"Becomes queen at eighteen and leaves Kensington Palace the same day."],
+         [1840,"Marries Albert; he becomes her closest adviser and the engine of the age's reforms."],
+         [1861,"Albert dies of typhoid; she withdraws into 40 years of widow's black and the public begins to doubt her."],
+         [1876,"Disraeli has her proclaimed Empress of India."],
+         [1897,"Her Diamond Jubilee: 60 years on the throne, and an empire spanning a quarter of the world."]],
+ fact:"Her reign of 63 years and seven months was the longest in British history until her great-great-granddaughter Elizabeth II — whose surname came from Albert.",
+ peek:"Sixty-four years, nine children, and an empire on which the sun never set."},
+
+/* ------------------------------ WINDSOR ------------------------------ */
+{id:"george5",name:"George V",epithet:"the Wartime King",house:"windsor",mono:"GV",start:1910,end:1936,reign:"1910–1936",
+ born:"1865, Marlborough House",died:"1936, Sandringham",age:"44",spouse:"Mary of Teck",issue:"6",
+ events:[[1910,"Accedes as a king of the House of Saxe-Coburg and Gotha, surrounded by European royal cousins."],
+         [1914,"The First World War turns those cousins into enemies; the family name becomes a liability."],
+         [1917,"Renames the royal house 'Windsor' — from the castle — and renounces all German titles."],
+         [1932,"Gives the first Royal Christmas Message on the wireless, written by Kipling."],
+         [1935,"His Silver Jubilee: half a million people in the streets for a king he had expected to be booed."]],
+ fact:"It was George V who invented the Windsors, dropping a thousand years of German inheritance to keep the throne in a bitter war.",
+ peek:"The king who renamed his own dynasty Windsor in the middle of the Great War."},
+
+{id:"edward8",name:"Edward VIII",epithet:"the Abdicator",house:"windsor",mono:"EVIII",start:1936,end:1936,reign:"1936 · 326 days",lost:true,
+ born:"1894, Whitehall",died:"1972, Paris",age:"41",spouse:"Wallis Simpson",issue:"None",
+ events:[[1936,"Accedes in January, popular and dashing, and immediately refuses to give up Wallis Simpson."],
+         [1936,"The government, the Dominions and the Church of England all reject a twice-divorced American as queen."],
+         [1936,"Broadcasts his abdication in December: 'I have found it impossible to carry the heavy burden of responsibility… without the help of the woman I love.'"],
+         [1937,"Marries Wallis in France and spends the rest of his life in exile, later suspected of wartime sympathies with Nazi Germany."]],
+ fact:"He never had a coronation, and for one strange year Britain had a king who had already decided to stop being one.",
+ peek:"Gave up the throne in 326 days for Wallis Simpson."},
+
+{id:"george6",name:"George VI",epithet:"the Reluctant King",house:"windsor",mono:"GVI",start:1936,end:1952,reign:"1936–1952",
+ born:"1895, Sandringham",died:"1952, Sandringham",age:"40",spouse:"Elizabeth Bowes-Lyon",issue:"2",
+ events:[[1936,"Becomes king after his brother's abdication — the second son who had never expected it."],
+         [1939,"Stays in London through the Blitz; the palace is bombed and the queen says she is glad, so she can look the East End in the face."],
+         [1945,"Appears on the balcony with Churchill on VE Day before a crowd of millions."],
+         [1947,"Gives his daughter Elizabeth away in marriage; his health fails as war and worry catch up with him."]],
+ fact:"The stammer he fought to overcome in the famous 1939 broadcast is the story of The King's Speech — and he was, by all accounts, a better king for having been the spare.",
+ peek:"The shy second son who steadied the nation through the Second World War."},
+
+{id:"elizabeth2",name:"Elizabeth II",epithet:"the Longest Reign",house:"windsor",mono:"EII",start:1952,end:2022,reign:"1952–2022",
+ born:"1926, Mayfair, London",died:"2022, Balmoral Castle",age:"25",spouse:"Philip, Duke of Edinburgh",issue:"4",
+ events:[[1952,"Accedes in Kenya on the death of her father; crowned the next year in the first televised coronation."],
+         [1977,"Silver Jubilee, then Golden (2002) and Diamond (2012) — a monarch visible across seven decades of change."],
+         [1992,"Her 'annus horribilis': a fire at Windsor, three royal marriages collapsing."],
+         [2020,"Addresses the nation in lockdown: 'We will meet again.'"],
+         [2022,"Dies at Balmoral after 70 years and 214 days — the longest reign of any British monarch — and the Platinum Jubilee she had just celebrated."]],
+ fact:"She met every US president from Truman to Biden, saw 15 prime ministers, and was crowned before colour television — but live-streamed to the world in her final years.",
+ peek:"Seventy years on the throne, 15 prime ministers, and a reign no British monarch has matched."},
+
+{id:"charles3",name:"Charles III",epithet:"the Environmental King",house:"windsor",mono:"CIII",start:2022,end:2026,reign:"2022–present",
+ born:"1948, Buckingham Palace",died:"—",age:"73",spouse:"Camilla, Queen Consort",issue:"2",
+ events:[[1952,"Becomes heir to the throne at three years old — and remains so for 70 years, the longest wait in British history."],
+         [1969,"Invested as Prince of Wales at Caernarfon; founds the Prince's Trust two years later."],
+         [2022,"Accedes on 8 September at 73, the oldest monarch to take the throne in British history."],
+         [2023,"Crowned at Westminster Abbey in a service watched around the world."],
+         [2024,"Announces a cancer diagnosis and steps back temporarily from public duties."]],
+ fact:"He is the oldest person ever to become a British monarch, and the first to have a university degree — a quiet break with a very long tradition.",
+ peek:"Seventy years as heir, then crowned at 73 — the longest apprenticeship in British royal history."}
+];
+
+/* ============================================================================
+   STATE + HELPERS
+   ========================================================================== */
+const state = {house:"all", q:"", view:"timeline", sort:"chrono", year:1215, id:null, t0:SPAN_START, t1:SPAN_END};
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const el = (tag, cls, html) => { const n = document.createElement(tag); if(cls) n.className = cls; if(html!=null) n.innerHTML = html; return n; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+/* pc() places a year on the timeline's CURRENT window (which zooms to a house);
+   pf() always places it on the full 872-year span, for the modal's context bar. */
+const pc = y => ((y - state.t0) / (state.t1 - state.t0)) * 100;
+const pf = y => ((y - SPAN_START) / (SPAN_END - SPAN_START)) * 100;
+function setWindow(){
+  if (state.house === "all"){ state.t0 = SPAN_START; state.t1 = SPAN_END; return; }
+  const g = DATA.filter(m => m.house === state.house);
+  const a = Math.min(...g.map(m => m.start)), b = Math.max(...g.map(m => m.end));
+  const pad = Math.max(10, Math.round((b - a) * .06));
+  state.t0 = Math.max(SPAN_START, a - pad);
+  state.t1 = Math.min(SPAN_END, b + pad);
+}
+const byId = id => DATA.find(m => m.id === id);
+const houseOf = m => HOUSES[m.house];
+
+/* house eras drawn across the full 872-year span */
+const ERAS = [["plantagenet",1154,1485],["tudor",1485,1603],["stuart",1603,1714],["hanover",1714,1901],["windsor",1901,2026]];
+function ctxBands(current){
+  return ERAS.map(([h,a,b]) => {
+    const l = pf(a), w = pf(b) - pf(a);
+    return `<div class="ctx-band${h === current ? " on" : ""}" data-house="${h}" style="left:${l}%;width:${w}%">` +
+           `<span>${w > 10 ? HOUSES[h].name : ""}</span></div>`;
+  }).join("");
+}
+function reignYears(m){ return Math.max(0.2, m.end - m.start); }
+function reignLengthText(m){
+  const y = m.end - m.start;
+  if (y === 0) return "Less than a year";
+  return y + (y === 1 ? " year" : " years");
+}
+function matches(m){
+  if (state.house !== "all" && m.house !== state.house) return false;
+  const q = state.q.trim().toLowerCase();
+  if (!q) return true;
+  const hay = [m.name, m.epithet, houseOf(m).name, m.spouse, m.issue, m.reign, m.peek, m.fact,
+               ...m.events.map(e => e[0] + " " + e[1])].join(" ").toLowerCase();
+  return q.split(/\s+/).every(w => hay.includes(w));
+}
+function visible(){
+  let list = DATA.filter(matches);
+  const s = state.sort;
+  if (s === "longest")  list = list.slice().sort((a,b) => reignYears(b) - reignYears(a));
+  if (s === "shortest") list = list.slice().sort((a,b) => reignYears(a) - reignYears(b));
+  if (s === "alpha")    list = list.slice().sort((a,b) => a.name.localeCompare(b.name));
+  return list;
+}
+/* sorted chronologically, always */
+const CHRONO = DATA.slice().sort((a,b) => a.start - b.start);
+
+/* ============================================================================
+   HERO STATS
+   ========================================================================== */
+(function heroStats(){
+  const total = DATA.filter(m => !m.interregnum).length;
+  const houses = ["plantagenet","tudor","stuart","windsor"].length;
+  const longest = DATA.reduce((a,b) => reignYears(b) > reignYears(a) ? b : a);
+  const executed = DATA.filter(m => m.lost).length;
+  const stats = [
+    ["Monarchs mapped", total],
+    ["Royal houses", houses],
+    ["Years of the crown", SPAN_END - SPAN_START],
+    ["Longest reign · 70 years", longest.name],
+    ["Deposed, killed or abdicated", executed]
+  ];
+  const host = $("#heroStats");
+  stats.forEach(([l,v]) => host.appendChild(el("div","stat",`<b>${esc(v)}</b><span>${esc(l)}</span>`)));
+})();
+
+/* ============================================================================
+   CHIPS
+   ========================================================================== */
+(function chips(){
+  const host = $("#chips");
+  const order = ["all","plantagenet","tudor","stuart","hanover","windsor"];
+  order.forEach(h => {
+    const n = h === "all" ? DATA.length : DATA.filter(m => m.house === h).length;
+    const b = el("button", "chip" + (h === state.house ? " on" : ""),
+      `<i class="dot"></i>${h === "all" ? "All houses" : HOUSES[h].name}<span class="n">${n}</span>`);
+    b.dataset.house = h;
+    b.setAttribute("aria-pressed", h === state.house);
+    b.addEventListener("click", () => {
+      state.house = h;
+      $$("#chips .chip").forEach(c => {
+        const on = c.dataset.house === h;
+        c.classList.toggle("on", on); c.setAttribute("aria-pressed", on);
+      });
+      render();
+    });
+    host.appendChild(b);
+  });
+})();
+
+/* ============================================================================
+   TIMELINE (REIGN MAP)
+   ========================================================================== */
+/* century (or quarter-century) ticks, re-drawn whenever the window changes */
+function renderAxis(){
+  const ax = $("#axis"); ax.innerHTML = "";
+  const gl = $("#gridlines"); gl.innerHTML = "";
+  const span = state.t1 - state.t0;
+  /* pick a tick spacing that keeps labels at least ~68px apart on THIS screen */
+  const trackPx = ax.getBoundingClientRect().width || 900;
+  const ideal = (68 * span) / trackPx;
+  const step = [5,10,20,25,50,100,200,500].find(s => s >= ideal) || 500;
+
+  for (let y = Math.ceil(state.t0 / step) * step; y <= state.t1; y += step){
+    const p = pc(y);
+    if (p < 5 || p > 95) continue; /* the labelled window edges own the ends */
+    const t = el("div","tk",`<span>${y}</span>`);
+    t.style.left = p + "%"; ax.appendChild(t);
+    const g = el("i"); g.style.left = p + "%"; gl.appendChild(g);
+  }
+  /* the two window edges, always labelled */
+  const s = el("div","tk edge",`<span>${state.t0}</span>`); s.style.left = "0%"; ax.appendChild(s);
+  const e = el("div","tk edge end",`<span>${state.t1}</span>`); e.style.left = "100%"; ax.appendChild(e);
+  const gS = el("i"); gS.style.left = "0%"; gl.appendChild(gS);
+  const gE = el("i"); gE.style.left = "100%"; gl.appendChild(gE);
+
+  if (state.house !== "all"){
+    const tag = el("div","zoomtag",`zoomed to the ${HOUSES[state.house].name}s · ${state.t0}–${state.t1}`);
+    ax.appendChild(tag);
+  }
+}
+
+function renderTimeline(){
+  const lanes = $("#lanes");
+  /* clear everything but the gridlines + marker */
+  Array.from(lanes.children).forEach(c => { if (c.id !== "gridlines" && c.id !== "marker") c.remove(); });
+  const list = visible();
+  const order = ["plantagenet","tudor","stuart","hanover","windsor"];
+
+  order.forEach(h => {
+    const group = list.filter(m => m.house === h);
+    if (!group.length) return;
+    group.sort((a,b) => a.start - b.start);
+
+    const band = el("div","house-band");
+    band.dataset.house = h;
+    band.innerHTML = `<h3>${HOUSES[h].name}</h3><span>${HOUSES[h].years}</span><p class="blurb">${HOUSES[h].blurb}</p>`;
+    lanes.appendChild(band);
+
+    group.forEach(m => {
+      const lane = el("div","lane"); lane.dataset.house = m.house; lane.dataset.id = m.id;
+      lane.tabIndex = 0;
+      lane.setAttribute("role","button");
+      lane.setAttribute("aria-label", m.name + ", " + m.reign);
+
+      const lab = el("div","lane-label",
+        `<span class="lane-name">${esc(m.name)}${m.interregnum ? " (not a king)" : ""}</span><span class="lane-reign">${esc(m.reign)}</span>`);
+      const track = el("div","lane-track");
+
+      const s = Math.min(m.start, m.end), e = Math.max(m.end, m.start + 0.5);
+      const left = pc(s), w = Math.max(0.35, pc(e) - pc(s));
+      /* sliver reigns (Edward V, Lady Jane Grey) get a marker-like pill */
+      const bar = el("button", "bar" + (w < 2 ? " tiny" : ""));
+      bar.style.left = left + "%";
+      bar.style.width = w + "%";
+      bar.innerHTML = `<span class="bt">${esc(m.name)}</span>`;
+      bar.setAttribute("aria-label", "Open " + m.name);
+      bar.addEventListener("click", ev => { ev.stopPropagation(); open(m.id); });
+      bar.addEventListener("mouseenter", ev => showTip(ev, m));
+      bar.addEventListener("mousemove", moveTip);
+      bar.addEventListener("mouseleave", hideTip);
+      track.appendChild(bar);
+
+      /* an interrupted reign (Henry VI 1461–70, Edward IV 1470–71) is hatched,
+         so the bar never pretends the reign ran unbroken */
+      (m.gap || []).forEach(([gs, ge]) => {
+        const gap = el("span", "bar-gap");
+        gap.style.left = pc(gs) + "%";
+        gap.style.width = (pc(ge) - pc(gs)) + "%";
+        track.appendChild(gap);
+      });
+
+      lane.appendChild(lab); lane.appendChild(track);
+      lane.addEventListener("click", () => open(m.id));
+      lane.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); open(m.id); } });
+      lanes.appendChild(lane);
+    });
+  });
+
+  if (!list.length) lanes.appendChild(el("div","empty","<b>No monarchs match</b>Try another house, or clear the search."));
+  layoutBarLabels();
+  applyYear();
+}
+
+/* tooltip */
+const tip = $("#tip");
+function showTip(ev, m){
+  tip.dataset.house = m.house;
+  tip.innerHTML = `<b>${esc(m.name)}</b><i>${esc(m.epithet)}</i><u>${esc(houseOf(m).name)} · ${esc(m.reign)}</u>`;
+  tip.classList.add("on"); moveTip(ev);
+}
+function moveTip(ev){
+  const pad = 16, w = tip.offsetWidth || 220, h = tip.offsetHeight || 80;
+  let x = ev.clientX + pad, y = ev.clientY - h - 8;
+  if (x + w > innerWidth - 10) x = ev.clientX - w - pad;
+  if (y < 8) y = ev.clientY + pad;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+function hideTip(){ tip.classList.remove("on"); }
+
+/* ============================================================================
+   GALLERY
+   ========================================================================== */
+function renderGallery(){
+  const grid = $("#grid"); grid.innerHTML = "";
+  const list = visible();
+  $("#galleryTitle").textContent = state.house === "all" ? "The Gallery" : "The House of " + HOUSES[state.house].name;
+  $("#galleryCount").textContent = list.length + (list.length === 1 ? " monarch" : " monarchs") +
+    (state.q ? ` matching “${state.q}”` : "");
+  if (!list.length){ grid.appendChild(el("div","empty","<b>No monarchs match</b>Try another house, or clear the search.")); return; }
+
+  list.forEach((m, i) => {
+    const card = el("button","card"); card.dataset.house = m.house; card.dataset.id = m.id;
+    card.style.animationDelay = Math.min(i * 34, 520) + "ms";
+    card.setAttribute("aria-label", "Open " + m.name);
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="mono"><span>${esc(m.mono)}</span></div>
+        <div>
+          <h3>${esc(m.name)}</h3>
+          <div class="ep">${esc(m.epithet)}</div>
+          <div class="rl">${esc(m.reign)}</div>
+        </div>
+      </div>
+      <div class="facts">
+        <span class="tag">${esc(houseOf(m).name)}</span>
+        <span class="tag">${esc(reignLengthText(m))}</span>
+        ${m.interregnum ? '<span class="tag">no crown</span>' : ''}
+      </div>
+      <p class="peek">${esc(m.peek)}</p>
+      <div class="open">Open the story
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>`;
+    card.addEventListener("click", () => open(m.id));
+    grid.appendChild(card);
+  });
+}
+
+/* A bar label is shown only when the bar can hold that exact name — measured with
+   the same font metrics, so nothing is ever clipped into an ellipsis. */
+function layoutBarLabels(){
+  if (!$("#marker").getBoundingClientRect().width) return; /* timeline hidden — retry later */
+  $$("#lanes .bar").forEach(b => {
+    const bt = b.querySelector(".bt");
+    if (!bt) return;
+    /* .bt is absolutely positioned with nowrap, so its offsetWidth is the true
+       text width whatever the bar width — measure first, then reveal */
+    b.classList.toggle("lab", bt.offsetWidth + 1 <= Math.round(b.getBoundingClientRect().width));
+  });
+}
+const laneRO = new ResizeObserver(layoutBarLabels);
+laneRO.observe($("#lanes"));
+
+/* ============================================================================
+   YEAR SCRUBBER — "who ruled in year X"
+   ========================================================================== */
+function applyYear(){
+  const y = state.year;
+  $("#scrubYear").textContent = y;
+  const marker = $("#marker");
+  const inWindow = y >= state.t0 && y <= state.t1;
+  marker.style.setProperty("--mx", pc(y) + "%");
+  marker.classList.toggle("on", inWindow);
+
+  const rulers = CHRONO.filter(m => y >= m.start && y <= m.end);
+  const pool = DATA.filter(m => matches(m));
+  $$("#lanes .lane").forEach(l => {
+    const m = byId(l.dataset.id);
+    const hit = y >= m.start && y <= m.end;
+    l.classList.toggle("hit", hit);
+    l.classList.toggle("dim", pool.length > 0 && !pool.some(p => p.id === m.id));
+  });
+
+  const who = $("#scrubWho");
+  const houseCss = h => `<span class="h" data-house="${h}" style="color:var(--c)">${HOUSES[h].name}</span>`;
+  if (!rulers.length){
+    who.innerHTML = `In <b>${y}</b> there was <b>no monarch</b> — England was a republic, the Commonwealth under Oliver Cromwell.`;
+  } else if (rulers.length === 1){
+    who.innerHTML = `In <b>${y}</b>, <b>${esc(rulers[0].name)}</b> ruled — ${houseCss(rulers[0].house)}` +
+      `${rulers[0].epithet ? ", " + esc(rulers[0].epithet) : ""} — ${esc(rulers[0].reign)}.`;
+  } else {
+    /* accession and death years genuinely overlap — say so rather than pick one */
+    const names = rulers.map(m => esc(m.name));
+    const joined = names.length === 2 ? names.join(" and ")
+      : names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+    who.innerHTML = `In <b>${y}</b> the crown was in flux — <b>${joined}</b> ` +
+      `each held the throne that year (${houseCss(rulers[0].house)}, ${esc(rulers[0].reign)}).`;
+  }
+}
+
+/* ============================================================================
+   MODAL
+   ========================================================================== */
+function open(id){
+  const m = byId(id); if (!m) return;
+  state.id = id;
+  const sheet = $("#sheet");
+  sheet.dataset.house = m.house;
+  const house = houseOf(m);
+  const idx = CHRONO.findIndex(x => x.id === id);
+  const prev = CHRONO[idx - 1], next = CHRONO[idx + 1];
+
+  const ctxLeft = pf(m.start), ctxW = Math.max(0.35, pf(m.end) - pf(m.start));
+
+  sheet.innerHTML = `
+    <button class="close" data-close aria-label="Close">✕</button>
+    <div class="sheet-head">
+      <div class="mono"><span>${esc(m.mono)}</span></div>
+      <div class="htxt">
+        <p class="hk">${esc(house.name)} · ${esc(house.years)}</p>
+        <h2 id="mTitle">${esc(m.name)}</h2>
+        <p class="he">${esc(m.epithet)}</p>
+        <div class="hr">
+          <span class="pill">Reigned ${esc(m.reign)}</span>
+          <span class="pill">${esc(reignLengthText(m))}</span>
+          ${m.interregnum ? '<span class="pill">Head of state, not a monarch</span>' : ""}
+        </div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div class="quick">
+        <div class="qi"><span>Born</span><b>${esc(m.born)}</b></div>
+        <div class="qi"><span>Died</span><b>${esc(m.died)}</b></div>
+        <div class="qi"><span>Age at accession</span><b class="serif">${esc(m.age)}</b></div>
+        <div class="qi"><span>Reign length</span><b class="serif">${esc(reignLengthText(m))}</b></div>
+        <div class="qi"><span>Children</span><b>${esc(m.issue)}</b></div>
+      </div>
+      <div class="qi spouses"><span>${m.spouse.split("·").length > 1 ? "Spouses" : "Spouse"}</span>
+        <div>${m.spouse.split("·").map(s => `<i class="wtag">${esc(s.trim())}</i>`).join("")}</div>
+      </div>
+
+      <div class="ctx">
+        <h4>Their place in 872 years of the crown</h4>
+        <div class="ctx-track" data-house="${m.house}">
+          ${ctxBands(m.house)}
+          <div class="ctx-bar" style="left:${ctxLeft}%;width:${ctxW}%"></div>
+        </div>
+        <div class="ctx-scale"><span>1154</span><span>their reign, above the five houses</span><span>today</span></div>
+      </div>
+
+      <div class="ev">
+        <h4>What happened</h4>
+        <ol>${m.events.map(([y,t]) => `<li><span class="y">${y}</span><span class="t">${esc(t)}</span></li>`).join("")}</ol>
+      </div>
+
+      <div class="fact">
+        <h4>Did you know</h4>
+        <p>${esc(m.fact)}</p>
+      </div>
+    </div>
+    <div class="sheet-foot">
+      <button class="nav-btn" id="prevM" ${prev ? "" : "disabled"}>
+        <span>←</span><span><small>Previous</small><b>${prev ? esc(prev.name) : "—"}</b></span>
+      </button>
+      <button class="nav-btn" id="nextM" ${next ? "" : "disabled"}>
+        <span><small>Next</small><b>${next ? esc(next.name) : "—"}</b></span><span>→</span>
+      </button>
+    </div>`;
+
+  sheet.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", close));
+  const p = $("#prevM"), n = $("#nextM");
+  if (p && prev) p.addEventListener("click", () => open(prev.id));
+  if (n && next) n.addEventListener("click", () => open(next.id));
+
+  $("#modal").classList.add("on");
+  $("#modal").setAttribute("aria-hidden","false");
+  document.body.classList.add("noscroll");
+  sheet.scrollTop = 0;
+  $("#modal .scrim").addEventListener("click", close, {once:true});
+  requestAnimationFrame(() => $("#modal .close").focus());
+}
+function close(){
+  $("#modal").classList.remove("on");
+  $("#modal").setAttribute("aria-hidden","true");
+  document.body.classList.remove("noscroll");
+  state.id = null;
+}
+
+/* ============================================================================
+   WIRING
+   ========================================================================== */
+function render(){ setWindow(); renderAxis(); renderTimeline(); renderGallery(); applyYear(); }
+
+$("#q").addEventListener("input", e => { state.q = e.target.value; render(); });
+$("#sort").addEventListener("change", e => { state.sort = e.target.value; renderGallery(); });
+$$("#viewSeg button").forEach(b => b.addEventListener("click", () => {
+  state.view = b.dataset.view;
+  $$("#viewSeg button").forEach(x => x.classList.toggle("on", x === b));
+  $("#view-timeline").classList.toggle("on", state.view === "timeline");
+  $("#view-gallery").classList.toggle("on", state.view === "gallery");
+}));
+$("#year").addEventListener("input", e => { state.year = +e.target.value; applyYear(); });
+
+document.addEventListener("keydown", e => {
+  const open_ = $("#modal").classList.contains("on");
+  if (e.key === "Escape" && open_) return close();
+  if (open_ && (e.key === "ArrowLeft" || e.key === "ArrowRight")){
+    const idx = CHRONO.findIndex(x => x.id === state.id);
+    const t = CHRONO[idx + (e.key === "ArrowRight" ? 1 : -1)];
+    if (t) open(t.id);
+    return;
+  }
+  if (e.key === "/" && !/input|select|textarea/i.test(document.activeElement.tagName)){
+    e.preventDefault(); $("#q").focus();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
