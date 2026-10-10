@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soundtrack Finder · TMDB + Wikipedia + Spotify</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0e14;
+    color: #e6edf3;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 820px; width: 100%; }
+  h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+  .sub { color: #7d8590; font-size: 0.9rem; margin-bottom: 1.75rem; }
+
+  .search { display: flex; gap: 0.6rem; margin-bottom: 1.75rem; }
+  .search input {
+    flex: 1;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.95rem;
+    color: #e6edf3;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search input:focus { border-color: #1ed760; }
+  .search input::placeholder { color: #484f58; }
+  .search button {
+    background: #1ed760;
+    border: none;
+    border-radius: 10px;
+    padding: 0 1.6rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #0a0e14;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .search button:hover { background: #2ae870; }
+  .search button:disabled { opacity: 0.5; cursor: default; }
+
+  .status { text-align: center; padding: 3rem 1rem; color: #7d8590; font-size: 0.95rem; }
+  .status.error { color: #f85149; }
+
+  .movie-meta {
+    display: flex;
+    gap: 1.1rem;
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .poster {
+    width: 70px;
+    height: 105px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #161b22;
+    flex-shrink: 0;
+  }
+  .meta-text { flex: 1; min-width: 0; }
+  .meta-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .meta-year { color: #7d8590; font-size: 0.85rem; margin-bottom: 0.5rem; }
+  .meta-year a { color: #58a6ff; text-decoration: none; }
+  .meta-year a:hover { text-decoration: underline; }
+  .meta-overview {
+    font-size: 0.82rem;
+    color: #8b949e;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid #21262d;
+  }
+  .result-header h2 { font-size: 1.05rem; font-weight: 500; color: #c9d1d9; }
+  .count {
+    font-size: 0.8rem;
+    color: #7d8590;
+    background: #161b22;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid #30363d;
+  }
+
+  .song {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .song:hover { border-color: #30363d; background: #11161d; }
+  .song-info { flex: 1; min-width: 0; }
+  .song-title {
+    font-weight: 500;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+  }
+  .song-artist {
+    font-size: 0.82rem;
+    color: #7d8590;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .spotify {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    border: 1px solid #1ed760;
+    color: #1ed760;
+    border-radius: 20px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .spotify:hover { background: #1ed760; color: #0a0e14; }
+  .spotify svg { width: 14px; height: 14px; fill: currentColor; }
+
+  .hint {
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: #484f58;
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Soundtrack Finder</h1>
+  <p class="sub">TMDB resolution · Wikipedia tracks · Spotify links</p>
+
+  <div class="search">
+    <input type="text" id="movieInput" placeholder="Try: pulp ficton, the matrix, drive 2011..." value="pulp ficton" autofocus>
+    <button id="searchBtn">Search</button>
+  </div>
+
+  <div id="output"></div>
+
+  <p class="hint">
+    TMDB corrects messy titles · Wikipedia provides tracks · Spotify search opens the track.
+  </p>
+</div>
+
+<script>
+// ------------------------------------------------------------------
+// CONFIG
+// ------------------------------------------------------------------
+const TMDB_KEY = '2ee5d1bf0a16ce05defa182c8859e3dd';
+const TMDB_BASE = 'https://api.themoviedb.org/3';
+const TMDB_IMG = 'https://image.tmdb.org/t/p/w200';
+const WIKI_API = 'https://en.wikipedia.org/w/api.php';
+
+const output = document.getElementById('output');
+const input = document.getElementById('movieInput');
+const btn = document.getElementById('searchBtn');
+
+// ------------------------------------------------------------------
+// UI HELPERS
+// ------------------------------------------------------------------
+function setStatus(msg, isError) {
+  output.innerHTML = `<div class="status${isError ? ' error' : ''}">${msg}</div>`;
+}
+
+function spotifyUrl(title, artist) {
+  const q = encodeURIComponent(`${title} ${artist}`.trim());
+  return `https://open.spotify.com/search/${q}`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+// ------------------------------------------------------------------
+// STEP 1 — RESOLVE MOVIE VIA TMDB
+// ------------------------------------------------------------------
+async function resolveMovie(query) {
+  const url = `${TMDB_BASE}/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}&include_adult=false`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`TMDB error ${res.status}`);
+  const data = await res.json();
+  if (!data.results || data.results.length === 0) return null;
+
+  const movie = data.results[0];
+
+  const detailUrl = `${TMDB_BASE}/movie/${movie.id}?api_key=${TMDB_KEY}`;
+  const detailRes = await fetch(detailUrl);
+  const detail = detailRes.ok ? await detailRes.json() : movie;
+
+  return {
+    id: movie.id,
+    title: movie.title,
+    year: (movie.release_date || '').slice(0, 4),
+    overview: detail.overview || movie.overview || '',
+    poster: movie.poster_path ? TMDB_IMG + movie.poster_path : null,
+  };
+}
+
+// ------------------------------------------------------------------
+// STEP 2 — WIKIPEDIA TRACK EXTRACTION
+// ------------------------------------------------------------------
+function extractTracks(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const tracks = [];
+
+  let tables = doc.querySelectorAll('table.tracklist');
+
+  if (!tables.length) {
+    tables = Array.from(doc.querySelectorAll('table')).filter(t => {
+      const headers = Array.from(t.querySelectorAll('th')).map(h => h.textContent.toLowerCase());
+      return headers.some(h => h.includes('title'));
+    });
+  }
+
+  for (const table of tables) {
+    const headerCells = Array.from(table.querySelectorAll('th')).map(h => h.textContent.trim().toLowerCase());
+    let titleIdx = headerCells.findIndex(h => h === 'title' || h.startsWith('title'));
+    let artistIdx = headerCells.findIndex(h => h.includes('artist') || h.includes('performer') || h.includes('writer'));
+
+    const rows = table.querySelectorAll('tr');
+    for (const row of rows) {
+      const cells = row.querySelectorAll('td');
+      if (cells.length < 2) continue;
+
+      const tIdx = titleIdx >= 0 ? titleIdx : 1;
+      const aIdx = artistIdx >= 0 ? artistIdx : Math.min(3, cells.length - 1);
+
+      if (!cells[tIdx]) continue;
+
+      const title = cells[tIdx].textContent
+        .replace(/\[.*?\]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      const artist = cells[aIdx]
+        ? cells[aIdx].textContent.replace(/\[.*?\]/g, '').replace(/\s+/g, ' ').trim()
+        : '';
+
+      if (title && title.length > 0 && title.length < 200 && !/^\d+$/.test(title)) {
+        tracks.push({ title, artist });
+      }
+    }
+    if (tracks.length) break;
+  }
+
+  return tracks;
+}
+
+async function fetchWikipediaTracks(movieTitle, year) {
+  const queries = [
+    `${movieTitle} (soundtrack)`,
+    `${movieTitle} soundtrack`,
+    `${movieTitle} (${year} soundtrack)`,
+    movieTitle,
+  ];
+
+  for (const q of queries) {
+    const searchUrl = `${WIKI_API}?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*&srlimit=5`;
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+    const results = searchData?.query?.search || [];
+    if (!results.length) continue;
+
+    let pageTitle = results[0].title;
+    const soundtrackMatch = results.find(r => r.title.toLowerCase().includes('soundtrack'));
+    if (soundtrackMatch) pageTitle = soundtrackMatch.title;
+
+    const pageUrl = `${WIKI_API}?action=parse&page=${encodeURIComponent(pageTitle)}&format=json&origin=*&prop=text`;
+    const pageRes = await fetch(pageUrl);
+    const pageData = await pageRes.json();
+    const html = pageData?.parse?.text?.['*'];
+    if (!html) continue;
+
+    const tracks = extractTracks(html);
+    if (tracks.length) {
+      return { pageTitle, tracks };
+    }
+  }
+
+  return null;
+}
+
+// ------------------------------------------------------------------
+// STEP 3 — MAIN FLOW
+// ------------------------------------------------------------------
+async function searchMovie() {
+  const query = input.value.trim();
+  if (!query) return;
+
+  btn.disabled = true;
+  setStatus('Resolving movie via TMDB...');
+
+  try {
+    const movie = await resolveMovie(query);
+
+    let movieBlock = '';
+    let wikiTitle;
+    let wikiYear;
+
+    if (movie) {
+      wikiTitle = movie.title;
+      wikiYear = movie.year;
+
+      movieBlock = `
+        <div class="movie-meta">
+          ${movie.poster
+            ? `<img class="poster" src="${movie.poster}" alt="" loading="lazy">`
+            : `<div class="poster"></div>`}
+          <div class="meta-text">
+            <div class="meta-title">${escapeHtml(movie.title)}</div>
+            <div class="meta-year">${escapeHtml(movie.year)}${movie.year ? ' · ' : ''}
+              <a href="https://www.themoviedb.org/movie/${movie.id}" target="_blank" rel="noopener">TMDB</a>
+            </div>
+            ${movie.overview ? `<div class="meta-overview">${escapeHtml(movie.overview)}</div>` : ''}
+          </div>
+        </div>
+      `;
+
+      setStatus(`Found "${movie.title}" (${movie.year}) — fetching tracks from Wikipedia...`);
+    } else {
+      wikiTitle = query;
+      wikiYear = '';
+      movieBlock = `
+        <div class="movie-meta">
+          <div class="meta-text">
+            <div class="meta-title">${escapeHtml(query)}</div>
+            <div class="meta-year">Not found on TMDB — using your input directly</div>
+          </div>
+        </div>
+      `;
+      setStatus('TMDB had no match — trying Wikipedia directly...');
+    }
+
+    const wiki = await fetchWikipediaTracks(wikiTitle, wikiYear);
+
+    if (!wiki) {
+      output.innerHTML = movieBlock + `
+        <div class="status error">
+          No Wikipedia track listing found for this movie.<br>
+          <span style="font-size:0.85rem;color:#7d8590;">The film may not have a dedicated soundtrack page.</span>
+        </div>
+      `;
+      btn.disabled = false;
+      return;
+    }
+
+    let tracksHtml = `
+      <div class="result-header">
+        <h2>Track listing</h2>
+        <span class="count">${wiki.tracks.length} tracks</span>
+      </div>
+    `;
+
+    for (const t of wiki.tracks) {
+      tracksHtml += `
+        <div class="song">
+          <div class="song-info">
+            <div class="song-title">${escapeHtml(t.title)}</div>
+            ${t.artist ? `<div class="song-artist">${escapeHtml(t.artist)}</div>` : ''}
+          </div>
+          <a class="spotify" href="${spotifyUrl(t.title, t.artist)}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.6 17.3c-.2.3-.6.4-.9.2-2.5-1.5-5.6-1.9-9.3-1-.4.1-.7-.1-.8-.5-.1-.4.1-.7.5-.8 4-.9 7.5-.4 10.3 1.2.3.2.4.6.2.9zm1.5-3.4c-.3.4-.8.5-1.2.3-2.8-1.7-7.1-2.2-10.4-1.2-.5.1-.9-.2-1-.6-.1-.5.2-.9.6-1 3.8-1.1 8.6-.6 11.8 1.4.4.2.5.7.2 1.1zm.1-3.5C15.4 8.2 9.9 8 6.9 8.9c-.5.1-1.1-.2-1.2-.7-.1-.5.2-1.1.7-1.2 3.5-1.1 9.6-.8 13.4 1.5.5.3.6.9.3 1.3-.3.4-.9.6-1.3.3z"/></svg>
+            Spotify
+          </a>
+        </div>
+      `;
+    }
+
+    output.innerHTML = movieBlock + tracksHtml;
+
+  } catch (e) {
+    console.error(e);
+    setStatus(`Error: ${e.message}`, true);
+  }
+
+  btn.disabled = false;
+}
+
+// ------------------------------------------------------------------
+// EVENTS
+// ------------------------------------------------------------------
+btn.addEventListener('click', searchMovie);
+input.addEventListener('keydown', e => { if (e.key === 'Enter') searchMovie(); });
+</script>
+</body>
+</html>
