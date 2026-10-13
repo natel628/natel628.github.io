@@ -1002,6 +1002,16 @@ select {
   color: var(--text);
 }
 
+/* The live-chart failure notice carries a retry button and a hint line. */
+.note-warn .muted {
+  display: block;
+  margin: 4px 0 8px;
+}
+
+.note-warn .ghost-btn {
+  margin-top: 2px;
+}
+
 .explainer {
   margin-top: 20px;
   padding: 12px 14px;
@@ -2188,15 +2198,74 @@ function monthlyRankFor(id) {
 
 const sessionCache = new Map();
 const LIVE_TTL_MS = 5 * 60 * 1000;
+const LIVE_TIMEOUT_MS = 15000;
+const LIVE_ATTEMPTS = 3;
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * True for the failures that a retry can actually fix: dropped connections,
+ * blocked or CORS-rejected requests (`TypeError: Failed to fetch`), timeouts,
+ * and Apple's rate limits. A 404 is not worth retrying.
+ */
+function isTransient(err) {
+  if (!err) return false;
+  if (err.name === 'AbortError' || err.name === 'TimeoutError') return true;
+  if (err instanceof TypeError) return true; // network / CORS / offline
+  if (err.retryable) return true;
+  return false;
+}
+
+/** One request with a hard timeout, so a hung socket can never stall the UI. */
+async function fetchJsonOnce(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), LIVE_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      const err = new Error(`HTTP ${res.status}`);
+      // 429/403 are how Apple signals throttling; 5xx is a bad gateway moment.
+      err.retryable = res.status === 429 || res.status === 403 || res.status >= 500;
+      throw err;
+    }
+    return await res.json();
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      const timeout = new Error(`timed out after ${LIVE_TIMEOUT_MS / 1000}s`);
+      timeout.name = 'TimeoutError';
+      throw timeout;
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Live JSON with a small retry budget. Charts are a nicety, not a requirement:
+ * every caller falls back to the baked snapshot, so this fails fast and loudly
+ * rather than hanging or hammering.
+ */
 async function cachedJson(key, url) {
   const hit = sessionCache.get(key);
   if (hit && Date.now() - hit.at < LIVE_TTL_MS) return hit.data;
-  const res = await fetch(url, { headers: { Accept: 'application/json' } });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  sessionCache.set(key, { at: Date.now(), data });
-  return data;
+
+  let lastErr;
+  for (let attempt = 0; attempt < LIVE_ATTEMPTS; attempt++) {
+    if (attempt) await sleep(500 * attempt); // 500ms, then 1s
+    try {
+      const data = await fetchJsonOnce(url);
+      sessionCache.set(key, { at: Date.now(), data });
+      return data;
+    } catch (err) {
+      lastErr = err;
+      if (!isTransient(err)) break;
+    }
+  }
+  throw lastErr;
 }
 
 async function liveChart({ country = 'us', genreId = null, limit = 100 } = {}) {
@@ -3109,7 +3178,15 @@ const player = (() => {
       ${genreFilterRow(state.genreFilter, Object.fromEntries(Object.entries(state.live.byGenre).map(([k, v]) => [k, v.length])))}
       ${
         state.live.status === 'error'
-          ? `<p class="note note-warn">Live chart refresh failed (${esc(state.live.error || 'unknown')}) — showing the baked snapshot instead. Your ratings still work.</p>`
+          ? `<div class="note note-warn">
+              <strong>Could not refresh live charts</strong> — ${
+                state.live.overall || Object.keys(state.live.byGenre).length
+                  ? `still showing the last live chart, fetched ${esc(relativeTime(state.live.at))}`
+                  : 'showing the baked snapshot instead'
+              } (${esc(state.live.error || 'unknown error')}). Your ratings, notes and saved shows are unaffected.
+              <span class="muted">Usually a dropped connection, an offline browser, or Apple briefly rate-limiting requests; it normally clears in a moment.</span>
+              <button class="ghost-btn" data-action="refresh-live">↻ Retry live charts</button>
+            </div>`
           : ''
       }
       <ol class="card-list">
@@ -3903,7 +3980,8 @@ const player = (() => {
         break;
       case 'refresh-live':
         toast('Refreshing charts…', 'info');
-        await refreshLive({ genreId: state.genreView });
+        await refreshLive({ genreId: state.genreView, force: true });
+        if (state.live.status === 'ok') toast('Live charts updated', 'ok');
         break;
       case 'for-you-mode':
         state.forYouMode = target.dataset.mode;
