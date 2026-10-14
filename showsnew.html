@@ -1410,6 +1410,26 @@ function providerLabel() {
   const sel = document.getElementById('provider-filter');
   return (sel && sel.selectedOptions && sel.selectedOptions[0] && sel.selectedOptions[0].text) || 'this service';
 }
+/* The streaming-service dropdown is rebuilt from TMDB for the selected
+   region, so the provider IDs always match the region's availability
+   data. Falls back to the shipped static list if the request fails. */
+async function refreshProviderList() {
+  const sel = document.getElementById('provider-filter');
+  if (!sel) return;
+  try {
+    const data = await tmdb('/watch/providers/tv', { watch_region: state.region });
+    const list = (data.results || []).filter(p => p.provider_id && p.provider_name);
+    if (!list.length) return;
+    const prev = state.provider;
+    sel.innerHTML = '<option value="">Any Streaming Service</option>' +
+      list.map(p => `<option value="${p.provider_id}">${esc(p.provider_name)}</option>`).join('');
+    if (prev && [...sel.options].some(o => String(o.value) === String(prev))) sel.value = prev;
+    else { state.provider = ''; savePrefs(); }
+  } catch (e) {
+    console.warn('Provider list refresh failed, keeping current list:', e);
+  }
+}
+
 function regionLabel() {
   const found = REGIONS.find(([code]) => code === state.region);
   return found ? found[1] : state.region;
@@ -2674,7 +2694,7 @@ async function discoverSafe(path, baseParams) {
   try {
     const filtered = await tmdb(path, { ...params, ...providerParams() });
     const items = filtered.results || [];
-    if (items.length) return { items, providerApplied: true };
+    if (items.length >= 5) return { items, providerApplied: true };
   } catch (e) {
     console.warn('Provider-filtered discover failed, retrying unfiltered:', e);
   }
@@ -3271,6 +3291,9 @@ function handleAction(action, el) {
       syncFilterControls();
       renderView();
       break;
+    case 'person':
+      personBrowse(el.dataset.personId, el.textContent.trim());
+      break;
     case 'genre':
       state.genre = el.dataset.genre || '';
       savePrefs();
@@ -3477,7 +3500,8 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
   const genres    = d.genres || [];
   const myR       = getRating(type, id);
   const wlStat    = getWlStatus(type, id);
-  const cast      = (credits.cast || []).slice(0, 5).map(c => c.name).join(', ');
+  const castList  = (credits.cast || []).slice(0, 6);
+  const director  = (credits.crew || []).find(c => c.job === 'Director');
   const sc        = d.vote_average ? d.vote_average.toFixed(1) : '—';
   const cr        = contentRating || '';
 
@@ -3524,7 +3548,8 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
     </div>
     <div style="padding:0 4px">
       ${d.overview ? `<p class="modal-overview">${esc(d.overview)}</p>` : ''}
-      ${cast ? `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">🎭 <strong>Cast:</strong> ${esc(cast)}</p>` : ''}
+      ${director ? `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:6px">🎬 <strong>Director:</strong> <span class="genre-tag clickable" data-action="person" data-person-id="${director.id}" data-person-type="${type}" title="Find more from ${esc(director.name)}">${esc(director.name)}</span></p>` : ''}
+      ${castList.length ? `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">🎭 <strong>Cast:</strong> ${castList.map(c => `<span class="genre-tag clickable" data-action="person" data-person-id="${c.id}" data-person-type="${type}" title="Find more with ${esc(c.name)}">${esc(c.name)}</span>`).join(' ')}</p>` : ''}
       ${nextHTML}
 
       <div class="my-rating-row">
@@ -3800,6 +3825,25 @@ async function renderTrending(main, token) {
           providerApplied: false,
         }));
 
+    /* Load More for the trending row: pulls the next page of the weekly
+       trending list (or the next discover page when a service is selected)
+       through the same filter pipeline, so the row keeps growing past the
+       20-item first page. */
+    let r1Page = 1;
+    const row1More = async () => {
+      r1Page++;
+      if (r1Page > 5) return [];
+      if (state.provider) {
+        const r = row1IsTV
+          ? await discoverSafe('/discover/tv',    { sort_by: 'popularity.desc', 'vote_count.gte': 50,  page: r1Page, ...gp, ...yearParams('tv') })
+          : await discoverSafe('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, page: r1Page, ...gp, ...yearParams('movie') });
+        return filterResults(r.items.map(i => ({ ...i, media_type: row1IsTV ? 'tv' : 'movie' })), { yearServerSide: true });
+      }
+      const r = await tmdb('/trending/all/week', { page: r1Page });
+      const items = (r.results || []).filter(i => i.media_type === 'movie' || i.media_type === 'tv');
+      return filterResults(items, { yearServerSide: false });
+    };
+
     const [trendingRes, popMovieRes, popTVRes, onAirRes] = await Promise.all([
       row1,
       wantMovie
@@ -3847,18 +3891,31 @@ async function renderTrending(main, token) {
         ...i,
         media_type: state.provider ? (row1IsTV ? 'tv' : 'movie') : i.media_type,
       })), { yearServerSide: !!state.provider }),
-    ]);
+    ], row1More);
     // Rows a type filter structurally excludes are omitted outright rather
     // than rendered as a permanent "no results" placeholder.
     if (wantMovie) {
       rows.push(['Popular Movies 🎬',
         await filterResults(popMovieRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true }), movieMore]);
+      /* Hidden gems: acclaimed titles the crowd hasn't found yet. */
+      const gems = await discoverSafe('/discover/movie', {
+        sort_by: 'vote_average.desc', 'vote_average.gte': 7.5,
+        'vote_count.gte': 150, 'vote_count.lte': 1500, ...gp, ...yearParams('movie'),
+      });
+      const gemItems = await filterResults(gems.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true });
+      if (gemItems.length) rows.push(['💎 Hidden Gem Movies — Acclaimed & Underseen', gemItems]);
     }
     if (wantTV) {
       rows.push(['Popular TV Shows 📺',
         await filterResults(popTVRes.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: true }), tvMore]);
       rows.push(['Currently On Air 📡',
         await filterResults(onAirRes.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: false })]);
+      const tvGems = await discoverSafe('/discover/tv', {
+        sort_by: 'vote_average.desc', 'vote_average.gte': 7.8,
+        'vote_count.gte': 100, 'vote_count.lte': 1000, ...gp, ...yearParams('tv'),
+      });
+      const tvGemItems = await filterResults(tvGems.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: true });
+      if (tvGemItems.length) rows.push(['💎 Hidden Gem Shows — Acclaimed & Underseen', tvGemItems]);
     }
     if (token !== renderToken) return;
 
@@ -3874,6 +3931,47 @@ async function renderTrending(main, token) {
     if (token !== renderToken) return;
     console.warn('renderTrending error:', e);
     main.innerHTML = emptyStateHTML('⚠️', 'Could not load trending', esc(e.message), 'retry');
+  }
+}
+
+/* 🎭 Person browse: every title a person has been in, straight from the
+   combined-credits endpoint - one call covers movies and TV alike. */
+async function personBrowse(personId, name) {
+  personId = Number(personId);
+  if (!personId) return;
+  closeModal();
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const main  = document.getElementById('main-content');
+  const token = ++renderToken;
+  main.innerHTML = '';
+  addSkeletonRow(main, `With ${name}`);
+
+  try {
+    const data = await tmdb(`/person/${personId}/combined_credits`);
+    if (token !== renderToken) return;
+    const seen = new Set();
+    const all = [
+      ...((data.cast || []).map(c => ({ ...c, media_type: c.media_type === 'tv' ? 'tv' : 'movie' }))),
+      ...((data.crew || []).filter(c => c.job === 'Director')
+        .map(c => ({ ...c, media_type: c.media_type === 'tv' ? 'tv' : 'movie', _directed: true }))),
+    ]
+      .filter(i => i.media_type && !seen.has(i.media_type + '_' + i.id) && seen.add(i.media_type + '_' + i.id))
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+
+    const shown = filterByRules(all).items.filter(i => i.poster_path);
+    main.innerHTML = '';
+    const label = name || 'this person';
+    if (!shown.length) {
+      main.innerHTML = emptyStateHTML('🎭', `No titles found for ${esc(label)}`, '', 'trending');
+      return;
+    }
+    const movies = shown.filter(i => i.media_type === 'movie');
+    const shows  = shown.filter(i => i.media_type === 'tv');
+    renderRow(main, `🎬 Movies with ${esc(label)} (${movies.length})`, movies);
+    renderRow(main, `📺 Shows with ${esc(label)} (${shows.length})`, shows);
+  } catch (e) {
+    if (token !== renderToken) return;
+    main.innerHTML = emptyStateHTML('⚠️', "Could not load this person's titles", esc(e.message), 'retry');
   }
 }
 
@@ -5441,6 +5539,7 @@ document.getElementById('region-filter').addEventListener('change', e => {
   state.region = e.target.value;
   savePrefs();
   syncFilterControls();
+  refreshProviderList();
   renderView();
 });
 document.getElementById('rating-filter').addEventListener('change', e => {
@@ -5571,6 +5670,7 @@ async function refreshSimklIfNeeded() {
 
   syncFilterControls();
   updateSearchChrome();
+  refreshProviderList();
 
   /* AI Director bootstrapping: restore the suggestion list and the saved
      chat, and make sure any rules saved earlier are in force right away. */
