@@ -1101,6 +1101,7 @@
   <div class="ai-head">
     <span class="ai-head-title">🤖 AI Director</span>
     <button class="ai-icon-btn" onclick="aiReapply()" title="Re-filter the current view with these rules">↻ Apply</button>
+    <button class="ai-icon-btn" onclick="shareRules()" title="Copy a link that imports your rules on another device">🔗 Share</button>
     <button class="ai-icon-btn" onclick="closeAiPanel()" title="Close (Esc or a)">✕</button>
   </div>
   <div class="ai-tabs">
@@ -1364,7 +1365,7 @@ function saveLlm()          { LS.set('llm_config',          state.llm); }
 function savePrefs() {
   LS.set('f_type',     state.filterType);
   LS.set('f_genre',    state.genre);
-  LS.set('f_sort',     state.sort);
+  LS.set('f_sort',      state.sort);
   LS.set('f_provider', state.provider);
   LS.set('f_region',   state.region);
   LS.set('f_rating',   state.contentRating);
@@ -1756,7 +1757,7 @@ function matchRulesToForget(text) {
   if (!keys.length) return [];
   return state.rules.filter(r => {
     const toks = [...ruleTokens(r)];
-    return keys.some(k => toks.some(tok => tok === k || tok.startsWith(k) || k.startsWith(tok)));
+    return keys.some(k => toks.includes(k) || (k.length >= 4 && toks.some(tok => tok.startsWith(k))));
   }).map(r => r.id);
 }
 
@@ -2326,6 +2327,21 @@ function renderAiRules() {
         <span>${new Date(r.createdAt || Date.now()).toLocaleDateString()}</span>
       </div>
     </div>`).join('');
+}
+
+function shareRules() {
+  if (!state.rules.length) { toast('No rules to share yet'); return; }
+  try {
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(state.rules))));
+    const url = `${location.origin}${location.pathname}#rules=${encoded}`;
+    const ok = () => toast('Share link copied to clipboard');
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(url).then(ok, () => { location.hash = 'rules=' + encoded; ok(); });
+    } else {
+      location.hash = 'rules=' + encoded;
+      ok();
+    }
+  } catch (e) { toast('Could not build a share link'); }
 }
 
 function aiToggleRule(id, on) {
@@ -3101,10 +3117,8 @@ function buildCard(item) {
   card.setAttribute('role', 'button');
   card.setAttribute('aria-label', `View details for ${title}`);
 
-  const pct = myRating * 10;
-  const rangeStyle = myRating > 0 ? `style="background: linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%);"` : '';
-
-  card.innerHTML = `
+  const cardEl = card;
+  cardEl.innerHTML = `
     <span class="card-badge ${type}">${type === 'movie' ? '🎬' : '📺'}</span>
     ${poster
       ? `<img class="card-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" />`
@@ -3120,7 +3134,7 @@ function buildCard(item) {
         <div class="card-rate-row">
           <span class="card-rate-emoji">${myRating > 0 ? ratingEmoji(myRating) : '·'}</span>
           <input type="range" class="card-rate-bar" min="0" max="10" step="1"
-            value="${myRating}" aria-label="Rate ${esc(title)} from 0 to 10" ${rangeStyle} />
+            value="${myRating}" aria-label="Rate ${esc(title)} from 0 to 10" />
           <span class="card-rate-label">${myRating > 0 ? myRating : '—'}</span>
         </div>
       </div>
@@ -3128,7 +3142,15 @@ function buildCard(item) {
     </div>
   `;
 
-  return card;
+  /* Paint the slider fill for already-rated cards on first render, so the
+     bar does not sit empty until the first input event. */
+  const slider = cardEl.querySelector('.card-rate-bar');
+  if (slider && myRating > 0) {
+    const pct = myRating * 10;
+    slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
+  }
+
+  return cardEl;
 }
 
 function wlStatusLabel(s) {
@@ -3384,6 +3406,7 @@ function openHelpModal() {
       <tr><td style="padding:4px 0"><strong>w</strong></td><td>My List View</td></tr>
       <tr><td style="padding:4px 0"><strong>r</strong></td><td>For You View</td></tr>
       <tr><td style="padding:4px 0"><strong>q</strong></td><td>Quick Rate View</td></tr>
+      <tr><td style="padding:4px 0"><strong>x</strong></td><td>Stats View</td></tr>
       <tr><td style="padding:4px 0"><strong>a</strong></td><td>AI Director (tell it what to show or hide)</td></tr>
       <tr><td style="padding:4px 0"><strong>d</strong></td><td>Toggle Light/Dark Theme</td></tr>
       <tr><td style="padding:4px 0"><strong>Enter</strong> / <strong>Space</strong></td><td>Open focused card</td></tr>
@@ -3460,7 +3483,6 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
 
   const vids = videos?.results || [];
   const trailer = vids.find(v => v.site === 'YouTube' && v.type === 'Trailer') || vids.find(v => v.site === 'YouTube');
-  const trailerUrl = trailer ? `https://www.youtube.com/watch?v=${encodeURIComponent(trailer.key)}` : '';
 
   const next = type === 'tv' ? d.next_episode_to_air : null;
   const nextHTML = next && next.air_date
@@ -3491,7 +3513,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
           ${d.networks && d.networks[0] ? `<span>🌐 ${esc(d.networks[0].name)}</span>` : ''}
         </div>
         <div class="modal-genres">
-          ${genres.map(g => `<span class="genre-tag clickable" data-action="genre" data-genre="${g.id}" title="Filter by ${esc(g.name)}">${esc(g.name)}</span>`).join('')}
+          ${genres.map(g => `<span class="genre-tag clickable" data-action="genre" data-genre="${g.id}" title="Filter by ${esc(g.name)}">${esc(g.name)}</span>`).join('') }
         </div>
         <div class="modal-scores">
           <div class="score-box"><div class="score-val">${sc}</div><div class="score-lbl">TMDB Score</div></div>
@@ -3516,8 +3538,10 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
       <div class="modal-actions">
         ${statusBtns}
         ${wlStat ? `<button class="modal-btn" onclick="removeFromWatchlist('${type}', ${id})">🗑 Remove</button>` : ''}
-        ${trailerUrl ? `<a class="modal-btn" href="${esc(trailerUrl)}" target="_blank" rel="noopener">▶ Trailer</a>` : ''}
+        ${trailer ? `<button class="modal-btn" id="trailer-btn">▶ Watch Trailer</button>` : ''}
       </div>
+
+      <div id="trailer-box" style="display:none;margin-bottom:16px;aspect-ratio:16/9"></div>
 
       <div class="modal-actions" style="gap:8px;margin-bottom:18px">
         <span style="font-size:.78rem;color:var(--text-muted)">Or tell the AI Director you're not interested:</span>
@@ -3552,6 +3576,25 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
       <div id="modal-similar"></div>
     </div>
   `;
+
+  /* Inline trailer: embed on demand via youtube-nocookie so no tracking
+     cookies load until the user actually asks to watch. */
+  const trailerBtn = document.getElementById('trailer-btn');
+  if (trailerBtn && trailer) {
+    trailerBtn.addEventListener('click', () => {
+      const box = document.getElementById('trailer-box');
+      if (!box) return;
+      if (box.style.display === 'none') {
+        box.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(trailer.key)}" title="Trailer" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px"></iframe>`;
+        box.style.display = 'block';
+        trailerBtn.textContent = '✕ Close Trailer';
+      } else {
+        box.style.display = 'none';
+        box.innerHTML = '';
+        trailerBtn.textContent = '▶ Watch Trailer';
+      }
+    });
+  }
 
   const modalSlider = document.getElementById('modal-rating-slider');
   const modalEmoji  = document.getElementById('modal-rating-emoji');
@@ -3641,6 +3684,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'w') go('watchlist');
   else if (e.key === 'r') go('recommended');
   else if (e.key === 'q') go('quickrate');
+  else if (e.key === 'x') go('stats');
   else if (e.key === 'd') { e.preventDefault(); toggleTheme(); }
 });
 
@@ -3660,15 +3704,29 @@ function addToWatchlist(type, id, status) {
 
 function removeFromWatchlist(type, id) {
   const key = mediaKey(type, id);
-  const title = state.mediaDetails[key]?.title || 'this item';
-  if (!confirm(`Remove "${title}" from your watchlist?`)) return;
+  const prevStatus = state.watchlist[key];
+  const prevAdded   = state.wlAdded[key];
+  if (!prevStatus) { closeModal(); return; }
+
   delete state.watchlist[key];
   delete state.wlAdded[key];
   saveWatchlist();
-  toast('Removed from list');
   updateCardStatus(type, id);
   closeModal();
   if (state.view === 'watchlist') renderView();
+
+  toast('Removed from list', {
+    duration: 6000,
+    actionLabel: 'Undo',
+    onAction: () => {
+      state.watchlist[key] = prevStatus;
+      state.wlAdded[key]   = prevAdded;
+      saveWatchlist();
+      updateCardStatus(type, id);
+      if (state.view === 'watchlist') renderView();
+      toast('Restored to list');
+    },
+  });
 }
 /* ─────────────────────────────────────────────────────────────────────
    VIEWS RENDERER
@@ -3766,6 +3824,20 @@ async function renderTrending(main, token) {
 
     const fellBack = [trendingRes, popMovieRes, popTVRes, onAirRes].some(r => r.fellBack);
 
+    /* Per-row pagination: each fetcher pulls the next discover page and
+       runs it through the same filter pipeline as the initial render. */
+    let mPage = 1, tPage = 1;
+    const movieMore = async () => {
+      mPage++;
+      const r = await discoverSafe('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 100, page: mPage, ...gp, ...yearParams('movie') });
+      return filterResults(r.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true });
+    };
+    const tvMore = async () => {
+      tPage++;
+      const r = await discoverSafe('/discover/tv', { sort_by: sortFor('tv'), 'vote_count.gte': 50, page: tPage, ...gp, ...yearParams('tv') });
+      return filterResults(r.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: true });
+    };
+
     const rows = [];
     rows.push([
       state.provider
@@ -3780,11 +3852,11 @@ async function renderTrending(main, token) {
     // than rendered as a permanent "no results" placeholder.
     if (wantMovie) {
       rows.push(['Popular Movies 🎬',
-        await filterResults(popMovieRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true })]);
+        await filterResults(popMovieRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true }), movieMore]);
     }
     if (wantTV) {
       rows.push(['Popular TV Shows 📺',
-        await filterResults(popTVRes.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: true })]);
+        await filterResults(popTVRes.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: true }), tvMore]);
       rows.push(['Currently On Air 📡',
         await filterResults(onAirRes.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: false })]);
     }
@@ -3797,7 +3869,7 @@ async function renderTrending(main, token) {
         `Streaming listings are often unpublished for new and upcoming releases.`,
         'provider-fallback');
     }
-    rows.forEach(([label, items]) => renderRow(main, label, items));
+    rows.forEach(([label, items, fetcher]) => renderRow(main, label, items, false, fetcher));
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('renderTrending error:', e);
@@ -5250,7 +5322,7 @@ async function filterResults(items, opts = {}) {
   return out;
 }
 
-function renderRow(container, title, items, recBadge = false) {
+function renderRow(container, title, items, recBadge = false, fetcher = null) {
   const sec = document.createElement('div');
   sec.className = 'section';
   sec.innerHTML = `
@@ -5287,7 +5359,44 @@ function renderRow(container, title, items, recBadge = false) {
       }
       row.appendChild(card);
     });
+
+    /* Hide the scroll arrows when the row is already at that end, so the
+       left arrow never points at nothing on first render. */
+    const updateArrows = () => {
+      const l = sec.querySelector('.row-scroll-btn.left');
+      const r = sec.querySelector('.row-scroll-btn.right');
+      if (!l || !r) return;
+      l.style.visibility = row.scrollLeft > 8 ? 'visible' : 'hidden';
+      r.style.visibility = row.scrollLeft < row.scrollWidth - row.clientWidth - 8 ? 'visible' : 'hidden';
+    };
+    row.addEventListener('scroll', updateArrows, { passive: true });
+    requestAnimationFrame(updateArrows);
   }
+
+  if (fetcher && row.children.length) {
+    const more = document.createElement('button');
+    more.className = 'modal-btn';
+    more.style.cssText = 'display:block;margin:2px 0 8px';
+    more.textContent = 'Load more';
+    more.addEventListener('click', async () => {
+      more.disabled = true;
+      more.textContent = 'Loading…';
+      try {
+        const extra = await fetcher();
+        if (!extra || !extra.length) { more.remove(); return; }
+        extra.forEach(i => row.appendChild(buildCard(i)));
+        more.disabled = false;
+        more.textContent = 'Load more';
+      } catch (e) {
+        console.warn('Load more error:', e);
+        more.disabled = false;
+        more.textContent = 'Load more';
+        toast('Failed to load more');
+      }
+    });
+    sec.appendChild(more);
+  }
+
   container.appendChild(sec);
 }
 
@@ -5440,6 +5549,24 @@ async function refreshSimklIfNeeded() {
     console.warn('[Media Calendar] TMDB_TOKEN placeholder still present. ' +
       'This is expected if you opened the raw source locally. ' +
       'The CI workflow injects the real token before deploy.');
+  }
+
+  /* Shared AI Director rules arrive as #rules=<base64>. Imported once,
+     then the hash is stripped so a refresh cannot re-import them. */
+  if (location.hash.startsWith('#rules=')) {
+    try {
+      const incoming = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(7)))));
+      if (Array.isArray(incoming) && incoming.length) {
+        const known = new Set(state.rules.map(r => r.id));
+        const fresh = incoming.filter(r => r && r.id && Array.isArray(r.effects) && !known.has(r.id));
+        if (fresh.length) {
+          state.rules = [...state.rules, ...fresh].slice(0, RULES_CAP);
+          saveRules();
+          toast(`Imported ${fresh.length} rule${fresh.length > 1 ? 's' : ''} from a shared link`);
+        }
+      }
+    } catch (e) { console.warn('Shared rules import error:', e); }
+    history.replaceState(null, '', location.pathname);
   }
 
   syncFilterControls();
