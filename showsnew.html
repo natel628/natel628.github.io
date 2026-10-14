@@ -21,6 +21,7 @@
       --star-off: #444;
       --radius: 10px;
       --card-w: 160px;
+      --ai: #7c5cff;
     }
     [data-theme="light"] {
       --bg: #f5f5f7;
@@ -34,6 +35,7 @@
       --tag-bg: #e8e8ed;
       --star-on: #f5a623;
       --star-off: #c7c7cc;
+      --ai: #6039e0;
     }
     html { scroll-behavior: smooth; }
     body {
@@ -763,6 +765,211 @@
     }
     [data-theme="light"] #config-warning code { background: rgba(0,0,0,.08); }
 
+    /* ─── AI Director sidebar ───────────────────────────────────────── */
+    #ai-btn {
+      background: none;
+      border: 1px solid var(--ai);
+      color: var(--ai);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    #ai-btn:hover { background: var(--ai); color: #fff; }
+    #ai-btn .ai-count {
+      background: var(--ai);
+      color: #fff;
+      border-radius: 10px;
+      padding: 0 6px;
+      margin-left: 5px;
+      font-size: .7rem;
+    }
+    #ai-btn:hover .ai-count { background: #fff; color: var(--ai); }
+
+    #ai-scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 230;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    #ai-scrim.open { opacity: 1; pointer-events: auto; }
+
+    #ai-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 400px;
+      max-width: 100vw;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      transform: translateX(102%);
+      transition: transform .28s ease;
+      z-index: 240;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -12px 0 32px rgba(0,0,0,.45);
+    }
+    #ai-panel.open { transform: translateX(0); }
+    .ai-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .ai-head-title { font-weight: 700; font-size: .95rem; color: var(--ai); flex: 1; white-space: nowrap; }
+    .ai-icon-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: .78rem;
+    }
+    .ai-icon-btn:hover { border-color: var(--ai); color: var(--text); }
+    .ai-tabs { display: flex; gap: 4px; padding: 10px 14px 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .ai-tabs::-webkit-scrollbar { display: none; }
+    .ai-tab {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 16px;
+      padding: 5px 12px;
+      font-size: .78rem;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .ai-tab:hover { border-color: var(--ai); color: var(--text); }
+    .ai-tab.active { background: var(--ai); border-color: var(--ai); color: #fff; font-weight: 600; }
+    .ai-body { flex: 1; overflow-y: auto; padding: 14px; }
+    .ai-pane { display: none; }
+    .ai-pane.active { display: block; }
+    .ai-hint { font-size: .78rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 10px; }
+    .ai-msg {
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: .84rem;
+      line-height: 1.5;
+      margin-bottom: 8px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .ai-msg.user { background: var(--surface2); border: 1px solid var(--border); margin-left: 28px; }
+    .ai-msg.bot { background: var(--tag-bg); border: 1px solid var(--border); border-left: 3px solid var(--ai); margin-right: 12px; }
+    .ai-msg .ai-msg-meta { display: block; font-size: .68rem; color: var(--text-muted); margin-top: 5px; }
+    .ai-msg.thinking { color: var(--text-muted); font-style: italic; }
+    .ai-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .ai-chip {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 14px;
+      padding: 4px 11px;
+      font-size: .75rem;
+      transition: all .15s;
+    }
+    .ai-chip:hover { border-color: var(--ai); color: var(--text); }
+    .ai-input-row { display: flex; gap: 8px; align-items: flex-end; border-top: 1px solid var(--border); padding: 12px 14px; }
+    #ai-input {
+      flex: 1;
+      min-width: 0;
+      resize: vertical;
+      min-height: 42px;
+      max-height: 140px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: .86rem;
+      padding: 9px 12px;
+      outline: none;
+      line-height: 1.4;
+    }
+    #ai-input:focus { border-color: var(--ai); }
+    #ai-send {
+      background: var(--ai);
+      border: 1px solid var(--ai);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: .84rem;
+      white-space: nowrap;
+    }
+    #ai-send:disabled { opacity: .5; cursor: default; }
+    .ai-rule {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 11px;
+      margin-bottom: 8px;
+    }
+    .ai-rule.off { opacity: .5; }
+    .ai-rule-top { display: flex; align-items: flex-start; gap: 8px; }
+    .ai-rule-text { flex: 1; min-width: 0; font-size: .83rem; font-weight: 600; word-break: break-word; }
+    .ai-rule-effects { margin-top: 6px; }
+    .ai-rule-effect {
+      display: inline-block;
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: .7rem;
+      color: var(--text-muted);
+      margin: 2px 4px 0 0;
+    }
+    .ai-rule-meta { font-size: .68rem; color: var(--text-muted); margin-top: 7px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .ai-rule-x {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: .9rem;
+      padding: 0 3px;
+      line-height: 1;
+    }
+    .ai-rule-x:hover { color: var(--accent); }
+    .ai-toggle { accent-color: var(--ai); cursor: pointer; width: 15px; height: 15px; flex: 0 0 auto; margin-top: 1px; }
+    .ai-field { margin-bottom: 10px; }
+    .ai-field label { display: block; font-size: .74rem; color: var(--text-muted); margin-bottom: 4px; }
+    .ai-field input, .ai-field select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      padding: 7px 10px;
+      font-size: .82rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .ai-field input:focus, .ai-field select:focus { border-color: var(--ai); }
+    .ai-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .ai-status {
+      font-size: .75rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+    .ai-status.warn { border-color: var(--accent2); color: var(--accent2); }
+    .ai-status.ok { border-color: #1ce783; color: #1ce783; }
+    .ai-kv { font-size: .74rem; color: var(--text-muted); line-height: 1.6; }
+    @media (max-width: 700px) {
+      #ai-panel { width: 100%; }
+      .ai-msg.user { margin-left: 12px; }
+    }
+
     /* ─── Reduced motion ─────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -790,6 +997,7 @@
     <button class="nav-tab" data-view="stats">📊 Stats</button>
   </div>
   <div class="nav-right">
+    <button id="ai-btn" onclick="toggleAiPanel()" title="AI Director — tell it what to show or hide (a)">🤖 AI Director</button>
     <button onclick="openHelpModal()" style="background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;font-size:0.8rem" title="Hotkeys (?)">❓</button>
     <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;color:var(--text);font-size:1.2rem;padding:4px 8px;cursor:pointer" title="Toggle theme">🌙</button>
     <button onclick="surpriseMe()" style="background:var(--accent);border:none;color:#fff;border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:600;cursor:pointer">🎲 Surprise Me</button>
@@ -887,6 +1095,65 @@
   </div>
 </div>
 
+<div id="ai-scrim" onclick="closeAiPanel()"></div>
+
+<aside id="ai-panel" aria-label="AI Director">
+  <div class="ai-head">
+    <span class="ai-head-title">🤖 AI Director</span>
+    <button class="ai-icon-btn" onclick="aiReapply()" title="Re-filter the current view with these rules">↻ Apply</button>
+    <button class="ai-icon-btn" onclick="closeAiPanel()" title="Close (Esc or a)">✕</button>
+  </div>
+  <div class="ai-tabs">
+    <button class="ai-tab active" data-ai-tab="chat">💬 Chat</button>
+    <button class="ai-tab" data-ai-tab="rules">📋 Suggestions <span id="ai-rule-count">0</span></button>
+    <button class="ai-tab" data-ai-tab="settings">⚙ Setup</button>
+  </div>
+  <div class="ai-body">
+    <div class="ai-pane active" data-ai-pane="chat">
+      <p class="ai-hint" id="ai-chat-hint">Tell me what you want to see — or never want to see again. I turn it into rules and remember them, on this device and in your data export.</p>
+      <div id="ai-chat-log"></div>
+      <div class="ai-chips" id="ai-chat-chips"></div>
+    </div>
+    <div class="ai-pane" data-ai-pane="rules">
+      <p class="ai-hint">Everything you have asked for, still in force. Untick one to suspend it, delete it to forget it, or tick it back on any time.</p>
+      <div id="ai-rules-list"></div>
+    </div>
+    <div class="ai-pane" data-ai-pane="settings">
+      <div id="ai-setup-status" class="ai-status"></div>
+      <div class="ai-field">
+        <label for="ai-provider">LLM provider</label>
+        <select id="ai-provider"></select>
+      </div>
+      <div class="ai-field">
+        <label for="ai-key">API key <span style="opacity:.65">— kept in this browser only</span></label>
+        <input id="ai-key" type="password" placeholder="paste your key…" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="ai-field">
+        <label for="ai-model">Model</label>
+        <div class="ai-row">
+          <input id="ai-model" list="ai-model-list" placeholder="model id" style="flex:1;min-width:140px" />
+          <button class="ai-icon-btn" id="ai-fetch-models" onclick="aiFetchModels()">Fetch list</button>
+          <datalist id="ai-model-list"></datalist>
+        </div>
+      </div>
+      <div class="ai-field">
+        <label for="ai-base">Base URL <span style="opacity:.65">— only for the "Custom (OpenAI-compatible)" provider</span></label>
+        <input id="ai-base" placeholder="https://…/v1" spellcheck="false" />
+      </div>
+      <div class="ai-row" style="margin-bottom:12px">
+        <button class="modal-btn primary" onclick="aiSaveLlm()">Save</button>
+        <button class="modal-btn" onclick="aiTestLlm()">Test connection</button>
+        <button class="modal-btn" onclick="aiClearKey()">Remove key</button>
+      </div>
+      <div class="ai-kv" id="ai-setup-note"></div>
+    </div>
+  </div>
+  <div class="ai-input-row">
+    <textarea id="ai-input" rows="1" placeholder="e.g. don't show me anime shows" spellcheck="false"></textarea>
+    <button id="ai-send" onclick="aiSend()">Send</button>
+  </div>
+</aside>
+
 <div id="toast" role="status" aria-live="polite"><span id="toast-msg"></span></div>
 
 <script>
@@ -939,6 +1206,70 @@ const FILTER_VIEWS = {
   year:          ['trending', 'upcoming'],
   hideRated:     ['trending', 'upcoming', 'recommended'],
 };
+
+/* ─── AI Director: LLM connection ───────────────────────────────────────
+   This page is a single static file with no server, so the LLM is called
+   straight from the browser with a key the user supplies at runtime (kept
+   in their own localStorage). LLM_API_KEY can also be replaced at build
+   time, exactly like TMDB_TOKEN, if you would rather ship a key — be aware
+   that anything baked into a deployed page is readable by anyone who opens
+   dev tools. */
+const LLM_API_KEY = '__LLM_API_KEY__';
+
+const LLM_PROVIDERS = {
+  gemini: {
+    label: 'Google Gemini',
+    kind: 'gemini',
+    base: 'https://generativelanguage.googleapis.com/v1beta',
+    models: ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'],
+    keyUrl: 'https://aistudio.google.com/apikey',
+  },
+  openai: {
+    label: 'OpenAI',
+    kind: 'openai',
+    base: 'https://api.openai.com/v1',
+    models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1'],
+    keyUrl: 'https://platform.openai.com/api-keys',
+  },
+  openrouter: {
+    label: 'OpenRouter (one key, many models)',
+    kind: 'openai',
+    base: 'https://openrouter.ai/api/v1',
+    models: ['openrouter/auto', 'google/gemini-2.5-flash', 'openai/gpt-4o-mini', 'anthropic/claude-3.5-haiku'],
+    keyUrl: 'https://openrouter.ai/keys',
+  },
+  groq: {
+    label: 'Groq (fast + free tier)',
+    kind: 'openai',
+    base: 'https://api.groq.com/openai/v1',
+    models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'],
+    keyUrl: 'https://console.groq.com/keys',
+  },
+  mistral: {
+    label: 'Mistral',
+    kind: 'openai',
+    base: 'https://api.mistral.ai/v1',
+    models: ['mistral-small-latest', 'mistral-large-latest'],
+    keyUrl: 'https://console.mistral.ai/api-keys',
+  },
+  anthropic: {
+    label: 'Anthropic (Claude)',
+    kind: 'anthropic',
+    base: 'https://api.anthropic.com/v1',
+    models: ['claude-3-5-haiku-latest', 'claude-3-5-sonnet-latest'],
+    keyUrl: 'https://console.anthropic.com/settings/keys',
+  },
+  custom: {
+    label: 'Custom (OpenAI-compatible)',
+    kind: 'openai',
+    base: '',
+    models: [],
+    keyUrl: '',
+  },
+};
+
+const LLM_DEFAULT_PROVIDER = 'gemini';
+const LLM_CHAT_MAX = 60;
 
 /* ─────────────────────────────────────────────────────────────────────
    UTILITIES
@@ -1015,11 +1346,21 @@ let state = {
   calMyOnly: !!LS.get('cal_my_only'),
   searchPage: 1,
   theme: LS.get('theme') || 'dark',
+  /* AI Director: every natural-language instruction the user has given,
+     stored as structured rules so they survive reloads like ratings do. */
+  rules: LS.get('ai_rules') || [],
+  chatLog: LS.get('ai_chat_log') || [],
+  llm: LS.get('llm_config') || null,
+  aiTab: 'chat',
+  aiDraft: '',
 };
 
 function saveRatings()      { LS.set('my_ratings',          state.ratings); }
 function saveWatchlist()    { LS.set('my_watchlist',        state.watchlist); LS.set('wl_added', state.wlAdded); }
 function saveSimkl()        { LS.set('simkl_token',         state.simklToken); LS.set('simkl_user', state.simklUser); }
+function saveRules()        { LS.set('ai_rules',            state.rules); }
+function saveChatLog()      { state.chatLog = state.chatLog.slice(-LLM_CHAT_MAX); LS.set('ai_chat_log', state.chatLog); }
+function saveLlm()          { LS.set('llm_config',          state.llm); }
 function savePrefs() {
   LS.set('f_type',     state.filterType);
   LS.set('f_genre',    state.genre);
@@ -1137,6 +1478,1059 @@ function addNotice(html, id) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
+   AI DIRECTOR: RULES
+   A natural-language instruction becomes one or more structured rules.
+   Rules are persisted like ratings and applied by every card-rendering
+   path through applyRules(), so "don't show me anime" sticks everywhere
+   and comes back after a reload.
+   ───────────────────────────────────────────────────────────────────── */
+const ANIMATION_GENRE = 16;
+
+const LANG_NAMES = {
+  ja: 'Japanese', ko: 'Korean', zh: 'Chinese', es: 'Spanish', fr: 'French',
+  de: 'German', it: 'Italian', pt: 'Portuguese', hi: 'Hindi', ru: 'Russian',
+  th: 'Thai', ar: 'Arabic', sv: 'Swedish', da: 'Danish', tr: 'Turkish',
+  he: 'Hebrew', nl: 'Dutch', pl: 'Polish', en: 'English',
+};
+
+function genreName(id) { return GENRE_MAP[id] || `genre ${id}`; }
+function typeName(t) { return t === 'movie' ? 'movies' : 'TV shows'; }
+
+const RULE_KINDS = {
+  excludeGenre:    e => `hide ${genreName(e.value)}`,
+  includeGenre:    e => `only ${genreName(e.value)}`,
+  excludeAnime:    () => 'hide anime',
+  includeAnime:    () => 'only anime',
+  excludeType:     e => `hide ${typeName(e.value)}`,
+  onlyType:        e => `only ${typeName(e.value)}`,
+  excludeKeyword:  e => `hide titles about “${e.value}”`,
+  excludeLanguage: e => `hide ${LANG_NAMES[e.value] || e.value} audio`,
+  minRating:       e => `score ${e.value}+`,
+  maxRating:       e => `score ${e.value} or less`,
+  minVotes:        e => `at least ${Number(e.value).toLocaleString()} votes`,
+  yearFrom:        e => `released ${e.value} or later`,
+  yearTo:          e => `released ${e.value} or earlier`,
+  hideRated:       () => 'hide anything I already rated',
+  excludeNonEnglish: () => 'hide anything not in English',
+};
+
+function effectSummary(e) {
+  const fn = RULE_KINDS[e && e.kind];
+  return fn ? fn(e) : String(e && e.kind || '?');
+}
+function describeEffects(effects) {
+  const parts = (effects || []).map(effectSummary).filter(Boolean);
+  return parts.length ? parts.join(' · ') : 'no effect';
+}
+
+/* Only the rules that are switched on take part. */
+function activeRules() {
+  return state.rules.filter(r => r.enabled !== false && (r.effects || []).length);
+}
+
+/* Server-side parameters we can hand to /discover. Anything TMDB cannot
+   express (anime, a keyword, a language) is left to applyRules(), which
+   is the authoritative check either way. */
+function ruleApiParams() {
+  const without = new Set(), include = [];
+  let minRating = 0, minVotes = 0;
+  activeRules().forEach(r => r.effects.forEach(e => {
+    if (e.kind === 'excludeGenre' && e.value) without.add(Number(e.value));
+    if (e.kind === 'includeGenre' && e.value) include.push(Number(e.value));
+    if (e.kind === 'minRating') minRating = Math.max(minRating, Number(e.value) || 0);
+    if (e.kind === 'minVotes')  minVotes  = Math.max(minVotes,  Number(e.value) || 0);
+  }));
+  const out = {};
+  if (without.size) out.without_genres = [...without].join(',');
+  if (include.length) out.with_genres = include.join('|');
+  if (minRating) out['vote_average.gte'] = minRating;
+  if (minVotes)  out['vote_count.gte']   = minVotes;
+  return out;
+}
+
+function isAnimeItem(item) {
+  const genres = item.genre_ids || (item.genres || []).map(g => g.id) || [];
+  if (!genres.includes(ANIMATION_GENRE)) return false;
+  const lang = item.original_language;
+  if (lang) return lang === 'ja';
+  const countries = item.origin_country || [];
+  return countries.includes('JP');
+}
+
+/* Does this single rule tell us to drop this item? */
+function ruleRejects(rule, item) {
+  if (!item) return false;
+  const type   = item.media_type || (item.title ? 'movie' : 'tv');
+  const genres = item.genre_ids || (item.genres || []).map(g => g.id) || [];
+  const title  = String(item.title || item.name || '').toLowerCase();
+  const overview = String(item.overview || '').toLowerCase();
+  const date   = item.release_date || item.first_air_date || '';
+  const year   = date ? Number(date.slice(0, 4)) : 0;
+
+  return (rule.effects || []).some(e => {
+    switch (e.kind) {
+      case 'excludeGenre':    return genres.includes(Number(e.value));
+      case 'includeGenre':    return !genres.includes(Number(e.value));
+      case 'excludeAnime':    return isAnimeItem(item);
+      case 'includeAnime':    return !isAnimeItem(item);
+      case 'excludeType':     return type === e.value;
+      case 'onlyType':        return type !== e.value;
+      case 'excludeKeyword': {
+        const needle = String(e.value || '').toLowerCase();
+        return !!needle && (title.includes(needle) || overview.includes(needle));
+      }
+      case 'excludeLanguage': return item.original_language === e.value;
+      case 'excludeNonEnglish': return !!item.original_language && item.original_language !== 'en';
+      case 'minRating':       return (item.vote_average || 0) > 0 && item.vote_average < Number(e.value);
+      case 'maxRating':       return (item.vote_average || 0) > Number(e.value);
+      case 'minVotes':        return (item.vote_count || 0) < Number(e.value);
+      case 'yearFrom':        return !!year && year < Number(e.value);
+      case 'yearTo':          return !!year && year > Number(e.value);
+      case 'hideRated':       return !!state.ratings[mediaKey(type, item.id)];
+      default:                return false;
+    }
+  });
+}
+
+function ruleAllows(item) { return !activeRules().some(r => ruleRejects(r, item)); }
+
+function filterByRules(list) {
+  if (!Array.isArray(list)) return { items: [], removed: 0 };
+  if (!activeRules().length) return { items: list, removed: 0 };
+  const items = list.filter(ruleAllows);
+  return { items, removed: list.length - items.length };
+}
+function applyRules(list) { return filterByRules(list).items; }
+
+/* Effects coming from a language model cannot be trusted verbatim: every
+   kind and value is validated and coerced here before it can become a rule. */
+const VALID_KINDS = new Set(Object.keys(RULE_KINDS));
+
+function normalizeEffect(e) {
+  if (!e || typeof e !== 'object') return null;
+  const kind = String(e.kind || '');
+  if (!VALID_KINDS.has(kind)) return null;
+  let value = e.value;
+
+  switch (kind) {
+    case 'excludeGenre':
+    case 'includeGenre': {
+      const id = Number(value);
+      if (!GENRE_MAP[id]) return null;
+      value = id;
+      break;
+    }
+    case 'excludeType':
+    case 'onlyType':
+      value = value === 'tv' || value === 'shows' ? 'tv' : value === 'movie' || value === 'movies' ? 'movie' : null;
+      if (!value) return null;
+      break;
+    case 'excludeLanguage':
+      value = String(value || '').toLowerCase().slice(0, 2);
+      if (!LANG_NAMES[value]) return null;
+      break;
+    case 'excludeKeyword':
+      value = String(value || '').trim().toLowerCase().slice(0, 60);
+      if (!value) return null;
+      break;
+    case 'minRating':
+    case 'maxRating': {
+      const n = Number(value);
+      if (!isFinite(n) || n < 0 || n > 10) return null;
+      value = Math.round(n * 10) / 10;
+      break;
+    }
+    case 'minVotes': {
+      const n = Number(value);
+      if (!isFinite(n) || n < 0) return null;
+      value = Math.round(n);
+      break;
+    }
+    case 'yearFrom':
+    case 'yearTo': {
+      const n = Number(value);
+      if (!isFinite(n) || n < 1900 || n > 2100) return null;
+      value = Math.round(n);
+      break;
+    }
+    default:
+      value = undefined;
+  }
+  return value === undefined ? { kind } : { kind, value };
+}
+
+function dedupeEffects(list) {
+  const seen = new Set(), out = [];
+  (list || []).forEach(e => {
+    const n = normalizeEffect(e);
+    if (!n) return;
+    const key = n.kind + ':' + (n.value ?? '');
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(n);
+  });
+  return out;
+}
+
+let _ruleSeq = 0;
+function makeRule(text, effects, source) {
+  const clean = dedupeEffects(effects);
+  if (!clean.length) return null;
+  return {
+    id: 'r' + Date.now().toString(36) + (_ruleSeq++).toString(36),
+    text: String(text || '').trim().slice(0, 160) || describeEffects(clean),
+    effects: clean,
+    source: source || 'local',
+    createdAt: Date.now(),
+    enabled: true,
+  };
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   AI DIRECTOR: LOCAL INTENT PARSER
+   Works with no API key and no network. Every phrasing here is understood
+   offline; an LLM (when configured) only has to handle the long tail.
+   ───────────────────────────────────────────────────────────────────── */
+const GENRE_WORDS = [
+  [/\banimated\b|\banimation\b|\bcartoons?\b/,          16],
+  [/\bhorror\b|\bscary\b|\bslashers?\b|\bgore\b/,       27],
+  [/\bcomed(y|ies)\b|\bfunny\b|\bstand[- ]?up\b/,       35],
+  [/\baction\b/,                                        28],
+  [/\bdramas?\b/,                                       18],
+  [/\bsci[- ]?fi\b|\bscience fiction\b|\bspace\b/,     878],
+  [/\bromance\b|\bromantic\b/,                        10749],
+  [/\bthrillers?\b|\bsuspense\b/,                       53],
+  [/\bdocumentar(y|ies)\b/,                             99],
+  [/\breality\b/,                                    10764],
+  [/\bkids?\b|\bfamily\b|\bchildrens?\b/,            10751],
+  [/\bmystery\b|\bwhodunn?it\b/,                      9648],
+  [/\bfantasy\b/,                                       14],
+  [/\bcrime\b|\bgangster\b|\bmob\b/,                    80],
+  [/\bwesterns?\b|\bcowboy\b/,                          37],
+  [/\bwars?\b|\bmilitary\b|\bbattle\b/,              10768],
+  [/\bmusicals?\b/,                                  10402],
+  [/\btalk ?shows?\b/,                               10767],
+  [/\bsoaps?\b/,                                     10766],
+  [/\bnews\b/,                                       10763],
+  [/\badventure\b/,                                     12],
+  [/\bsh?onen\b|\bisekai\b|\bmecha\b/,                  16],
+];
+
+const LANGUAGE_WORDS = [
+  [/\bjapanese\b/, 'ja'], [/\bkorean\b/, 'ko'], [/\bchinese\b/, 'zh'],
+  [/\bspanish\b/, 'es'],  [/\bfrench\b/, 'fr'], [/\bgerman\b/, 'de'],
+  [/\bitalian\b/, 'it'],  [/\bhindi\b|\bbollywood\b/, 'hi'],
+  [/\brussian\b/, 'ru'],  [/\bthai\b/, 'th'],   [/\bturkish\b/, 'tr'],
+];
+
+const FORGET_STOPWORDS = new Set([
+  'forget','undo','stop','hiding','hide','allow','bring','back','unhide','remove',
+  'delete','rule','rules','clear','reset','that','this','the','and','from','now',
+  'again','show','shows','movies','movie','never','dont','not','any','more','please',
+  'suggestions','filters','everything','all','less','about','some',
+]);
+
+/* Which words identify a rule well enough to match a "forget that" request? */
+function ruleTokens(rule) {
+  const toks = new Set();
+  const push = s => String(s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ')
+    .split(/\s+/).filter(w => w.length > 2).forEach(w => toks.add(w));
+  push(rule.text);
+  (rule.effects || []).forEach(e => {
+    push(e.kind);
+    push(e.value);
+    if (e.kind === 'excludeAnime' || e.kind === 'includeAnime') { push('anime'); push('animation'); }
+    if (e.kind === 'excludeNonEnglish') { push('foreign'); push('subtitles'); }
+  });
+  return toks;
+}
+
+function matchRulesToForget(text) {
+  const t = String(text || '').toLowerCase();
+  if (/\b(clear|reset|remove|delete|forget)\b[^.]{0,20}\b(all|every|everyone)\b/.test(t) ||
+      /\ball\b[^.]{0,12}\b(rules|suggestions|filters|restrictions)\b/.test(t)) {
+    return state.rules.map(r => r.id);
+  }
+  const keys = t.replace(/[^a-z0-9]+/g, ' ').split(/\s+/)
+    .filter(w => w.length > 2 && !FORGET_STOPWORDS.has(w));
+  if (!keys.length) return [];
+  return state.rules.filter(r => {
+    const toks = [...ruleTokens(r)];
+    return keys.some(k => toks.some(tok => tok === k || tok.startsWith(k) || k.startsWith(tok)));
+  }).map(r => r.id);
+}
+
+const NON_ENGLISH_TERMS = ['subtitle', 'subtitles', 'subtitled', 'subbed', 'foreign', 'non english', 'nonenglish'];
+const NEW_RELEASE_PHRASES = ['new release', 'new releases', 'brand new', 'just came out', 'recent', 'recently', 'latest', 'new stuff', 'newer stuff', 'new movie', 'new movies', 'new show', 'new shows', 'new series'];
+const GENRE_ADJECTIVES = ['anime','animated','animation','cartoon','cartoons','horror','scary','slasher','gore','comedy','comedies','funny','standup','action','drama','dramas','scifi','science','space','romance','romantic','thriller','thrillers','suspense','documentary','documentaries','reality','kids','family','children','mystery','fantasy','crime','gangster','mob','western','westerns','cowboy','war','wars','military','battle','musical','musicals','talk','soap','soaps','news','adventure','shonen','shounen','isekai','mecha','japanese','korean','chinese','spanish','french','german','italian','hindi','bollywood','russian','thai','turkish','foreign','subtitle','subtitles','old','older','new','newer'];
+/* Words that flip a date or a media-type phrase around when they appear. */
+const NEGATION_TERMS = ['nothing','none','no','not','never','dont','don','doesnt','without','avoid','skip','exclude','hide','hides','remove','stop','under','fewer','less','tired','sick','enough','block'];
+const MOVIE_WORDS = ['movie','movies','film','films'];
+const TV_WORDS = ['tv','television','shows','series','programme','programmes','program','programs'];
+
+/* Matching helpers built on plain words instead of word-boundary escapes. */
+function normText(s) { return ' ' + String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]+/g, ' ') + ' '; }
+function normTokens(s) { return normText(s).trim().split(' ').filter(Boolean); }
+function hasTerm(text, terms) { const t = normText(text); return terms.some(w => t.includes(' ' + w + ' ')); }
+function hasPhrase(text, phrases) { const t = normText(text); return phrases.some(p => t.includes(' ' + p + ' ')); }
+function firstIndexOf(tokens, words) { for (let i = 0; i < tokens.length; i++) { if (words.includes(tokens[i])) return i; } return -1; }
+
+/* One clause of a sentence -> zero or more effects. */
+function parseClause(clause, out, forceMode) {
+  const c = String(clause || '').toLowerCase().trim();
+  if (!c) return;
+  const neg = /\b(no|not|don'?t|dont|doesn'?t|isn'?t|without|never|avoid|skip|block|exclude|hide|hides|removes?|stop|filter out|nothing|none|less|fewer|enough of|tired of|sick of)\b/.test(c);
+  const pos = /\b(only|just|want|wanna|prefer|like|love|interested|more|show me|give me|include|stick to|favour|favor|instead)\b/.test(c);
+  const mode = forceMode || ((pos && !neg) ? 'include' : 'exclude');
+  const before = out.length;
+
+  /* Anime is a genre + language combination, not a TMDB genre, so it gets
+     its own dedicated effect rather than being folded into Animation. */
+  const animeWord = /\banime\b|\bjapanese animation\b/.test(c);
+  if (animeWord) {
+    out.push({ kind: mode === 'include' ? 'includeAnime' : 'excludeAnime' });
+  }
+
+  GENRE_WORDS.forEach(([re, id]) => {
+    if (!re.test(c)) return;
+    const onlyAnimeWord = animeWord && !/\banimat(ed|ion)\b|\bcartoons?\b/.test(c);
+    if (id === ANIMATION_GENRE && onlyAnimeWord) return;
+    out.push({ kind: mode === 'include' ? 'includeGenre' : 'excludeGenre', value: id });
+  });
+
+  if (/\b(already (rated|watched)|(hide|no|skip) (my )?(rated|watched)|i'?ve rated)\b/.test(c)) {
+    out.push({ kind: 'hideRated' });
+  }
+
+  const num = m => m ? parseFloat(m[1] ?? m[2] ?? m[3]) : NaN;
+  const plus    = c.match(/\b(\d+(?:\.\d+)?)\s*(?:\+|or (?:more|higher|better)|and (?:up|above|more|higher))\b/);
+  const atLeast = c.match(/\b(?:at least|minimum|min|rated|scored|score of|rating of|above|over|higher than|better than)\s*(\d+(?:\.\d+)?)/);
+  const under   = c.match(/\b(?:under|below|less than|lower than|worse than)\s*(\d+(?:\.\d+)?)/);
+  const capped  = c.match(/\b(?:nothing|no|not|never|don'?t)\b[^.]{0,16}?\b(?:above|over|higher than|more than|past)\s*(\d+(?:\.\d+)?)/);
+
+  let min = NaN, max = NaN;
+  if (plus)          min = num(plus);
+  if (atLeast && !capped) min = Math.max(min || 0, num(atLeast));
+  if (under)         min = Math.max(min || 0, num(under));
+  if (capped)        max = num(capped);
+  if (!isFinite(min) && /\b(highly rated|well rated|top rated|good ratings|great reviews|critically acclaimed)\b/.test(c)) min = 7;
+  if (isFinite(min) && min > 0) out.push({ kind: 'minRating', value: min });
+  if (isFinite(max) && max > 0) out.push({ kind: 'maxRating', value: max });
+
+  if (/\b(obscure|unheard of|no one has (seen|heard)|barely watched|low vote count)\b/.test(c)) {
+    out.push({ kind: 'minVotes', value: 1000 });
+  } else if (/\b(popular|mainstream|well[- ]known|famous|big hits?)\b/.test(c)) {
+    out.push({ kind: 'minVotes', value: mode === 'include' ? 500 : 2000 });
+  }
+
+  const decade = c.match(/\b(?:the\s+)?'?(\d0)s\b/);
+  const fromY  = c.match(/\b(?:after|since|newer than|from|post[- ]?)\s*((?:19|20)\d{2})\b/);
+  const toY    = c.match(/\b(?:before|older than|prior to|pre[- ]?|up to|until)\s*((?:19|20)\d{2})\b/);
+  if (decade) {
+    const d = Number(decade[1]);
+    const start = d >= 50 ? 1900 + d : 2000 + d;
+    out.push({ kind: 'yearFrom', value: start });
+    out.push({ kind: 'yearTo', value: start + 9 });
+  } else {
+  /* "nothing before 2010" keeps 2010 and later, while "before 2010" wants
+     the opposite - so a negation flips which boundary the phrase sets. */
+  const negativeClause = mode === 'exclude' && normTokens(c).some(w => NEGATION_TERMS.includes(w) && w !== 'less' && w !== 'fewer');
+  if (fromY) {
+    if (negativeClause) out.push({ kind: 'yearTo',   value: Number(fromY[1]) });
+    else                out.push({ kind: 'yearFrom', value: Number(fromY[1]) });
+  }
+  if (toY) {
+    if (negativeClause) out.push({ kind: 'yearFrom', value: Number(toY[1]) });
+    else                out.push({ kind: 'yearTo',   value: Number(toY[1]) });
+  }
+  }
+  if (hasPhrase(c, NEW_RELEASE_PHRASES)) {
+    out.push({ kind: 'yearFrom', value: new Date().getFullYear() - 1 });
+  }
+
+  /* A media type word only means "all movies / all TV" when nothing is
+     qualifying it: "anime shows" is about anime, not about television. */
+  const typeTokens = normTokens(c);
+  const movieIdx = firstIndexOf(typeTokens, MOVIE_WORDS);
+  const tvIdx    = firstIndexOf(typeTokens, TV_WORDS);
+  const qualifies = idx => idx > 0 && typeTokens.slice(Math.max(0, idx - 3), idx).some(w => GENRE_ADJECTIVES.includes(w));
+  const wantsMovie = movieIdx >= 0 && !qualifies(movieIdx);
+  const wantsTV    = tvIdx >= 0 && !qualifies(tvIdx);
+  const typeKind   = mode === 'include' ? 'onlyType' : 'excludeType';
+  if (wantsMovie && !wantsTV) out.push({ kind: typeKind, value: 'movie' });
+  if (wantsTV && !wantsMovie) out.push({ kind: typeKind, value: 'tv' });
+
+  if (mode === 'exclude' && hasTerm(c, NON_ENGLISH_TERMS)) {
+    out.push({ kind: 'excludeNonEnglish' });
+  }
+  if (mode === 'exclude') {
+    LANGUAGE_WORDS.forEach(([re, code]) => {
+      if (!re.test(c)) return;
+      out.push({ kind: 'excludeLanguage', value: code });
+    });
+  }
+
+  /* Nothing specific matched: treat the tail of the sentence as a keyword
+     to avoid, so "hide The Office" still works. */
+  if (out.length === before && mode === 'exclude') {
+    const quoted = c.match(/["“'']([^"”'']{2,60})["”'']/);
+    const tail = c.match(/\b(?:hide|remove|block|stop showing|don'?t show|dont show|no more|exclude|filter out|never show|skip|not interested in|tired of|sick of|enough of)\s+(?:me\s+)?(?:any\s+)?(?:more\s+)?(?:of\s+)?(.{2,60})$/);
+    const rawHit = quoted ? quoted[1] : (tail ? tail[1] : '');
+    const cleaned = rawHit
+      .replace(/\b(please|thanks|thank you|from now on|anymore|any more|at all|ever again)\b/g, ' ')
+      .replace(/[.!?]+$/, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (cleaned.length >= 2) out.push({ kind: 'excludeKeyword', value: cleaned });
+  }
+}
+
+/* The offline interpreter: handles the common phrasings without a key. */
+function parseLocalIntent(raw) {
+  const text = String(raw || '').trim();
+  const out = { effects: [], forget: [] };
+  if (!text) return out;
+  const lower = text.toLowerCase();
+
+  if (/\b(forget|undo|allow|bring back|unhide|stop hiding|remove|delete|clear|reset|never mind|nvm|revert|turn off)\b/.test(lower)) {
+    const ids = matchRulesToForget(lower);
+    if (ids.length) { out.forget = ids; return out; }
+  }
+
+  const split = lower.match(/\b(?:but not|except for|except|other than|apart from)\b(.*)$/);
+  if (split) {
+    parseClause(lower.slice(0, split.index), out.effects, null);
+    parseClause(split[1], out.effects, 'exclude');
+  } else {
+    parseClause(lower, out.effects, null);
+  }
+  out.effects = dedupeEffects(out.effects);
+  return out;
+}
+
+const RULES_CAP = 60;
+
+function addRuleFromEffects(text, effects, source) {
+  const rule = makeRule(text, effects, source);
+  if (!rule) return null;
+  state.rules.unshift(rule);
+  state.rules = state.rules.slice(0, RULES_CAP);
+  saveRules();
+  updateAiRuleCount();
+  return rule;
+}
+
+function removeRule(id) {
+  state.rules = state.rules.filter(r => r.id !== id);
+  saveRules();
+  renderAiRules();
+  updateAiRuleCount();
+}
+function setRuleEnabled(id, on) {
+  const rule = state.rules.find(r => r.id === id);
+  if (!rule) return;
+  rule.enabled = !!on;
+  saveRules();
+  updateAiRuleCount();
+}
+
+/* Turn a sentence into stored rules (and honour "forget that" requests).
+   Used by both the offline parser and the LLM path. */
+function applyUserMessage(text, source) {
+  const parsed = parseLocalIntent(text);
+  const forgotten = [];
+  if (parsed.forget.length) {
+    const ids = new Set(parsed.forget);
+    state.rules = state.rules.filter(r => {
+      if (!ids.has(r.id)) return true;
+      forgotten.push(r);
+      return false;
+    });
+    saveRules();
+  }
+  const rule = addRuleFromEffects(text, parsed.effects, source || 'local');
+  updateAiRuleCount();
+  return { rule, forgotten };
+}
+
+function ruleSummaryText() {
+  const rules = activeRules();
+  if (!rules.length) return '';
+  return rules.map(r => describeEffects(r.effects)).join('; ');
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   AI DIRECTOR: LLM CLIENT
+   One tiny adapter per API shape, called straight from the browser. The
+   offline parser above always runs first, so the app stays useful with no
+   key at all — the model only has to catch what it misses.
+   ───────────────────────────────────────────────────────────────────── */
+function llmCfg() {
+  const stored = state.llm || {};
+  const providerId = LLM_PROVIDERS[stored.provider] ? stored.provider : LLM_DEFAULT_PROVIDER;
+  const provider = LLM_PROVIDERS[providerId];
+  const baked = (!LLM_API_KEY.startsWith('__LLM')) ? LLM_API_KEY : '';
+  return {
+    providerId,
+    provider,
+    apiKey: stored.apiKey || baked,
+    usingBakedKey: !stored.apiKey && !!baked,
+    model: stored.model || provider.models[0] || '',
+    base: stored.base || provider.base || '',
+  };
+}
+function llmConfigured() {
+  const c = llmCfg();
+  if (c.provider.kind === 'custom') return !!(c.apiKey && c.base);
+  return !!c.apiKey;
+}
+
+async function readLlmResponse(res) {
+  const raw = await res.text();
+  let data = null;
+  try { data = JSON.parse(raw); } catch (e) { /* non-JSON error body */ }
+  if (!res.ok) {
+    const msg = (data && (data.error?.message || data.message)) || raw.slice(0, 180) || res.statusText;
+    throw new Error(`${res.status} — ${msg}`);
+  }
+  return data || {};
+}
+
+function parseJsonResponse(text, wantJson) {
+  const s = String(text || '').trim();
+  if (!wantJson) return s;
+  const fenced = s.match(/```(?:json)?\s*([\s\S]*?)```/);
+  const body = fenced ? fenced[1] : s;
+  const start = body.indexOf('{'), end = body.lastIndexOf('}');
+  const slice = (start >= 0 && end > start) ? body.slice(start, end + 1) : body;
+  try {
+    return JSON.parse(slice);
+  } catch (e) {
+    throw new Error('the model did not reply with valid JSON');
+  }
+}
+
+async function llmChat(messages, opts = {}) {
+  const c = llmCfg();
+  if (!c.apiKey) throw new Error('no API key set (open Setup)');
+  const model = c.model;
+  if (!model) throw new Error('no model set (open Setup)');
+  const base = (c.base || '').replace(/\/+$/, '');
+  const wantJson = opts.json !== false;
+  const maxTokens = opts.maxTokens || 700;
+
+  if (c.provider.kind === 'gemini') {
+    const system = messages.filter(m => m.role === 'system').map(m => m.content).join('\n\n');
+    const contents = messages.filter(m => m.role !== 'system')
+      .map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+    const res = await fetch(`${base}/models/${encodeURIComponent(model)}:generateContent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': c.apiKey },
+      body: JSON.stringify({
+        system_instruction: system ? { parts: [{ text: system }] } : undefined,
+        contents,
+        generationConfig: Object.assign(
+          { temperature: 0.2, maxOutputTokens: maxTokens },
+          wantJson ? { responseMimeType: 'application/json' } : {}
+        ),
+      }),
+    });
+    const data = await readLlmResponse(res);
+    const text = (((data.candidates || [])[0] || {}).content || {}).parts?.map(p => p.text || '').join('') || '';
+    return parseJsonResponse(text, wantJson);
+  }
+
+  if (c.provider.kind === 'anthropic') {
+    const system = messages.filter(m => m.role === 'system').map(m => m.content).join('\n\n');
+    const res = await fetch(`${base}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': c.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: maxTokens,
+        temperature: 0.2,
+        system,
+        messages: messages.filter(m => m.role !== 'system')
+          .map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),
+      }),
+    });
+    const data = await readLlmResponse(res);
+    const text = (data.content || []).map(p => p.text || '').join('');
+    return parseJsonResponse(text, wantJson);
+  }
+
+  const res = await fetch(`${base}/chat/completions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${c.apiKey}` },
+    body: JSON.stringify(Object.assign(
+      { model, messages, temperature: 0.2, max_tokens: maxTokens },
+      wantJson ? { response_format: { type: 'json_object' } } : {}
+    )),
+  });
+  const data = await readLlmResponse(res);
+  const text = ((data.choices || [])[0] || {}).message?.content || '';
+  return parseJsonResponse(text, wantJson);
+}
+
+async function aiFetchModels() {
+  const c = llmCfg();
+  const btn = document.getElementById('ai-fetch-models');
+  if (!c.apiKey) { aiSetStatus('Add an API key first, then fetch the model list.', 'warn'); return; }
+  const base = (c.base || '').replace(/\/+$/, '');
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  try {
+    let ids = [];
+    if (c.provider.kind === 'gemini') {
+      const res = await fetch(`${base}/models?pageSize=200`, { headers: { 'x-goog-api-key': c.apiKey } });
+      const data = await readLlmResponse(res);
+      ids = (data.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+        .map(m => String(m.name || '').replace(/^models\//, ''));
+    } else {
+      const headers = c.provider.kind === 'anthropic'
+        ? { 'x-api-key': c.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }
+        : { 'Authorization': `Bearer ${c.apiKey}` };
+      const res = await fetch(`${base}/models`, { headers });
+      const data = await readLlmResponse(res);
+      ids = ((data.data || data.models || []).map(m => m.id || m.name || '')).filter(Boolean);
+    }
+    ids = ids.slice(0, 120);
+    if (!ids.length) { aiSetStatus('The provider returned no models.', 'warn'); return; }
+    const list = document.getElementById('ai-model-list');
+    if (list) list.innerHTML = ids.map(id => `<option value="${esc(id)}"></option>`).join('');
+    aiSetStatus(`Found ${ids.length} models — start typing in the Model box to pick one.`, 'ok');
+    toast(`Loaded ${ids.length} models`);
+  } catch (e) {
+    aiSetStatus(`Could not list models: ${esc(e.message)}. You can still type a model id by hand.`, 'warn');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Fetch list'; }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   AI DIRECTOR: THE CHAT
+   ───────────────────────────────────────────────────────────────────── */
+const AI_CHIPS = [
+  { label: '🚫 No anime',     prompt: "don't show me anime shows" },
+  { label: '🎬 Only movies',  prompt: 'only show me movies' },
+  { label: '⭐ 7+ only',      prompt: 'nothing under 7' },
+  { label: '😱 No horror',    prompt: 'no horror movies' },
+  { label: '🆕 New only',     prompt: 'only recent releases' },
+  { label: '🕰 90s',          prompt: 'only things from the 90s' },
+  { label: '👀 Hide rated',   prompt: "hide anything I've already rated" },
+  { label: '↩︎ Allow anime',  prompt: 'forget the anime rule' },
+];
+
+function aiSystemPrompt() {
+  const genres = Object.entries(GENRE_MAP).map(([id, n]) => `${id}=${n}`).join(', ');
+  const langs = Object.keys(LANG_NAMES).join(', ');
+  const existing = state.rules.length
+    ? state.rules.map(r => `- id=${r.id} ${r.enabled === false ? '(off)' : '(on)'} "${r.text}" => ${r.effects.map(e => e.kind + (e.value !== undefined && e.value !== null ? ':' + e.value : '')).join(', ')}`).join('\n')
+    : '(none yet)';
+
+  return `You are the "AI Director" inside a movie and TV discovery app (TMDB data). The user
+describes in plain language what the app should show or stop showing. Instructions become
+permanent filters, so be accurate and conservative.
+
+Translate the request into effects. Allowed kinds and values:
+- excludeGenre / includeGenre: value = ONE numeric TMDB genre id from: ${genres}
+- excludeAnime / includeAnime: no value. Anime = Animation + Japanese original language; TMDB
+  does not model anime as a genre, so never use excludeGenre 16 to hide anime.
+- excludeType / onlyType: value "movie" or "tv"
+- excludeKeyword: value = short lowercase phrase, matched against title and overview
+- excludeLanguage: value = 2-letter code from: ${langs}
+- minRating / maxRating: value 0-10
+- minVotes: value = number of votes
+- yearFrom / yearTo: value = 4-digit year
+- hideRated: no value (everything the user has already rated)
+
+Answer with ONE JSON object, nothing else:
+{"reply":"one plain-text sentence, max 25 words","add":[{"text":"the user's phrasing","effects":[{"kind":"...","value":"..."}]}],"remove":["rule id or distinctive word"]}
+
+Rules:
+- "add" only when the user wants to change what they see; otherwise [].
+- "remove" when they want something allowed or forgotten; ids are in the list below.
+- Never invent genre ids or language codes and never emit another kind.
+- If the request is unclear or impossible, explain in "reply" and return empty arrays.
+
+Existing rules:
+${existing}`;
+}
+
+function aiHistory() {
+  return state.chatLog.slice(-6).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: String(m.text || '').slice(0, 400) }));
+}
+
+function aiPushMessage(role, text, meta) {
+  state.chatLog.push({ role, text: String(text || ''), meta: meta || '', ts: Date.now() });
+  saveChatLog();
+  renderAiChat();
+}
+
+function applyLlmResult(userText, res) {
+  const added = [], removed = [];
+  const list = Array.isArray(res && res.add) ? res.add : [];
+  list.forEach(entry => {
+    const effects = dedupeEffects(entry && entry.effects);
+    if (!effects.length) return;
+    const rule = addRuleFromEffects(String((entry && entry.text) || userText), effects, 'llm');
+    if (rule) added.push(rule);
+  });
+  const dropList = Array.isArray(res && res.remove) ? res.remove : [];
+  dropList.forEach(needle => {
+    const n = String(needle || '').toLowerCase().trim();
+    if (!n) return;
+    const hit = state.rules.find(r => r.id === needle || r.id === n)
+      || state.rules.find(r => (r.text || '').toLowerCase().includes(n))
+      || state.rules.find(r => ruleTokens(r).has(n));
+    if (!hit) return;
+    state.rules = state.rules.filter(r => r.id !== hit.id);
+    removed.push(hit);
+  });
+  if (removed.length) saveRules();
+
+  const lines = [];
+  if (added.length)   lines.push('Added → ' + added.map(r => describeEffects(r.effects)).join(' · '));
+  if (removed.length) lines.push('Removed → ' + removed.map(r => `"${r.text}"`).join(', '));
+  if (!lines.length)  lines.push('No rule changes.');
+  const reply = String((res && res.reply) || '').trim();
+  aiPushMessage('bot', (reply ? reply + '\n' : '') + lines.join('\n'));
+
+  if (added.length || removed.length) afterRuleChange();
+}
+
+let _aiBusy = false;
+let _aiThinking = false;
+
+function setAiBusy(on) {
+  const btn = document.getElementById('ai-send');
+  if (btn) btn.disabled = !!on;
+}
+
+async function aiSend(forced) {
+  const input = document.getElementById('ai-input');
+  const text = String(forced || (input ? input.value : '') || '').trim();
+  if (!text || _aiBusy) return;
+  if (input) input.value = '';
+
+  aiPushMessage('user', text);
+  _aiBusy = true;
+  setAiBusy(true);
+
+  /* The offline parser answers instantly and for free, so it gets first go.
+     A model is only consulted for what it cannot work out. */
+  const local = parseLocalIntent(text);
+  let handled = false;
+
+  if (local.forget.length) {
+    const { forgotten } = applyUserMessage(text, 'local');
+    aiPushMessage('bot', `Forgotten: ${forgotten.map(r => `"${r.text}"`).join(', ')}. That restriction is lifted.`);
+    handled = true;
+  } else if (local.effects.length) {
+    const { rule } = applyUserMessage(text, 'local');
+    aiPushMessage('bot', `Done — applied everywhere: ${describeEffects(rule.effects)}. Remembered until you say otherwise.`);
+    handled = true;
+  }
+
+  if (handled) {
+    afterRuleChange();
+    _aiBusy = false;
+    setAiBusy(false);
+    return;
+  }
+
+  if (!llmConfigured()) {
+    aiPushMessage('bot',
+      "I couldn't turn that into a rule on my own. Try \"hide anime\", \"no horror movies\", " +
+      "\"only movies scored 8+\", \"nothing before 2010\", \"hide anything I've already rated\", " +
+      "or add an API key under Setup so free-form requests can be understood.");
+    _aiBusy = false;
+    setAiBusy(false);
+    return;
+  }
+
+  _aiThinking = true;
+  renderAiChat();
+  try {
+    const res = await llmChat([
+      { role: 'system', content: aiSystemPrompt() },
+      ...aiHistory(),
+      { role: 'user', content: text },
+    ]);
+    _aiThinking = false;
+    applyLlmResult(text, res);
+  } catch (e) {
+    _aiThinking = false;
+    aiPushMessage('bot', `The model call failed: ${e.message}\nCheck Setup, or rephrase using one of the quick buttons.`);
+  } finally {
+    _aiThinking = false;
+    renderAiChat();
+    _aiBusy = false;
+    setAiBusy(false);
+  }
+}
+
+function aiQuick(prompt) {
+  const input = document.getElementById('ai-input');
+  if (input) input.value = prompt;
+  aiSend();
+}
+
+function renderAiChat() {
+  const log = document.getElementById('ai-chat-log');
+  if (log) {
+    if (!state.chatLog.length && !_aiThinking) {
+      log.innerHTML = `<div class="ai-hint">No instructions yet. Try “don't show me anime shows”, “no horror movies”, “only movies rated 8 or higher”, “nothing before 2010”, “hide anything I already rated”, or “forget the anime rule”.</div>`;
+    } else {
+      log.innerHTML = state.chatLog.map(m =>
+        `<div class="ai-msg ${m.role === 'user' ? 'user' : 'bot'}">${esc(m.text)}</div>`
+      ).join('') + (_aiThinking ? `<div class="ai-msg bot thinking">Thinking…</div>` : '');
+      log.scrollTop = log.scrollHeight;
+    }
+  }
+  const chips = document.getElementById('ai-chat-chips');
+  if (chips) {
+    chips.innerHTML = AI_CHIPS.map(c =>
+      `<button class="ai-chip" onclick="aiQuick(decodeURIComponent('${encodeURIComponent(c.prompt)}'))">${esc(c.label)}</button>`
+    ).join('');
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   AI DIRECTOR: SUGGESTIONS LIST & PANEL CHROME
+   ───────────────────────────────────────────────────────────────────── */
+function renderAiRules() {
+  const box = document.getElementById('ai-rules-list');
+  if (!box) return;
+  if (!state.rules.length) {
+    box.innerHTML = `<div class="ai-hint">No suggestions yet. Ask for something in the Chat tab and it will show up here, switched on, until you turn it off or delete it.</div>`;
+    return;
+  }
+  box.innerHTML = state.rules.map(r => `
+    <div class="ai-rule${r.enabled === false ? ' off' : ''}">
+      <div class="ai-rule-top">
+        <input type="checkbox" class="ai-toggle" ${r.enabled === false ? '' : 'checked'}
+          onchange="aiToggleRule('${r.id}', this.checked)" aria-label="Enable this suggestion" />
+        <span class="ai-rule-text">${esc(r.text)}</span>
+        <button class="ai-rule-x" onclick="aiDeleteRule('${r.id}')" title="Forget this suggestion" aria-label="Delete this suggestion">🗑</button>
+      </div>
+      <div class="ai-rule-effects">
+        ${r.effects.map(e => `<span class="ai-rule-effect">${esc(effectSummary(e))}</span>`).join('')}
+      </div>
+      <div class="ai-rule-meta">
+        <span>${r.source === 'llm' ? 'AI-parsed' : r.source === 'quick' ? 'from a card' : 'understood offline'}</span>
+        <span>${new Date(r.createdAt || Date.now()).toLocaleDateString()}</span>
+      </div>
+    </div>`).join('');
+}
+
+function aiToggleRule(id, on) {
+  setRuleEnabled(id, on);
+  afterRuleChange();
+  toast(on ? 'Suggestion active again' : 'Suggestion suspended');
+}
+function aiDeleteRule(id) {
+  const r = state.rules.find(x => x.id === id);
+  removeRule(id);
+  afterRuleChange();
+  if (r) toast(`Forgot: ${r.text}`);
+}
+
+function updateAiRuleCount() {
+  const n = activeRules().length;
+  const btn = document.getElementById('ai-btn');
+  if (btn) btn.innerHTML = `🤖 AI Director${n ? `<span class="ai-count">${n}</span>` : ''}`;
+  const el = document.getElementById('ai-rule-count');
+  if (el) el.textContent = String(n);
+}
+
+/* Rules affect every view, so a change means re-render and re-write prefs. */
+function afterRuleChange() {
+  updateAiRuleCount();
+  renderAiRules();
+  renderView();
+}
+
+function aiReapply() {
+  afterRuleChange();
+  toast('Rules re-applied');
+}
+
+function openAiPanel(tab) {
+  const panel = document.getElementById('ai-panel');
+  const scrim = document.getElementById('ai-scrim');
+  if (!panel) return;
+  panel.classList.add('open');
+  scrim?.classList.add('open');
+  renderAiChat();
+  renderAiRules();
+  renderAiSettings();
+  showAiTab(tab || state.aiTab || 'chat');
+  setTimeout(() => document.getElementById('ai-input')?.focus(), 180);
+}
+
+function closeAiPanel() {
+  document.getElementById('ai-panel')?.classList.remove('open');
+  document.getElementById('ai-scrim')?.classList.remove('open');
+}
+
+function toggleAiPanel() {
+  const open = document.getElementById('ai-panel')?.classList.contains('open');
+  if (open) closeAiPanel(); else openAiPanel();
+}
+
+function showAiTab(name) {
+  state.aiTab = name;
+  document.querySelectorAll('.ai-tab').forEach(t => t.classList.toggle('active', t.dataset.aiTab === name));
+  document.querySelectorAll('.ai-pane').forEach(p => p.classList.toggle('active', p.dataset.aiPane === name));
+  if (name === 'rules') renderAiRules();
+  if (name === 'settings') renderAiSettings();
+}
+
+document.querySelectorAll('.ai-tab').forEach(tab => {
+  tab.addEventListener('click', () => showAiTab(tab.dataset.aiTab));
+});
+
+document.getElementById('ai-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); aiSend(); }
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   AI DIRECTOR: SETUP TAB
+   ───────────────────────────────────────────────────────────────────── */
+function aiSetStatus(html, cls) {
+  const el = document.getElementById('ai-setup-status');
+  if (!el) return;
+  el.className = 'ai-status' + (cls ? ' ' + cls : '');
+  el.innerHTML = html;
+}
+
+function updateAiProviderFields() {
+  const c = llmCfg();
+  const note = document.getElementById('ai-setup-note');
+  if (note) {
+    note.innerHTML = c.provider.keyUrl
+      ? `Get a key: <a href="${esc(c.provider.keyUrl)}" target="_blank" rel="noopener" style="color:var(--ai)">${esc(new URL(c.provider.keyUrl).hostname)} ↗</a><br>
+         Your key is saved only in this browser's localStorage — never sent anywhere except
+         ${esc(new URL(c.provider.base || 'https://example.com').hostname)}.
+         ${c.provider.kind === 'custom' ? '<br>Point Base URL at any OpenAI-compatible endpoint.' : ''}`
+      : 'Point Base URL at any OpenAI-compatible endpoint and paste its key.';
+  }
+  const baseField = document.getElementById('ai-base')?.closest('.ai-field');
+  if (baseField) baseField.style.display = c.providerId === 'custom' ? '' : 'none';
+}
+
+function renderAiSettings() {
+  const sel = document.getElementById('ai-provider');
+  if (!sel) return;
+  if (!sel.dataset.filled) {
+    sel.innerHTML = Object.entries(LLM_PROVIDERS)
+      .map(([k, p]) => `<option value="${esc(k)}">${esc(p.label)}</option>`).join('');
+    sel.dataset.filled = '1';
+  }
+  const c = llmCfg();
+  sel.value = c.providerId;
+  document.getElementById('ai-key').value = state.llm?.apiKey || '';
+  document.getElementById('ai-model').value = c.model || '';
+  document.getElementById('ai-base').value = state.llm?.base || '';
+  updateAiProviderFields();
+
+  if (c.usingBakedKey) {
+    aiSetStatus(`Using the API key injected at build time with <strong>${esc(c.provider.label)}</strong> / <code>${esc(c.model)}</code>.`, 'ok');
+  } else if (llmConfigured()) {
+    aiSetStatus(`Connected to <strong>${esc(c.provider.label)}</strong> using <code>${esc(c.model)}</code>. Rules work offline too — a model only handles unusual phrasing.`, 'ok');
+  } else {
+    aiSetStatus('No API key yet. Everything else still works: the offline interpreter understands the common phrasings, and you only need a key for free-form requests.', 'warn');
+  }
+}
+
+function aiSaveLlm() {
+  const provider = document.getElementById('ai-provider')?.value || LLM_DEFAULT_PROVIDER;
+  const apiKey   = (document.getElementById('ai-key')?.value || '').trim();
+  const model    = (document.getElementById('ai-model')?.value || '').trim();
+  const base     = (document.getElementById('ai-base')?.value || '').trim();
+  state.llm = { provider, apiKey, model, base };
+  saveLlm();
+  renderAiSettings();
+  return llmConfigured();
+}
+
+async function aiTestLlm() {
+  if (!aiSaveLlm()) return;
+  aiSetStatus('Testing…', '');
+  try {
+    const res = await llmChat([
+      { role: 'system', content: 'Reply with one JSON object only.' },
+      { role: 'user', content: 'Return {"reply":"ok","add":[],"remove":[]}' },
+    ], { maxTokens: 60 });
+    aiSetStatus(`Connection works — the model replied “${esc(String(res.reply || 'ok'))}”.`, 'ok');
+  } catch (e) {
+    aiSetStatus(`Connection failed: ${esc(e.message)}`, 'warn');
+  }
+}
+
+function aiClearKey() {
+  state.llm = {
+    provider: state.llm?.provider || LLM_DEFAULT_PROVIDER,
+    apiKey: '',
+    model: state.llm?.model || '',
+    base: state.llm?.base || '',
+  };
+  saveLlm();
+  renderAiSettings();
+  aiSetStatus('API key removed from this browser.', 'warn');
+  toast('API key removed');
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   AI DIRECTOR: "NOT INTERESTED" ON A TITLE
+   ───────────────────────────────────────────────────────────────────── */
+function notInterested(mode) {
+  const inner = document.getElementById('modal-inner');
+  const key = inner?.dataset.key || '';
+  const [type, idStr] = key.split('_');
+  if (!type || !idStr) { toast('Open a title first'); return; }
+  const d = state.mediaDetails[key] || {};
+  const title = d.title || 'this title';
+  let rule = null;
+
+  if (mode === 'title') {
+    rule = addRuleFromEffects(`Hide “${title}”`, [{ kind: 'excludeKeyword', value: title }], 'quick');
+  } else if (mode === 'genre') {
+    const gid = (d.genre_ids || [])[0];
+    if (!gid) { toast('No genre recorded for this title yet'); return; }
+    rule = addRuleFromEffects(`Hide ${genreName(gid)}`, [{ kind: 'excludeGenre', value: gid }], 'quick');
+  } else if (mode === 'type') {
+    const t = type === 'movie' ? 'movie' : 'tv';
+    rule = addRuleFromEffects(`Hide ${typeName(t)}`, [{ kind: 'excludeType', value: t }], 'quick');
+  } else if (mode === 'anime') {
+    rule = addRuleFromEffects('Hide anime', [{ kind: 'excludeAnime' }], 'quick');
+  }
+
+  closeModal();
+  afterRuleChange();
+  if (rule) {
+    toast(`Hiding: ${describeEffects(rule.effects)}`, {
+      duration: 6000,
+      actionLabel: 'Undo',
+      onAction: () => { removeRule(rule.id); afterRuleChange(); toast('Rule removed'); },
+    });
+    openAiPanel('rules');
+  } else {
+    toast('Could not build a rule from that');
+  }
+}
+
+function aiExplainHidden(hidden) {
+  return `<strong>${hidden}</strong> item${hidden === 1 ? '' : 's'} hidden by your AI Director rules` +
+    (ruleSummaryText() ? ` (${esc(ruleSummaryText())})` : '') + '.';
+}
+
+/* ─────────────────────────────────────────────────────────────────────
    API CACHE LAYER
    ───────────────────────────────────────────────────────────────────── */
 const _cache = new Map();
@@ -1232,24 +2626,43 @@ async function tmdb(path, params = {}) {
   try { return await promise; } finally { _inflight.delete(key); }
 }
 
+/* Fold the AI Director rules into a discover query where TMDB can express
+   them, so the API filters too rather than only the client doing cleanup. */
+function mergeRuleParams(params) {
+  const rp = ruleApiParams();
+  const out = { ...params };
+  if (rp.without_genres) {
+    out.without_genres = [out.without_genres, rp.without_genres].filter(Boolean).join(',');
+  }
+  if (rp.with_genres) {
+    out.with_genres = [out.with_genres, rp.with_genres].filter(Boolean).join('|');
+  }
+  if (rp['vote_average.gte'] && !out['vote_average.gte']) out['vote_average.gte'] = rp['vote_average.gte'];
+  if (rp['vote_count.gte']) {
+    out['vote_count.gte'] = Math.max(Number(out['vote_count.gte'] || 0), Number(rp['vote_count.gte']));
+  }
+  return out;
+}
+
 /* Discover, but never let a streaming filter produce an empty row.
    Future/unreleased titles frequently have no provider listings published
    yet, which is what made "select a service -> no shows" happen. If the
    provider-filtered query comes back empty we retry unfiltered and report
    that we did, so the user sees content plus an explanation. */
 async function discoverSafe(path, baseParams) {
+  const params = mergeRuleParams(baseParams);
   if (!state.provider) {
-    const data = await tmdb(path, baseParams);
+    const data = await tmdb(path, params);
     return { items: data.results || [], providerApplied: false };
   }
   try {
-    const filtered = await tmdb(path, { ...baseParams, ...providerParams() });
+    const filtered = await tmdb(path, { ...params, ...providerParams() });
     const items = filtered.results || [];
     if (items.length) return { items, providerApplied: true };
   } catch (e) {
     console.warn('Provider-filtered discover failed, retrying unfiltered:', e);
   }
-  const data = await tmdb(path, baseParams);
+  const data = await tmdb(path, params);
   return { items: data.results || [], providerApplied: false, fellBack: true };
 }
 
@@ -1262,6 +2675,7 @@ function yearParams(type) {
   if (!state.year) return {};
   return type === 'movie' ? { primary_release_year: state.year } : { first_air_date_year: state.year };
 }
+
 async function getContentRating(type, id) {
   const k = mediaKey(type, id);
   if (state.mediaDetails[k]?.contentRating !== undefined) {
@@ -1564,14 +2978,14 @@ async function surpriseMe() {
   try {
     const randomPage = Math.floor(Math.random() * 50) + 1;
     const [movie, tv] = await Promise.all([
-      tmdb('/discover/movie', { sort_by: 'vote_count.desc', 'vote_count.gte': 500, page: randomPage }),
-      tmdb('/discover/tv', { sort_by: 'vote_count.desc', 'vote_count.gte': 200, page: randomPage }),
+      tmdb('/discover/movie', mergeRuleParams({ sort_by: 'vote_count.desc', 'vote_count.gte': 500, page: randomPage })),
+      tmdb('/discover/tv',    mergeRuleParams({ sort_by: 'vote_count.desc', 'vote_count.gte': 200, page: randomPage })),
     ]);
 
-    const all = [
+    const all = filterByRules([
       ...(movie.results || []).map(m => ({ ...m, media_type: 'movie' })),
       ...(tv.results || []).map(t => ({ ...t, media_type: 'tv' })),
-    ].filter(i => !state.ratings[mediaKey(i.media_type, i.id)]);
+    ].filter(i => !state.ratings[mediaKey(i.media_type, i.id)])).items;
 
     if (all.length === 0) {
       toast('No random items found');
@@ -1822,6 +3236,13 @@ function handleAction(action, el) {
     case 'simkl-auth':  simklAuth(); break;
     case 'retry':       renderView(); break;
     case 'dismiss-notice': el.closest('.notice')?.remove(); break;
+    case 'open-ai':     openAiPanel('chat'); break;
+    case 'open-ai-rules': openAiPanel('rules'); break;
+    case 'allow-anime': {
+      const hit = state.rules.find(r => r.effects.some(e => e.kind === 'excludeAnime'));
+      if (hit) { removeRule(hit.id); afterRuleChange(); toast('Anime allowed again'); }
+      break;
+    }
     case 'clear-provider':
       state.provider = '';
       savePrefs();
@@ -1963,10 +3384,11 @@ function openHelpModal() {
       <tr><td style="padding:4px 0"><strong>w</strong></td><td>My List View</td></tr>
       <tr><td style="padding:4px 0"><strong>r</strong></td><td>For You View</td></tr>
       <tr><td style="padding:4px 0"><strong>q</strong></td><td>Quick Rate View</td></tr>
+      <tr><td style="padding:4px 0"><strong>a</strong></td><td>AI Director (tell it what to show or hide)</td></tr>
       <tr><td style="padding:4px 0"><strong>d</strong></td><td>Toggle Light/Dark Theme</td></tr>
       <tr><td style="padding:4px 0"><strong>Enter</strong> / <strong>Space</strong></td><td>Open focused card</td></tr>
       <tr><td style="padding:4px 0"><strong>0–9</strong></td><td>Rate the first Quick Rate card</td></tr>
-      <tr><td style="padding:4px 0"><strong>Esc</strong></td><td>Close Modal</td></tr>
+      <tr><td style="padding:4px 0"><strong>Esc</strong></td><td>Close Modal / AI Director</td></tr>
     </table>
   `;
 }
@@ -2097,6 +3519,13 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
         ${trailerUrl ? `<a class="modal-btn" href="${esc(trailerUrl)}" target="_blank" rel="noopener">▶ Trailer</a>` : ''}
       </div>
 
+      <div class="modal-actions" style="gap:8px;margin-bottom:18px">
+        <span style="font-size:.78rem;color:var(--text-muted)">Or tell the AI Director you're not interested:</span>
+        <button class="modal-btn" onclick="notInterested('title')">🚫 Hide this title</button>
+        ${genres[0] ? `<button class="modal-btn" onclick="notInterested('genre')">🚫 Hide ${esc(genres[0].name)}</button>` : ''}
+        <button class="modal-btn" onclick="notInterested('type')">🚫 Hide ${type === 'movie' ? 'movies' : 'TV shows'}</button>
+      </div>
+
       ${providers && (providers.flatrate.length || providers.rent.length) ? `
         <div style="margin-bottom:16px">
           <div style="font-size:.85rem;font-weight:700;margin-bottom:8px;color:var(--text-muted)">Where to Watch — ${esc(providers.region)} ${providers.link ? `<a href="${esc(providers.link)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:400;font-size:.78rem;margin-left:6px">View all ↗</a>` : ''}</div>
@@ -2146,10 +3575,15 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
 async function loadSimilar(type, id) {
   try {
     const data = await tmdb(`/${type}/${id}/similar`);
-    const items = (data.results || []).slice(0, 8);
-    if (!items.length) return;
+    const items = filterByRules((data.results || []).slice(0, 16)).items.slice(0, 8);
     const wrap = document.getElementById('modal-similar');
     if (!wrap) return;
+    if (!items.length) {
+      wrap.innerHTML = (data.results || []).length
+        ? `<div class="modal-similar-title">Similar</div><p style="font-size:.78rem;color:var(--text-muted)">All similar titles are hidden by your AI Director rules.</p>`
+        : '';
+      return;
+    }
     wrap.innerHTML = `<div class="modal-similar-title">Similar</div><div class="card-row" id="similar-row"></div>`;
     const row = document.getElementById('similar-row');
     items.forEach(item => {
@@ -2171,10 +3605,12 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
 
 document.addEventListener('keydown', e => {
   const overlayOpen = document.getElementById('modal-overlay').classList.contains('open');
+  const aiOpen = document.getElementById('ai-panel').classList.contains('open');
 
   if (e.key === 'Escape') {
     // Escape always dismisses an open modal, even from inside an input.
     if (overlayOpen) closeModal();
+    else if (aiOpen) closeAiPanel();
     return;
   }
 
@@ -2198,6 +3634,7 @@ document.addEventListener('keydown', e => {
   const go = v => { e.preventDefault(); document.querySelector(`[data-view="${v}"]`)?.click(); };
   if (e.key === '?' || (e.shiftKey && e.key === '?')) { e.preventDefault(); openHelpModal(); }
   else if (e.key === '/' || e.key === 's') { e.preventDefault(); document.getElementById('search-input').focus(); }
+  else if (e.key === 'a') { e.preventDefault(); toggleAiPanel(); }
   else if (e.key === 't') go('trending');
   else if (e.key === 'c') go('calendar');
   else if (e.key === 'u') go('upcoming');
@@ -2239,6 +3676,7 @@ function removeFromWatchlist(type, id) {
 async function renderView() {
   const token = ++renderToken;
   updateSimklUI();
+  updateAiRuleCount();
   updateFilterVisibility();
   syncFilterControls();
   const main = document.getElementById('main-content');
@@ -2579,6 +4017,7 @@ async function populateCalendar() {
   const placed = new Set();
   let itemCount = 0;
   let myCount = 0;
+  let hiddenCount = 0;
 
   const stale = () => myTok !== calToken || gridTok !== calGridToken;
 
@@ -2593,17 +4032,21 @@ async function populateCalendar() {
     if (cls.includes('my-show')) myCount++;
   };
 
+  /* Rules apply to what the app suggests. Titles the user put in their own
+     list are never hidden from their calendar — they asked for those. */
+  const keep = item => { if (ruleAllows(item)) return true; hiddenCount++; return false; };
+
   if (!state.calMyOnly) {
     try {
-      const [pg1, pg2] = await Promise.all([1, 2].map(page => tmdb('/discover/movie', {
+      const [pg1, pg2] = await Promise.all([1, 2].map(page => tmdb('/discover/movie', mergeRuleParams({
         'primary_release_date.gte': dateFrom,
         'primary_release_date.lte': dateTo,
         sort_by: 'popularity.desc',
         'vote_count.gte': 0,
         page,
-      })));
+      }))));
       if (stale()) return;
-      [...(pg1.results||[]), ...(pg2.results||[])].forEach(m => {
+      [...(pg1.results||[]), ...(pg2.results||[])].filter(keep).forEach(m => {
         if (!inRange(m.release_date)) return;
         const mine = ['plantowatch', 'watching'].includes(getWlStatus('movie', m.id));
         add(m.release_date, m.title, mine ? 'movie my-show' : 'movie',
@@ -2612,14 +4055,14 @@ async function populateCalendar() {
     } catch(e) { console.warn('TMDB movies error:', e); toast('Failed to load movie releases'); }
 
     try {
-      const tvDiscover = await tmdb('/discover/tv', {
+      const tvDiscover = await tmdb('/discover/tv', mergeRuleParams({
         'first_air_date.gte': dateFrom,
         'first_air_date.lte': dateTo,
         sort_by: 'popularity.desc',
         page: 1,
-      });
+      }));
       if (stale()) return;
-      (tvDiscover.results || []).forEach(show => {
+      (tvDiscover.results || []).filter(keep).forEach(show => {
         if (!inRange(show.first_air_date)) return;
         add(show.first_air_date, show.name, 'tv', `📺 ${show.name} (premiere)`,
           () => openModal('tv', show.id, show), { pk: `tvprem_${show.id}` });
@@ -2709,7 +4152,8 @@ async function populateCalendar() {
 
   if (loading && !stale()) {
     if (itemCount > 0) {
-      loading.textContent = `${itemCount} events — ${myCount} from your list`;
+      loading.innerHTML = `${itemCount} events — ${myCount} from your list` +
+        (hiddenCount ? ` · <button class="link-btn" data-action="open-ai-rules">${hiddenCount} hidden by your rules</button>` : '');
     } else {
       loading.innerHTML = `No events found in this month.
         <button class="link-btn" data-action="trending">Browse Trending</button>`;
@@ -2719,11 +4163,15 @@ async function populateCalendar() {
 
 /* ── CALENDAR EXPORT (.ics) ───────────────────────────────────────── */
 function icsEscape(s) {
-  return String(s ?? '')
-    .replace(/\\/g, '\\\\')
-    .replace(/;/g, '\\;')
-    .replace(/,/g, '\\,')
-    .replace(/\r?\n/g, '\\n');
+  const BS = String.fromCharCode(92);
+  const CR = String.fromCharCode(13);
+  const LF = String.fromCharCode(10);
+  return String(s == null ? '' : s)
+    .split(BS).join(BS + BS)
+    .split(';').join(BS + ';')
+    .split(',').join(BS + ',')
+    .split(CR).join('')
+    .split(LF).join(BS + 'n');
 }
 function icsFold(line) {
   if (line.length <= 73) return line;
@@ -2825,7 +4273,7 @@ async function renderUpcoming(main, token) {
 
     // The row above is driven by episode air dates; the schedule list is
     // driven by premiere dates, so keep them consistent by including both.
-    const sorted = [...fMovies, ...fShows]
+    const sorted = filterByRules([...fMovies, ...fShows]).items
       .filter(i => {
         const d = i.release_date || i.first_air_date;
         return d && d >= todayStr && d <= futureStr;
@@ -2892,6 +4340,8 @@ function buildWatchlistSection(container, title, items) {
 }
 
 /* ── MY LIST ──────────────────────────────────────────────────────── */
+/* Your own list is never filtered by AI Director rules: you put those
+   titles there on purpose. Rules shape discovery, not your library. */
 async function renderWatchlist(main, token) {
   const statuses = ['watching', 'plantowatch', 'completed', 'hold', 'dropped'];
   main.innerHTML = '';
@@ -3104,6 +4554,7 @@ async function renderRecommended(main, token) {
       .filter(i => {
         const key = mediaKey(mediaType, i.id);
         if (seen.has(i.id) || state.ratings[key] || state.watchlist[key]) return false;
+        if (!ruleAllows(i)) return false;
         seen.add(i.id);
         return true;
       })
@@ -3134,6 +4585,7 @@ async function renderRecommended(main, token) {
     ${liked    ? `<span>❤️ Loves: <strong>${esc(liked)}</strong></span>` : ''}
     ${disliked ? `<span>👎 Avoids: <strong>${esc(disliked)}</strong></span>` : ''}
     ${state.genre ? `<span>🎯 Genre: <strong>${esc(GENRE_MAP[state.genre] || state.genre)}</strong></span>` : ''}
+    ${activeRules().length ? `<span>🤖 <strong>${activeRules().length}</strong> AI rules on <button data-action="open-ai-rules" style="background:none;border:none;color:var(--ai);cursor:pointer;text-decoration:underline;font-size:.78rem;padding:0">review</button></span>` : ''}
     <button data-action="reset-filters"
       style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer">
       Refresh taste profile
@@ -3163,7 +4615,7 @@ async function renderRecommended(main, token) {
       if (token !== renderToken) return;
       const results = (data.results || [])
         .map(i => ({ ...i, media_type: type }))
-        .filter(i => !state.ratings[mediaKey(type, i.id)] && !state.watchlist[mediaKey(type, i.id)])
+        .filter(i => !state.ratings[mediaKey(type, i.id)] && !state.watchlist[mediaKey(type, i.id)] && ruleAllows(i))
         .slice(0, 12);
 
       if (results.length) {
@@ -3176,6 +4628,7 @@ async function renderRecommended(main, token) {
 /* ── SEARCH ──────────────────────────────────────────────────────── */
 let searchQuery = '';
 let searchResults = [];
+let searchHiddenByRules = 0;
 let recentSearches = LS.get('recent_searches') || [];
 
 function updateSearchChrome() {
@@ -3269,20 +4722,25 @@ async function loadMoreSearchResults() {
       tmdb('/search/movie', { query: searchQuery, page: state.searchPage }),
       tmdb('/search/tv',    { query: searchQuery, page: state.searchPage }),
     ]);
-    const newResults = [
+    const raw = [
       ...(movies.results || []).map(m => ({ ...m, media_type: 'movie' })),
       ...(shows.results  || []).map(t => ({ ...t, media_type: 'tv' })),
     ].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
 
+    const { items: newResults, removed } = filterByRules(raw);
+    searchHiddenByRules += removed;
     searchResults.push(...newResults);
     const main = document.getElementById('main-content');
-    if (!newResults.length) { toast('No more results'); document.getElementById('load-more-btn')?.remove(); return; }
+    if (!newResults.length && !removed) {
+      toast('No more results');
+      document.getElementById('load-more-btn')?.remove();
+      return;
+    }
 
     const existingRow = main.querySelector('.card-row[data-search-row]');
     if (existingRow) {
       newResults.forEach(item => existingRow.appendChild(buildCard(item)));
-      const meta = main.querySelector('.search-meta');
-      if (meta) meta.textContent = `${searchResults.length} results (through page ${state.searchPage})`;
+      updateSearchMeta(main);
     } else {
       renderSearchRow(main);
     }
@@ -3291,6 +4749,15 @@ async function loadMoreSearchResults() {
     console.warn('Load more search error:', e);
     toast('Failed to load more results');
   }
+}
+
+function updateSearchMeta(main) {
+  const meta = main.querySelector('.search-meta');
+  if (!meta) return;
+  meta.innerHTML = `${searchResults.length} results (through page ${state.searchPage})` +
+    (searchHiddenByRules
+      ? ` · ${searchHiddenByRules} hidden by your rules <button class="link-btn" data-action="open-ai-rules" style="margin-left:4px">review</button>`
+      : '');
 }
 
 function positionLoadMoreButton(main) {
@@ -3320,6 +4787,7 @@ function renderSearchRow(main) {
   const row = sec.querySelector('.card-row');
   searchResults.forEach(item => row.appendChild(buildCard(item)));
   main.appendChild(sec);
+  updateSearchMeta(main);
 }
 
 async function renderSearch(main, token) {
@@ -3330,16 +4798,27 @@ async function renderSearch(main, token) {
       tmdb('/search/tv',    { query: searchQuery, page: state.searchPage }),
     ]);
     if (token !== renderToken) return;
-    searchResults = [
+    const raw = [
       ...(movies.results || []).map(m => ({ ...m, media_type: 'movie' })),
       ...(shows.results  || []).map(t => ({ ...t, media_type: 'tv' })),
     ].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+
+    /* Rules apply here too, but the count is surfaced so a deliberate
+       search for something you blocked is never a silent dead end. */
+    const { items, removed } = filterByRules(raw);
+    searchResults = items;
+    searchHiddenByRules = removed;
 
     main.innerHTML = '';
     if (!searchResults.length) {
       main.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>
         <p><strong>No results for "${esc(searchQuery)}"</strong></p>
-        <p style="margin-top:6px;font-size:.85rem">Check the spelling, or try a shorter phrase.</p>
+        <p style="margin-top:6px;font-size:.85rem">${
+          removed
+            ? `${removed} match${removed === 1 ? '' : 'es'} hidden by your AI Director rules.
+               <button class="link-btn" data-action="open-ai-rules" style="margin-left:6px">Review rules</button>`
+            : 'Check the spelling, or try a shorter phrase.'
+        }</p>
       </div>`;
       return;
     }
@@ -3366,7 +4845,7 @@ async function fetchQuickRateBatch(type, want = 20) {
     qrPage[type]++; tries++;
     let data;
     try {
-      data = await tmdb(path, { sort_by: 'popularity.desc', 'vote_count.gte': minVotes, page: qrPage[type] });
+      data = await tmdb(path, mergeRuleParams({ sort_by: 'popularity.desc', 'vote_count.gte': minVotes, page: qrPage[type] }));
     } catch (e) {
       console.warn('Quick rate batch error:', e);
       break;
@@ -3377,6 +4856,7 @@ async function fetchQuickRateBatch(type, want = 20) {
     results.forEach(i => {
       const key = mediaKey(type, i.id);
       if (qrSeen.has(key) || state.ratings[key]) return;
+      if (!ruleAllows({ ...i, media_type: type })) return;
       qrSeen.add(key);
       out.push({ ...i, media_type: type });
     });
@@ -3404,6 +4884,10 @@ async function renderQuickRate(main, token) {
     renderQuickRateRow(main, 'Popular TV Shows 📺', 'tv', tvItems);
 
     addNotice('Tip: press <strong>1–9</strong> to rate the first card here, <strong>0</strong> for a 10. On a card, <strong>👍</strong> rates it 10 and <strong>👎</strong> rates it 2.', 'qr-tip');
+    if (activeRules().length) {
+      addNotice(`Your AI Director rules are steering these picks — ${esc(ruleSummaryText())}. ` +
+        `<button class="link-btn" data-action="open-ai-rules">Review ${activeRules().length}</button>`, 'qr-rules');
+    }
   } catch(e) {
     if (token !== renderToken) return;
     main.innerHTML = emptyStateHTML('⚠️', 'Could not load Quick Rate', esc(e.message), 'retry');
@@ -3453,6 +4937,7 @@ function buildQuickRateCard(item, onGone) {
   const title = item.title || item.name;
   const poster = item.poster_path ? `${IMG_BASE}${item.poster_path}` : '';
   const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+  const cr = item._contentRating || item.contentRating || '';
 
   const card = document.createElement('div');
   card.className = 'card';
@@ -3466,7 +4951,7 @@ function buildQuickRateCard(item, onGone) {
       ${poster ? `<img src="${esc(poster)}" alt="" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted)">🎬</div>'}
     </div>
     <div style="padding:0 10px 10px">
-      <div style="font-weight:600;font-size:0.85rem;line-height:1.3;margin-bottom:4px">${esc(title)}</div>
+      <div style="font-weight:600;font-size:0.85rem;line-height:1.3;margin-bottom:4px">${esc(title)} ${cr ? ratingBadgeHTML(cr) : ''}</div>
       <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px">${esc(year)} • ${type === 'movie' ? 'Movie' : 'TV'}</div>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="thumbs-btn" data-r="10" title="👍 Loved it (10)" aria-label="Rate ${esc(title)} 10">👍</button>
@@ -3629,6 +5114,24 @@ function renderStats(main) {
       </div>
       ` : ''}
 
+      <div style="margin-bottom:24px">
+        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">🤖 AI Director
+          <span style="color:var(--text-muted);font-weight:400;font-size:.8rem">(${activeRules().length} active of ${state.rules.length})</span>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+          ${state.rules.length
+            ? state.rules.map(r => `
+                <div style="display:flex;gap:8px;align-items:flex-start;font-size:.82rem;padding:4px 0${r.enabled === false ? ';opacity:.5' : ''}">
+                  <span>${r.enabled === false ? '⏸' : '✅'}</span>
+                  <span style="flex:1;min-width:0">${esc(r.text)}
+                    <span style="color:var(--text-muted);font-size:.75rem">— ${esc(describeEffects(r.effects))}</span>
+                  </span>
+                </div>`).join('')
+            : '<p style="font-size:.82rem;color:var(--text-muted)">No rules yet. Open the AI Director and describe what you want to see or stop seeing.</p>'}
+          <button class="modal-btn" style="margin-top:12px" data-action="open-ai-rules">Open AI Director</button>
+        </div>
+      </div>
+
       <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
         <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Data & Storage Management</div>
         <div style="background:var(--surface2);padding:12px;border-radius:8px;margin-bottom:12px">
@@ -3657,8 +5160,10 @@ function exportData() {
     watchlist: state.watchlist,
     wlAdded: state.wlAdded,
     mediaDetails: state.mediaDetails,
+    aiRules: state.rules,
+    aiChatLog: state.chatLog,
     exportDate: new Date().toISOString(),
-    version: '1.2'
+    version: '1.3'
   };
   downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
     `media-calendar-backup-${localISO(new Date())}.json`);
@@ -3672,19 +5177,30 @@ function importData(input) {
   reader.onload = (e) => {
     try {
       const data = JSON.parse(e.target.result);
-      if (!confirm(`Import ${Object.keys(data.ratings || {}).length} ratings and ${Object.keys(data.watchlist || {}).length} watchlist items? This will merge with existing data.`)) return;
+      const ruleCount = Array.isArray(data.aiRules) ? data.aiRules.length : 0;
+      if (!confirm(`Import ${Object.keys(data.ratings || {}).length} ratings, ${Object.keys(data.watchlist || {}).length} watchlist items and ${ruleCount} AI rules? This will merge with existing data.`)) return;
 
       state.ratings = { ...state.ratings, ...(data.ratings || {}) };
       state.watchlist = { ...state.watchlist, ...(data.watchlist || {}) };
       state.wlAdded = { ...state.wlAdded, ...(data.wlAdded || {}) };
       state.mediaDetails = { ...state.mediaDetails, ...(data.mediaDetails || {}) };
+      if (ruleCount) {
+        const known = new Set(state.rules.map(r => r.id));
+        state.rules = [...state.rules, ...data.aiRules.filter(r => r && !known.has(r.id))].slice(0, RULES_CAP);
+      }
+      if (Array.isArray(data.aiChatLog)) {
+        state.chatLog = [...state.chatLog, ...data.aiChatLog].slice(-LLM_CHAT_MAX);
+      }
 
       saveRatings();
       saveWatchlist();
       saveMediaDetails();
+      saveRules();
+      saveChatLog();
       recomputeAffinity();
       toast('Data imported successfully');
       renderView();
+      renderAiRules();
     } catch (err) {
       toast('Failed to import: Invalid file format');
       console.error(err);
@@ -3700,7 +5216,9 @@ function importData(input) {
 async function filterResults(items, opts = {}) {
   const { yearServerSide = false } = opts;
 
-  let out = items.filter(i => {
+  /* AI Director rules run first: they are global and view-independent, and
+     they are also what the user expects to persist between reloads. */
+  let out = applyRules(items).filter(i => {
     if (filterVisible('type') && state.filterType !== 'all' && i.media_type !== state.filterType) return false;
     if (filterVisible('genre') && state.genre && !(i.genre_ids || []).includes(parseInt(state.genre, 10))) return false;
     if (filterVisible('hideRated') && state.hideRated && state.ratings[mediaKey(i.media_type, i.id)]) return false;
@@ -3744,15 +5262,21 @@ function renderRow(container, title, items, recBadge = false) {
     </div>`;
 
   const row = sec.querySelector('.card-row');
+  const { items: shown, removed } = filterByRules(items);
+  const rulesOn = activeRules().length > 0;
 
-  if (!items.length) {
+  if (!shown.length) {
     const hasFilters = activeFilterCount() > 0;
+    const byRules = removed > 0 || rulesOn;
     sec.querySelector('.row-wrap').outerHTML = `<div class="row-empty">
-      <span>No results found${hasFilters ? ' for the current filters' : ''}.</span>
+      <span>${byRules
+        ? `Nothing left here — your ${rulesOn ? rulesOn + ' ' : ''}AI Director rule${rulesOn === 1 ? '' : 's'} may be hiding everything${hasFilters ? ', along with the filters' : ''}.`
+        : `No results found${hasFilters ? ' for the current filters' : ''}.`}</span>
+      ${byRules ? '<button class="link-btn" data-action="open-ai-rules">Review rules</button>' : ''}
       ${hasFilters ? '<button class="link-btn" data-action="reset-filters">Clear filters</button>' : ''}
     </div>`;
   } else {
-    items.forEach(item => {
+    shown.forEach(item => {
       const card = buildCard(item);
       if (recBadge) {
         const badge = document.createElement('span');
@@ -3920,6 +5444,19 @@ async function refreshSimklIfNeeded() {
 
   syncFilterControls();
   updateSearchChrome();
+
+  /* AI Director bootstrapping: restore the suggestion list and the saved
+     chat, and make sure any rules saved earlier are in force right away. */
+  updateAiRuleCount();
+  renderAiChat();
+  renderAiRules();
+  renderAiSettings();
+  const llmNote = document.getElementById('ai-chat-hint');
+  if (llmNote) {
+    llmNote.innerHTML = llmConfigured()
+      ? 'Tell me what you want to see — or never want to see again. I turn it into rules and remember them.'
+      : 'Tell me what you want to see — or never want to see again. Works offline for the common phrasings; add a model key under <strong>Setup</strong> for anything unusual.';
+  }
 
   const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (isLocal) {
