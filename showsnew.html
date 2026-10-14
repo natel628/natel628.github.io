@@ -3890,8 +3890,7 @@ async function renderTrending(main, token) {
       await filterResults(trendingRes.items.map(i => ({
         ...i,
         media_type: state.provider ? (row1IsTV ? 'tv' : 'movie') : i.media_type,
-      })), { yearServerSide: !!state.provider }),
-    ], row1More);
+      })), { yearServerSide: !!state.provider }), row1More]);
     // Rows a type filter structurally excludes are omitted outright rather
     // than rendered as a permanent "no results" placeholder.
     if (wantMovie) {
