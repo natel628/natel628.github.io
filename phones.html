@@ -31,7 +31,7 @@ a{color:var(--blue)}
 .wrap{max-width:1440px;margin:auto;padding:0 22px 60px}
 
 /* nav */
-.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 95%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .nav-in{max-width:1440px;margin:auto;padding:10px 22px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .nav a{color:var(--muted);text-decoration:none;font-size:.86rem;padding:6px 10px;border-radius:8px}
 .nav a:hover{color:var(--text);background:var(--panel2)}
@@ -91,6 +91,8 @@ td.model{font-weight:800;white-space:nowrap}
 .empty{padding:22px;color:var(--muted)}
 
 /* comparison */
+.cmpbar{align-items:center}
+#comparison th.b-Google{box-shadow:inset 0 3px 0 var(--google)}#comparison th.b-Samsung{box-shadow:inset 0 3px 0 var(--samsung)}#comparison th.b-Apple{box-shadow:inset 0 3px 0 var(--apple)}
 #comparison td:first-child,#comparison th:first-child{position:sticky;left:0;background:var(--head);z-index:1;font-weight:700;white-space:nowrap;min-width:150px}
 #comparison td:first-child{background:var(--panel)}
 #comparison td{min-width:230px}
@@ -155,14 +157,20 @@ td.model{font-weight:800;white-space:nowrap}
   #specs td.model{background:var(--head);padding:12px 14px;margin-bottom:6px;font-size:1.05rem;white-space:normal}
   #specs td[data-label]::before{content:attr(data-label);display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
 
-  #comparison thead{display:none}
-  #comparison,#comparison tbody,#comparison tr,#comparison td{display:block;width:100%}
-  #comparison tr{border:1px solid var(--line);border-radius:12px;margin:0 0 10px;overflow:hidden;background:var(--panel)}
-  #comparison td{border:0;padding:9px 14px;min-width:0;position:static}
-  #comparison td:first-child{background:var(--head);font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:8px 14px;min-width:0;white-space:normal;position:static}
-  #comparison td[data-label]::before{content:attr(data-label);display:block;font-size:.74rem;color:var(--muted);font-weight:700;margin-bottom:3px}
-  #comparison td[data-label]+td[data-label]{border-top:1px dashed var(--line)}
-  #comparison mark.d,#comparison .same{display:block;width:fit-content;max-width:100%;margin:3px 0}
+  /* comparison stays side by side: two columns, sticky phone-name header */
+  #comparison{display:block;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  #comparison thead{display:block;position:sticky;top:var(--navh,57px);z-index:6;border-radius:11px 11px 0 0;overflow:hidden;box-shadow:0 6px 12px -8px rgba(0,0,0,.45)}
+  #comparison thead tr,#comparison tbody tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  #comparison thead th:first-child{display:none}
+  #comparison thead th{position:static;white-space:normal;text-transform:none;letter-spacing:0;font-size:.82rem;line-height:1.3;padding:11px 12px 10px;border-bottom:1px solid var(--line)}
+  #comparison thead th+th{border-left:1px solid var(--line)}
+  #comparison tbody{display:block}
+  #comparison tbody tr{border-bottom:1px solid var(--line)}
+  #comparison tbody tr:last-child{border-bottom:0}
+  #comparison td{display:block;border:0;padding:9px 12px;min-width:0;position:static;font-size:.86rem;overflow-wrap:anywhere}
+  #comparison td:first-child{grid-column:1/-1;background:var(--panel2);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:6px 12px;white-space:normal}
+  #comparison td:nth-child(2){border-right:1px solid var(--line)}
+  #comparison mark.d,#comparison .same{display:block;width:fit-content;max-width:100%;margin:3px 0;padding:2px 6px;font-size:.84rem;box-shadow:none}
   #comparison .sep,#comparison br{display:none}
   .cmpbar{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:4px}
   .cmpbar .toggle{flex:1 1 auto}
@@ -406,7 +414,7 @@ const norm = t => t.toLowerCase().replace(/\s+/g,' ');
 function renderComparison(){
   const chosen = pickers.map(s => data[Number(s.value)]);
   const onlyDiff = $('onlydiff').checked;
-  $('comparison-head').innerHTML = '<tr><th scope="col">Specification</th>' + chosen.map(x => `<th scope="col">${esc(label(x))}</th>`).join('') + '</tr>';
+  $('comparison-head').innerHTML = '<tr><th scope="col">Specification</th>' + chosen.map(x => `<th scope="col" class="b-${esc(x.b)}">${esc(label(x))}</th>`).join('') + '</tr>';
   const rows = fields.map(([name,key]) => {
     const parts = chosen.map(x => segs(x[key]));
     // a piece is "shared" only if every chosen phone has it
@@ -417,7 +425,7 @@ function renderComparison(){
   }).filter(r => !onlyDiff || r.differs);
   const cellHtml = c => {
     const shown = onlyDiff ? c.filter(o => !o.same) : c;
-    if(!shown.length) return '<span class="none">same as the others</span>';
+    if(!shown.length) return '<span class="none">all shared</span>';
     return shown.map(o => o.same ? `<span class="same">${esc(o.t)}</span>` : `<mark class="d">${esc(o.t)}</mark>`).join(onlyDiff ? '<br>' : '<span class="sep">; </span>');
   };
   $('comparison-body').innerHTML = rows.length
@@ -443,6 +451,8 @@ window.addEventListener('hashchange', () => {
   renderComparison();
 });
 
+function setNavH(){ const n = document.querySelector('.nav'); if(n) document.documentElement.style.setProperty('--navh', n.offsetHeight + 'px'); }
+setNavH(); addEventListener('resize', setNavH); addEventListener('load', setNavH);
 render();
 renderComparison();
 </script>
