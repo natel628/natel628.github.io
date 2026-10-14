@@ -3954,7 +3954,15 @@ async function renderTrending(main, token) {
       return filterResults(items, { yearServerSide: false });
     };
 
-    const [trendingRes, popMovieRes, popTVRes, onAirRes] = await Promise.all([
+    /* Best rated of the last 7 and 30 days. The window comes from the
+       release date, and the vote floor is what keeps a one-vote 10.0 out of
+       the chart - without it these rows are whatever nobody has seen yet.
+       Fetched with the rest so they cost no extra round trip. */
+    const recent7  = { 'primary_release_date.gte': shiftDaysISO(new Date(), -7),  'primary_release_date.lte': todayISO() };
+    const recent30 = { 'primary_release_date.gte': shiftDaysISO(new Date(), -30), 'primary_release_date.lte': todayISO() };
+    const wantRecent = wantMovie && !state.year;
+
+    const [trendingRes, popMovieRes, popTVRes, onAirRes, weekRes, monthRes] = await Promise.all([
       row1,
       wantMovie
         ? discoverSafe('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 100, ...gp, ...yearParams('movie') })
@@ -3973,12 +3981,18 @@ async function renderTrending(main, token) {
               })
             : tmdb('/tv/on_the_air').then(r => ({ items: r.results || [], providerApplied: false })))
         : Promise.resolve({ items: [] }),
+      wantRecent
+        ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 20, ...recent7, ...gp })
+        : Promise.resolve({ items: [] }),
+      wantRecent
+        ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 100, ...recent30, ...gp })
+        : Promise.resolve({ items: [] }),
     ]);
     if (token !== renderToken) return;
 
-    const fellBack = [trendingRes, popMovieRes, popTVRes, onAirRes].some(r => r.fellBack);
+    const fellBack = [trendingRes, popMovieRes, popTVRes, onAirRes, weekRes, monthRes].some(r => r.fellBack);
     const thinProviderRows = !!state.provider && !fellBack &&
-      [popMovieRes, popTVRes, onAirRes].some(r => r.partial);
+      [popMovieRes, popTVRes, onAirRes, weekRes, monthRes].some(r => r.partial);
 
     /* Per-row pagination: each fetcher pulls the next discover page and
        runs it through the same filter pipeline as the initial render. */
@@ -4008,6 +4022,16 @@ async function renderTrending(main, token) {
     if (wantMovie) {
       rows.push(['Popular Movies 🎬',
         await filterResults(popMovieRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true }), movieMore]);
+      /* Ranked charts. Skipped entirely when a year filter is on, since
+         "this week" and "2020" cannot both be true. */
+      if (!state.year) {
+        const trophy = '\u{1F3C6}';   // escaped so this script stays plain ASCII
+        const weekTop = await filterResults(weekRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: false });
+        if (weekTop.length) rows.push([trophy + ' Best Rated This Week', weekTop, null, true]);
+        const monthTop = await filterResults(monthRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: false });
+        if (monthTop.length) rows.push([trophy + ' Best Rated This Month', monthTop, null, true]);
+      }
+
       /* Hidden gems: acclaimed titles the crowd hasn't found yet. */
       const gems = await discoverSafe('/discover/movie', {
         sort_by: 'vote_average.desc', 'vote_average.gte': 7.5,
@@ -4040,7 +4064,7 @@ async function renderTrending(main, token) {
         `<button class="link-btn" data-action="clear-provider">Show everything</button>`,
         'provider-fallback');
     }
-    rows.forEach(([label, items, fetcher]) => renderRow(main, label, items, false, fetcher));
+    rows.forEach(([label, items, fetcher, ranked]) => renderRow(main, label, items, false, fetcher, ranked));
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('renderTrending error:', e);
@@ -5551,7 +5575,7 @@ async function filterResults(items, opts = {}) {
   return out;
 }
 
-function renderRow(container, title, items, recBadge = false, fetcher = null) {
+function renderRow(container, title, items, recBadge = false, fetcher = null, ranked = false) {
   const sec = document.createElement('div');
   sec.className = 'section';
   sec.innerHTML = `
@@ -5588,13 +5612,21 @@ function renderRow(container, title, items, recBadge = false, fetcher = null) {
       ${hasFilters ? '<button class="link-btn" data-action="reset-filters">Clear filters</button>' : ''}
     </div>`;
   } else {
-    shown.forEach(item => {
+    shown.forEach((item, idx) => {
       const card = buildCard(item);
       if (recBadge) {
         const badge = document.createElement('span');
         badge.className = 'rec-badge';
         badge.style.cssText = 'position:absolute;top:6px;right:6px;';
         badge.textContent = 'For You';
+        card.appendChild(badge);
+      }
+      /* A ranked row is a chart, so the cards carry their position. */
+      if (ranked) {
+        const badge = document.createElement('span');
+        badge.className = 'rec-badge';
+        badge.style.cssText = 'position:absolute;top:6px;right:6px;min-width:22px;text-align:center;background:var(--accent2);color:#1d1d1f;';
+        badge.textContent = '#' + (idx + 1);
         card.appendChild(badge);
       }
       row.appendChild(card);
