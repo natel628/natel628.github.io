@@ -1401,10 +1401,17 @@ let calGridToken = 0;
 function filterVisible(name, view = state.view) {
   return (FILTER_VIEWS[name] || []).includes(view);
 }
-function providerParams() {
-  return state.provider
-    ? { watch_region: state.region, with_watch_providers: state.provider }
-    : {};
+/* Provider query parameters for /discover. watch_region and
+   with_watch_providers are the pair TMDB requires; the monetization list is
+   what makes "on Netflix" mean "included with the subscription" rather than
+   "also rentable somewhere". Callers pass a looser set to widen the search. */
+function providerParams(extra = {}) {
+  if (!state.provider) return {};
+  return {
+    watch_region: state.region,
+    with_watch_providers: String(state.provider),
+    ...extra,
+  };
 }
 function providerLabel() {
   const sel = document.getElementById('provider-filter');
@@ -1417,14 +1424,25 @@ async function refreshProviderList() {
   const sel = document.getElementById('provider-filter');
   if (!sel) return;
   try {
-    const data = await tmdb('/watch/providers/tv', { watch_region: state.region });
-    const list = (data.results || []).filter(p => p.provider_id && p.provider_name);
-    if (!list.length) return;
-    const prev = state.provider;
+    /* Both catalogues, not just TV: a movie-only or region-specific provider
+       id chosen here used to make every movie query answer with nothing. */
+    const [tv, movie] = await Promise.all([
+      tmdb('/watch/providers/tv',    { watch_region: state.region }).catch(() => ({ results: [] })),
+      tmdb('/watch/providers/movie', { watch_region: state.region }).catch(() => ({ results: [] })),
+    ]);
+    const byId = new Map();
+    const add = list => (list || []).forEach(p => {
+      if (p && p.provider_id && p.provider_name) byId.set(String(p.provider_id), p.provider_name);
+    });
+    add(tv.results);
+    add(movie.results);
+    if (!byId.size) return;
+    const prev = String(state.provider || '');
+    const names = [...byId.entries()].sort((a, b) => a[1].localeCompare(b[1]));
     sel.innerHTML = '<option value="">Any Streaming Service</option>' +
-      list.map(p => `<option value="${p.provider_id}">${esc(p.provider_name)}</option>`).join('');
-    if (prev && [...sel.options].some(o => String(o.value) === String(prev))) sel.value = prev;
-    else { state.provider = ''; savePrefs(); }
+      names.map(([id, name]) => `<option value="${esc(id)}">${esc(name)}</option>`).join('');
+    if (prev && byId.has(prev)) sel.value = prev;
+    else if (prev) { state.provider = ''; savePrefs(); }
   } catch (e) {
     console.warn('Provider list refresh failed, keeping current list:', e);
   }
@@ -2680,24 +2698,61 @@ function mergeRuleParams(params) {
   return out;
 }
 
+const _providerVoid = new Map();   // "service has nothing here" verdicts, 5 min
+
 /* Discover, but never let a streaming filter produce an empty row.
-   Future/unreleased titles frequently have no provider listings published
-   yet, which is what made "select a service -> no shows" happen. If the
-   provider-filtered query comes back empty we retry unfiltered and report
-   that we did, so the user sees content plus an explanation. */
+   TMDB's watch-provider filter is the only real source of "what is on
+   <service> in <region>", but that data is sparse: listings are published
+   late, provider ids differ between movies and TV, and the vote floors used
+   by the callers cut hard. So the provider query is tried loosest-last, the
+   best partial answer is kept, and only when nothing provider-scoped exists
+   at all does the row fall back to unfiltered results. */
 async function discoverSafe(path, baseParams) {
   const params = mergeRuleParams(baseParams);
   if (!state.provider) {
     const data = await tmdb(path, params);
     return { items: data.results || [], providerApplied: false };
   }
-  try {
-    const filtered = await tmdb(path, { ...params, ...providerParams() });
-    const items = filtered.results || [];
-    if (items.length >= 5) return { items, providerApplied: true };
-  } catch (e) {
-    console.warn('Provider-filtered discover failed, retrying unfiltered:', e);
+
+  /* Once the ladder has shown that this service has nothing published for an
+     endpoint, remember it briefly instead of re-running four queries for
+     every row on the page. Keyed by region+service, so a different selection
+     is never served a stale verdict. */
+  const voidKey = `${state.region}|${state.provider}|${path}`;
+  const voidUntil = _providerVoid.get(voidKey) || 0;
+  if (Date.now() < voidUntil) {
+    const data = await tmdb(path, params);
+    return { items: data.results || [], providerApplied: false, fellBack: true };
   }
+
+  const relaxed = { ...params };
+  delete relaxed['vote_count.gte'];
+  delete relaxed['vote_average.gte'];
+
+  const ladder = [
+    { ...params,  ...providerParams({ with_watch_monetization_types: 'flatrate' }) },
+    { ...params,  ...providerParams() },
+    { ...relaxed, ...providerParams() },
+    { ...relaxed, sort_by: 'vote_count.desc', ...providerParams() },
+  ];
+
+  let best = [];
+  for (let i = 0; i < ladder.length; i++) {
+    try {
+      const data = await tmdb(path, ladder[i]);
+      const items = data.results || [];
+      if (items.length >= 5) return { items, providerApplied: true, exact: i === 0 };
+      if (items.length > best.length) best = items;
+    } catch (e) {
+      console.warn('Provider-filtered discover attempt failed:', path, e.message);
+      // An auth/perm failure fails every attempt the same way, so surface it
+      // instead of burning three more requests and silently degrading.
+      if (/TMDB 40[13]/.test(e.message)) throw e;
+    }
+  }
+  if (best.length) return { items: best, providerApplied: true, partial: true };
+
+  _providerVoid.set(voidKey, Date.now() + 5 * 60 * 1000);
   const data = await tmdb(path, params);
   return { items: data.results || [], providerApplied: false, fellBack: true };
 }
@@ -3801,6 +3856,29 @@ function emptyStateHTML(icon, title, detail = '', action = '') {
 }
 
 /* ── TRENDING ─────────────────────────────────────────────────────── */
+/* Weekly trending intersected with "available on the selected service".
+   /discover scoped to a provider is the accurate source but often has no
+   listings published for a title; the weekly trending list is never empty,
+   and each title's own watch-provider data says whether the chosen service
+   carries it in the selected region. Chunked and cached for an hour. */
+async function trendingOnProvider(type, want = 18) {
+  const data = await tmdb('/trending/all/week');
+  const pool = (data.results || []).filter(i => i.media_type === type);
+  if (!pool.length) return [];
+  const rank = new Map(pool.map((i, idx) => [mediaKey(i.media_type, i.id), idx]));
+  const hits = [];
+  await promiseAllChunked(pool, async item => {
+    const p = await getProviders(item.media_type, item.id);
+    if (!p) return;
+    const carries = [...(p.flatrate || []), ...(p.rent || []), ...(p.buy || [])]
+      .some(x => String(x.provider_id) === String(state.provider));
+    if (carries) hits.push(item);
+  }, 6);
+  return hits
+    .sort((a, b) => rank.get(mediaKey(a.media_type, a.id)) - rank.get(mediaKey(b.media_type, b.id)))
+    .slice(0, want);
+}
+
 async function renderTrending(main, token) {
   addSkeletonRow(main, 'Trending This Week 🔥');
   addSkeletonRow(main, 'Popular Movies 🎬');
@@ -3820,6 +3898,25 @@ async function renderTrending(main, token) {
       ? (row1IsTV
           ? discoverSafe('/discover/tv',    { sort_by: 'popularity.desc', 'vote_count.gte': 50,  ...gp, ...yearParams('tv') })
           : discoverSafe('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, ...gp, ...yearParams('movie') }))
+          .then(async res => {
+            /* Nothing provider-scoped came back, or only a handful did: top the
+               row up from the weekly trending list, keeping just the titles the
+               selected service actually carries in this region. */
+            if (!res.fellBack && !(res.partial && res.items.length < 8)) return res;
+            const joined = await trendingOnProvider(row1IsTV ? 'tv' : 'movie');
+            const fits = state.year
+              ? joined.filter(i => (i.release_date || i.first_air_date || '').startsWith(state.year))
+              : joined;
+            if (!fits.length) return res;
+            if (res.fellBack) return { items: fits, providerApplied: true, joined: true };
+            const kind = row1IsTV ? 'tv' : 'movie';
+            const seen = new Set(res.items.map(i => mediaKey(kind, i.id)));
+            const extra = fits.filter(i => !seen.has(mediaKey(kind, i.id)));
+            return {
+              items: res.items.concat(extra),
+              providerApplied: true, joined: true, partial: res.partial,
+            };
+          })
       : tmdb('/trending/all/week').then(r => ({
           items: (r.results || []).filter(i => i.media_type === 'movie' || i.media_type === 'tv'),
           providerApplied: false,
@@ -3867,6 +3964,8 @@ async function renderTrending(main, token) {
     if (token !== renderToken) return;
 
     const fellBack = [trendingRes, popMovieRes, popTVRes, onAirRes].some(r => r.fellBack);
+    const thinProviderRows = !!state.provider && !fellBack &&
+      [popMovieRes, popTVRes, onAirRes].some(r => r.partial);
 
     /* Per-row pagination: each fetcher pulls the next discover page and
        runs it through the same filter pipeline as the initial render. */
@@ -3919,10 +4018,13 @@ async function renderTrending(main, token) {
     if (token !== renderToken) return;
 
     main.innerHTML = '';
-    if (fellBack) {
+    if (fellBack || thinProviderRows) {
       addNotice(
-        `No <strong>${esc(providerLabel())}</strong> titles were found for these rows, so they are showing everything. ` +
-        `Streaming listings are often unpublished for new and upcoming releases.`,
+        (fellBack
+          ? `Nearly nothing on <strong>${esc(providerLabel())}</strong> is published for these rows, so they are showing everything.`
+          : `Only a handful of <strong>${esc(providerLabel())}</strong> titles are published for these rows, so they look thin.`) +
+        ` Streaming listings are often unpublished for new and upcoming releases. ` +
+        `<button class="link-btn" data-action="clear-provider">Show everything</button>`,
         'provider-fallback');
     }
     rows.forEach(([label, items, fetcher]) => renderRow(main, label, items, false, fetcher));
@@ -5538,8 +5640,9 @@ document.getElementById('region-filter').addEventListener('change', e => {
   state.region = e.target.value;
   savePrefs();
   syncFilterControls();
-  refreshProviderList();
-  renderView();
+  /* Rebuild the service list first, then render once - otherwise the old
+     selection can be cleared underneath a render that is already running. */
+  refreshProviderList().then(renderView, renderView);
 });
 document.getElementById('rating-filter').addEventListener('change', e => {
   state.contentRating = e.target.value;
