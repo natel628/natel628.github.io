@@ -3346,6 +3346,19 @@ function handleAction(action, el) {
       syncFilterControls();
       renderView();
       break;
+    case 'suspend-rule': {
+      const id = el.dataset.ruleId || '';
+      const rule = state.rules.find(r => r.id === id);
+      if (!rule) break;
+      setRuleEnabled(id, false);
+      afterRuleChange();
+      toast(`Suspended: ${rule.text}`, {
+        duration: 8000,
+        actionLabel: 'Undo',
+        onAction: () => { setRuleEnabled(id, true); afterRuleChange(); toast('Rule active again'); },
+      });
+      break;
+    }
     case 'person':
       personBrowse(el.dataset.personId, el.textContent.trim());
       break;
@@ -3626,8 +3639,8 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
       <div class="modal-actions" style="gap:8px;margin-bottom:18px">
         <span style="font-size:.78rem;color:var(--text-muted)">Or tell the AI Director you're not interested:</span>
         <button class="modal-btn" onclick="notInterested('title')">🚫 Hide this title</button>
-        ${genres[0] ? `<button class="modal-btn" onclick="notInterested('genre')">🚫 Hide ${esc(genres[0].name)}</button>` : ''}
-        <button class="modal-btn" onclick="notInterested('type')">🚫 Hide ${type === 'movie' ? 'movies' : 'TV shows'}</button>
+        ${genres[0] ? `<button class="modal-btn" onclick="notInterested('genre')">🚫 Hide all ${esc(genres[0].name)}</button>` : ''}
+        <button class="modal-btn" onclick="notInterested('type')">🚫 Hide all ${type === 'movie' ? 'movies' : 'TV shows'}</button>
       </div>
 
       ${providers && (providers.flatrate.length || providers.rent.length) ? `
@@ -5486,10 +5499,12 @@ function importData(input) {
    ───────────────────────────────────────────────────────────────────── */
 async function filterResults(items, opts = {}) {
   const { yearServerSide = false } = opts;
+  const rawList = items || [];
 
   /* AI Director rules run first: they are global and view-independent, and
      they are also what the user expects to persist between reloads. */
-  let out = applyRules(items).filter(i => {
+  const afterRules = applyRules(rawList);
+  let out = afterRules.filter(i => {
     if (filterVisible('type') && state.filterType !== 'all' && i.media_type !== state.filterType) return false;
     if (filterVisible('genre') && state.genre && !(i.genre_ids || []).includes(parseInt(state.genre, 10))) return false;
     if (filterVisible('hideRated') && state.hideRated && state.ratings[mediaKey(i.media_type, i.id)]) return false;
@@ -5501,6 +5516,18 @@ async function filterResults(items, opts = {}) {
     }
     return true;
   });
+
+  /* Remember what removed what, so a row that ends up empty can name the
+     rule responsible instead of shrugging at the user. Counted against the
+     raw list, because by here the rules have already taken their bite. */
+  const blame = {
+    raw: rawList.length,
+    rules: activeRules()
+      .map(r => ({ rule: r, n: rawList.filter(i => ruleRejects(r, i)).length }))
+      .filter(h => h.n > 0)
+      .sort((a, b) => b.n - a.n),
+    flags: afterRules.length - out.length,
+  };
 
   if (filterVisible('contentRating') && state.contentRating) {
     const need = out.filter(i => state.mediaDetails[mediaKey(i.media_type, i.id)]?.contentRating === undefined);
@@ -5518,6 +5545,9 @@ async function filterResults(items, opts = {}) {
     out = out.filter(i => (i._contentRating || 'NR') === state.contentRating);
   }
 
+  /* Non-enumerable, so it rides along with the array without turning up in
+     maps or spreads; renderRow reads it to explain an empty row. */
+  Object.defineProperty(out, '_blame', { value: blame, enumerable: false });
   return out;
 }
 
@@ -5534,16 +5564,27 @@ function renderRow(container, title, items, recBadge = false, fetcher = null) {
 
   const row = sec.querySelector('.card-row');
   const { items: shown, removed } = filterByRules(items);
-  const rulesOn = activeRules().length > 0;
+  const rulesOn = activeRules().length;   // a count, not a flag: the row message prints it
 
   if (!shown.length) {
     const hasFilters = activeFilterCount() > 0;
-    const byRules = removed > 0 || rulesOn;
+    /* Name the rule(s) that emptied this row: "your rules may be hiding
+       everything" is useless when you cannot tell which one to switch off. */
+    const culprits = (items && items._blame && items._blame.rules) || [];
+    const rawCount = (items && items._blame) ? items._blame.raw : 0;
+    const blameNote = culprits.length
+      ? (rawCount
+          ? `All ${rawCount} title${rawCount === 1 ? '' : 's'} here are hidden by ${culprits.length === 1 ? 'one rule' : culprits.length + ' rules'} you added: ${culprits.map(h => '"' + h.rule.text + '"').join(', ')}.`
+          : `Everything in a row like this is hidden by ${culprits.map(h => '"' + h.rule.text + '"').join(', ')}.`)
+      : '';
+    /* When the culprit is known, don't also hedge about it. */
+    const byRules = culprits.length ? false : (removed > 0 || rulesOn);
     sec.querySelector('.row-wrap').outerHTML = `<div class="row-empty">
-      <span>${byRules
+      <span>${blameNote ? `<strong style="color:var(--accent2)">${blameNote}</strong> ` : ''}${byRules
         ? `Nothing left here — your ${rulesOn ? rulesOn + ' ' : ''}AI Director rule${rulesOn === 1 ? '' : 's'} may be hiding everything${hasFilters ? ', along with the filters' : ''}.`
-        : `No results found${hasFilters ? ' for the current filters' : ''}.`}</span>
-      ${byRules ? '<button class="link-btn" data-action="open-ai-rules">Review rules</button>' : ''}
+        : (culprits.length ? '' : `No results found${hasFilters ? ' for the current filters' : ''}.`)}</span>
+      ${culprits.slice(0, 3).map(h => `<button class="link-btn" data-action="suspend-rule" data-rule-id="${esc(h.rule.id)}" title="Turn this suggestion off without deleting it">Suspend "${esc(h.rule.text)}"</button>`).join('')}
+      ${(byRules || culprits.length) ? '<button class="link-btn" data-action="open-ai-rules">Review rules</button>' : ''}
       ${hasFilters ? '<button class="link-btn" data-action="reset-filters">Clear filters</button>' : ''}
     </div>`;
   } else {
