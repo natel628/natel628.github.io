@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spectrum TV Packages Rhode Island — Channel Lineup</title>
+    <title>Spectrum TV Packages Rhode Island — Comparison</title>
     <style>
         * {
             box-sizing: border-box;
@@ -41,213 +41,219 @@
         .subhead strong {
             color: #0066cc;
         }
-
-        /* TABS */
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .tab-btn {
-            padding: 0.7rem 1.4rem;
-            border: 2px solid #d0deed;
-            background: #ffffff;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #3e556b;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .tab-btn:hover {
-            border-color: #0066cc;
-            color: #0066cc;
-        }
-        .tab-btn.active {
-            background: #0066cc;
-            border-color: #0066cc;
-            color: #ffffff;
-        }
-
-        /* CHANNEL GRID */
-        .channel-grid {
+        .grid-3 {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
             margin-bottom: 2.5rem;
         }
-        .channel-card {
+        .card {
             background: #ffffff;
-            border-radius: 14px;
-            box-shadow: 0 4px 14px rgba(0, 20, 50, 0.06);
-            border: 1px solid #e3eaf2;
-            padding: 1rem 0.9rem 0.9rem;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0, 20, 50, 0.08);
+            padding: 1.8rem 1.5rem 1.5rem;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            border: 1px solid #e3eaf2;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
-        .channel-card:hover {
+        .card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 24px rgba(0, 60, 130, 0.12);
-            border-color: #b0c8e0;
+            box-shadow: 0 14px 32px rgba(0, 60, 130, 0.12);
         }
-        .channel-card .logo-wrap {
-            width: 64px;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.55rem;
-            background: #f4f8fd;
-            border-radius: 12px;
-            padding: 6px;
-        }
-        .channel-card .logo-wrap img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-        .channel-card .chnum {
-            font-size: 0.72rem;
+        .card h2 {
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #0066cc;
-            background: #e6f0ff;
-            padding: 0.15rem 0.6rem;
-            border-radius: 20px;
-            margin-bottom: 0.35rem;
-            letter-spacing: 0.02em;
-        }
-        .channel-card .chname {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #1e2a3a;
-            line-height: 1.25;
-        }
-
-        /* MODAL */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 25, 45, 0.55);
-            backdrop-filter: blur(3px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-        .modal-overlay.open {
-            display: flex;
-        }
-        .modal-box {
-            background: #ffffff;
-            border-radius: 22px;
-            max-width: 520px;
-            width: 100%;
-            padding: 2rem 1.8rem 1.8rem;
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
-            position: relative;
-            animation: modalIn 0.2s ease;
-        }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .modal-close {
-            position: absolute;
-            top: 0.9rem;
-            right: 1rem;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background: #f0f4f9;
-            color: #4a5f73;
-            font-size: 1.3rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s ease;
-        }
-        .modal-close:hover {
-            background: #e0eaf4;
+            margin-bottom: 0.25rem;
             color: #0b1a2b;
         }
-        .modal-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0066cc;
+            letter-spacing: -0.03em;
+            margin: 0.25rem 0 0.2rem;
+        }
+        .price span {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #5e7387;
+        }
+        .std-price {
+            font-size: 0.85rem;
+            color: #7a8fa3;
             margin-bottom: 1rem;
         }
-        .modal-header .modal-logo {
-            width: 72px;
-            height: 72px;
-            flex-shrink: 0;
-            background: #f4f8fd;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
+        .badge {
+            display: inline-block;
+            background: #e6f0ff;
+            color: #004a99;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
+            letter-spacing: 0.02em;
+            margin-bottom: 1rem;
+            align-self: flex-start;
         }
-        .modal-header .modal-logo img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-        .modal-header .modal-title h3 {
-            font-size: 1.25rem;
+        .channels {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #0b1a2b;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.75rem;
         }
-        .modal-header .modal-title .modal-chnum {
-            font-size: 0.8rem;
+        .channels small {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #5e7387;
+        }
+        .card ul {
+            list-style: none;
+            margin: 0.5rem 0 1.25rem;
+            padding: 0;
+            flex: 1;
+        }
+        .card li {
+            padding: 0.35rem 0 0.35rem 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+            color: #2b3f53;
+            border-bottom: 1px solid #f0f4f9;
+        }
+        .card li:last-child {
+            border-bottom: none;
+        }
+        .card li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #0066cc;
+            font-weight: 700;
+        }
+        .note {
+            font-size: 0.82rem;
+            color: #6b8096;
+            background: #f2f6fc;
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            margin-top: auto;
+            border-left: 3px solid #b0c8e0;
+        }
+        .diff-section {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 1.8rem 1.8rem 1.5rem;
+            box-shadow: 0 8px 24px rgba(0, 20, 50, 0.06);
+            border: 1px solid #e3eaf2;
+            margin-bottom: 2.5rem;
+        }
+        .diff-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #0b1a2b;
+        }
+        .diff-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        .diff-item h4 {
+            font-size: 1rem;
             font-weight: 700;
             color: #0066cc;
-            background: #e6f0ff;
-            padding: 0.2rem 0.7rem;
-            border-radius: 20px;
-            display: inline-block;
+            margin-bottom: 0.35rem;
         }
-        .modal-body {
-            font-size: 0.95rem;
+        .diff-item p {
+            font-size: 0.92rem;
             color: #3e556b;
-            line-height: 1.6;
-            margin-bottom: 1.2rem;
         }
-        .modal-body strong {
-            color: #1e2a3a;
+        .channel-table-wrap {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid #e3eaf2;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 20, 50, 0.06);
+            margin-bottom: 2.5rem;
         }
-        .modal-footer {
-            font-size: 0.82rem;
-            color: #7a8fa3;
-            border-top: 1px solid #eef3f9;
-            padding-top: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 700px;
         }
-        .modal-footer .pkg-tag {
+        thead {
+            background: #f0f6ff;
+        }
+        th {
+            text-align: left;
+            padding: 0.9rem 1rem;
+            font-weight: 700;
+            color: #0b1a2b;
+            border-bottom: 2px solid #d0deed;
+            white-space: nowrap;
+        }
+        td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid #eef3f9;
+            color: #2b3f53;
+            vertical-align: top;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        tbody tr:hover {
+            background: #fafcff;
+        }
+        .yes {
+            color: #0d7a3e;
+            font-weight: 700;
+        }
+        .no {
+            color: #b0becb;
+            font-weight: 500;
+        }
+        .highlight {
+            background: #f3f8ff;
             font-weight: 600;
+        }
+        .total-row {
+            background: #f0f6ff;
+            font-weight: 700;
+        }
+        .price-note {
+            font-size: 0.85rem;
+            color: #6b8096;
+            margin-top: 0.8rem;
+        }
+        .footnote {
+            font-size: 0.85rem;
+            color: #6b8096;
+            line-height: 1.6;
+            border-top: 1px solid #d9e4ef;
+            padding-top: 1.2rem;
+            margin-top: 0.5rem;
+        }
+        .footnote a {
             color: #0066cc;
+            text-decoration: none;
         }
-
-        /* RESPONSIVE */
+        .footnote a:hover {
+            text-decoration: underline;
+        }
         @media (max-width: 900px) {
-            h1 { font-size: 1.7rem; }
-            body { padding: 1.25rem 0.75rem; }
-            .channel-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-        }
-        @media (max-width: 480px) {
-            .channel-grid { grid-template-columns: repeat(2, 1fr); }
-            .modal-box { padding: 1.5rem 1.2rem 1.2rem; }
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .diff-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+            body {
+                padding: 1.25rem 0.75rem;
+            }
         }
     </style>
 </head>
@@ -255,394 +261,268 @@
     <div class="wrap">
         <h1>Spectrum TV Packages in Rhode Island</h1>
         <div class="subhead">
-            <strong>Three main tiers</strong> — Click any channel card to see a description of what that network shows. Channel numbers are Rhode Island / Providence market numbers. Availability can vary slightly by zip code.
+            <strong>Three main tiers</strong> — Spectrum’s current lineup uses the names <strong>TV Select Signature</strong>, <strong>TV Select Plus</strong>, and <strong>TV Platinum</strong>. Older materials may call these <em>Select</em>, <em>Silver</em>, and <em>Gold</em>, but the channel counts and pricing below reflect the current Rhode Island offerings.
         </div>
 
-        <!-- TABS -->
-        <div class="tabs">
-            <button class="tab-btn active" data-pkg="signature">TV Select Signature (150+)</button>
-            <button class="tab-btn" data-pkg="plus">TV Select Plus (160+)</button>
-            <button class="tab-btn" data-pkg="platinum">TV Platinum (230+)</button>
+        <!-- THREE PACKAGE CARDS -->
+        <div class="grid-3">
+            <!-- SELECT SIGNATURE -->
+            <div class="card">
+                <span class="badge">Entry Level</span>
+                <h2>TV Select Signature</h2>
+                <div class="price">$100<span>/mo</span></div>
+                <div class="std-price">Standard rate after 1 year: ~$130/mo</div>
+                <div class="channels">150+ channels <small>local + basic cable</small></div>
+                <ul>
+                    <li>All local broadcast stations (ABC, CBS, NBC, FOX, PBS, CW)</li>
+                    <li>Popular cable nets: ESPN, CNN, HGTV, AMC, FX, Disney Channel</li>
+                    <li>Streaming apps included: Disney+, Hulu, ESPN Unlimited, Max (ad-supported), Peacock Premium</li>
+                    <li>Free Spectrum TV App for streaming on devices</li>
+                    <li><strong>No regional sports networks (RSNs)</strong></li>
+                </ul>
+                <div class="note">Best for households that want the essentials + major streaming apps without paying for sports RSNs.</div>
+            </div>
+
+            <!-- SELECT PLUS -->
+            <div class="card">
+                <span class="badge">Most Popular</span>
+                <h2>TV Select Plus</h2>
+                <div class="price">$110<span>/mo</span></div>
+                <div class="std-price">Standard rate after 1 year: ~$140/mo</div>
+                <div class="channels">160+ channels <small>adds regional sports</small></div>
+                <ul>
+                    <li>Everything in TV Select Signature</li>
+                    <li><strong>Regional Sports Networks (RSNs)</strong> — NESN, MSG, SportsNet NY, etc.</li>
+                    <li>Extra sports: NFL Network, MLB Network, NBA TV, ACC Network, SEC Network</li>
+                    <li>Same streaming apps as Select Signature</li>
+                    <li>Ideal for local sports fans (Red Sox, Celtics, Bruins, etc.)</li>
+                </ul>
+                <div class="note">The key upgrade here is <strong>live regional sports</strong>. If you follow local teams, this is the minimum tier you need.</div>
+            </div>
+
+            <!-- PLATINUM -->
+            <div class="card">
+                <span class="badge">Premium</span>
+                <h2>TV Platinum</h2>
+                <div class="price">$145<span>/mo</span></div>
+                <div class="std-price">Standard rate after 1 year: ~$175/mo</div>
+                <div class="channels">230+ channels <small>premiums + sports view</small></div>
+                <ul>
+                    <li>Everything in TV Select Plus</li>
+                    <li><strong>Premium movie channels:</strong> HBO, Showtime, STARZ, The Movie Channel, EPIX</li>
+                    <li><strong>Sports View</strong> add-on (extra sports channels)</li>
+                    <li><strong>Entertainment+</strong> tier (additional lifestyle &amp; entertainment nets)</li>
+                    <li>Largest included streaming app bundle (HBO Max Standard, etc.)</li>
+                </ul>
+                <div class="note">For households that want everything: movies, premium series, and the widest sports coverage.</div>
+            </div>
         </div>
 
-        <!-- CHANNEL GRIDS -->
-        <div class="channel-grid" id="grid-signature"></div>
-        <div class="channel-grid" id="grid-plus" style="display:none;"></div>
-        <div class="channel-grid" id="grid-platinum" style="display:none;"></div>
-    </div>
+        <!-- PRICE COMPARISON -->
+        <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:1rem; color:#0b1a2b;">Price comparison at a glance</h3>
+        <div class="channel-table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Price component</th>
+                        <th>TV Select Signature</th>
+                        <th>TV Select Plus</th>
+                        <th>TV Platinum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Promotional package price (first 12 months)</td>
+                        <td>$100.00/mo</td>
+                        <td>$110.00/mo</td>
+                        <td>$145.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Standard package price (after promo)</td>
+                        <td>$130.00/mo</td>
+                        <td>$140.00/mo</td>
+                        <td>$175.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Broadcast TV surcharge (estimated)</td>
+                        <td>$25.00/mo</td>
+                        <td>$25.00/mo</td>
+                        <td>$25.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Regional sports fee (estimated)</td>
+                        <td>$0.00/mo</td>
+                        <td>$8.00/mo</td>
+                        <td>$8.00/mo</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Estimated total during promo</td>
+                        <td>$125.00/mo</td>
+                        <td>$143.00/mo</td>
+                        <td>$178.00/mo</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Estimated total after promo</td>
+                        <td>$155.00/mo</td>
+                        <td>$173.00/mo</td>
+                        <td>$208.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Difference vs. previous tier (estimated total, promo)</td>
+                        <td>—</td>
+                        <td>+$18.00/mo</td>
+                        <td>+$35.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Difference vs. previous tier (estimated total, standard)</td>
+                        <td>—</td>
+                        <td>+$18.00/mo</td>
+                        <td>+$35.00/mo</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="price-note">
+            Prices shown are illustrative Rhode Island rates. Taxes, equipment, and other fees are extra. Surcharges and fees can change; confirm your exact total with Spectrum.
+        </p>
 
-    <!-- MODAL -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-box" role="dialog" aria-modal="true">
-            <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
-            <div class="modal-header">
-                <div class="modal-logo">
-                    <img id="modalLogo" src="" alt="">
+        <!-- KEY DIFFERENCES -->
+        <div class="diff-section">
+            <h3>What actually changes between the three?</h3>
+            <div class="diff-grid">
+                <div class="diff-item">
+                    <h4>1. Channel count</h4>
+                    <p><strong>150+ → 160+ → 230+</strong>. The jump from Select Plus to Platinum is the biggest because it adds premium movie networks and the Sports View / Entertainment+ tiers.</p>
                 </div>
-                <div class="modal-title">
-                    <h3 id="modalName"></h3>
-                    <span class="modal-chnum" id="modalChnum"></span>
+                <div class="diff-item">
+                    <h4>2. Regional sports</h4>
+                    <p>Only <strong>Select Plus and Platinum</strong> include RSNs. Select Signature does <em>not</em> carry NESN, MSG, or similar local sports networks.</p>
+                </div>
+                <div class="diff-item">
+                    <h4>3. Premium movies</h4>
+                    <p>HBO, Showtime, STARZ, and TMC are <strong>only in Platinum</strong>. Select Signature and Select Plus do not include premium movie channels.</p>
                 </div>
             </div>
-            <div class="modal-body" id="modalDesc"></div>
-            <div class="modal-footer">
-                <span class="pkg-tag" id="modalPkg"></span>
-                <span id="modalCategory"></span>
-            </div>
+        </div>
+
+        <!-- DETAILED CHANNEL COMPARISON TABLE -->
+        <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:1rem; color:#0b1a2b;">Channel-by-channel comparison</h3>
+        <div class="channel-table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Channel / Category</th>
+                        <th>TV Select Signature</th>
+                        <th>TV Select Plus</th>
+                        <th>TV Platinum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Local broadcast</strong> (ABC, CBS, NBC, FOX, PBS, CW)</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>A&amp;E, AMC, Animal Planet, BBC America</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>ESPN, ESPN2, FS1, ACC Network</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Regional Sports Networks</strong> (NESN, MSG, SportsNet NY, etc.)</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>NFL Network, MLB Network, NBA TV</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>HGTV, Food Network, TLC, Discovery</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Disney Channel, Nickelodeon, Cartoon Network</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>HBO / HBO Max</strong></td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Showtime</strong></td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>STARZ / STARZ Encore</strong></td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>The Movie Channel (TMC), EPIX</td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Sports View add-on (extra sports nets)</td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Entertainment+ tier</td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Included streaming apps (Disney+, Hulu, ESPN Unlimited, Max, Peacock)</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓ (plus HBO Max Standard)</td>
+                    </tr>
+                    <tr>
+                        <td>Spectrum TV App (stream on devices)</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PRICE SUMMARY & NOTES -->
+        <div class="footnote">
+            <p><strong>Pricing notes (Rhode Island):</strong></p>
+            <ul style="margin:0.5rem 0 1rem 1.2rem; color:#4a5f73;">
+                <li>Promotional prices shown are for the first 12 months; standard rates apply after that.</li>
+                <li>A <strong>Broadcast TV Surcharge</strong> (currently around $25/mo) and regional sports fee may apply on top of the package price. Confirm your exact total with Spectrum.</li>
+                <li>Prices and channel availability can vary slightly by zip code within Rhode Island. The tiers above reflect the standard statewide lineup.</li>
+                <li><strong>Traditional “Select / Silver / Gold” naming:</strong> Spectrum has largely moved to the “TV Select Signature / Plus / Platinum” branding. If you see “Silver” or “Gold” in older materials, Silver roughly corresponds to a mid-tier with premiums (HBO/Showtime), and Gold adds STARZ/TMC — which today maps most closely to <strong>TV Platinum</strong>.</li>
+            </ul>
+            <p>Sources: Spectrum official channel lineup pages, CableTV.com package breakdowns, and current Rhode Island pricing data.</p>
         </div>
     </div>
-
-    <script>
-        /* ============================================================
-           CHANNEL DATA
-           ============================================================ */
-        const LOGO_BASE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
-
-        // Helper to build a logo URL from a Wikipedia file path
-        function wikiLogo(path) {
-            return LOGO_BASE + path;
-        }
-
-        const CHANNELS = [
-            // ---- LOCAL BROADCAST ----
-            { id: 'wjar', name: 'WJAR (NBC 10)', num: '10', cat: 'Local Broadcast', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('c/c9/WJAR_2017.svg/120px-WJAR_2017.svg.png'),
-              desc: 'NBC affiliate for Providence. Carries NBC primetime shows, "Today," "Nightly News," Sunday Night Football, and local Rhode Island news.' },
-            { id: 'wpri', name: 'WPRI (CBS 12)', num: '12', cat: 'Local Broadcast', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('b/b3/WPRI_2013.svg/120px-WPRI_2013.svg.png'),
-              desc: 'CBS affiliate for Providence. Home to CBS primetime, NFL on CBS, NCAA March Madness, "60 Minutes," and local Eyewitness News.' },
-            { id: 'wne', name: 'WNAC (FOX 64)', num: '64', cat: 'Local Broadcast', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('d/d2/WNAC-TV_logo.svg/120px-WNAC-TV_logo.svg.png'),
-              desc: 'FOX affiliate for Providence. Carries FOX primetime, NFL on FOX, MLB World Series, "The Simpsons," and local news.' },
-            { id: 'wsbe', name: 'WSBE (PBS 36)', num: '36', cat: 'Local Broadcast', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('5/5e/WSBE-TV_logo.png/120px-WSBE-TV_logo.png'),
-              desc: 'Rhode Island PBS. Offers PBS national programming, "PBS NewsHour," "Masterpiece," kids shows, and local Rhode Island documentaries.' },
-            { id: 'wlne', name: 'WLNE (ABC 6)', num: '6', cat: 'Local Broadcast', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('f/fd/WLNE-TV_logo.svg/120px-WLNE-TV_logo.svg.png'),
-              desc: 'ABC affiliate for Providence. Carries ABC primetime, "Good Morning America," NBA on ABC, "World News Tonight," and local news.' },
-            { id: 'cw', name: 'The CW (WNAC-DT2)', num: '65', cat: 'Local Broadcast', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('3/36/The_CW_2024.svg/120px-The_CW_2024.svg.png'),
-              desc: 'The CW network. Carries "Superman & Lois," "All American," WWE NXT, and other CW series and movies.' },
-
-            // ---- NEWS ----
-            { id: 'cnn', name: 'CNN', num: '200', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('9/9c/CNN.svg/120px-CNN.svg.png'),
-              desc: '24-hour cable news network. Provides breaking news, political coverage, international reporting, and opinion shows like "Anderson Cooper 360."' },
-            { id: 'foxnews', name: 'FOX News Channel', num: '118', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('0/0d/Fox_News_Channel_logo.svg/120px-Fox_News_Channel_logo.svg.png'),
-              desc: 'Conservative-leaning cable news network. Features "Tucker Carlson Tonight," "Hannity," "The Five," and round-the-clock political coverage.' },
-            { id: 'msnbc', name: 'MSNBC', num: '203', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('6/6d/MSNBC_logo_%282015%29.svg/120px-MSNBC_logo_%282015%29.svg.png'),
-              desc: 'Progressive-leaning cable news network. Features "The Rachel Maddow Show," "Morning Joe," "The Last Word," and political analysis.' },
-            { id: 'cnbc', name: 'CNBC', num: '205', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('e/e3/CNBC_logo.svg/120px-CNBC_logo.svg.png'),
-              desc: 'Business and financial news network. Carries "Squawk Box," "Mad Money," "Shark Tank," and live stock market coverage.' },
-            { id: 'hln', name: 'HLN', num: '202', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('2/2e/HLN_logo_%282017%29.svg/120px-HLN_logo_%282017%29.svg.png'),
-              desc: 'News and true-crime network. Features "Forensic Files," "Very Scary People," and live coverage of major court cases.' },
-            { id: 'bbcworld', name: 'BBC World News', num: '103', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('d/d4/BBC_World_News_logo.svg/120px-BBC_World_News_logo.svg.png'),
-              desc: 'International news from the BBC. Provides global perspective on politics, business, and culture from London and bureaus worldwide.' },
-            { id: 'bloomberg', name: 'Bloomberg TV', num: '105', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('2/2e/Bloomberg_Television_logo.svg/120px-Bloomberg_Television_logo.svg.png'),
-              desc: 'Global business and financial news. Covers markets, economics, technology, and interviews with business leaders.' },
-            { id: 'cspan', name: 'C-SPAN', num: '80', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('8/8d/C-SPAN_logo.svg/120px-C-SPAN_logo.svg.png'),
-              desc: 'Public affairs network. Provides gavel-to-gavel coverage of the U.S. Congress, political events, and historical programming.' },
-            { id: 'accuweather', name: 'AccuWeather', num: '109', cat: 'News', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('3/3e/AccuWeather_logo.svg/120px-AccuWeather_logo.svg.png'),
-              desc: '24-hour weather network. Offers local, national, and international forecasts, severe weather alerts, and climate analysis.' },
-
-            // ---- SPORTS ----
-            { id: 'espn', name: 'ESPN', num: '1401', cat: 'Sports', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('2/2f/ESPN_wordmark.svg/120px-ESPN_wordmark.svg.png'),
-              desc: 'The worldwide leader in sports. Carries "Monday Night Football," NBA games, MLB games, "SportsCenter," and college sports.' },
-            { id: 'espn2', name: 'ESPN2', num: '1402', cat: 'Sports', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('c/cb/ESPN2_logo.svg/120px-ESPN2_logo.svg.png'),
-              desc: 'ESPN’s second network. Carries additional college sports, NBA games, tennis Grand Slams, and "First Take."' },
-            { id: 'espnews', name: 'ESPNEWS', num: '1407', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('7/7a/ESPNEWS_logo.svg/120px-ESPNEWS_logo.svg.png'),
-              desc: '24-hour sports news and highlights. Provides scores, analysis, press conferences, and "SportsCenter" updates.' },
-            { id: 'fs1', name: 'FOX Sports 1', num: '1403', cat: 'Sports', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('7/7e/Fox_Sports_1_logo.svg/120px-Fox_Sports_1_logo.svg.png'),
-              desc: 'FOX sports network. Carries MLB playoffs, NASCAR, UFC, college football and basketball, and "Undisputed."' },
-            { id: 'accn', name: 'ACC Network', num: '1404', cat: 'Sports', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('a/a4/ACC_Network_logo.svg/120px-ACC_Network_logo.svg.png'),
-              desc: 'Atlantic Coast Conference sports. Carries ACC football, basketball, baseball, and Olympic sports.' },
-            { id: 'secn', name: 'SEC Network', num: '1405', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('4/4d/SEC_Network_logo.svg/120px-SEC_Network_logo.svg.png'),
-              desc: 'Southeastern Conference sports. Carries SEC football, basketball, baseball, and "SEC Nation."' },
-            { id: 'nflnet', name: 'NFL Network', num: '94', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('6/6e/NFL_Network_logo.svg/120px-NFL_Network_logo.svg.png'),
-              desc: '24-hour NFL coverage. Carries "Thursday Night Football," "NFL Total Access," the NFL Combine, and the NFL Draft.' },
-            { id: 'mlbnet', name: 'MLB Network', num: '302', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('7/7e/MLB_Network_logo.svg/120px-MLB_Network_logo.svg.png'),
-              desc: '24-hour baseball coverage. Carries live games, "MLB Tonight," "Quick Pitch," and the World Baseball Classic.' },
-            { id: 'nbaTV', name: 'NBA TV', num: '308', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('5/5c/NBA_TV_logo.svg/120px-NBA_TV_logo.svg.png'),
-              desc: '24-hour NBA coverage. Carries live regular-season games, "NBA GameTime," and the NBA Summer League.' },
-            { id: 'nhl', name: 'NHL Network', num: '312', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('6/6a/NHL_Network_logo.svg/120px-NHL_Network_logo.svg.png'),
-              desc: '24-hour hockey coverage. Carries live games, "NHL Tonight," the NHL Draft, and international hockey tournaments.' },
-            { id: 'golf', name: 'Golf Channel', num: '30', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('1/1e/Golf_Channel_logo.svg/120px-Golf_Channel_logo.svg.png'),
-              desc: '24-hour golf network. Carries PGA Tour, LPGA, European Tour, "Golf Central," and instructional programming.' },
-            { id: 'btn', name: 'Big Ten Network', num: '386', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('6/6a/Big_Ten_Network_logo.svg/120px-Big_Ten_Network_logo.svg.png'),
-              desc: 'Big Ten Conference sports. Carries Big Ten football, basketball, wrestling, and "The Big Ten Pulse."' },
-            { id: 'tennis', name: 'Tennis Channel', num: '406', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('0/0b/Tennis_Channel_logo.svg/120px-Tennis_Channel_logo.svg.png'),
-              desc: '24-hour tennis network. Carries Grand Slam coverage, ATP and WTA tours, and "Tennis Channel Live."' },
-            { id: 'nesn', name: 'NESN', num: '81', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('4/4a/NESN_logo.svg/120px-NESN_logo.svg.png'),
-              desc: 'New England Sports Network. Home of the Boston Red Sox and Boston Bruins. Carries live games, "NESN Sports Today," and pre/post-game shows.' },
-            { id: 'msg', name: 'MSG', num: '82', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('5/5c/MSG_logo.svg/120px-MSG_logo.svg.png'),
-              desc: 'Madison Square Garden Network. Carries New York Knicks, New York Rangers, New York Islanders, and New Jersey Devils games.' },
-            { id: 'snny', name: 'SportsNet NY', num: '83', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('3/3d/SNY_logo.svg/120px-SNY_logo.svg.png'),
-              desc: 'SportsNet New York. Home of the New York Mets. Carries Mets games, "Geico SportsNite," and Jets coverage.' },
-
-            // ---- ENTERTAINMENT ----
-            { id: 'amc', name: 'AMC', num: '130', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4a/AMC_logo_2019.svg/120px-AMC_logo_2019.svg.png'),
-              desc: 'Home of "The Walking Dead," "Better Call Saul," "Breaking Bad," and "Mad Men." Also carries classic movies and original dramas.' },
-            { id: 'fx', name: 'FX', num: '148', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('0/0e/FX_Logo.svg/120px-FX_Logo.svg.png'),
-              desc: 'Carries "American Horror Story," "Atlanta," "The Bear," "Sons of Anarchy," and major movie premieres.' },
-            { id: 'fxx', name: 'FXX', num: '149', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4a/FXX_Logo.svg/120px-FXX_Logo.svg.png'),
-              desc: 'Comedy-focused FX network. Carries "It’s Always Sunny in Philadelphia," "Archer," and marathon blocks of comedy series.' },
-            { id: 'tnt', name: 'TNT', num: '143', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('3/3c/TNT_logo_2016.svg/120px-TNT_logo_2016.svg.png'),
-              desc: 'Carries NBA games, "Inside the NBA," NHL games, major movies, and original series like "Animal Kingdom."' },
-            { id: 'tbs', name: 'TBS', num: '142', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('2/2d/TBS_logo_2016.svg/120px-TBS_logo_2016.svg.png'),
-              desc: 'Carries MLB playoffs, "Conan," "Full Frontal," comedy movies, and syndicated sitcoms like "The Big Bang Theory."' },
-            { id: 'usa', name: 'USA Network', num: '124', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4a/USA_Network_logo_%282016%29.svg/120px-USA_Network_logo_%282016%29.svg.png'),
-              desc: 'Carries "WWE Raw," "Chrisley Knows Best," "Suits," "Mr. Robot," and blockbuster movies.' },
-            { id: 'bravo', name: 'Bravo', num: '129', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('c/c0/Bravo_2017_logo.svg/120px-Bravo_2017_logo.svg.png'),
-              desc: 'Home of "The Real Housewives" franchise, "Top Chef," "Below Deck," and "Watch What Happens Live."' },
-            { id: 'e', name: 'E! Entertainment', num: '144', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('b/b4/E%21_Logo_2012.svg/120px-E%21_Logo_2012.svg.png'),
-              desc: 'Entertainment news and reality. Carries "Keeping Up with the Kardashians," "E! News," and red-carpet coverage.' },
-            { id: 'comedy', name: 'Comedy Central', num: '132', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/Comedy_Central_2018.svg/120px-Comedy_Central_2018.svg.png'),
-              desc: 'Home of "South Park," "The Daily Show," "Chappelle’s Show," and stand-up comedy specials.' },
-            { id: 'paramount', name: 'Paramount Network', num: '133', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('1/1c/Paramount_Network_2018.svg/120px-Paramount_Network_2018.svg.png'),
-              desc: 'Carries "Yellowstone," "1883," "Mayor of Kingstown," and classic movies.' },
-            { id: 'syfy', name: 'Syfy', num: '151', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('2/2d/Syfy_logo_2017.svg/120px-Syfy_logo_2017.svg.png'),
-              desc: 'Science fiction, fantasy, and horror. Carries "The Expanse," "Resident Alien," "Wynonna Earp," and classic sci-fi movies.' },
-            { id: 'bet', name: 'BET', num: '136', cat: 'Entertainment', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/BET_logo_2018.svg/120px-BET_logo_2018.svg.png'),
-              desc: 'Black entertainment network. Carries "Being Mary Jane," "The Oval," "Sistas," and the BET Awards.' },
-
-            // ---- LIFESTYLE & REALITY ----
-            { id: 'hgtv', name: 'HGTV', num: '112', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('0/0d/HGTV_logo_2015.svg/120px-HGTV_logo_2015.svg.png'),
-              desc: 'Home and garden network. Carries "House Hunters," "Fixer Upper," "Property Brothers," and "Home Town."' },
-            { id: 'food', name: 'Food Network', num: '110', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('3/3e/Food_Network_logo_%282016%29.svg/120px-Food_Network_logo_%282016%29.svg.png'),
-              desc: 'Cooking and food competition. Carries "Chopped," "Diners, Drive-Ins and Dives," "Iron Chef," and "The Great Food Truck Race."' },
-            { id: 'tlc', name: 'TLC', num: '116', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('0/0e/TLC_logo_2016.svg/120px-TLC_logo_2016.svg.png'),
-              desc: 'Reality and lifestyle. Carries "90 Day Fiancé," "Sister Wives," "My 600-lb Life," and "Say Yes to the Dress."' },
-            { id: 'discovery', name: 'Discovery Channel', num: '120', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('0/0d/Discovery_Channel_logo_2019.svg/120px-Discovery_Channel_logo_2019.svg.png'),
-              desc: 'Documentary and reality. Carries "Deadliest Catch," "Gold Rush," "Naked and Afraid," and "Shark Week."' },
-            { id: 'history', name: 'HISTORY', num: '121', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('6/6a/History_Logo_2018.svg/120px-History_Logo_2018.svg.png'),
-              desc: 'Historical and reality programming. Carries "The Curse of Oak Island," "Forged in Fire," "Ancient Aliens," and "Pawn Stars."' },
-            { id: 'animal', name: 'Animal Planet', num: '122', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('6/6a/Animal_Planet_logo_2018.svg/120px-Animal_Planet_logo_2018.svg.png'),
-              desc: 'Animal and nature programming. Carries "Pit Bulls & Parolees," "River Monsters," "The Aquarium," and "Crikey! It’s the Irwins."' },
-            { id: 'lifetime', name: 'Lifetime', num: '125', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/Lifetime_logo_2017.svg/120px-Lifetime_logo_2017.svg.png'),
-              desc: 'Dramas and movies. Carries "Dance Moms," "Married at First Sight," "Little Women: LA," and original movies.' },
-            { id: 'investigation', name: 'Investigation Discovery', num: '123', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('2/2a/Investigation_Discovery_logo_2018.svg/120px-Investigation_Discovery_logo_2018.svg.png'),
-              desc: 'True crime network. Carries "Evil Lives Here," "Homicide Hunter," "Deadly Women," and "See No Evil."' },
-            { id: 'travel', name: 'Travel Channel', num: '127', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('1/1c/Travel_Channel_logo_2018.svg/120px-Travel_Channel_logo_2018.svg.png'),
-              desc: 'Travel and exploration. Carries "Ghost Adventures," "Expedition Unknown," "Bizarre Foods," and "The Dead Files."' },
-            { id: 'gaf', name: 'Great American Family', num: '114', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/Great_American_Family_logo.svg/120px-Great_American_Family_logo.svg.png'),
-              desc: 'Family-friendly entertainment. Carries original movies, holiday programming, and classic family series.' },
-            { id: 'hallmark', name: 'Hallmark Channel', num: '113', cat: 'Lifestyle', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/Hallmark_Channel_logo_2018.svg/120px-Hallmark_Channel_logo_2018.svg.png'),
-              desc: 'Family and romance. Carries "Countdown to Christmas," "When Calls the Heart," and original romantic movies.' },
-
-            // ---- KIDS ----
-            { id: 'disney', name: 'Disney Channel', num: '173', cat: 'Kids', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('2/2d/Disney_Channel_logo_2019.svg/120px-Disney_Channel_logo_2019.svg.png'),
-              desc: 'Kids and family programming. Carries "Mickey Mouse Clubhouse," "Bluey," "Descendants," and original Disney series.' },
-            { id: 'nick', name: 'Nickelodeon', num: '170', cat: 'Kids', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('5/5e/Nickelodeon_logo_2017.svg/120px-Nickelodeon_logo_2017.svg.png'),
-              desc: 'Kids network. Carries "SpongeBob SquarePants," "PAW Patrol," "The Loud House," and "iCarly."' },
-            { id: 'cartoon', name: 'Cartoon Network', num: '176', cat: 'Kids', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/Cartoon_Network_logo_2018.svg/120px-Cartoon_Network_logo_2018.svg.png'),
-              desc: 'Animation for all ages. Carries "Teen Titans Go!," "Gumball," "Adventure Time," and Adult Swim programming at night.' },
-            { id: 'freeform', name: 'Freeform', num: '180', cat: 'Kids', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/Freeform_logo_2018.svg/120px-Freeform_logo_2018.svg.png'),
-              desc: 'Young adult and teen programming. Carries "Pretty Little Liars," "The Fosters," "Grown-ish," and 25 Days of Christmas.' },
-            { id: 'disneyjr', name: 'Disney Junior', num: '174', cat: 'Kids', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('0/0d/Disney_Junior_logo_2019.svg/120px-Disney_Junior_logo_2019.svg.png'),
-              desc: 'Preschool programming. Carries "Mickey Mouse Clubhouse," "Puppy Dog Pals," "Bluey," and "Doc McStuffins."' },
-            { id: 'disneyxd', name: 'Disney XD', num: '175', cat: 'Kids', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('2/2a/Disney_XD_logo_2019.svg/120px-Disney_XD_logo_2019.svg.png'),
-              desc: 'Action and comedy for kids. Carries "Phineas and Ferb," "Marvel’s Spider-Man," and "DuckTales."' },
-
-            // ---- PREMIUM MOVIES (PLATINUM ONLY) ----
-            { id: 'hbo', name: 'HBO', num: '511', cat: 'Premium Movies', pkg: ['platinum'],
-              logo: wikiLogo('5/5c/HBO_logo.svg/120px-HBO_logo.svg.png'),
-              desc: 'Premium movie and original series network. Carries "The Last of Us," "Succession," "Game of Thrones," and blockbuster films.' },
-            { id: 'showtime', name: 'Showtime', num: '551', cat: 'Premium Movies', pkg: ['platinum'],
-              logo: wikiLogo('4/4e/Showtime_logo_2018.svg/120px-Showtime_logo_2018.svg.png'),
-              desc: 'Premium network. Carries "Billions," "Yellowjackets," "Homeland," and major Hollywood movies.' },
-            { id: 'starz', name: 'STARZ', num: '581', cat: 'Premium Movies', pkg: ['platinum'],
-              logo: wikiLogo('0/0d/Starz_logo_2018.svg/120px-Starz_logo_2018.svg.png'),
-              desc: 'Premium movie network. Carries "Outlander," "Power," "American Gods," and theatrical films.' },
-            { id: 'tmc', name: 'The Movie Channel', num: '571', cat: 'Premium Movies', pkg: ['platinum'],
-              logo: wikiLogo('4/4e/The_Movie_Channel_logo.svg/120px-The_Movie_Channel_logo.svg.png'),
-              desc: 'Premium movie channel. Carries uncut, commercial-free Hollywood films from every era.' },
-            { id: 'epix', name: 'EPIX', num: '594', cat: 'Premium Movies', pkg: ['platinum'],
-              logo: wikiLogo('4/4e/Epix_logo_2019.svg/120px-Epix_logo_2019.svg.png'),
-              desc: 'Premium network. Carries "Godfather of Harlem," "Berlin Station," and recent theatrical releases.' },
-            { id: 'cinemax', name: 'Cinemax', num: '531', cat: 'Premium Movies', pkg: ['platinum'],
-              logo: wikiLogo('4/4e/Cinemax_logo_2018.svg/120px-Cinemax_logo_2018.svg.png'),
-              desc: 'HBO’s sister premium network. Carries action, thriller, and late-night films plus original series.' },
-
-            // ---- MUSIC ----
-            { id: 'mtv', name: 'MTV', num: '160', cat: 'Music', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('6/6a/MTV_logo_2018.svg/120px-MTV_logo_2018.svg.png'),
-              desc: 'Music and reality TV. Carries "Jersey Shore," "Teen Mom," "The Challenge," and the MTV VMAs.' },
-            { id: 'vh1', name: 'VH1', num: '162', cat: 'Music', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/VH1_logo_2018.svg/120px-VH1_logo_2018.svg.png'),
-              desc: 'Music and pop culture. Carries "Love & Hip Hop," "Basketball Wives," and classic music video blocks.' },
-            { id: 'cmt', name: 'CMT', num: '161', cat: 'Music', pkg: ['signature','plus','platinum'],
-              logo: wikiLogo('4/4e/CMT_logo_2018.svg/120px-CMT_logo_2018.svg.png'),
-              desc: 'Country music television. Carries "Nashville," "Sun Records," and country music award shows.' },
-            { id: 'betjams', name: 'BET Jams', num: '166', cat: 'Music', pkg: ['plus','platinum'],
-              logo: wikiLogo('4/4e/BET_Jams_logo.svg/120px-BET_Jams_logo.svg.png'),
-              desc: 'Hip-hop and R&B music videos. 24-hour music video channel featuring the latest urban hits.' },
-            { id: 'betsoul', name: 'BET Soul', num: '167', cat: 'Music', pkg: ['plus','platinum'],
-              logo: wikiLogo('4/4e/BET_Soul_logo.svg/120px-BET_Soul_logo.svg.png'),
-              desc: 'Classic soul and R&B music videos. Features throwback and contemporary soul music.' },
-
-            // ---- ADDITIONAL SPORTS (PLATINUM / SPORTS VIEW) ----
-            { id: 'nflredzone', name: 'NFL RedZone', num: '311', cat: 'Sports', pkg: ['platinum'],
-              logo: wikiLogo('6/6e/NFL_RedZone_logo.svg/120px-NFL_RedZone_logo.svg.png'),
-              desc: 'NFL RedZone. Shows every touchdown from every Sunday afternoon NFL game as they happen.' },
-            { id: 'mlbstrike', name: 'MLB Strike Zone', num: '307', cat: 'Sports', pkg: ['platinum'],
-              logo: wikiLogo('7/7e/MLB_Network_logo.svg/120px-MLB_Network_logo.svg.png'),
-              desc: 'MLB Strike Zone. Live look-ins at MLB games in progress, similar to NFL RedZone for baseball.' },
-            { id: 'fdTV', name: 'FanDuel TV', num: '413', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('4/4e/FanDuel_TV_logo.svg/120px-FanDuel_TV_logo.svg.png'),
-              desc: 'Sports betting and horse racing network. Carries live horse racing, "The Favorites," and sports betting analysis.' },
-            { id: 'beinsports', name: 'BeIN SPORTS', num: '417', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('4/4e/BeIN_Sports_logo.svg/120px-BeIN_Sports_logo.svg.png'),
-              desc: 'International sports. Carries La Liga, Ligue 1, Copa Libertadores, and international soccer.' },
-            { id: 'willow', name: 'Willow TV', num: '1554', cat: 'Sports', pkg: ['plus','platinum'],
-              logo: wikiLogo('4/4e/Willow_TV_logo.svg/120px-Willow_TV_logo.svg.png'),
-              desc: 'Cricket network. Carries live international cricket matches, including IPL and ICC tournaments.' }
-        ];
-
-        /* ============================================================
-           BUILD GRIDS
-           ============================================================ */
-        function buildGrid(pkgKey, containerId) {
-            const container = document.getElementById(containerId);
-            const filtered = CHANNELS.filter(ch => ch.pkg.includes(pkgKey));
-            filtered.forEach(ch => {
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.dataset.chId = ch.id;
-                card.innerHTML = `
-                    <div class="logo-wrap">
-                        <img src="${ch.logo}" alt="${ch.name} logo" loading="lazy"
-                             onerror="this.parentElement.innerHTML='<span style=\\'font-size:1.8rem;font-weight:800;color:#0066cc;\\'>${ch.name.charAt(0)}</span>'">
-                    </div>
-                    <span class="chnum">Ch ${ch.num}</span>
-                    <span class="chname">${ch.name}</span>
-                `;
-                card.addEventListener('click', () => openModal(ch, pkgKey));
-                container.appendChild(card);
-            });
-        }
-
-        buildGrid('signature', 'grid-signature');
-        buildGrid('plus', 'grid-plus');
-        buildGrid('platinum', 'grid-platinum');
-
-        /* ============================================================
-           TABS
-           ============================================================ */
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const grids = {
-            signature: document.getElementById('grid-signature'),
-            plus: document.getElementById('grid-plus'),
-            platinum: document.getElementById('grid-platinum')
-        };
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const pkg = btn.dataset.pkg;
-                Object.keys(grids).forEach(k => {
-                    grids[k].style.display = (k === pkg) ? 'grid' : 'none';
-                });
-            });
-        });
-
-        /* ============================================================
-           MODAL
-           ============================================================ */
-        const overlay = document.getElementById('modalOverlay');
-        const modalLogo = document.getElementById('modalLogo');
-        const modalName = document.getElementById('modalName');
-        const modalChnum = document.getElementById('modalChnum');
-        const modalDesc = document.getElementById('modalDesc');
-        const modalPkg = document.getElementById('modalPkg');
-        const modalCategory = document.getElementById('modalCategory');
-        const modalClose = document.getElementById('modalClose');
-
-        function pkgLabel(key) {
-            return {
-                signature: 'TV Select Signature',
-                plus: 'TV Select Plus',
-                platinum: 'TV Platinum'
-            }[key] || key;
-        }
-
-        function openModal(ch, pkgKey) {
-            modalLogo.src = ch.logo;
-            modalLogo.alt = ch.name + ' logo';
-            modalName.textContent = ch.name;
-            modalChnum.textContent = 'Channel ' + ch.num;
-            modalDesc.innerHTML = ch.desc;
-            modalPkg.textContent = pkgLabel(pkgKey);
-            modalCategory.textContent = ch.cat;
-            overlay.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            overlay.classList.remove('open');
-            document.body.style.overflow = '';
-        }
-
-        modalClose.addEventListener('click', closeModal);
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) closeModal();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
-        });
-    </script>
 </body>
 </html>
