@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
 <meta name="color-scheme" content="dark light">
 <title>Flagship Phone Showdown | 2021–2026</title>
 <style>
@@ -19,7 +20,9 @@
   --google:#1d4fd8;--samsung:#0b7a57;--apple:#9a4d00;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:70px}
+html{scroll-behavior:smooth;scroll-padding-top:70px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,select,input,a{-webkit-tap-highlight-color:transparent}
+.sortfield{display:none}
 body{margin:0;background:radial-gradient(ellipse at top,var(--bg-glow) 0,var(--bg) 48%) fixed;color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 a{color:var(--blue)}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
@@ -103,21 +106,72 @@ td.model{font-weight:800;white-space:nowrap}
 .sources a{text-decoration:none}.sources a:hover{text-decoration:underline}
 .foot{margin-top:34px;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:.86rem}
 
-/* mobile: spec table becomes cards */
+/* mobile */
 @media(max-width:800px){
-  
-  .wrap{padding:0 13px 40px}.nav-in{padding:8px 13px}.hero{padding-top:24px}
+  body{font-size:15px}
+  .wrap{padding:0 max(14px,env(safe-area-inset-right)) 40px max(14px,env(safe-area-inset-left))}
+  section{margin-top:30px}
+  h2.section{font-size:1.3rem}
+  .hero{padding:22px 0 8px}
+  .sub{font-size:1rem}
+  .pills{gap:6px;margin:14px 0}.pill{font-size:.76rem;padding:5px 9px}
+  .panel{padding:12px;border-radius:12px}
+
+  /* nav: one scrollable row */
+  .nav-in{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:8px max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left))}
+  .nav-in::-webkit-scrollbar{display:none}
+  .nav a,.nav .btn{flex:none;white-space:nowrap}
+  .nav a{padding:10px 12px;font-size:.9rem}
+
+  /* controls: stacked, thumb-sized, 16px text so iOS doesn't zoom */
+  .controls{flex-direction:column;align-items:stretch;gap:10px}
+  .controls input,.controls select{font-size:16px;min-height:46px;width:100%}
+  .controls input[type=search]{min-width:0}
+  .field{min-width:0;flex:none}
+  .btn{min-height:46px;font-size:.95rem}
+  .controls .spacer{display:none}
+  .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .chip{min-height:44px;padding:8px 4px;font-size:.88rem;text-align:center}
+  .sortfield{display:block}
+  .specbar{display:grid;grid-template-columns:1fr auto;gap:10px}
+  .specbar #search{grid-column:1/-1;order:1}
+  .specbar #year{order:2}
+  .specbar #reset{order:3;width:auto;padding:0 18px}
+  .specbar .chips{grid-column:1/-1;order:4}
+  .specbar #sortsel{order:5}
+  .specbar #sortdir{order:6;width:auto;min-width:96px;padding:0 14px}
+  .toggle{font-size:.95rem;min-height:44px}
+  .toggle input{width:22px;height:22px;flex:none}
+  .status{min-height:0}
+
+  /* tables become cards: no sideways scrolling */
+  .table-wrap{border:0;background:transparent;overflow:visible;max-height:none;border-radius:0}
+
   #specs{min-width:0}
   #specs thead{display:none}
   #specs,#specs tbody,#specs tr,#specs td{display:block;width:100%}
-  #specs tr{border-bottom:1px solid var(--line);padding:10px 4px}
-  #specs td{border:0;padding:5px 12px;white-space:normal}
-  #specs td.model{font-size:1.05rem;padding-top:8px}
+  #specs tr{border:1px solid var(--line);border-radius:14px;margin:0 0 12px;padding:0 0 8px;background:var(--panel);overflow:hidden}
+  #specs td{border:0;padding:6px 14px;white-space:normal}
+  #specs td.model{background:var(--head);padding:12px 14px;margin-bottom:6px;font-size:1.05rem;white-space:normal}
   #specs td[data-label]::before{content:attr(data-label);display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
-  #specs td.model::before{display:none}
-  .table-wrap{max-height:none}
-  #comparison td{min-width:170px}
-  .nav .hide-sm{display:none}
+
+  #comparison thead{display:none}
+  #comparison,#comparison tbody,#comparison tr,#comparison td{display:block;width:100%}
+  #comparison tr{border:1px solid var(--line);border-radius:12px;margin:0 0 10px;overflow:hidden;background:var(--panel)}
+  #comparison td{border:0;padding:9px 14px;min-width:0;position:static}
+  #comparison td:first-child{background:var(--head);font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:8px 14px;min-width:0;white-space:normal;position:static}
+  #comparison td[data-label]::before{content:attr(data-label);display:block;font-size:.74rem;color:var(--muted);font-weight:700;margin-bottom:3px}
+  #comparison td[data-label]+td[data-label]{border-top:1px dashed var(--line)}
+  #comparison mark.d,#comparison .same{display:block;width:fit-content;max-width:100%;margin:3px 0}
+  #comparison .sep,#comparison br{display:none}
+  .cmpbar{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:4px}
+  .cmpbar .toggle{flex:1 1 auto}
+  .cmpbar .btn{width:auto;flex:none;padding:0 18px}
+  .cmpbar .legend{order:3;flex:1 0 100%;gap:6px 16px;line-height:1.6}
+  #swap{min-height:40px}
+
+  .sources li{overflow-wrap:anywhere}
+  .small{font-size:.8rem}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 @media print{
@@ -153,9 +207,9 @@ td.model{font-weight:800;white-space:nowrap}
     <button class="btn" id="swap" type="button" title="Swap phone 1 and phone 2" aria-label="Swap phone 1 and phone 2">⇄ Swap</button>
     <label class="field">Phone 2<select id="pick2"></select></label>
   </div>
-  <div class="controls" style="margin-top:0">
+  <div class="controls cmpbar" style="margin-top:0">
     <label class="toggle"><input type="checkbox" id="onlydiff"> Show only differences</label>
-    <span class="legend small"><mark>Highlighted</mark> = differs between the two <span class="dim">Dimmed</span> = same on all</span>
+    <span class="legend small"><span><mark>Highlighted</mark> differs</span><span><span class="dim">Dimmed</span> same</span></span>
     <span class="spacer" style="flex:1"></span>
     <button class="btn" id="copylink" type="button">Copy link</button>
     <span class="status" id="status" role="status" aria-live="polite"></span>
@@ -166,8 +220,8 @@ td.model{font-weight:800;white-space:nowrap}
 
 <section id="specs-section">
 <h2 class="section">Model-by-model specification table</h2>
-<p class="note">Search for a model, year, camera, chip, or feature, or click a column header to sort. Figures come from manufacturer specifications where available. Video-playback claims are lab estimates, not guaranteed screen-on time.</p>
-<div class="controls">
+<p class="note">Search for a model, year, camera, chip, or feature, and sort with the column headers (or the Sort by menu on a phone). Figures come from manufacturer specifications where available. Video-playback claims are lab estimates, not guaranteed screen-on time.</p>
+<div class="controls specbar">
   <input id="search" type="search" placeholder="Search: 200 MP, USB-C, 5x zoom, titanium, Tensor…" aria-label="Search phone specifications">
   <select id="year" aria-label="Filter by year"><option value="">All years</option><option>2021</option><option>2022</option><option>2023</option><option>2024</option><option>2025</option><option>2026</option></select>
   <div class="chips" id="brandchips" role="group" aria-label="Filter by brand">
@@ -176,6 +230,8 @@ td.model{font-weight:800;white-space:nowrap}
     <button class="chip" type="button" data-brand="Samsung" aria-pressed="false">Samsung</button>
     <button class="chip" type="button" data-brand="Apple" aria-pressed="false">Apple</button>
   </div>
+  <select id="sortsel" class="sortfield" aria-label="Sort by"></select>
+  <button class="btn sortfield" id="sortdir" type="button">↑ Asc</button>
   <button class="btn" id="reset" type="button">Reset</button>
 </div>
 <p class="count" id="count" role="status" aria-live="polite"></p>
@@ -259,6 +315,15 @@ const cols = [
   {k:'support',t:'Software support',sort:(a,b)=> a.support.localeCompare(b.support)}
 ];
 const state = {q:'', year:'', brand:'', sortKey:'model', dir:1};
+const sortsel = $('sortsel'), sortdir = $('sortdir');
+sortsel.innerHTML = cols.map(c => `<option value="${c.k}">Sort: ${esc(c.t)}</option>`).join('');
+sortsel.addEventListener('change', e => { state.sortKey = e.target.value; state.dir = 1; render(); });
+sortdir.addEventListener('click', () => { state.dir *= -1; render(); });
+function syncSort(){
+  sortsel.value = state.sortKey;
+  sortdir.textContent = state.dir === 1 ? '↑ Asc' : '↓ Desc';
+  sortdir.setAttribute('aria-label', 'Sort direction: ' + (state.dir === 1 ? 'ascending' : 'descending'));
+}
 
 function buildHead(){
   $('headrow').innerHTML = cols.map(c => {
@@ -297,6 +362,7 @@ function render(){
   $('empty').hidden = list.length !== 0;
   $('count').textContent = `Showing ${list.length} of ${data.length} models`;
   buildHead();
+  syncSort();
 }
 $('search').addEventListener('input', e => { state.q = e.target.value; render(); });
 $('year').addEventListener('change', e => { state.year = e.target.value; render(); });
@@ -352,10 +418,10 @@ function renderComparison(){
   const cellHtml = c => {
     const shown = onlyDiff ? c.filter(o => !o.same) : c;
     if(!shown.length) return '<span class="none">same as the others</span>';
-    return shown.map(o => o.same ? `<span class="same">${esc(o.t)}</span>` : `<mark class="d">${esc(o.t)}</mark>`).join(onlyDiff ? '<br>' : '; ');
+    return shown.map(o => o.same ? `<span class="same">${esc(o.t)}</span>` : `<mark class="d">${esc(o.t)}</mark>`).join(onlyDiff ? '<br>' : '<span class="sep">; </span>');
   };
   $('comparison-body').innerHTML = rows.length
-    ? rows.map(r => `<tr class="${r.differs ? 'diff' : ''}"><td>${esc(r.name)}</td>${r.cells.map(c => `<td>${cellHtml(c)}</td>`).join('')}</tr>`).join('')
+    ? rows.map(r => `<tr class="${r.differs ? 'diff' : ''}"><td>${esc(r.name)}</td>${r.cells.map((c,i) => `<td data-label="${esc(label(chosen[i]))}">${cellHtml(c)}</td>`).join('')}</tr>`).join('')
     : `<tr><td colspan="${chosen.length+1}" class="empty">These phones match on every row.</td></tr>`;
   const ids = pickers.map(s => s.value).filter(v => v !== '');
   safe(() => history.replaceState(null, '', '#c=' + ids.join(',')));
