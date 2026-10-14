@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Flagship Phone Showdown | 2021–2026</title>
+<style>
+:root{
+  --bg:#0b1020;--bg-glow:#182747;--panel:#131b2e;--panel2:#19243a;--field:#111a2b;--head:#1a2740;
+  --text:#eef3ff;--muted:#a8b5ce;--line:#2b3852;--blue:#8ab4ff;--green:#7ee0bb;--orange:#ffc58a;
+  --tag:#213452;--tagtext:#cfe0ff;--diff:rgba(255,197,138,.07);--diffbar:#ffc58a;--diffbg:rgba(255,197,138,.30);--difftext:#ffe6c4;--focus:#8ab4ff;
+  --google:#8ab4ff;--samsung:#7ee0bb;--apple:#ffc58a;
+}
+:root[data-theme="light"]{
+  --bg:#f5f7fb;--bg-glow:#e3ebfb;--panel:#ffffff;--panel2:#f0f4fb;--field:#ffffff;--head:#e8eef9;
+  --text:#14203a;--muted:#4d5d7a;--line:#cfd8e8;--blue:#1d4fd8;--green:#0b7a57;--orange:#9a4d00;
+  --tag:#e3ebfb;--tagtext:#1b3a7a;--diff:rgba(214,120,20,.06);--diffbar:#d67814;--diffbg:rgba(214,120,20,.24);--difftext:#5c2b00;--focus:#1d4fd8;
+  --google:#1d4fd8;--samsung:#0b7a57;--apple:#9a4d00;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:radial-gradient(ellipse at top,var(--bg-glow) 0,var(--bg) 48%) fixed;color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+a{color:var(--blue)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--panel);color:var(--text);padding:8px 12px;border-radius:8px;z-index:50}
+.skip:focus{left:8px}
+.wrap{max-width:1440px;margin:auto;padding:0 22px 60px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1440px;margin:auto;padding:10px 22px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav a{color:var(--muted);text-decoration:none;font-size:.86rem;padding:6px 10px;border-radius:8px}
+.nav a:hover{color:var(--text);background:var(--panel2)}
+.nav .spacer{flex:1}
+.btn{background:var(--field);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font:inherit;font-size:.86rem;cursor:pointer}
+.btn:hover{background:var(--panel2)}
+.btn[aria-pressed="true"]{border-color:var(--blue);color:var(--blue)}
+
+/* hero */
+.hero{padding:40px 0 18px}
+.eyebrow{color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:.76rem}
+h1{font-size:clamp(2rem,5vw,4rem);line-height:1.03;letter-spacing:-.04em;margin:12px 0 16px;max-width:900px}
+.accent{color:var(--blue)}
+.sub{color:var(--muted);font-size:1.08rem;max-width:850px;margin:0}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.pill{border:1px solid var(--line);background:var(--panel);padding:7px 11px;border-radius:99px;color:var(--text);font-size:.85rem}
+
+section{margin-top:40px}
+h2.section{font-size:1.55rem;letter-spacing:-.025em;margin:0 0 12px}
+.note{color:var(--muted);font-size:.91rem;margin:0 0 6px}
+.small{font-size:.82rem;color:var(--muted)}
+
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.panel h3{margin:0 0 8px}
+.panel ul{padding-left:20px;margin:8px 0}
+.panel li{margin:6px 0}
+
+/* controls */
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;align-items:flex-end}
+.controls input,.controls select{background:var(--field);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font:inherit}
+.controls input[type=search]{flex:1;min-width:220px}
+.field{display:grid;gap:6px;flex:1;min-width:210px;color:var(--muted);font-size:.85rem}
+.field select{width:100%}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--field);color:var(--text);border:1px solid var(--line);border-radius:99px;padding:7px 13px;font:inherit;font-size:.85rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--tag);border-color:var(--blue);color:var(--tagtext);font-weight:700}
+.count{color:var(--muted);font-size:.85rem;margin:0 0 8px}
+.toggle{display:flex;gap:8px;align-items:center;font-size:.88rem;color:var(--muted);cursor:pointer}
+
+/* tables */
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel);max-height:80vh}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+#specs{min-width:1180px}
+th,td{text-align:left;padding:12px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;background:var(--head);color:var(--text);z-index:2;font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+th button{all:unset;cursor:pointer;display:inline-flex;gap:5px;align-items:center;text-transform:inherit;letter-spacing:inherit;font:inherit;font-weight:700}
+th button:hover{color:var(--blue)}
+th button:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+th .arrow{opacity:.35;font-size:.7rem}
+th[aria-sort="ascending"] .arrow,th[aria-sort="descending"] .arrow{opacity:1;color:var(--blue)}
+tbody tr:hover{background:var(--panel2)}
+tbody tr:last-child td{border-bottom:0}
+td.model{font-weight:800;white-space:nowrap}
+.tag{display:inline-block;border-radius:6px;background:var(--tag);padding:2px 7px;font-size:.72rem;color:var(--tagtext);font-weight:700;margin-left:4px}
+.tag.Google{box-shadow:inset 3px 0 0 var(--google)}.tag.Samsung{box-shadow:inset 3px 0 0 var(--samsung)}.tag.Apple{box-shadow:inset 3px 0 0 var(--apple)}
+.empty{padding:22px;color:var(--muted)}
+
+/* comparison */
+#comparison td:first-child,#comparison th:first-child{position:sticky;left:0;background:var(--head);z-index:1;font-weight:700;white-space:nowrap;min-width:150px}
+#comparison td:first-child{background:var(--panel)}
+#comparison td{min-width:230px}
+#comparison tr.diff td:first-child{box-shadow:inset 4px 0 0 var(--diffbar)}
+#comparison .same{color:var(--muted);opacity:.75}
+#comparison mark.d{background:var(--diffbg);color:var(--difftext);font-weight:700;border-radius:5px;padding:1px 6px;box-shadow:inset 0 -2px 0 var(--diffbar);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+#comparison .none{color:var(--muted);font-style:italic}
+.legend{display:inline-flex;gap:10px;align-items:center;flex-wrap:wrap}
+.legend mark{background:var(--diffbg);color:var(--difftext);font-weight:700;border-radius:5px;padding:1px 6px;box-shadow:inset 0 -2px 0 var(--diffbar)}
+.legend .dim{color:var(--muted);opacity:.75}
+.status{min-height:1.2em;color:var(--green);font-size:.85rem}
+
+.sources a{text-decoration:none}.sources a:hover{text-decoration:underline}
+.foot{margin-top:34px;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:.86rem}
+
+/* mobile: spec table becomes cards */
+@media(max-width:800px){
+  
+  .wrap{padding:0 13px 40px}.nav-in{padding:8px 13px}.hero{padding-top:24px}
+  #specs{min-width:0}
+  #specs thead{display:none}
+  #specs,#specs tbody,#specs tr,#specs td{display:block;width:100%}
+  #specs tr{border-bottom:1px solid var(--line);padding:10px 4px}
+  #specs td{border:0;padding:5px 12px;white-space:normal}
+  #specs td.model{font-size:1.05rem;padding-top:8px}
+  #specs td[data-label]::before{content:attr(data-label);display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
+  #specs td.model::before{display:none}
+  .table-wrap{max-height:none}
+  #comparison td{min-width:170px}
+  .nav .hide-sm{display:none}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media print{
+  :root,:root[data-theme]{--bg:#fff;--bg-glow:#fff;--panel:#fff;--panel2:#f3f3f3;--field:#fff;--head:#eee;--text:#111;--muted:#444;--line:#bbb;--blue:#1d4fd8;--tag:#eee;--tagtext:#111}
+  body{background:#fff}.nav,.controls,.skip,.btn,.chips,.status{display:none!important}
+  .wrap{max-width:none}.table-wrap{max-height:none;overflow:visible}
+  #specs{min-width:0;font-size:.7rem}section{break-inside:avoid-page}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Page sections"><div class="nav-in">
+  <a href="#compare">Compare</a><a href="#specs-section">All specs</a><a href="#sources" class="hide-sm">Sources</a>
+  <span class="spacer"></span>
+  <button class="btn" id="theme" type="button" aria-label="Toggle light and dark theme">Theme</button>
+</div></nav>
+
+<main class="wrap" id="main">
+<header class="hero">
+  <div class="eyebrow">The long-view comparison · 2021 to 2026</div>
+  <h1>Flagship Phone <span class="accent">Showdown</span></h1>
+  <p class="sub">Google Pixel Pro XL, Samsung Galaxy S Ultra, and Apple iPhone Pro Max, compared across cameras, battery, screens, charging, build, and software support. Updated October 2026 with the Pixel 11 Pro XL and iPhone 18 Pro Max.</p>
+  <div class="pills"><span class="pill">18 model-years</span><span class="pill">Large-screen flagships</span><span class="pill">Sortable, searchable table</span><span class="pill">Shareable side-by-side links</span></div>
+</header>
+
+<section id="compare">
+<h2 class="section">Build your own side-by-side comparison</h2>
+<p class="note">Pick any two phones from any year. Your selection is saved in the page link, so you can copy it and share it.</p>
+<div class="panel">
+  <div class="controls">
+    <label class="field">Phone 1<select id="pick1"></select></label>
+    <button class="btn" id="swap" type="button" title="Swap phone 1 and phone 2" aria-label="Swap phone 1 and phone 2">⇄ Swap</button>
+    <label class="field">Phone 2<select id="pick2"></select></label>
+  </div>
+  <div class="controls" style="margin-top:0">
+    <label class="toggle"><input type="checkbox" id="onlydiff"> Show only differences</label>
+    <span class="legend small"><mark>Highlighted</mark> = differs between the two <span class="dim">Dimmed</span> = same on all</span>
+    <span class="spacer" style="flex:1"></span>
+    <button class="btn" id="copylink" type="button">Copy link</button>
+    <span class="status" id="status" role="status" aria-live="polite"></span>
+  </div>
+  <div class="table-wrap"><table id="comparison"><thead id="comparison-head"></thead><tbody id="comparison-body"></tbody></table></div>
+</div>
+</section>
+
+<section id="specs-section">
+<h2 class="section">Model-by-model specification table</h2>
+<p class="note">Search for a model, year, camera, chip, or feature, or click a column header to sort. Figures come from manufacturer specifications where available. Video-playback claims are lab estimates, not guaranteed screen-on time.</p>
+<div class="controls">
+  <input id="search" type="search" placeholder="Search: 200 MP, USB-C, 5x zoom, titanium, Tensor…" aria-label="Search phone specifications">
+  <select id="year" aria-label="Filter by year"><option value="">All years</option><option>2021</option><option>2022</option><option>2023</option><option>2024</option><option>2025</option><option>2026</option></select>
+  <div class="chips" id="brandchips" role="group" aria-label="Filter by brand">
+    <button class="chip" type="button" data-brand="" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-brand="Google" aria-pressed="false">Google</button>
+    <button class="chip" type="button" data-brand="Samsung" aria-pressed="false">Samsung</button>
+    <button class="chip" type="button" data-brand="Apple" aria-pressed="false">Apple</button>
+  </div>
+  <button class="btn" id="reset" type="button">Reset</button>
+</div>
+<p class="count" id="count" role="status" aria-live="polite"></p>
+<div class="table-wrap">
+  <table id="specs"><thead><tr id="headrow"></tr></thead><tbody id="rows"></tbody></table>
+  <div id="empty" class="empty" hidden>No matching models. Try a broader search or reset the filters.</div>
+</div>
+<p class="small">RAM and battery capacity can differ by storage tier, region, and model variant. Apple doesn't officially publish iPhone RAM or mAh, so the mAh sort leaves iPhones at the bottom. "Zoom" labels separate optical magnification from digital or computational zoom.</p>
+</section>
+
+<section id="sources">
+<h2 class="section">Sources &amp; verification</h2>
+<div class="panel sources">
+<ul>
+  <li><a href="https://support.google.com/pixelphone/answer/7158570" target="_blank" rel="noopener">Google Pixel hardware specifications</a>: official specs by model.</li>
+  <li><a href="https://store.google.com/product/pixel_10_pro_specs" target="_blank" rel="noopener">Google Pixel 10 Pro / Pro XL specs</a></li>
+  <li><a href="https://www.gsmarena.com/google_pixel_11_pro_xl-review-2994.php" target="_blank" rel="noopener">GSMArena: Pixel 11 Pro XL review</a>: display, camera, battery, charging, update policy.</li>
+  <li><a href="https://www.phonearena.com/google-pixel-11-pro-release-date-price-features-news" target="_blank" rel="noopener">PhoneArena: Pixel 11 Pro</a>: battery claim, charging speeds.</li>
+  <li><a href="https://www.samsung.com/us/smartphones/galaxy-s26-ultra/" target="_blank" rel="noopener">Samsung Galaxy S26 Ultra</a>: camera, display, battery, and charging claims.</li>
+  <li><a href="https://support.apple.com/en-us/148591" target="_blank" rel="noopener">Apple iPhone 18 Pro Max tech specs</a>: display, chip, build, size.</li>
+  <li><a href="https://www.apple.com/in/iphone-18-pro/specs/" target="_blank" rel="noopener">Apple iPhone 18 Pro / Pro Max specs</a>: video-playback ratings, USB-C, wireless charging.</li>
+  <li><a href="https://support.apple.com/en-us/125091" target="_blank" rel="noopener">Apple iPhone 17 Pro Max tech specs</a></li>
+  <li><a href="https://www.apple.com/iphone/compare/" target="_blank" rel="noopener">Apple iPhone model comparison</a></li>
+</ul>
+<p class="small">This is an interactive overview, not a lab benchmark. Where sources disagree (for example Galaxy S26 Ultra wired charging at 45 W vs 60 W, or iPhone 18 Pro Max wired speed), the row says so. For purchase decisions, check the manufacturer's page for your exact model and region.</p>
+</div>
+</section>
+<footer class="foot">Self-contained page: no external scripts, fonts, or trackers. Use your browser's Print → Save as PDF to keep a copy.</footer>
+</main>
+
+<script>
+const data = [
+{y:2021,b:"Google",m:"Pixel 6 Pro",d:"6.7″ LTPO OLED, 120 Hz, QHD+",c:"50 MP wide + 12 MP ultrawide + 48 MP telephoto",z:"4x optical",bat:"5,003 mAh typical; Google rated 24+ hours",mah:5003,chg:"Wired fast charge; wireless; reverse wireless",chip:"Google Tensor; 12 GB RAM",build:"IP68; under-display fingerprint",support:"3 OS upgrades; 5 years security (launch policy)"},
+{y:2021,b:"Samsung",m:"Galaxy S21 Ultra",d:"6.8″ Dynamic AMOLED 2X, 120 Hz, QHD+",c:"108 MP wide + 12 MP ultrawide + 10 MP 3x + 10 MP 10x",z:"3x + 10x optical",bat:"5,000 mAh; up to 20 h video (Samsung)",mah:5000,chg:"25 W wired; 15 W wireless; reverse wireless",chip:"Snapdragon 888 (US); 12/16 GB RAM",build:"IP68; S Pen support via accessory",support:"3 OS upgrades; about 4 years security (launch policy)"},
+{y:2021,b:"Apple",m:"iPhone 13 Pro Max",d:"6.7″ OLED, ProMotion 120 Hz",c:"12 MP wide + 12 MP ultrawide + 12 MP 3x telephoto",z:"3x optical; 6x optical range",bat:"Up to 28 h video playback (Apple)",mah:null,chg:"Lightning; MagSafe wireless",chip:"A15 Bionic; RAM not officially listed",build:"IP68; Face ID; stainless steel",support:"iOS support ongoing; Apple gives no fixed year count"},
+{y:2022,b:"Google",m:"Pixel 7 Pro",d:"6.7″ LTPO OLED, 120 Hz, QHD+",c:"50 MP wide + 12 MP ultrawide + 48 MP telephoto",z:"5x optical",bat:"5,000 mAh typical; 24+ h claimed",mah:5000,chg:"Wired fast charge; wireless; reverse wireless",chip:"Tensor G2; 12 GB RAM",build:"IP68; under-display fingerprint",support:"3 OS upgrades; 5 years security (launch policy)"},
+{y:2022,b:"Samsung",m:"Galaxy S22 Ultra",d:"6.8″ Dynamic AMOLED 2X, 120 Hz, QHD+",c:"108 MP wide + 12 MP ultrawide + 10 MP 3x + 10 MP 10x",z:"3x + 10x optical",bat:"5,000 mAh; up to 20 h video (Samsung)",mah:5000,chg:"45 W wired; 15 W wireless",chip:"Snapdragon 8 Gen 1 (US); 8/12 GB RAM",build:"IP68; integrated S Pen",support:"4 Android OS upgrades; 5 years security (launch policy)"},
+{y:2022,b:"Apple",m:"iPhone 14 Pro Max",d:"6.7″ OLED, ProMotion 120 Hz, Always-On",c:"48 MP wide + 12 MP ultrawide + 12 MP 3x telephoto",z:"3x optical; 6x optical range",bat:"Up to 29 h video playback (Apple)",mah:null,chg:"Lightning; MagSafe wireless",chip:"A16 Bionic; RAM not officially listed",build:"IP68; Dynamic Island; Crash Detection",support:"iOS support ongoing; Apple gives no fixed year count"},
+{y:2023,b:"Google",m:"Pixel 8 Pro",d:"6.7″ LTPO OLED, 1–120 Hz, brighter display",c:"50 MP wide + 48 MP ultrawide + 48 MP telephoto",z:"5x optical",bat:"5,050 mAh typical; 24+ h claimed",mah:5050,chg:"Wired fast charge; wireless",chip:"Tensor G3; 12 GB RAM",build:"IP68; temperature sensor",support:"7 years of OS, security, and Feature Drops"},
+{y:2023,b:"Samsung",m:"Galaxy S23 Ultra",d:"6.8″ Dynamic AMOLED 2X, 120 Hz, QHD+",c:"200 MP wide + 12 MP ultrawide + 10 MP 3x + 10 MP 10x",z:"3x + 10x optical",bat:"5,000 mAh; up to 26 h video (Samsung)",mah:5000,chg:"45 W wired; 15 W wireless",chip:"Snapdragon 8 Gen 2 for Galaxy; 8/12 GB RAM",build:"IP68; integrated S Pen",support:"4 OS upgrades; 5 years security (launch policy)"},
+{y:2023,b:"Apple",m:"iPhone 15 Pro Max",d:"6.7″ OLED, ProMotion 120 Hz, Always-On",c:"48 MP wide + 12 MP ultrawide + 12 MP 5x telephoto",z:"5x optical",bat:"Up to 29 h video playback (Apple)",mah:null,chg:"USB-C; MagSafe; Qi2 support",chip:"A17 Pro; RAM not officially listed",build:"IP68; titanium; Action button; ProRes to external storage",support:"iOS support ongoing; Apple gives no fixed year count"},
+{y:2024,b:"Google",m:"Pixel 9 Pro XL",d:"6.8″ LTPO OLED, 1–120 Hz",c:"50 MP wide + 48 MP ultrawide + 48 MP telephoto",z:"5x optical; up to 30x Super Res Zoom",bat:"5,060 mAh typical; 24+ h claimed",mah:5060,chg:"Wired fast charge; wireless",chip:"Tensor G4; 16 GB RAM",build:"IP68; ultrasonic fingerprint",support:"7 years of OS, security, and Feature Drops"},
+{y:2024,b:"Samsung",m:"Galaxy S24 Ultra",d:"6.8″ AMOLED, 1–120 Hz, anti-reflective glass",c:"200 MP wide + 12 MP ultrawide + 10 MP 3x + 50 MP 5x",z:"3x + 5x optical; 10x optical-quality",bat:"5,000 mAh; up to 30 h video (Samsung)",mah:5000,chg:"45 W wired; 15 W wireless",chip:"Snapdragon 8 Gen 3 for Galaxy; 12 GB RAM",build:"IP68; titanium; integrated S Pen",support:"7 OS upgrades; 7 years security"},
+{y:2024,b:"Apple",m:"iPhone 16 Pro Max",d:"6.9″ OLED, ProMotion 120 Hz, Always-On",c:"48 MP wide + 48 MP ultrawide + 12 MP 5x telephoto",z:"5x optical",bat:"Up to 33 h video playback (Apple)",mah:null,chg:"USB-C; MagSafe wireless",chip:"A18 Pro; RAM not officially listed",build:"IP68; titanium; Camera Control; 4K Dolby Vision up to 120 fps",support:"iOS support ongoing; Apple gives no fixed year count"},
+{y:2025,b:"Google",m:"Pixel 10 Pro XL",d:"6.8″ LTPO OLED, 1–120 Hz; up to 3,300 nits peak",c:"50 MP wide + 48 MP ultrawide + 48 MP 5x telephoto",z:"5x optical; up to 100x Pro Zoom (computational)",bat:"5,200 mAh typical; 24+ h claimed",mah:5200,chg:"45 W wired; Qi2 Pixelsnap up to 25 W",chip:"Tensor G5; 16 GB RAM",build:"IP68; Gorilla Glass Victus 2",support:"7 years of OS, security, and Feature Drops"},
+{y:2025,b:"Samsung",m:"Galaxy S25 Ultra",d:"6.9″ AMOLED, 1–120 Hz, QHD+",c:"200 MP wide + 50 MP ultrawide + 10 MP 3x + 50 MP 5x",z:"3x + 5x optical; 10x optical-quality",bat:"5,000 mAh; up to 31 h video (Samsung)",mah:5000,chg:"45 W wired; wireless",chip:"Snapdragon 8 Elite for Galaxy; 12 GB RAM",build:"IP68; titanium; integrated S Pen",support:"7 OS upgrades; 7 years security"},
+{y:2025,b:"Apple",m:"iPhone 17 Pro Max",d:"6.9″ OLED, ProMotion 120 Hz; up to 3,000 nits outdoor",c:"48 MP wide + 48 MP ultrawide + 48 MP 4x telephoto",z:"4x optical; 8x optical-quality",bat:"Up to 39 h video; 35 h streamed (Apple)",mah:null,chg:"USB-C; up to 50% in 20 min with 40 W+ adapter",chip:"A19 Pro; RAM not officially listed",build:"IP68; aluminum unibody; Ceramic Shield 2; 18 MP Center Stage front camera",support:"iOS support ongoing; Apple gives no fixed year count"},
+{y:2026,b:"Google",m:"Pixel 11 Pro XL",d:"6.8″ LTPO OLED, 1–120 Hz, 1344×2992; up to 3,600 nits peak",c:"50 MP wide + 48 MP ultrawide + 48 MP 5x telephoto",z:"5x optical",bat:"5,115 mAh typical; Google claims 30+ h",mah:5115,chg:"45 W wired (about 75% in 30 min); 25 W Qi2 wireless",chip:"Google Tensor G6; 12 GB (256/512 GB) or 16 GB (1 TB)",build:"IP68; Gorilla Glass Victus 2; aluminum frame; 226 g; 42 MP front camera",support:"7 years of OS, security, and Pixel Drops; ships with Android 17"},
+{y:2026,b:"Samsung",m:"Galaxy S26 Ultra",d:"6.9″ LTPO AMOLED 2X, 120 Hz; built-in Privacy Display; anti-reflective Gorilla Armor 2",c:"200 MP wide + 50 MP ultrawide + 10 MP 3x + 50 MP 5x",z:"3x + 5x optical; 10x optical-quality; up to 100x digital",bat:"5,000 mAh; up to 31 h video (Samsung)",mah:5000,chg:"Wired speed reported as 45–60 W depending on source (Samsung claims ~75% in 30 min); 25 W wireless",chip:"Snapdragon 8 Elite Gen 5 for Galaxy; 12/16 GB RAM",build:"IP68; S Pen; Privacy Display; 214 g",support:"Samsung flagship policy (7 years on recent Ultras); confirm regional listing"},
+{y:2026,b:"Apple",m:"iPhone 18 Pro Max",d:"6.9″ Super Retina XDR OLED, ProMotion 120 Hz, 2868×1320; up to 3,000 nits outdoor",c:"48 MP variable-aperture main + 48 MP ultrawide + 48 MP telephoto",z:"Telephoto lens (see Apple for exact reach)",bat:"Up to 43 h video; 38 h streamed (Apple)",mah:null,chg:"USB-C (USB 3, up to 10 Gbps); MagSafe and Qi2 wireless up to 25 W; wired speed reports vary",chip:"A20 Pro; RAM not officially listed (third parties report 12 GB)",build:"IP68; aluminum unibody; Ceramic Shield 2 front and back; 249 g; 18 MP Center Stage front camera",support:"Ships with iOS 27; Apple gives no fixed year count"}
+];
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = id => document.getElementById(id);
+const label = x => `${x.y} ${x.b} ${x.m}`;
+const safe = fn => { try { return fn(); } catch(e) { return null; } };
+
+/* ---------- theme ---------- */
+const root = document.documentElement;
+function setTheme(t){ root.setAttribute('data-theme', t); $('theme').textContent = t === 'dark' ? '☀ Light' : '🌙 Dark'; }
+(function(){
+  const saved = safe(() => localStorage.getItem('phone-theme'));
+  const prefersLight = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches;
+  setTheme(saved || (prefersLight ? 'light' : 'dark'));
+})();
+$('theme').addEventListener('click', () => {
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  setTheme(next); safe(() => localStorage.setItem('phone-theme', next));
+});
+
+/* ---------- spec table ---------- */
+const cols = [
+  {k:'model', t:'Year / model', sort:(a,b)=> a.y-b.y || a.m.localeCompare(b.m)},
+  {k:'d',   t:'Display',       sort:(a,b)=> a.d.localeCompare(b.d)},
+  {k:'c',   t:'Rear cameras',  sort:(a,b)=> a.c.localeCompare(b.c)},
+  {k:'z',   t:'Optical zoom',  sort:(a,b)=> a.z.localeCompare(b.z)},
+  {k:'bat', t:'Battery / endurance', sort:(a,b)=> (a.mah==null)-(b.mah==null) || a.mah-b.mah, nullsLast:true},
+  {k:'chg', t:'Charging',      sort:(a,b)=> a.chg.localeCompare(b.chg)},
+  {k:'chip',t:'Chip / memory', sort:(a,b)=> a.chip.localeCompare(b.chip)},
+  {k:'build',t:'Build / extras',sort:(a,b)=> a.build.localeCompare(b.build)},
+  {k:'support',t:'Software support',sort:(a,b)=> a.support.localeCompare(b.support)}
+];
+const state = {q:'', year:'', brand:'', sortKey:'model', dir:1};
+
+function buildHead(){
+  $('headrow').innerHTML = cols.map(c => {
+    const active = state.sortKey === c.k;
+    const aria = active ? (state.dir === 1 ? 'ascending' : 'descending') : 'none';
+    const arrow = active ? (state.dir === 1 ? '▲' : '▼') : '↕';
+    return `<th scope="col" aria-sort="${aria}"><button type="button" data-k="${c.k}">${esc(c.t)} <span class="arrow" aria-hidden="true">${arrow}</span></button></th>`;
+  }).join('');
+}
+$('headrow').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-k]'); if(!btn) return;
+  const k = btn.dataset.k;
+  if(state.sortKey === k) state.dir *= -1; else { state.sortKey = k; state.dir = 1; }
+  render();
+});
+
+function render(){
+  const q = state.q.toLowerCase().trim();
+  const col = cols.find(c => c.k === state.sortKey);
+  let list = data.filter(x =>
+    (!state.year || String(x.y) === state.year) &&
+    (!state.brand || x.b === state.brand) &&
+    (!q || Object.values(x).join(' ').toLowerCase().includes(q)));
+  list = list.slice().sort((a,b) => {
+    if(col.nullsLast){ // keep unpublished values at the bottom either direction
+      if(a.mah==null && b.mah!=null) return 1;
+      if(a.mah!=null && b.mah==null) return -1;
+      if(a.mah==null && b.mah==null) return a.y-b.y;
+    }
+    return col.sort(a,b) * state.dir;
+  });
+  $('rows').innerHTML = list.map(x => `<tr>
+    <td class="model">${x.y} <span class="tag ${esc(x.b)}">${esc(x.b)}</span><br>${esc(x.m)}</td>
+    ${cols.slice(1).map(c => `<td data-label="${esc(c.t)}">${esc(x[c.k])}</td>`).join('')}
+  </tr>`).join('');
+  $('empty').hidden = list.length !== 0;
+  $('count').textContent = `Showing ${list.length} of ${data.length} models`;
+  buildHead();
+}
+$('search').addEventListener('input', e => { state.q = e.target.value; render(); });
+$('year').addEventListener('change', e => { state.year = e.target.value; render(); });
+$('brandchips').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if(!b) return;
+  state.brand = b.dataset.brand;
+  document.querySelectorAll('#brandchips .chip').forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+  render();
+});
+$('reset').addEventListener('click', () => {
+  Object.assign(state, {q:'', year:'', brand:'', sortKey:'model', dir:1});
+  $('search').value = ''; $('year').value = '';
+  document.querySelectorAll('#brandchips .chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.brand === '')));
+  render();
+});
+
+/* ---------- comparison ---------- */
+const pickers = [$('pick1'), $('pick2')];
+data.forEach((x,i) => pickers.forEach(sel => {
+  const o = document.createElement('option'); o.value = String(i); o.textContent = label(x); sel.appendChild(o);
+}));
+const idx = (y,b) => data.findIndex(x => x.y === y && x.b === b);
+const fields = [['Display','d'],['Rear cameras','c'],['Optical zoom','z'],['Battery / endurance','bat'],['Charging','chg'],['Chip / memory','chip'],['Build / extras','build'],['Software support','support']];
+
+function readHash(){
+  const m = location.hash.match(/c=([\d,]*)/);
+  if(!m) return null;
+  const ids = m[1].split(',').filter(s => s !== '').map(Number).filter(n => Number.isInteger(n) && n >= 0 && n < data.length);
+  return ids.length >= 2 ? ids.slice(0,2) : null;
+}
+(function init(){
+  const ids = readHash() || [idx(2026,'Google'), idx(2026,'Samsung')];
+  pickers.forEach((s,i) => { s.value = String(ids[i]); });
+})();
+
+function segs(text){
+  // split a spec string into comparable pieces: "a; b + c" -> ["a","b","c"]
+  return String(text).split(/;\s*|\s\+\s/).map(t => t.trim()).filter(Boolean);
+}
+const norm = t => t.toLowerCase().replace(/\s+/g,' ');
+function renderComparison(){
+  const chosen = pickers.map(s => data[Number(s.value)]);
+  const onlyDiff = $('onlydiff').checked;
+  $('comparison-head').innerHTML = '<tr><th scope="col">Specification</th>' + chosen.map(x => `<th scope="col">${esc(label(x))}</th>`).join('') + '</tr>';
+  const rows = fields.map(([name,key]) => {
+    const parts = chosen.map(x => segs(x[key]));
+    // a piece is "shared" only if every chosen phone has it
+    const shared = new Set(parts[0].map(norm).filter(t => parts.every(p => p.map(norm).includes(t))));
+    const cells = parts.map(p => p.map(t => ({t, same: shared.has(norm(t))})));
+    const differs = cells.some(c => c.some(o => !o.same));
+    return {name, cells, differs};
+  }).filter(r => !onlyDiff || r.differs);
+  const cellHtml = c => {
+    const shown = onlyDiff ? c.filter(o => !o.same) : c;
+    if(!shown.length) return '<span class="none">same as the others</span>';
+    return shown.map(o => o.same ? `<span class="same">${esc(o.t)}</span>` : `<mark class="d">${esc(o.t)}</mark>`).join(onlyDiff ? '<br>' : '; ');
+  };
+  $('comparison-body').innerHTML = rows.length
+    ? rows.map(r => `<tr class="${r.differs ? 'diff' : ''}"><td>${esc(r.name)}</td>${r.cells.map(c => `<td>${cellHtml(c)}</td>`).join('')}</tr>`).join('')
+    : `<tr><td colspan="${chosen.length+1}" class="empty">These phones match on every row.</td></tr>`;
+  const ids = pickers.map(s => s.value).filter(v => v !== '');
+  safe(() => history.replaceState(null, '', '#c=' + ids.join(',')));
+}
+pickers.forEach(s => s.addEventListener('change', renderComparison));
+$('onlydiff').addEventListener('change', renderComparison);
+$('swap').addEventListener('click', () => {
+  const t = pickers[0].value; pickers[0].value = pickers[1].value; pickers[1].value = t; renderComparison();
+});
+$('copylink').addEventListener('click', async () => {
+  const st = $('status');
+  try { await navigator.clipboard.writeText(location.href); st.textContent = 'Link copied'; }
+  catch(e) { st.textContent = 'Copy the address bar to share'; }
+  setTimeout(() => st.textContent = '', 2500);
+});
+window.addEventListener('hashchange', () => {
+  const ids = readHash(); if(!ids) return;
+  pickers.forEach((s,i) => s.value = String(ids[i]));
+  renderComparison();
+});
+
+render();
+renderComparison();
+</script>
+</body>
+</html>
