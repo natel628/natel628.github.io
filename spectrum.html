@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectrum TV Packages Rhode Island — Comparison</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f6f8fc;
+            color: #1e2a3a;
+            padding: 2rem 1.5rem;
+            line-height: 1.5;
+        }
+        .wrap {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.4rem;
+            color: #0b1a2b;
+        }
+        .subhead {
+            font-size: 1.05rem;
+            color: #4a5f73;
+            margin-bottom: 2rem;
+            border-left: 4px solid #0066cc;
+            padding-left: 1rem;
+            background: #eef4fb;
+            border-radius: 0 8px 8px 0;
+            padding: 0.75rem 1rem;
+        }
+        .subhead strong {
+            color: #0066cc;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0, 20, 50, 0.08);
+            padding: 1.8rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e3eaf2;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 32px rgba(0, 60, 130, 0.12);
+        }
+        .card h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: #0b1a2b;
+        }
+        .price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0066cc;
+            letter-spacing: -0.03em;
+            margin: 0.25rem 0 0.2rem;
+        }
+        .price span {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #5e7387;
+        }
+        .std-price {
+            font-size: 0.85rem;
+            color: #7a8fa3;
+            margin-bottom: 1rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #e6f0ff;
+            color: #004a99;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
+            letter-spacing: 0.02em;
+            margin-bottom: 1rem;
+            align-self: flex-start;
+        }
+        .channels {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0b1a2b;
+            margin-bottom: 0.75rem;
+        }
+        .channels small {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #5e7387;
+        }
+        .card ul {
+            list-style: none;
+            margin: 0.5rem 0 1.25rem;
+            padding: 0;
+            flex: 1;
+        }
+        .card li {
+            padding: 0.35rem 0 0.35rem 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+            color: #2b3f53;
+            border-bottom: 1px solid #f0f4f9;
+        }
+        .card li:last-child {
+            border-bottom: none;
+        }
+        .card li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #0066cc;
+            font-weight: 700;
+        }
+        .note {
+            font-size: 0.82rem;
+            color: #6b8096;
+            background: #f2f6fc;
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            margin-top: auto;
+            border-left: 3px solid #b0c8e0;
+        }
+        .diff-section {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 1.8rem 1.8rem 1.5rem;
+            box-shadow: 0 8px 24px rgba(0, 20, 50, 0.06);
+            border: 1px solid #e3eaf2;
+            margin-bottom: 2.5rem;
+        }
+        .diff-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #0b1a2b;
+        }
+        .diff-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        .diff-item h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0066cc;
+            margin-bottom: 0.35rem;
+        }
+        .diff-item p {
+            font-size: 0.92rem;
+            color: #3e556b;
+        }
+        .channel-table-wrap {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid #e3eaf2;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 20, 50, 0.06);
+            margin-bottom: 2.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 700px;
+        }
+        thead {
+            background: #f0f6ff;
+        }
+        th {
+            text-align: left;
+            padding: 0.9rem 1rem;
+            font-weight: 700;
+            color: #0b1a2b;
+            border-bottom: 2px solid #d0deed;
+            white-space: nowrap;
+        }
+        td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid #eef3f9;
+            color: #2b3f53;
+            vertical-align: top;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        tbody tr:hover {
+            background: #fafcff;
+        }
+        .yes {
+            color: #0d7a3e;
+            font-weight: 700;
+        }
+        .no {
+            color: #b0becb;
+            font-weight: 500;
+        }
+        .highlight {
+            background: #f3f8ff;
+            font-weight: 600;
+        }
+        .total-row {
+            background: #f0f6ff;
+            font-weight: 700;
+        }
+        .price-note {
+            font-size: 0.85rem;
+            color: #6b8096;
+            margin-top: 0.8rem;
+        }
+        .footnote {
+            font-size: 0.85rem;
+            color: #6b8096;
+            line-height: 1.6;
+            border-top: 1px solid #d9e4ef;
+            padding-top: 1.2rem;
+            margin-top: 0.5rem;
+        }
+        .footnote a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .footnote a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 900px) {
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .diff-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+            body {
+                padding: 1.25rem 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>Spectrum TV Packages in Rhode Island</h1>
+        <div class="subhead">
+            <strong>Three main tiers</strong> — Spectrum’s current lineup uses the names <strong>TV Select Signature</strong>, <strong>TV Select Plus</strong>, and <strong>TV Platinum</strong>. Older materials may call these <em>Select</em>, <em>Silver</em>, and <em>Gold</em>, but the channel counts and pricing below reflect the current Rhode Island offerings.
+        </div>
+
+        <!-- THREE PACKAGE CARDS -->
+        <div class="grid-3">
+            <!-- SELECT SIGNATURE -->
+            <div class="card">
+                <span class="badge">Entry Level</span>
+                <h2>TV Select Signature</h2>
+                <div class="price">$100<span>/mo</span></div>
+                <div class="std-price">Standard rate after 1 year: ~$130/mo</div>
+                <div class="channels">150+ channels <small>local + basic cable</small></div>
+                <ul>
+                    <li>All local broadcast stations (ABC, CBS, NBC, FOX, PBS, CW)</li>
+                    <li>Popular cable nets: ESPN, CNN, HGTV, AMC, FX, Disney Channel</li>
+                    <li>Streaming apps included: Disney+, Hulu, ESPN Unlimited, Max (ad-supported), Peacock Premium</li>
+                    <li>Free Spectrum TV App for streaming on devices</li>
+                    <li><strong>No regional sports networks (RSNs)</strong></li>
+                </ul>
+                <div class="note">Best for households that want the essentials + major streaming apps without paying for sports RSNs.</div>
+            </div>
+
+            <!-- SELECT PLUS -->
+            <div class="card">
+                <span class="badge">Most Popular</span>
+                <h2>TV Select Plus</h2>
+                <div class="price">$110<span>/mo</span></div>
+                <div class="std-price">Standard rate after 1 year: ~$140/mo</div>
+                <div class="channels">160+ channels <small>adds regional sports</small></div>
+                <ul>
+                    <li>Everything in TV Select Signature</li>
+                    <li><strong>Regional Sports Networks (RSNs)</strong> — NESN, MSG, SportsNet NY, etc.</li>
+                    <li>Extra sports: NFL Network, MLB Network, NBA TV, ACC Network, SEC Network</li>
+                    <li>Same streaming apps as Select Signature</li>
+                    <li>Ideal for local sports fans (Red Sox, Celtics, Bruins, etc.)</li>
+                </ul>
+                <div class="note">The key upgrade here is <strong>live regional sports</strong>. If you follow local teams, this is the minimum tier you need.</div>
+            </div>
+
+            <!-- PLATINUM -->
+            <div class="card">
+                <span class="badge">Premium</span>
+                <h2>TV Platinum</h2>
+                <div class="price">$145<span>/mo</span></div>
+                <div class="std-price">Standard rate after 1 year: ~$175/mo</div>
+                <div class="channels">230+ channels <small>premiums + sports view</small></div>
+                <ul>
+                    <li>Everything in TV Select Plus</li>
+                    <li><strong>Premium movie channels:</strong> HBO, Showtime, STARZ, The Movie Channel, EPIX</li>
+                    <li><strong>Sports View</strong> add-on (extra sports channels)</li>
+                    <li><strong>Entertainment+</strong> tier (additional lifestyle &amp; entertainment nets)</li>
+                    <li>Largest included streaming app bundle (HBO Max Standard, etc.)</li>
+                </ul>
+                <div class="note">For households that want everything: movies, premium series, and the widest sports coverage.</div>
+            </div>
+        </div>
+
+        <!-- PRICE COMPARISON -->
+        <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:1rem; color:#0b1a2b;">Price comparison at a glance</h3>
+        <div class="channel-table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Price component</th>
+                        <th>TV Select Signature</th>
+                        <th>TV Select Plus</th>
+                        <th>TV Platinum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Promotional package price (first 12 months)</td>
+                        <td>$100.00/mo</td>
+                        <td>$110.00/mo</td>
+                        <td>$145.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Standard package price (after promo)</td>
+                        <td>$130.00/mo</td>
+                        <td>$140.00/mo</td>
+                        <td>$175.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Broadcast TV surcharge (estimated)</td>
+                        <td>$25.00/mo</td>
+                        <td>$25.00/mo</td>
+                        <td>$25.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Regional sports fee (estimated)</td>
+                        <td>$0.00/mo</td>
+                        <td>$8.00/mo</td>
+                        <td>$8.00/mo</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Estimated total during promo</td>
+                        <td>$125.00/mo</td>
+                        <td>$143.00/mo</td>
+                        <td>$178.00/mo</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Estimated total after promo</td>
+                        <td>$155.00/mo</td>
+                        <td>$173.00/mo</td>
+                        <td>$208.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Difference vs. previous tier (estimated total, promo)</td>
+                        <td>—</td>
+                        <td>+$18.00/mo</td>
+                        <td>+$35.00/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Difference vs. previous tier (estimated total, standard)</td>
+                        <td>—</td>
+                        <td>+$18.00/mo</td>
+                        <td>+$35.00/mo</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="price-note">
+            Prices shown are illustrative Rhode Island rates. Taxes, equipment, and other fees are extra. Surcharges and fees can change; confirm your exact total with Spectrum.
+        </p>
+
+        <!-- KEY DIFFERENCES -->
+        <div class="diff-section">
+            <h3>What actually changes between the three?</h3>
+            <div class="diff-grid">
+                <div class="diff-item">
+                    <h4>1. Channel count</h4>
+                    <p><strong>150+ → 160+ → 230+</strong>. The jump from Select Plus to Platinum is the biggest because it adds premium movie networks and the Sports View / Entertainment+ tiers.</p>
+                </div>
+                <div class="diff-item">
+                    <h4>2. Regional sports</h4>
+                    <p>Only <strong>Select Plus and Platinum</strong> include RSNs. Select Signature does <em>not</em> carry NESN, MSG, or similar local sports networks.</p>
+                </div>
+                <div class="diff-item">
+                    <h4>3. Premium movies</h4>
+                    <p>HBO, Showtime, STARZ, and TMC are <strong>only in Platinum</strong>. Select Signature and Select Plus do not include premium movie channels.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DETAILED CHANNEL COMPARISON TABLE -->
+        <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:1rem; color:#0b1a2b;">Channel-by-channel comparison</h3>
+        <div class="channel-table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Channel / Category</th>
+                        <th>TV Select Signature</th>
+                        <th>TV Select Plus</th>
+                        <th>TV Platinum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Local broadcast</strong> (ABC, CBS, NBC, FOX, PBS, CW)</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>A&amp;E, AMC, Animal Planet, BBC America</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>ESPN, ESPN2, FS1, ACC Network</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Regional Sports Networks</strong> (NESN, MSG, SportsNet NY, etc.)</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>NFL Network, MLB Network, NBA TV</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>HGTV, Food Network, TLC, Discovery</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Disney Channel, Nickelodeon, Cartoon Network</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>HBO / HBO Max</strong></td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Showtime</strong></td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>STARZ / STARZ Encore</strong></td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>The Movie Channel (TMC), EPIX</td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Sports View add-on (extra sports nets)</td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Entertainment+ tier</td>
+                        <td class="no">✗</td>
+                        <td class="no">✗</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Included streaming apps (Disney+, Hulu, ESPN Unlimited, Max, Peacock)</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓ (plus HBO Max Standard)</td>
+                    </tr>
+                    <tr>
+                        <td>Spectrum TV App (stream on devices)</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                        <td class="yes">✓</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PRICE SUMMARY & NOTES -->
+        <div class="footnote">
+            <p><strong>Pricing notes (Rhode Island):</strong></p>
+            <ul style="margin:0.5rem 0 1rem 1.2rem; color:#4a5f73;">
+                <li>Promotional prices shown are for the first 12 months; standard rates apply after that.</li>
+                <li>A <strong>Broadcast TV Surcharge</strong> (currently around $25/mo) and regional sports fee may apply on top of the package price. Confirm your exact total with Spectrum.</li>
+                <li>Prices and channel availability can vary slightly by zip code within Rhode Island. The tiers above reflect the standard statewide lineup.</li>
+                <li><strong>Traditional “Select / Silver / Gold” naming:</strong> Spectrum has largely moved to the “TV Select Signature / Plus / Platinum” branding. If you see “Silver” or “Gold” in older materials, Silver roughly corresponds to a mid-tier with premiums (HBO/Showtime), and Gold adds STARZ/TMC — which today maps most closely to <strong>TV Platinum</strong>.</li>
+            </ul>
+            <p>Sources: Spectrum official channel lineup pages, CableTV.com package breakdowns, and current Rhode Island pricing data.</p>
+        </div>
+    </div>
+</body>
+</html>
