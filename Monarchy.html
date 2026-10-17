@@ -736,6 +736,100 @@ body.v-compare .deck-row.compare-controls { display: flex !important; }
   transform: translateX(-50%);
 }
 
+
+/* ===== Command-the-map side panel (LLM-editable surface) ===== */
+.cmd-fab {
+  position: fixed; right: 20px; bottom: 24px; z-index: 90;
+  width: 56px; height: 56px; border-radius: 18px;
+  background: linear-gradient(145deg, #e0bb63, #c4922e);
+  color: #0c0b09; border: none; cursor: pointer;
+  box-shadow: 0 8px 28px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.12);
+  font: 700 22px/1 var(--sans); display: grid; place-items: center;
+  transition: transform .18s, box-shadow .18s;
+}
+.cmd-fab:hover { transform: scale(1.06); box-shadow: 0 12px 36px rgba(0,0,0,.55); }
+.cmd-fab[aria-expanded="true"] { background: #2a2824; color: #e0bb63; }
+
+.cmd-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100vw);
+  z-index: 95; background: #12110f; border-left: 1px solid var(--line);
+  box-shadow: -20px 0 60px rgba(0,0,0,.55);
+  transform: translateX(105%); transition: transform .28s cubic-bezier(.2,.8,.2,1);
+  display: flex; flex-direction: column; font-family: var(--sans);
+}
+.cmd-drawer.open { transform: translateX(0); }
+.cmd-drawer header {
+  padding: 18px 20px 14px; border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 12px;
+}
+.cmd-drawer header h2 {
+  margin: 0; font-size: 16px; letter-spacing: -.01em; flex: 1;
+}
+.cmd-drawer header .close-cmd {
+  background: transparent; border: none; color: var(--ink-2);
+  font-size: 22px; cursor: pointer; line-height: 1; padding: 4px 8px;
+}
+.cmd-drawer .body {
+  flex: 1; overflow-y: auto; padding: 16px 20px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.cmd-drawer label {
+  font-size: 11px; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600;
+}
+.cmd-drawer textarea {
+  width: 100%; min-height: 110px; resize: vertical;
+  background: rgba(255,255,255,.04); border: 1px solid var(--line);
+  border-radius: 12px; color: var(--ink); padding: 12px 14px;
+  font: 14px/1.5 var(--sans); outline: none;
+}
+.cmd-drawer textarea:focus { border-color: #e0bb63; box-shadow: 0 0 0 2px rgba(224,187,99,.2); }
+.cmd-examples {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.cmd-examples button {
+  background: rgba(255,255,255,.05); border: 1px solid var(--line);
+  border-radius: 999px; padding: 5px 11px; font-size: 12px;
+  color: var(--ink-2); cursor: pointer; transition: .12s;
+}
+.cmd-examples button:hover { background: rgba(255,255,255,.1); color: var(--ink); border-color: var(--line-2); }
+
+.cmd-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.cmd-actions button {
+  flex: 1; min-width: 120px; padding: 11px 14px; border-radius: 12px;
+  font: 600 13px/1 var(--sans); cursor: pointer; border: none; transition: .15s;
+}
+.cmd-actions .primary {
+  background: linear-gradient(145deg, #e0bb63, #c4922e); color: #0c0b09;
+}
+.cmd-actions .primary:hover { filter: brightness(1.08); }
+.cmd-actions .secondary {
+  background: rgba(255,255,255,.06); color: var(--ink); border: 1px solid var(--line);
+}
+.cmd-actions .secondary:hover { background: rgba(255,255,255,.1); }
+
+.cmd-status {
+  font-size: 13px; line-height: 1.45; padding: 10px 12px;
+  border-radius: 10px; background: rgba(255,255,255,.04);
+  border: 1px solid var(--line); color: var(--ink-2); min-height: 1.4em;
+}
+.cmd-status.ok { border-color: #3ca69b; color: #9de0d6; }
+.cmd-status.warn { border-color: #e0bb63; color: #f0d78a; }
+.cmd-status.err { border-color: #e08080; color: #f0a0a0; }
+
+.cmd-log {
+  margin-top: 4px; font-size: 12px; color: var(--ink-3);
+  max-height: 140px; overflow-y: auto;
+}
+.cmd-log div { padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+.cmd-log b { color: var(--ink-2); }
+
+.cmd-hint {
+  font-size: 12px; color: var(--ink-3); line-height: 1.5;
+  padding: 10px 12px; border-radius: 10px;
+  background: rgba(224,187,99,.08); border: 1px solid rgba(224,187,99,.2);
+}
+
 /* French context bar inside modal when FR entry open */
 .fr-ctx { margin: 8px 0 0; }
 
@@ -902,6 +996,45 @@ body.v-compare .deck-row.compare-controls { display: flex !important; }
   <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="mTitle"></div>
 </div>
 
+
+<!-- ===== Command-the-map (LLM surface) ===== -->
+<button class="cmd-fab" id="cmdFab" aria-label="Open command panel" aria-expanded="false" title="Command the map">✦</button>
+<aside class="cmd-drawer" id="cmdDrawer" aria-label="Command the map" aria-hidden="true">
+  <header>
+    <h2>✦ Command the map</h2>
+    <button class="close-cmd" id="cmdClose" aria-label="Close">×</button>
+  </header>
+  <div class="body">
+    <div class="cmd-hint">
+      Type what you want in plain English. Simple changes (colours, jump to year, show/hide houses) apply live. Bigger structural changes are packaged so you can paste them back to Grok for a full rebuild.
+    </div>
+
+    <label for="cmdInput">What should change?</label>
+    <textarea id="cmdInput" placeholder="e.g. Change the Capetian colour to deep crimson&#10;Jump to the year 1789&#10;Add a fictional ruler called King Arthur of Avalon, house briton, 480–520, colour #7d8f7a&#10;Hide the Hanoverians for a moment"></textarea>
+
+    <label>Quick examples</label>
+    <div class="cmd-examples" id="cmdExamples">
+      <button data-ex="Change the Valois colour to hot pink">Valois → pink</button>
+      <button data-ex="Jump to year 1066">Jump to 1066</button>
+      <button data-ex="Jump to year 1789">Jump to 1789</button>
+      <button data-ex="Show only the Plantagenets">Only Plantagenets</button>
+      <button data-ex="Reset all house colours and filters">Reset view</button>
+      <button data-ex="Open the Britain vs France tab">Open compare tab</button>
+      <button data-ex="Add a note that the map now includes France">Footer note</button>
+    </div>
+
+    <div class="cmd-actions">
+      <button class="primary" id="cmdApply">Apply live</button>
+      <button class="secondary" id="cmdCopy">Copy for Grok</button>
+    </div>
+
+    <div class="cmd-status" id="cmdStatus">Ready. Try an example or write your own instruction.</div>
+
+    <label>Recent commands</label>
+    <div class="cmd-log" id="cmdLog"></div>
+  </div>
+</aside>
+
 <script>
 /* ============================================================================
    DATASET — every ruler from Roman Britain to today.
@@ -913,7 +1046,7 @@ body.v-compare .deck-row.compare-controls { display: flex !important; }
 const SPAN_START = 43, SPAN_END = 2026;
 /* Bump this on every edit. It is printed in the page footer so a stale browser
    cache or an old copy on disk is obvious at a glance. */
-const BUILD = "2026-10-16-fr";
+const BUILD = "2026-10-16-cmd";
 
 const HOUSES = {
   roman:{name:"Roman Britain", years:"AD 43–410", gallery:"Roman Britain",
@@ -4704,6 +4837,251 @@ const FR_DATA = [
   // expose for debugging
   window.openFr = openFr;
   window.renderCompare = renderCompare;
+})();
+
+
+/* ===== Command-the-map controller ===== */
+(function(){
+  const fab = $("#cmdFab");
+  const drawer = $("#cmdDrawer");
+  const input = $("#cmdInput");
+  const status = $("#cmdStatus");
+  const logEl = $("#cmdLog");
+  let log = [];
+
+  function openDrawer(){
+    drawer.classList.add("open");
+    drawer.setAttribute("aria-hidden", "false");
+    fab.setAttribute("aria-expanded", "true");
+    setTimeout(() => input.focus(), 280);
+  }
+  function closeDrawer(){
+    drawer.classList.remove("open");
+    drawer.setAttribute("aria-hidden", "true");
+    fab.setAttribute("aria-expanded", "false");
+  }
+  fab.addEventListener("click", () => drawer.classList.contains("open") ? closeDrawer() : openDrawer());
+  $("#cmdClose").addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
+  });
+
+  // example chips
+  $$("#cmdExamples button").forEach(b => {
+    b.addEventListener("click", () => {
+      input.value = b.dataset.ex;
+      input.focus();
+    });
+  });
+
+  function setStatus(msg, kind){
+    status.textContent = msg;
+    status.className = "cmd-status" + (kind ? " " + kind : "");
+  }
+  function pushLog(cmd, result){
+    log.unshift({cmd, result, t: new Date().toLocaleTimeString()});
+    if (log.length > 12) log.pop();
+    logEl.innerHTML = log.map(x => `<div><b>${esc(x.t)}</b> — ${esc(x.cmd)} <i style="opacity:.7">→ ${esc(x.result)}</i></div>`).join("");
+  }
+
+  // ---- live interpreters (simple, deterministic) ----
+  function parseColour(str){
+    // try hex first
+    const hex = str.match(/#([0-9a-fA-F]{3,8})\b/);
+    if (hex) return "#" + hex[1];
+    const named = {
+      red:"#e2583c", crimson:"#b01030", pink:"#ff69b4", "hot pink":"#ff69b4",
+      blue:"#4f86e6", green:"#2ec294", gold:"#e0bb63", purple:"#9b85f5",
+      orange:"#e0803a", teal:"#3ca69b", white:"#d7d2c0", black:"#222",
+      "deep crimson":"#8b0000", "royal blue":"#4169e1", "forest green":"#228b22"
+    };
+    const lower = str.toLowerCase();
+    for (const [k,v] of Object.entries(named)) if (lower.includes(k)) return v;
+    return null;
+  }
+
+  function findHouseKey(text){
+    const lower = text.toLowerCase();
+    const all = {...HOUSES, ...FR_HOUSES};
+    // longest name first to avoid partial matches
+    const keys = Object.keys(all).sort((a,b) => all[b].name.length - all[a].name.length);
+    for (const k of keys){
+      if (lower.includes(k) || lower.includes(all[k].name.toLowerCase())) return k;
+    }
+    // common aliases
+    if (lower.includes("plantagenet") || lower.includes("angevin")) return "plantagenet";
+    if (lower.includes("tudor")) return "tudor";
+    if (lower.includes("stuart") || lower.includes("stewart")) return "stuart";
+    if (lower.includes("windsor")) return "windsor";
+    if (lower.includes("hanover")) return "hanover";
+    if (lower.includes("capet")) return "capetian";
+    if (lower.includes("valois")) return "valois";
+    if (lower.includes("bourbon")) return "bourbon";
+    if (lower.includes("bonaparte") || lower.includes("napoleon")) return "bonaparte";
+    if (lower.includes("meroving")) return "merovingian";
+    if (lower.includes("caroling")) return "carolingian";
+    if (lower.includes("orleans") || lower.includes("orléans")) return "orleans";
+    if (lower.includes("republic")) return "republic";
+    if (lower.includes("gaul") || lower.includes("gallic")) return "gaul";
+    return null;
+  }
+
+  function applyLive(raw){
+    const text = raw.trim();
+    if (!text) { setStatus("Type something first.", "warn"); return false; }
+
+    const lower = text.toLowerCase();
+
+    // 1. Jump to year
+    let m = lower.match(/(?:jump|go|show|move|set).*?(?:to|year|in)\s+(?:year\s+)?(-?\d{1,4})\b/) ||
+            lower.match(/\byear\s+(-?\d{1,4})\b/) ||
+            lower.match(/\b(52\s*bc|1066|1215|1346|1415|1485|1534|1588|1649|1688|1789|1815|1837|1901|1914|1939|1945|1952|2022|2023)\b/);
+    if (m){
+      let y = m[1];
+      if (typeof y === "string" && y.includes("bc")) y = -parseInt(y,10);
+      else y = parseInt(y,10);
+      if (isNaN(y)) y = 1066;
+      // if compare tab is open, drive its scrubber; else drive the main one
+      if (document.body.classList.contains("v-compare") && typeof setCmpYear === "function"){
+        setCmpYear(y);
+      } else {
+        const yearInp = $("#year");
+        if (yearInp){ yearInp.value = Math.max(SPAN_START, Math.min(SPAN_END, y)); yearInp.dispatchEvent(new Event("input")); }
+        if (typeof setView === "function") setView("timeline");
+      }
+      setStatus(`Jumped to ${y < 0 ? Math.abs(y)+" BC" : y}.`, "ok");
+      pushLog(text, "jumped to year");
+      return true;
+    }
+
+    // 2. Open a specific tab
+    if (lower.includes("compare") || lower.includes("britain vs") || lower.includes("france tab")){
+      setView("compare");
+      setStatus("Opened Britain vs France.", "ok");
+      pushLog(text, "opened compare tab");
+      return true;
+    }
+    if (lower.includes("reign map") || lower.includes("timeline")){
+      setView("timeline");
+      setStatus("Opened reign map.", "ok");
+      pushLog(text, "opened timeline");
+      return true;
+    }
+    if (lower.includes("gallery")){
+      setView("gallery");
+      setStatus("Opened gallery.", "ok");
+      pushLog(text, "opened gallery");
+      return true;
+    }
+    if (lower.includes("progression") || lower.includes("how we got")){
+      setView("progression");
+      setStatus("Opened progression.", "ok");
+      pushLog(text, "opened progression");
+      return true;
+    }
+
+    // 3. Change house colour
+    if (lower.includes("colour") || lower.includes("color") || lower.includes("paint") || lower.includes("make")){
+      const house = findHouseKey(text);
+      const col = parseColour(text);
+      if (house && col){
+        // inject / update a live style rule
+        let style = document.getElementById("live-house-colours");
+        if (!style){
+          style = document.createElement("style");
+          style.id = "live-house-colours";
+          document.head.appendChild(style);
+        }
+        // soft colour derived
+        const soft = col.length === 7
+          ? `rgba(${parseInt(col.slice(1,3),16)},${parseInt(col.slice(3,5),16)},${parseInt(col.slice(5,7),16)},.16)`
+          : "rgba(200,200,200,.16)";
+        style.textContent += `\n[data-house="${house}"]{--c:${col};--c2:${col};--c-soft:${soft} !important;}`;
+        // force a re-render if possible
+        if (typeof render === "function") render();
+        if (typeof renderCompare === "function" && document.body.classList.contains("v-compare")) renderCompare();
+        setStatus(`Set ${house} colour to ${col}. Live — refresh clears it.`, "ok");
+        pushLog(text, `colour ${house} → ${col}`);
+        return true;
+      }
+    }
+
+    // 4. Filter to one house / show only
+    if (lower.includes("only") || lower.includes("show only") || lower.includes("filter")){
+      const house = findHouseKey(text);
+      if (house && HOUSES[house]){
+        state.house = house;
+        state.kingdom = "all";
+        $$(".chip").forEach(c => {
+          const on = c.dataset.house === house;
+          c.classList.toggle("on", on); c.setAttribute("aria-pressed", on);
+        });
+        if (typeof setView === "function") setView("timeline");
+        if (typeof render === "function") render();
+        setStatus(`Showing only ${HOUSES[house].name}.`, "ok");
+        pushLog(text, "filtered to " + house);
+        return true;
+      }
+    }
+
+    // 5. Reset
+    if (lower.includes("reset") || lower.includes("clear filter") || lower.includes("show all")){
+      state.house = "all";
+      state.kingdom = "all";
+      $$(".chip").forEach(c => {
+        const on = c.dataset.house === "all";
+        c.classList.toggle("on", on); c.setAttribute("aria-pressed", on);
+      });
+      const live = document.getElementById("live-house-colours");
+      if (live) live.remove();
+      if (typeof setView === "function") setView("timeline");
+      if (typeof render === "function") render();
+      setStatus("Reset filters and live colours.", "ok");
+      pushLog(text, "reset");
+      return true;
+    }
+
+    // 6. Footer / build note (tiny live edit)
+    if (lower.includes("footer") || lower.includes("note that") || lower.includes("add a note")){
+      const foot = document.querySelector("footer p");
+      if (foot){
+        foot.textContent = text.replace(/^.*?(?:note that|say that|footer[:\s]*)/i, "").trim() || foot.textContent;
+        setStatus("Footer text updated live.", "ok");
+        pushLog(text, "footer updated");
+        return true;
+      }
+    }
+
+    // Nothing matched → needs Grok
+    setStatus("This change is too rich for the live parser. Click “Copy for Grok” and paste the request into the chat — I’ll rebuild the file for you.", "warn");
+    pushLog(text, "needs Grok");
+    return false;
+  }
+
+  $("#cmdApply").addEventListener("click", () => applyLive(input.value));
+
+  $("#cmdCopy").addEventListener("click", () => {
+    const text = input.value.trim();
+    if (!text){ setStatus("Type an instruction first.", "warn"); return; }
+    const payload = `Please edit the Crown page with this instruction:\n\n"${text}"\n\nApply it to the current crown_with_france.html and give me a fresh ZIP.`;
+    navigator.clipboard.writeText(payload).then(() => {
+      setStatus("Copied! Paste that into the chat with Grok and I’ll apply the change properly.", "ok");
+      pushLog(text, "copied for Grok");
+    }).catch(() => {
+      // fallback
+      input.value = payload;
+      input.select();
+      setStatus("Clipboard blocked — the request is now in the box, ready to copy manually.", "warn");
+    });
+  });
+
+  // keyboard shortcut: Ctrl/Cmd + K opens the panel
+  document.addEventListener("keydown", e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k"){
+      e.preventDefault();
+      drawer.classList.contains("open") ? closeDrawer() : openDrawer();
+    }
+  });
 })();
 
 </script>
