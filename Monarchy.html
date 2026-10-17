@@ -517,6 +517,228 @@ kbd{
   background:rgba(255,255,255,.08);border:1px solid var(--line-2);border-bottom-width:2px;
   border-radius:5px;padding:1px 6px;font-size:11px;font-family:var(--sans);color:var(--ink-2)
 }
+
+
+/* French modal extras */
+.meanwhile-strip {
+  margin: 16px 0 8px; padding: 12px 14px; border-radius: 12px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--line);
+}
+.meanwhile-strip b { display: block; font-size: 11px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+.mw-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.mw-list .meanwhile {
+  background: rgba(255,255,255,.06); border: 1px solid var(--line);
+  border-radius: 8px; padding: 5px 10px; font-size: 12px; color: var(--ink);
+  cursor: pointer;
+}
+.mw-list .meanwhile:hover { border-color: var(--line-2); }
+.mw-list .meanwhile i { opacity: .65; font-style: normal; margin-left: 4px; }
+.sheet .nav { display: flex; gap: 8px; margin-top: 14px; }
+.sheet .nav button {
+  flex: 1; padding: 8px; border-radius: 10px; border: 1px solid var(--line);
+  background: rgba(255,255,255,.05); color: var(--ink); cursor: pointer; font: 13px var(--sans);
+}
+.sheet .nav button:hover { background: rgba(255,255,255,.1); }
+.sheet .role { font-size: 12px; color: var(--ink-2); margin: 2px 0 4px; }
+.sheet .lost { font-size: 11px; color: #e08080; margin-left: 6px; }
+.cmp-panel { min-height: 200px; }
+
+/* ---- French house palettes (Britain vs France tab) ---- */
+[data-house="gaul"]        {--c:#b8a24a;--c2:#6a5c22;--c-soft:rgba(184,162,74,.16);}
+[data-house="merovingian"] {--c:#3ca69b;--c2:#1f5c56;--c-soft:rgba(60,166,155,.16);}
+[data-house="carolingian"] {--c:#8a7de0;--c2:#4a3f8a;--c-soft:rgba(138,125,224,.16);}
+[data-house="capetian"]    {--c:#4f86e6;--c2:#2a4a8a;--c-soft:rgba(79,134,230,.16);}
+[data-house="valois"]      {--c:#d46aa0;--c2:#7a3a58;--c-soft:rgba(212,106,160,.16);}
+[data-house="bourbon"]     {--c:#d7d2c0;--c2:#7a7560;--c-soft:rgba(215,210,192,.18);}
+[data-house="bonaparte"]   {--c:#e0803a;--c2:#8a4a1a;--c-soft:rgba(224,128,58,.16);}
+[data-house="orleans"]     {--c:#8fbf5a;--c2:#4a6a2a;--c-soft:rgba(143,191,90,.16);}
+[data-house="republic"]    {--c:#4ec3de;--c2:#2a6a7a;--c-soft:rgba(78,195,222,.16);}
+
+/* hide British-only deck controls when in compare view */
+body.v-compare .deck-row:not(.compare-controls),
+body.v-compare .scrub,
+body.v-compare #chips,
+body.v-compare .search,
+body.v-compare #sort,
+body.v-compare #kingdom { display: none !important; }
+body.v-compare .deck-row.compare-controls { display: flex !important; }
+
+/* ---- Compare view layout ---- */
+#view-compare { display: none; }
+#view-compare.on { display: block; }
+
+.compare-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 24px;
+  margin: 0 0 18px; padding: 0 2px;
+}
+.compare-head h2 { margin: 0; font-size: 1.35rem; letter-spacing: -.02em; }
+.compare-head p { margin: 0; color: var(--ink-2); font-size: 14px; max-width: 52ch; }
+
+.cmp-sub { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 20px; }
+.cmp-sub button {
+  background: rgba(255,255,255,.04); border: 1px solid var(--line);
+  color: var(--ink-2); border-radius: 999px; padding: 6px 14px;
+  font: 13px/1 var(--sans); cursor: pointer; transition: .15s;
+}
+.cmp-sub button.on, .cmp-sub button:hover {
+  background: rgba(255,255,255,.1); color: var(--ink); border-color: var(--line-2);
+}
+
+/* twin scrubber */
+.twin-scrub {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin: 0 0 22px; padding: 14px 16px; border-radius: 16px;
+  background: rgba(255,255,255,.03); border: 1px solid var(--line);
+}
+@media (max-width:720px){ .twin-scrub { grid-template-columns: 1fr; } }
+.twin-scrub .side { min-width: 0; }
+.twin-scrub .side h3 {
+  margin: 0 0 8px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600;
+}
+.twin-scrub .side .rulers { display: flex; flex-direction: column; gap: 6px; min-height: 52px; }
+.twin-scrub .ruler-chip {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+  border-radius: 12px; background: var(--c-soft); border: 1px solid transparent;
+  cursor: pointer; text-align: left; transition: .12s;
+}
+.twin-scrub .ruler-chip:hover { border-color: var(--c); }
+.twin-scrub .ruler-chip .mono {
+  width: 36px; height: 36px; border-radius: 10px; background: var(--c);
+  color: #0c0b09; display: grid; place-items: center; font: 700 11px/1 var(--sans);
+  flex-shrink: 0;
+}
+.twin-scrub .ruler-chip .meta { min-width: 0; }
+.twin-scrub .ruler-chip .meta b { display: block; font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.twin-scrub .ruler-chip .meta span { font-size: 11px; color: var(--ink-2); }
+.twin-scrub .empty { color: var(--ink-3); font-size: 13px; padding: 10px 4px; font-style: italic; }
+
+.cmp-year-row {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 18px; flex-wrap: wrap;
+}
+.cmp-year-row input[type=range] { flex: 1; min-width: 160px; accent-color: #d9b45b; }
+.cmp-year-row .yr { font: 600 15px/1 var(--sans); color: var(--ink); min-width: 4.5ch; text-align: center; }
+
+/* twin era rails */
+.twin-rails {
+  position: relative; margin: 0 0 28px; padding: 0 0 8px;
+}
+.twin-rails .rail {
+  position: relative; height: 28px; border-radius: 8px; overflow: hidden;
+  background: rgba(255,255,255,.03); margin-bottom: 6px;
+}
+.twin-rails .rail-label {
+  position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+  font: 600 10px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-3); z-index: 2; pointer-events: none;
+}
+.twin-rails .band {
+  position: absolute; top: 0; bottom: 0; opacity: .55; cursor: pointer;
+  transition: opacity .12s;
+}
+.twin-rails .band:hover, .twin-rails .band.on { opacity: .95; }
+.twin-rails .band span {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  font: 600 10px/1 var(--sans); color: #0c0b09; white-space: nowrap;
+  pointer-events: none; text-shadow: 0 0 4px rgba(0,0,0,.3);
+}
+.twin-rails .marker {
+  position: absolute; top: -4px; bottom: -4px; width: 2px; background: #fff;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.4); z-index: 3; pointer-events: none;
+  transform: translateX(-1px);
+}
+
+/* period panels */
+.period-grid { display: flex; flex-direction: column; gap: 20px; }
+.period {
+  border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+  background: rgba(255,255,255,.02);
+}
+.period-h {
+  padding: 12px 16px; background: rgba(255,255,255,.04);
+  border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap;
+  align-items: baseline; gap: 8px 16px;
+}
+.period-h h3 { margin: 0; font-size: 15px; }
+.period-h span { font-size: 12px; color: var(--ink-3); }
+.period-cols {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+}
+@media (max-width:720px){ .period-cols { grid-template-columns: 1fr; } }
+.period-col {
+  padding: 12px 14px; border-right: 1px solid var(--line);
+}
+.period-col:last-child { border-right: none; }
+.period-col h4 {
+  margin: 0 0 8px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.period-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.period-col li {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 8px;
+  cursor: pointer; font-size: 13px; transition: .1s;
+}
+.period-col li:hover { background: rgba(255,255,255,.06); }
+.period-col li .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex-shrink: 0;
+}
+.period-col li .nm { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.period-col li .rg { font-size: 11px; color: var(--ink-3); flex-shrink: 0; }
+
+/* parallel moments */
+.moments { display: flex; flex-direction: column; gap: 14px; }
+.moment {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+  background: rgba(255,255,255,.02);
+}
+@media (max-width:720px){ .moment { grid-template-columns: 1fr; } }
+.moment .when {
+  grid-column: 1 / -1; font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 2px;
+}
+.moment .card {
+  padding: 10px 12px; border-radius: 10px; background: var(--c-soft);
+  border-left: 3px solid var(--c); cursor: pointer; transition: .12s;
+}
+.moment .card:hover { filter: brightness(1.08); }
+.moment .card b { display: block; font-size: 14px; margin-bottom: 2px; }
+.moment .card span { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+
+/* twin reign map */
+.twin-map { margin-top: 8px; }
+.twin-map .lane-group { margin-bottom: 18px; }
+.twin-map .lane-group h4 {
+  margin: 0 0 8px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.twin-map .lane {
+  position: relative; height: 26px; margin-bottom: 4px; border-radius: 6px;
+  background: rgba(255,255,255,.03);
+}
+.twin-map .bar {
+  position: absolute; top: 3px; bottom: 3px; border-radius: 5px;
+  background: var(--c); opacity: .85; cursor: pointer; min-width: 2px;
+  transition: opacity .1s;
+}
+.twin-map .bar:hover { opacity: 1; filter: brightness(1.1); }
+.twin-map .bar span {
+  position: absolute; left: 6px; top: 50%; transform: translateY(-50%);
+  font: 600 10px/1 var(--sans); color: #0c0b09; white-space: nowrap;
+  pointer-events: none;
+}
+.twin-map .axis {
+  position: relative; height: 18px; margin: 4px 0 12px;
+  border-top: 1px solid var(--line);
+}
+.twin-map .axis .tk {
+  position: absolute; top: 4px; font-size: 10px; color: var(--ink-3);
+  transform: translateX(-50%);
+}
+
+/* French context bar inside modal when FR entry open */
+.fr-ctx { margin: 8px 0 0; }
+
 </style>
 </head>
 <body>
@@ -567,6 +789,7 @@ kbd{
         <button data-view="timeline" class="on">Reign map</button>
         <button data-view="gallery">Gallery</button>
         <button data-view="progression">How we got here</button>
+        <button data-view="compare">Britain vs France</button>
       </div>
       <select id="sort" aria-label="Sort gallery">
         <option value="chrono">Sort: chronology</option>
@@ -610,6 +833,52 @@ kbd{
       <div class="prog" id="prog"></div>
     </section>
 
+
+    <section class="view" id="view-compare" aria-label="Britain vs France">
+      <div class="compare-head">
+        <h2>Britain vs France</h2>
+        <p>Side-by-side from Vercingetorix (52 BC) to the present. Same level of detail as the British map — Gauls, Franks, Capetians, Valois, Bourbons, Bonapartes, and the Republics.</p>
+      </div>
+
+      <div class="cmp-sub" id="cmpSub" role="group" aria-label="Compare sub-view">
+        <button data-cmp="scrub" class="on">Year by year</button>
+        <button data-cmp="periods">Period by period</button>
+        <button data-cmp="moments">Parallel moments</button>
+        <button data-cmp="map">Twin reign map</button>
+      </div>
+
+      <div id="cmp-scrub" class="cmp-panel on">
+        <div class="cmp-year-row">
+          <span class="scrub-lab">Who ruled in</span>
+          <input type="range" id="cmpYear" min="-60" max="2026" value="1066" step="1" aria-label="Year">
+          <span class="yr" id="cmpYearLab">1066</span>
+        </div>
+        <div class="twin-rails" id="twinRails"></div>
+        <div class="twin-scrub" id="twinScrub">
+          <div class="side" data-side="gb">
+            <h3>Britain</h3>
+            <div class="rulers" id="gbRulers"></div>
+          </div>
+          <div class="side" data-side="fr">
+            <h3>France</h3>
+            <div class="rulers" id="frRulers"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="cmp-periods" class="cmp-panel" style="display:none">
+        <div class="period-grid" id="periodGrid"></div>
+      </div>
+
+      <div id="cmp-moments" class="cmp-panel" style="display:none">
+        <div class="moments" id="momentsHost"></div>
+      </div>
+
+      <div id="cmp-map" class="cmp-panel" style="display:none">
+        <div class="twin-map" id="twinMap"></div>
+      </div>
+    </section>
+
     <div class="note">
       <b>How to read this.</b> The map now runs from the <b>Roman invasion of AD 43</b>, so it begins with something that was not a monarchy at all: Britain was a province, governed in an emperor's name, and the Roman entries here are emperors, governors and one rebel queen rather than kings. Kingdom-making starts later — the Anglo-Saxons called no single man king of all England until <b>Æthelstan in 927</b>, and before that the land was divided between Kent, Sussex, Essex, East Anglia, Northumbria, Mercia and Wessex, all of whom are on the map with their own kings. The early eras and the Hanoverians are drawn in <b>muted colours</b>, so the four dynasties the map was built for — Plantagenet, Tudor, Stuart and Windsor — stay the vivid ones.<br><br>
       <b>What this map does not show.</b> It is the line of <b>England</b> and of the crown that inherited it, so the kings of Wales, Scotland and Ireland are outside it — apart from the Welsh and Scottish rulers who appear when English kings fought them. Some entries here are <b>not monarchs at all</b>: Roman officials, a rebel queen, semi-legendary founders, Danish client kings, and two women who ruled Mercia without a crown. Each says so in its own entry. <b>Arthur</b> is included because the question is always asked, and his entry states plainly that no contemporary source names him.<br><br>
@@ -620,7 +889,7 @@ kbd{
 
   <footer>
     <div class="rule"></div>
-    <p>An interactive lineage of rule in Britain · AD 43 – present</p>
+    <p>An interactive lineage of rule in Britain · AD 43 – present · plus Britain vs France from 52 BC</p>
     <p><kbd>←</kbd> <kbd>→</kbd> move between monarchs in an open portrait · <kbd>Esc</kbd> to close · <kbd>/</kbd> to search</p>
     <p class="build" id="build"></p>
   </footer>
@@ -644,7 +913,7 @@ kbd{
 const SPAN_START = 43, SPAN_END = 2026;
 /* Bump this on every edit. It is printed in the page footer so a stale browser
    cache or an old copy on disk is obvious at a glance. */
-const BUILD = "2026-10-09d";
+const BUILD = "2026-10-16-fr";
 
 const HOUSES = {
   roman:{name:"Roman Britain", years:"AD 43–410", gallery:"Roman Britain",
@@ -3057,6 +3326,1386 @@ document.addEventListener("keydown", e => {
 
 renderProgression();
 render();
+</script>
+<script>
+/* ============================================================================
+   FRANCE — every ruler of Gaul and France from Vercingetorix (52 BC) to today.
+   Same shape as DATA above: events are [year, text] pairs; interregnum:true
+   marks entries who were never kings (Roman governors, mayors of the palace,
+   revolutionary leaders, presidents of the Republic) and carries a role.
+   Years before AD 1 are negative (-52 = 52 BC).
+   ========================================================================== */
+const FR_START = -60, FR_END = 2026;
+
+const FR_HOUSES = {
+  gaul:{name:"Gaul & Roman Gaul", years:"58 BC–AD 486", gallery:"Gaul",
+    blurb:"Tribes, then a Roman province: Gaul was never a kingdom until the Franks made it one. Its last free war-leader lost at Alesia; its last Roman ruler lost at Soissons."},
+  merovingian:{name:"Merovingian", years:"c.458–751", gallery:"The Merovingians",
+    blurb:"The long-haired kings of the Franks: Clovis's conquests, a kingdom split among his sons every generation, and a line of figurehead kings run by mayors of the palace."},
+  carolingian:{name:"Carolingian", years:"751–987", gallery:"The Carolingians",
+    blurb:"The mayors who took the crown. Charlemagne's empire, its division at Verdun, the Viking raids, and a western kingdom whose power shrank until the crown passed to Paris."},
+  capetian:{name:"Capetian", years:"987–1328", gallery:"The Direct Capetians",
+    blurb:"Fourteen kings in direct line, father to son, with no break in 341 years: from a weak count of Paris to the monarch who humbled the Pope."},
+  valois:{name:"Valois", years:"1328–1589", gallery:"The House of Valois",
+    blurb:"A cousin branch, challenged at once by Edward III of England. The Hundred Years' War, Joan of Arc, the Italian Wars, the Renaissance and the Wars of Religion."},
+  bourbon:{name:"Bourbon", years:"1589–1792 · 1814–1830", gallery:"The House of Bourbon",
+    blurb:"Henry of Navarre's line: the Sun King and Versailles, absolute monarchy, a Revolution that ended it, and a restoration that lasted fifteen years."},
+  bonaparte:{name:"Bonaparte", years:"1799–1815 · 1848–1870", gallery:"The Bonapartes",
+    blurb:"Two emperors from one family: an artillery officer who conquered Europe, and his nephew who built modern Paris and lost it all at Sedan."},
+  orleans:{name:"Orléans", years:"1830–1848", gallery:"The July Monarchy",
+    blurb:"The Citizen King: a cadet Bourbon crowned by a revolution, who called himself King of the French rather than King of France."},
+  republic:{name:"The Republics", years:"1792–1804 · 1848–1852 · 1870–present", gallery:"The Republics",
+    blurb:"Five republics, two empires and a collaborationist state: the Terror, the Third Republic's presidents, Vichy, de Gaulle and the directly elected president of today."}
+};
+const FR_ORDER = ["gaul","merovingian","carolingian","capetian","valois","bourbon","bonaparte","orleans","republic"];
+
+/* the French eras drawn across the full span, in time order. A house can
+   appear twice because France changed regime back and forth in 1789–1870. */
+const FR_ERAS = [["gaul",-60,481],["merovingian",481,751],["carolingian",751,987],["capetian",987,1328],
+  ["valois",1328,1589],["bourbon",1589,1792],["republic",1792,1799],["bonaparte",1799,1814],
+  ["bourbon",1814,1830],["orleans",1830,1848],["republic",1848,1852],["bonaparte",1852,1870],
+  ["republic",1870,2026]];
+
+const FR_DATA = [
+/* ------------------------------ GAUL ------------------------------ */
+{id:"vercingetorix",name:"Vercingetorix",epithet:"the war-chief who united Gaul",house:"gaul",kingdom:"Gaul",interregnum:true,role:"War-chief of the Gauls",start:-52,end:-52,reign:"52 BC",
+ born:"c.82 BC, Arvernian lands",died:"46 BC, Rome",age:"c.30",spouse:"—",issue:"—",
+ events:[[-52,"Raises the Arverni and persuades most of the Gallic tribes to follow a single commander — the only time they act as one."],
+         [-52,"Burns his own towns to starve the legions and beats Caesar at Gergovia."],
+         [-52,"Trapped in the hill-fort of Alesia, he holds out against a double ring of Roman siegeworks until the relief army fails, then surrenders in person."],
+         [-46,"Paraded in Caesar's triumph after six years in prison, then strangled."]],
+ fact:"Almost everything we know about him comes from Caesar's own account. The heroic statue at Alise-Sainte-Reine was put up in 1865 by Napoleon III.",
+ peek:"The chieftain who united Gaul once, and lost it at Alesia."},
+
+{id:"caesar",name:"Julius Caesar",epithet:"the conqueror of Gaul",house:"gaul",kingdom:"Roman Gaul",interregnum:true,role:"Proconsul",start:-58,end:-50,reign:"58–50 BC",
+ born:"100 BC, Rome",died:"44 BC, Rome",age:"42",spouse:"Cornelia; Pompeia; Calpurnia",issue:"1 daughter",
+ events:[[-58,"Takes command in Gaul and turns a border dispute with the Helvetii into a war of conquest."],
+         [-55,"Bridges the Rhine, then crosses to Britain — the first Roman to do so, and again in 54 BC."],
+         [-52,"Defeats Vercingetorix at Alesia, the end of serious Gallic resistance."],
+         [-50,"Leaves Gaul with a veteran army and a fortune; a year later he crosses the Rubicon."]],
+ fact:"His Commentaries on the Gallic War are the only continuous account of Gaul before the Romans — and they were written as political advertising.",
+ peek:"Conquered Gaul in eight years and used its army to take Rome."},
+
+{id:"augustus",name:"Augustus",epithet:"the organiser of the Gauls",house:"gaul",kingdom:"Roman Gaul",interregnum:true,role:"Emperor",start:-27,end:14,reign:"27 BC–AD 14",
+ born:"63 BC, Rome",died:"AD 14, Nola",age:"35",spouse:"Scribonia; Livia Drusilla",issue:"1 daughter",
+ events:[[-27,"Reorganises conquered Gaul into provinces after a census, with Lugdunum (Lyon) as its capital."],
+         [-12,"Dedicates the Altar of Rome and Augustus at Lugdunum, where delegates of the sixty tribes meet each year."],
+         [14,"Dies at Nola; Roman rule in Gaul is by now a settled thing, with roads, cities and Latin."]],
+ fact:"Lyon, not Paris, was the capital of Roman Gaul — and the emperor Claudius, who later invaded Britain, was born there.",
+ peek:"Turned a conquered country into three provinces and a capital at Lyon."},
+
+{id:"postumus",name:"Postumus",epithet:"emperor of the Gauls",house:"gaul",kingdom:"Gallic Empire",interregnum:true,role:"Usurping emperor",start:260,end:269,reign:"AD 260–269",
+ born:"—",died:"AD 269, Mogontiacum (Mainz)",age:"—",spouse:"—",issue:"—",
+ events:[[260,"Governor on the Rhine, he is proclaimed emperor after the emperor Gallienus's son is killed at Cologne, and founds what historians call the Gallic Empire."],
+         [261,"Holds Gaul, Britain and Spain while the rest of the empire is collapsing under Persians and Goths."],
+         [269,"Killed by his own soldiers after refusing to let them sack Mainz, which had risen against him."]],
+ fact:"For about a decade Gaul and Britain had their own emperor, their own coinage and their own court — and Rome could do nothing about it.",
+ peek:"The general who made Gaul and Britain a separate empire."},
+
+{id:"tetricus",name:"Tetricus I",epithet:"the last emperor of the Gauls",house:"gaul",kingdom:"Gallic Empire",interregnum:true,role:"Usurping emperor",start:271,end:274,reign:"AD 271–274",
+ born:"—",died:"after AD 274, Italy",age:"—",spouse:"—",issue:"—",
+ events:[[271,"Becomes the last emperor of the Gallic Empire after the murder of Victorinus."],
+         [274,"Surrenders to Aurelian at Châlons, supposedly after secretly asking to be defeated because his own troops had turned mutinous."],
+         [274,"Marched through Rome in Aurelian's triumph, then pardoned and given a governorship in southern Italy."]],
+ fact:"He is the only usurping emperor in this story who ended up with a pardon, a pension and a governorship.",
+ peek:"Gave Gaul back to Rome — and kept his life."},
+
+{id:"julian",name:"Julian",epithet:"the Apostate",house:"gaul",kingdom:"Roman Gaul",interregnum:true,role:"Caesar, then emperor",start:355,end:363,reign:"AD 355–363",
+ born:"331, Constantinople",died:"26 June 363, Persia",age:"24",spouse:"Helena",issue:"None",
+ events:[[355,"Sent to Gaul as Caesar at 24, a bookish prince with no military training, to deal with Germanic invaders."],
+         [357,"Defeats a much larger Alamannic army at Strasbourg and drives the invaders back across the Rhine."],
+         [360,"Winters at Lutetia (Paris), where his army proclaims him Augustus against the emperor Constantius II."],
+         [363,"As sole emperor he tries to restore the old gods; he is killed in Persia within two years."]],
+ fact:"He called Paris his 'dear Lutetia' and wrote affectionately of its mild winters, its river and its vines.",
+ peek:"The emperor Paris proclaimed — and the last pagan on the Roman throne."},
+
+{id:"aetius",name:"Aetius",epithet:"the last of the Romans",house:"gaul",kingdom:"Roman Gaul",interregnum:true,role:"Roman general",start:425,end:454,reign:"AD 425–454",
+ born:"c.391, Durostorum",died:"AD 454, Ravenna",age:"c.34",spouse:"—",issue:"2",
+ events:[[425,"Rises to be the real power behind the boy-emperor Valentinian III, using Hun mercenaries he knew from years as a hostage among them."],
+         [436,"Crushes the Burgundian kingdom on the Rhine, an event later told as the Nibelungenlied."],
+         [451,"Leads Romans, Visigoths and Franks to stop Attila at the Catalaunian Plains, near Châlons."],
+         [454,"Stabbed to death by Valentinian III himself in the palace at Ravenna."]],
+ fact:"A courtier is said to have told Valentinian that he had cut off his right hand with his left. The emperor was murdered within a year.",
+ peek:"Held back Attila — and was killed by the emperor he served."},
+
+{id:"syagrius",name:"Syagrius",epithet:"the last Roman ruler in Gaul",house:"gaul",kingdom:"Soissons",interregnum:true,role:"King of the Romans",start:464,end:486,reign:"c.464–486",
+ born:"c.430",died:"AD 487, Toulouse",age:"—",spouse:"—",issue:"—",
+ events:[[464,"Inherits from his father Aegidius a Roman enclave around Soissons, cut off from Rome itself."],
+         [486,"Beaten by Clovis at Soissons and flees to the Visigoths."],
+         [487,"Handed over by the Visigothic king and put to death on Clovis's orders."]],
+ fact:"With him the last Roman-ruled territory in Gaul vanished — ten years after the western empire itself ended in 476.",
+ peek:"Rome's last ruler in Gaul, and Clovis's first victim."},
+
+/* ---------------------------- MEROVINGIAN ---------------------------- */
+{id:"childeric1",name:"Childeric I",epithet:"the king in the grave",house:"merovingian",kingdom:"Tournai",start:458,end:481,reign:"c.458–481",
+ born:"c.437",died:"AD 481, Tournai",age:"—",spouse:"Basina of Thuringia",issue:"Clovis",
+ events:[[458,"Emerges as king of the Salian Franks around Tournai, serving as an ally of Rome."],
+         [463,"Campaigns beside the Roman commander Aegidius on the Loire."],
+         [481,"Dies and is buried at Tournai with a gold bull's head, a crossbow brooch and a seal ring reading 'Childerici regis'."]],
+ fact:"His tomb was found by accident in 1653. The gold bees in it inspired Napoleon to put bees on his own coronation robes in place of the fleurs-de-lis.",
+ peek:"The Frankish king whose treasure-filled grave proves the dynasty was real."},
+
+{id:"clovis1",name:"Clovis I",epithet:"founder of the Frankish kingdom",house:"merovingian",kingdom:"Franks",start:481,end:511,reign:"481–511",
+ born:"c.466, Tournai",died:"27 November 511, Paris",age:"15",spouse:"Clotilde",issue:"4 sons",
+ events:[[486,"Defeats Syagrius at Soissons and takes the last Roman territory in northern Gaul."],
+         [496,"Wins at Tolbiac against the Alamanni; tradition says he vowed to take Christ's religion if he won. His baptism is dated between 496 and 508."],
+         [507,"Beats the Visigoths at Vouillé and takes most of Aquitaine; the eastern emperor sends him consular insignia."],
+         [508,"Makes Paris his capital. The Salic Law is first written down in his reign."]],
+ fact:"He was baptised at Reims by Bishop Remigius, with several thousand of his warriors — the reason Reims later became the coronation city of French kings.",
+ peek:"United the Franks, took Gaul from Rome and the Goths, and was baptised."},
+
+{id:"theuderic1",name:"Theuderic I",epithet:"king at Reims and Metz",house:"merovingian",kingdom:"Austrasia",start:511,end:533,reign:"511–533",
+ born:"c.485",died:"AD 533",age:"c.26",spouse:"—",issue:"Theudebert I",
+ events:[[511,"Takes the eastern share of Clovis's kingdom, ruled from Reims and Metz — the core of what becomes Austrasia."],
+         [531,"Conquers Thuringia with his half-brother Chlothar."],
+         [533,"Dies, leaving his son Theudebert, the most ambitious Frank of the century, to rule."]],
+ fact:"He was Clovis's eldest son but the child of a concubine, which is why his younger half-brothers never quite trusted him.",
+ peek:"Clovis's eldest son, and the first king of Austrasia."},
+
+{id:"childebert1",name:"Childebert I",epithet:"king of Paris",house:"merovingian",kingdom:"Paris",start:511,end:558,reign:"511–558",
+ born:"c.496",died:"AD 558, Paris",age:"c.15",spouse:"Ultrogotha",issue:"2 daughters",
+ events:[[511,"Takes Paris and the north-west as one of four sons dividing Clovis's lands."],
+         [524,"With Chlothar, kills the young sons of their dead brother Chlodomer to share his kingdom; the third, Chlodovald, escapes and becomes the monk St Cloud."],
+         [534,"Helps conquer Burgundy with his brothers."],
+         [542,"Invades Spain and returns with the tunic of St Vincent, for which he founds the church that becomes Saint-Germain-des-Prés."]],
+ fact:"The church built for the relic of St Vincent became the abbey of Saint-Germain-des-Prés, where Childebert is buried.",
+ peek:"Clovis's son, who built the church of Saint-Germain-des-Prés."},
+
+{id:"chlothar1",name:"Chlothar I",epithet:"the Old",house:"merovingian",kingdom:"Soissons",start:511,end:561,reign:"511–561",
+ born:"c.497",died:"AD 561, Compiègne",age:"c.14",spouse:"Radegund and five others",issue:"7",
+ events:[[511,"Takes Soissons as one of four sons dividing Clovis's lands, the weakest share."],
+         [524,"Helps kill the sons of his brother Chlodomer to take their lands."],
+         [558,"On Childebert's death becomes sole king of all the Franks."],
+         [560,"Crushes the revolt of his own son Chramn, who is burned alive with his family; Chlothar dies a year later."]],
+ fact:"The last of Clovis's sons, and the last Frank for 50 years to rule everything — his four sons divided it again within days of his funeral.",
+ peek:"The last son of Clovis, and the last to hold the whole kingdom."},
+
+{id:"charibert1",name:"Charibert I",epithet:"Bertha's father",house:"merovingian",kingdom:"Paris",start:561,end:567,reign:"561–567",
+ born:"c.517",died:"AD 567, Blaye",age:"c.44",spouse:"Ingoberga; Merofled; Marcovefa; Theodogilda",issue:"Bertha and others",
+ events:[[561,"Takes Paris and the west as the eldest of Chlothar's four sons."],
+         [567,"Dies without a surviving son; his brothers share his kingdom."]],
+ fact:"His daughter Bertha married Æthelberht of Kent and took a Frankish bishop with her; her chapel at Canterbury became St Martin's, the oldest church in England still in use.",
+ peek:"King of Paris for six years, and grandfather of English Christianity."},
+
+{id:"sigebert1",name:"Sigebert I",epithet:"king of Austrasia",house:"merovingian",kingdom:"Austrasia",start:561,end:575,reign:"561–575",
+ born:"c.535",died:"AD 575, Vitry",age:"c.26",spouse:"Brunhilda",issue:"3",
+ events:[[561,"Takes the eastern kingdom (Austrasia), with Reims and Metz."],
+         [567,"Marries Brunhilda, a Visigothic princess; his brother Chilperic then marries her sister Galswintha — and later has her murdered to marry his mistress Fredegund."],
+         [575,"Murdered at Vitry by two assassins sent by Fredegund, at the moment he is raised on a shield as king of Neustria too."]],
+ fact:"The feud between his wife Brunhilda and his brother's wife Fredegund ran for almost forty years.",
+ peek:"Killed on the point of winning, and the start of the great feud."},
+
+{id:"chilperic1",name:"Chilperic I",epithet:"the Nero of the Franks",house:"merovingian",kingdom:"Neustria",start:561,end:584,reign:"561–584",
+ born:"c.539",died:"AD 584, Chelles",age:"c.22",spouse:"Audovera; Galswintha; Fredegund",issue:"10 or more",
+ events:[[561,"Takes the western kingdom (Neustria), around Soissons."],
+         [568,"Has his wife Galswintha strangled to marry Fredegund, which begins the blood-feud with Austrasia."],
+         [580,"Writes poems and tries to add new letters to the Latin alphabet; Gregory of Tours calls him the Nero and Herod of his age."],
+         [584,"Stabbed to death on returning from a hunt; Fredegund is suspected."]],
+ fact:"The historian Gregory of Tours, who hated him, says he added four new letters to the alphabet and tried to enforce them in schools.",
+ peek:"A poet-king whose murder left a baby on the throne."},
+
+{id:"guntram",name:"Guntram",epithet:"king of Burgundy",house:"merovingian",kingdom:"Burgundy",start:561,end:592,reign:"561–592",
+ born:"c.532",died:"AD 592, Chalon-sur-Saône",age:"c.29",spouse:"Marcatrude; Austrechild",issue:"2 sons, who died young",
+ events:[[561,"Takes Burgundy, with Orléans and his capital at Chalon-sur-Saône."],
+         [587,"Agrees the Treaty of Andelot with Brunhilda and his nephew Childebert II, fixing who inherits what."],
+         [592,"Dies childless; later honoured as a saint, a rare thing for a Merovingian king."]],
+ fact:"Gregory of Tours writes of him as a generous, moody king who could weep at a funeral and have a man killed that afternoon.",
+ peek:"The most stable of the four brothers."},
+
+{id:"brunhilda",name:"Brunhilda",epithet:"queen of Austrasia",house:"merovingian",kingdom:"Austrasia & Burgundy",interregnum:true,role:"Queen and regent",start:575,end:613,reign:"c.575–613",
+ born:"c.543, Toledo",died:"AD 613, Renève",age:"c.32",spouse:"Sigebert I; Merovech",issue:"3",
+ events:[[575,"Becomes regent for her five-year-old son Childebert II after Sigebert's murder."],
+         [596,"Rules Austrasia and Burgundy in the names of her grandsons, repairing roads and quarrelling with the nobles."],
+         [613,"Betrayed to Chlothar II by her own nobles, she is tied to a wild horse and dragged to death at about seventy."]],
+ fact:"The straight Roman roads of northern France still called chaussées Brunehaut bear her name, though most are far older than she is.",
+ peek:"The Visigothic queen who ruled the east for forty years."},
+
+{id:"fredegund",name:"Fredegund",epithet:"queen of Neustria",house:"merovingian",kingdom:"Neustria",interregnum:true,role:"Queen and regent",start:584,end:597,reign:"584–597",
+ born:"c.543",died:"AD 597, Paris",age:"c.41",spouse:"Chilperic I",issue:"Chlothar II and others",
+ events:[[567,"Rises from servant in the royal household to queen by marrying Chilperic."],
+         [584,"After Chilperic's murder, rules Neustria as regent for her infant son Chlothar II."],
+         [593,"Wins the battle of Droizy and keeps Paris and the north from the Austrasians."]],
+ fact:"Gregory of Tours says she sent assassins against her enemies, including a bishop stabbed at the altar.",
+ peek:"A servant who became queen, then regent, then survivor of the great feud."},
+
+{id:"chlothar2",name:"Chlothar II",epithet:"the king from the cradle",house:"merovingian",kingdom:"Neustria, then all the Franks",start:584,end:629,reign:"584–629",
+ born:"584, Neustria",died:"AD 629",age:"4 months",spouse:"Haldetrude; Bertrude; Sichilde",issue:"2 sons",
+ events:[[584,"Becomes king as a baby, protected by his mother Fredegund."],
+         [613,"Has Brunhilda executed and unites all the Frankish kingdoms under one king for the first time in more than fifty years."],
+         [614,"Issues the Edict of Paris, which binds the king to respect the rights of nobles and the Church."],
+         [623,"Gives his son Dagobert the kingdom of Austrasia."]],
+ fact:"He reigned 45 years — the longest of any Merovingian — beginning at four months old.",
+ peek:"King at four months, and master of all the Franks at 29."},
+
+{id:"dagobert1",name:"Dagobert I",epithet:"the last strong Merovingian",house:"merovingian",kingdom:"The Franks",start:629,end:639,reign:"629–639",
+ born:"c.603",died:"AD 639, Épinay-sur-Seine",age:"c.26",spouse:"Gomatrude; Nanthild; Wulfegundis",issue:"2 sons",
+ events:[[629,"Becomes king of all the Franks and rules from Paris, the last Merovingian to hold real power."],
+         [634,"Accepts the demands of the Austrasian nobles to have his young son Sigebert as their own king."],
+         [639,"Dies and is buried at the abbey of Saint-Denis, which he enriched; most later kings of France follow him there."]],
+ fact:"The comic song 'Le bon roi Dagobert', about a king who wore his breeches inside out, is still sung by French children.",
+ peek:"The last Merovingian who ruled rather than reigned."},
+
+{id:"clovis2",name:"Clovis II",epithet:"the child king",house:"merovingian",kingdom:"Neustria & Burgundy",start:639,end:657,reign:"639–657",
+ born:"c.634",died:"AD 657",age:"5",spouse:"Balthild",issue:"3 sons, all kings",
+ events:[[639,"Inherits Neustria and Burgundy aged about five, with real power in the hands of his mother Nanthild and the mayor of the palace."],
+         [649,"Marries Balthild, an Anglo-Saxon woman bought as a slave."],
+         [657,"Dies aged about 23, leaving three infant sons and a kingdom run by mayors."]],
+ fact:"His wife Balthild, an English slave in the household of the mayor of the palace, ended up as queen, regent and a canonised saint.",
+ peek:"The first of the 'do-nothing kings'."},
+
+{id:"pepinherstal",name:"Pepin of Herstal",epithet:"mayor of the palace",house:"merovingian",kingdom:"Austrasia",interregnum:true,role:"Mayor of the Palace",start:687,end:714,reign:"687–714",
+ born:"c.635",died:"AD 714, Jupille",age:"c.52",spouse:"Plectrude; Alpaida",issue:"Charles Martel and others",
+ events:[[687,"Defeats the Neustrian mayor at Tertry and becomes the real ruler of all the Franks while Merovingian kings sit on the throne as figureheads."],
+         [690,"Takes the title 'duke and prince of the Franks' and makes the office of mayor hereditary in his family."],
+         [714,"Dies leaving his grandsons as heirs; his son Charles, by a second wife, escapes imprisonment and takes power."]],
+ fact:"The late Merovingians, called rois fainéants, 'do-nothing kings', were figureheads in a kingdom actually run by Pepin's family.",
+ peek:"The mayor who ran the kingdom for a generation without being king."},
+
+{id:"charlesmartel",name:"Charles Martel",epithet:"the Hammer",house:"merovingian",kingdom:"The Franks",interregnum:true,role:"Mayor of the Palace",start:718,end:741,reign:"718–741",
+ born:"c.688",died:"AD 741, Quierzy",age:"c.30",spouse:"Rotrude; Swanachild",issue:"Carloman, Pepin, Grifo",
+ events:[[718,"After three years of civil war, emerges as sole mayor of the palace."],
+         [732,"Beats an Umayyad raiding army between Tours and Poitiers, usually seen as the check to the Arab advance into Gaul."],
+         [737,"On the death of Theuderic IV he leaves the throne empty for six years, ruling without a king."]],
+ fact:"He never took the crown himself. His son Pepin did, and his grandson was Charlemagne.",
+ peek:"The mayor who won at Tours, and made a dynasty possible."},
+
+{id:"childeric3",name:"Childeric III",epithet:"the last Merovingian",house:"merovingian",kingdom:"The Franks",start:743,end:751,reign:"743–751",lost:true,
+ born:"c.714",died:"c.755, Saint-Omer",age:"c.29",spouse:"—",issue:"Theuderic",
+ events:[[743,"Placed on the throne by the mayors Carloman and Pepin, who needed a king to give their rule legitimacy."],
+         [751,"Pepin asks Pope Zacharias whether the man with the power should hold the title; the answer is yes."],
+         [751,"Deposed, his long hair — the sign of Merovingian royalty — cut off, and shut in a monastery."]],
+ fact:"Uncut hair was the mark of the Merovingian kings; cutting it was how a king was deposed.",
+ peek:"The last of the long-haired kings, sent to a monastery."},
+
+/* ---------------------------- CAROLINGIAN ---------------------------- */
+{id:"pepin3",name:"Pepin the Short",epithet:"the mayor who became king",house:"carolingian",kingdom:"The Franks",start:751,end:768,reign:"751–768",
+ born:"c.714",died:"24 September 768, Saint-Denis",age:"37",spouse:"Bertrada of Laon",issue:"Charlemagne, Carloman",
+ events:[[751,"Elected king by the Frankish nobles and anointed by bishops, ending the Merovingian line."],
+         [754,"Pope Stephen II crosses the Alps in winter, anoints Pepin again at Saint-Denis and names him Patrician of the Romans."],
+         [756,"Defeats the Lombards and gives the Pope the lands around Rome — the Donation of Pepin, the start of the Papal States."]],
+ fact:"The Pope came all the way from Rome in midwinter to ask for his help — and gave the dynasty its religious blessing in exchange.",
+ peek:"The mayor who made himself king, and the Pope his first state."},
+
+{id:"charlemagne",name:"Charlemagne",epithet:"Charles the Great",house:"carolingian",kingdom:"The Franks, then Empire",start:768,end:814,reign:"768–814",
+ born:"c.748",died:"28 January 814, Aachen",age:"c.20",spouse:"Himiltrude; Desiderata; Hildegard; Fastrada; Luitgard",issue:"18 or more",
+ events:[[774,"Conquers the Lombard kingdom in Italy and takes the iron crown."],
+         [782,"Orders about 4,500 Saxons executed at Verden, in the middle of thirty years of war to subdue them."],
+         [789,"Orders schools and a standard clear script, Carolingian minuscule, from which our lower-case letters descend."],
+         [800,"Crowned Emperor of the Romans by Pope Leo III in St Peter's on Christmas Day."]],
+ fact:"Einhard says he could read but never learned to write well, though he kept tablets under his pillow to practise.",
+ peek:"King of the Franks and Lombards, and the first Western emperor in 300 years."},
+
+{id:"louispious",name:"Louis the Pious",epithet:"the emperor his sons deposed",house:"carolingian",kingdom:"The Franks, Empire",start:814,end:840,reign:"814–840",
+ born:"778, Chasseneuil",died:"20 June 840, near Ingelheim",age:"35",spouse:"Ermengarde of Hesbaye; Judith of Bavaria",issue:"6",
+ events:[[814,"Succeeds his father as sole emperor and purges the court of his father's circle."],
+         [817,"Issues the Ordinatio Imperii, planning to divide the empire among his three sons; the plan collapses when he has a fourth by Judith."],
+         [833,"Deposed by his own sons at the 'Field of Lies' and forced into public penance, then restored the next year."],
+         [840,"Dies in the middle of a new civil war."]],
+ fact:"His sons rebelled three times; the quarrel ended only with the Treaty of Verdun, which split the empire into the kingdoms that became France and Germany.",
+ peek:"Charlemagne's son, whose sons tore the empire apart."},
+
+{id:"charlesbald",name:"Charles the Bald",epithet:"first king of the West Franks",house:"carolingian",kingdom:"West Francia",start:843,end:877,reign:"843–877",
+ born:"823, Frankfurt",died:"6 October 877, Avrieux",age:"20",spouse:"Ermentrude of Orléans; Richilde of Provence",issue:"9",
+ events:[[843,"Treaty of Verdun gives him the western third of the empire — the kingdom that becomes France."],
+         [845,"A Viking fleet sails up the Seine and reaches Paris; he buys it off with seven thousand pounds of silver."],
+         [875,"Crowned emperor by the Pope in Rome on Christmas Day."],
+         [877,"Capitulary of Quierzy recognises the right of counts to pass their lands to their sons, the root of French feudalism."]],
+ fact:"Paying off the Vikings in silver in 845 — nearly 150 years before Æthelred's first Danegeld in England — was a French invention.",
+ peek:"The first king of what would become France."},
+
+{id:"charlesfat",name:"Charles the Fat",epithet:"the emperor who re-united the empire",house:"carolingian",kingdom:"West Francia & Empire",start:884,end:888,reign:"884–888",lost:true,
+ born:"839",died:"13 January 888, Neidingen",age:"45",spouse:"Richardis",issue:"None legitimate",
+ events:[[881,"Crowned emperor in Rome."],
+         [884,"Inherits the western kingdom, briefly reuniting all of Charlemagne's empire."],
+         [885,"Faces the great Viking siege of Paris and is accused of buying the Vikings off instead of fighting them."],
+         [887,"Deposed by his nephew Arnulf at Tribur and dies within a few weeks."]],
+ fact:"Paris was held in 885–886 by Count Odo and Bishop Gozlin, not by the emperor who was supposed to relieve them.",
+ peek:"The last emperor of a united Frankish empire."},
+
+{id:"odo",name:"Odo",epithet:"the count who defended Paris",house:"carolingian",kingdom:"West Francia",start:888,end:898,reign:"888–898",
+ born:"c.860",died:"1 January 898, La Fère",age:"c.28",spouse:"Théodrate",issue:"—",
+ events:[[885,"As count of Paris, holds the city for a year against a very large Viking army, with Bishop Gozlin."],
+         [888,"Elected king by the western nobles when Charles the Fat is deposed — the first non-Carolingian king."],
+         [893,"Faces a rival coronation of the young Charles the Simple at Reims and spends the rest of his reign fighting him."]],
+ fact:"His family, the Robertians, held the crown, lost it, won it back and finally founded the Capetian dynasty in the person of his great-nephew Hugh Capet.",
+ peek:"The hero of the siege of Paris who became king."},
+
+{id:"charlessimple",name:"Charles the Simple",epithet:"who gave the Vikings Normandy",house:"carolingian",kingdom:"West Francia",start:898,end:922,reign:"898–922",lost:true,
+ born:"17 September 879",died:"7 October 929, Péronne",age:"19",spouse:"Frederuna; Eadgifu of Wessex",issue:"Louis IV",
+ events:[[898,"Becomes sole king after Odo's death, aged 19."],
+         [911,"Treaty of Saint-Clair-sur-Epte: grants the Viking leader Rollo land around Rouen, the origin of Normandy."],
+         [922,"Deposed by his nobles, who elect Robert I; Charles is imprisoned the next year."],
+         [929,"Dies a prisoner at Péronne; his English queen Eadgifu had already taken their son Louis to safety in Wessex."]],
+ fact:"'Simple' meant straightforward, not stupid — but the treaty he signed made Normandy, and so eventually William the Conqueror, possible.",
+ peek:"Gave Rollo Normandy and lost his throne for it."},
+
+{id:"robert1",name:"Robert I",epithet:"Odo's brother",house:"carolingian",kingdom:"West Francia",start:922,end:923,reign:"922–923",
+ born:"c.866",died:"15 June 923, Soissons",age:"c.56",spouse:"Béatrice of Vermandois",issue:"Hugh the Great, Emma",
+ events:[[922,"Count of Paris and brother of Odo, elected king by the nobles who deposed Charles the Simple."],
+         [923,"Killed at Soissons, in a battle his side wins against Charles."],
+         [923,"His son-in-law Rudolph is elected in his place."]],
+ fact:"He was the grandfather of Hugh Capet — the Capetian line starts here, through his son Hugh the Great.",
+ peek:"Killed in the moment of victory."},
+
+{id:"rudolph",name:"Rudolph",epithet:"duke of Burgundy",house:"carolingian",kingdom:"West Francia",start:923,end:936,reign:"923–936",
+ born:"c.890",died:"15 January 936, Auxerre",age:"c.33",spouse:"Emma of France",issue:"—",
+ events:[[923,"Elected king while Charles the Simple is still alive in prison."],
+         [930,"Defeats a Viking raiding army at Limoges."],
+         [936,"Dies childless, and Hugh the Great recalls Louis, the son of Charles, from England."]],
+ fact:"He reigned over a kingdom where the dukes of Normandy, Aquitaine and Burgundy and the counts of Flanders held real power.",
+ peek:"A king in a kingdom run by its dukes."},
+
+{id:"louis4",name:"Louis IV",epithet:"d'Outremer — from overseas",house:"carolingian",kingdom:"West Francia",start:936,end:954,reign:"936–954",
+ born:"920, Laon",died:"10 September 954, Reims",age:"15",spouse:"Gerberga of Saxony",issue:"5",
+ events:[[936,"Recalled from England, where he had been raised at the court of his uncle Æthelstan, and crowned at Laon aged about fifteen."],
+         [945,"Captured by Normans and handed over to Hugh the Great, who holds him for a year."],
+         [948,"A council at Ingelheim, under the German king Otto I, excommunicates Hugh."]],
+ fact:"His mother Eadgifu was Æthelstan's half-sister; the English king had sheltered the boy during Hugh the Great's reign of power.",
+ peek:"The French king who grew up in England."},
+
+{id:"lothair",name:"Lothair",epithet:"king at 13",house:"carolingian",kingdom:"West Francia",start:954,end:986,reign:"954–986",
+ born:"941",died:"2 March 986, Laon",age:"13",spouse:"Emma of Italy",issue:"Louis V",
+ events:[[954,"Crowned at Reims aged 13, with Hugh the Great as guardian and Otto I of Germany as protector."],
+         [978,"Raids Aachen, the German emperor's capital, with a large army; Otto II retaliates and reaches Paris."],
+         [980,"Peace of Margut: gives up his claim to Lorraine."]],
+ fact:"Tradition says Otto II's army sang the Alleluia on Montmartre, within sight of Paris, as a way of showing that a French king could be insulted in his own capital.",
+ peek:"A king whose real power shrank to the town of Laon."},
+
+{id:"louis5",name:"Louis V",epithet:"the last Carolingian",house:"carolingian",kingdom:"West Francia",start:986,end:987,reign:"986–987",
+ born:"c.966",died:"21 May 987, Compiègne",age:"20",spouse:"Adelaide of Anjou",issue:"None",
+ events:[[986,"Succeeds his father at about twenty and clashes at once with Archbishop Adalberon of Reims."],
+         [987,"Dies in a hunting accident after 14 months — the last Carolingian king of the West Franks."],
+         [987,"Hugh Capet is elected a few weeks later at Noyon."]],
+ fact:"His death ended the line of Charlemagne in France, and with it any rule that the crown must pass in the blood of one family.",
+ peek:"Thrown from his horse, and the end of Charlemagne's dynasty."},
+
+/* ----------------------------- CAPETIAN ----------------------------- */
+{id:"hugh",name:"Hugh Capet",epithet:"the first Capetian",house:"capetian",kingdom:"France",start:987,end:996,reign:"987–996",
+ born:"c.939",died:"24 October 996, Paris",age:"c.48",spouse:"Adelaide of Aquitaine",issue:"Robert II and 4 others",
+ events:[[987,"Elected king by the nobles at Noyon, with Archbishop Adalberon of Reims as his backer."],
+         [987,"Has his son Robert crowned as co-king within months, to secure the succession against a Carolingian rival."],
+         [991,"Captures the rival claimant Charles of Lorraine by the betrayal of the bishop of Laon, and the Carolingian cause ends."]],
+ fact:"The line he started held the French throne — by direct descent or through Valois, Bourbon and Orléans branches — until 1848.",
+ peek:"A count of Paris elected king: the start of 800 years of Capetian rule."},
+
+{id:"robert2",name:"Robert II",epithet:"the Pious",house:"capetian",kingdom:"France",start:996,end:1031,reign:"996–1031",
+ born:"c.972, Orléans",died:"20 July 1031, Melun",age:"24",spouse:"Rosala of Italy; Bertha of Burgundy; Constance of Arles",issue:"8",
+ events:[[996,"Succeeds his father as the second Capetian, already crowned co-king for nine years."],
+         [998,"Excommunicated for marrying his cousin Bertha of Burgundy, whom he eventually puts aside."],
+         [1015,"Takes the duchy of Burgundy after a long war with its claimants."],
+         [1022,"Has a group of heretics burned at Orléans, among the first such executions in western Europe."]],
+ fact:"He is the first French king credited with healing scrofula by touch, a gift that every king of France after him claimed.",
+ peek:"The pious king who started the royal touch."},
+
+{id:"henry1fr",name:"Henry I",epithet:"the king who married a Kyivan princess",house:"capetian",kingdom:"France",start:1031,end:1060,reign:"1031–1060",
+ born:"c.1008",died:"4 August 1060, Vitry-aux-Loges",age:"c.23",spouse:"Anne of Kyiv",issue:"Philip I, Hugh",
+ events:[[1031,"Takes the throne after a civil war with his mother Constance, who wanted her younger son to rule."],
+         [1047,"Helps the young William of Normandy win at Val-ès-Dunes — then spends the 1050s fighting him and losing."],
+         [1051,"Marries Anne, daughter of Yaroslav the Wise of Kyiv, a bride from further away than any French king had married."]],
+ fact:"His son Philip was the first Frenchman named Philip — a Greek name brought from Kyiv by Anne.",
+ peek:"The king who lost his Norman ally, and married into Kyiv."},
+
+{id:"philip1",name:"Philip I",epithet:"the Amorous",house:"capetian",kingdom:"France",start:1060,end:1108,reign:"1060–1108",
+ born:"23 May 1052",died:"29 July 1108, Melun",age:"8",spouse:"Bertha of Holland; Bertrade de Montfort",issue:"5",
+ events:[[1060,"Becomes king aged seven, with his mother Anne and Baldwin of Flanders as regents."],
+         [1066,"Watches his vassal, William of Normandy, become King of England — a duke now his equal."],
+         [1092,"Puts aside his queen and takes Bertrade de Montfort, who was already married to the Count of Anjou; he spends years excommunicated."],
+         [1100,"Buys the viscounty of Bourges, bringing the centre of France into the royal domain."]],
+ fact:"He ruled 48 years and added little to the Crown lands, but kept the dynasty intact so that his son Louis VI could become the first capable Capetian.",
+ peek:"A weak king, whose vassal conquered England."},
+
+{id:"louis6",name:"Louis VI",epithet:"the Fat",house:"capetian",kingdom:"France",start:1108,end:1137,reign:"1108–1137",
+ born:"c.1081, Paris",died:"1 August 1137, Paris",age:"27",spouse:"Lucienne de Rochefort; Adelaide of Maurienne",issue:"9",
+ events:[[1108,"Crowned at Orléans, after spending years clearing robber barons from the roads around Paris."],
+         [1124,"Rallies the nobles of France behind the banner of Saint-Denis against the invading emperor Henry V — the first time most of the realm fought for the Crown."],
+         [1137,"Arranges his son's marriage to Eleanor of Aquitaine, making Louis VII lord of half of France — and dies the same year."]],
+ fact:"He grew so fat he could hardly mount a horse. His friend and biographer, Abbot Suger, called him the king who made the roads safe.",
+ peek:"Made the royal domain safe, and arranged the marriage with Aquitaine."},
+
+{id:"louis7",name:"Louis VII",epithet:"the Young",house:"capetian",kingdom:"France",start:1137,end:1180,reign:"1137–1180",
+ born:"1120",died:"18 September 1180, Paris",age:"17",spouse:"Eleanor of Aquitaine; Constance of Castile; Adela of Champagne",issue:"Marie, Alix and Philip II among others",
+ events:[[1137,"Marries Eleanor of Aquitaine just before inheriting the crown, uniting the Capetian domain with the greatest duchy in France."],
+         [1147,"Leads the Second Crusade with Eleanor and the emperor Conrad III; it ends in failure outside Damascus."],
+         [1152,"Marriage annulled on grounds of kinship; Eleanor marries Henry of Anjou within eight weeks, taking Aquitaine to him."],
+         [1179,"Visits Becket's shrine at Canterbury, the first French king to cross the Channel as a pilgrim."]],
+ fact:"Annulling the marriage cost him Aquitaine, and gave him a rival: Eleanor's next husband became Henry II of England.",
+ peek:"Lost Eleanor of Aquitaine — and with her half of France."},
+
+{id:"philip2",name:"Philip II",epithet:"Augustus",house:"capetian",kingdom:"France",start:1180,end:1223,reign:"1180–1223",
+ born:"21 August 1165, Gonesse",died:"14 July 1223, Mantes",age:"15",spouse:"Isabella of Hainault; Ingeborg of Denmark; Agnes of Merania",issue:"Louis VIII and others",
+ events:[[1190,"Goes on the Third Crusade with Richard the Lionheart, returns early and begins taking Richard's lands."],
+         [1190,"Builds the first Louvre as a fortress and a wall around Paris."],
+         [1204,"Takes Normandy from King John of England, then Anjou, Maine and Touraine, tripling the royal domain."],
+         [1214,"Defeats John's allies, the emperor Otto IV and the count of Flanders, at Bouvines."]],
+ fact:"He is called Augustus because he enlarged the realm; the chronicler Rigord gave him the name. The paved streets of Paris are his too.",
+ peek:"Took Normandy from John and won at Bouvines."},
+
+{id:"louis8",name:"Louis VIII",epithet:"the Lion",house:"capetian",kingdom:"France",start:1223,end:1226,reign:"1223–1226",
+ born:"5 September 1187, Paris",died:"8 November 1226, Montpensier",age:"35",spouse:"Blanche of Castile",issue:"12",
+ events:[[1216,"Invited by the English barons to take the throne from King John, he lands in Kent, enters London and is proclaimed king in St Paul's churchyard."],
+         [1217,"Abandons the English claim at the Treaty of Lambeth after defeat at Lincoln and the loss of his fleet."],
+         [1226,"Leads a second crusade against the Cathars, takes Avignon, and dies of dysentery on the way home."]],
+ fact:"The only French king ever proclaimed King of England, he never wore the English crown.",
+ peek:"Proclaimed king in London, crowned in Reims."},
+
+{id:"louis9",name:"Louis IX",epithet:"Saint Louis",house:"capetian",kingdom:"France",start:1226,end:1270,reign:"1226–1270",
+ born:"25 April 1214, Poissy",died:"25 August 1270, Tunis",age:"12",spouse:"Margaret of Provence",issue:"11",
+ events:[[1226,"Succeeds at twelve, with his mother Blanche of Castile holding the kingdom together against rebel barons."],
+         [1248,"Consecrates the Sainte-Chapelle, built for the Crown of Thorns he bought from the emperor of Constantinople."],
+         [1250,"Captured in Egypt on the Seventh Crusade and ransomed for a vast sum."],
+         [1259,"Treaty of Paris: Henry III of England gives up Normandy, Anjou and Poitou and holds Gascony as the French king's vassal."]],
+ fact:"The only king of France to be made a saint, canonised in 1297 — he died of plague at Tunis on the Eighth Crusade.",
+ peek:"The saintly king who bought the Crown of Thorns."},
+
+{id:"philip3",name:"Philip III",epithet:"the Bold",house:"capetian",kingdom:"France",start:1270,end:1285,reign:"1270–1285",
+ born:"1 April 1245, Poissy",died:"5 October 1285, Perpignan",age:"25",spouse:"Isabella of Aragon; Marie of Brabant",issue:"6",
+ events:[[1270,"Proclaimed king at Tunis at his father's deathbed, and brings the crusader army home."],
+         [1271,"Inherits Toulouse and Poitou on the death of his uncle Alphonse, adding the south to the Crown."],
+         [1284,"His son marries Joan of Navarre, bringing Champagne and Navarre to the Crown."],
+         [1285,"Invades Aragon after the Sicilian Vespers and dies of fever on the retreat."]],
+ fact:"He brought the royal domain to its greatest size of the century without winning a major battle.",
+ peek:"The king who inherited the south of France."},
+
+{id:"philip4",name:"Philip IV",epithet:"the Fair",house:"capetian",kingdom:"France",start:1285,end:1314,reign:"1285–1314",
+ born:"1268, Fontainebleau",died:"29 November 1314, Fontainebleau",age:"17",spouse:"Joan I of Navarre",issue:"7",
+ events:[[1302,"Summons the first Estates General of nobles, clergy and townspeople to back him against Pope Boniface VIII."],
+         [1303,"His agent William of Nogaret attacks the Pope at Anagni; within a few years the papacy moves to Avignon."],
+         [1307,"Has the Knights Templar arrested on Friday 13 October and seizes their wealth; the order is dissolved in 1312."],
+         [1314,"Dies in a hunting accident after the Tour de Nesle scandal has ruined his sons' marriages."]],
+ fact:"His three sons all became kings of France, and none left a son who lived: the direct Capetian line ended with them.",
+ peek:"The king who arrested the Templars and moved the Pope to Avignon."},
+
+{id:"louis10",name:"Louis X",epithet:"the Quarreller",house:"capetian",kingdom:"France",start:1314,end:1316,reign:"1314–1316",
+ born:"4 October 1289, Paris",died:"5 June 1316, Vincennes",age:"24",spouse:"Margaret of Burgundy; Clementia of Hungary",issue:"Joan II of Navarre; John I",
+ events:[[1314,"Becomes king as the Tour de Nesle affair breaks; his wife Margaret is jailed and dies in prison."],
+         [1315,"Frees serfs on the royal lands for a fee, an early step toward ending serfdom in France."],
+         [1316,"Dies after drinking cold wine, legend says, following a game of paume; his queen is pregnant."]],
+ fact:"He died leaving his queen pregnant; the child, John I, was born king and lived five days.",
+ peek:"Dead after 18 months, with a baby on the way."},
+
+{id:"john1",name:"John I",epithet:"the Posthumous",house:"capetian",kingdom:"France",start:1316,end:1316,reign:"1316 · five days",
+ born:"15 November 1316, Paris",died:"20 November 1316, Paris",age:"Born king",spouse:"—",issue:"None",
+ events:[[1316,"Born on 15 November, already king, with his uncle Philip as regent."],
+         [1316,"Dies five days later; rumour says Philip had him smothered, but nothing proves it."]],
+ fact:"The shortest reign of any French king, and the only one whose reign began at birth.",
+ peek:"The baby king of five days."},
+
+{id:"philip5",name:"Philip V",epithet:"the Tall",house:"capetian",kingdom:"France",start:1316,end:1322,reign:"1316–1322",
+ born:"c.1292, Lyon",died:"3 January 1322, Longchamp",age:"24",spouse:"Joan II of Burgundy",issue:"4 daughters",
+ events:[[1316,"Takes the regency, then the throne, over the claim of his niece Joan."],
+         [1317,"An assembly in Paris confirms that women cannot inherit the crown, the rule that comes to be called the Salic Law."],
+         [1320,"Crushes the Pastoureaux, a peasants' crusade that had turned to massacring Jews and royal officers."]],
+ fact:"The Salic Law was the basis for the Valois claim in 1328, and the reason Edward III of England could be told he had none: the Hundred Years' War descends from this ruling.",
+ peek:"Made the rule that shut women out of the French throne."},
+
+{id:"charles4",name:"Charles IV",epithet:"the Fair",house:"capetian",kingdom:"France",start:1322,end:1328,reign:"1322–1328",
+ born:"June 1294, Clermont",died:"1 February 1328, Vincennes",age:"27",spouse:"Blanche of Burgundy; Marie of Luxembourg; Joan of Évreux",issue:"Daughters; none male surviving",
+ events:[[1322,"Succeeds his brother Philip V, who left only daughters."],
+         [1324,"The War of Saint-Sardos: seizes much of Edward II's Gascony."],
+         [1326,"Shelters his sister, Queen Isabella of England, and her lover Roger Mortimer, who use France as a base to overthrow Edward II."],
+         [1328,"Dies without a male heir; the crown goes to his cousin Philip of Valois and Edward III's claim is rejected."]],
+ fact:"The third son of Philip IV to die without a living male heir — ending the direct Capetian line after 341 years.",
+ peek:"The last direct Capetian, and the start of the Hundred Years' War."},
+
+/* ------------------------------ VALOIS ------------------------------ */
+{id:"philip6",name:"Philip VI",epithet:"the Fortunate",house:"valois",kingdom:"France",start:1328,end:1350,reign:"1328–1350",
+ born:"1293",died:"22 August 1350, Nogent-le-Roi",age:"35",spouse:"Joan of Burgundy; Blanche of Navarre",issue:"7",
+ events:[[1328,"Chosen king by the French nobles over Edward III of England, whose claim came through his mother Isabella."],
+         [1337,"Confiscates Edward III's duchy of Guyenne; Edward claims the French crown and the Hundred Years' War begins."],
+         [1346,"His army is destroyed by English longbowmen at Crécy; Calais falls the next year."],
+         [1348,"The Black Death reaches France; his queen Joan is among its victims in 1349."]],
+ fact:"The Valois claim was weaker than Edward's by blood but stronger by French custom, which is why Edward kept up the challenge for 116 years.",
+ peek:"Lost Crécy and Calais, and the Black Death hit France."},
+
+{id:"john2",name:"John II",epithet:"the Good",house:"valois",kingdom:"France",start:1350,end:1364,reign:"1350–1364",
+ born:"26 April 1319, Gué-de-Maulny",died:"8 April 1364, London",age:"31",spouse:"Bonne of Luxembourg; Joan of Auvergne",issue:"11",
+ events:[[1356,"Captured at Poitiers by the Black Prince, despite outnumbering him two to one."],
+         [1360,"Treaty of Brétigny frees him for a ransom of three million écus and the cession of about a third of France to England."],
+         [1360,"Strikes the first franc to pay the ransom."],
+         [1364,"Returns to London voluntarily when his son, a hostage, escapes; he dies there."]],
+ fact:"The French franc began as a coin struck in 1360 to pay his own ransom.",
+ peek:"Captured at Poitiers; gave France its franc."},
+
+{id:"charles5",name:"Charles V",epithet:"the Wise",house:"valois",kingdom:"France",start:1364,end:1380,reign:"1364–1380",
+ born:"21 January 1338, Vincennes",died:"16 September 1380, Beauté-sur-Marne",age:"26",spouse:"Joanna of Bourbon",issue:"7",
+ events:[[1364,"Takes the throne with France in ruins and begins to win it back by avoiding battle, under the constable Bertrand du Guesclin."],
+         [1369,"Resumes the war; by 1375 the English hold little but Calais, Bordeaux and Bayonne."],
+         [1370,"Begins the Bastille, a fortress to protect Paris on the east."],
+         [1380,"Dies at 42, leaving an eleven-year-old heir."]],
+ fact:"He recovered nearly everything lost at Crécy and Poitiers without fighting a single major battle, and filled the Louvre with 900 manuscripts, the first royal library in France.",
+ peek:"Won back France without a battle."},
+
+{id:"charles6",name:"Charles VI",epithet:"the Beloved, the Mad",house:"valois",kingdom:"France",start:1380,end:1422,reign:"1380–1422",
+ born:"3 December 1368, Paris",died:"21 October 1422, Paris",age:"11",spouse:"Isabeau of Bavaria",issue:"12",
+ events:[[1392,"First attack of madness: he kills four of his own knights in a forest near Le Mans; further bouts follow for thirty years."],
+         [1407,"The Duke of Orléans is murdered by the Duke of Burgundy, igniting the Armagnac–Burgundian civil war."],
+         [1415,"English victory at Agincourt under Henry V; much of the French nobility is killed or captured."],
+         [1420,"Treaty of Troyes disinherits his son the Dauphin and names Henry V his heir, who marries his daughter Catherine."]],
+ fact:"At one point he believed he was made of glass and wore reinforced clothes, so that he would not shatter.",
+ peek:"The mad king who signed France away at Troyes."},
+
+{id:"henry6fr",name:"Henry VI of England",epithet:"the English king of France",house:"valois",kingdom:"English France",interregnum:true,role:"English claimant king of France",start:1422,end:1453,reign:"1422–1453 · claim",
+ born:"1421, Windsor",died:"1471, Tower of London",age:"9 months",spouse:"Margaret of Anjou",issue:"1",
+ events:[[1422,"Proclaimed king of France at nine months old, on the deaths of both Henry V and Charles VI within weeks."],
+         [1431,"Crowned at Notre-Dame in Paris, after Joan of Arc has been burned at Rouen."],
+         [1436,"Paris falls back to Charles VII; the English hold only Normandy and Gascony."],
+         [1453,"After Castillon and the fall of Bordeaux only Calais is left."]],
+ fact:"He is the only man ever crowned king in both Westminster and Paris.",
+ peek:"King of two countries as a baby."},
+
+{id:"charles7",name:"Charles VII",epithet:"the Victorious",house:"valois",kingdom:"France",start:1422,end:1461,reign:"1422–1461",
+ born:"22 February 1403, Paris",died:"22 July 1461, Mehun-sur-Yèvre",age:"19",spouse:"Marie of Anjou",issue:"14",
+ events:[[1422,"Proclaims himself king at Bourges while the English hold Paris and the north; mocked as 'the king of Bourges'."],
+         [1429,"Joan of Arc lifts the siege of Orléans and leads him to be crowned at Reims on 17 July."],
+         [1438,"The Pragmatic Sanction of Bourges asserts royal control over the French church."],
+         [1453,"Wins at Castillon; Bordeaux falls and the Hundred Years' War ends after 116 years, leaving only Calais English."]],
+ fact:"Reportedly, he starved himself to death at 58 for fear that his own son, the future Louis XI, would poison him.",
+ peek:"The king Joan of Arc crowned, and who won the Hundred Years' War."},
+
+{id:"louis11",name:"Louis XI",epithet:"the Spider King",house:"valois",kingdom:"France",start:1461,end:1483,reign:"1461–1483",
+ born:"3 July 1423, Bourges",died:"30 August 1483, Plessis-lez-Tours",age:"38",spouse:"Margaret of Scotland; Charlotte of Savoy",issue:"3",
+ events:[[1465,"Faces the League of the Public Weal, a revolt of the great nobles led by Charles the Bold of Burgundy."],
+         [1475,"Pays Edward IV of England a pension and 75,000 crowns at Picquigny, ending his invasion without a battle."],
+         [1477,"Charles the Bold dies at Nancy; Louis takes Burgundy and Picardy."],
+         [1481,"Inherits Anjou, Maine and Provence, leaving a France far bigger than he found it."]],
+ fact:"He founded the royal postal service in 1464, with relays of couriers; legend also gave him iron cages for his enemies.",
+ peek:"The spider king who bought off Edward IV and took Burgundy."},
+
+{id:"charles8",name:"Charles VIII",epithet:"the Affable",house:"valois",kingdom:"France",start:1483,end:1498,reign:"1483–1498",
+ born:"30 June 1470, Amboise",died:"7 April 1498, Amboise",age:"13",spouse:"Anne of Brittany",issue:"None surviving",
+ events:[[1483,"Becomes king at 13, with his sister Anne of Beaujeu as regent."],
+         [1491,"Marries Anne of Brittany, bringing the duchy of Brittany to the Crown."],
+         [1494,"Invades Italy to claim Naples, the start of the long Italian Wars; he takes Naples in 1495 and loses it within months."],
+         [1498,"Dies after striking his head on a low doorway at Amboise on the way to a tennis match."]],
+ fact:"His army brought back from Naples the first European epidemic of a disease the French called the Neapolitan sickness.",
+ peek:"Hit his head on a doorframe, and so ended a dynasty branch."},
+
+{id:"louis12",name:"Louis XII",epithet:"Father of the People",house:"valois",kingdom:"France",start:1498,end:1515,reign:"1498–1515",
+ born:"27 June 1462, Blois",died:"1 January 1515, Paris",age:"35",spouse:"Joan of France; Anne of Brittany; Mary Tudor",issue:"2 daughters",
+ events:[[1498,"Succeeds his cousin; has his marriage to Joan annulled and marries Charles VIII's widow Anne of Brittany to keep Brittany."],
+         [1499,"Takes Milan and claims Naples."],
+         [1509,"Wins at Agnadello against Venice, then faces the Holy League."],
+         [1514,"Marries Mary Tudor, sister of Henry VIII, to seal peace with England; he dies less than three months later."]],
+ fact:"He cut the taille and was called Father of the People. Gossip blamed his young English bride for wearing him out.",
+ peek:"Married Henry VIII's sister and died within weeks."},
+
+{id:"francis1",name:"Francis I",epithet:"the Renaissance king",house:"valois",kingdom:"France",start:1515,end:1547,reign:"1515–1547",
+ born:"12 September 1494, Cognac",died:"31 March 1547, Rambouillet",age:"20",spouse:"Claude of France; Eleanor of Austria",issue:"10",
+ events:[[1515,"Wins at Marignano in his first year, retaking Milan."],
+         [1520,"Meets Henry VIII at the Field of Cloth of Gold, a fortnight of tents and tournaments that settles nothing."],
+         [1525,"Captured at Pavia by the emperor Charles V's forces and held in Madrid for a year."],
+         [1539,"The Ordinance of Villers-Cotterêts makes French the official language of law."]],
+ fact:"Leonardo da Vinci died in his service at Amboise in 1519, and the Mona Lisa stayed in France.",
+ peek:"Patron of Leonardo, rival of Henry VIII and Charles V."},
+
+{id:"henry2fr",name:"Henry II",epithet:"the Jouster",house:"valois",kingdom:"France",start:1547,end:1559,reign:"1547–1559",
+ born:"31 March 1519, Saint-Germain-en-Laye",died:"10 July 1559, Paris",age:"28",spouse:"Catherine de' Medici",issue:"10",
+ events:[[1547,"Takes the throne; his mistress Diane de Poitiers, twenty years older, has more influence than his wife."],
+         [1558,"Takes Calais from the English, who had held it for more than two centuries."],
+         [1559,"Treaty of Cateau-Cambrésis ends the Italian Wars; in the celebrations he is wounded in the eye by a lance and dies ten days later."]],
+ fact:"Nostradamus's verse about a young lion wounding an old one in single combat was later read as predicting his death.",
+ peek:"Killed in a joust in 1559."},
+
+{id:"francis2",name:"Francis II",epithet:"the husband of Mary Stuart",house:"valois",kingdom:"France",start:1559,end:1560,reign:"1559–1560",
+ born:"19 January 1544, Fontainebleau",died:"5 December 1560, Orléans",age:"15",spouse:"Mary, Queen of Scots",issue:"None",
+ events:[[1558,"Marries Mary Stuart, Queen of Scots, at Notre-Dame."],
+         [1559,"Becomes king at 15, with the Guise brothers, his wife's uncles, holding the power."],
+         [1560,"The Conspiracy of Amboise by Protestant nobles is crushed; he dies that December of an ear infection."]],
+ fact:"His wife was queen of Scotland and France in 1559–60, then a widow at 17; she returned to Scotland.",
+ peek:"The king who died at 16 and left Mary a widow."},
+
+{id:"charles9",name:"Charles IX",epithet:"the king of Saint Bartholomew",house:"valois",kingdom:"France",start:1560,end:1574,reign:"1560–1574",
+ born:"27 June 1550, Saint-Germain-en-Laye",died:"30 May 1574, Vincennes",age:"10",spouse:"Elisabeth of Austria",issue:"1 daughter",
+ events:[[1560,"Becomes king at ten, with his mother Catherine de' Medici as regent."],
+         [1562,"The first of the Wars of Religion opens with the massacre of Protestants at Wassy."],
+         [1572,"The St Bartholomew's Day massacre: thousands of Huguenots are killed in Paris and the provinces after the wedding of Henry of Navarre."],
+         [1574,"Dies at 23, probably of tuberculosis."]],
+ fact:"The wedding of Protestant Henry of Navarre to the king's sister Margot, meant to heal the divide, was the occasion for the massacre.",
+ peek:"The king whose reign included Saint Bartholomew's Day."},
+
+{id:"henry3fr",name:"Henry III",epithet:"the last Valois",house:"valois",kingdom:"France",start:1574,end:1589,reign:"1574–1589",lost:true,
+ born:"19 September 1551, Fontainebleau",died:"2 August 1589, Saint-Cloud",age:"22",spouse:"Louise of Lorraine",issue:"None",
+ events:[[1573,"Elected king of Poland, but flees in 1574 to claim the French throne on Charles IX's death."],
+         [1588,"Driven from Paris by the Catholic League on the Day of the Barricades; has the Duke of Guise murdered at Blois."],
+         [1589,"Allies with Henry of Navarre and besieges Paris; stabbed by the monk Jacques Clément at Saint-Cloud and names Navarre as heir as he dies."]],
+ fact:"The last Valois king; he was killed by a Dominican friar who had slipped into his presence with a letter.",
+ peek:"Murdered by a monk, and the end of the Valois."},
+
+/* ------------------------------ BOURBON ------------------------------ */
+{id:"henry4",name:"Henry IV",epithet:"Good King Henry",house:"bourbon",kingdom:"France",start:1589,end:1610,reign:"1589–1610",
+ born:"13 December 1553, Pau",died:"14 May 1610, Paris",age:"35",spouse:"Margaret of Valois; Marie de' Medici",issue:"6 legitimate, about 11 illegitimate",
+ events:[[1589,"Inherits the throne from Henry III but must fight for it for four years against the Catholic League."],
+         [1593,"Converts to Catholicism, reportedly saying 'Paris is well worth a mass'; Paris opens its gates in 1594."],
+         [1598,"The Edict of Nantes gives Huguenots freedom of worship and ends the Wars of Religion."],
+         [1610,"Stabbed in his carriage in Paris by the fanatic François Ravaillac."]],
+ fact:"He wanted every peasant to have a chicken in the pot on Sundays, and he gave Paris the Pont Neuf and the Place des Vosges.",
+ peek:"Ended the religious wars and was killed for it."},
+
+{id:"louis13",name:"Louis XIII",epithet:"the Just",house:"bourbon",kingdom:"France",start:1610,end:1643,reign:"1610–1643",
+ born:"27 September 1601, Fontainebleau",died:"14 May 1643, Saint-Germain-en-Laye",age:"8",spouse:"Anne of Austria",issue:"2",
+ events:[[1617,"Has his mother's favourite Concini murdered and takes power himself at 15."],
+         [1624,"Appoints Cardinal Richelieu chief minister; the Cardinal curbs the nobility and the Huguenots."],
+         [1628,"Takes La Rochelle after a 14-month siege, ending Huguenot political power."],
+         [1635,"Enters the Thirty Years' War against the Habsburgs; the war is not over when he dies."]],
+ fact:"Dumas set The Three Musketeers in his reign and made Richelieu the villain, a role historians think unfair.",
+ peek:"The king behind Richelieu."},
+
+{id:"louis14",name:"Louis XIV",epithet:"the Sun King",house:"bourbon",kingdom:"France",start:1643,end:1715,reign:"1643–1715",
+ born:"5 September 1638, Saint-Germain-en-Laye",died:"1 September 1715, Versailles",age:"4",spouse:"Maria Theresa of Spain; Madame de Maintenon (secretly)",issue:"1 surviving legitimate son; many illegitimate",
+ events:[[1648,"The Fronde, a civil war of nobles and parlements, drives the boy king from Paris; he never forgets it."],
+         [1661,"Takes personal rule at Cardinal Mazarin's death."],
+         [1682,"Moves the court to Versailles, making the nobles live under his eye."],
+         [1685,"Revokes the Edict of Nantes; hundreds of thousands of Huguenots flee, many to England."],
+         [1688,"Shelters James II at Saint-Germain after the Glorious Revolution."],
+         [1701,"Accepts the Spanish throne for his grandson, starting the War of the Spanish Succession, which ends at Utrecht in 1713."]],
+ fact:"72 years and 110 days: the longest reign of any European monarch.",
+ peek:"The Sun King: Versailles, absolute monarchy, and the longest reign in Europe."},
+
+{id:"louis15",name:"Louis XV",epithet:"the Beloved",house:"bourbon",kingdom:"France",start:1715,end:1774,reign:"1715–1774",
+ born:"15 February 1710, Versailles",died:"10 May 1774, Versailles",age:"5",spouse:"Marie Leszczyńska",issue:"10",
+ events:[[1715,"Succeeds his great-grandfather at five, with the Duke of Orléans as regent."],
+         [1745,"Present at Fontenoy; the army beats the British, but the war brings little."],
+         [1756,"Allies with Austria in the Diplomatic Revolution and enters the Seven Years' War."],
+         [1763,"The Treaty of Paris cedes Canada and most of French India to Britain."]],
+ fact:"He is credited with 'après moi le déluge' — after me, the flood — though it may be Madame de Pompadour who said it.",
+ peek:"Lost Canada, and the monarchy's credit."},
+
+{id:"louis16",name:"Louis XVI",epithet:"the king who lost his head",house:"bourbon",kingdom:"France",start:1774,end:1792,reign:"1774–1792",lost:true,
+ born:"23 August 1754, Versailles",died:"21 January 1793, Paris",age:"19",spouse:"Marie Antoinette",issue:"4",
+ events:[[1778,"Allies with the American revolutionaries; the debts of the war help bring down the regime."],
+         [1789,"Calls the Estates General for the first time since 1614; the Third Estate declares itself a National Assembly; the Bastille falls on 14 July."],
+         [1791,"Tries to flee the country but is caught at Varennes."],
+         [1792,"The monarchy is overthrown on 10 August; the Republic is declared in September."],
+         [1793,"Tried for treason and guillotined on 21 January."]],
+ fact:"He was a keen amateur locksmith, and made locks at Versailles.",
+ peek:"The last king of the old France, guillotined in 1793."},
+
+{id:"louis17",name:"Louis XVII",epithet:"the lost Dauphin",house:"bourbon",kingdom:"France",interregnum:true,role:"Titular king",start:1793,end:1795,reign:"1793–1795 · titular",lost:true,
+ born:"27 March 1785, Versailles",died:"8 June 1795, Paris (the Temple)",age:"7",spouse:"—",issue:"None",
+ events:[[1793,"Proclaimed king by royalists on his father's execution, aged seven, while a prisoner of the Republic."],
+         [1793,"Separated from his mother and held in the Temple prison."],
+         [1795,"Dies of tuberculosis in the Temple, aged ten."],
+         [2000,"DNA tests on a preserved heart confirm it was his."]],
+ fact:"Dozens of men claimed to be him in the following decades. DNA tests in 2000 settled the question.",
+ peek:"The king who never reigned."},
+
+/* ------------------------ REVOLUTION & EMPIRE ------------------------ */
+{id:"robespierre",name:"Maximilien Robespierre",epithet:"the Incorruptible",house:"republic",kingdom:"First Republic",interregnum:true,role:"Leader of the Committee of Public Safety",start:1793,end:1794,reign:"1793–1794",
+ born:"6 May 1758, Arras",died:"28 July 1794, Paris",age:"35",spouse:"Never married",issue:"None",
+ events:[[1792,"The monarchy is abolished and a republic declared."],
+         [1793,"Joins the Committee of Public Safety and becomes the dominant voice in the Terror."],
+         [1794,"Launches the Festival of the Supreme Being, then is arrested on 9 Thermidor (27 July)."],
+         [1794,"Guillotined the next day, with about 20 supporters."]],
+ fact:"About 17,000 people were officially sentenced to death during the Terror, many after only a few minutes' trial.",
+ peek:"The Terror's architect, guillotined in turn."},
+
+{id:"directory",name:"The Directory",epithet:"five men and a coup",house:"republic",kingdom:"First Republic",interregnum:true,role:"Five-man executive",start:1795,end:1799,reign:"1795–1799",
+ born:"—",died:"—",age:"—",spouse:"—",issue:"—",
+ events:[[1795,"Five Directors, including Paul Barras, take executive power after the end of the Terror."],
+         [1796,"A young general, Napoleon Bonaparte, wins the Italian campaign for them."],
+         [1799,"Overthrown on 18 Brumaire by Bonaparte and the Director Sieyès."]],
+ fact:"Corruption and instability marked the Directory, but it lasted four years: a long time by the standards of the Revolution.",
+ peek:"Four unstable years that ended with Napoleon."},
+
+{id:"napoleon1",name:"Napoleon I",epithet:"Emperor of the French",house:"bonaparte",kingdom:"France",start:1799,end:1815,reign:"1799–1814 · 1815",gap:[[1814,1815.2]],lost:true,
+ born:"15 August 1769, Ajaccio",died:"5 May 1821, Longwood, St Helena",age:"30",spouse:"Joséphine de Beauharnais; Marie Louise of Austria",issue:"1 legitimate son; several illegitimate",
+ events:[[1799,"Seizes power in the coup of 18 Brumaire and becomes First Consul."],
+         [1804,"Crowns himself emperor in Notre-Dame; the Napoleonic Code is issued."],
+         [1805,"Destroys the Austro-Russian army at Austerlitz — but the French fleet loses to Nelson at Trafalgar, ending any hope of invading Britain."],
+         [1812,"The invasion of Russia: of some 600,000 men, perhaps 100,000 return."],
+         [1815,"Escapes from Elba, rules for the Hundred Days, and is beaten at Waterloo on 18 June by Wellington and Blücher; exiled to St Helena."]],
+ fact:"At about 1.69 m he was of average height for his time; the myth of a tiny emperor owes much to British caricature.",
+ peek:"From artillery officer to emperor of Europe, to St Helena."},
+
+/* ----------------------- RESTORATION & JULY MONARCHY ----------------------- */
+{id:"louis18",name:"Louis XVIII",epithet:"the Desired",house:"bourbon",kingdom:"France",start:1814,end:1824,reign:"1814–1824",
+ born:"17 November 1755, Versailles",died:"16 September 1824, Paris",age:"58",spouse:"Marie Joséphine of Savoy",issue:"None",
+ events:[[1814,"Returns after 23 years of exile and grants a Charter, a constitution guaranteeing some freedoms."],
+         [1815,"Flees to Ghent during Napoleon's Hundred Days and returns after Waterloo."],
+         [1823,"Sends French troops into Spain to restore its king."]],
+ fact:"He spent five years of his exile at Hartwell House in Buckinghamshire, and returned to France by way of London.",
+ peek:"The brother of two kings, restored by the allies."},
+
+{id:"charles10",name:"Charles X",epithet:"the last Bourbon king",house:"bourbon",kingdom:"France",start:1824,end:1830,reign:"1824–1830",lost:true,
+ born:"9 October 1757, Versailles",died:"6 November 1836, Gorizia",age:"66",spouse:"Maria Theresa of Savoy",issue:"4",
+ events:[[1825,"Crowned at Reims in the full medieval ritual, the last French king to be so."],
+         [1830,"Takes Algiers, the start of French rule in Algeria, which lasts 132 years."],
+         [1830,"On 25 July signs ordinances suspending press freedom; three days of revolution follow."],
+         [1830,"Abdicates on 2 August and sails for Britain."]],
+ fact:"He lived in Holyrood House in Edinburgh in exile — as he had in the 1790s, as the Comte d'Artois.",
+ peek:"The last Bourbon to reign, overthrown in three days."},
+
+{id:"louisphilippe",name:"Louis-Philippe I",epithet:"the Citizen King",house:"orleans",kingdom:"France",start:1830,end:1848,reign:"1830–1848",lost:true,
+ born:"6 October 1773, Paris",died:"26 August 1850, Claremont, England",age:"56",spouse:"Maria Amalia of Naples and Sicily",issue:"10",
+ events:[[1830,"Proclaimed King of the French — not King of France — after the July Revolution."],
+         [1840,"Brings Napoleon's remains back from St Helena to Les Invalides."],
+         [1848,"Overthrown by the February Revolution; he abdicates on 24 February and escapes to England, travelling as 'Mr Smith'."]],
+ fact:"He had fought for the Republic at Valmy in 1792 as a young officer, and died in exile in Surrey.",
+ peek:"The Citizen King, who left Paris as 'Mr Smith'."},
+
+{id:"chambord",name:"Henry, Count of Chambord",epithet:"Henry V who never was",house:"bourbon",kingdom:"France",interregnum:true,role:"Legitimist claimant",start:1830,end:1883,reign:"1830–1883 · claimant",lost:true,
+ born:"29 September 1820, Paris",died:"24 August 1883, Frohsdorf",age:"9",spouse:"Marie Thérèse of Modena",issue:"None",
+ events:[[1830,"Charles X abdicates in his favour; the Chamber chooses Louis-Philippe instead."],
+         [1873,"The Assembly offers him the throne, but he refuses to accept the tricolour flag, insisting on the white Bourbon flag."],
+         [1883,"Dies childless in Austria; the senior Bourbon line ends with him."]],
+ fact:"A flag cost him a throne: with his refusal in 1873 the monarchist restoration failed, and the Third Republic survived.",
+ peek:"The king who lost the throne over a flag."},
+
+{id:"napoleon3",name:"Napoleon III",epithet:"the last emperor",house:"bonaparte",kingdom:"France",start:1848,end:1870,reign:"1848–1870",lost:true,
+ born:"20 April 1808, Paris",died:"9 January 1873, Chislehurst, Kent",age:"40",spouse:"Eugénie de Montijo",issue:"1",
+ events:[[1848,"Elected first president of the Second Republic by a landslide, as the nephew of the great Napoleon."],
+         [1851,"Dissolves the assembly in a coup on 2 December; he proclaims himself emperor a year later."],
+         [1853,"Appoints Haussmann to rebuild Paris with wide boulevards."],
+         [1855,"Receives Queen Victoria in Paris, the first British monarch to visit since Henry VI."],
+         [1870,"Captured at Sedan by the Prussians on 2 September; the Empire falls two days later."]],
+ fact:"He died in exile in Kent and is buried at Farnborough in Hampshire, where his wife Eugénie also lies.",
+ peek:"Built modern Paris and lost it at Sedan."},
+
+/* ---------------------------- THIRD REPUBLIC ---------------------------- */
+{id:"thiers",name:"Adolphe Thiers",epithet:"liberator of the territory",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1871,end:1873,reign:"1871–1873",
+ born:"15 April 1797, Marseille",died:"3 September 1877, Saint-Germain-en-Laye",age:"74",spouse:"Élise Dosne",issue:"None",
+ events:[[1871,"Makes peace with Germany, ceding Alsace and most of Lorraine and paying a huge indemnity."],
+         [1871,"Crushes the Paris Commune in the 'Bloody Week' of late May."],
+         [1873,"Pays the indemnity early, ending the German occupation, then loses the confidence of the monarchist Assembly."]],
+ fact:"He was an historian who wrote a ten-volume history of Napoleon, then became the republic's first president.",
+ peek:"Crushed the Commune and freed France of the occupiers."},
+
+{id:"macmahon",name:"Patrice de MacMahon",epithet:"the monarchist marshal",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1873,end:1879,reign:"1873–1879",
+ born:"13 July 1808, Sully",died:"17 October 1893, Montcresson",age:"65",spouse:"Élisabeth de La Croix de Castries",issue:"4",
+ events:[[1873,"Elected president by the royalist Assembly as a placeholder until a king can be found."],
+         [1875,"The constitutional laws set up the republic's institutions."],
+         [1877,"The 16 May crisis: dismisses a republican government, loses the election, and eventually resigns in 1879."]],
+ fact:"The royalist Assembly meant him as a stopgap. The republic outlasted them all.",
+ peek:"A marshal and a monarchist who presided over the republic."},
+
+{id:"grevy",name:"Jules Grévy",epithet:"the republican",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1879,end:1887,reign:"1879–1887",
+ born:"15 August 1807, Mont-sous-Vaudrey",died:"9 September 1891, Mont-sous-Vaudrey",age:"71",spouse:"Coralie Dubois",issue:"1",
+ events:[[1879,"Elected president after MacMahon resigns."],
+         [1880,"Bastille Day becomes a national holiday; the Marseillaise had become the anthem in 1879."],
+         [1887,"Forced to resign after his son-in-law is found selling decorations from the Élysée."]],
+ fact:"Under him the republic's symbols were fixed: the anthem, the holiday, the tricolour.",
+ peek:"The president who fixed the republic's symbols."},
+
+{id:"carnot",name:"Sadi Carnot",epithet:"the engineer president",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1887,end:1894,reign:"1887–1894",
+ born:"11 August 1837, Limoges",died:"25 June 1894, Lyon",age:"50",spouse:"Cécile Dupont-White",issue:"4",
+ events:[[1887,"Elected after Grévy's resignation, as a clean name in a scandal-ridden republic."],
+         [1889,"Opens the Paris Exposition, whose centrepiece is the Eiffel Tower."],
+         [1894,"Stabbed in Lyon by an Italian anarchist on 24 June, dying the next day."]],
+ fact:"His grandfather Lazare Carnot organised the armies of the Revolution.",
+ peek:"Opened the Eiffel Tower, and was assassinated."},
+
+{id:"casimirperier",name:"Jean Casimir-Perier",epithet:"the six-month president",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1894,end:1895,reign:"1894–1895",
+ born:"8 November 1847, Paris",died:"11 March 1907, Paris",age:"46",spouse:"Hélène Perier",issue:"3",
+ events:[[1894,"Elected president days after Carnot's assassination."],
+         [1894,"The Dreyfus affair begins during his term, with the arrest of Captain Alfred Dreyfus."],
+         [1895,"Resigns after six months, complaining that the presidency had no real power."]],
+ fact:"He was the shortest-serving president of the Third Republic, and said the job was a pointless one.",
+ peek:"Quit after six months."},
+
+{id:"faure",name:"Félix Faure",epithet:"the would-be monarch",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1895,end:1899,reign:"1895–1899",
+ born:"30 January 1841, Paris",died:"16 February 1899, Paris",age:"54",spouse:"Berthe Belluot",issue:"2",
+ events:[[1896,"Welcomes the Russian tsar Nicholas II in Paris, sealing the Franco-Russian alliance."],
+         [1898,"Presides over the Fashoda crisis, in which French and British forces face each other in Sudan."],
+         [1899,"Dies suddenly in the Élysée in February."]],
+ fact:"He loved pomp and was said to have acted like a monarch.",
+ peek:"The president who died in office."},
+
+{id:"loubet",name:"Émile Loubet",epithet:"the president of the Entente",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1899,end:1906,reign:"1899–1906",
+ born:"31 December 1838, Marsanne",died:"20 December 1929, Montélimar",age:"60",spouse:"Marie-Louise Picard",issue:"3",
+ events:[[1899,"Elected as the Dreyfus affair divides France; Dreyfus is pardoned."],
+         [1903,"Welcomes Edward VII to Paris, the visit that paves the way for the Entente Cordiale."],
+         [1905,"Signs the law separating Church and State."]],
+ fact:"He was the first French president to complete a full seven-year term in the new century, and he presided over the reconciliation with Britain.",
+ peek:"The president who made friends with Britain."},
+
+{id:"fallieres",name:"Armand Fallières",epithet:"the peasant president",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1906,end:1913,reign:"1906–1913",
+ born:"6 November 1841, Mézin",died:"22 June 1931, Mézin",age:"64",spouse:"Jeanne Bresson",issue:"2",
+ events:[[1906,"Elected president."],
+         [1908,"Hosts Edward VII's state visit to France, among the first of the new entente."],
+         [1911,"Faces the Agadir crisis with Germany over Morocco."]],
+ fact:"He was the son of a clerk of the court in Gascony and was said to be so down-to-earth that he sold his own wine.",
+ peek:"A calm president in the years before the war."},
+
+{id:"poincare",name:"Raymond Poincaré",epithet:"the wartime president",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1913,end:1920,reign:"1913–1920",
+ born:"20 August 1860, Bar-le-Duc",died:"15 October 1934, Paris",age:"52",spouse:"Henriette Benucci",issue:"None",
+ events:[[1913,"Elected president, a Lorrainer who had never forgiven the loss of Alsace-Lorraine."],
+         [1914,"Presides over the outbreak of the First World War."],
+         [1917,"Appoints his rival Clemenceau as prime minister to win the war."],
+         [1919,"The Treaty of Versailles returns Alsace-Lorraine to France."]],
+ fact:"He later served as prime minister and occupied the Ruhr in 1923 as a way of collecting reparations.",
+ peek:"President through the Great War."},
+
+{id:"deschanel",name:"Paul Deschanel",epithet:"the president who fell off a train",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1920,end:1920,reign:"1920 · seven months",
+ born:"13 February 1855, Brussels",died:"28 April 1922, Paris",age:"65",spouse:"Germaine Brice",issue:"3",
+ events:[[1920,"Elected president in February."],
+         [1920,"Falls from the presidential train in May while sleepwalking."],
+         [1920,"Resigns in September after months of illness and gossip."]],
+ fact:"The fall from the train was widely covered and he was found by a railway worker, who did not at first believe he was the president.",
+ peek:"Seven months in office, and a fall from a train."},
+
+{id:"millerand",name:"Alexandre Millerand",epithet:"the president who lost the Cartel",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1920,end:1924,reign:"1920–1924",
+ born:"10 February 1859, Paris",died:"6 April 1943, Versailles",age:"61",spouse:"Jeanne Chouanard",issue:"3",
+ events:[[1920,"Elected after Deschanel's resignation."],
+         [1923,"Backs Poincaré's occupation of the Ruhr."],
+         [1924,"Forced to resign after the left wins the elections."]],
+ fact:"He began as a socialist and ended as a conservative.",
+ peek:"Forced out by a left-wing victory."},
+
+{id:"doumergue",name:"Gaston Doumergue",epithet:"Gastounet",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1924,end:1931,reign:"1924–1931",
+ born:"1 August 1863, Aigues-Vives",died:"18 June 1937, Aigues-Vives",age:"60",spouse:"Jeanne-Marie Gaussal",issue:"None",
+ events:[[1924,"Elected, the first Protestant president of France."],
+         [1928,"Presides over stability and growth under Poincaré's second government."],
+         [1931,"Serves a full term and leaves office."]],
+ fact:"He was brought back in 1934 as prime minister to deal with the crisis after the riots of 6 February.",
+ peek:"The first Protestant president."},
+
+{id:"doumer",name:"Paul Doumer",epithet:"the assassinated president",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1931,end:1932,reign:"1931–1932",
+ born:"22 March 1857, Aurillac",died:"7 May 1932, Paris",age:"74",spouse:"Blanche Richel",issue:"8",
+ events:[[1931,"Elected president, having been governor-general of Indochina."],
+         [1931,"Opens the Colonial Exhibition in Paris."],
+         [1932,"Shot by a Russian émigré, Paul Gorguloff, at a book fair on 6 May, and dies the next day."]],
+ fact:"Four of his sons died in the First World War.",
+ peek:"Shot at a book fair."},
+
+{id:"lebrun",name:"Albert Lebrun",epithet:"the last president of the Third Republic",house:"republic",kingdom:"Third Republic",interregnum:true,role:"President",start:1932,end:1940,reign:"1932–1940",lost:true,
+ born:"29 August 1871, Mercy-le-Haut",died:"6 March 1950, Paris",age:"60",spouse:"Marguerite Nivoit",issue:"2",
+ events:[[1932,"Elected after Doumer's murder."],
+         [1936,"Presides over the Popular Front, with the first paid holidays."],
+         [1940,"After the fall of France he appoints Marshal Pétain, and leaves office in July."]],
+ fact:"The Vichy vote of July 1940 gave full powers to Pétain, and Lebrun left office without formally resigning.",
+ peek:"The last president of the Third Republic."},
+
+{id:"petain",name:"Philippe Pétain",epithet:"the hero of Verdun, head of Vichy",house:"republic",kingdom:"Vichy France",interregnum:true,role:"Head of the French State",start:1940,end:1944,reign:"1940–1944",lost:true,
+ born:"24 April 1856, Cauchy-à-la-Tour",died:"23 July 1951, Île d'Yeu",age:"84",spouse:"Eugénie Hardon",issue:"None",
+ events:[[1940,"Signs the armistice on 22 June and takes full powers; the French State is established at Vichy."],
+         [1940,"Shakes hands with Hitler at Montoire and announces collaboration."],
+         [1942,"French police round up about 13,000 Jews at the Vél d'Hiv in Paris."],
+         [1945,"Tried for treason and sentenced to death; the sentence is commuted to life imprisonment."]],
+ fact:"The victor of Verdun in 1916 ended as a convicted traitor, and died in prison at 95.",
+ peek:"The hero of Verdun, and the head of the Vichy regime."},
+
+/* ------------------- FOURTH AND FIFTH REPUBLICS ------------------- */
+{id:"degaulle",name:"Charles de Gaulle",epithet:"the General",house:"republic",kingdom:"Fifth Republic",interregnum:true,role:"President",start:1944,end:1969,reign:"1944–1946 · 1959–1969",gap:[[1946,1959]],
+ born:"22 November 1890, Lille",died:"9 November 1970, Colombey-les-Deux-Églises",age:"53",spouse:"Yvonne Vendroux",issue:"3",
+ events:[[1940,"Makes his appeal of 18 June from London on the BBC, urging the French to fight on."],
+         [1944,"Enters liberated Paris on 25 August as head of the provisional government."],
+         [1958,"Returns amid the Algerian crisis and writes the constitution of the Fifth Republic."],
+         [1963,"Vetoes British entry to the Common Market, and again in 1967."],
+         [1969,"Resigns after losing a referendum."]],
+ fact:"He broadcast his first appeal from London, and lived in England for much of the war years.",
+ peek:"Liberator of France, and the founder of the Fifth Republic."},
+
+{id:"auriol",name:"Vincent Auriol",epithet:"the first president of the Fourth Republic",house:"republic",kingdom:"Fourth Republic",interregnum:true,role:"President",start:1947,end:1954,reign:"1947–1954",
+ born:"27 August 1884, Revel",died:"1 January 1966, Paris",age:"62",spouse:"Michelle Aucouturier",issue:"1",
+ events:[[1947,"Elected the first president of the Fourth Republic."],
+         [1949,"France joins NATO."],
+         [1954,"Leaves office as the Indochina war ends."]],
+ fact:"The Fourth Republic had more than twenty governments in twelve years.",
+ peek:"A figure of continuity in an unstable republic."},
+
+{id:"coty",name:"René Coty",epithet:"the last president of the Fourth Republic",house:"republic",kingdom:"Fourth Republic",interregnum:true,role:"President",start:1954,end:1959,reign:"1954–1959",
+ born:"20 March 1882, Le Havre",died:"22 November 1962, Le Havre",age:"71",spouse:"Germaine Corblet",issue:"2",
+ events:[[1954,"Elected after thirteen rounds of voting."],
+         [1957,"Signs the Treaty of Rome, founding the European Economic Community."],
+         [1958,"Calls on de Gaulle to form a government as Algiers rebels."]],
+ fact:"He famously said that the republic was in danger and handed it to de Gaulle.",
+ peek:"Handed the republic to de Gaulle."},
+
+{id:"pompidou",name:"Georges Pompidou",epithet:"the modernising president",house:"republic",kingdom:"Fifth Republic",interregnum:true,role:"President",start:1969,end:1974,reign:"1969–1974",
+ born:"5 July 1911, Montboudif",died:"2 April 1974, Paris",age:"57",spouse:"Claude Cahour",issue:"1 adopted son",
+ events:[[1969,"Elected president after de Gaulle."],
+         [1971,"Meets Edward Heath in Paris and lifts the French veto on Britain's entry to the Common Market."],
+         [1973,"Britain joins the EEC."],
+         [1974,"Dies in office in April."]],
+ fact:"The Pompidou Centre in Paris bears his name, and was opened in 1977.",
+ peek:"The president who let Britain in."},
+
+{id:"giscard",name:"Valéry Giscard d'Estaing",epithet:"VGE",house:"republic",kingdom:"Fifth Republic",interregnum:true,role:"President",start:1974,end:1981,reign:"1974–1981",
+ born:"2 February 1926, Koblenz",died:"2 December 2020, Authon",age:"48",spouse:"Anne-Aymone Sauvage de Brantes",issue:"4",
+ events:[[1974,"Elected at 48, the youngest president since Napoleon III."],
+         [1974,"Lowers the voting age to 18."],
+         [1981,"Loses to François Mitterrand."]],
+ fact:"He later chaired the convention that drafted the European constitution.",
+ peek:"The youngest president since Napoleon III."},
+
+{id:"mitterrand",name:"François Mitterrand",epithet:"the Sphinx",house:"republic",kingdom:"Fifth Republic",interregnum:true,role:"President",start:1981,end:1995,reign:"1981–1995",
+ born:"26 October 1916, Jarnac",died:"8 January 1996, Paris",age:"64",spouse:"Danielle Gouze",issue:"3",
+ events:[[1981,"Elected, the first Socialist president of the Fifth Republic; abolishes the death penalty."],
+         [1986,"Signs the Channel Tunnel agreement with Margaret Thatcher."],
+         [1992,"Signs the Maastricht Treaty."],
+         [1994,"Opens the Channel Tunnel with Queen Elizabeth II."]],
+ fact:"Fourteen years: the longest-serving president of France.",
+ peek:"Opened the Channel Tunnel with the Queen."},
+
+{id:"chirac",name:"Jacques Chirac",epithet:"the bulldozer",house:"republic",kingdom:"Fifth Republic",interregnum:true,role:"President",start:1995,end:2007,reign:"1995–2007",
+ born:"29 November 1932, Paris",died:"26 September 2019, Paris",age:"62",spouse:"Bernadette Chodron de Courcel",issue:"2",
+ events:[[1995,"Elected; acknowledges the French state's responsibility for the roundup of Jews in 1942."],
+         [2002,"Re-elected with about 82 per cent against Jean-Marie Le Pen."],
+         [2003,"Refuses to join the invasion of Iraq."],
+         [2005,"French voters reject the European constitution in a referendum."]],
+ fact:"He was the first president to publicly acknowledge the French state's role in the Vél d'Hiv roundup.",
+ peek:"Said no to the Iraq war."},
+
+{id:"sarkozy",name:"Nicolas Sarkozy",epithet:"hyperpresident",house:"republic",kingdom:"Fifth Republic",interregnum:true,role:"President",start:2007,end:2012,reign:"2007–2012",
+ born:"28 January 1955, Paris",age:"52",spouse:"Marie-Dominique Culioli; Cécilia Ciganer-Albéniz; Carla Bruni",issue:"3",
+ events:[[2007,"Elected, promising a break with the past."],
+         [2008,"Faces the financial crisis and holds the EU presidency."],
+         [2011,"Leads the military intervention in Libya with Britain."],
+         [2012,"Loses to François Hollande."]],
+ fact:"His 2008 marriage to Carla Bruni made him the first sitting president to marry in the Élysée in decades.",
+ peek:"The hyperactive president of the financial crisis."},
+
+{id:"hollande",name:"François Hollande",epithet:"Monsieur Normal",house:"republic",kingdom:"Fifth Republic",interregnum:true,role:"President",start:2012,end:2017,reign:"2012–2017",
+ born:"12 August 1954, Rouen",age:"57",spouse:"Ségolène Royal (partner); Valérie Trierweiler (partner)",issue:"4",
+ events:[[2013,"Legalises same-sex marriage."],
+         [2015,"The Charlie Hebdo attacks in January and the Paris attacks in November."],
+         [2015,"Hosts the COP21 climate conference, which produces the Paris Agreement."],
+         [2016,"Announces that he will not stand again."]],
+ fact:"The first president since the war not to seek a second term.",
+ peek:"The president of Charlie Hebdo and the Paris Agreement."},
+
+{id:"macron",name:"Emmanuel Macron",epithet:"the youngest president",house:"republic",kingdom:"Fifth Republic",interregnum:true,role:"President",start:2017,end:2026,reign:"2017–present",
+ born:"21 December 1977, Amiens",age:"39",spouse:"Brigitte Macron",issue:"None",
+ events:[[2017,"Elected at 39, the youngest president in French history."],
+         [2019,"Notre-Dame catches fire in April; it reopens in December 2024."],
+         [2022,"Re-elected, the first president in two decades to win a second term."],
+         [2023,"Welcomes Charles III on his first state visit as king, in September."]],
+ fact:"The French constitution limits him to two terms, so his presidency ends in 2027.",
+ peek:"The youngest president, and the first re-elected in twenty years."}
+];
+
+
+/* ============================================================================
+   BRITAIN vs FRANCE — compare tab
+   ========================================================================== */
+(function(){
+  // wrap setView so the new section participates
+  const _setView = setView;
+  setView = function(v){
+    _setView(v);
+    const cmp = $("#view-compare");
+    if (cmp) cmp.classList.toggle("on", v === "compare");
+    document.body.classList.toggle("v-compare", v === "compare");
+    if (v === "compare") renderCompare();
+  };
+
+  // better year formatter that handles BC
+  const fmtY = y => {
+    if (y < 0) return Math.abs(y) + " BC";
+    if (y < 1000) return "AD " + y;
+    return String(y);
+  };
+
+  // French monogram helper
+  const FR_MONO_ABBR = {
+    louis:"Lou", charles:"Chas", philip:"Phil", francis:"Fran", henry:"Hen",
+    jean:"Jean", napoleon:"Nap", emmanuel:"Emm", jacques:"Jac", francois:"Fran",
+    nicholas:"Nic", nicolas:"Nic", georges:"Geo", albert:"Alb", vincent:"Vin",
+    paul:"Paul", felix:"Fél", adolphe:"Ado", marie:"Mar", vercingetorix:"Verc",
+    clovis:"Clo", charlemagne:"Char", hugh:"Hugh", robert:"Rob", odo:"Odo",
+    pepin:"Pep", childeric:"Chi", dagobert:"Dag", theuderic:"Theu"
+  };
+  function frMono(m){
+    if (m.mono) return m.mono;
+    const words = m.name.replace(/[^A-Za-zÀ-ÿÆæ ]/g, "").trim().split(/\s+/);
+    const first = FR_MONO_ABBR[words[0].toLowerCase()] || words[0].slice(0,4).replace(/^./, c => c.toUpperCase());
+    const num = (m.name.match(/\b(XVIII|XVII|XVI|XV|XIV|XIII|XII|XI|X|IX|VIII|VII|VI|V|IV|III|II|I)\b/) || [""])[0];
+    return num ? first + " " + num : first;
+  }
+
+  const frById = id => FR_DATA.find(m => m.id === id);
+  const frHouseOf = m => FR_HOUSES[m.house];
+
+  // who was in power in year y (honour gaps)
+  function rulersInYear(list, y){
+    return list.filter(m => {
+      if (m.gap){
+        for (const [a,b] of m.gap) if (y >= a && y <= b) return false;
+      }
+      return m.start <= y && y <= m.end;
+    });
+  }
+
+  // ---- sub-view switching ----
+  let cmpMode = "scrub";
+  let cmpYear = 1066;
+
+  function setCmpMode(mode){
+    cmpMode = mode;
+    $$("#cmpSub button").forEach(b => b.classList.toggle("on", b.dataset.cmp === mode));
+    ["scrub","periods","moments","map"].forEach(n => {
+      const el = $("#cmp-" + n);
+      if (el) el.style.display = (n === mode) ? "" : "none";
+    });
+    renderCompare();
+  }
+  $$("#cmpSub button").forEach(b => b.addEventListener("click", () => setCmpMode(b.dataset.cmp)));
+
+  // ---- twin scrubber ----
+  function renderTwinRails(){
+    const host = $("#twinRails");
+    if (!host) return;
+    const total = FR_END - FR_START;
+    const pct = y => ((y - FR_START) / total) * 100;
+
+    function bands(eras, houses){
+      return eras.map(([h,a,b]) => {
+        const l = pct(a), w = pct(b) - pct(a);
+        const label = w > 6 ? (houses[h] ? houses[h].name.split(" ")[0] : h) : "";
+        return `<div class="band" data-house="${h}" data-a="${a}" data-b="${b}" style="left:${l}%;width:${w}%"><span>${label}</span></div>`;
+      }).join("");
+    }
+
+    host.innerHTML = `
+      <div class="rail" data-side="gb">
+        <span class="rail-label">Britain</span>
+        ${bands(ERAS, HOUSES)}
+        <div class="marker" id="gbMarker" style="left:${pct(cmpYear)}%"></div>
+      </div>
+      <div class="rail" data-side="fr">
+        <span class="rail-label">France</span>
+        ${bands(FR_ERAS, FR_HOUSES)}
+        <div class="marker" id="frMarker" style="left:${pct(cmpYear)}%"></div>
+      </div>`;
+
+    host.querySelectorAll(".band").forEach(b => {
+      b.addEventListener("click", () => {
+        const mid = Math.round((+b.dataset.a + +b.dataset.b) / 2);
+        setCmpYear(mid);
+      });
+    });
+  }
+
+  function renderTwinScrub(){
+    const gb = rulersInYear(DATA, cmpYear);
+    const fr = rulersInYear(FR_DATA, cmpYear);
+
+    function chip(m, isFr){
+      const mono = isFr ? frMono(m) : monoOf(m);
+      const house = isFr ? frHouseOf(m) : houseOf(m);
+      const role = m.interregnum ? (m.role || "not a monarch") : (m.epithet || "");
+      return `<button class="ruler-chip" data-house="${m.house}" data-id="${m.id}" data-fr="${isFr?1:0}">
+        <div class="mono"><span${monoClass(mono)}>${esc(mono)}</span></div>
+        <div class="meta"><b>${esc(m.name)}</b><span>${esc(house.name)} · ${esc(m.reign)}${role ? " · " + esc(role) : ""}</span></div>
+      </button>`;
+    }
+
+    const gbH = $("#gbRulers"), frH = $("#frRulers");
+    if (gbH) gbH.innerHTML = gb.length ? gb.map(m => chip(m, false)).join("") : `<div class="empty">No British ruler on record for ${fmtY(cmpYear)}.</div>`;
+    if (frH) frH.innerHTML = fr.length ? fr.map(m => chip(m, true)).join("") : `<div class="empty">No French ruler on record for ${fmtY(cmpYear)}.</div>`;
+
+    $$("#twinScrub .ruler-chip").forEach(b => {
+      b.addEventListener("click", () => {
+        if (b.dataset.fr === "1") openFr(b.dataset.id);
+        else open(b.dataset.id);
+      });
+    });
+  }
+
+  function setCmpYear(y){
+    cmpYear = Math.max(FR_START, Math.min(FR_END, y|0));
+    const inp = $("#cmpYear");
+    if (inp) inp.value = cmpYear;
+    const lab = $("#cmpYearLab");
+    if (lab) lab.textContent = fmtY(cmpYear);
+    const pct = ((cmpYear - FR_START) / (FR_END - FR_START)) * 100;
+    ["gbMarker","frMarker"].forEach(id => {
+      const m = $("#" + id);
+      if (m) m.style.left = pct + "%";
+    });
+    renderTwinScrub();
+  }
+
+  const yearInp = $("#cmpYear");
+  if (yearInp) yearInp.addEventListener("input", e => setCmpYear(+e.target.value));
+
+  // ---- period by period ----
+  const PERIODS = [
+    {title:"Gaul & Roman Britain", when:"58 BC – AD 410", gb: m => m.house==="roman" || (m.start>=43 && m.end<=410), fr: m => m.house==="gaul"},
+    {title:"Post-Roman & Merovingian", when:"c.410 – 751", gb: m => ["briton","saxon"].includes(m.house) && m.start < 751, fr: m => m.house==="merovingian"},
+    {title:"Carolingian & early England", when:"751 – 987", gb: m => m.start >= 750 && m.start < 987, fr: m => m.house==="carolingian"},
+    {title:"Capetians & Anglo-Saxons / Normans", when:"987 – 1154", gb: m => m.start >= 987 && m.start < 1154, fr: m => m.house==="capetian" && m.start < 1154},
+    {title:"Plantagenet & Capetian / Valois", when:"1154 – 1328", gb: m => m.house==="plantagenet" && m.start < 1328, fr: m => (m.house==="capetian" || m.house==="valois") && m.start >= 1154 && m.start < 1328},
+    {title:"Hundred Years' War", when:"1328 – 1453", gb: m => m.start >= 1328 && m.start < 1453, fr: m => m.start >= 1328 && m.start < 1453 && (m.house==="valois" || m.id==="henry6fr")},
+    {title:"Late Valois & Tudor", when:"1453 – 1589", gb: m => m.house==="tudor" || (m.house==="plantagenet" && m.start >= 1453), fr: m => m.house==="valois" && m.start >= 1453},
+    {title:"Stuarts & early Bourbon", when:"1589 – 1714", gb: m => m.house==="stuart", fr: m => m.house==="bourbon" && m.start < 1715},
+    {title:"Hanover & Bourbon / Revolution", when:"1714 – 1815", gb: m => m.house==="hanover" && m.start < 1815, fr: m => (m.house==="bourbon" || m.house==="republic" || m.house==="bonaparte") && m.start >= 1715 && m.start < 1815},
+    {title:"19th century: empires & restorations", when:"1815 – 1870", gb: m => m.house==="hanover" && m.start >= 1815, fr: m => m.start >= 1815 && m.start < 1871},
+    {title:"Third Republic to World Wars", when:"1870 – 1945", gb: m => m.house==="windsor" || (m.house==="hanover" && m.start >= 1901), fr: m => m.house==="republic" && m.start >= 1870 && m.start < 1945},
+    {title:"Modern era", when:"1945 – present", gb: m => m.house==="windsor" && m.start >= 1945, fr: m => m.start >= 1945}
+  ];
+
+  function renderPeriods(){
+    const host = $("#periodGrid");
+    if (!host || host.dataset.built) return;
+    host.dataset.built = "1";
+
+    host.innerHTML = PERIODS.map((p,i) => {
+      const gbs = DATA.filter(p.gb).sort((a,b) => a.start - b.start);
+      const frs = FR_DATA.filter(p.fr).sort((a,b) => a.start - b.start);
+      function li(m, isFr){
+        return `<li data-house="${m.house}" data-id="${m.id}" data-fr="${isFr?1:0}">
+          <span class="dot"></span>
+          <span class="nm">${esc(m.name)}${m.interregnum ? " <i style='opacity:.6'>("+esc(m.role||"")+")</i>" : ""}</span>
+          <span class="rg">${esc(m.reign)}</span>
+        </li>`;
+      }
+      return `<div class="period">
+        <div class="period-h"><h3>${esc(p.title)}</h3><span>${esc(p.when)}</span></div>
+        <div class="period-cols">
+          <div class="period-col"><h4>Britain (${gbs.length})</h4><ul>${gbs.map(m => li(m,false)).join("") || "<li style='opacity:.5'>—</li>"}</ul></div>
+          <div class="period-col"><h4>France (${frs.length})</h4><ul>${frs.map(m => li(m,true)).join("") || "<li style='opacity:.5'>—</li>"}</ul></div>
+        </div>
+      </div>`;
+    }).join("");
+
+    host.querySelectorAll("li[data-id]").forEach(li => {
+      li.addEventListener("click", () => {
+        if (li.dataset.fr === "1") openFr(li.dataset.id);
+        else open(li.dataset.id);
+      });
+    });
+  }
+
+  // ---- parallel moments ----
+  const MOMENTS = [
+    {when:"52 BC", gb:{title:"Roman Britain still decades away", text:"Julius Caesar had already raided Britain twice (55–54 BC). The full conquest under Claudius was still 95 years off."}, fr:{id:"vercingetorix", title:"Vercingetorix at Alesia", text:"The last great Gallic revolt ends in defeat. Caesar takes the war-leader to Rome."}},
+    {when:"AD 43", gb:{id:"claudius", title:"Claudius invades", text:"Four legions cross the Channel. Britain becomes a Roman province."}, fr:{title:"Roman Gaul", text:"Gaul has been a Roman province for nearly a century. The same empire now rules both sides of the Channel."}},
+    {when:"260–274", gb:{title:"Britain under the Gallic Empire", text:"Postumus and his successors rule Britain, Gaul and Spain as a breakaway Roman state."}, fr:{id:"postumus", title:"Gallic Empire", text:"Postumus declares himself emperor at Cologne; for 14 years the north-west is independent of Rome."}},
+    {when:"486", gb:{title:"Britain after Rome", text:"The legions are long gone. Anglo-Saxon kingdoms are forming in the east."}, fr:{id:"clovis", title:"Clovis at Soissons", text:"The Frankish king defeats the last Roman ruler of northern Gaul and begins the Merovingian kingdom."}},
+    {when:"597", gb:{id:"aethelberht", title:"Æthelberht of Kent", text:"Augustine lands; the king of Kent accepts baptism. His Frankish wife Bertha had kept a Christian chapel."}, fr:{title:"Merovingian Gaul", text:"Bertha, daughter of the Frankish king Charibert, had brought her faith to Canterbury years earlier."}},
+    {when:"800", gb:{id:"offa", title:"Offa of Mercia", text:"The strongest English king of his day corresponds with Charlemagne as an equal."}, fr:{id:"charlemagne", title:"Charlemagne crowned", text:"On Christmas Day the Frankish king is crowned Emperor of the Romans in St Peter's."}},
+    {when:"843", gb:{title:"England still divided", text:"Wessex, Mercia and Northumbria remain separate. No single English kingdom yet."}, fr:{id:"charles2", title:"Treaty of Verdun", text:"Charlemagne's grandsons partition the empire. West Francia becomes the core of future France."}},
+    {when:"911", gb:{title:"England under Edward the Elder", text:"The West Saxon kings are reconquering the Danelaw."}, fr:{id:"charles3", title:"Normandy granted", text:"Charles the Simple grants the lower Seine to the Viking Rollo — the origin of the duchy that will conquer England."}},
+    {when:"927 vs 987", gb:{id:"aethelstan", title:"Æthelstan, first king of England", text:"He takes York and is recognised as overlord of Britain."}, fr:{id:"hugh", title:"Hugh Capet elected", text:"The last Carolingian is set aside; a new dynasty begins that will last (in male line) until 1328."}},
+    {when:"1066", gb:{id:"william1", title:"Norman Conquest", text:"William of Normandy defeats Harold and is crowned at Westminster."}, fr:{id:"philip1", title:"Philip I watches", text:"The king of France is the new English king's feudal overlord for Normandy — in theory."}},
+    {when:"1154", gb:{id:"henry2", title:"Henry II & Eleanor", text:"The Angevin empire stretches from the Scottish border to the Pyrenees."}, fr:{id:"louis7", title:"Louis VII loses Aquitaine", text:"His former wife Eleanor remarries the future Henry II, taking half of France with her."}},
+    {when:"1204", gb:{id:"john", title:"John loses Normandy", text:"Philip II conquers the duchy. The cross-Channel empire collapses."}, fr:{id:"philip2", title:"Philip Augustus takes Normandy", text:"The Capetian domain doubles. France begins to look like a single kingdom."}},
+    {when:"1216", gb:{id:"john", title:"Prince Louis in London", text:"Barons invite the French king's son to take the English throne; he is proclaimed in London but never crowned."}, fr:{id:"louis8", title:"Louis (later VIII) invades", text:"He lands in England during the civil war against John, then withdraws after John's death."}},
+    {when:"1337–1453", gb:{title:"Hundred Years' War", text:"Edward III claims the French crown through his mother. English armies win Crécy, Poitiers and Agincourt."}, fr:{title:"The Valois fight back", text:"Joan of Arc, the recovery of Paris, and finally Castillon end the English presence in France (except Calais)."}},
+    {when:"1420", gb:{id:"henry5", title:"Treaty of Troyes", text:"Henry V is named heir to the mad Charles VI and marries Catherine of Valois."}, fr:{id:"charles6", title:"Charles VI disinherits his son", text:"The treaty makes an English king the next king of France — until Joan of Arc and Charles VII reverse it."}},
+    {when:"1520", gb:{id:"henry8", title:"Field of Cloth of Gold", text:"Henry VIII and Francis I stage the most extravagant summit of the age near Calais."}, fr:{id:"francis1", title:"Francis I meets Henry", text:"Two Renaissance kings try to outshine each other; the alliance does not last."}},
+    {when:"1534 vs 1598", gb:{id:"henry8", title:"Act of Supremacy", text:"Henry breaks with Rome and becomes Supreme Head of the Church of England."}, fr:{id:"henry4", title:"Edict of Nantes", text:"Henry IV ends the Wars of Religion and grants limited toleration to the Huguenots."}},
+    {when:"1649 vs 1793", gb:{id:"charles1", title:"Charles I executed", text:"England becomes a republic under Cromwell. The monarchy is restored in 1660."}, fr:{id:"louis16", title:"Louis XVI executed", text:"The French Revolution abolishes the monarchy; the First Republic is proclaimed."}},
+    {when:"1688 vs 1789", gb:{id:"william3", title:"Glorious Revolution", text:"James II flees; William and Mary accept a constitutional settlement."}, fr:{id:"louis16", title:"French Revolution begins", text:"The Estates-General become the National Assembly; absolute monarchy begins to collapse."}},
+    {when:"1805 / 1815", gb:{id:"george3", title:"Trafalgar & Waterloo", text:"Nelson ends French naval power; Wellington and Blücher end Napoleon's career."}, fr:{id:"napoleon1", title:"Napoleon rises and falls", text:"Emperor of the French, master of Europe, then exile on St Helena."}},
+    {when:"1830–48", gb:{title:"British exile for the French", text:"Charles X and later Louis-Philippe both end their days in Britain after losing their thrones."}, fr:{id:"charles10", title:"July Revolution & 1848", text:"Two French kings are forced out; the second French Republic briefly appears."}},
+    {when:"1855", gb:{id:"victoria", title:"Victoria in Paris", text:"The first British monarch to visit Paris since Henry VI. The Entente Cordiale is still decades away, but the ice thaws."}, fr:{id:"napoleon3", title:"Napoleon III hosts Victoria", text:"The Second Empire puts on a spectacular welcome; the two countries are allies in the Crimea."}},
+    {when:"1904", gb:{id:"edward7", title:"Entente Cordiale", text:"Britain and France settle colonial disputes and begin the partnership that will fight two world wars."}, fr:{id:"loubet", title:"Loubet and Edward VII", text:"The official visits seal a new friendship after centuries of rivalry."}},
+    {when:"1940", gb:{id:"george6", title:"Britain stands alone", text:"After the fall of France, Churchill's government fights on."}, fr:{id:"degaulle", title:"de Gaulle in London", text:"From a BBC studio he calls on the French to continue the fight. Free France is born in exile."}},
+    {when:"1963 / 1973", gb:{id:"elizabeth2", title:"Britain joins Europe", text:"After de Gaulle's veto, Britain finally enters the EEC under Heath."}, fr:{id:"degaulle", title:"de Gaulle's veto", text:"Twice he blocks British entry, fearing an American Trojan horse."}},
+    {when:"1994", gb:{title:"Channel Tunnel", text:"A fixed link under the sea finally joins the two countries after centuries of schemes."}, fr:{title:"Le Tunnel sous la Manche", text:"Opened by Elizabeth II and François Mitterrand."}},
+    {when:"2023", gb:{id:"charles3", title:"Charles III state visit", text:"The first state visit of the new reign is to France."}, fr:{id:"macron", title:"Macron hosts Charles III", text:"The youngest French president welcomes the new British king in Paris and at Versailles."}}
+  ];
+
+  function renderMoments(){
+    const host = $("#momentsHost");
+    if (!host || host.dataset.built) return;
+    host.dataset.built = "1";
+
+    host.innerHTML = MOMENTS.map(mo => {
+      function card(side, isFr){
+        if (!side) return `<div class="card" style="opacity:.5"><b>—</b><span>No entry</span></div>`;
+        const house = side.id ? (isFr ? (frById(side.id)||{}).house : (byId(side.id)||{}).house) : (isFr ? "republic" : "windsor");
+        const click = side.id ? `data-id="${side.id}" data-fr="${isFr?1:0}"` : "";
+        return `<div class="card" data-house="${house||'all'}" ${click}>
+          <b>${esc(side.title)}</b>
+          <span>${esc(side.text)}</span>
+        </div>`;
+      }
+      return `<div class="moment">
+        <div class="when">${esc(mo.when)}</div>
+        ${card(mo.gb, false)}
+        ${card(mo.fr, true)}
+      </div>`;
+    }).join("");
+
+    host.querySelectorAll(".card[data-id]").forEach(c => {
+      c.addEventListener("click", () => {
+        if (c.dataset.fr === "1") openFr(c.dataset.id);
+        else open(c.dataset.id);
+      });
+    });
+  }
+
+  // ---- twin reign map (simplified bars) ----
+  function renderTwinMap(){
+    const host = $("#twinMap");
+    if (!host) return;
+    const total = FR_END - FR_START;
+    const pct = y => ((y - FR_START) / total) * 100;
+
+    function bars(list, isFr){
+      // group by house for lanes
+      const byHouse = {};
+      list.forEach(m => {
+        if (!byHouse[m.house]) byHouse[m.house] = [];
+        byHouse[m.house].push(m);
+      });
+      const order = isFr ? FR_ORDER : ORDER;
+      return order.filter(h => byHouse[h]).map(h => {
+        const items = byHouse[h].map(m => {
+          const l = pct(m.start), w = Math.max(0.15, pct(m.end) - pct(m.start));
+          const label = w > 3 ? (isFr ? frMono(m) : monoOf(m)) : "";
+          return `<div class="bar" data-house="${m.house}" data-id="${m.id}" data-fr="${isFr?1:0}"
+            style="left:${l}%;width:${w}%" title="${esc(m.name)} (${esc(m.reign)})">
+            ${label ? `<span>${esc(label)}</span>` : ""}
+          </div>`;
+        }).join("");
+        const hName = isFr ? (FR_HOUSES[h]||{}).name : (HOUSES[h]||{}).name;
+        return `<div class="lane" data-house="${h}">${items}</div>`;
+      }).join("");
+    }
+
+    // simple century ticks
+    let ticks = "";
+    for (let y = 0; y <= 2000; y += 200){
+      if (y < FR_START) continue;
+      ticks += `<span class="tk" style="left:${pct(y)}%">${y||"1"}</span>`;
+    }
+    ticks += `<span class="tk" style="left:${pct(FR_END)}%">now</span>`;
+
+    host.innerHTML = `
+      <div class="lane-group">
+        <h4>Britain</h4>
+        ${bars(DATA, false)}
+      </div>
+      <div class="axis">${ticks}</div>
+      <div class="lane-group">
+        <h4>France</h4>
+        ${bars(FR_DATA, true)}
+      </div>
+      <div class="axis">${ticks}</div>`;
+
+    host.querySelectorAll(".bar").forEach(b => {
+      b.addEventListener("click", () => {
+        if (b.dataset.fr === "1") openFr(b.dataset.id);
+        else open(b.dataset.id);
+      });
+    });
+  }
+
+  // ---- French modal (reuse #modal / #sheet) ----
+  let frOpenId = null;
+  const FR_CHRONO = FR_DATA.slice().sort((a,b) => a.start - b.start || a.end - b.end);
+
+  function openFr(id){
+    const m = frById(id);
+    if (!m) return;
+    frOpenId = id;
+    state.id = null; // clear British selection
+
+    const house = frHouseOf(m);
+    const mono = frMono(m);
+    const roleLine = m.interregnum ? `<div class="role">${esc(m.role || "not a monarch")}</div>` : "";
+    const lost = m.lost ? `<span class="lost">lost / deposed</span>` : "";
+
+    // context bands for French span
+    const total = FR_END - FR_START;
+    const pfFr = y => ((y - FR_START) / total) * 100;
+    const bands = FR_ERAS.map(([h,a,b]) => {
+      const l = pfFr(a), w = pfFr(b) - pfFr(a);
+      return `<div class="ctx-band${h === m.house ? " on" : ""}" data-house="${h}" style="left:${l}%;width:${w}%">
+        <span>${w > 8 ? (FR_HOUSES[h]||{}).name || "" : ""}</span></div>`;
+    }).join("");
+
+    // meanwhile in Britain
+    const mid = Math.round((m.start + m.end) / 2);
+    const brits = rulersInYear(DATA, mid);
+    const meanwhile = brits.length
+      ? brits.map(b => `<button class="meanwhile" data-id="${b.id}">${esc(b.name)} <i>${esc(b.reign)}</i></button>`).join("")
+      : `<span style="opacity:.6">No British ruler on the map for the mid-point of this reign.</span>`;
+
+    const events = (m.events || []).map(([y,t]) =>
+      `<li><b>${fmtY(y)}</b> ${esc(t)}</li>`).join("");
+
+    const sheet = $("#sheet");
+    sheet.innerHTML = `
+      <button class="x" data-close aria-label="Close">×</button>
+      <div class="sheet-inner" data-house="${m.house}">
+        <div class="portrait">
+          <div class="mono big"><span${monoClass(mono)}>${esc(mono)}</span></div>
+          <div class="who">
+            <h2 id="mTitle">${esc(m.name)}</h2>
+            <p class="epi">${esc(m.epithet || "")}</p>
+            ${roleLine}
+            <p class="reign">${esc(m.reign)} ${lost}</p>
+            <p class="house-line"><span class="h" data-house="${m.house}">${esc(house.name)}</span>
+              ${m.kingdom && m.kingdom !== house.name ? " · " + esc(m.kingdom) : ""}</p>
+          </div>
+        </div>
+        <div class="ctx-track fr-ctx">${bands}</div>
+        <div class="facts">
+          ${m.born ? `<div><b>Born</b> ${esc(m.born)}${m.age ? " · aged " + esc(m.age) + " at accession" : ""}</div>` : ""}
+          ${m.died ? `<div><b>Died</b> ${esc(m.died)}</div>` : ""}
+          ${m.spouse ? `<div><b>Spouse</b> ${esc(m.spouse)}</div>` : ""}
+          ${m.issue ? `<div><b>Issue</b> ${esc(m.issue)}</div>` : ""}
+        </div>
+        ${m.fact ? `<p class="fact">${esc(m.fact)}</p>` : ""}
+        ${events ? `<ul class="events">${events}</ul>` : ""}
+        <div class="meanwhile-strip">
+          <b>Meanwhile in Britain</b> (mid-reign ~${fmtY(mid)})
+          <div class="mw-list">${meanwhile}</div>
+        </div>
+        <div class="nav">
+          <button data-frnav="-1">← Previous</button>
+          <button data-frnav="1">Next →</button>
+        </div>
+      </div>`;
+
+    $("#modal").classList.add("on");
+    $("#modal").setAttribute("aria-hidden", "false");
+
+    sheet.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeFr));
+    sheet.querySelector(".scrim")?.addEventListener("click", closeFr);
+    sheet.querySelectorAll("[data-frnav]").forEach(b => {
+      b.addEventListener("click", () => {
+        const idx = FR_CHRONO.findIndex(x => x.id === frOpenId);
+        const t = FR_CHRONO[idx + (+b.dataset.frnav)];
+        if (t) openFr(t.id);
+      });
+    });
+    sheet.querySelectorAll(".meanwhile").forEach(b => {
+      b.addEventListener("click", () => { closeFr(); open(b.dataset.id); });
+    });
+  }
+
+  function closeFr(){
+    frOpenId = null;
+    close(); // reuse existing close which clears modal
+  }
+
+  // capture-phase key handler for French modal
+  document.addEventListener("keydown", e => {
+    if (!frOpenId) return;
+    if (e.key === "Escape"){ closeFr(); return; }
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight"){
+      e.stopPropagation();
+      const idx = FR_CHRONO.findIndex(x => x.id === frOpenId);
+      const t = FR_CHRONO[idx + (e.key === "ArrowRight" ? 1 : -1)];
+      if (t) openFr(t.id);
+    }
+  }, true);
+
+  // ---- main render entry ----
+  function renderCompare(){
+    if (cmpMode === "scrub"){
+      renderTwinRails();
+      setCmpYear(cmpYear);
+    } else if (cmpMode === "periods"){
+      renderPeriods();
+    } else if (cmpMode === "moments"){
+      renderMoments();
+    } else if (cmpMode === "map"){
+      renderTwinMap();
+    }
+  }
+
+  // expose for debugging
+  window.openFr = openFr;
+  window.renderCompare = renderCompare;
+})();
+
 </script>
 </body>
 </html>
