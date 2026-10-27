@@ -1181,6 +1181,7 @@
     <button class="nav-tab" data-view="stats">📊 Stats</button>
     <button class="nav-tab" data-view="discoveries">🕵️ Discoveries</button>
     <button class="nav-tab" data-view="moodboard">🎭 Mood Board</button>
+    <button class="nav-tab" data-view="wheretowatch">📺 Where to Watch</button>
   </div>
   <div class="nav-right">
     <button id="ai-btn" onclick="toggleAiPanel()" title="AI Director — tell it what to show or hide (a)">🤖 AI Director</button>
@@ -4057,6 +4058,7 @@ function openHelpModal() {
       <tr><td style="padding:4px 0"><strong>m</strong></td><td>Mood Board View</td></tr>
       <tr><td style="padding:4px 0"><strong>b</strong></td><td>Toggle Blind Mode</td></tr>
       <tr><td style="padding:4px 0"><strong>n</strong></td><td>What's On Tonight?</td></tr>
+      <tr><td style="padding:4px 0"><strong>p</strong></td><td>Where to Watch</td></tr>
       <tr><td style="padding:4px 0"><strong>a</strong></td><td>AI Director (tell it what to show or hide)</td></tr>
       <tr><td style="padding:4px 0"><strong>d</strong></td><td>Toggle Light/Dark Theme</td></tr>
       <tr><td style="padding:4px 0"><strong>Enter</strong> / <strong>Space</strong></td><td>Open focused card</td></tr>
@@ -4347,6 +4349,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'v') { e.preventDefault(); document.querySelector('[data-view="discoveries"]')?.click(); }
   else if (e.key === 'b') { e.preventDefault(); document.getElementById('obscurity-toggle')?.click(); }
   else if (e.key === 'n') { e.preventDefault(); whatsOnTonight(); }
+  else if (e.key === 'p') { e.preventDefault(); document.querySelector('[data-view="wheretowatch"]')?.click(); }
   else if (e.key === 'm') { e.preventDefault(); document.querySelector('[data-view="moodboard"]')?.click(); }
 });
 
@@ -4419,6 +4422,7 @@ async function renderView() {
       case 'stats':       renderStats(main);                   break;
       case 'discoveries': await renderDiscoveries(main, token);break;
       case 'moodboard':   await renderMoodBoard(main, token);   break;
+      case 'wheretowatch': await renderWhereToWatch(main, token); break;
     }
   } catch (e) {
     if (token !== renderToken) return;
@@ -4634,7 +4638,7 @@ async function renderTrending(main, token) {
       sort_by: 'vote_average.desc', 'vote_average.gte': 7.0,
       'vote_count.gte': 10, 'vote_count.lte': 200, ...gp, ...yearParams('tv'),
     });
-    const allDeep = filterResults(
+    const allDeep = await filterResults(
       [...(deepCutRes.items || []).map(m => ({ ...m, media_type: 'movie' })),
        ...(deepCutTV.items || []).map(t => ({ ...t, media_type: 'tv' }))]
         .sort((a, b) => obscurityScore(b) - obscurityScore(a))
@@ -5582,7 +5586,7 @@ async function renderRecommended(main, token) {
         'vote_count.gte': 50, 'vote_count.lte': 800,
         with_genres: String(gapGenre),
       });
-      const gapItems = filterResults(data.items.map(m => ({ ...m, media_type: 'movie' })))
+      const gapItems = (await filterResults(data.items.map(m => ({ ...m, media_type: 'movie' }))))
         .filter(i => !state.ratings[mediaKey('movie', i.id)] && !state.watchlist[mediaKey('movie', i.id)])
         .slice(0, 8);
       if (gapItems.length) {
@@ -6183,6 +6187,128 @@ async function spinRoulette() {
     spinBtn.disabled = false;
     spinBtn.textContent = 'Spin again';
   }
+}
+
+/* ── WHERE TO WATCH ────────────────────────────────────────────────────
+   JustWatch-style search: type a title, see where it's streaming/renting
+   in your region. Uses TMDB's watch/providers endpoint (sourced from
+   JustWatch data). No extra API keys needed — uses the same TMDB token. ─ */
+let wtwQuery = '';
+let wtwResults = [];
+let wtwProviders = {}; // key -> providers object
+
+async function renderWhereToWatch(main, token) {
+  main.innerHTML = '';
+
+  const section = document.createElement('div');
+  section.className = 'section';
+  section.innerHTML = `
+    <div class="section-header"><span class="section-title">📺 Where to Watch — Streaming Search</span></div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">
+      Search for any movie or TV show to see where it's streaming, renting, or buying in your region.
+      Data sourced from JustWatch via TMDB. No extra API keys needed.
+    </p>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <input id="wtw-search" type="text" placeholder="Search for a movie or show…" autocomplete="off"
+        style="flex:1;min-width:200px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-size:.9rem;outline:none" />
+      <button class="modal-btn primary" onclick="doWtwSearch()">Search</button>
+      <button class="modal-btn" onclick="clearWtwSearch()">Clear</button>
+    </div>
+    <div id="wtw-results" class="watchlist-grid"></div>
+    <div id="wtw-empty" class="empty-state" style="display:none">
+      <div class="icon">📺</div>
+      <p><strong>No results found</strong></p>
+      <p style="margin-top:6px;font-size:.85rem">Try a different title or check your region filter.</p>
+    </div>
+  `;
+  main.appendChild(section);
+
+  const input = document.getElementById('wtw-search');
+  if (input) {
+    input.value = wtwQuery;
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); doWtwSearch(); }
+      else if (e.key === 'Escape') { e.preventDefault(); clearWtwSearch(); }
+    });
+    // Auto-search if there's a previous query
+    if (wtwQuery) doWtwSearch();
+  }
+}
+
+async function doWtwSearch() {
+  const input = document.getElementById('wtw-search');
+  const q = (input ? input.value : '').trim();
+  if (!q) return;
+  wtwQuery = q;
+
+  const grid = document.getElementById('wtw-results');
+  const empty = document.getElementById('wtw-empty');
+  if (grid) grid.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Searching…</p></div>';
+  if (empty) empty.style.display = 'none';
+
+  try {
+    const [movies, shows] = await Promise.all([
+      tmdb('/search/movie', { query: q, page: 1 }),
+      tmdb('/search/tv',    { query: q, page: 1 }),
+    ]);
+
+    const raw = [
+      ...(movies.results || []).map(m => ({ ...m, media_type: 'movie' })),
+      ...(shows.results  || []).map(t => ({ ...t, media_type: 'tv' })),
+    ].sort((a, b) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 12);
+
+    wtwResults = raw;
+    if (grid) grid.innerHTML = '';
+
+    if (!raw.length) {
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+
+    for (const item of raw) {
+      const type = item.media_type;
+      const id = item.id;
+      const key = mediaKey(type, id);
+
+      // Fetch providers for this title
+      let providers = null;
+      try {
+        providers = await getProviders(type, id);
+      } catch (e) { console.warn('Provider fetch error:', e); }
+      wtwProviders[key] = providers;
+
+      const card = buildCard(item);
+      // Add streaming badge
+      if (providers && (providers.flatrate.length || providers.rent.length)) {
+        const badge = document.createElement('div');
+        badge.style.cssText = 'position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.8);border-radius:6px;padding:4px 8px;font-size:.7rem;display:flex;gap:4px;flex-wrap:wrap;align-items:center;z-index:5';
+        const streamNames = [...(providers.flatrate || []).slice(0, 3), ...(providers.rent || []).slice(0, 2)]
+          .map(p => `<span title="${esc(p.provider_name)}" style="display:inline-flex;align-items:center;gap:3px">${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="" style="width:16px;height:16px;border-radius:2px" />` : ''}${esc(p.provider_name)}</span>`)
+          .join(' · ');
+        badge.innerHTML = streamNames || 'No streaming info';
+        card.appendChild(badge);
+      }
+      card.addEventListener('click', () => openModal(type, id, item));
+      if (grid) grid.appendChild(card);
+    }
+  } catch (e) {
+    console.warn('Where to watch search error:', e);
+    toast('Search failed: ' + e.message);
+    if (grid) grid.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+  }
+}
+
+function clearWtwSearch() {
+  wtwQuery = '';
+  wtwResults = [];
+  wtwProviders = {};
+  const input = document.getElementById('wtw-search');
+  if (input) input.value = '';
+  const grid = document.getElementById('wtw-results');
+  if (grid) grid.innerHTML = '';
+  const empty = document.getElementById('wtw-empty');
+  if (empty) empty.style.display = 'none';
 }
 
 /* ── STATS & STORAGE ───────────────────────────────────────────────── */
