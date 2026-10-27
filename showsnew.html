@@ -4413,7 +4413,7 @@ async function renderTrending(main, token) {
        ...(deepCutTV.items || []).map(t => ({ ...t, media_type: 'tv' }))]
         .sort((a, b) => obscurityScore(b) - obscurityScore(a))
         .slice(0, 12)
-    ).items;
+    );
     if (allDeep.length) rows.push(['🕵️ Deep Cuts — You Probably Havent Heard Of', allDeep]);
     if (token !== renderToken) return;
 
