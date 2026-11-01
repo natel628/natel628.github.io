@@ -180,7 +180,8 @@
       border-color: var(--accent);
       color: #fff;
     }
-    select.filter-select {
+    /* Applies to the filter dropdowns and the My List search box alike. */
+    .filter-select {
       background: var(--surface2);
       border: 1px solid var(--border);
       color: var(--text);
@@ -190,6 +191,8 @@
       outline: none;
       cursor: pointer;
     }
+    input.filter-select::placeholder { color: var(--text-muted); }
+    input.filter-select::-webkit-search-cancel-button { filter: grayscale(1); }
     select.filter-select.filtered { border-color: var(--accent2); color: var(--accent2); font-weight: 600; }
     label.filter-toggle {
       display: inline-flex;
@@ -370,8 +373,29 @@
       padding: 2px 6px;
       border-radius: 4px;
     }
-    .card-badge.tv { background: #1a6ef5; }
-    .card-badge.movie { background: var(--accent); }
+  .card-badge.tv { background: #1a6ef5; }
+  .card-badge.movie { background: var(--accent); }
+  .card-dismiss {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 6;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(13, 13, 15, .82);
+    color: #fff;
+    font-size: .78rem;
+    line-height: 1;
+    opacity: .65;
+    transition: opacity .15s, background .15s, border-color .15s;
+  }
+  .card-dismiss:hover, .card-dismiss:focus-visible { opacity: 1; background: var(--accent); border-color: var(--accent); }
     
     .card-rate-wrap { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; width: 100%; }
     .card-rate-row  { display: flex; align-items: center; gap: 6px; width: 100%; padding-right: 4px; }
@@ -1400,7 +1424,7 @@ const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
 
 const SIMKL_CLIENT_ID = '823280121411d86d7f3bd2491cc84db961e50d16416f6d5afe53d8dd7a07dcda';
-const SIMKL_REDIRECT  = 'https://natel628.github.io/shows.html'; // must match the deployed filename and the Simkl OAuth app
+const SIMKL_REDIRECT  = 'https://natel628.github.io/showsnew.html'; // must match the deployed filename and the Simkl OAuth app
 const SIMKL_AUTH_URL  = 'https://simkl.com/oauth2/authorize';
 const SIMKL_TOKEN_URL = 'https://api.simkl.com/oauth2/token';
 const SIMKL_API       = 'https://api.simkl.com';
@@ -1432,13 +1456,17 @@ const REGIONS = [
    control can never be shown while silently doing nothing. */
 const FILTER_VIEWS = {
   type:          ['trending', 'upcoming'],
-  genre:         ['trending', 'upcoming', 'recommended'],
+  genre:         ['trending', 'upcoming', 'recommended', 'discoveries'],
   sort:          ['trending', 'upcoming'],
   provider:      ['trending', 'upcoming', 'recommended'],
   region:        ['trending', 'upcoming', 'recommended'],
   contentRating: ['trending', 'upcoming'],
-  year:          ['trending', 'upcoming'],
+  year:          ['trending', 'upcoming', 'discoveries'],
   hideRated:     ['trending', 'upcoming', 'recommended'],
+  /* Era and mood are client-side only, so they belong exactly on the views
+     whose pipeline runs them — nowhere else. */
+  era:           ['trending', 'upcoming', 'recommended'],
+  mood:          ['trending', 'upcoming', 'recommended', 'discoveries'],
 };
 
 /* ─── AI Director: LLM connection ───────────────────────────────────────
@@ -1895,15 +1923,7 @@ function ruleRejects(rule, item) {
       case 'onlyType':        return type !== e.value;
       case 'excludeKeyword': {
         const needle = String(e.value || '').toLowerCase();
-        if (!needle) return false;
-        // If it looks like a stored ID (type_12345), hide by ID — avoids
-        // "Hide Her" catching everything mentioning "her" in an overview.
-        if (/^(movie|tv)_\d+$/.test(needle)) {
-          const type = item.media_type || (item.title ? 'movie' : 'tv');
-          return needle === mediaKey(type, item.id);
-        }
-        // Otherwise match title only (not overview) to avoid broad false positives
-        return title.includes(needle);
+        return !!needle && (title.includes(needle) || overview.includes(needle));
       }
       case 'excludeLanguage': return item.original_language === e.value;
       case 'excludeNonEnglish': return !!item.original_language && item.original_language !== 'en';
@@ -2855,17 +2875,19 @@ function aiClearKey() {
 /* ─────────────────────────────────────────────────────────────────────
    AI DIRECTOR: "NOT INTERESTED" ON A TITLE
    ───────────────────────────────────────────────────────────────────── */
-function notInterested(mode) {
+function notInterested(mode, ctx = {}) {
   const inner = document.getElementById('modal-inner');
-  const key = inner?.dataset.key || '';
+  const key = ctx.key || inner?.dataset.key || '';
   const [type, idStr] = key.split('_');
   if (!type || !idStr) { toast('Open a title first'); return; }
   const d = state.mediaDetails[key] || {};
-  const title = d.title || 'this title';
+  // A card carries its own title, so a dismiss works before the title has
+  // ever been opened and cached.
+  const title = ctx.title || d.title || 'this title';
   let rule = null;
 
   if (mode === 'title') {
-    rule = addRuleFromEffects(`Hide “${title}”`, [{ kind: 'excludeKeyword', value: type + '_' + id }], 'quick');
+    rule = addRuleFromEffects(`Hide “${title}”`, [{ kind: 'excludeKeyword', value: title }], 'quick');
   } else if (mode === 'genre') {
     const gid = (d.genre_ids || [])[0];
     if (!gid) { toast('No genre recorded for this title yet'); return; }
@@ -2885,7 +2907,9 @@ function notInterested(mode) {
       actionLabel: 'Undo',
       onAction: () => { removeRule(rule.id); afterRuleChange(); toast('Rule removed'); },
     });
-    openAiPanel('rules');
+    // Only the modal flow tours the user through the rules list; a card
+    // dismiss stays out of the way.
+    if (!ctx.fromCard) openAiPanel('rules');
   } else {
     toast('Could not build a rule from that');
   }
@@ -3397,9 +3421,9 @@ function obscurityScore(item) {
   return result;
 }
 function obscurityLabel(s) {
-  if (s >= 35) return '🕵️ Deep Cut';
-  if (s >= 22) return '💎 Hidden Gem';
-  if (s >= 12) return '🔍 Underseen';
+  if (s >= 70) return '🕵️ Deep Cut';
+  if (s >= 50) return '💎 Hidden Gem';
+  if (s >= 30) return '🔍 Underseen';
   return '';
 }
 function isUnderseen(item) {
@@ -3409,7 +3433,7 @@ function isUnderseen(item) {
 }
 function isDeepCut(item) {
   if (!state.deepCutsOnly) return false;
-  return obscurityScore(item) >= 22;
+  return obscurityScore(item) >= 50;
 }
 function moodKeywords(mood) {
   const map = {
@@ -3430,7 +3454,13 @@ function moodKeywords(mood) {
 function moodMatches(item, mood) {
   if (!mood) return true;
   const kws = moodKeywords(mood);
-  const hay = `${item.title || item.name || ''} ${item.overview || ''} ${(item.genre_ids||[]).join(' ')}`.toLowerCase();
+  /* Genres arrive as TMDB ids (10749, 99, 12 …), which never match a
+     keyword, so resolve them through GENRE_MAP before matching. */
+  const genreNames = [
+    ...(item.genre_ids || []).map(id => GENRE_MAP[id] || ''),
+    ...(item.genres   || []).map(g => (g && g.name) || ''),
+  ].join(' ');
+  const hay = `${item.title || item.name || ''} ${item.overview || ''} ${genreNames}`.toLowerCase();
   return kws.some(k => hay.includes(k));
 }
 function isSeen(type, id) {
@@ -3462,12 +3492,13 @@ async function findByDNA(person, roleLabel, excludeId, mediaType = null, limit =
   if (!person) return [];
   try {
     const data = await tmdb(`/person/${person.id}/combined_credits`);
-    const all = [
+    let all = [
       ...((data.cast || []).map(c => ({ ...c, media_type: c.media_type === 'tv' ? 'tv' : 'movie' }))),
       ...((data.crew || []).filter(c => c.job === 'Director' || c.job === 'Director of Photography' || c.job === 'Original Music Composer')
         .map(c => ({ ...c, media_type: c.media_type === 'tv' ? 'tv' : 'movie' }))),
     ].filter(i => i.id !== excludeId && i.poster_path);
-    if (mediaType) all.filter(i => i.media_type === mediaType);
+    // Reassign: filter() returns a new array and was being thrown away.
+    if (mediaType) all = all.filter(i => i.media_type === mediaType);
     const scored = all.map(i => ({ item: i, score: obscurityScore(i) }))
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
@@ -3717,7 +3748,7 @@ function dislikedGenres() {
 /* ─────────────────────────────────────────────────────────────────────
    DOM CARD CONSTRUCTORS & DELEGATED EVENTS
    ───────────────────────────────────────────────────────────────────── */
-function buildCard(item) {
+function buildCard(item, dismiss = false) {
   const type     = item.media_type || (item.title ? 'movie' : 'tv');
   const id       = item.id;
   const title    = item.title || item.name || 'Unknown';
@@ -3731,7 +3762,7 @@ function buildCard(item) {
 
   const card = document.createElement('div');
   const osc  = obscurityScore(item);
-  const obsLabel = osc >= 12 ? obscurityLabel(osc) : '';
+  const obsLabel = osc >= 30 ? obscurityLabel(osc) : '';
   card.className = 'card' + (myRating > 0 ? ' rated' : '') + (state.obscurityMode ? ' blind-card' : '');
   card.dataset.id = id;
   card.dataset.type = type;
@@ -3749,17 +3780,24 @@ function buildCard(item) {
       ${year ? `<span>${esc(year)}</span>` : ''}
       ${sc ? `<span class="card-score">⭐ ${sc}</span>` : ''}
       ${cr ? ratingBadgeHTML(cr) : ''}
-      ${osc >= 12 ? `<span class="obscurity-badge ${osc >= 35 ? 'hidden' : ''}" title="Obscurity score ${osc}">💎 ${osc}</span>` : ''}
+      ${osc >= 30 ? `<span class="obscurity-badge ${osc >= 50 ? 'hidden' : ''}" title="Obscurity score ${osc}">💎 ${osc}</span>` : ''}
     </div>
     ${!blind ? `<div style="margin-top:3px">${microGenreHTML(item)}</div>` : ''}
   `;
   const revealBtn = blind ? `<button class="blind-reveal" onclick="markSeen('${type}', ${id}); this.closest('.card').classList.remove('blind-card'); this.remove();">Reveal</button>` : '';
-  const meterHTML = !blind && osc >= 12 ? `
+  const meterHTML = !blind && osc >= 30 ? `
     <div class="obscurity-meter">
       <div class="obscurity-meter-fill" style="width:${osc}%"></div>
     </div>
   ` : '';
+  /* Not Interested without opening anything — only rendered on the views
+     that asked for it, so the control never appears where it would do
+     nothing. The tooltip stays generic so Blind mode keeps its secret. */
+  const dismissBtn = dismiss ? `<button class="card-dismiss" data-action="dismiss-card"
+      data-dismiss-key="${type}_${id}" data-dismiss-title="${esc(title)}"
+      title="Not interested" aria-label="Not interested">🚫</button>` : '';
   cardEl.innerHTML = `
+    ${dismissBtn}
     <span class="card-badge ${type}">${type === 'movie' ? '🎬' : '📺'}</span>
     ${poster
       ? `<img class="card-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" style="${blind ? 'filter:blur(6px) brightness(0.6)' : ''}" />`
@@ -3920,6 +3958,14 @@ function handleAction(action, el) {
         duration: 8000,
         actionLabel: 'Undo',
         onAction: () => { setRuleEnabled(id, true); afterRuleChange(); toast('Rule active again'); },
+      });
+      break;
+    }
+    case 'dismiss-card': {
+      notInterested('title', {
+        key:   el.dataset.dismissKey   || '',
+        title: el.dataset.dismissTitle || '',
+        fromCard: true,
       });
       break;
     }
@@ -4372,7 +4418,23 @@ function addToWatchlist(type, id, status) {
   toast(`${wlStatusLabel(status)}`);
   if (state.simklToken) pushWatchlistToSimkl(type, id, status);
   updateCardStatus(type, id);
-  if (state.view === 'watchlist') renderView();
+  if (state.view === 'watchlist') refreshWatchlistEntry(key);
+}
+
+/* One entry changed. When My List is the visible view and we already hold
+   the metadata, patch just that card; anything structural (view not up, a
+   title whose details still need fetching, or the list becoming empty,
+   which has its own empty-state markup) goes through a normal render. */
+function refreshWatchlistEntry(key) {
+  const needsDetails = !!state.watchlist[key] && !state.mediaDetails[key]?._full;
+  if (state.view !== 'watchlist' ||
+      typeof watchlistSync !== 'function' ||
+      needsDetails ||
+      !Object.keys(state.watchlist).length) {
+    renderView();
+    return;
+  }
+  watchlistSync(key);
 }
 
 function removeFromWatchlist(type, id) {
@@ -4386,7 +4448,7 @@ function removeFromWatchlist(type, id) {
   saveWatchlist();
   updateCardStatus(type, id);
   closeModal();
-  if (state.view === 'watchlist') renderView();
+  if (state.view === 'watchlist') refreshWatchlistEntry(key);
 
   toast('Removed from list', {
     duration: 6000,
@@ -4396,7 +4458,7 @@ function removeFromWatchlist(type, id) {
       state.wlAdded[key]   = prevAdded;
       saveWatchlist();
       updateCardStatus(type, id);
-      if (state.view === 'watchlist') renderView();
+      if (state.view === 'watchlist') refreshWatchlistEntry(key);
       toast('Restored to list');
     },
   });
@@ -4406,6 +4468,7 @@ function removeFromWatchlist(type, id) {
    ───────────────────────────────────────────────────────────────────── */
 async function renderView() {
   const token = ++renderToken;
+  clearWatchlistSync();
   updateSimklUI();
   updateAiRuleCount();
   updateFilterVisibility();
@@ -4798,7 +4861,6 @@ async function thisDayInHistory() {
     ].filter(i => ruleAllows(i));
 
     const section = document.createElement('div');
-    section.id = 'on-this-day-section';
     section.className = 'section';
     section.innerHTML = `<div class="section-header"><span class="section-title">⏳ On This Day (${month}/${day}) — Past Releases</span></div><div class="card-row" id="on-this-day-row"></div>`;
     const row = section.querySelector('#on-this-day-row');
@@ -4811,8 +4873,6 @@ async function thisDayInHistory() {
         row.appendChild(card);
       });
     }
-    // Remove any previous "On This Day" section before adding the new one
-    document.getElementById('on-this-day-section')?.remove();
     main.appendChild(section);
     main.scrollIntoView({ behavior: 'smooth' });
   } catch (e) {
@@ -5288,13 +5348,22 @@ const WL_SORTS = {
   release: ['Release date',   (a, b) => (b.date || '').localeCompare(a.date || '')],
 };
 
-function buildWatchlistSection(container, title, items) {
+/* Set by renderWatchlist while My List is on screen; addToWatchlist /
+   removeFromWatchlist use it to patch a single card. See
+   refreshWatchlistEntry below. */
+let watchlistSync = null;
+
+function buildWatchlistSection(container, title, items, status = '') {
   const sec = document.createElement('div');
   sec.className = 'section';
-  sec.innerHTML = `<div class="section-header"><span class="section-title">${title} <span style="color:var(--text-muted);font-size:.8rem;font-weight:400">(${items.length})</span></span></div><div class="watchlist-grid"></div>`;
+  /* Labelled so a single-card patch can find (and count) its own section. */
+  sec.dataset.wlLabel = title;
+  if (status) sec.dataset.wlStatus = status;
+  sec.innerHTML = `<div class="section-header"><span class="section-title">${title} <span class="wl-count" style="color:var(--text-muted);font-size:.8rem;font-weight:400">(${items.length})</span></span></div><div class="watchlist-grid"></div>`;
   const grid = sec.querySelector('.watchlist-grid');
   items.forEach(item => grid.appendChild(buildCard(item)));
   container.appendChild(sec);
+  return sec;
 }
 
 /* ── MY LIST ──────────────────────────────────────────────────────── */
@@ -5340,18 +5409,6 @@ async function renderWatchlist(main, token) {
     <input id="wl-search" class="filter-select" type="search" placeholder="Filter my list…" value="${esc(state.wlQuery)}" style="min-width:180px;cursor:text" />
   `;
   main.appendChild(toolbar);
-
-  toolbar.querySelectorAll('[data-wl-status]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.wlFilterStatus = btn.dataset.wlStatus;
-      renderView();
-    });
-  });
-  toolbar.querySelector('#wl-sort').addEventListener('change', e => {
-    state.wlSort = e.target.value;
-    LS.set('wl_sort', state.wlSort);
-    renderView();
-  });
 
   const missing = entries.filter(([key]) => !state.mediaDetails[key]?._full).map(([key]) => key);
   if (missing.length) {
@@ -5416,7 +5473,7 @@ async function renderWatchlist(main, token) {
       statuses.forEach(status => {
         const items = visible.filter(r => r.status === status);
         if (!items.length) return;
-        buildWatchlistSection(sections, wlStatusLabel(status), items.map(r => r.item));
+        buildWatchlistSection(sections, wlStatusLabel(status), items.map(r => r.item), status);
       });
     } else {
       const sorter = (WL_SORTS[state.wlSort] || WL_SORTS.added)[1];
@@ -5424,13 +5481,126 @@ async function renderWatchlist(main, token) {
     }
   };
 
+  /* ── One-card patching ─────────────────────────────────────────────────
+     refreshWatchlistEntry hands us a single key when an entry is added,
+     re-statused or removed. The row model takes the change, then only that
+     entry's card is created, moved between groups or dropped — the rest of
+     the list, its order and its scroll position stay put. */
+  const rowVisible = row => {
+    if (state.wlFilterStatus !== 'all' && row.status !== state.wlFilterStatus) return false;
+    const q = state.wlQuery.toLowerCase();
+    return !q || row.title.toLowerCase().includes(q);
+  };
+  /* Same ordering the full render produces: state insertion order while
+     grouped by status, otherwise the selected sorter. */
+  const rowComesBefore = (a, b) => {
+    if (state.wlSort === 'added') return rows.indexOf(a) < rows.indexOf(b);
+    const sorter = (WL_SORTS[state.wlSort] || WL_SORTS.added)[1];
+    return sorter(a, b) < 0;
+  };
+  const sectionByLabel = label =>
+    [...sections.querySelectorAll('.section')].find(s => s.dataset.wlLabel === label) || null;
+  const ensureSection = (label, status) => {
+    const found = sectionByLabel(label);
+    if (found) return found;
+    const sec = buildWatchlistSection(sections, label, [], status);
+    /* A group that reappears keeps its canonical place in the status order. */
+    if (status) {
+      const order = statuses.indexOf(status);
+      const next = [...sections.querySelectorAll('.section')]
+        .find(s => s.dataset.wlStatus && statuses.indexOf(s.dataset.wlStatus) > order);
+      if (next) sections.insertBefore(sec, next);
+    }
+    return sec;
+  };
+  const insertRowCard = row => {
+    const label = state.wlSort === 'added' ? wlStatusLabel(row.status) : 'My List';
+    const sec = ensureSection(label, state.wlSort === 'added' ? row.status : '');
+    const grid = sec.querySelector('.watchlist-grid');
+    sections.querySelector('.empty-state')?.remove();
+    const card = buildCard(row.item);
+    const before = [...grid.children].find(el => {
+      const other = rows.find(r => r.key === `${el.dataset.type}_${el.dataset.id}`);
+      return other && rowComesBefore(row, other);
+    });
+    grid.insertBefore(card, before || null);
+  };
+  const tidySections = () => {
+    [...sections.querySelectorAll('.section')].forEach(sec => {
+      const grid = sec.querySelector('.watchlist-grid');
+      if (!grid || !grid.children.length) { sec.remove(); return; }
+      const count = sec.querySelector('.wl-count');
+      if (count) count.textContent = `(${grid.children.length})`;
+    });
+    if (!sections.querySelector('.card') && !sections.querySelector('.empty-state')) {
+      sections.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>Nothing in your list matches those filters.</p></div>`;
+    }
+  };
+
+  watchlistSync = key => {
+    const [t, idStr] = key.split('_');
+    const status = state.watchlist[key];
+    const idx = rows.findIndex(r => r.key === key);
+
+    /* 1. Keep the row model in step with state. */
+    if (!status) {
+      if (idx >= 0) rows.splice(idx, 1);
+    } else if (idx >= 0) {
+      rows[idx].status = status;
+    } else {
+      const d = state.mediaDetails[key] || {};
+      rows.push({
+        key,
+        status,
+        item:  { ...d, id: d.id || parseInt(idStr, 10), media_type: d.media_type || t },
+        title: d.title || '',
+        rating: state.ratings[key] || 0,
+        score: d.vote_average || 0,
+        date:  d.release_date || d.first_air_date || '',
+        added: state.wlAdded[key] || 0,
+      });
+    }
+
+    /* 2. Drop this key's card wherever it sits; the row model now decides
+       whether — and where — it belongs. */
+    sections.querySelectorAll(`.card[data-type="${t}"][data-id="${idStr}"]`)
+      .forEach(card => card.remove());
+    const row = rows.find(r => r.key === key);
+    if (row && rowVisible(row)) insertRowCard(row);
+
+    /* 3. Empty groups go, counts follow, and an all-filtered list keeps its
+       "nothing matches" message. */
+    tidySections();
+  };
+
   toolbar.querySelector('#wl-search').addEventListener('input', debounce(e => {
     state.wlQuery = e.target.value.trim();
     rebuild();
   }, 180));
 
+  /* Status and sort only reorder what is already on screen, so they go
+     through the local rebuild — a full renderView() would drop the user
+     back to a loading state and refetch the whole list. */
+  toolbar.querySelectorAll('[data-wl-status]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.wlFilterStatus = btn.dataset.wlStatus;
+      toolbar.querySelectorAll('[data-wl-status]')
+        .forEach(b => b.classList.toggle('active', b === btn));
+      rebuild();
+    });
+  });
+  toolbar.querySelector('#wl-sort').addEventListener('change', e => {
+    state.wlSort = e.target.value;
+    LS.set('wl_sort', state.wlSort);
+    rebuild();
+  });
+
   rebuild();
 }
+
+/* Leaving the view (or re-rendering it) drops the patcher so a stale closure
+   can never touch detached DOM. */
+function clearWatchlistSync() { watchlistSync = null; }
 
 /* ── FOR YOU ──────────────────────────────────────────────────────── */
 async function renderRecommended(main, token) {
@@ -5491,49 +5661,11 @@ async function renderRecommended(main, token) {
       'vote_count.gte': 200,
       page: 1,
     };
-
-    // TMDB uses different genre IDs for movies vs TV.
-    // Movie-only genres like Action(28) and Sci-Fi(878) don't exist on TV —
-    // TV uses Action & Adventure(10759) and Sci-Fi & Fantasy(10765).
-    // Map movie genre IDs to their TV equivalents before querying /discover/tv.
-    const MOVIE_TO_TV_GENRE = {
-      28:   10759, // Action → Action & Adventure
-      12:   10759, // Adventure → Action & Adventure
-      878:  10765, // Sci-Fi → Sci-Fi & Fantasy
-      14:   10765, // Fantasy → Sci-Fi & Fantasy
-      10749: 10749, // Romance (same)
-      27:   27,   // Horror (same)
-      35:   35,   // Comedy (same)
-      18:   18,   // Drama (same)
-      53:   53,   // Thriller (same)
-      99:   99,   // Documentary (same)
-      16:   16,   // Animation (same)
-      80:   80,   // Crime (same)
-    };
-
     // The genre control is visible on this view, so it must do something:
     // an explicit choice wins over the inferred taste profile.
-    let genreParam;
-    if (state.genre) {
-      // User explicitly picked a genre — map it for TV if needed
-      const mappedGenre = mediaType === 'tv' ? (MOVIE_TO_TV_GENRE[Number(state.genre)] || state.genre) : state.genre;
-      genreParam = String(mappedGenre);
-    } else if (topGenres.length) {
-      // Inferred from taste profile — map each genre for the media type
-      const mapped = topGenres.slice(0, 3).map(id => {
-        if (mediaType === 'tv') return String(MOVIE_TO_TV_GENRE[Number(id)] || id);
-        return String(id);
-      });
-      // Deduplicate (multiple movie genres can map to same TV genre)
-      genreParam = [...new Set(mapped)].slice(0, 2).join('|');
-    }
+    const genreParam = state.genre ? state.genre : topGenres.slice(0, 2).join('|');
     if (genreParam) params.with_genres = genreParam;
-    if (badGenres.length) {
-      const mappedBad = badGenres.slice(0, 3).map(id =>
-        mediaType === 'tv' ? String(MOVIE_TO_TV_GENRE[Number(id)] || id) : String(id)
-      );
-      params.without_genres = [...new Set(mappedBad)].join(',');
-    }
+    if (badGenres.length) params.without_genres = badGenres.slice(0, 3).join(',');
 
     const path = mediaType === 'movie' ? '/discover/movie' : '/discover/tv';
     const pages = await Promise.all([
@@ -6071,29 +6203,43 @@ async function renderDiscoveries(main, token) {
   main.appendChild(intro);
 
   try {
-    const gp = state.genre ? { with_genres: state.genre } : {};
-    const yearP = state.year ? yearParams('movie') : {};
+    /* Genre and year are offered on this view now (see FILTER_VIEWS), so
+       they belong in the query — read through the same map so they can
+       never apply on a view that hides the control. */
+    const gp     = filterVisible('genre') && state.genre ? { with_genres: state.genre } : {};
+    const yearP  = filterVisible('year') ? yearParams('movie') : {};
+    const yearTV = filterVisible('year') ? yearParams('tv')    : {};
 
-    /* Pull from multiple discover endpoints, then sort by obscurity. */
+    /* Pull from multiple discover endpoints, then sort by obscurity. The
+       documentary sweep only widens the mix, so it is skipped once a genre
+       is picked — its own with_genres would be overridden anyway. */
     const [movies, tvShows, docs] = await Promise.all([
       discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 2000, ...gp, ...yearP }),
-      discoverSafe('/discover/tv',    { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 5,  'vote_count.lte': 1000, ...gp, ...yearParams('tv') }),
-      discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 1500, with_genres: '99', ...gp, ...yearP }),
+      discoverSafe('/discover/tv',    { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 5,  'vote_count.lte': 1000, ...gp, ...yearTV }),
+      gp.with_genres
+        ? Promise.resolve({ items: [] })
+        : discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 1500, with_genres: '99', ...yearP }),
     ]);
     if (token !== renderToken) return;
 
     const pool = [
-      ...(movies.results || []).map(m => ({ ...m, media_type: 'movie' })),
-      ...(tvShows.results || []).map(t => ({ ...t, media_type: 'tv' })),
-      ...(docs.results || []).map(d => ({ ...d, media_type: 'movie' })),
+      /* discoverSafe resolves to { items, providerApplied, fellBack }. */
+      ...(movies.items || []).map(m => ({ ...m, media_type: 'movie' })),
+      ...(tvShows.items || []).map(t => ({ ...t, media_type: 'tv' })),
+      ...(docs.items || []).map(d => ({ ...d, media_type: 'movie' })),
     ];
 
+    /* The sweeps overlap (a documentary also shows up in the genre-less
+       movie list), so keep the first copy of each title. */
+    const poolKeys = new Set();
     const unseen = pool.filter(i => {
       const key = mediaKey(i.media_type, i.id);
+      if (poolKeys.has(key)) return false;
+      poolKeys.add(key);
       if (state.ratings[key] || state.watchlist[key]) return false;
       if (isSeen(i.media_type, i.id)) return false;
       if (!ruleAllows(i)) return false;
-      if (state.moodFilter && !moodMatches(i, state.moodFilter)) return false;
+      if (filterVisible('mood') && state.moodFilter && !moodMatches(i, state.moodFilter)) return false;
       if (state.underseenOnly) {
         const v = i.vote_count || 0;
         if (v > 0 && v > state.underseenCeiling) return false;
@@ -6385,28 +6531,34 @@ async function doWtwSearch() {
       return;
     }
 
-    for (const item of raw) {
+    // Every provider lookup is independent, so run them in parallel batches
+    // instead of waiting out one round trip per title.
+    const providerList = await promiseAllChunked(raw, async item => {
+      try {
+        return await getProviders(item.media_type, item.id);
+      } catch (e) { console.warn('Provider fetch error:', e); return null; }
+    }, 6);
+
+    for (let idx = 0; idx < raw.length; idx++) {
+      const item = raw[idx];
       const type = item.media_type;
       const id = item.id;
       const key = mediaKey(type, id);
-
-      // Fetch providers for this title
-      let providers = null;
-      try {
-        providers = await getProviders(type, id);
-      } catch (e) { console.warn('Provider fetch error:', e); }
+      const providers = providerList[idx];
       wtwProviders[key] = providers;
 
       const card = buildCard(item);
-      // Add streaming badge
+      // Add streaming badge — in the card body's flow so it sits below the
+      // rating row instead of covering it.
       if (providers && (providers.flatrate.length || providers.rent.length)) {
         const badge = document.createElement('div');
-        badge.style.cssText = 'position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.8);border-radius:6px;padding:4px 8px;font-size:.7rem;display:flex;gap:4px;flex-wrap:wrap;align-items:center;z-index:5';
+        badge.className = 'card-providers';
+        badge.style.cssText = 'margin-top:6px;background:rgba(0,0,0,.55);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.7rem;display:flex;gap:4px;flex-wrap:wrap;align-items:center';
         const streamNames = [...(providers.flatrate || []).slice(0, 3), ...(providers.rent || []).slice(0, 2)]
           .map(p => `<span title="${esc(p.provider_name)}" style="display:inline-flex;align-items:center;gap:3px">${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="" style="width:16px;height:16px;border-radius:2px" />` : ''}${esc(p.provider_name)}</span>`)
           .join(' · ');
         badge.innerHTML = streamNames || 'No streaming info';
-        card.appendChild(badge);
+        (card.querySelector('.card-body') || card).appendChild(badge);
       }
       card.addEventListener('click', () => openModal(type, id, item));
       if (grid) grid.appendChild(card);
@@ -6682,8 +6834,8 @@ async function filterResults(items, opts = {}) {
       const date = i.release_date || i.first_air_date;
       if (!date || !date.startsWith(state.year)) return false;
     }
-    // Era filter: decade range
-    if (state.eraFilter) {
+    // Era filter: decade range — only on the views that offer the control.
+    if (filterVisible('era') && state.eraFilter) {
       const [from, to] = state.eraFilter.split('-').map(Number);
       const date = i.release_date || i.first_air_date;
       const yr = date ? Number(date.slice(0, 4)) : 0;
@@ -6700,12 +6852,12 @@ async function filterResults(items, opts = {}) {
     });
   }
   /* Mood / vibe filter: keyword match against title, overview, genres. */
-  if (state.moodFilter) {
+  if (filterVisible('mood') && state.moodFilter) {
     out = out.filter(i => moodMatches(i, state.moodFilter));
   }
   /* Deep cuts only: keep only titles with obscurity score >= 50. */
   if (state.deepCutsOnly) {
-    out = out.filter(i => obscurityScore(i) >= 22);
+    out = out.filter(i => obscurityScore(i) >= 50);
   }
 
   /* Remember what removed what, so a row that ends up empty can name the
@@ -6754,6 +6906,11 @@ function renderRow(container, title, items, recBadge = false, fetcher = null, ra
     </div>`;
 
   const row = sec.querySelector('.card-row');
+  /* Cards only carry a Not Interested button on the views that asked for
+     it — For You and Trending. */
+  const withDismiss = state.view === 'trending' || state.view === 'recommended';
+  // The badge shares the top-right corner with the dismiss button.
+  const badgeRight = withDismiss ? '38px' : '6px';
   const { items: shown, removed } = filterByRules(items);
   const rulesOn = activeRules().length;   // a count, not a flag: the row message prints it
 
@@ -6780,11 +6937,11 @@ function renderRow(container, title, items, recBadge = false, fetcher = null, ra
     </div>`;
   } else {
     shown.forEach((item, idx) => {
-      const card = buildCard(item);
+      const card = buildCard(item, withDismiss);
       if (recBadge) {
         const badge = document.createElement('span');
         badge.className = 'rec-badge';
-        badge.style.cssText = 'position:absolute;top:6px;right:6px;';
+        badge.style.cssText = `position:absolute;top:6px;right:${badgeRight};`;
         badge.textContent = 'For You';
         card.appendChild(badge);
       }
@@ -6792,7 +6949,7 @@ function renderRow(container, title, items, recBadge = false, fetcher = null, ra
       if (ranked) {
         const badge = document.createElement('span');
         badge.className = 'rec-badge';
-        badge.style.cssText = 'position:absolute;top:6px;right:6px;min-width:22px;text-align:center;background:var(--accent2);color:#1d1d1f;';
+        badge.style.cssText = `position:absolute;top:6px;right:${badgeRight};min-width:22px;text-align:center;background:var(--accent2);color:#1d1d1f;`;
         badge.textContent = '#' + (idx + 1);
         card.appendChild(badge);
       }
@@ -6823,7 +6980,7 @@ function renderRow(container, title, items, recBadge = false, fetcher = null, ra
       try {
         const extra = await fetcher();
         if (!extra || !extra.length) { more.remove(); return; }
-        extra.forEach(i => row.appendChild(buildCard(i)));
+        extra.forEach(i => row.appendChild(buildCard(i, withDismiss)));
         more.disabled = false;
         more.textContent = 'Load more';
       } catch (e) {
@@ -6924,7 +7081,9 @@ document.getElementById('era-filter').addEventListener('change', e => {
   state.eraFilter = e.target.value;
   savePrefs();
   syncFilterControls();
-  renderView();
+  // Same contract as the year control: never re-render for a filter this
+  // view does not honour.
+  if (filterVisible('era')) renderView();
 });
 document.querySelectorAll('.mood-chip').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -6959,6 +7118,7 @@ function updateFilterVisibility() {
     if (el) el.style.display = on ? '' : 'none';
   };
   show('year-filter',     filterVisible('year'));
+  show('era-filter',      filterVisible('era'));
   show('sort-filter',     filterVisible('sort'));
   show('provider-filter', filterVisible('provider'));
   show('region-filter',   filterVisible('region'));
@@ -6967,12 +7127,13 @@ function updateFilterVisibility() {
   show('type-label',      filterVisible('type'));
   show('genre-label',     filterVisible('genre'));
   show('hide-rated-label',filterVisible('hideRated'));
+  show('mood-row',        filterVisible('mood'));
 
   document.querySelectorAll('#filter-row [data-filter-type]').forEach(chip => {
     chip.style.display = filterVisible('type') ? '' : 'none';
   });
 
-  const anyVisible = ['type','genre','provider','contentRating','year','sort','hideRated']
+  const anyVisible = ['type','genre','provider','contentRating','year','era','sort','hideRated','mood']
     .some(n => filterVisible(n));
   if (!anyVisible) document.getElementById('filter-reset')?.classList.remove('show');
 }
