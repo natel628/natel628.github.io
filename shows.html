@@ -104,6 +104,7 @@
       color: var(--text);
       font-size: 0.9rem;
       width: 280px;
+      max-width: 100%;
       outline: none;
     }
     #search-input:focus { border-color: var(--accent); }
@@ -234,7 +235,10 @@
       justify-content: center;
       font-size: 2.5rem;
     }
-    .card-body { padding: 8px 10px 10px; }
+    .card-body { 
+      padding: 8px 10px 10px; 
+      overflow: hidden; 
+    }
     .card-title {
       font-size: 0.82rem;
       font-weight: 600;
@@ -252,7 +256,6 @@
       font-weight: 700;
       color: var(--accent2);
     }
-    .card-date { font-size: 0.73rem; color: var(--text-muted); }
     .card-badge {
       position: absolute;
       top: 6px;
@@ -266,12 +269,13 @@
     }
     .card-badge.tv { background: #1a6ef5; }
     .card-badge.movie { background: var(--accent); }
-    /* My rating on card — slider style */
-    .card-rate-wrap { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
-    .card-rate-row  { display: flex; align-items: center; gap: 6px; }
+    
+    .card-rate-wrap { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; width: 100%; }
+    .card-rate-row  { display: flex; align-items: center; gap: 6px; width: 100%; padding-right: 4px; }
     .card-rate-label{ font-size: 0.75rem; color: var(--text-muted); min-width: 24px; text-align: right; font-weight: 600; }
     .card-rate-bar  {
       flex: 1;
+      min-width: 0;
       -webkit-appearance: none;
       appearance: none;
       height: 6px;
@@ -325,6 +329,7 @@
       padding: 6px;
       font-size: 0.75rem;
       position: relative;
+      min-width: 0;
     }
     .cal-day.today { border-color: var(--accent); }
     .cal-day-num {
@@ -334,11 +339,11 @@
       margin-bottom: 4px;
     }
     .cal-day.today .cal-day-num { color: var(--accent); }
+    .cal-wrap { position: relative; margin-bottom: 3px; }
     .cal-item {
       background: var(--tag-bg);
       border-radius: 4px;
       padding: 2px 5px;
-      margin-bottom: 3px;
       font-size: 0.68rem;
       line-height: 1.3;
       white-space: nowrap;
@@ -350,12 +355,14 @@
     .cal-item:hover { background: var(--accent); }
     .cal-item.movie { border-left: 3px solid var(--accent); }
     .cal-item.tv { border-left: 3px solid #1a6ef5; }
-    .cal-item.my-show { border-left: 3px solid #1ce783; background: rgba(28,231,131,.12); }
+    .cal-item.my-show { border-left: 3px solid #1ce783; background: rgba(28,231,131,.12); padding-right: 16px; }
+    .cal-item.my-show:hover { background: var(--accent); }
     .cal-month-nav {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 12px;
+      flex-wrap: wrap;
     }
     .cal-month-nav button {
       background: var(--surface2);
@@ -366,6 +373,7 @@
     }
     .cal-month-nav button:hover { border-color: var(--accent); }
     #cal-month-label { font-weight: 700; font-size: 1rem; min-width: 160px; text-align: center; }
+    .cal-toggle { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--text-muted); cursor: pointer; margin-left: 8px; }
 
     /* ─── Watchlist panel ───────────────────────────────────────────── */
     .watchlist-grid {
@@ -456,25 +464,25 @@
       padding: 8px 16px;
       font-size: 0.84rem;
       transition: all .15s;
+      display: inline-block;
     }
     .modal-btn:hover { border-color: var(--accent); color: var(--accent); }
     .modal-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .modal-btn.primary:hover { filter: brightness(1.1); }
-    /* My Rating row */
+    .modal-btn.primary:hover { filter: brightness(1.1); color: #fff; }
+    .modal-btn.active { border-color: var(--accent2); color: var(--accent2); font-weight: 700; }
+    
     .my-rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
     .my-rating-label { font-size: 0.85rem; font-weight: 600; }
-    .rating-stars { display: flex; gap: 4px; }
-    .rating-stars .star {
-      font-size: 1.3rem;
-      color: var(--star-off);
-      cursor: pointer;
-      transition: color .1s, transform .1s;
-    }
-    .rating-stars .star:hover, .rating-stars .star.on { color: var(--star-on); }
-    .rating-stars .star:hover { transform: scale(1.2); }
     .rating-val { font-size: 0.85rem; color: var(--text-muted); }
-    /* Similar / Recommended */
     .modal-similar-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); }
+    .next-ep {
+      font-size: .82rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+    }
 
     /* ─── Notifications toast ───────────────────────────────────────── */
     #toast {
@@ -511,11 +519,11 @@
     /* ─── Responsiveness ────────────────────────────────────────────── */
     @media (max-width: 700px) {
       :root { --card-w: 130px; }
+      .topnav, .search-wrap, .filter-row, .main { padding-left: 14px; padding-right: 14px; }
       .cal-grid { grid-template-columns: repeat(3, 1fr); }
       .cal-day-header:nth-child(n+4) { display: none; }
     }
 
-    /* ─── Recommendations tag badges ────────────────────────────────── */
     .rec-badge {
       background: #1a6ef5;
       color: #fff;
@@ -524,7 +532,6 @@
       border-radius: 4px;
       font-weight: 700;
     }
-    /* Content rating badge */
     .rating-badge {
       display: inline-block;
       font-size: 0.62rem;
@@ -540,21 +547,6 @@
     .rating-badge.teen  { color: var(--accent2); }
     .rating-badge.family{ color: #1ce783; }
 
-    /* ─── Section tabs (TV / Movies / Both) ─────────────────────────── */
-    .type-pills { display: flex; gap: 6px; }
-    .type-pill {
-      background: var(--tag-bg);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 14px;
-      padding: 4px 12px;
-      font-size: 0.78rem;
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .type-pill.active { background: var(--surface2); border-color: var(--accent2); color: var(--accent2); }
-
-    /* ─── Watchlist status menu ─────────────────────────────────────── */
     .wl-status {
       font-size: 0.7rem;
       background: var(--tag-bg);
@@ -563,7 +555,6 @@
       border-radius: 6px;
       padding: 3px 7px;
       margin-top: 5px;
-      cursor: pointer;
       width: 100%;
       text-align: left;
     }
@@ -573,7 +564,6 @@
     .wl-status.hold { color: #f5a623; border-color: #f5a623; border-style: dotted; }
     .wl-status.dropped { color: var(--accent); border-color: var(--accent); text-decoration: line-through; }
 
-    /* ─── Quick Rate thumbs buttons ───────────────────────────────────── */
     .thumbs-btn {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -583,18 +573,11 @@
       cursor: pointer;
       transition: all 0.2s;
       flex: 1;
+      color: var(--text);
     }
-    .thumbs-btn:hover {
-      background: var(--surface);
-      border-color: var(--accent);
-    }
-    .thumbs-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
+    .thumbs-btn:hover { background: var(--surface); border-color: var(--accent); }
+    .thumbs-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    /* ─── Empty state ───────────────────────────────────────────────── */
     .empty-state {
       padding: 48px 20px;
       text-align: center;
@@ -603,7 +586,6 @@
     }
     .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
 
-    /* ─── Simkl connect prompt ──────────────────────────────────────── */
     .simkl-prompt {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -620,7 +602,6 @@
 </head>
 <body>
 
-<!-- ═══ TOP NAV ═══════════════════════════════════════════════════════ -->
 <nav class="topnav">
   <h1>📺 Media Calendar</h1>
   <div class="nav-tabs">
@@ -633,6 +614,7 @@
     <button class="nav-tab" data-view="stats">📊 Stats</button>
   </div>
   <div class="nav-right">
+    <button onclick="openHelpModal()" style="background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;font-size:0.8rem" title="Hotkeys (?)">❓</button>
     <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;color:var(--text);font-size:1.2rem;padding:4px 8px;cursor:pointer" title="Toggle theme">🌙</button>
     <button onclick="surpriseMe()" style="background:var(--accent);border:none;color:#fff;border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:600;cursor:pointer">🎲 Surprise Me</button>
     <span id="simkl-user"></span>
@@ -642,13 +624,11 @@
   </div>
 </nav>
 
-<!-- ═══ SEARCH ════════════════════════════════════════════════════════ -->
 <div class="search-wrap">
   <input id="search-input" type="text" placeholder="Search movies & shows…" />
   <button id="search-btn" onclick="doSearch()">Search</button>
 </div>
 
-<!-- ═══ FILTER ROW ════════════════════════════════════════════════════ -->
 <div class="filter-row" id="filter-row">
   <span class="filter-label">Type:</span>
   <span class="filter-chip active" data-filter-type="all">All</span>
@@ -694,12 +674,8 @@
   </select>
 </div>
 
-<!-- ═══ MAIN CONTENT ══════════════════════════════════════════════════ -->
-<main class="main" id="main-content">
-  <!-- Views injected here by JS -->
-</main>
+<main class="main" id="main-content"></main>
 
-<!-- ═══ MODAL ════════════════════════════════════════════════════════ -->
 <div id="modal-overlay" role="dialog" aria-modal="true" aria-label="Media details">
   <div id="modal-box">
     <button id="modal-close" aria-label="Close" onclick="closeModal()">✕</button>
@@ -707,29 +683,23 @@
   </div>
 </div>
 
-<!-- ═══ TOAST ════════════════════════════════════════════════════════ -->
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* ─────────────────────────────────────────────────────────────────────
-   CONFIG
+   CONFIG & CONSTANTS
    ───────────────────────────────────────────────────────────────────── */
-const TMDB_TOKEN = '__TMDB_TOKEN__'; // injected by CI, never stored in git
+const TMDB_TOKEN = '__TMDB_TOKEN__';
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
 const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
 
-const SIMKL_CLIENT_ID  = '823280121411d86d7f3bd2491cc84db961e50d16416f6d5afe53d8dd7a07dcda';
-// Simkl requires an exact registered redirect URI — set this to your GitHub Pages URL
-// Register the same URL at: https://simkl.com/settings/developer/
-const SIMKL_REDIRECT   = 'https://natel628.github.io/shows.html';
-const SIMKL_AUTH_URL   = 'https://simkl.com/oauth2/authorize';
-const SIMKL_TOKEN_URL  = 'https://api.simkl.com/oauth2/token';
-const SIMKL_API        = 'https://api.simkl.com';
+const SIMKL_CLIENT_ID = '823280121411d86d7f3bd2491cc84db961e50d16416f6d5afe53d8dd7a07dcda';
+const SIMKL_REDIRECT  = 'https://natel628.github.io/shows.html';
+const SIMKL_AUTH_URL  = 'https://simkl.com/oauth2/authorize';
+const SIMKL_TOKEN_URL = 'https://api.simkl.com/oauth2/token';
+const SIMKL_API       = 'https://api.simkl.com';
 
-/* ─────────────────────────────────────────────────────────────────────
-   CONSTANTS
-   ───────────────────────────────────────────────────────────────────── */
 const GENRE_MAP = {
   28: 'Action', 35: 'Comedy', 18: 'Drama', 27: 'Horror', 878: 'Sci-Fi',
   10749: 'Romance', 53: 'Thriller', 16: 'Animation', 12: 'Adventure',
@@ -739,23 +709,37 @@ const GENRE_MAP = {
   10766: 'Soap', 10767: 'Talk', 80: 'Crime', 14: 'Fantasy'
 };
 
-const VOTE_THRESHOLDS = {
-  trending: 100,
-  popular_movies: 100,
-  popular_tv: 50,
-  discover_movie: 5,
-  discover_tv: 20,
-  upcoming_movie: 0,
-  upcoming_tv: 10,
-  recommended: 100
-};
+const WL_STATUSES = ['plantowatch', 'watching', 'completed', 'hold', 'dropped'];
 
 /* ─────────────────────────────────────────────────────────────────────
-   STATE
+   UTILITIES
+   ───────────────────────────────────────────────────────────────────── */
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+const pad2 = n => String(n).padStart(2, '0');
+function localISO(d) {
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+async function promiseAllChunked(items, fn, chunkSize = 5) {
+  const results = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    const chunk = items.slice(i, i + chunkSize);
+    const chunkResults = await Promise.all(chunk.map(fn));
+    results.push(...chunkResults);
+  }
+  return results;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   STATE MANAGEMENT
    ───────────────────────────────────────────────────────────────────── */
 const LS = {
   get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
-  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { console.warn('LS Write error:', e); } },
 };
 
 let state = {
@@ -766,36 +750,40 @@ let state = {
   provider: '',
   contentRating: '',
   year: '',
+  wlFilterStatus: 'all',
   simklToken: LS.get('simkl_token'),
   simklUser: LS.get('simkl_user'),
   ratings: LS.get('my_ratings') || {},
   watchlist: LS.get('my_watchlist') || {},
-  // mediaDetails: title/poster cache keyed by "type_id"
   mediaDetails: LS.get('media_details_cache') || {},
-  simklLibrary: LS.get('simkl_library') || [],
+  simklLibrary: [],
   calYear: new Date().getFullYear(),
   calMonth: new Date().getMonth(),
+  calMyOnly: !!LS.get('cal_my_only'),
   searchPage: 1,
   theme: LS.get('theme') || 'dark',
 };
 
-function saveRatings()   { LS.set('my_ratings',    state.ratings); }
-function saveWatchlist() { LS.set('my_watchlist',  state.watchlist); }
-function saveSimkl()     { LS.set('simkl_token',   state.simklToken); LS.set('simkl_user', state.simklUser); }
+function saveRatings()      { LS.set('my_ratings',          state.ratings); }
+function saveWatchlist()    { LS.set('my_watchlist',        state.watchlist); }
+function saveSimkl()        { LS.set('simkl_token',         state.simklToken); LS.set('simkl_user', state.simklUser); }
 function saveMediaDetails() { LS.set('media_details_cache', state.mediaDetails); }
-function saveTheme()     { LS.set('theme', state.theme); }
+function saveTheme()        { LS.set('theme',               state.theme); }
+
+let renderToken = 0;
+let calToken = 0;
 
 /* ─────────────────────────────────────────────────────────────────────
-   API CACHE — in-memory with TTL, persisted to localStorage for details
+   API CACHE LAYER
    ───────────────────────────────────────────────────────────────────── */
-const _cache = new Map(); // in-memory: key → { data, expires }
+const _cache = new Map();
 const CACHE_TTL = {
-  trending: 5 * 60 * 1000,       // 5 min
-  discover: 10 * 60 * 1000,      // 10 min
-  detail:   60 * 60 * 1000,      // 1 hr
-  season:   24 * 60 * 60 * 1000, // 24 hr
-  search:   2 * 60 * 1000,       // 2 min
-  providers:60 * 60 * 1000,      // 1 hr
+  trending: 5 * 60 * 1000,
+  discover: 10 * 60 * 1000,
+  detail:   60 * 60 * 1000,
+  season:   24 * 60 * 60 * 1000,
+  search:   2 * 60 * 1000,
+  providers:60 * 60 * 1000,
 };
 
 function cacheTTL(path) {
@@ -825,7 +813,7 @@ function cacheSet(key, data, ttl) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   TMDB API  (with cache)
+   TMDB API CLIENT
    ───────────────────────────────────────────────────────────────────── */
 async function tmdb(path, params = {}) {
   const key = cacheKey(path, params);
@@ -844,26 +832,42 @@ async function tmdb(path, params = {}) {
   return data;
 }
 
-// Fetch content rating for a title (US region)
+function sortFor(type) {
+  if (type === 'tv') return state.sort.replace('release_date', 'first_air_date');
+  return state.sort;
+}
+
+function yearParams(type) {
+  if (!state.year) return {};
+  return type === 'movie' ? { primary_release_year: state.year } : { first_air_date_year: state.year };
+}
+
 async function getContentRating(type, id) {
+  const cacheKeyStr = mediaKey(type, id);
+  if (state.mediaDetails[cacheKeyStr]?.contentRating !== undefined) {
+    return state.mediaDetails[cacheKeyStr].contentRating;
+  }
   try {
+    let cert = '';
     if (type === 'movie') {
       const data = await tmdb(`/movie/${id}/release_dates`);
       const us = (data.results || []).find(r => r.iso_3166_1 === 'US');
       if (us && us.release_dates) {
         const rated = us.release_dates.find(r => r.certification);
-        return rated?.certification || '';
+        cert = rated?.certification || '';
       }
     } else {
       const data = await tmdb(`/tv/${id}/content_ratings`);
       const us = (data.results || []).find(r => r.iso_3166_1 === 'US');
-      return us?.rating || '';
+      cert = us?.rating || '';
     }
-  } catch (e) { console.warn('Content rating fetch failed:', e); }
+    state.mediaDetails[cacheKeyStr] = { ...(state.mediaDetails[cacheKeyStr] || {}), contentRating: cert };
+    saveMediaDetails();
+    return cert;
+  } catch (e) { console.warn('Content rating fetch error:', e); }
   return '';
 }
 
-// Fetch streaming providers for a title (US region)
 async function getProviders(type, id) {
   try {
     const data = await tmdb(`/${type}/${id}/watch/providers`);
@@ -875,19 +879,18 @@ async function getProviders(type, id) {
       buy:      us.buy      || [],
       link:     us.link     || '',
     };
-  } catch (e) { console.warn('Providers fetch failed:', e); return null; }
+  } catch (e) { console.warn('Providers fetch error:', e); return null; }
 }
 
-// Rating badge helper
 function ratingBadgeHTML(rating) {
   if (!rating) return '';
   const cls = ['TV-MA','R','NC-17'].includes(rating) ? 'adult'
             : ['TV-14','PG-13'].includes(rating) ? 'teen' : 'family';
-  return `<span class="rating-badge ${cls}">${rating}</span>`;
+  return `<span class="rating-badge ${cls}">${esc(rating)}</span>`;
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   SIMKL OAuth2 PKCE
+   SIMKL PKCE & OAUTH
    ───────────────────────────────────────────────────────────────────── */
 function base64urlEncode(buf) {
   return btoa(String.fromCharCode(...new Uint8Array(buf)))
@@ -915,13 +918,13 @@ async function simklAuth() {
 }
 
 function simklDisconnect() {
-  state.simklToken  = null;
-  state.simklUser   = null;
+  state.simklToken   = null;
+  state.simklUser    = null;
   state.simklLibrary = [];
   LS.set('simkl_token', null);
   LS.set('simkl_user', null);
-  LS.set('simkl_library', []);
   LS.set('pkce_verifier', null);
+  LS.set('simkl_last_sync', null);
   updateSimklUI();
   toast('Disconnected from Simkl');
   renderView();
@@ -933,7 +936,6 @@ async function handleSimklCallback() {
   const verifier = LS.get('pkce_verifier');
   if (!code || !verifier) return;
 
-  // Clean URL
   window.history.replaceState({}, '', window.location.pathname);
 
   try {
@@ -955,10 +957,11 @@ async function handleSimklCallback() {
     saveSimkl();
     await loadSimklUser();
     await syncSimklLibrary();
+    LS.set('simkl_last_sync', new Date().toISOString());
     toast('✅ Connected to Simkl!');
     renderView();
   } catch (e) {
-    toast('❌ Simkl login failed: ' + e.message);
+    toast('❌ Simkl auth failed: ' + e.message);
   }
 }
 
@@ -979,6 +982,7 @@ async function simklPost(path, body) {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${state.simklToken}`,
+      'simkl-api-key': SIMKL_CLIENT_ID,
     },
     body: JSON.stringify(body),
   });
@@ -992,7 +996,7 @@ async function loadSimklUser() {
     state.simklUser = data.user?.name || 'Simkl User';
     saveSimkl();
     updateSimklUI();
-  } catch (e) { console.warn('Simkl user load failed:', e); }
+  } catch (e) { console.warn('Simkl user fetch error:', e); }
 }
 
 async function syncSimklLibrary() {
@@ -1007,34 +1011,19 @@ async function syncSimklLibrary() {
       ...(shows?.shows   || []).map(s => ({ ...s, media_type: 'tv' })),
     ];
     state.simklLibrary = lib;
-    LS.set('simkl_library', lib);
 
-    // Mirror Simkl ratings AND statuses into local state
     const simklToLocal = { watching: 'watching', completed: 'completed', plantowatch: 'plantowatch', hold: 'hold', dropped: 'dropped', notinteresting: 'dropped' };
     lib.forEach(item => {
-      const tmdbId = item.movie?.ids?.tmdb || item.show?.ids?.tmdb;
+      const src = item.movie || item.show;
+      const tmdbId = Number(src?.ids?.tmdb);
       if (!tmdbId) return;
       const type = item.media_type;
       const key  = mediaKey(type, tmdbId);
 
-      // Mirror rating
       if (item.user_rating) state.ratings[key] = item.user_rating;
-
-      // Mirror watchlist status (#5)
-      const simklStatus = item.status;
-      if (simklStatus && simklToLocal[simklStatus]) {
-        state.watchlist[key] = simklToLocal[simklStatus];
-      }
-
-      // Cache title + poster for watchlist display (#1, #3)
-      const src = item.movie || item.show;
+      if (item.status && simklToLocal[item.status]) state.watchlist[key] = simklToLocal[item.status];
       if (src?.title && !state.mediaDetails[key]) {
-        state.mediaDetails[key] = {
-          title: src.title,
-          poster_path: src.poster || src.poster_path || null,
-          media_type: type,
-          id: tmdbId,
-        };
+        state.mediaDetails[key] = { title: src.title, media_type: type, id: tmdbId };
       }
     });
 
@@ -1053,10 +1042,12 @@ function updateSimklUI() {
   if (state.simklToken && state.simklUser) {
     btn.textContent  = 'Disconnect';
     btn.style.background = '#444';
+    btn.style.color = '#fff';
     user.textContent = `👤 ${state.simklUser}`;
   } else {
     btn.innerHTML    = '<span>▶</span> Connect Simkl';
     btn.style.background = '#1ce783';
+    btn.style.color = '#000';
     user.textContent = '';
   }
 }
@@ -1066,29 +1057,26 @@ function updateSimklUI() {
    ───────────────────────────────────────────────────────────────────── */
 async function pushRatingToSimkl(mediaType, tmdbId, rating) {
   if (!state.simklToken || !tmdbId) return;
-  const body = {};
-  const item = { ids: { tmdb: tmdbId }, rating };
-  if (mediaType === 'movie') body.movies = [item];
-  else body.shows = [item];
+  const remove = !rating;
+  const item = remove ? { ids: { tmdb: tmdbId } } : { ids: { tmdb: tmdbId }, rating };
+  const body = mediaType === 'movie' ? { movies: [item] } : { shows: [item] };
   try {
-    await simklPost('/sync/ratings', body);
-  } catch (e) { console.warn('Push rating to Simkl failed:', e); }
+    await simklPost(remove ? '/sync/ratings/remove' : '/sync/ratings', body);
+  } catch (e) { console.warn('Simkl push rating error:', e); }
 }
 
 async function pushWatchlistToSimkl(mediaType, tmdbId, status) {
   if (!state.simklToken || !tmdbId) return;
   const simklStatus = { watching: 'watching', plantowatch: 'plantowatch', completed: 'completed', dropped: 'dropped', hold: 'hold' }[status] || 'plantowatch';
-  const body = {};
   const item = { ids: { tmdb: tmdbId }, to: simklStatus };
-  if (mediaType === 'movie') body.movies = [item];
-  else body.shows = [item];
+  const body = mediaType === 'movie' ? { movies: [item] } : { shows: [item] };
   try {
     await simklPost('/sync/add-to-list', body);
-  } catch (e) { console.warn('Push watchlist to Simkl failed:', e); }
+  } catch (e) { console.warn('Simkl push watchlist error:', e); }
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   HELPERS
+   HELPERS & DOM MANIPULATION
    ───────────────────────────────────────────────────────────────────── */
 function mediaKey(type, id)   { return `${type}_${id}`; }
 function getRating(type, id)  { return state.ratings[mediaKey(type, id)] || 0; }
@@ -1108,15 +1096,13 @@ function posterUrl(path) {
   return path ? IMG_BASE + path : null;
 }
 
-function isInWatchlist(type, id) {
-  return !!state.watchlist[mediaKey(type, id)];
-}
-
+let _toastTimer = null;
 function toast(msg, duration = 3000) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), duration);
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), duration);
 }
 
 function toggleTheme() {
@@ -1129,7 +1115,6 @@ function toggleTheme() {
 async function surpriseMe() {
   toast('Finding something random for you...');
   try {
-    // Get a random page from discover with high vote count
     const randomPage = Math.floor(Math.random() * 50) + 1;
     const [movie, tv] = await Promise.all([
       tmdb('/discover/movie', { sort_by: 'vote_count.desc', 'vote_count.gte': 500, page: randomPage }),
@@ -1139,7 +1124,7 @@ async function surpriseMe() {
     const all = [
       ...(movie.results || []).map(m => ({ ...m, media_type: 'movie' })),
       ...(tv.results || []).map(t => ({ ...t, media_type: 'tv' })),
-    ];
+    ].filter(i => !state.ratings[mediaKey(i.media_type, i.id)]);
 
     if (all.length === 0) {
       toast('No random items found');
@@ -1149,22 +1134,14 @@ async function surpriseMe() {
     const random = all[Math.floor(Math.random() * all.length)];
     openModal(random.media_type, random.id, random);
   } catch (e) {
-    console.warn('Surprise me failed:', e);
+    console.warn('Surprise me error:', e);
     toast('Failed to find random item');
   }
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   RECOMMENDATION ENGINE
-   Weighted score = TMDB popularity + vote_avg + genre affinity from ratings
+   ALGORITHMIC ENGINE: TASTE PROFILE & RECOMMENDATIONS
    ───────────────────────────────────────────────────────────────────── */
-/* ─────────────────────────────────────────────────────────────────────
-   RATING & RECOMMENDATION ENGINE
-   Uses a weighted genre affinity map + exponential decay on old ratings
-   Scale: 0–10 (0=hate, 5=neutral, 10=love)
-   ───────────────────────────────────────────────────────────────────── */
-
-// Emoji feedback for 0-10 scale
 function ratingEmoji(val) {
   if (val === 0)  return '🚫';
   if (val <= 2)   return '👎';
@@ -1175,60 +1152,45 @@ function ratingEmoji(val) {
   return '🏆';
 }
 
-// Genre affinity: each rating pushes genres toward liked (+) or disliked (-)
-// Uses exponential moving average so recent ratings matter more
-function updateGenreAffinity(genreIds, rating) {
-  const affinity = LS.get('genre_affinity') || {};
-  const counts   = LS.get('genre_counts')   || {};
-  const alpha    = 0.3; // EMA weight — higher = more responsive to new ratings
-  const delta    = rating - 5; // -5 to +5 around neutral
-
-  genreIds.forEach(gid => {
-    const prev  = affinity[gid] || 0;
-    const count = (counts[gid] || 0) + 1;
-    // EMA: new = alpha * delta + (1-alpha) * prev
-    affinity[gid] = alpha * delta + (1 - alpha) * prev;
-    counts[gid]   = count;
+function recomputeAffinity() {
+  const sums = {}, counts = {};
+  Object.entries(state.ratings).forEach(([key, r]) => {
+    if (!r) return;
+    const gids = state.mediaDetails[key]?.genre_ids || [];
+    gids.forEach(g => {
+      sums[g]   = (sums[g]   || 0) + (r - 5);
+      counts[g] = (counts[g] || 0) + 1;
+    });
   });
-
-  LS.set('genre_affinity', affinity);
-  LS.set('genre_counts',   counts);
+  const aff = {};
+  Object.keys(sums).forEach(g => { aff[g] = sums[g] / counts[g]; });
+  LS.set('genre_affinity', aff);
+  LS.set('genre_counts', counts);
 }
 
-// Collaborative-style score for a candidate item
-function recScore(item) {
-  const affinity = LS.get('genre_affinity') || {};
-  const type     = item.media_type || (item.title ? 'movie' : 'tv');
-  const key      = mediaKey(type, item.id);
-  const myRating = state.ratings[key] || 0;
+function recScore(item, affinityMap) {
+  const type  = item.media_type || (item.title ? 'movie' : 'tv');
+  const key   = mediaKey(type, item.id);
 
-  // Don't recommend already rated or watchlisted items
-  if (myRating > 0) return -999;
+  if ((state.ratings[key] || 0) > 0) return -999;
   if (state.watchlist[key]) return -998;
 
-  // Genre affinity score
   let genreScore = 0;
   let genreCount = 0;
   (item.genre_ids || []).forEach(gid => {
-    if (affinity[gid] !== undefined) {
-      genreScore += affinity[gid];
+    if (affinityMap[gid] !== undefined) {
+      genreScore += affinityMap[gid];
       genreCount++;
     }
   });
   const avgGenre = genreCount > 0 ? genreScore / genreCount : 0;
+  const popScore  = Math.log1p(item.popularity || 0) / 10;
+  const voteScore = ((item.vote_average || 0) - 5) / 5;
+  const voteConf  = Math.min((item.vote_count || 0) / 1000, 1);
 
-  // Normalize TMDB signals
-  const popScore  = Math.log1p(item.popularity || 0) / 10; // log scale, 0-~1
-  const voteScore = ((item.vote_average || 0) - 5) / 5;    // -1 to +1 from neutral
-  const voteConf  = Math.min((item.vote_count || 0) / 1000, 1); // confidence 0-1
-
-  // Weighted composite
-  return (avgGenre * 4)               // genre fit is the primary signal
-       + (voteScore * voteConf * 2)   // quality, weighted by confidence
-       + (popScore * 0.5);            // popularity is a tiebreaker only
+  return (avgGenre * 4) + (voteScore * voteConf * 2) + (popScore * 0.5);
 }
 
-// Get top genre names for display
 function topGenreNames(n = 3) {
   const affinity = LS.get('genre_affinity') || {};
   return Object.entries(affinity)
@@ -1239,7 +1201,6 @@ function topGenreNames(n = 3) {
     .join(', ');
 }
 
-// Get disliked genre IDs (to exclude from discover)
 function dislikedGenres() {
   const affinity = LS.get('genre_affinity') || {};
   return Object.entries(affinity)
@@ -1248,9 +1209,9 @@ function dislikedGenres() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   CARD BUILDER
+   DOM CARD CONSTRUCTORS & DELEGATED EVENTS
    ───────────────────────────────────────────────────────────────────── */
-function buildCard(item, opts = {}) {
+function buildCard(item) {
   const type     = item.media_type || (item.title ? 'movie' : 'tv');
   const id       = item.id;
   const title    = item.title || item.name || 'Unknown';
@@ -1260,26 +1221,29 @@ function buildCard(item, opts = {}) {
   const myRating = getRating(type, id);
   const wlStatus = getWlStatus(type, id);
   const sc       = score(item);
-  const cr       = item._contentRating || '';  // set by enrichCard if available
+  const cr       = item._contentRating || item.contentRating || '';
 
   const card = document.createElement('div');
-  card.className = 'card';
-  if (myRating > 0) card.classList.add('rated');
+  card.className = 'card' + (myRating > 0 ? ' rated' : '');
   card.dataset.id = id;
   card.dataset.type = type;
+  if (item.genre_ids) card.dataset.genres = item.genre_ids.join(',');
   card.setAttribute('tabindex', '0');
   card.setAttribute('role', 'button');
   card.setAttribute('aria-label', `View details for ${title}`);
 
+  const pct = myRating * 10;
+  const rangeStyle = myRating > 0 ? `style="background: linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%);"` : '';
+
   card.innerHTML = `
     <span class="card-badge ${type}">${type === 'movie' ? '🎬' : '📺'}</span>
     ${poster
-      ? `<img class="card-poster" src="${poster}" alt="${title}" loading="lazy" />`
+      ? `<img class="card-poster" src="${esc(poster)}" alt="${esc(title)}" loading="lazy" />`
       : `<div class="card-poster-placeholder">🎬</div>`}
     <div class="card-body">
-      <div class="card-title">${title}</div>
+      <div class="card-title">${esc(title)}</div>
       <div class="card-meta">
-        ${year ? `<span>${year}</span>` : ''}
+        ${year ? `<span>${esc(year)}</span>` : ''}
         ${sc ? `<span class="card-score">⭐ ${sc}</span>` : ''}
         ${cr ? ratingBadgeHTML(cr) : ''}
       </div>
@@ -1287,54 +1251,13 @@ function buildCard(item, opts = {}) {
         <div class="card-rate-row">
           <span class="card-rate-emoji">${myRating > 0 ? ratingEmoji(myRating) : '·'}</span>
           <input type="range" class="card-rate-bar" min="0" max="10" step="1"
-            value="${myRating}" aria-label="Rate 0-10" />
+            value="${myRating}" aria-label="Rate 0-10" ${rangeStyle} />
           <span class="card-rate-label">${myRating > 0 ? myRating : '—'}</span>
         </div>
       </div>
       ${wlStatus ? `<div class="wl-status ${wlStatus}" title="${wlStatus}">${wlStatusLabel(wlStatus)}</div>` : ''}
     </div>
   `;
-
-  card.addEventListener('click', e => {
-    if (!e.target.classList.contains('card-rate-bar')) openModal(type, id, item);
-  });
-  card.addEventListener('keydown', e => {
-    if (e.key === 'Enter') openModal(type, id, item);
-  });
-
-  // Slider rating
-  const slider = card.querySelector('.card-rate-bar');
-  const emoji  = card.querySelector('.card-rate-emoji');
-  const label  = card.querySelector('.card-rate-label');
-
-  slider.addEventListener('click', e => e.stopPropagation());
-  slider.addEventListener('input', e => {
-    e.stopPropagation();
-    const val = parseInt(slider.value);
-    emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
-    label.textContent = val > 0 ? val : '—';
-    // Color the track
-    const pct = val * 10;
-    slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
-  });
-  slider.addEventListener('change', e => {
-    e.stopPropagation();
-    const val = parseInt(slider.value);
-    setRating(type, id, val, item.genre_ids || []);
-    // Update visual state
-    if (val > 0) {
-      card.classList.add('rated');
-    } else {
-      card.classList.remove('rated');
-    }
-    if (state.simklToken) pushRatingToSimkl(type, id, val);
-  });
-
-  // Init track color for existing rating
-  if (myRating > 0) {
-    const pct = myRating * 10;
-    slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
-  }
 
   return card;
 }
@@ -1343,19 +1266,116 @@ function wlStatusLabel(s) {
   return { watching: '▶ Watching', completed: '✅ Completed', plantowatch: '🔖 Plan to Watch', hold: '⏸ On Hold', dropped: '❌ Dropped' }[s] || s;
 }
 
-function setRating(type, id, val, genreIds) {
+function updateCardStatus(type, id) {
+  const st = getWlStatus(type, id);
+  document.querySelectorAll(`.card[data-type="${type}"][data-id="${id}"]`).forEach(card => {
+    const body = card.querySelector('.card-body');
+    if (!body) return;
+    body.querySelector('.wl-status')?.remove();
+    if (st) {
+      const d = document.createElement('div');
+      d.className = `wl-status ${st}`;
+      d.textContent = wlStatusLabel(st);
+      body.appendChild(d);
+    }
+  });
+}
+
+function setRating(type, id, val, genreIds, item) {
   const key = mediaKey(type, id);
-  state.ratings[key] = val;
+  if (val > 0) state.ratings[key] = val; else delete state.ratings[key];
+
+  const prev = state.mediaDetails[key] || {};
+  const patch = { media_type: type, id };
+  if (genreIds && genreIds.length) patch.genre_ids = genreIds;
+  if (item && (item.title || item.name) && !prev.title) patch.title = item.title || item.name;
+  if (item && item.poster_path && !prev.poster_path) patch.poster_path = item.poster_path;
+  state.mediaDetails[key] = { ...prev, ...patch };
+
   saveRatings();
-  if (genreIds && genreIds.length) {
-    updateGenreAffinity(genreIds, val);
-  }
-  toast(`${ratingEmoji(val)} Rated ${val}/10`);
+  saveMediaDetails();
+  recomputeAffinity();
+  toast(val > 0 ? `${ratingEmoji(val)} Rated ${val}/10` : 'Rating removed');
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   MODAL
+   GLOBAL EVENT DELEGATION (FIXED FOR QUICK RATE THUMBS)
    ───────────────────────────────────────────────────────────────────── */
+document.getElementById('main-content').addEventListener('click', e => {
+  const scrollBtn = e.target.closest('.row-scroll-btn');
+  if (scrollBtn) {
+    const wrap = scrollBtn.closest('.row-wrap');
+    const row = wrap.querySelector('.card-row');
+    const cardW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--card-w')) || 160;
+    const scrollAmt = cardW * 4 + 56;
+    row.scrollBy({ left: scrollBtn.classList.contains('left') ? -scrollAmt : scrollAmt, behavior: 'smooth' });
+    return;
+  }
+
+  // FIXED: Ignore clicks on thumbs buttons or rating sliders (don't open modal)
+  if (e.target.closest('.thumbs-btn') || e.target.classList.contains('card-rate-bar')) {
+    return;
+  }
+
+  const card = e.target.closest('.card');
+  if (card) {
+    const type = card.dataset.type;
+    const id = Number(card.dataset.id);
+    if (type && id) openModal(type, id);
+  }
+});
+
+document.getElementById('main-content').addEventListener('input', e => {
+  if (e.target.classList.contains('card-rate-bar')) {
+    const slider = e.target;
+    const card = slider.closest('.card');
+    const emoji = card.querySelector('.card-rate-emoji');
+    const label = card.querySelector('.card-rate-label');
+    const val = parseInt(slider.value);
+
+    emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
+    label.textContent = val > 0 ? val : '—';
+    const pct = val * 10;
+    slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
+  }
+});
+
+document.getElementById('main-content').addEventListener('change', e => {
+  if (e.target.classList.contains('card-rate-bar')) {
+    const slider = e.target;
+    const card = slider.closest('.card');
+    const type = card.dataset.type;
+    const id = Number(card.dataset.id);
+    const val = parseInt(slider.value);
+    const genreIds = card.dataset.genres ? card.dataset.genres.split(',').map(Number) : [];
+
+    setRating(type, id, val, genreIds, { title: card.querySelector('.card-title')?.textContent });
+    card.classList.toggle('rated', val > 0);
+    if (state.simklToken) pushRatingToSimkl(type, id, val);
+  }
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   MODAL CONTROLLER & HELP MODAL
+   ───────────────────────────────────────────────────────────────────── */
+function openHelpModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-inner').innerHTML = `
+    <h3 style="font-size:1.2rem;margin-bottom:12px">⌨️ Keyboard Shortcuts</h3>
+    <table style="width:100%;font-size:0.85rem;border-collapse:collapse;color:var(--text-muted)">
+      <tr><td style="padding:4px 0"><strong>/</strong> or <strong>s</strong></td><td>Focus Search Bar</td></tr>
+      <tr><td style="padding:4px 0"><strong>t</strong></td><td>Trending View</td></tr>
+      <tr><td style="padding:4px 0"><strong>c</strong></td><td>Calendar View</td></tr>
+      <tr><td style="padding:4px 0"><strong>u</strong></td><td>Upcoming View</td></tr>
+      <tr><td style="padding:4px 0"><strong>w</strong></td><td>My List View</td></tr>
+      <tr><td style="padding:4px 0"><strong>r</strong></td><td>For You View</td></tr>
+      <tr><td style="padding:4px 0"><strong>q</strong></td><td>Quick Rate View</td></tr>
+      <tr><td style="padding:4px 0"><strong>d</strong></td><td>Toggle Light/Dark Theme</td></tr>
+      <tr><td style="padding:4px 0"><strong>Esc</strong></td><td>Close Modal</td></tr>
+    </table>
+  `;
+}
+
 async function openModal(type, id, basicItem = {}) {
   document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('modal-inner').innerHTML = `
@@ -1366,16 +1386,17 @@ async function openModal(type, id, basicItem = {}) {
 
   try {
     const apiPath = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
-    const [detail, credits, providers, contentRating] = await Promise.all([
+    const [detail, credits, providers, contentRating, videos] = await Promise.all([
       tmdb(apiPath),
       tmdb(`${apiPath}/credits`).catch(() => ({ cast: [] })),
       getProviders(type, id),
       getContentRating(type, id),
+      tmdb(`${apiPath}/videos`).catch(() => ({ results: [] })),
     ]);
 
-    // Cache title/poster for watchlist display (#1, #3)
     const key = mediaKey(type, id);
     state.mediaDetails[key] = {
+      ...(state.mediaDetails[key] || {}),
       title: detail.title || detail.name,
       poster_path: detail.poster_path,
       media_type: type,
@@ -1385,48 +1406,63 @@ async function openModal(type, id, basicItem = {}) {
       first_air_date: detail.first_air_date,
       genre_ids: (detail.genres || []).map(g => g.id),
       contentRating,
+      _full: true,
     };
     saveMediaDetails();
+    if (getRating(type, id) > 0) recomputeAffinity();
 
-    renderModal(type, detail, credits, providers, contentRating);
+    renderModal(type, detail, credits, providers, contentRating, videos);
   } catch (e) {
-    document.getElementById('modal-inner').innerHTML = `<p style="padding:20px;color:var(--text-muted)">Could not load details: ${e.message}</p>`;
+    document.getElementById('modal-inner').innerHTML = `<p style="padding:20px;color:var(--text-muted)">Could not load details: ${esc(e.message)}</p>`;
   }
 }
 
-function renderModal(type, d, credits, providers, contentRating) {
-  const id       = d.id;
-  const title    = d.title || d.name;
-  const poster   = d.poster_path ? IMG_ORIG + d.poster_path : null;
-  const backdrop = d.backdrop_path ? `https://image.tmdb.org/t/p/w780${d.backdrop_path}` : null;
-  const year     = (d.release_date || d.first_air_date || '').slice(0, 4);
-  const runtime  = d.runtime || (d.episode_run_time && d.episode_run_time[0]) || '';
-  const genres   = d.genres || [];
-  const myR      = getRating(type, id);
-  const wlStat   = getWlStatus(type, id);
-  const cast     = (credits.cast || []).slice(0, 5).map(c => c.name).join(', ');
-  const sc       = d.vote_average ? d.vote_average.toFixed(1) : '—';
-  const cr       = contentRating || '';
+function renderModal(type, d, credits, providers, contentRating, videos) {
+  const id        = d.id;
+  const title     = d.title || d.name;
+  const poster    = d.poster_path ? IMG_ORIG + d.poster_path : null;
+  const backdrop  = d.backdrop_path ? `https://image.tmdb.org/t/p/w780${d.backdrop_path}` : null;
+  const year      = (d.release_date || d.first_air_date || '').slice(0, 4);
+  const runtime   = d.runtime || (d.episode_run_time && d.episode_run_time[0]) || '';
+  const genres    = d.genres || [];
+  const myR       = getRating(type, id);
+  const wlStat    = getWlStatus(type, id);
+  const cast      = (credits.cast || []).slice(0, 5).map(c => c.name).join(', ');
+  const sc        = d.vote_average ? d.vote_average.toFixed(1) : '—';
+  const cr        = contentRating || '';
+
+  const vids = videos?.results || [];
+  const trailer = vids.find(v => v.site === 'YouTube' && v.type === 'Trailer') || vids.find(v => v.site === 'YouTube');
+  const trailerUrl = trailer ? `https://www.youtube.com/watch?v=${encodeURIComponent(trailer.key)}` : '';
+
+  const next = type === 'tv' ? d.next_episode_to_air : null;
+  const nextHTML = next && next.air_date
+    ? `<div class="next-ep">📅 <strong>Next episode:</strong> S${pad2(next.season_number)}E${pad2(next.episode_number)}${next.name ? ' — ' + esc(next.name) : ''} · ${formatDate(next.air_date)}</div>`
+    : '';
+
+  const statusBtns = WL_STATUSES.map(s =>
+    `<button class="modal-btn${s === wlStat ? ' active' : ''}${(!wlStat && s === 'plantowatch') ? ' primary' : ''}" onclick="addToWatchlist('${type}', ${id}, '${s}')">${wlStatusLabel(s)}</button>`
+  ).join('');
 
   document.getElementById('modal-inner').innerHTML = `
-    ${backdrop ? `<img src="${backdrop}" alt="" style="width:100%;border-radius:8px 8px 0 0;display:block;object-fit:cover;max-height:200px" />` : ''}
+    ${backdrop ? `<img src="${esc(backdrop)}" alt="" style="width:100%;border-radius:8px 8px 0 0;display:block;object-fit:cover;max-height:200px" />` : ''}
     <div class="modal-hero" style="${backdrop ? 'margin-top:-50px;padding:0 20px' : ''}">
       ${poster
-        ? `<img class="modal-poster" src="${poster}" alt="${title}" />`
+        ? `<img class="modal-poster" src="${esc(poster)}" alt="${esc(title)}" />`
         : `<div class="modal-poster" style="display:flex;align-items:center;justify-content:center;font-size:3rem">🎬</div>`}
       <div class="modal-info">
-        <div class="modal-title">${title}</div>
-        ${d.tagline ? `<div class="modal-tagline">"${d.tagline}"</div>` : ''}
+        <div class="modal-title">${esc(title)}</div>
+        ${d.tagline ? `<div class="modal-tagline">"${esc(d.tagline)}"</div>` : ''}
         <div class="modal-meta">
-          ${year ? `<span>📅 ${year}</span>` : ''}
-          ${runtime ? `<span>⏱ ${runtime}min</span>` : ''}
+          ${year ? `<span>📅 ${esc(year)}</span>` : ''}
+          ${runtime ? `<span>⏱ ${esc(runtime)}min</span>` : ''}
           ${cr ? ratingBadgeHTML(cr) : ''}
-          ${d.status ? `<span>📡 ${d.status}</span>` : ''}
+          ${d.status ? `<span>📡 ${esc(d.status)}</span>` : ''}
           ${type === 'tv' && d.number_of_seasons ? `<span>📺 ${d.number_of_seasons} season${d.number_of_seasons > 1 ? 's' : ''}</span>` : ''}
-          ${d.networks && d.networks[0] ? `<span>🌐 ${d.networks[0].name}</span>` : ''}
+          ${d.networks && d.networks[0] ? `<span>🌐 ${esc(d.networks[0].name)}</span>` : ''}
         </div>
         <div class="modal-genres">
-          ${genres.map(g => `<span class="genre-tag">${g.name}</span>`).join('')}
+          ${genres.map(g => `<span class="genre-tag">${esc(g.name)}</span>`).join('')}
         </div>
         <div class="modal-scores">
           <div class="score-box"><div class="score-val">${sc}</div><div class="score-lbl">TMDB Score</div></div>
@@ -1436,10 +1472,10 @@ function renderModal(type, d, credits, providers, contentRating) {
       </div>
     </div>
     <div style="padding:0 4px">
-      ${d.overview ? `<p class="modal-overview">${d.overview}</p>` : ''}
-      ${cast ? `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">🎭 <strong>Cast:</strong> ${cast}</p>` : ''}
+      ${d.overview ? `<p class="modal-overview">${esc(d.overview)}</p>` : ''}
+      ${cast ? `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">🎭 <strong>Cast:</strong> ${esc(cast)}</p>` : ''}
+      ${nextHTML}
 
-      <!-- My Rating — 0-10 slider -->
       <div class="my-rating-row">
         <span class="my-rating-label">My Rating:</span>
         <span id="modal-rating-emoji" style="font-size:1.2rem;min-width:24px">${myR > 0 ? ratingEmoji(myR) : '·'}</span>
@@ -1448,45 +1484,39 @@ function renderModal(type, d, credits, providers, contentRating) {
         <span class="rating-val" id="modal-rating-val">${myR ? myR + '/10' : 'Not rated'}</span>
       </div>
 
-      <!-- Watchlist Actions -->
       <div class="modal-actions">
-        <button class="modal-btn primary" onclick="addToWatchlist('${type}', ${id}, 'plantowatch')">🔖 Plan to Watch</button>
-        <button class="modal-btn" onclick="addToWatchlist('${type}', ${id}, 'watching')">▶ Watching</button>
-        <button class="modal-btn" onclick="addToWatchlist('${type}', ${id}, 'completed')">✅ Completed</button>
+        ${statusBtns}
         ${wlStat ? `<button class="modal-btn" onclick="removeFromWatchlist('${type}', ${id})">🗑 Remove</button>` : ''}
+        ${trailerUrl ? `<a class="modal-btn" href="${esc(trailerUrl)}" target="_blank" rel="noopener">▶ Trailer</a>` : ''}
       </div>
-      ${wlStat ? `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">Status: ${wlStatusLabel(wlStat)}</p>` : ''}
 
-      <!-- Streaming Providers -->
       ${providers && (providers.flatrate.length || providers.rent.length) ? `
         <div style="margin-bottom:16px">
-          <div style="font-size:.85rem;font-weight:700;margin-bottom:8px;color:var(--text-muted)">Where to Watch ${providers.link ? `<a href="${providers.link}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:400;font-size:.78rem;margin-left:6px">View all ↗</a>` : ''}</div>
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:8px;color:var(--text-muted)">Where to Watch ${providers.link ? `<a href="${esc(providers.link)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:400;font-size:.78rem;margin-left:6px">View all ↗</a>` : ''}</div>
           ${providers.flatrate.length ? `
             <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:5px">Stream</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
               ${providers.flatrate.map(p => `
-                <div title="${p.provider_name}" style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.75rem">
-                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${p.provider_name}" style="width:20px;height:20px;border-radius:3px" />` : ''}
-                  ${p.provider_name}
+                <div title="${esc(p.provider_name)}" style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.75rem">
+                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${esc(p.provider_name)}" style="width:20px;height:20px;border-radius:3px" />` : ''}
+                  ${esc(p.provider_name)}
                 </div>`).join('')}
             </div>` : ''}
           ${providers.rent.length ? `
             <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:5px">Rent / Buy</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
               ${providers.rent.slice(0,6).map(p => `
-                <div title="${p.provider_name}" style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.75rem">
-                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${p.provider_name}" style="width:20px;height:20px;border-radius:3px" />` : ''}
-                  ${p.provider_name}
+                <div title="${esc(p.provider_name)}" style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.75rem">
+                  ${p.logo_path ? `<img src="https://image.tmdb.org/t/p/w45${p.logo_path}" alt="${esc(p.provider_name)}" style="width:20px;height:20px;border-radius:3px" />` : ''}
+                  ${esc(p.provider_name)}
                 </div>`).join('')}
             </div>` : ''}
         </div>` : providers ? '<p style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px">No US streaming info available.</p>' : ''}
 
-      <!-- Similar -->
       <div id="modal-similar"></div>
     </div>
   `;
 
-  // Bind modal rating slider
   const modalSlider = document.getElementById('modal-rating-slider');
   const modalEmoji  = document.getElementById('modal-rating-emoji');
   const modalValEl  = document.getElementById('modal-rating-val');
@@ -1498,12 +1528,20 @@ function renderModal(type, d, credits, providers, contentRating) {
     });
     modalSlider.addEventListener('change', () => {
       const val = parseInt(modalSlider.value);
-      setRating(type, id, val, genres.map(g => g.id));
+      setRating(type, id, val, genres.map(g => g.id), d);
       if (state.simklToken) pushRatingToSimkl(type, id, val);
+      document.querySelectorAll(`.card[data-type="${type}"][data-id="${id}"]`).forEach(c => {
+        c.classList.toggle('rated', val > 0);
+        const s = c.querySelector('.card-rate-bar');
+        const em = c.querySelector('.card-rate-emoji');
+        const lb = c.querySelector('.card-rate-label');
+        if (s) { s.value = val; s.style.background = val > 0 ? `linear-gradient(to right, var(--accent2) ${val * 10}%, var(--border) ${val * 10}%)` : ''; }
+        if (em) em.textContent = val > 0 ? ratingEmoji(val) : '·';
+        if (lb) lb.textContent = val > 0 ? val : '—';
+      });
     });
   }
 
-  // Load similar
   loadSimilar(type, id);
 }
 
@@ -1520,7 +1558,7 @@ async function loadSimilar(type, id) {
       item.media_type = type;
       row.appendChild(buildCard(item));
     });
-  } catch (e) { console.warn('Load similar failed:', e); }
+  } catch (e) { console.warn('Load similar error:', e); }
 }
 
 function closeModal() {
@@ -1532,49 +1570,34 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
 
-  // Keyboard shortcuts
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
-  if (e.key === '/' || e.key === 's') {
-    e.preventDefault();
-    document.getElementById('search-input').focus();
-  }
-  if (e.key === 't') {
-    e.preventDefault();
-    document.querySelector('[data-view="trending"]').click();
-  }
-  if (e.key === 'c') {
-    e.preventDefault();
-    document.querySelector('[data-view="calendar"]').click();
-  }
-  if (e.key === 'u') {
-    e.preventDefault();
-    document.querySelector('[data-view="upcoming"]').click();
-  }
-  if (e.key === 'w') {
-    e.preventDefault();
-    document.querySelector('[data-view="watchlist"]').click();
-  }
-  if (e.key === 'r') {
-    e.preventDefault();
-    document.querySelector('[data-view="recommended"]').click();
-  }
-  if (e.key === 'd') {
-    e.preventDefault();
-    toggleTheme();
-  }
+  const go = v => { e.preventDefault(); document.querySelector(`[data-view="${v}"]`)?.click(); };
+  if (e.key === '?' || (e.shiftKey && e.key === '?')) { e.preventDefault(); openHelpModal(); }
+  else if (e.key === '/' || e.key === 's') { e.preventDefault(); document.getElementById('search-input').focus(); }
+  else if (e.key === 't') go('trending');
+  else if (e.key === 'c') go('calendar');
+  else if (e.key === 'u') go('upcoming');
+  else if (e.key === 'w') go('watchlist');
+  else if (e.key === 'r') go('recommended');
+  else if (e.key === 'q') go('quickrate');
+  else if (e.key === 'd') { e.preventDefault(); toggleTheme(); }
 });
 
 /* ─────────────────────────────────────────────────────────────────────
-   WATCHLIST MANAGEMENT
+   WATCHLIST ACTIONS
    ───────────────────────────────────────────────────────────────────── */
 function addToWatchlist(type, id, status) {
   const key = mediaKey(type, id);
   state.watchlist[key] = status;
   saveWatchlist();
-  toast(`Added to ${wlStatusLabel(status)}`);
+  toast(`${wlStatusLabel(status)}`);
   if (state.simklToken) pushWatchlistToSimkl(type, id, status);
+  updateCardStatus(type, id);
   closeModal();
+  if (state.view === 'watchlist') renderView();
 }
 
 function removeFromWatchlist(type, id) {
@@ -1584,94 +1607,115 @@ function removeFromWatchlist(type, id) {
   delete state.watchlist[key];
   saveWatchlist();
   toast('Removed from list');
+  updateCardStatus(type, id);
   closeModal();
+  if (state.view === 'watchlist') renderView();
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   VIEWS
+   VIEWS RENDERER
    ───────────────────────────────────────────────────────────────────── */
 async function renderView() {
+  const token = ++renderToken;
   updateSimklUI();
   const main = document.getElementById('main-content');
 
-  // Nav tab highlight
   document.querySelectorAll('.nav-tab').forEach(t => {
     t.classList.toggle('active', t.dataset.view === state.view);
   });
 
-  // Show loading indicator
   main.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading…</p></div>';
 
-  switch (state.view) {
-    case 'trending':   await renderTrending(main);   break;
-    case 'calendar':   await renderCalendar(main);   break;
-    case 'upcoming':   await renderUpcoming(main);   break;
-    case 'watchlist':  await renderWatchlist(main);    break;
-    case 'recommended':await renderRecommended(main); break;
-    case 'search':     await renderSearch(main);      break;
-    case 'quickrate':  await renderQuickRate(main);   break;
-    case 'stats':      renderStats(main);             break;
+  try {
+    switch (state.view) {
+      case 'trending':    await renderTrending(main, token);   break;
+      case 'calendar':    await renderCalendar(main, token);   break;
+      case 'upcoming':    await renderUpcoming(main, token);   break;
+      case 'watchlist':   await renderWatchlist(main, token);  break;
+      case 'recommended': await renderRecommended(main, token);break;
+      case 'search':      await renderSearch(main, token);     break;
+      case 'quickrate':   await renderQuickRate(main, token);  break;
+      case 'stats':       renderStats(main);                   break;
+    }
+  } catch (e) {
+    if (token !== renderToken) return;
+    console.warn('Render error:', e);
+    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Error loading view: ${esc(e.message)}</p></div>`;
   }
 }
 
 /* ── TRENDING ─────────────────────────────────────────────────────── */
-async function renderTrending(main) {
+async function renderTrending(main, token) {
   addSkeletonRow(main, 'Trending This Week 🔥');
   addSkeletonRow(main, 'Popular Movies 🎬');
   addSkeletonRow(main, 'Popular TV Shows 📺');
 
   try {
-    const providerParam = state.provider
-      ? { watch_region: 'US', with_watch_providers: state.provider }
-      : {};
+    const providerParam = state.provider ? { watch_region: 'US', with_watch_providers: state.provider } : {};
     const genreParam = state.genre ? { with_genres: state.genre } : {};
 
-    // When a streaming provider is selected, use discover (supports provider filter)
-    // Otherwise use trending for the top row
     const trendingOrDiscover = state.provider
-      ? tmdb('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, ...providerParam, ...genreParam })
+      ? tmdb('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, ...providerParam, ...genreParam, ...yearParams('movie') })
       : tmdb('/trending/all/week');
 
     const [trending, popMovies, popTV, onAir] = await Promise.all([
       trendingOrDiscover,
-      tmdb('/discover/movie', { sort_by: state.sort, 'vote_count.gte': 100, ...providerParam, ...genreParam }),
-      tmdb('/discover/tv',    { sort_by: state.sort, 'vote_count.gte': 50,  ...providerParam, ...genreParam }),
+      tmdb('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 100, ...providerParam, ...genreParam, ...yearParams('movie') }),
+      tmdb('/discover/tv',    { sort_by: sortFor('tv'),    'vote_count.gte': 50,  ...providerParam, ...genreParam, ...yearParams('tv') }),
       tmdb('/tv/on_the_air'),
     ]);
+    if (token !== renderToken) return;
+
+    const trendingItems = (trending.results || [])
+      .map(m => state.provider ? { ...m, media_type: 'movie' } : m)
+      .filter(m => m.media_type === 'movie' || m.media_type === 'tv');
+
+    const rows = [
+      [state.provider
+        ? `🎬 Movies on ${esc(document.getElementById('provider-filter').selectedOptions[0]?.text || 'Service')}`
+        : 'Trending This Week 🔥', await filterResults(trendingItems)],
+      ['Popular Movies 🎬',   await filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'})))],
+      ['Popular TV Shows 📺', await filterResults((popTV.results    || []).map(t => ({...t, media_type:'tv'})))],
+      ['Currently On Air 📡', await filterResults((onAir.results    || []).map(t => ({...t, media_type:'tv'})))],
+    ];
+    if (token !== renderToken) return;
 
     main.innerHTML = '';
-    const trendingLabel = state.provider
-      ? `🎬 Movies on ${document.getElementById('provider-filter').selectedOptions[0]?.text || 'Service'}`
-      : 'Trending This Week 🔥';
-
-    renderRow(main, trendingLabel, await filterResults((trending.results || []).map(m => state.provider ? {...m, media_type:'movie'} : m)));
-    renderRow(main, 'Popular Movies 🎬',   await filterResults((popMovies.results || []).map(m => ({...m, media_type:'movie'}))));
-    renderRow(main, 'Popular TV Shows 📺', await filterResults((popTV.results    || []).map(t => ({...t, media_type:'tv'}))));
-    renderRow(main, 'Currently On Air 📡', await filterResults((onAir.results    || []).map(t => ({...t, media_type:'tv'}))));
+    rows.forEach(([label, items]) => renderRow(main, label, items));
   } catch(e) {
-    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${e.message}</p><p style="margin-top:8px;font-size:.8rem">Check that your TMDB token is valid.</p></div>`;
+    if (token !== renderToken) return;
+    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${esc(e.message)}</p></div>`;
   }
 }
 
 /* ── CALENDAR ─────────────────────────────────────────────────────── */
-async function renderCalendar(main) {
+async function renderCalendar(main, token) {
   main.innerHTML = `
     <div class="section">
       <div class="cal-month-nav">
         <button onclick="calPrev()">◀ Prev</button>
         <span id="cal-month-label"></span>
         <button onclick="calNext()">Next ▶</button>
+        <button onclick="calToday()">Today</button>
+        <label class="cal-toggle"><input type="checkbox" id="cal-my-only" ${state.calMyOnly ? 'checked' : ''} /> My list only</label>
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:.78rem;color:var(--text-muted);align-items:center">
         <span>Legend:</span>
-        <span><span style="display:inline-block;width:10px;height:10px;background:#1a6ef5;border-radius:2px;margin-right:4px"></span>TV Episode</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#1a6ef5;border-radius:2px;margin-right:4px"></span>TV Premiere</span>
         <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px"></span>Movie Release</span>
-        <span><span style="display:inline-block;width:10px;height:10px;background:#1ce783;border-radius:2px;margin-right:4px"></span>My Watchlist</span>
-        ${state.simklToken ? `<button class="modal-btn" onclick="markAllEpisodesWatched()" style="margin-left:auto;font-size:.75rem;padding:4px 10px">✓ Mark All Watched</button>` : `<span style="margin-left:auto;color:var(--accent)">⚠ <a href="#" onclick="simklAuth();return false" style="color:var(--accent)">Connect Simkl</a> to mark episodes</span>`}
+        <span><span style="display:inline-block;width:10px;height:10px;background:#1ce783;border-radius:2px;margin-right:4px"></span>My List</span>
+        ${state.simklToken ? `<button class="modal-btn" onclick="markAllEpisodesWatched()" style="margin-left:auto;font-size:.75rem;padding:4px 10px">✓ Mark All Aired Watched</button>` : `<span style="margin-left:auto;color:var(--accent)">⚠ <a href="#" onclick="simklAuth();return false" style="color:var(--accent)">Connect Simkl</a> to mark episodes</span>`}
       </div>
       <div class="cal-grid" id="cal-grid"></div>
       <div id="cal-loading" style="text-align:center;padding:20px;color:var(--text-muted);font-size:.85rem"></div>
     </div>`;
+
+  document.getElementById('cal-my-only').addEventListener('change', e => {
+    state.calMyOnly = e.target.checked;
+    LS.set('cal_my_only', state.calMyOnly);
+    buildCalendarGrid();
+    populateCalendar();
+  });
 
   buildCalendarGrid();
   await populateCalendar();
@@ -1686,6 +1730,13 @@ function calPrev() {
 function calNext() {
   state.calMonth++;
   if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+  buildCalendarGrid();
+  populateCalendar();
+}
+function calToday() {
+  const now = new Date();
+  state.calYear = now.getFullYear();
+  state.calMonth = now.getMonth();
   buildCalendarGrid();
   populateCalendar();
 }
@@ -1710,7 +1761,7 @@ function buildCalendarGrid() {
     const isToday = today.getFullYear() === state.calYear &&
                     today.getMonth() === state.calMonth &&
                     today.getDate() === d;
-    const dateStr = `${state.calYear}-${String(state.calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dateStr = `${state.calYear}-${pad2(state.calMonth+1)}-${pad2(d)}`;
     html += `<div class="cal-day${isToday ? ' today' : ''}" data-date="${dateStr}">
       <div class="cal-day-num">${d}</div>
     </div>`;
@@ -1718,52 +1769,50 @@ function buildCalendarGrid() {
   grid.innerHTML = html;
 }
 
-// Place an item pill on the calendar grid
-// epLabel: optional episode label shown in the pill (e.g. "S27E03")
-// showId: optional TMDB show ID for mark-watched functionality
-// episodeData: optional { season_number, episode_number } for Simkl history write
-function addCalItem(dateStr, label, cssClass, tooltip, onClick, epLabel, showId, episodeData) {
+function addCalItem(dateStr, label, cssClass, tooltip, onClick, opts = {}) {
   const cell = document.querySelector(`.cal-day[data-date="${dateStr}"]`);
   if (!cell) return;
 
   const wrapper = document.createElement('div');
-  wrapper.style.cssText = 'position:relative;margin-bottom:3px';
+  wrapper.className = 'cal-wrap';
 
   const div = document.createElement('div');
   div.className = `cal-item ${cssClass}`;
-  const displayLabel = epLabel ? `${epLabel} ${label}` : label;
+  const displayLabel = opts.epLabel ? `${opts.epLabel} ${label}` : label;
   div.textContent = displayLabel;
   div.title = tooltip || displayLabel;
   if (onClick) div.addEventListener('click', e => { e.stopPropagation(); onClick(); });
-
-  // Store episode data for bulk mark function
-  if (showId && episodeData) {
-    div.dataset.showId = showId;
-    div.dataset.season = episodeData.season_number;
-    div.dataset.episode = episodeData.episode_number;
-  }
-
   wrapper.appendChild(div);
 
-  // Mark Watched button — only for personal shows when Simkl is connected
-  if (showId && episodeData && state.simklToken && cssClass.includes('my-show')) {
-    const watchedKey = `watched_${showId}_s${episodeData.season_number}e${episodeData.episode_number}`;
-    const alreadyWatched = LS.get(watchedKey);
+  const aired = opts.airDate && opts.airDate <= localISO(new Date());
+  if (opts.showId && opts.episode && aired && state.simklToken && cssClass.includes('my-show')) {
+    const ep = opts.episode;
+    const watchedKey = `watched_${opts.showId}_s${ep.season_number}e${ep.episode_number}`;
+    const already = !!LS.get(watchedKey);
 
     const btn = document.createElement('button');
-    btn.title = alreadyWatched ? 'Marked as watched' : 'Mark as watched';
-    btn.textContent = alreadyWatched ? '✅' : '○';
-    btn.style.cssText = `position:absolute;top:1px;right:2px;background:none;border:none;font-size:.65rem;cursor:pointer;color:${alreadyWatched ? '#1ce783' : 'var(--text-muted)'};padding:0;line-height:1`;
+    btn.dataset.showId  = opts.showId;
+    btn.dataset.season  = ep.season_number;
+    btn.dataset.episode = ep.episode_number;
+    btn.dataset.watched = already ? '1' : '0';
+    btn.title = already ? 'Marked as watched' : 'Mark as watched';
+    btn.textContent = already ? '✅' : '○';
+    btn.style.cssText = `position:absolute;top:1px;right:2px;background:none;border:none;font-size:.65rem;color:${already ? '#1ce783' : 'var(--text-muted)'};padding:0;line-height:1.6`;
     btn.addEventListener('click', async e => {
       e.stopPropagation();
-      if (alreadyWatched) return;
+      if (btn.dataset.watched === '1') return;
       btn.textContent = '⏳';
-      await markEpisodeWatched(showId, episodeData.season_number, episodeData.episode_number);
-      LS.set(watchedKey, true);
-      btn.textContent = '✅';
-      btn.style.color = '#1ce783';
-      btn.title = 'Marked as watched';
-      toast(`✅ Marked S${String(episodeData.season_number).padStart(2,'0')}E${String(episodeData.episode_number).padStart(2,'0')} as watched`);
+      const ok = await markEpisodeWatched(opts.showId, ep.season_number, ep.episode_number);
+      if (ok) {
+        LS.set(watchedKey, true);
+        btn.dataset.watched = '1';
+        btn.textContent = '✅';
+        btn.style.color = '#1ce783';
+        btn.title = 'Marked as watched';
+        toast(`✅ Marked S${pad2(ep.season_number)}E${pad2(ep.episode_number)} as watched`);
+      } else {
+        btn.textContent = '○';
+      }
     });
     wrapper.appendChild(btn);
   }
@@ -1771,225 +1820,189 @@ function addCalItem(dateStr, label, cssClass, tooltip, onClick, epLabel, showId,
   cell.appendChild(wrapper);
 }
 
-// Write watch history to Simkl
 async function markEpisodeWatched(showTmdbId, season, episode) {
-  if (!state.simklToken) return;
+  if (!state.simklToken) return false;
   try {
     await simklPost('/sync/history', {
       shows: [{
         ids: { tmdb: showTmdbId },
-        seasons: [{
-          number: season,
-          episodes: [{ number: episode }]
-        }]
+        seasons: [{ number: season, episodes: [{ number: episode }] }]
       }]
     });
+    return true;
   } catch(e) {
-    console.warn('Mark watched failed:', e);
+    console.warn('Mark watched error:', e);
     toast('Failed to mark as watched');
+    return false;
   }
 }
 
-// Mark all unwatched episodes in current calendar month as watched
 async function markAllEpisodesWatched() {
   if (!state.simklToken) return;
-  const unwatchedBtns = document.querySelectorAll('.cal-item.my-show button:not([style*="color: #1ce783"])');
-  if (unwatchedBtns.length === 0) {
-    toast('No unwatched episodes this month');
+  const btns = [...document.querySelectorAll('.cal-wrap button[data-watched="0"]')];
+  if (btns.length === 0) {
+    toast('No unwatched aired episodes this month');
     return;
   }
+  if (!confirm(`Mark ${btns.length} aired episode${btns.length > 1 ? 's' : ''} as watched?`)) return;
 
-  if (!confirm(`Mark ${unwatchedBtns.length} episodes as watched?`)) return;
+  const byShow = {};
+  btns.forEach(b => {
+    const s = Number(b.dataset.showId), se = Number(b.dataset.season), ep = Number(b.dataset.episode);
+    byShow[s] = byShow[s] || {};
+    byShow[s][se] = byShow[s][se] || [];
+    byShow[s][se].push({ number: ep });
+  });
+  const body = {
+    shows: Object.entries(byShow).map(([id, seasons]) => ({
+      ids: { tmdb: Number(id) },
+      seasons: Object.entries(seasons).map(([n, eps]) => ({ number: Number(n), episodes: eps })),
+    })),
+  };
 
-  toast(`Marking ${unwatchedBtns.length} episodes as watched...`);
-  let marked = 0;
-
-  for (const btn of unwatchedBtns) {
-    try {
-      const wrapper = btn.parentElement;
-      const div = wrapper.querySelector('.cal-item');
-      const showId = parseInt(div.dataset.showId);
-      const season = parseInt(div.dataset.season);
-      const episode = parseInt(div.dataset.episode);
-
-      if (showId && season && episode) {
-        await markEpisodeWatched(showId, season, episode);
-        const watchedKey = `watched_${showId}_s${season}e${episode}`;
-        LS.set(watchedKey, true);
-        btn.textContent = '✅';
-        btn.style.color = '#1ce783';
-        btn.title = 'Marked as watched';
-        marked++;
-      }
-    } catch (e) {
-      console.warn('Failed to mark episode:', e);
-    }
+  toast(`Marking ${btns.length} episodes as watched...`);
+  try {
+    await simklPost('/sync/history', body);
+    btns.forEach(b => {
+      LS.set(`watched_${b.dataset.showId}_s${b.dataset.season}e${b.dataset.episode}`, true);
+      b.dataset.watched = '1';
+      b.textContent = '✅';
+      b.style.color = '#1ce783';
+      b.title = 'Marked as watched';
+    });
+    toast(`✅ Marked ${btns.length} episodes as watched`);
+  } catch (e) {
+    console.warn('Bulk mark error:', e);
+    toast('Failed to mark episodes as watched');
   }
-
-  toast(`✅ Marked ${marked} episodes as watched`);
 }
 
 async function populateCalendar() {
-  const yr      = state.calYear;
-  const mo      = state.calMonth; // 0-indexed
-  const moStr   = String(mo + 1).padStart(2, '0');
-  const dateFrom = `${yr}-${moStr}-01`;
-  const dateTo   = `${yr}-${moStr}-31`;
+  const myTok = ++calToken;
+  const yr = state.calYear;
+  const mo = state.calMonth;
+  const lastDay  = new Date(yr, mo + 1, 0).getDate();
+  const dateFrom = `${yr}-${pad2(mo + 1)}-01`;
+  const dateTo   = `${yr}-${pad2(mo + 1)}-${pad2(lastDay)}`;
   const loading  = document.getElementById('cal-loading');
   if (loading) loading.textContent = 'Loading…';
 
-  // Date range for "is this episode in our calendar month?"
-  const rangeStart = new Date(yr, mo, 1);
-  const rangeEnd   = new Date(yr, mo + 1, 0, 23, 59, 59);
-
-  function inRange(dateStr) {
-    if (!dateStr) return false;
-    const d = new Date(dateStr + 'T12:00:00');
-    return d >= rangeStart && d <= rangeEnd;
-  }
-
+  const inRange = ds => !!ds && ds >= dateFrom && ds <= dateTo;
+  const placed = new Set();
   let itemCount = 0;
+  let myCount = 0;
 
-  // ── 1. TMDB movie releases this month ─────────────────────────────
-  try {
-    const [pg1, pg2] = await Promise.all([
-      tmdb('/discover/movie', {
+  const add = (date, label, cls, tip, onClick, opts = {}) => {
+    if (myTok !== calToken) return;
+    const pk = `${date}|${opts.pk || label}`;
+    if (placed.has(pk)) return;
+    placed.add(pk);
+    addCalItem(date, label, cls, tip, onClick, opts);
+    itemCount++;
+    if (cls.includes('my-show')) myCount++;
+  };
+
+  if (!state.calMyOnly) {
+    try {
+      const [pg1, pg2] = await Promise.all([1, 2].map(page => tmdb('/discover/movie', {
         'primary_release_date.gte': dateFrom,
         'primary_release_date.lte': dateTo,
         sort_by: 'popularity.desc',
-        'vote_count.gte': 5,
+        'vote_count.gte': 0,
+        page,
+      })));
+      [...(pg1.results||[]), ...(pg2.results||[])].forEach(m => {
+        if (!inRange(m.release_date)) return;
+        const mine = ['plantowatch', 'watching'].includes(getWlStatus('movie', m.id));
+        add(m.release_date, m.title, mine ? 'movie my-show' : 'movie',
+          `🎬 ${m.title}`, () => openModal('movie', m.id, m), { pk: `movie_${m.id}` });
+      });
+    } catch(e) { console.warn('TMDB movies error:', e); toast('Failed to load movie releases'); }
+
+    try {
+      const tvDiscover = await tmdb('/discover/tv', {
+        'first_air_date.gte': dateFrom,
+        'first_air_date.lte': dateTo,
+        sort_by: 'popularity.desc',
         page: 1,
-      }),
-      tmdb('/discover/movie', {
-        'primary_release_date.gte': dateFrom,
-        'primary_release_date.lte': dateTo,
-        sort_by: 'popularity.desc',
-        'vote_count.gte': 5,
-        page: 2,
-      }),
-    ]);
-    [...(pg1.results||[]), ...(pg2.results||[])].forEach(m => {
-      if (!m.release_date || !inRange(m.release_date)) return;
-      addCalItem(m.release_date, m.title, 'movie',
-        `🎬 ${m.title}`, () => openModal('movie', m.id, m));
-      itemCount++;
-    });
-  } catch(e) { console.warn('TMDB movies failed:', e); toast('Failed to load movie releases'); }
-
-  // ── 2. TMDB TV episodes airing this month (popular shows) ─────────
-  try {
-    const tvDiscover = await tmdb('/discover/tv', {
-      'air_date.gte': dateFrom,
-      'air_date.lte': dateTo,
-      sort_by: 'popularity.desc',
-      'vote_count.gte': 20,
-      page: 1,
-    });
-    (tvDiscover.results || []).forEach(show => {
-      // Use first_air_date as a fallback date for the calendar
-      const d = show.first_air_date;
-      if (!d || !inRange(d)) return;
-      addCalItem(d, show.name, 'tv',
-        `📺 ${show.name}`, () => openModal('tv', show.id, show));
-      itemCount++;
-    });
-  } catch(e) { console.warn('TMDB TV discover failed:', e); toast('Failed to load TV shows'); }
-
-  // ── 3. Your Simkl library shows — fetch current season episodes ────
-  // Combines: local watchlist + Simkl connected library
-  const myShowIds = new Set();
-
-  // From local watchlist
-  Object.keys(state.watchlist)
-    .filter(k => k.startsWith('tv_'))
-    .forEach(k => myShowIds.add(parseInt(k.replace('tv_', ''))));
-
-  // From Simkl library
-  if (state.simklToken && state.simklLibrary.length) {
-    state.simklLibrary
-      .filter(i => i.media_type === 'tv' && i.show?.ids?.tmdb)
-      .forEach(i => myShowIds.add(i.show.ids.tmdb));
+      });
+      (tvDiscover.results || []).forEach(show => {
+        if (!inRange(show.first_air_date)) return;
+        add(show.first_air_date, show.name, 'tv', `📺 ${show.name} (premiere)`,
+          () => openModal('tv', show.id, show), { pk: `tvprem_${show.id}` });
+      });
+    } catch(e) { console.warn('TMDB TV discover error:', e); toast('Failed to load TV premieres'); }
   }
 
-  if (myShowIds.size > 0) {
-    if (loading) loading.textContent = `Loading your ${myShowIds.size} shows…`;
+  Object.entries(state.watchlist).forEach(([key, status]) => {
+    if (!key.startsWith('movie_') || !['plantowatch', 'watching'].includes(status)) return;
+    const d = state.mediaDetails[key];
+    if (!d || !inRange(d.release_date)) return;
+    add(d.release_date, d.title || 'Movie', 'movie my-show', `⭐ ${d.title}`,
+      () => openModal('movie', d.id, d), { pk: `movie_${d.id}` });
+  });
 
-    await Promise.allSettled([...myShowIds].map(async (showId) => {
+  const myShowIds = Object.entries(state.watchlist)
+    .filter(([k, s]) => k.startsWith('tv_') && ['watching', 'plantowatch'].includes(s))
+    .map(([k]) => parseInt(k.replace('tv_', '')))
+    .filter(Boolean);
+
+  if (myShowIds.length > 0) {
+    if (loading && myTok === calToken) loading.textContent = `Loading your ${myShowIds.length} shows…`;
+
+    await promiseAllChunked(myShowIds, async showId => {
       try {
         const detail = await tmdb(`/tv/${showId}`);
         const showName = detail.name;
         const currentSeason = detail.number_of_seasons;
         if (!currentSeason) return;
 
-        // Fetch the current season's episodes
         const seasonData = await tmdb(`/tv/${showId}/season/${currentSeason}`);
-        const episodes = seasonData.episodes || [];
-
-        episodes.forEach(ep => {
-          if (!ep.air_date || !inRange(ep.air_date)) return;
-          const epLabel = `S${String(ep.season_number).padStart(2,'0')}E${String(ep.episode_number).padStart(2,'0')}`;
-          addCalItem(
-            ep.air_date,
-            showName,
-            'tv my-show',
+        (seasonData.episodes || []).forEach(ep => {
+          if (!inRange(ep.air_date)) return;
+          const epLabel = `S${pad2(ep.season_number)}E${pad2(ep.episode_number)}`;
+          add(ep.air_date, showName, 'tv my-show',
             `⭐ ${showName} ${epLabel}: ${ep.name || ''}`,
             () => openModal('tv', showId, detail),
-            epLabel,
-            showId,
-            { season_number: ep.season_number, episode_number: ep.episode_number }
-          );
-          itemCount++;
+            { pk: `ep_${showId}_${epLabel}`, epLabel, showId, airDate: ep.air_date,
+              episode: { season_number: ep.season_number, episode_number: ep.episode_number } });
         });
 
-        // Also check next_episode_to_air in case it's a future episode
         const next = detail.next_episode_to_air;
-        if (next && next.air_date && inRange(next.air_date)) {
-          const epLabel = `S${String(next.season_number).padStart(2,'0')}E${String(next.episode_number).padStart(2,'0')}`;
-          // Only add if not already added from season fetch
-          const alreadyAdded = document.querySelector(
-            `.cal-day[data-date="${next.air_date}"] .my-show`
-          );
-          if (!alreadyAdded) {
-            addCalItem(
-              next.air_date,
-              showName,
-              'tv my-show',
-              `⭐ ${showName} ${epLabel} (next)`,
-              () => openModal('tv', showId, detail),
-              epLabel,
-              showId,
-              { season_number: next.season_number, episode_number: next.episode_number }
-            );
-            itemCount++;
-          }
+        if (next && inRange(next.air_date)) {
+          const epLabel = `S${pad2(next.season_number)}E${pad2(next.episode_number)}`;
+          add(next.air_date, showName, 'tv my-show',
+            `⭐ ${showName} ${epLabel} (next)`,
+            () => openModal('tv', showId, detail),
+            { pk: `ep_${showId}_${epLabel}`, epLabel, showId, airDate: next.air_date,
+              episode: { season_number: next.season_number, episode_number: next.episode_number } });
         }
-      } catch(e) { console.warn(`Failed to load show ${showId}:`, e); }
-    }));
+      } catch(e) { console.warn(`Failed loading show ${showId}:`, e); }
+    }, 5);
   }
 
-  if (loading) {
+  if (loading && myTok === calToken) {
     if (itemCount > 0) {
-      const myCount = document.querySelectorAll('.cal-item.my-show').length;
-      loading.textContent = `${itemCount} events — ${myCount} from your watchlist`;
+      loading.textContent = `${itemCount} events — ${myCount} from your list`;
     } else {
-      loading.innerHTML = `No events found. <a href="#" onclick="document.querySelector('[data-view=trending]').click();return false" style="color:var(--accent)">Browse Trending</a> and add shows to your watchlist to see their episodes here.`;
+      loading.innerHTML = `No events found. <a href="#" onclick="document.querySelector('[data-view=trending]').click();return false" style="color:var(--accent)">Browse Trending</a> to add shows.`;
     }
   }
 }
 
 /* ── UPCOMING ─────────────────────────────────────────────────────── */
-async function renderUpcoming(main) {
+async function renderUpcoming(main, token) {
   addSkeletonRow(main, 'Upcoming Movies 🎬');
   addSkeletonRow(main, 'New TV Premieres 📺');
 
   const today     = new Date();
-  const todayStr  = today.toISOString().slice(0, 10);
+  const todayStr  = localISO(today);
   const future    = new Date(today); future.setDate(today.getDate() + 60);
-  const futureStr = future.toISOString().slice(0, 10);
+  const futureStr = localISO(future);
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  const providerParam = state.provider
-    ? { watch_region: 'US', with_watch_providers: state.provider }
-    : {};
+  const providerParam = state.provider ? { watch_region: 'US', with_watch_providers: state.provider } : {};
+  const genreParam = state.genre ? { with_genres: state.genre } : {};
 
   const [upMovies, tvPrem] = await Promise.all([
     tmdb('/discover/movie', {
@@ -1998,7 +2011,7 @@ async function renderUpcoming(main) {
       sort_by: 'popularity.desc',
       'vote_count.gte': 0,
       ...providerParam,
-      ...(state.genre ? { with_genres: state.genre } : {}),
+      ...genreParam,
     }),
     tmdb('/discover/tv', {
       'air_date.gte': todayStr,
@@ -2006,18 +2019,22 @@ async function renderUpcoming(main) {
       sort_by: 'popularity.desc',
       'vote_count.gte': 10,
       ...providerParam,
-      ...(state.genre ? { with_genres: state.genre } : {}),
+      ...genreParam,
     }),
   ]);
+  if (token !== renderToken) return;
 
-  main.innerHTML = '';
   const movies = (upMovies.results || []).map(m => ({...m, media_type:'movie'}));
   const shows  = (tvPrem.results   || []).map(t => ({...t, media_type:'tv'}));
 
-  renderRow(main, 'Upcoming Movies 🎬', await filterResults(movies));
-  renderRow(main, 'Premiering / On Air Soon 📺', await filterResults(shows));
+  const fMovies = await filterResults(movies);
+  const fShows  = await filterResults(shows);
+  if (token !== renderToken) return;
 
-  // Release schedule — only items with dates within next 60 days
+  main.innerHTML = '';
+  renderRow(main, 'Upcoming Movies 🎬', fMovies);
+  renderRow(main, 'Premiering / On Air Soon 📺', fShows);
+
   const listSection = document.createElement('div');
   listSection.className = 'section';
   listSection.innerHTML = `
@@ -2027,19 +2044,12 @@ async function renderUpcoming(main) {
   main.appendChild(listSection);
   const releaseList = document.getElementById('release-list');
 
-  const nowMs  = today.getTime();
-  const endMs  = future.getTime();
-
-  const sorted = [...movies, ...shows]
+  const sorted = [...fMovies, ...fShows]
     .filter(i => {
-      const d = new Date((i.release_date || i.first_air_date) + 'T12:00:00').getTime();
-      return d >= nowMs && d <= endMs;
+      const d = i.release_date || i.first_air_date;
+      return d && d >= todayStr && d <= futureStr;
     })
-    .sort((a, b) => {
-      const da = new Date((a.release_date || a.first_air_date) + 'T12:00:00');
-      const db = new Date((b.release_date || b.first_air_date) + 'T12:00:00');
-      return da - db;
-    });
+    .sort((a, b) => (a.release_date || a.first_air_date).localeCompare(b.release_date || b.first_air_date));
 
   if (!sorted.length) {
     releaseList.innerHTML = `<p style="color:var(--text-muted);font-size:.85rem;padding:8px 0">No upcoming releases found for the selected filters.</p>`;
@@ -2049,8 +2059,8 @@ async function renderUpcoming(main) {
     const title    = item.title || item.name;
     const dateStr  = item.release_date || item.first_air_date;
     const date     = formatDate(dateStr);
-    const daysAway = Math.ceil((new Date(dateStr + 'T12:00:00') - today) / 86400000);
-    const daysLabel = daysAway === 0 ? 'Today!' : daysAway === 1 ? 'Tomorrow' : `in ${daysAway}d`;
+    const daysAway = Math.round((new Date(dateStr + 'T00:00:00') - startOfToday) / 86400000);
+    const daysLabel = daysAway <= 0 ? 'Today!' : daysAway === 1 ? 'Tomorrow' : `in ${daysAway}d`;
 
     const el = document.createElement('div');
     el.style.cssText = 'display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;transition:border-color .15s';
@@ -2058,11 +2068,11 @@ async function renderUpcoming(main) {
     el.onmouseout  = () => el.style.borderColor = 'var(--border)';
     el.innerHTML = `
       <div style="min-width:90px;text-align:right">
-        <div style="font-size:.75rem;color:var(--accent);font-weight:700">${date}</div>
+        <div style="font-size:.75rem;color:var(--accent);font-weight:700">${esc(date)}</div>
         <div style="font-size:.68rem;color:var(--text-muted)">${daysLabel}</div>
       </div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${title}</div>
+        <div style="font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(title)}</div>
         <div style="font-size:.73rem;color:var(--text-muted)">${item.media_type === 'movie' ? '🎬 Movie' : '📺 TV'} ${score(item) ? '· ⭐ ' + score(item) : ''}</div>
       </div>
     `;
@@ -2072,8 +2082,9 @@ async function renderUpcoming(main) {
 }
 
 /* ── WATCHLIST ────────────────────────────────────────────────────── */
-async function renderWatchlist(main) {
+async function renderWatchlist(main, token) {
   const statuses = ['watching', 'plantowatch', 'completed', 'hold', 'dropped'];
+  main.innerHTML = '';
 
   if (!state.simklToken) {
     const prompt = document.createElement('div');
@@ -2086,6 +2097,14 @@ async function renderWatchlist(main) {
     main.appendChild(prompt);
   }
 
+  const filterRow = document.createElement('div');
+  filterRow.style.cssText = 'display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap';
+  filterRow.innerHTML = `
+    <button class="filter-chip${state.wlFilterStatus === 'all' ? ' active' : ''}" onclick="state.wlFilterStatus='all';renderView()">All</button>
+    ${statuses.map(s => `<button class="filter-chip${state.wlFilterStatus === s ? ' active' : ''}" onclick="state.wlFilterStatus='${s}';renderView()">${wlStatusLabel(s)}</button>`).join('')}
+  `;
+  main.appendChild(filterRow);
+
   const entries = Object.entries(state.watchlist);
   if (!entries.length) {
     const empty = document.createElement('div');
@@ -2095,15 +2114,15 @@ async function renderWatchlist(main) {
     return;
   }
 
-  // Pre-fetch TMDB details for any items not yet cached
-  const missing = entries.filter(([key]) => !state.mediaDetails[key]).map(([key]) => key);
+  const missing = entries.filter(([key]) => !state.mediaDetails[key]?._full).map(([key]) => key);
   if (missing.length) {
-    await Promise.allSettled(missing.map(async key => {
+    await promiseAllChunked(missing, async key => {
       const [type, idStr] = key.split('_');
       const id = parseInt(idStr);
       try {
         const detail = await tmdb(`/${type}/${id}`);
         state.mediaDetails[key] = {
+          ...(state.mediaDetails[key] || {}),
           title: detail.title || detail.name,
           poster_path: detail.poster_path,
           media_type: type,
@@ -2112,64 +2131,88 @@ async function renderWatchlist(main) {
           release_date: detail.release_date,
           first_air_date: detail.first_air_date,
           genre_ids: (detail.genres || []).map(g => g.id),
+          _full: true,
         };
-      } catch (e) { console.warn('Cache fetch failed:', e); }
-    }));
+      } catch (e) { console.warn('Cache fetch error:', e); }
+    }, 5);
     saveMediaDetails();
+    if (token !== renderToken) return;
   }
 
-  statuses.forEach(status => {
+  const renderStatuses = state.wlFilterStatus === 'all' ? statuses : [state.wlFilterStatus];
+  renderStatuses.forEach(status => {
     const items = entries.filter(([, s]) => s === status);
     if (!items.length) return;
 
     const sec = document.createElement('div');
     sec.className = 'section';
-    sec.innerHTML = `<div class="section-header"><span class="section-title">${wlStatusLabel(status)} <span style="color:var(--text-muted);font-size:.8rem;font-weight:400">(${items.length})</span></span></div><div class="watchlist-grid" id="wl-${status}"></div>`;
+    sec.innerHTML = `<div class="section-header"><span class="section-title">${wlStatusLabel(status)} <span style="color:var(--text-muted);font-size:.8rem;font-weight:400">(${items.length})</span></span></div><div class="watchlist-grid"></div>`;
     main.appendChild(sec);
 
     const grid = sec.querySelector('.watchlist-grid');
     items.forEach(([key]) => {
       const cached = state.mediaDetails[key];
       const item = cached ? { ...cached } : { id: parseInt(key.split('_')[1]), media_type: key.split('_')[0] };
-      const card = buildCard(item);
-      grid.appendChild(card);
+      grid.appendChild(buildCard(item));
     });
   });
 }
 
 /* ── RECOMMENDED ──────────────────────────────────────────────────── */
-async function renderRecommended(main) {
-  const affinity  = LS.get('genre_affinity') || {};
+async function renderRecommended(main, token) {
   const hasRatings = Object.keys(state.ratings).length > 0;
 
   if (!hasRatings) {
     main.innerHTML = `<div class="empty-state"><div class="icon">✨</div>
       <p>Rate some movies and shows to get personalized recommendations!</p>
-      <p style="margin-top:8px;font-size:.8rem">Drag the slider on any card to rate 0–10.</p></div>`;
+      <p style="margin-top:8px;font-size:.8rem">Drag the slider on any card to rate 0–10, or try ⚡ Quick Rate.</p></div>`;
     return;
   }
 
   addSkeletonRow(main, 'Recommended For You ✨');
   addSkeletonRow(main, 'More Like Your Favorites');
 
-  // Top liked genres (positive affinity)
+  const needGenres = Object.keys(state.ratings)
+    .filter(k => !(state.mediaDetails[k]?.genre_ids || []).length)
+    .slice(0, 40);
+
+  if (needGenres.length) {
+    await promiseAllChunked(needGenres, async key => {
+      const [type, idStr] = key.split('_');
+      try {
+        const detail = await tmdb(`/${type}/${idStr}`);
+        state.mediaDetails[key] = {
+          ...(state.mediaDetails[key] || {}),
+          title: detail.title || detail.name,
+          poster_path: detail.poster_path,
+          media_type: type,
+          id: parseInt(idStr),
+          genre_ids: (detail.genres || []).map(g => g.id),
+          _full: true,
+        };
+      } catch (e) { console.warn('Genre backfill error:', e); }
+    }, 5);
+    saveMediaDetails();
+  }
+
+  recomputeAffinity();
+  if (token !== renderToken) return;
+
+  const affinity = LS.get('genre_affinity') || {};
   const topGenres = Object.entries(affinity)
     .filter(([, v]) => v > 0)
     .sort(([,a],[,b]) => b - a)
     .slice(0, 3)
     .map(([id]) => id);
-
-  // Genres to exclude (strongly disliked)
   const badGenres = dislikedGenres();
 
-  // Fetch 3 pages per type for a large candidate pool, then sort by recScore
   const fetchRec = async (mediaType, label) => {
     const params = {
       sort_by: 'vote_average.desc',
       'vote_count.gte': 200,
       page: 1,
     };
-    if (topGenres.length)  params.with_genres    = topGenres.slice(0, 2).join(',');
+    if (topGenres.length)  params.with_genres    = topGenres.slice(0, 2).join('|');
     if (badGenres.length)  params.without_genres = badGenres.slice(0, 3).join(',');
 
     const path = mediaType === 'movie' ? '/discover/movie' : '/discover/tv';
@@ -2185,13 +2228,11 @@ async function renderRecommended(main) {
       .map(i => ({ ...i, media_type: mediaType }))
       .filter(i => {
         const key = mediaKey(mediaType, i.id);
-        if (seen.has(i.id)) return false;
+        if (seen.has(i.id) || state.ratings[key] || state.watchlist[key]) return false;
         seen.add(i.id);
-        if (state.ratings[key]) return false;   // already rated
-        if (state.watchlist[key]) return false; // already in list
         return true;
       })
-      .sort((a, b) => recScore(b) - recScore(a))
+      .sort((a, b) => recScore(b, affinity) - recScore(a, affinity))
       .slice(0, 20);
 
     return { label, results };
@@ -2201,21 +2242,21 @@ async function renderRecommended(main) {
     fetchRec('movie', '🎬 Movies For You'),
     fetchRec('tv',    '📺 Shows For You'),
   ]);
+  if (token !== renderToken) return;
 
   main.innerHTML = '';
 
-  // Header summary
-  const liked  = topGenreNames(3);
+  const liked    = topGenreNames(3);
   const disliked = Object.entries(affinity).filter(([,v]) => v < -1).map(([id]) => GENRE_MAP[id]).filter(Boolean).slice(0,2).join(', ');
   const summary = document.createElement('div');
-  summary.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;display:flex;gap:16px;flex-wrap:wrap';
+  summary.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;display:flex;gap:16px;flex-wrap:wrap;align-items:center';
   summary.innerHTML = `
     <span>📊 <strong>${Object.keys(state.ratings).length}</strong> ratings</span>
-    ${liked    ? `<span>❤️ Loves: <strong>${liked}</strong></span>` : ''}
-    ${disliked ? `<span>👎 Avoids: <strong>${disliked}</strong></span>` : ''}
-    <button onclick="LS.set('genre_affinity',{});LS.set('genre_counts',{});toast('Preferences reset');renderView();"
+    ${liked    ? `<span>❤️ Loves: <strong>${esc(liked)}</strong></span>` : ''}
+    ${disliked ? `<span>👎 Avoids: <strong>${esc(disliked)}</strong></span>` : ''}
+    <button onclick="recomputeAffinity();toast('Taste profile refreshed');renderView();"
       style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer">
-      Reset preferences
+      Refresh taste profile
     </button>
   `;
   main.appendChild(summary);
@@ -2223,7 +2264,6 @@ async function renderRecommended(main) {
   renderRow(main, recMovies.label, recMovies.results, true);
   renderRow(main, recTV.label, recTV.results, true);
 
-  // "Because you liked X" rows for top 3 rated items (rating >= 7)
   const topRated = Object.entries(state.ratings)
     .filter(([, v]) => v >= 7)
     .sort(([,a],[,b]) => b - a)
@@ -2231,9 +2271,8 @@ async function renderRecommended(main) {
 
   for (const [key] of topRated) {
     const [type, idStr] = key.split('_');
-    const cached = state.mediaDetails[key];
     try {
-      let title = cached?.title;
+      let title = state.mediaDetails[key]?.title;
       if (!title) {
         const detail = await tmdb(`/${type}/${idStr}`);
         title = detail.title || detail.name;
@@ -2241,21 +2280,23 @@ async function renderRecommended(main) {
         saveMediaDetails();
       }
       const data = await tmdb(`/${type}/${idStr}/recommendations`);
+      if (token !== renderToken) return;
       const results = (data.results || [])
         .map(i => ({ ...i, media_type: type }))
-        .filter(i => !state.ratings[mediaKey(type, i.id)])
-        .filter(i => !state.watchlist[mediaKey(type, i.id)])
+        .filter(i => !state.ratings[mediaKey(type, i.id)] && !state.watchlist[mediaKey(type, i.id)])
         .slice(0, 12);
+
       if (results.length) {
-        renderRow(main, `Because you loved ${type === 'movie' ? '🎬' : '📺'} ${title}`, results);
+        renderRow(main, `Because you loved ${type === 'movie' ? '🎬' : '📺'} ${esc(title)}`, results);
       }
-    } catch (e) { console.warn('Recommendations fetch failed:', e); }
+    } catch (e) { console.warn('Recommendations fetch error:', e); }
   }
 }
 
 /* ── SEARCH ──────────────────────────────────────────────────────── */
 let searchQuery = '';
 let searchResults = [];
+
 async function doSearch() {
   searchQuery = document.getElementById('search-input').value.trim();
   if (!searchQuery) return;
@@ -2279,16 +2320,16 @@ async function loadMoreSearchResults() {
       ...(movies.results || []).map(m => ({ ...m, media_type: 'movie' })),
       ...(shows.results  || []).map(t => ({ ...t, media_type: 'tv' })),
     ].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+
     searchResults.push(...newResults);
     const main = document.getElementById('main-content');
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    if (loadMoreBtn) loadMoreBtn.remove();
-    renderRow(main, `Search results for "${searchQuery}" (page ${state.searchPage})`, newResults);
-    if (newResults.length > 0) {
-      addLoadMoreButton(main);
-    }
+    document.getElementById('load-more-btn')?.remove();
+
+    if (!newResults.length) { toast('No more results'); return; }
+    renderRow(main, `Search results for "${esc(searchQuery)}" (page ${state.searchPage})`, newResults);
+    addLoadMoreButton(main);
   } catch (e) {
-    console.warn('Load more failed:', e);
+    console.warn('Load more search error:', e);
     toast('Failed to load more results');
   }
 }
@@ -2303,13 +2344,14 @@ function addLoadMoreButton(main) {
   main.appendChild(btn);
 }
 
-async function renderSearch(main) {
+async function renderSearch(main, token) {
   main.innerHTML = '<div class="empty-state"><div class="icon">🔍</div>Searching…</div>';
   try {
     const [movies, shows] = await Promise.all([
       tmdb('/search/movie', { query: searchQuery, page: state.searchPage }),
       tmdb('/search/tv',    { query: searchQuery, page: state.searchPage }),
     ]);
+    if (token !== renderToken) return;
     searchResults = [
       ...(movies.results || []).map(m => ({ ...m, media_type: 'movie' })),
       ...(shows.results  || []).map(t => ({ ...t, media_type: 'tv' })),
@@ -2317,154 +2359,207 @@ async function renderSearch(main) {
 
     main.innerHTML = '';
     if (!searchResults.length) {
-      main.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>No results for "${searchQuery}"</div>`;
+      main.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>No results for "${esc(searchQuery)}"</div>`;
       return;
     }
-    renderRow(main, `Search results for "${searchQuery}"`, searchResults);
+    renderRow(main, `Search results for "${esc(searchQuery)}"`, searchResults);
     addLoadMoreButton(main);
   } catch (e) {
-    console.warn('Search failed:', e);
+    if (token !== renderToken) return;
+    console.warn('Search error:', e);
     main.innerHTML = '<div class="empty-state">Search failed. Try again.</div>';
     toast('Search failed');
   }
 }
 
 /* ── QUICK RATE ─────────────────────────────────────────────────────── */
-async function renderQuickRate(main) {
+const qrPage = { movie: 0, tv: 0 };
+const qrSeen = new Set();
+
+async function fetchQuickRateBatch(type, want = 20) {
+  const out = [];
+  const path = type === 'movie' ? '/discover/movie' : '/discover/tv';
+  const minVotes = type === 'movie' ? 100 : 50;
+  let tries = 0;
+
+  while (out.length < want && tries < 5 && qrPage[type] < 500) {
+    qrPage[type]++; tries++;
+    const data = await tmdb(path, { sort_by: 'popularity.desc', 'vote_count.gte': minVotes, page: qrPage[type] });
+    const results = data.results || [];
+    if (!results.length) break;
+
+    results.forEach(i => {
+      const key = mediaKey(type, i.id);
+      if (qrSeen.has(key) || state.ratings[key]) return;
+      qrSeen.add(key);
+      out.push({ ...i, media_type: type });
+    });
+  }
+  return out;
+}
+
+async function renderQuickRate(main, token) {
   addSkeletonRow(main, 'Popular Movies 🎬');
   addSkeletonRow(main, 'Popular TV Shows 📺');
 
   try {
-    const [movies, shows] = await Promise.all([
-      tmdb('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100 }),
-      tmdb('/discover/tv', { sort_by: 'popularity.desc', 'vote_count.gte': 50 }),
+    qrSeen.clear();
+    qrPage.movie = Math.floor(Math.random() * 4);
+    qrPage.tv    = Math.floor(Math.random() * 4);
+
+    const [movieItems, tvItems] = await Promise.all([
+      fetchQuickRateBatch('movie'),
+      fetchQuickRateBatch('tv'),
     ]);
+    if (token !== renderToken) return;
 
     main.innerHTML = '';
-
-    const movieItems = (movies.results || []).map(m => ({ ...m, media_type: 'movie' }));
-    const tvItems = (shows.results || []).map(t => ({ ...t, media_type: 'tv' }));
-
-    renderQuickRateRow(main, 'Popular Movies 🎬', movieItems);
-    renderQuickRateRow(main, 'Popular TV Shows 📺', tvItems);
+    renderQuickRateRow(main, 'Popular Movies 🎬', 'movie', movieItems);
+    renderQuickRateRow(main, 'Popular TV Shows 📺', 'tv', tvItems);
   } catch(e) {
-    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${e.message}</p></div>`;
+    if (token !== renderToken) return;
+    main.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load: ${esc(e.message)}</p></div>`;
   }
 }
 
-function renderQuickRateRow(container, title, items) {
+function renderQuickRateRow(container, title, type, items) {
   const sec = document.createElement('div');
   sec.className = 'section';
-  sec.innerHTML = `<div class="section-header"><span class="section-title">${title}</span></div><div class="card-row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px"></div>`;
-  const row = sec.querySelector('.card-row');
+  sec.innerHTML = `
+    <div class="section-header"><span class="section-title">${title}</span></div>
+    <div class="card-row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px"></div>
+    <div class="qr-empty" style="display:none;color:var(--text-muted);font-size:.85rem;padding:8px 0">Nothing left to rate here — hit Load more.</div>
+    <button class="modal-btn qr-more" style="display:block;margin:16px auto 0">Load more</button>`;
+  const grid  = sec.querySelector('.card-row');
+  const empty = sec.querySelector('.qr-empty');
+  const more  = sec.querySelector('.qr-more');
 
-  if (!items.length) {
-    sec.querySelector('.card-row').outerHTML = `<p style="color:var(--text-muted);font-size:.85rem">No results found.</p>`;
-  } else {
-    items.forEach(item => {
-      const card = buildQuickRateCard(item);
-      row.appendChild(card);
-    });
+  let loading = false;
+  const syncEmpty = () => { empty.style.display = grid.children.length ? 'none' : 'block'; };
+  const addItems = list => list.forEach(item => grid.appendChild(buildQuickRateCard(item, onGone)));
+
+  async function loadMore(want) {
+    if (loading) return;
+    loading = true;
+    more.disabled = true;
+    try { addItems(await fetchQuickRateBatch(type, want)); }
+    catch (e) { console.warn('Quick rate error:', e); toast('Failed to load more'); }
+    loading = false;
+    more.disabled = false;
+    syncEmpty();
   }
+
+  function onGone() {
+    syncEmpty();
+    if (grid.children.length < 6) loadMore(12);
+  }
+
+  more.addEventListener('click', () => loadMore(20));
+  addItems(items);
+  syncEmpty();
   container.appendChild(sec);
 }
 
-function buildQuickRateCard(item) {
-  const key = mediaKey(item.media_type, item.id);
-  const currentRating = getRating(item.media_type, item.id);
+function buildQuickRateCard(item, onGone) {
+  const type = item.media_type;
   const title = item.title || item.name;
   const poster = item.poster_path ? `${IMG_BASE}${item.poster_path}` : '';
   const year = (item.release_date || item.first_air_date || '').slice(0, 4);
 
   const card = document.createElement('div');
   card.className = 'card';
-  card.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+  card.dataset.id = item.id;
+  card.dataset.type = type;
+  card.style.cssText = 'display:flex;flex-direction:column;gap:8px;flex:initial;transition:opacity .3s, transform .3s';
 
   card.innerHTML = `
-    <div style="position:relative;aspect-ratio:2/3;background:var(--surface2);border-radius:8px;overflow:hidden;cursor:pointer" onclick="openModal('${item.media_type}', ${item.id}, ${JSON.stringify(item).replace(/"/g, '&quot;')})">
-      ${poster ? `<img src="${poster}" alt="${title}" style="width:100%;height:100%;object-fit:cover" loading="lazy">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted)">🎬</div>'}
+    <div class="qr-poster" style="position:relative;aspect-ratio:2/3;background:var(--surface2);overflow:hidden;cursor:pointer">
+      ${poster ? `<img src="${esc(poster)}" alt="${esc(title)}" style="width:100%;height:100%;object-fit:cover" loading="lazy">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted)">🎬</div>'}
     </div>
-    <div style="flex:1">
-      <div style="font-weight:600;font-size:0.9rem;line-height:1.3;margin-bottom:4px">${title}</div>
-      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px">${year} • ${item.media_type === 'movie' ? 'Movie' : 'TV'}</div>
+    <div style="padding:0 10px 10px">
+      <div style="font-weight:600;font-size:0.85rem;line-height:1.3;margin-bottom:4px">${esc(title)}</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px">${esc(year)} • ${type === 'movie' ? 'Movie' : 'TV'}</div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="thumbs-btn ${currentRating >= 8 ? 'active' : ''}" onclick="quickRate('${item.media_type}', ${item.id}, 10, this)" title="👍 Thumbs Up (10)">
-          👍
-        </button>
-        <button class="thumbs-btn ${currentRating > 0 && currentRating < 8 ? 'active' : ''}" onclick="quickRate('${item.media_type}', ${item.id}, 5, this)" title="👎 Thumbs Down (5)">
-          👎
-        </button>
-        <button class="thumbs-btn ${currentRating === 0 ? 'active' : ''}" onclick="quickRate('${item.media_type}', ${item.id}, 0, this)" title="Remove rating">
-          ✕
-        </button>
+        <button class="thumbs-btn" data-r="10" title="👍 Loved it (10)">👍</button>
+        <button class="thumbs-btn" data-r="2" title="👎 Not for me (2)">👎</button>
+        <button class="thumbs-btn" data-r="skip" title="Skip — hide without rating">⏭</button>
       </div>
     </div>
   `;
 
+  const dismiss = () => {
+    card.style.pointerEvents = 'none';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(.92)';
+    setTimeout(() => { card.remove(); if (onGone) onGone(); }, 300);
+  };
+
+  card.querySelector('.qr-poster').addEventListener('click', () => openModal(type, item.id, item));
+  card.querySelectorAll('.thumbs-btn').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.r === 'skip') { dismiss(); return; }
+    const val = Number(b.dataset.r);
+    setRating(type, item.id, val, item.genre_ids || [], item);
+    if (state.simklToken) pushRatingToSimkl(type, item.id, val);
+    dismiss();
+  }));
+
   return card;
 }
 
-async function quickRate(type, id, rating, btn) {
-  const key = mediaKey(type, id);
-  state.ratings[key] = rating;
-  saveRatings();
-
-  // Update button states
-  const container = btn.parentElement;
-  container.querySelectorAll('.thumbs-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  // Update genre affinity
-  if (rating > 0) {
-    const details = state.mediaDetails[key];
-    if (details && details.genre_ids) {
-      const affinity = LS.get('genre_affinity') || {};
-      details.genre_ids.forEach(gid => {
-        affinity[gid] = (affinity[gid] || 0) + rating;
-      });
-      LS.set('genre_affinity', affinity);
+/* ── STATS & STORAGE ─────────────────────────────────────────────── */
+function getStorageUsage() {
+  let totalBytes = 0;
+  for (let key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      totalBytes += ((localStorage[key].length + key.length) * 2);
     }
   }
-
-  // Sync to Simkl
-  if (state.simklToken) {
-    await pushRatingToSimkl(type, id, rating);
-  }
-
-  toast(rating === 0 ? 'Rating removed' : `Rated ${rating}/10`);
+  const maxBytes = 5 * 1024 * 1024;
+  return {
+    bytes: totalBytes,
+    kb: (totalBytes / 1024).toFixed(1),
+    percent: Math.min(100, ((totalBytes / maxBytes) * 100)).toFixed(1)
+  };
 }
 
-/* ── STATS ───────────────────────────────────────────────────────── */
+function clearCache() {
+  _cache.clear();
+  state.mediaDetails = {};
+  saveMediaDetails();
+  toast('Cache cleared successfully');
+  renderView();
+}
+
 function renderStats(main) {
-  const totalRatings = Object.keys(state.ratings).length;
+  const rated = Object.entries(state.ratings).filter(([, v]) => v > 0);
+  const totalRatings = rated.length;
   const totalWatchlist = Object.keys(state.watchlist).length;
   const avgRating = totalRatings > 0
-    ? (Object.values(state.ratings).reduce((a, b) => a + b, 0) / totalRatings / 2).toFixed(1)
+    ? (rated.reduce((a, [, b]) => a + b, 0) / totalRatings).toFixed(1)
     : '0';
 
-  // Count by status
   const statusCounts = {};
   Object.values(state.watchlist).forEach(s => {
     statusCounts[s] = (statusCounts[s] || 0) + 1;
   });
 
-  // Count by type
-  const movieCount = Object.keys(state.ratings).filter(k => k.startsWith('movie_')).length;
-  const tvCount = Object.keys(state.ratings).filter(k => k.startsWith('tv_')).length;
+  const movieCount = rated.filter(([k]) => k.startsWith('movie_')).length;
+  const tvCount = rated.filter(([k]) => k.startsWith('tv_')).length;
 
-  // Genre distribution
   const genreCounts = {};
-  Object.entries(state.mediaDetails).forEach(([key, item]) => {
-    if (item.genre_ids) {
-      item.genre_ids.forEach(gid => {
-        genreCounts[gid] = (genreCounts[gid] || 0) + 1;
-      });
-    }
+  const mine = new Set([...Object.keys(state.ratings), ...Object.keys(state.watchlist)]);
+  mine.forEach(key => {
+    (state.mediaDetails[key]?.genre_ids || []).forEach(gid => {
+      genreCounts[gid] = (genreCounts[gid] || 0) + 1;
+    });
   });
+
   const topGenres = Object.entries(genreCounts)
     .sort(([,a], [,b]) => b - a)
     .slice(0, 5)
     .map(([id, count]) => ({ name: GENRE_MAP[id] || `Genre ${id}`, count }));
+
+  const storage = getStorageUsage();
 
   main.innerHTML = `
     <div class="section">
@@ -2475,7 +2570,7 @@ function renderStats(main) {
           <div style="font-size:0.85rem;color:var(--text-muted)">Items Rated</div>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
-          <div style="font-size:2.5rem;font-weight:700;color:var(--accent2)">${avgRating}</div>
+          <div style="font-size:2.5rem;font-weight:700;color:var(--accent2)">${avgRating}<span style="font-size:1rem;color:var(--text-muted)">/10</span></div>
           <div style="font-size:0.85rem;color:var(--text-muted)">Average Rating</div>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
@@ -2507,28 +2602,29 @@ function renderStats(main) {
       ` : ''}
 
       ${topGenres.length > 0 ? `
-      <div>
+      <div style="margin-bottom:24px">
         <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Top Genres</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
-          ${topGenres.map(g => `
-            <span class="genre-tag">${g.name} (${g.count})</span>
-          `).join('')}
+          ${topGenres.map(g => `<span class="genre-tag">${esc(g.name)} (${g.count})</span>`).join('')}
         </div>
       </div>
       ` : ''}
 
-      ${totalRatings === 0 && totalWatchlist === 0 ? `
-      <div class="empty-state">
-        <div class="icon">📊</div>
-        <p>No stats yet! Start rating and adding items to your watchlist.</p>
-      </div>
-      ` : ''}
-
       <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
-        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Data Management</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:12px">Data & Storage Management</div>
+        <div style="background:var(--surface2);padding:12px;border-radius:8px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:6px">
+            <span>Local Storage Used</span>
+            <span>${storage.kb} KB (${storage.percent}%)</span>
+          </div>
+          <div style="background:var(--border);height:6px;border-radius:3px;overflow:hidden">
+            <div style="background:var(--accent);width:${storage.percent}%;height:100%"></div>
+          </div>
+        </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <button class="modal-btn" onclick="exportData()">📥 Export Data</button>
           <button class="modal-btn" onclick="document.getElementById('import-file').click()">📤 Import Data</button>
+          <button class="modal-btn" onclick="clearCache()">🧹 Clear Cache</button>
           <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)" />
         </div>
       </div>
@@ -2541,15 +2637,14 @@ function exportData() {
     ratings: state.ratings,
     watchlist: state.watchlist,
     mediaDetails: state.mediaDetails,
-    genreAffinity: LS.get('genre_affinity') || {},
     exportDate: new Date().toISOString(),
-    version: '1.0'
+    version: '1.1'
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `media-calendar-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `media-calendar-backup-${localISO(new Date())}.json`;
   a.click();
   URL.revokeObjectURL(url);
   toast('Data exported successfully');
@@ -2564,21 +2659,14 @@ function importData(input) {
       const data = JSON.parse(e.target.result);
       if (!confirm(`Import ${Object.keys(data.ratings || {}).length} ratings and ${Object.keys(data.watchlist || {}).length} watchlist items? This will merge with existing data.`)) return;
 
-      // Merge data
       state.ratings = { ...state.ratings, ...(data.ratings || {}) };
       state.watchlist = { ...state.watchlist, ...(data.watchlist || {}) };
       state.mediaDetails = { ...state.mediaDetails, ...(data.mediaDetails || {}) };
-      if (data.genreAffinity) {
-        const existing = LS.get('genre_affinity') || {};
-        Object.entries(data.genreAffinity).forEach(([k, v]) => {
-          existing[k] = (existing[k] || 0) + v;
-        });
-        LS.set('genre_affinity', existing);
-      }
 
       saveRatings();
       saveWatchlist();
       saveMediaDetails();
+      recomputeAffinity();
       toast('Data imported successfully');
       renderView();
     } catch (err) {
@@ -2591,35 +2679,33 @@ function importData(input) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   HELPERS — row builder, filter, skeletons
+   HELPER UTILITIES: RENDER & FILTER PIPELINES
    ───────────────────────────────────────────────────────────────────── */
 async function filterResults(items) {
-  const filtered = items.filter(i => {
+  let out = items.filter(i => {
     if (state.filterType !== 'all' && i.media_type !== state.filterType) return false;
     if (state.genre && !(i.genre_ids || []).includes(parseInt(state.genre))) return false;
     return true;
   });
 
-  // Apply content rating filter if set
-  if (state.contentRating) {
-    const withRatings = await Promise.all(filtered.map(async (item) => {
-      if (item._contentRating) return item;
-      const rating = await getContentRating(item.media_type, item.id);
-      item._contentRating = rating;
-      return item;
-    }));
-    return withRatings.filter(i => i._contentRating === state.contentRating);
-  }
-
-  // Apply year filter if set
   if (state.year) {
-    return filtered.filter(i => {
+    out = out.filter(i => {
       const date = i.release_date || i.first_air_date;
       return date && date.startsWith(state.year);
     });
   }
 
-  return filtered;
+  if (state.contentRating) {
+    out = await promiseAllChunked(out, async item => {
+      if (item._contentRating === undefined) {
+        item._contentRating = await getContentRating(item.media_type, item.id);
+      }
+      return item;
+    }, 10);
+    out = out.filter(i => (i._contentRating || 'NR') === state.contentRating);
+  }
+
+  return out;
 }
 
 function renderRow(container, title, items, recBadge = false) {
@@ -2633,14 +2719,7 @@ function renderRow(container, title, items, recBadge = false) {
       <button class="row-scroll-btn right" aria-label="Scroll right">&#8250;</button>
     </div>`;
 
-  const row  = sec.querySelector('.card-row');
-  const btnL = sec.querySelector('.row-scroll-btn.left');
-  const btnR = sec.querySelector('.row-scroll-btn.right');
-
-  // Scroll by ~4 cards worth
-  const scrollAmt = () => (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--card-w')) || 160) * 4 + 56;
-  btnL.addEventListener('click', () => row.scrollBy({ left: -scrollAmt(), behavior: 'smooth' }));
-  btnR.addEventListener('click', () => row.scrollBy({ left:  scrollAmt(), behavior: 'smooth' }));
+  const row = sec.querySelector('.card-row');
 
   if (!items.length) {
     sec.querySelector('.row-wrap').outerHTML = `<p style="color:var(--text-muted);font-size:.85rem">No results found.</p>`;
@@ -2669,7 +2748,7 @@ function addSkeletonRow(container, title) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   FILTER EVENTS
+   UI CONTROLS & LISTENERS
    ───────────────────────────────────────────────────────────────────── */
 document.querySelectorAll('[data-filter-type]').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -2696,21 +2775,19 @@ document.getElementById('rating-filter').addEventListener('change', e => {
   renderView();
 });
 
-// Populate year filter
 const yearFilter = document.getElementById('year-filter');
 const currentYear = new Date().getFullYear();
-for (let y = currentYear; y >= 1950; y--) {
+for (let y = currentYear + 1; y >= 1950; y--) {
   const opt = document.createElement('option');
   opt.value = y;
   opt.textContent = y;
   yearFilter.appendChild(opt);
 }
-document.getElementById('year-filter').addEventListener('change', e => {
+yearFilter.addEventListener('change', e => {
   state.year = e.target.value;
-  if (['trending','upcoming'].includes(state.view)) renderView();
+  if (['trending', 'upcoming'].includes(state.view)) renderView();
 });
 
-// Populate genre filter from GENRE_MAP
 const genreFilter = document.getElementById('genre-filter');
 Object.entries(GENRE_MAP)
   .sort(([,a], [,b]) => a.localeCompare(b))
@@ -2721,9 +2798,6 @@ Object.entries(GENRE_MAP)
     genreFilter.appendChild(opt);
   });
 
-/* ─────────────────────────────────────────────────────────────────────
-   NAV EVENTS
-   ───────────────────────────────────────────────────────────────────── */
 document.querySelectorAll('.nav-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     state.view = tab.dataset.view;
@@ -2732,38 +2806,39 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
 });
 
 /* ─────────────────────────────────────────────────────────────────────
-   INIT
+   INITIALIZATION
    ───────────────────────────────────────────────────────────────────── */
-// Check Simkl activities and re-sync if anything changed since last sync
 async function refreshSimklIfNeeded() {
   if (!state.simklToken) return;
   try {
     const lastSync = LS.get('simkl_last_sync') || '2000-01-01T00:00:00.000Z';
     const activities = await simklGet('/sync/activities');
-    // Check if any TV/movie activity is newer than our last sync
     const latest = [
-      activities?.tv?.all,
+      activities?.all,
+      activities?.tv_shows?.all,
       activities?.movies?.all,
+      activities?.tv?.all,
       activities?.tv?.rated_at,
       activities?.movies?.rated_at,
     ].filter(Boolean).sort().pop();
 
-    if (latest && latest > lastSync) {
-      console.log('Simkl changes detected, resyncing…');
+    if (!latest || latest > lastSync) {
       await syncSimklLibrary();
-      LS.set('simkl_last_sync', new Date().toISOString());
     }
+    LS.set('simkl_last_sync', new Date().toISOString());
   } catch(e) {
-    console.warn('Simkl activity check failed:', e);
+    console.warn('Simkl activity check error:', e);
   }
 }
 
 (async function init() {
-  // Initialize theme
   document.documentElement.setAttribute('data-theme', state.theme);
   document.getElementById('theme-toggle').textContent = state.theme === 'dark' ? '🌙' : '☀️';
 
-  // Hide Simkl connect button when running from local filesystem
+  if (TMDB_TOKEN.startsWith('__TMDB')) {
+    toast('⚠ TMDB token not set — replace placeholder.', 8000);
+  }
+
   const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (isLocal) {
     const btn  = document.getElementById('simkl-btn');
@@ -2771,13 +2846,12 @@ async function refreshSimklIfNeeded() {
     btn.textContent   = 'Simkl (deploy to enable)';
     btn.style.opacity = '0.4';
     btn.style.cursor  = 'not-allowed';
-    btn.onclick       = () => toast('Connect Simkl after deploying to GitHub Pages');
+    btn.onclick       = () => toast('Connect Simkl after deploying');
     user.textContent  = '⚠ Running locally';
     user.style.color  = 'var(--text-muted)';
   } else {
     updateSimklUI();
     await handleSimklCallback();
-    // Auto-refresh Simkl library if anything changed since last visit
     await refreshSimklIfNeeded();
   }
 
