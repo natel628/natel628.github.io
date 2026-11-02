@@ -1698,16 +1698,20 @@ function providerLabel() {
 /* The streaming-service dropdown is rebuilt from TMDB for the selected
    region, so the provider IDs always match the region's availability
    data. Falls back to the shipped static list if the request fails. */
+let providerListToken = 0;
 async function refreshProviderList() {
+  const token = ++providerListToken;
+  const region = state.region;
   const sel = document.getElementById('provider-filter');
   if (!sel) return;
   try {
     /* Both catalogues, not just TV: a movie-only or region-specific provider
        id chosen here used to make every movie query answer with nothing. */
     const [tv, movie] = await Promise.all([
-      tmdb('/watch/providers/tv',    { watch_region: state.region }).catch(() => ({ results: [] })),
-      tmdb('/watch/providers/movie', { watch_region: state.region }).catch(() => ({ results: [] })),
+      tmdb('/watch/providers/tv',    { watch_region: region }).catch(() => ({ results: [] })),
+      tmdb('/watch/providers/movie', { watch_region: region }).catch(() => ({ results: [] })),
     ]);
+    if (token !== providerListToken || state.region !== region) return;
     const byId = new Map();
     const add = list => (list || []).forEach(p => {
       if (p && p.provider_id && p.provider_name) byId.set(String(p.provider_id), p.provider_name);
@@ -2692,9 +2696,9 @@ function renderAiRules() {
     <div class="ai-rule${r.enabled === false ? ' off' : ''}">
       <div class="ai-rule-top">
         <input type="checkbox" class="ai-toggle" ${r.enabled === false ? '' : 'checked'}
-          onchange="aiToggleRule('${r.id}', this.checked)" aria-label="Enable this suggestion" />
+          data-rule-id="${esc(r.id)}" onchange="aiToggleRule(this.dataset.ruleId, this.checked)" aria-label="Enable this suggestion" />
         <span class="ai-rule-text">${esc(r.text)}</span>
-        <button class="ai-rule-x" onclick="aiDeleteRule('${r.id}')" title="Forget this suggestion" aria-label="Delete this suggestion">🗑</button>
+        <button class="ai-rule-x" data-rule-id="${esc(r.id)}" onclick="aiDeleteRule(this.dataset.ruleId)" title="Forget this suggestion" aria-label="Delete this suggestion">🗑</button>
       </div>
       <div class="ai-rule-effects">
         ${r.effects.map(e => `<span class="ai-rule-effect">${esc(effectSummary(e))}</span>`).join('')}
@@ -3152,14 +3156,14 @@ async function getContentRating(type, id) {
 async function getProviders(type, id) {
   try {
     const data = await tmdb(`/${type}/${id}/watch/providers`);
-    const country = data.results && (data.results[state.region] || data.results.US);
+    const country = data.results && data.results[state.region];
     if (!country) return null;
     return {
       flatrate: country.flatrate || [],
       rent:     country.rent     || [],
       buy:      country.buy      || [],
       link:     country.link     || '',
-      region:   data.results[state.region] ? state.region : 'US',
+      region:   state.region,
     };
   } catch (e) { console.warn('Providers fetch error:', e); return null; }
 }
@@ -3187,8 +3191,11 @@ async function pkceChallenge() {
 async function simklAuth() {
   if (state.simklToken) { simklDisconnect(); return; }
   const { verifier, challenge } = await pkceChallenge();
+  const oauthState = base64urlEncode(crypto.getRandomValues(new Uint8Array(32)));
   LS.set('pkce_verifier', verifier);
+  LS.set('simkl_oauth_state', oauthState);
   const params = new URLSearchParams({
+    state: oauthState,
     response_type: 'code',
     client_id: SIMKL_CLIENT_ID,
     redirect_uri: SIMKL_REDIRECT,
@@ -3206,6 +3213,7 @@ function simklDisconnect() {
   LS.set('simkl_token', null);
   LS.set('simkl_user', null);
   LS.set('pkce_verifier', null);
+  LS.set('simkl_oauth_state', null);
   LS.set('simkl_last_sync', null);
   updateSimklUI();
   toast('Disconnected from Simkl');
@@ -3217,10 +3225,14 @@ async function handleSimklCallback() {
   const code     = params.get('code');
   const verifier = LS.get('pkce_verifier');
   if (!code || !verifier) return;
-
-  window.history.replaceState({}, '', window.location.pathname);
-
+  const expectedState = LS.get('simkl_oauth_state');
+  window.history.replaceState({}, '', window.location.pathname + window.location.hash);
   LS.set('pkce_verifier', null);
+  LS.set('simkl_oauth_state', null);
+  if (!expectedState || params.get('state') !== expectedState) {
+    toast('Simkl connection failed: invalid authorization response. Please reconnect.');
+    return;
+  }
   try {
     const res = await fetch(`${SIMKL_TOKEN_URL}`, {
       method: 'POST',
@@ -3235,12 +3247,12 @@ async function handleSimklCallback() {
     });
     if (!res.ok) throw new Error('Token exchange failed');
     const data = await res.json();
+    if (!data.access_token) throw new Error('No access token returned');
     state.simklToken = data.access_token;
     saveSimkl();
     await loadSimklUser();
-    await syncSimklLibrary();
-    LS.set('simkl_last_sync', new Date().toISOString());
-    toast('✅ Connected to Simkl!');
+    const synced = await syncSimklLibrary();
+    toast(synced ? '✅ Connected to Simkl!' : 'Connected to Simkl, but library sync failed.');
     renderView();
   } catch (e) {
     toast('❌ Simkl auth failed: ' + e.message);
@@ -3269,7 +3281,11 @@ async function simklPost(path, body) {
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`Simkl POST ${res.status}`);
-  return res.json();
+  const data = res.status === 204 ? {} : await res.json();
+  if (data.not_found && Object.values(data.not_found).some(items => Array.isArray(items) && items.length)) {
+    throw new Error('Some items were not found by Simkl');
+  }
+  return data;
 }
 
 async function loadSimklUser() {
@@ -3283,17 +3299,23 @@ async function loadSimklUser() {
 
 let _simklSyncInFlight = null;
 async function syncSimklLibrary() {
-  if (!state.simklToken) return;
+  if (!state.simklToken) return false;
   if (_simklSyncInFlight) return _simklSyncInFlight;
+  const token = state.simklToken;
+  const ratingsAtStart = { ...state.ratings };
+  const watchlistAtStart = { ...state.watchlist };
   _simklSyncInFlight = (async () => {
     try {
-      const [movies, shows] = await Promise.all([
+      const [movies, shows, anime] = await Promise.all([
         simklGet('/sync/all-items/movies/all'),
         simklGet('/sync/all-items/shows/all'),
+        simklGet('/sync/all-items/anime/all'),
       ]);
+      if (state.simklToken !== token) return false;
       const lib = [
         ...(movies?.movies || []).map(m => ({ ...m, media_type: 'movie' })),
         ...(shows?.shows   || []).map(s => ({ ...s, media_type: 'tv' })),
+        ...(anime?.anime   || []).map(s => ({ ...s, media_type: 'tv' })),
       ];
       state.simklLibrary = lib;
 
@@ -3305,8 +3327,8 @@ async function syncSimklLibrary() {
         const type = item.media_type;
         const key  = mediaKey(type, tmdbId);
 
-        if (item.user_rating) state.ratings[key] = item.user_rating;
-        if (item.status && simklToLocal[item.status]) {
+        if (item.user_rating && state.ratings[key] === ratingsAtStart[key]) state.ratings[key] = item.user_rating;
+        if (item.status && simklToLocal[item.status] && state.watchlist[key] === watchlistAtStart[key]) {
           if (!state.watchlist[key]) state.wlAdded[key] = Date.now();
           state.watchlist[key] = simklToLocal[item.status];
         }
@@ -3320,11 +3342,13 @@ async function syncSimklLibrary() {
       saveMediaDetails();
       recomputeAffinity();
       toast(`Synced ${lib.length} items from Simkl`);
+      return true;
     } catch (e) {
       toast('Simkl sync failed: ' + e.message);
+      return false;
     }
   })();
-  try { await _simklSyncInFlight; } finally { _simklSyncInFlight = null; }
+  try { return await _simklSyncInFlight; } finally { _simklSyncInFlight = null; }
 }
 
 function updateSimklUI() {
@@ -3353,7 +3377,7 @@ async function pushRatingToSimkl(mediaType, tmdbId, rating) {
   const body = mediaType === 'movie' ? { movies: [item] } : { shows: [item] };
   try {
     await simklPost(remove ? '/sync/ratings/remove' : '/sync/ratings', body);
-  } catch (e) { console.warn('Simkl push rating error:', e); }
+  } catch (e) { console.warn('Simkl push rating error:', e); toast('Rating saved locally, but Simkl sync failed.'); }
 }
 
 async function pushWatchlistToSimkl(mediaType, tmdbId, status) {
@@ -3363,7 +3387,7 @@ async function pushWatchlistToSimkl(mediaType, tmdbId, status) {
   const body = mediaType === 'movie' ? { movies: [item] } : { shows: [item] };
   try {
     await simklPost('/sync/add-to-list', body);
-  } catch (e) { console.warn('Simkl push watchlist error:', e); }
+  } catch (e) { console.warn('Simkl push watchlist error:', e); toast('List saved locally, but Simkl sync failed.'); }
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -3430,12 +3454,11 @@ function obscurityScore(item) {
   const pop   = item.popularity || 0;
   const rating= item.vote_average || 0;
   if (!votes || rating < 5) { _obscurityCache.set(key, 0); return 0; }
-  // Log scale so a title with 50 votes isn't massively more obscure than one with 500,
-  // but a title with 10 votes is drastically more obscure than one with 10,000.
-  const voteObscurity = 100 / (1 + Math.log1p(votes));
-  const popObscurity  = 100 / (1 + Math.log1p(pop));
-  const qualityBoost  = rating / 10;
-  const result = Math.round((voteObscurity * 0.55 + popObscurity * 0.35 + qualityBoost * 10) * 0.5);
+  // Logarithmic vote and popularity scales favour less-visible titles while
+  // leaving enough range for the Deep Cut and Hidden Gem thresholds.
+  const voteObscurity = 1 - Math.min(Math.log1p(votes) / Math.log1p(10000), 1);
+  const popObscurity = 1 - Math.min(Math.log1p(pop) / Math.log1p(1000), 1);
+  const result = Math.round(65 * voteObscurity + 25 * popObscurity + 10 * Math.min(rating / 10, 1));
   _obscurityCache.set(key, result);
   return result;
 }
@@ -4114,6 +4137,7 @@ document.getElementById('modal-overlay').addEventListener('change', e => {
    MODAL CONTROLLER & HELP MODAL
    ───────────────────────────────────────────────────────────────────── */
 function openHelpModal() {
+  modalToken++;
   const inner = document.getElementById('modal-inner');
   delete inner.dataset.key;
   document.getElementById('modal-overlay').classList.add('open');
@@ -4281,9 +4305,9 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
         <button class="modal-btn" onclick="notInterested('title')">🚫 Hide this title</button>
         ${genres[0] ? `<button class="modal-btn" onclick="notInterested('genre')">🚫 Hide all ${esc(genres[0].name)}</button>` : ''}
         <button class="modal-btn" onclick="notInterested('type')">🚫 Hide all ${type === 'movie' ? 'movies' : 'TV shows'}</button>
-        <button class="modal-btn" onclick="openDNAModal(${id}, '${type}', '${esc(title)}')">🧬 Same DNA — Obscure</button>
-        ${type === 'movie' ? `<button class="modal-btn" onclick="openCollectionModal(${id}, '${esc(title)}')">📦 View Collection</button>` : ''}
-        ${director ? `<button class="modal-btn" onclick="personBrowse(${director.id}, '${esc(director.name)}')">🎬 Director's Filmography</button>` : ''}
+        <button class="modal-btn" data-id="${id}" data-type="${type}" data-title="${esc(title)}" onclick="openDNAModal(Number(this.dataset.id), this.dataset.type, this.dataset.title)">🧬 Same DNA — Obscure</button>
+        ${type === 'movie' ? `<button class="modal-btn" data-id="${id}" data-title="${esc(title)}" onclick="openCollectionModal(Number(this.dataset.id), this.dataset.title)">📦 View Collection</button>` : ''}
+        ${director ? `<button class="modal-btn" data-id="${director.id}" data-name="${esc(director.name)}" onclick="personBrowse(Number(this.dataset.id), this.dataset.name)">🎬 Director's Filmography</button>` : ''}
       </div>
 
       ${providers && (providers.flatrate.length || providers.rent.length) ? `
@@ -4352,8 +4376,10 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
 }
 
 async function loadSimilar(type, id) {
+  const token = modalToken;
   try {
     const data = await tmdb(`/${type}/${id}/similar`);
+    if (token !== modalToken) return;
     const items = filterByRules((data.results || []).slice(0, 16)).items.slice(0, 8);
     const wrap = document.getElementById('modal-similar');
     if (!wrap) return;
@@ -5776,7 +5802,15 @@ async function renderRecommended(main, token) {
       const candidates = (data.results || [])
         .map(i => ({ ...i, media_type: type }))
         .filter(i => !state.ratings[mediaKey(type, i.id)] && !state.watchlist[mediaKey(type, i.id)] && ruleAllows(i));
-      const results = (await filterResults(candidates)).slice(0, 12);
+      let results = await filterResults(candidates);
+      if (state.provider) {
+        const availability = await promiseAllChunked(results, i => getProviders(type, i.id), 6);
+        results = results.filter((i, index) => {
+          const p = availability[index];
+          return p && [...p.flatrate, ...p.rent, ...p.buy].some(service => String(service.provider_id) === String(state.provider));
+        });
+      }
+      results = results.slice(0, 12);
       if (token !== renderToken) return;
 
       if (results.length) {
@@ -6609,7 +6643,6 @@ async function doWtwSearch() {
         badge.innerHTML = streamNames || 'No streaming info';
         (card.querySelector('.card-body') || card).appendChild(badge);
       }
-      card.addEventListener('click', () => openModal(type, id, item));
       if (grid) grid.appendChild(card);
     }
   } catch (e) {
@@ -6826,14 +6859,55 @@ function exportData() {
   toast('Data exported successfully');
 }
 
+/* Treat backups and shared links as untrusted input before merging anything. */
+function validateImportedRule(rule) {
+  if (!rule || typeof rule !== 'object' || Array.isArray(rule) ||
+      typeof rule.id !== 'string' || !/^[A-Za-z0-9_-]{1,100}$/.test(rule.id) ||
+      typeof rule.text !== 'string' || rule.text.length > 1000 ||
+      !Array.isArray(rule.effects) || !rule.effects.length || rule.effects.length > 100 ||
+      rule.effects.some(e => !normalizeEffect(e)) ||
+      (rule.enabled !== undefined && typeof rule.enabled !== 'boolean') ||
+      (rule.source !== undefined && typeof rule.source !== 'string') ||
+      (rule.createdAt !== undefined && (!Number.isFinite(rule.createdAt) || rule.createdAt < 0))) {
+    throw new Error('Invalid AI rule');
+  }
+  return { id: rule.id, text: rule.text, effects: dedupeEffects(rule.effects),
+    enabled: rule.enabled !== false, source: rule.source || 'local', createdAt: rule.createdAt || Date.now() };
+}
+
+function validateBackup(data) {
+  const object = v => v && typeof v === 'object' && !Array.isArray(v);
+  const keyOK = k => /^(movie|tv)_[1-9]\d*$/.test(k);
+  if (!object(data) || !['ratings', 'watchlist', 'wlAdded', 'mediaDetails', 'aiRules', 'aiChatLog', 'seenKeys'].some(k => Object.hasOwn(data, k))) throw new Error('Not a media backup');
+  for (const field of ['ratings', 'watchlist', 'wlAdded', 'mediaDetails']) {
+    if (data[field] !== undefined && !object(data[field])) throw new Error(`Invalid ${field}`);
+    for (const [key, value] of Object.entries(data[field] || {})) {
+      if (!keyOK(key)) throw new Error(`Invalid ${field} key`);
+      if (field === 'ratings' && (!Number.isInteger(value) || value < 1 || value > 10)) throw new Error('Invalid rating');
+      if (field === 'watchlist' && !WL_STATUSES.includes(value)) throw new Error('Invalid watchlist status');
+      if (field === 'wlAdded' && (!Number.isFinite(value) || value < 0)) throw new Error('Invalid list date');
+      if (field === 'mediaDetails' && (!object(value) ||
+          (value.genre_ids !== undefined && (!Array.isArray(value.genre_ids) || value.genre_ids.some(n => !Number.isInteger(n)))) ||
+          ['title', 'name', 'overview', 'release_date', 'first_air_date', 'contentRating', 'poster_path'].some(k => value[k] !== undefined && value[k] !== null && typeof value[k] !== 'string') ||
+          (value.genres !== undefined && (!Array.isArray(value.genres) || value.genres.some(g => !object(g) || typeof g.name !== 'string'))) ||
+          (value.vote_average !== undefined && value.vote_average !== null && (typeof value.vote_average !== 'number' || !Number.isFinite(value.vote_average))) ||
+          (value._ts !== undefined && (!Number.isFinite(value._ts) || value._ts < 0)))) throw new Error('Invalid media details');
+    }
+  }
+  if (data.aiRules !== undefined && !Array.isArray(data.aiRules)) throw new Error('Invalid rules');
+  if (data.aiChatLog !== undefined && (!Array.isArray(data.aiChatLog) || data.aiChatLog.some(m => !object(m) || !['user', 'bot'].includes(m.role) || typeof m.text !== 'string'))) throw new Error('Invalid chat');
+  if (data.seenKeys !== undefined && (!Array.isArray(data.seenKeys) || data.seenKeys.some(k => typeof k !== 'string' || !keyOK(k)))) throw new Error('Invalid seen list');
+  return { ...data, aiRules: (data.aiRules || []).map(validateImportedRule) };
+}
+
 function importData(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      const data = JSON.parse(e.target.result);
-      const ruleCount = Array.isArray(data.aiRules) ? data.aiRules.length : 0;
+      const data = validateBackup(JSON.parse(e.target.result));
+      const ruleCount = data.aiRules.length;
       if (!confirm(`Import ${Object.keys(data.ratings || {}).length} ratings, ${Object.keys(data.watchlist || {}).length} watchlist items and ${ruleCount} AI rules? This will merge with existing data.`)) return;
 
       state.ratings = { ...state.ratings, ...(data.ratings || {}) };
@@ -6842,7 +6916,7 @@ function importData(input) {
       state.mediaDetails = { ...state.mediaDetails, ...(data.mediaDetails || {}) };
       if (ruleCount) {
         const known = new Set(state.rules.map(r => r.id));
-        state.rules = [...state.rules, ...data.aiRules.filter(r => r && !known.has(r.id))].slice(0, RULES_CAP);
+        state.rules = [...state.rules, ...data.aiRules.filter(r => !known.has(r.id) && known.add(r.id))].slice(0, RULES_CAP);
       }
       if (Array.isArray(data.aiChatLog)) {
         state.chatLog = [...state.chatLog, ...data.aiChatLog].slice(-LLM_CHAT_MAX);
@@ -6866,6 +6940,7 @@ function importData(input) {
       console.error(err);
     }
   };
+  reader.onerror = () => toast('Failed to read backup file');
   reader.readAsText(file);
   input.value = '';
 }
@@ -7272,9 +7347,10 @@ async function refreshSimklIfNeeded() {
     ].filter(Boolean).sort().pop();
 
     if (!latest || latest > lastSync) {
-      await syncSimklLibrary();
+      const synced = await syncSimklLibrary();
+      if (!synced) return;
     }
-    LS.set('simkl_last_sync', new Date().toISOString());
+    if (latest) LS.set('simkl_last_sync', latest);
   } catch(e) {
     console.warn('Simkl activity check error:', e);
   }
@@ -7298,7 +7374,7 @@ async function refreshSimklIfNeeded() {
       const incoming = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(7)))));
       if (Array.isArray(incoming) && incoming.length) {
         const known = new Set(state.rules.map(r => r.id));
-        const fresh = incoming.filter(r => r && r.id && Array.isArray(r.effects) && !known.has(r.id));
+        const fresh = incoming.map(validateImportedRule).filter(r => !known.has(r.id) && known.add(r.id));
         if (fresh.length) {
           state.rules = [...state.rules, ...fresh].slice(0, RULES_CAP);
           saveRules();
