@@ -638,6 +638,12 @@
     .modal-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     .modal-btn.primary:hover { filter: brightness(1.1); color: #fff; }
     .modal-btn.active { border-color: var(--accent2); color: var(--accent2); font-weight: 700; }
+
+    /* Direct "watch free" links to third-party streaming sites. */
+    .watch-links { margin-bottom: 16px; }
+    .watch-links-title { font-size: .85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); }
+    .watch-links-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .watch-link { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
     
     .my-rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
     .my-rating-label { font-size: 0.85rem; font-weight: 600; }
@@ -1380,6 +1386,7 @@
       .modal-overview { font-size: .86rem; }
       .modal-actions { gap: 8px; }
       .modal-actions .modal-btn { flex: 1 1 auto; text-align: center; padding: 10px 12px; }
+      .watch-links-row .watch-link { flex: 1 1 auto; justify-content: center; padding: 10px 12px; }
       .my-rating-row { flex-wrap: wrap; }
       .my-rating-row input[type="range"] { min-width: 140px; }
       .score-box { flex: 1 1 auto; padding: 7px 10px; }
@@ -4561,6 +4568,13 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
   const sc        = d.vote_average ? d.vote_average.toFixed(1) : '—';
   const cr        = contentRating || '';
 
+  // Direct title pages on the third-party streaming sites (all keyed by TMDB id).
+  const watchSites = [
+    { name: 'Movy',     url: `https://www.movy.sx/${type}/${id}` },
+    { name: 'Cinejoy',  url: `https://cinejoy.pk/${type === 'movie' ? 'movie' : 'series'}/${id}` },
+    { name: 'Atlantic', url: `https://atlantic.bz/title/${type}/${id}` },
+  ];
+
   const vids = videos?.results || [];
   const trailer = vids.find(v => v.site === 'YouTube' && v.type === 'Trailer') || vids.find(v => v.site === 'YouTube');
 
@@ -4620,6 +4634,13 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
         ${statusBtns}
         ${wlStat ? `<button class="modal-btn" onclick="removeFromWatchlist('${type}', ${id})">🗑 Remove</button>` : ''}
         ${trailer ? `<button class="modal-btn" id="trailer-btn">▶ Watch Trailer</button>` : ''}
+      </div>
+
+      <div class="watch-links">
+        <div class="watch-links-title">▶ Watch Free <span style="font-weight:400">(opens third-party site)</span></div>
+        <div class="watch-links-row">
+          ${watchSites.map(s => `<a class="modal-btn watch-link" href="${esc(s.url)}" target="_blank" rel="noopener noreferrer" title="Watch ${esc(title)} on ${s.name}">${s.name} ↗</a>`).join('')}
+        </div>
       </div>
 
       <div id="trailer-box" style="display:none;margin-bottom:16px;aspect-ratio:16/9"></div>
