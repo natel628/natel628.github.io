@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>TV & Movie Calendar</title>
   <style>
     /* ─── Reset & Base ─────────────────────────────────────────────── */
@@ -223,6 +223,37 @@
     }
     #filter-reset.show { display: inline-block; }
     #filter-reset:hover { border-color: var(--accent); color: var(--text); }
+
+    /* Mobile-only button that collapses the filter wall (hidden on desktop). */
+    .filters-toggle {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      width: calc(100% - 24px);
+      margin: 10px 12px 0;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: .85rem;
+      font-weight: 600;
+      text-align: left;
+      transition: border-color .15s, color .15s;
+    }
+    .filters-toggle:hover { border-color: var(--accent); }
+    .filters-toggle.has-active { border-color: var(--accent2); color: var(--accent2); }
+    .filters-toggle .filters-caret { margin-left: auto; transition: transform .2s; }
+    .filters-toggle.open .filters-caret { transform: rotate(180deg); }
+    .filters-count {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 7px;
+      font-size: .7rem;
+      font-weight: 700;
+    }
 
     /* ─── Main layout ───────────────────────────────────────────────── */
     .main { padding: 16px 24px 40px; }
@@ -684,11 +715,8 @@
     }
 
     /* ─── Responsiveness ────────────────────────────────────────────── */
-    @media (max-width: 700px) {
-      :root { --card-w: 130px; }
-      .topnav, .search-wrap, .filter-row, .main, .recent-searches { padding-left: 14px; padding-right: 14px; }
-      .cal-grid { grid-template-columns: repeat(7, minmax(72px, 1fr)); overflow-x: auto; }
-    }
+    /* Mobile rules are consolidated at the end of this stylesheet so they
+       win over every component defined in between. */
 
     .rec-badge {
       background: #1a6ef5;
@@ -1183,6 +1211,216 @@
       .ai-msg.user { margin-left: 12px; }
     }
 
+    /* ─── Mobile & touch optimisation ───────────────────────────────── */
+    @media (max-width: 700px) {
+      :root { --card-w: 118px; }
+
+      body { -webkit-text-size-adjust: 100%; }
+
+      /* Header: two compact, swipeable rows instead of a wrapped wall. */
+      .topnav {
+        gap: 8px;
+        padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+      }
+      .topnav h1 { font-size: 1rem; white-space: nowrap; }
+      .nav-tabs {
+        order: 10;
+        flex: 1 0 100%;
+        flex-wrap: nowrap;
+        gap: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .nav-tabs::-webkit-scrollbar { display: none; }
+      .nav-tab { flex: 0 0 auto; padding: 7px 12px; font-size: .8rem; }
+      .nav-right {
+        flex: 1 1 0;
+        min-width: 0;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .nav-right::-webkit-scrollbar { display: none; }
+      .nav-right > * { flex: 0 0 auto; }
+      .nav-right button { padding: 5px 9px !important; font-size: .76rem !important; }
+      #ai-btn { padding: 6px 10px !important; }
+
+      /* Search */
+      .search-wrap, .recent-searches, .main { padding-left: 12px; padding-right: 12px; }
+      .search-wrap { gap: 8px; padding-top: 10px; }
+      #search-input { flex: 1; width: auto; min-width: 0; font-size: 16px; padding: 10px 12px; }
+      #search-btn, #search-clear { min-height: 42px; padding: 0 14px; }
+      .recent-searches { font-size: .72rem; }
+
+      /* Filters collapse behind one button; the panel opens as a 2-up grid. */
+      .filters-toggle { display: flex; }
+      #filter-row { display: none; padding: 8px 12px 4px; }
+      #filter-row.open { display: flex; }
+      .filter-row { gap: 8px; }
+      #filter-row .filter-label { display: none; }
+      .filter-label { font-size: .75rem; margin-right: 0; }
+      .filter-select {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 0;
+        width: auto;
+        font-size: 16px;
+        padding: 9px 8px;
+      }
+      .filter-toggle {
+        flex: 1 1 calc(50% - 8px);
+        justify-content: center;
+        min-height: 42px;
+        padding: 8px;
+        font-size: .78rem;
+      }
+      #filter-row [data-filter-type] { flex: 0 0 auto; padding: 7px 14px; }
+      .mood-row {
+        flex: 1 1 100%;
+        margin-left: 0 !important;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+      }
+      .mood-row::-webkit-scrollbar { display: none; }
+      .mood-chip { flex: 0 0 auto; }
+      #filter-reset { flex: 1 1 100%; min-height: 40px; }
+
+      /* Content rhythm */
+      .main { padding-top: 12px; padding-bottom: calc(40px + env(safe-area-inset-bottom)); }
+      .section { margin-bottom: 26px; }
+      .section-header { gap: 8px; margin-bottom: 10px; }
+      .section-title { font-size: .98rem; }
+      .notice { align-items: flex-start; padding: 9px 11px; font-size: .78rem; }
+      .empty-state { padding: 36px 14px; }
+
+      /* Rows: swipe, no arrow buttons eating horizontal space. */
+      .row-wrap { gap: 0; }
+      .row-scroll-btn { display: none; }
+      .card-row { gap: 10px; padding-bottom: 6px; }
+      .skel-card { height: 210px; }
+
+      /* Cards */
+      .card { border-radius: 9px; }
+      .card-body { padding: 7px 8px 8px; }
+      .card-title { font-size: .78rem; }
+      .card-meta { font-size: .68rem; gap: 4px; }
+      .card-badge { font-size: .6rem; top: 5px; left: 5px; }
+      .card-dismiss { width: 30px; height: 30px; top: 5px; right: 5px; }
+      .card-rate-row { gap: 4px; padding-right: 0; }
+      .card-rate-emoji { font-size: .9rem; min-width: 18px; }
+      .card-rate-label { font-size: .68rem; min-width: 18px; }
+      .card-rate-bar { height: 20px; padding: 7px 0; background-clip: content-box; }
+      .card-rate-bar::-webkit-slider-thumb { width: 18px; height: 18px; }
+      .card-rate-bar::-moz-range-thumb { width: 18px; height: 18px; }
+      .wl-status { font-size: .65rem; padding: 2px 6px; }
+      .thumbs-btn { min-height: 44px; }
+
+      /* Watchlist & grids */
+      .watchlist-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .watchlist-toolbar { gap: 6px; }
+      .watchlist-toolbar .filter-chip { padding: 7px 10px; }
+      #wl-search { flex: 1 1 100% !important; min-width: 0 !important; font-size: 16px; }
+      .mood-board { grid-template-columns: 1fr; gap: 12px; }
+      .mood-board-card { padding: 12px; }
+      .roulette-card { padding: 18px 14px; }
+      .simkl-prompt { padding: 16px; gap: 12px; }
+      .simkl-prompt p { flex: 1 1 100%; }
+      .simkl-prompt .modal-btn { width: 100%; }
+
+      /* Calendar: whole month on screen, events as colour bars. */
+      .cal-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+        overflow: visible;
+      }
+      .cal-day-header { font-size: .62rem; padding: 2px 0; }
+      .cal-day { min-height: 58px; padding: 3px; border-radius: 7px; }
+      .cal-day-num { font-size: .66rem; margin-bottom: 3px; }
+      .cal-item {
+        font-size: 0;
+        height: 8px;
+        padding: 0;
+        margin-bottom: 3px;
+        border-left: 0;
+        border-radius: 4px;
+      }
+      .cal-item.movie { background: var(--accent); }
+      .cal-item.tv { background: #1a6ef5; }
+      .cal-item.my-show { background: #1ce783; padding-right: 0; }
+      .cal-month-nav { gap: 8px; }
+      .cal-month-nav button { flex: 1 1 auto; padding: 9px 10px; font-size: .78rem; }
+      #cal-month-label { flex: 1 1 100%; order: -1; min-width: 0; text-align: left; font-size: 1.05rem; }
+      .cal-toggle { margin-left: 0; min-height: 38px; }
+
+      /* Modal becomes a full-height sheet. */
+      #modal-overlay { padding: 0; align-items: stretch; }
+      #modal-box {
+        width: 100%;
+        max-width: 100%;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+      }
+      #modal-close { width: 42px; height: 42px; margin: 8px 8px 0 0; }
+      .modal-inner { padding: 14px 16px calc(24px + env(safe-area-inset-bottom)); }
+      #modal-inner > img { max-height: 150px !important; }
+      .modal-hero { gap: 12px; margin-bottom: 14px; }
+      .modal-poster { width: 96px; }
+      .modal-title { font-size: 1.15rem; }
+      .modal-overview { font-size: .86rem; }
+      .modal-actions { gap: 8px; }
+      .modal-actions .modal-btn { flex: 1 1 auto; text-align: center; padding: 10px 12px; }
+      .my-rating-row { flex-wrap: wrap; }
+      .my-rating-row input[type="range"] { min-width: 140px; }
+      .score-box { flex: 1 1 auto; padding: 7px 10px; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      .hist-row { grid-template-columns: 24px 1fr 34px; gap: 6px; }
+
+      /* Toast & AI panel */
+      #toast {
+        left: 12px;
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        max-width: none;
+      }
+      #ai-panel { width: 100%; height: 100dvh; }
+      .ai-head { padding: 10px 12px; }
+      .ai-body { padding: 12px; }
+      .ai-input-row { padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
+      #ai-input, .ai-field input, .ai-field select { font-size: 16px; }
+
+      /* Where to Watch search */
+      #wtw-search { flex: 1 1 100% !important; min-width: 0 !important; font-size: 16px !important; }
+
+      /* Touch devices: no sticky hover states. */
+      .card:hover,
+      .card.rated:hover { transform: none; box-shadow: none; }
+      .mood-board-card:hover { transform: none; }
+      .blind-card:hover { transform: none; }
+    }
+
+    @media (max-width: 430px) {
+      /* Keep the brand as a small icon so the action row gets the width. */
+      .topnav h1 { font-size: 0; line-height: 1; }
+      .topnav h1::before { content: '📺'; font-size: 1.35rem; }
+    }
+
+    @media (max-width: 380px) {
+      :root { --card-w: 106px; }
+      .nav-right button { padding: 4px 7px !important; font-size: .72rem !important; }
+      .watchlist-grid { gap: 8px; }
+    }
+
     /* ─── Reduced motion ─────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -1236,6 +1474,12 @@
   <button id="search-clear" onclick="clearSearch()" title="Clear search">✕</button>
 </div>
 <div class="recent-searches" id="recent-searches"></div>
+
+<button type="button" id="filters-toggle" class="filters-toggle" onclick="toggleFilters()" aria-expanded="false" aria-controls="filter-row">
+  <span>⚙ Filters</span>
+  <span id="filters-count" class="filters-count" hidden></span>
+  <span class="filters-caret" aria-hidden="true">▾</span>
+</button>
 
 <div class="filter-row" id="filter-row">
   <span class="filter-label" id="type-label">Type:</span>
@@ -1794,6 +2038,31 @@ function resetFilters() {
   renderView();
 }
 
+/* Mobile-only: the filter wall is collapsed behind a single button. */
+function toggleFilters(force) {
+  const row = document.getElementById('filter-row');
+  const btn = document.getElementById('filters-toggle');
+  if (!row) return;
+  const open = typeof force === 'boolean' ? force : !row.classList.contains('open');
+  row.classList.toggle('open', open);
+  if (btn) {
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+  }
+}
+
+function updateFiltersToggle() {
+  const btn = document.getElementById('filters-toggle');
+  if (!btn) return;
+  const n = activeFilterCount();
+  btn.classList.toggle('has-active', n > 0);
+  const countEl = document.getElementById('filters-count');
+  if (countEl) {
+    countEl.textContent = n ? String(n) : '';
+    countEl.hidden = !n;
+  }
+}
+
 /* Reflect state back into the controls (used on init and after a reset). */
 function syncFilterControls() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
@@ -1842,6 +2111,8 @@ function syncFilterControls() {
     const def = { 'sort-filter': 'popularity.desc' }[id] ?? '';
     el.classList.toggle('filtered', el.value !== def);
   });
+
+  updateFiltersToggle();
 }
 
 function addNotice(html, id) {
@@ -4581,7 +4852,12 @@ async function renderView() {
   const main = document.getElementById('main-content');
 
   document.querySelectorAll('.nav-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.view === state.view);
+    const active = t.dataset.view === state.view;
+    t.classList.toggle('active', active);
+    /* Keep the active tab visible in the swipeable mobile strip. */
+    if (active && window.matchMedia('(max-width: 700px)').matches) {
+      t.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    }
   });
 
   main.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading…</p></div>';
@@ -4920,6 +5196,8 @@ async function renderCalendar(main, token) {
   });
 
   buildCalendarGrid();
+  const calGridEl = document.getElementById('cal-grid');
+  if (calGridEl) calGridEl.addEventListener('click', onCalGridClick);
   await populateCalendar();
 }
 
@@ -5021,6 +5299,47 @@ function buildCalendarGrid() {
   grid.innerHTML = html;
 }
 
+/* On phones the month is shown compactly, so a tap anywhere in a day cell
+   opens that day's events in a sheet instead of requiring a precise tap on
+   an 8px bar. */
+function onCalGridClick(e) {
+  if (!window.matchMedia('(max-width: 700px)').matches) return;
+  const cell = e.target.closest('.cal-day');
+  if (!cell) return;
+  const items = [...cell.querySelectorAll('.cal-item')];
+  if (items.length) openCalDaySheet(cell.dataset.date, items);
+}
+
+function openCalDaySheet(dateStr, items) {
+  modalToken++;
+  const inner = document.getElementById('modal-inner');
+  if (!inner) return;
+  delete inner.dataset.key;
+  const date = new Date(`${dateStr}T00:00:00`);
+  const label = date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  inner.innerHTML = `
+    <h3 style="font-size:1.05rem;margin:0 0 12px">${esc(label)}</h3>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      ${items.map((el, i) => {
+        const dot = el.classList.contains('my-show') ? '#1ce783'
+                  : el.classList.contains('tv') ? '#1a6ef5' : 'var(--accent)';
+        return `<button class="modal-btn" data-cal-idx="${i}" style="display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:10px 12px">
+          <span style="width:9px;height:9px;border-radius:50%;background:${dot};flex:0 0 auto"></span>
+          <span style="flex:1;min-width:0">${esc(el.title || el.textContent)}</span>
+        </button>`;
+      }).join('')}
+    </div>`;
+  inner.querySelectorAll('[data-cal-idx]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = items[Number(btn.dataset.calIdx)];
+      const fn = el && el._onClick;
+      closeModal();
+      if (fn) fn();
+    });
+  });
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
 function addCalItem(dateStr, label, cssClass, tooltip, onClick, opts = {}) {
   const cell = document.querySelector(`.cal-day[data-date="${dateStr}"]`);
   if (!cell) return;
@@ -5033,6 +5352,7 @@ function addCalItem(dateStr, label, cssClass, tooltip, onClick, opts = {}) {
   const displayLabel = opts.epLabel ? `${opts.epLabel} ${label}` : label;
   div.textContent = displayLabel;
   div.title = tooltip || displayLabel;
+  div._onClick = onClick;
   if (onClick) div.addEventListener('click', e => { e.stopPropagation(); onClick(); });
   wrapper.appendChild(div);
 
@@ -6818,7 +7138,7 @@ function renderStats(main) {
   main.innerHTML = `
     <div class="section">
       <div class="section-header"><span class="section-title">Your Viewing Stats</span></div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">
+      <div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
           <div style="font-size:2.5rem;font-weight:700;color:var(--accent)">${totalRatings}</div>
           <div style="font-size:0.85rem;color:var(--text-muted)">Items Rated</div>
@@ -7392,8 +7712,11 @@ function updateFilterVisibility() {
     chip.style.display = filterVisible('type') ? '' : 'none';
   });
 
-  const anyVisible = ['type','genre','provider','contentRating','year','era','sort','hideRated','mood']
+  const anyVisible = ['type','genre','provider','region','contentRating','year','era','sort','hideRated','mood','underseen','deepCuts']
     .some(n => filterVisible(n));
+  const filtersBtn = document.getElementById('filters-toggle');
+  if (filtersBtn) filtersBtn.style.display = anyVisible ? '' : 'none';
+  if (!anyVisible) toggleFilters(false);
   if (!anyVisible) document.getElementById('filter-reset')?.classList.remove('show');
 }
 
