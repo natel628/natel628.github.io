@@ -358,12 +358,36 @@
     .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.5); }
     .card.rated { opacity: 0.85; }
     .card.rated:hover { opacity: 1; transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+    .card-poster-wrap { position: relative; display: block; }
     .card-poster {
       width: 100%;
       aspect-ratio: 2/3;
       object-fit: cover;
       background: var(--surface2);
     }
+    /* Quick watch button over the poster; opens a small site picker. */
+    .card-watch {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      z-index: 7;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(10,10,12,.78);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .95rem;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background .15s, transform .15s, border-color .15s;
+    }
+    .card-watch:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.06); }
+    .card-watch:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
     .card-poster-placeholder {
       width: 100%;
       aspect-ratio: 2/3;
@@ -644,6 +668,57 @@
     .watch-links-title { font-size: .85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); }
     .watch-links-row { display: flex; flex-wrap: wrap; gap: 8px; }
     .watch-link { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+    .watch-torrent { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; font-size: .75rem; color: var(--text-muted); }
+    .watch-torrent a {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--surface2);
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .watch-torrent a:hover { border-color: var(--accent); text-decoration: underline; }
+
+    /* Floating site picker for the card quick-watch button. */
+    .watch-menu {
+      position: fixed;
+      z-index: 10000;
+      width: 178px;
+      padding: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.65);
+    }
+    .watch-menu[hidden] { display: none; }
+    .watch-menu-title {
+      padding: 4px 8px 5px;
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .watch-menu a {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 9px;
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+    .watch-menu a:hover,
+    .watch-menu a:focus-visible { background: var(--surface2); color: var(--accent); outline: none; }
+    .watch-menu a.primary { background: var(--accent); color: #fff; }
+    .watch-menu a.primary:hover { filter: brightness(1.1); color: #fff; }
+    .watch-menu .wm-arrow { margin-left: auto; opacity: .6; font-size: .7rem; }
+    .watch-menu .watch-menu-sep { height: 1px; margin: 4px 6px; background: var(--border); }
     
     .my-rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
     .my-rating-label { font-size: 0.85rem; font-weight: 600; }
@@ -1426,6 +1501,7 @@
       :root { --card-w: 106px; }
       .nav-right button { padding: 4px 7px !important; font-size: .72rem !important; }
       .watchlist-grid { gap: 8px; }
+      .card-watch { width: 34px; height: 34px; right: 6px; bottom: 6px; font-size: .85rem; }
     }
 
     /* ─── Reduced motion ─────────────────────────────────────────────── */
@@ -1606,6 +1682,11 @@
     <button id="modal-close" aria-label="Close" onclick="closeModal()">✕</button>
     <div class="modal-inner" id="modal-inner"></div>
   </div>
+</div>
+
+<div id="watch-menu" class="watch-menu" role="menu" aria-label="Watch options" hidden>
+  <div class="watch-menu-title">Watch on</div>
+  <div id="watch-menu-links"></div>
 </div>
 
 <div id="ai-scrim" onclick="closeAiPanel()"></div>
@@ -3076,6 +3157,7 @@ function aiReapply() {
 }
 
 function openAiPanel(tab) {
+  closeWatchMenu();
   const panel = document.getElementById('ai-panel');
   const scrim = document.getElementById('ai-scrim');
   if (!panel) return;
@@ -4169,12 +4251,17 @@ function buildCard(item, dismiss = false) {
   const dismissBtn = dismiss && !blind ? `<button class="card-dismiss" data-action="dismiss-card"
       data-dismiss-key="${type}_${id}" data-dismiss-title="${esc(title)}"
       title="Not interested" aria-label="Not interested">🚫</button>` : '';
+  const watchBtn = !blind ? `<button class="card-watch" type="button" aria-haspopup="menu" aria-controls="watch-menu" aria-expanded="false"
+      aria-label="Watch ${esc(title)}" title="Watch free">▶</button>` : '';
   cardEl.innerHTML = `
     ${dismissBtn}
     <span class="card-badge ${type}">${type === 'movie' ? '🎬' : '📺'}</span>
-    ${poster
-      ? `<img class="card-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" style="${blind ? 'filter:blur(6px) brightness(0.6)' : ''}" />`
-      : `<div class="card-poster-placeholder">${blind ? '❓' : '🎬'}</div>`}
+    <div class="card-poster-wrap">
+      ${poster
+        ? `<img class="card-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" style="${blind ? 'filter:blur(6px) brightness(0.6)' : ''}" />`
+        : `<div class="card-poster-placeholder">${blind ? '❓' : '🎬'}</div>`}
+      ${watchBtn}
+    </div>
     <div class="card-body">
       ${titleHTML}
       ${metaHTML}
@@ -4192,6 +4279,16 @@ function buildCard(item, dismiss = false) {
     </div>
   `;
 
+  const watchBtnEl = cardEl.querySelector('.card-watch');
+  if (watchBtnEl) {
+    watchBtnEl.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      openWatchMenu(watchBtnEl, type, id, title);
+    });
+    watchBtnEl.addEventListener('keydown', e => e.stopPropagation());
+  }
+
   /* Paint the slider fill for already-rated cards on first render, so the
      bar does not sit empty until the first input event. */
   const slider = cardEl.querySelector('.card-rate-bar');
@@ -4202,6 +4299,90 @@ function buildCard(item, dismiss = false) {
 
   return cardEl;
 }
+
+/* ─── Card quick-watch popover ─────────────────────────────────────── */
+let watchMenuBtn = null;
+
+function closeWatchMenu() {
+  const menu = document.getElementById('watch-menu');
+  if (!menu || menu.hidden) return;
+  menu.hidden = true;
+  if (watchMenuBtn) watchMenuBtn.setAttribute('aria-expanded', 'false');
+  watchMenuBtn = null;
+}
+
+function openWatchMenu(btn, type, id, title) {
+  const menu  = document.getElementById('watch-menu');
+  const links = document.getElementById('watch-menu-links');
+  if (!menu || !links) return;
+
+  // Tapping the same button again closes the picker.
+  if (watchMenuBtn === btn && !menu.hidden) { closeWatchMenu(); return; }
+  closeWatchMenu();
+
+  links.innerHTML = '';
+  watchSitesFor(type, id, title).forEach(site => {
+    if (site.torrent) {
+      const sep = document.createElement('div');
+      sep.className = 'watch-menu-sep';
+      links.appendChild(sep);
+      const lbl = document.createElement('div');
+      lbl.className = 'watch-menu-title';
+      lbl.textContent = 'Torrent search';
+      links.appendChild(lbl);
+    }
+    const a = document.createElement('a');
+    a.href = site.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.setAttribute('role', 'menuitem');
+    if (site.primary) a.className = 'primary';
+    a.title = site.torrent
+      ? `Search LimeTorrents for ${title}`
+      : `Watch ${title} on ${site.name}`;
+    a.textContent = site.name;
+    const arrow = document.createElement('span');
+    arrow.className = 'wm-arrow';
+    arrow.textContent = '↗';
+    a.appendChild(arrow);
+    a.addEventListener('click', closeWatchMenu);
+    links.appendChild(a);
+  });
+
+  watchMenuBtn = btn;
+  btn.setAttribute('aria-expanded', 'true');
+  menu.hidden = false;
+
+  const r  = btn.getBoundingClientRect();
+  const mw = menu.offsetWidth;
+  const mh = menu.offsetHeight;
+  let left = r.right - mw;
+  left = Math.max(8, Math.min(left, window.innerWidth - mw - 8));
+  let top = r.top - mh - 8;
+  if (top < 8) top = r.bottom + 8;
+  if (top + mh > window.innerHeight - 8) top = Math.max(8, window.innerHeight - mh - 8);
+  menu.style.left = left + 'px';
+  menu.style.top = top + 'px';
+
+  const first = links.querySelector('a');
+  if (first) first.focus({ preventScroll: true });
+}
+
+document.addEventListener('pointerdown', e => {
+  const menu = document.getElementById('watch-menu');
+  if (!menu || menu.hidden) return;
+  if (!(e.target instanceof Element)) return;
+  if (menu.contains(e.target) || e.target.closest('.card-watch')) return;
+  closeWatchMenu();
+}, true);
+window.addEventListener('scroll', closeWatchMenu, true);
+window.addEventListener('resize', closeWatchMenu);
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const btn = watchMenuBtn;
+  closeWatchMenu();
+  if (btn) btn.focus({ preventScroll: true });
+});
 
 function wlStatusLabel(s) {
   return { watching: '▶ Watching', completed: '✅ Completed', plantowatch: '🔖 Plan to Watch', hold: '⏸ On Hold', dropped: '❌ Dropped' }[s] || s;
@@ -4468,6 +4649,7 @@ document.getElementById('modal-overlay').addEventListener('change', e => {
    MODAL CONTROLLER & HELP MODAL
    ───────────────────────────────────────────────────────────────────── */
 function openHelpModal() {
+  closeWatchMenu();
   modalToken++;
   const inner = document.getElementById('modal-inner');
   delete inner.dataset.key;
@@ -4499,6 +4681,7 @@ function openHelpModal() {
 
 let modalToken = 0;
 async function openModal(type, id, basicItem = {}) {
+  closeWatchMenu();
   const token = ++modalToken;
   document.getElementById('modal-overlay').classList.add('open');
   const inner = document.getElementById('modal-inner');
@@ -4553,6 +4736,18 @@ async function openModal(type, id, basicItem = {}) {
   }
 }
 
+/* Direct title pages on the streaming sites, plus a torrent search.
+   Dulo is the primary destination. */
+function watchSitesFor(type, id, title) {
+  return [
+    { name: 'Dulo',         url: `https://dulo.mov/title/${type}/${id}/`, primary: true },
+    { name: 'Movy',         url: `https://www.movy.sx/${type}/${id}` },
+    { name: 'Cinejoy',      url: `https://cinejoy.pk/${type === 'movie' ? 'movie' : 'series'}/${id}` },
+    { name: 'Atlantic',     url: `https://atlantic.bz/title/${type}/${id}` },
+    { name: 'LimeTorrents', url: `https://www.limetorrents.fun/search/all/${encodeURIComponent(title)}/`, torrent: true },
+  ];
+}
+
 function renderModal(type, d, credits, providers, contentRating, videos) {
   const id        = d.id;
   const title     = d.title || d.name;
@@ -4568,12 +4763,9 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
   const sc        = d.vote_average ? d.vote_average.toFixed(1) : '—';
   const cr        = contentRating || '';
 
-  // Direct title pages on the third-party streaming sites (all keyed by TMDB id).
-  const watchSites = [
-    { name: 'Movy',     url: `https://www.movy.sx/${type}/${id}` },
-    { name: 'Cinejoy',  url: `https://cinejoy.pk/${type === 'movie' ? 'movie' : 'series'}/${id}` },
-    { name: 'Atlantic', url: `https://atlantic.bz/title/${type}/${id}` },
-  ];
+  const watchSites  = watchSitesFor(type, id, title);
+  const streamSites = watchSites.filter(s => !s.torrent);
+  const torrentSite = watchSites.find(s => s.torrent);
 
   const vids = videos?.results || [];
   const trailer = vids.find(v => v.site === 'YouTube' && v.type === 'Trailer') || vids.find(v => v.site === 'YouTube');
@@ -4639,8 +4831,9 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
       <div class="watch-links">
         <div class="watch-links-title">▶ Watch Free <span style="font-weight:400">(opens third-party site)</span></div>
         <div class="watch-links-row">
-          ${watchSites.map(s => `<a class="modal-btn watch-link" href="${esc(s.url)}" target="_blank" rel="noopener noreferrer" title="Watch ${esc(title)} on ${s.name}">${s.name} ↗</a>`).join('')}
+          ${streamSites.map(s => `<a class="modal-btn watch-link${s.primary ? ' primary' : ''}" href="${esc(s.url)}" target="_blank" rel="noopener noreferrer" title="Watch ${esc(title)} on ${s.name}">${s.name} ↗</a>`).join('')}
         </div>
+        ${torrentSite ? `<div class="watch-torrent">🧲 Torrent search: <a href="${esc(torrentSite.url)}" target="_blank" rel="noopener noreferrer" title="Search LimeTorrents for ${esc(title)}">LimeTorrents ↗</a></div>` : ''}
       </div>
 
       <div id="trailer-box" style="display:none;margin-bottom:16px;aspect-ratio:16/9"></div>
@@ -4864,6 +5057,7 @@ function removeFromWatchlist(type, id) {
    VIEWS RENDERER
    ───────────────────────────────────────────────────────────────────── */
 async function renderView() {
+  closeWatchMenu();
   const token = ++renderToken;
   clearWatchlistSync();
   updateSimklUI();
