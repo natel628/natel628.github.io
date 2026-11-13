@@ -49,22 +49,42 @@
     button { cursor: pointer; font-family: inherit; }
     img { display: block; }
     :focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; border-radius: 4px; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--accent2);
+      outline-offset: 2px;
+    }
+    .nav-tab:focus-visible, .bn-item:focus-visible, .card-open:focus-visible {
+      outline: 2px solid var(--accent2);
+      outline-offset: 2px;
+    }
 
     /* ─── Top Nav ───────────────────────────────────────────────────── */
     .topnav {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 14px 24px;
+      gap: 12px;
+      padding: 10px 20px;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
       z-index: 100;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
-    .topnav h1 { font-size: 1.2rem; font-weight: 700; color: var(--accent); flex: 0 0 auto; }
-    .nav-tabs { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+    .topnav h1 { font-size: 1.15rem; font-weight: 700; color: var(--accent); flex: 0 0 auto; margin: 0; white-space: nowrap; }
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      flex: 1 1 auto;
+      flex-wrap: nowrap;
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+      mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%);
+    }
+    .nav-tabs::-webkit-scrollbar { height: 4px; }
     .nav-tab {
       background: none;
       border: 1px solid var(--border);
@@ -76,7 +96,19 @@
     }
     .nav-tab:hover { border-color: var(--accent); color: var(--text); }
     .nav-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-    .nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .nav-right { display: flex; align-items: center; gap: 6px; margin-left: auto; flex: 0 0 auto; }
+    .nav-right .nav-icon-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .nav-right .nav-icon-btn:hover { border-color: var(--accent); }
+    .nav-tab { flex: 0 0 auto; }
     #simkl-btn {
       background: #1ce783;
       color: #000;
@@ -158,12 +190,13 @@
 
     /* ─── Filter row ────────────────────────────────────────────────── */
     .filter-row {
-      display: flex;
+      display: none;
       gap: 8px;
       padding: 12px 24px;
       flex-wrap: wrap;
       align-items: center;
     }
+    #filter-row.open { display: flex; }
     .filter-label { font-size: 0.8rem; color: var(--text-muted); margin-right: 4px; }
     .filter-chip {
       background: var(--tag-bg);
@@ -226,7 +259,7 @@
 
     /* Mobile-only button that collapses the filter wall (hidden on desktop). */
     .filters-toggle {
-      display: none;
+      display: flex;
       align-items: center;
       gap: 8px;
       width: calc(100% - 24px);
@@ -257,6 +290,9 @@
 
     /* ─── Main layout ───────────────────────────────────────────────── */
     .main { padding: 16px 24px 40px; }
+    @media (max-width: 700px) {
+      .main { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+    }
     .section { margin-bottom: 36px; }
     .section-header {
       display: flex;
@@ -1375,7 +1411,7 @@
       #filter-reset { flex: 1 1 100%; min-height: 40px; }
 
       /* Content rhythm */
-      .main { padding-top: 12px; padding-bottom: calc(40px + env(safe-area-inset-bottom)); }
+      .main { padding-top: 12px; padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
       .section { margin-bottom: 26px; }
       .section-header { gap: 8px; margin-bottom: 10px; }
       .section-title { font-size: .98rem; }
@@ -1492,9 +1528,8 @@
     }
 
     @media (max-width: 430px) {
-      /* Keep the brand as a small icon so the action row gets the width. */
-      .topnav h1 { font-size: 0; line-height: 1; }
-      .topnav h1::before { content: '📺'; font-size: 1.35rem; }
+      /* Brand stays visible: tabs moved to the bottom bar, so the top row has room. */
+      .topnav h1 { font-size: 0.95rem; }
     }
 
     @media (max-width: 380px) {
@@ -1502,6 +1537,133 @@
       .nav-right button { padding: 4px 7px !important; font-size: .72rem !important; }
       .watchlist-grid { gap: 8px; }
       .card-watch { width: 34px; height: 34px; right: 6px; bottom: 6px; font-size: .85rem; }
+    }
+
+    /* ─── Welcome / first-run banner ─────────────────────────────────── */
+    #welcome-banner {
+      display: none;
+      margin: 12px 24px 0;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(245, 80, 80, .12), rgba(120, 80, 200, .12));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    #welcome-banner.show { display: flex; }
+    #welcome-banner .welcome-copy { flex: 1; min-width: 0; }
+    #welcome-banner strong { display: block; font-size: .95rem; margin-bottom: 4px; }
+    #welcome-banner p { margin: 0; font-size: .82rem; color: var(--text-muted); line-height: 1.45; }
+    #welcome-banner .welcome-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    @media (max-width: 700px) {
+      #welcome-banner { margin: 10px 12px 0; flex-direction: column; }
+    }
+
+    /* ─── "Why this?" chip on For You cards ──────────────────────────── */
+    .why-chip {
+      margin-top: 6px;
+      font-size: .68rem;
+      line-height: 1.3;
+      color: var(--accent2);
+      background: color-mix(in srgb, var(--accent2) 14%, transparent);
+      border-radius: 8px;
+      padding: 3px 7px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ─── Card open control (semantics: not a role=button wrapper) ───── */
+    .card-open {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .card-open .card-poster,
+    .card-open .card-poster-placeholder { pointer-events: none; }
+
+    /* ─── Bottom nav (mobile) & More sheet ───────────────────────────── */
+    .bottom-nav, #more-sheet, #more-scrim { display: none; }
+    @media (max-width: 700px) {
+      .topnav .nav-tabs { display: none; }
+      .topnav .nav-extra { display: none; }
+      .bottom-nav {
+        display: flex;
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 120;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+        justify-content: space-around;
+        align-items: stretch;
+        gap: 2px;
+      }
+      .bn-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        background: none;
+        border: 0;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: .65rem;
+        font-weight: 600;
+        padding: 6px 2px;
+        border-radius: 10px;
+        cursor: pointer;
+        min-width: 0;
+      }
+      .bn-item .bn-icon { font-size: 1.15rem; line-height: 1; }
+      .bn-item[aria-current="page"], .bn-item.active {
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+      }
+      #more-scrim.open {
+        display: block;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.45);
+        z-index: 130;
+      }
+      #more-sheet.open {
+        display: block;
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 140;
+        background: var(--surface);
+        border-radius: 16px 16px 0 0;
+        border-top: 1px solid var(--border);
+        padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+        max-height: 70dvh;
+        overflow-y: auto;
+      }
+      #more-sheet h2 { font-size: .9rem; margin: 0 0 12px; color: var(--text-muted); }
+      #more-sheet .more-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      #more-sheet .more-item, #more-sheet .more-action {
+        display: flex; align-items: center; gap: 8px;
+        padding: 12px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: .85rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: left;
+      }
+      #more-sheet .more-item[aria-current="page"] { border-color: var(--accent); color: var(--accent); }
     }
 
     /* ─── Reduced motion ─────────────────────────────────────────────── */
@@ -1519,36 +1681,48 @@
 </head>
 <body>
 
-<nav class="topnav">
+<nav class="topnav" aria-label="App">
   <h1>📺 Media Calendar</h1>
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-view="trending">🔥 Trending</button>
-    <button class="nav-tab" data-view="calendar">📅 Calendar</button>
-    <button class="nav-tab" data-view="upcoming">🎬 Upcoming</button>
-    <button class="nav-tab" data-view="watchlist">⭐ My List</button>
-    <button class="nav-tab" data-view="recommended">✨ For You</button>
-    <button class="nav-tab" data-view="quickrate">⚡ Quick Rate</button>
-    <button class="nav-tab" data-view="stats">📊 Stats</button>
-    <button class="nav-tab" data-view="discoveries">🕵️ Discoveries</button>
-    <button class="nav-tab" data-view="moodboard">🎭 Mood Board</button>
-    <button class="nav-tab" data-view="wheretowatch">📺 Where to Watch</button>
+  <div class="nav-tabs" aria-label="Views">
+    <button type="button" class="nav-tab active" data-view="trending" aria-current="page">🔥 Trending</button>
+    <button type="button" class="nav-tab" data-view="calendar">📅 Calendar</button>
+    <button type="button" class="nav-tab" data-view="upcoming">🎬 Upcoming</button>
+    <button type="button" class="nav-tab" data-view="watchlist">⭐ My List</button>
+    <button type="button" class="nav-tab" data-view="recommended">✨ For You</button>
+    <button type="button" class="nav-tab" data-view="quickrate">⚡ Quick Rate</button>
+    <button type="button" class="nav-tab" data-view="stats">📊 Stats</button>
+    <button type="button" class="nav-tab" data-view="discoveries">🕵️ Discoveries</button>
+    <button type="button" class="nav-tab" data-view="moodboard">🎭 Mood Board</button>
+    <button type="button" class="nav-tab" data-view="wheretowatch">📺 Where to Watch</button>
   </div>
   <div class="nav-right">
-    <button id="ai-btn" onclick="toggleAiPanel()" title="AI Director — tell it what to show or hide (a)">🤖 AI Director</button>
-    <button onclick="openHelpModal()" style="background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;font-size:0.8rem" title="Hotkeys (?)">❓</button>
-    <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;color:var(--text);font-size:1.2rem;padding:4px 8px;cursor:pointer" title="Toggle theme">🌙</button>
-    <button onclick="surpriseMe()" style="background:var(--accent);border:none;color:#fff;border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:600;cursor:pointer">🎲 Surprise Me</button>
-    <button onclick="whatsOnTonight()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:600;cursor:pointer" title="Find something to watch right now">📺 Tonight?</button>
+    <button type="button" id="ai-btn" onclick="toggleAiPanel()" title="AI Director — tell it what to show or hide (a)" aria-haspopup="dialog" aria-controls="ai-panel">🤖 AI Director</button>
+    <button type="button" class="nav-icon-btn" onclick="openHelpModal()" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">❓</button>
+    <button type="button" class="nav-icon-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+    <button type="button" class="nav-extra" onclick="surpriseMe()" style="background:var(--accent);border:none;color:#fff;border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:600;cursor:pointer">🎲 Surprise Me</button>
+    <button type="button" class="nav-extra" onclick="whatsOnTonight()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:600;cursor:pointer" title="Find something to watch right now">📺 Tonight?</button>
     <span id="simkl-user"></span>
-    <button id="simkl-btn" onclick="simklAuth()">
+    <button type="button" class="nav-extra" id="simkl-btn" onclick="simklAuth()">
       <span>▶</span> Connect Simkl
     </button>
   </div>
 </nav>
 
 <div id="config-warning" role="status">
-  Running with an unreplaced <code>TMDB_TOKEN</code> placeholder.
-  API calls will fail until the token is injected at build time.
+  The movie catalog isn’t connected in this copy, so browsing will be empty.
+  Your list, ratings and Stats still work on this device.
+</div>
+
+<div id="welcome-banner" role="region" aria-label="Getting started">
+  <div class="welcome-copy">
+    <strong>Make this yours.</strong>
+    <p>Rate a few titles and For You starts recommending in your taste. Ratings stay on this device — nothing is sent to an account unless you connect Simkl.</p>
+  </div>
+  <div class="welcome-actions">
+    <button type="button" class="modal-btn primary" data-action="quickrate">Start Quick Rate</button>
+    <button type="button" class="modal-btn" data-action="recommended">See For You</button>
+    <button type="button" class="modal-btn" id="welcome-dismiss">Not now</button>
+  </div>
 </div>
 
 <div class="search-wrap">
@@ -1566,14 +1740,14 @@
 
 <div class="filter-row" id="filter-row">
   <span class="filter-label" id="type-label">Type:</span>
-  <button type="button" class="filter-chip active" data-filter-type="all">All</button>
-  <button type="button" class="filter-chip" data-filter-type="movie">Movies</button>
-  <button type="button" class="filter-chip" data-filter-type="tv">TV</button>
+  <button type="button" class="filter-chip active" data-filter-type="all" aria-pressed="true">All</button>
+  <button type="button" class="filter-chip" data-filter-type="movie" aria-pressed="false">Movies</button>
+  <button type="button" class="filter-chip" data-filter-type="tv" aria-pressed="false">TV</button>
   <span class="filter-label" id="genre-label" style="margin-left:12px">Genre:</span>
-  <select class="filter-select" id="genre-filter">
+  <select class="filter-select" id="genre-filter" aria-labelledby="genre-label">
     <option value="">Any Genre</option>
   </select>
-  <select class="filter-select" id="sort-filter">
+  <select class="filter-select" id="sort-filter" aria-label="Sort">
     <option value="popularity.desc">Most Popular</option>
     <option value="vote_average.desc">Highest Rated</option>
     <option value="release_date.desc">Newest</option>
@@ -1620,7 +1794,7 @@
     <option value="TV-14">TV-14</option>
     <option value="TV-MA">TV-MA</option>
   </select>
-  <select class="filter-select" id="year-filter">
+  <select class="filter-select" id="year-filter" aria-label="Year">
     <option value="">Any Year</option>
   </select>
   <select class="filter-select" id="era-filter" title="Browse by era">
@@ -1748,6 +1922,42 @@
     <button id="ai-send" onclick="aiSend()">Send</button>
   </div>
 </aside>
+
+<nav class="bottom-nav" aria-label="Primary">
+  <button type="button" class="bn-item" data-view="trending" aria-current="page">
+    <span class="bn-icon" aria-hidden="true">🔥</span><span class="bn-label">Home</span>
+  </button>
+  <button type="button" class="bn-item" data-view="recommended">
+    <span class="bn-icon" aria-hidden="true">✨</span><span class="bn-label">For You</span>
+  </button>
+  <button type="button" class="bn-item" data-view="watchlist">
+    <span class="bn-icon" aria-hidden="true">⭐</span><span class="bn-label">My List</span>
+  </button>
+  <button type="button" class="bn-item" data-view="calendar">
+    <span class="bn-icon" aria-hidden="true">📅</span><span class="bn-label">Calendar</span>
+  </button>
+  <button type="button" class="bn-item" id="bn-more" aria-haspopup="dialog" aria-expanded="false" aria-controls="more-sheet">
+    <span class="bn-icon" aria-hidden="true">•••</span><span class="bn-label">More</span>
+  </button>
+</nav>
+<div id="more-scrim" hidden></div>
+<div id="more-sheet" role="dialog" aria-label="More views" hidden>
+  <h2>More</h2>
+  <div class="more-grid">
+    <button type="button" class="more-item" data-view="upcoming">🎬 Upcoming</button>
+    <button type="button" class="more-item" data-view="quickrate">⚡ Quick Rate</button>
+    <button type="button" class="more-item" data-view="discoveries">🕵️ Discoveries</button>
+    <button type="button" class="more-item" data-view="moodboard">🎭 Mood Board</button>
+    <button type="button" class="more-item" data-view="wheretowatch">📺 Where to Watch</button>
+    <button type="button" class="more-item" data-view="stats">📊 Stats</button>
+  </div>
+  <div class="more-grid" style="margin-top:10px">
+    <button type="button" class="more-action" onclick="closeMoreSheet(); surpriseMe();">🎲 Surprise Me</button>
+    <button type="button" class="more-action" onclick="closeMoreSheet(); whatsOnTonight();">📺 Tonight?</button>
+    <button type="button" class="more-action" id="more-simkl" onclick="closeMoreSheet(); simklAuth();">▶ Connect Simkl</button>
+    <button type="button" class="more-action" onclick="closeMoreSheet(); toggleAiPanel();">🤖 AI Director</button>
+  </div>
+</div>
 
 <div id="toast" role="status" aria-live="polite"><span id="toast-msg"></span></div>
 
@@ -1929,8 +2139,38 @@ function downloadBlob(blob, filename) {
    ───────────────────────────────────────────────────────────────────── */
 const LS = {
   get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
-  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { console.warn('LS Write error:', e); } },
+  set: (k, v) => {
+    try {
+      localStorage.setItem(k, JSON.stringify(v));
+      return true;
+    } catch (e) {
+      console.warn('LS Write error:', e);
+      const quota = e && (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014);
+      if (quota) toast('Storage is full — export a backup in Stats, then clear cached details.');
+      return false;
+    }
+  },
 };
+
+function isLocalHost() {
+  return window.location.protocol === 'file:'
+    || window.location.hostname === 'localhost'
+    || window.location.hostname === '127.0.0.1';
+}
+
+function friendlyError(e) {
+  const msg = String((e && e.message) || e || '');
+  if (typeof TMDB_TOKEN === 'string' && TMDB_TOKEN.startsWith('__TMDB')) {
+    return 'The movie catalog isn’t available in this copy. Your list, ratings and Stats still work on this device.';
+  }
+  if (/TMDB 40[13]/.test(msg)) {
+    return 'The movie catalog isn’t available right now. Try again later, or use My List and Stats.';
+  }
+  if (/timeout|abort|Failed to fetch|NetworkError|Load failed/i.test(msg)) {
+    return 'Couldn’t reach the catalog. Check your connection and try again.';
+  }
+  return msg || 'Something went wrong.';
+}
 
 let state = {
   view: 'trending',
@@ -2017,7 +2257,7 @@ function saveMediaDetails() {
     });
     state.mediaDetails = Object.fromEntries(entries.slice(0, MEDIA_DETAILS_CAP));
   }
-  LS.set('media_details_cache', state.mediaDetails);
+  return LS.set('media_details_cache', state.mediaDetails);
 }
 function saveTheme()        { LS.set('theme',               state.theme); }
 function saveHideRated()    { LS.set('hide_rated',          state.hideRated); }
@@ -2162,7 +2402,9 @@ function syncFilterControls() {
   set('year-filter', state.year);
 
   document.querySelectorAll('[data-filter-type]').forEach(c => {
-    c.classList.toggle('active', c.dataset.filterType === state.filterType);
+    const on = c.dataset.filterType === state.filterType;
+    c.classList.toggle('active', on);
+    c.setAttribute('aria-pressed', String(on));
   });
 
   const hideEl = document.getElementById('hide-rated-toggle');
@@ -2253,7 +2495,10 @@ const RULE_KINDS = {
 
 function effectSummary(e) {
   const fn = RULE_KINDS[e && e.kind];
-  return fn ? fn(e) : String(e && e.kind || '?');
+  let s = fn ? fn(e) : String(e && e.kind || '?');
+  if (e && e.type === 'movie') s += ' (movies)';
+  else if (e && e.type === 'tv') s += ' (TV)';
+  return s;
 }
 function describeEffects(effects) {
   const parts = (effects || []).map(effectSummary).filter(Boolean);
@@ -2305,6 +2550,7 @@ function ruleRejects(rule, item) {
   const year   = date ? Number(date.slice(0, 4)) : 0;
 
   return (rule.effects || []).some(e => {
+    if (e.type && type !== e.type) return false;
     switch (e.kind) {
       case 'excludeGenre':    return genres.includes(Number(e.value));
       case 'includeGenre':    return !genres.includes(Number(e.value));
@@ -2393,7 +2639,12 @@ function normalizeEffect(e) {
     default:
       value = undefined;
   }
-  return value === undefined ? { kind } : { kind, value };
+  const out = value === undefined ? { kind } : { kind, value };
+  if ((e.type === 'movie' || e.type === 'tv') &&
+      kind !== 'excludeType' && kind !== 'onlyType') {
+    out.type = e.type;
+  }
+  return out;
 }
 
 function dedupeEffects(list) {
@@ -2401,7 +2652,7 @@ function dedupeEffects(list) {
   (list || []).forEach(e => {
     const n = normalizeEffect(e);
     if (!n) return;
-    const key = n.kind + ':' + (n.value ?? '');
+    const key = n.kind + ':' + (n.value ?? '') + ':' + (n.type ?? '');
     if (seen.has(key)) return;
     seen.add(key);
     out.push(n);
@@ -2521,22 +2772,40 @@ function parseClause(clause, out, forceMode) {
   const mode = forceMode || ((pos && !neg) ? 'include' : 'exclude');
   const before = out.length;
 
+  /* Resolve a media-type scope first so year, rating and genre effects can
+     attach to "movies" or "TV" instead of also emitting a global excludeType.
+     "No movies before 2010" must mean "movies from 2010 on", not "hide every movie". */
+  const typeTokens = normTokens(c);
+  const movieIdx = firstIndexOf(typeTokens, MOVIE_WORDS);
+  const tvIdx    = firstIndexOf(typeTokens, TV_WORDS);
+  const qualifies = idx => idx > 0 && typeTokens.slice(Math.max(0, idx - 3), idx).some(w => GENRE_ADJECTIVES.includes(w));
+  const wantsMovie = movieIdx >= 0 && !qualifies(movieIdx);
+  const wantsTV    = tvIdx >= 0 && !qualifies(tvIdx);
+  const scope = wantsMovie && !wantsTV ? 'movie' : wantsTV && !wantsMovie ? 'tv' : undefined;
+  const push = (effect) => {
+    if (scope && effect.kind !== 'excludeType' && effect.kind !== 'onlyType' &&
+        effect.kind !== 'excludeAnime' && effect.kind !== 'includeAnime') {
+      effect.type = scope;
+    }
+    out.push(effect);
+  };
+
   /* Anime is a genre + language combination, not a TMDB genre, so it gets
      its own dedicated effect rather than being folded into Animation. */
   const animeWord = /\banime\b|\bjapanese animation\b/.test(c);
   if (animeWord) {
-    out.push({ kind: mode === 'include' ? 'includeAnime' : 'excludeAnime' });
+    push({ kind: mode === 'include' ? 'includeAnime' : 'excludeAnime' });
   }
 
   GENRE_WORDS.forEach(([re, id]) => {
     if (!re.test(c)) return;
     const onlyAnimeWord = animeWord && !/\banimat(ed|ion)\b|\bcartoons?\b/.test(c);
     if (id === ANIMATION_GENRE && onlyAnimeWord) return;
-    out.push({ kind: mode === 'include' ? 'includeGenre' : 'excludeGenre', value: id });
+    push({ kind: mode === 'include' ? 'includeGenre' : 'excludeGenre', value: id });
   });
 
   if (/\b(already (rated|watched)|(hide|no|skip) (my )?(rated|watched)|i'?ve rated)\b/.test(c)) {
-    out.push({ kind: 'hideRated' });
+    push({ kind: 'hideRated' });
   }
 
   const num = m => m ? parseFloat(m[1] ?? m[2] ?? m[3]) : NaN;
@@ -2551,13 +2820,14 @@ function parseClause(clause, out, forceMode) {
   if (under)         min = Math.max(min || 0, num(under));
   if (capped)        max = num(capped);
   if (!isFinite(min) && /\b(highly rated|well rated|top rated|good ratings|great reviews|critically acclaimed)\b/.test(c)) min = 7;
-  if (isFinite(min) && min > 0) out.push({ kind: 'minRating', value: min });
-  if (isFinite(max) && max > 0) out.push({ kind: 'maxRating', value: max });
+  if (!isFinite(min) && mode === 'exclude' && /\b(low|bad|poor|weak)\s+(ratings?|scores?)\b/.test(c)) min = 6.5;
+  if (isFinite(min) && min > 0) push({ kind: 'minRating', value: min });
+  if (isFinite(max) && max > 0) push({ kind: 'maxRating', value: max });
 
   if (/\b(obscure|unheard of|no one has (seen|heard)|barely watched|low vote count)\b/.test(c)) {
-    out.push({ kind: 'minVotes', value: 1000 });
+    push({ kind: 'minVotes', value: 1000 });
   } else if (/\b(popular|mainstream|well[- ]known|famous|big hits?)\b/.test(c)) {
-    out.push({ kind: 'minVotes', value: mode === 'include' ? 500 : 2000 });
+    push({ kind: 'minVotes', value: mode === 'include' ? 500 : 2000 });
   }
 
   const decade = c.match(/\b(?:the\s+)?'?(\d0)s\b/);
@@ -2566,44 +2836,40 @@ function parseClause(clause, out, forceMode) {
   if (decade) {
     const d = Number(decade[1]);
     const start = d >= 50 ? 1900 + d : 2000 + d;
-    out.push({ kind: 'yearFrom', value: start });
-    out.push({ kind: 'yearTo', value: start + 9 });
+    push({ kind: 'yearFrom', value: start });
+    push({ kind: 'yearTo', value: start + 9 });
   } else {
   /* "nothing before 2010" keeps 2010 and later, while "before 2010" wants
      the opposite - so a negation flips which boundary the phrase sets. */
   const negativeClause = mode === 'exclude' && normTokens(c).some(w => NEGATION_TERMS.includes(w) && w !== 'less' && w !== 'fewer');
   if (fromY) {
-    if (negativeClause) out.push({ kind: 'yearTo',   value: Number(fromY[1]) });
-    else                out.push({ kind: 'yearFrom', value: Number(fromY[1]) });
+    if (negativeClause) push({ kind: 'yearTo',   value: Number(fromY[1]) });
+    else                push({ kind: 'yearFrom', value: Number(fromY[1]) });
   }
   if (toY) {
-    if (negativeClause) out.push({ kind: 'yearFrom', value: Number(toY[1]) });
-    else                out.push({ kind: 'yearTo',   value: Number(toY[1]) });
+    if (negativeClause) push({ kind: 'yearFrom', value: Number(toY[1]) });
+    else                push({ kind: 'yearTo',   value: Number(toY[1]) });
   }
   }
   if (hasPhrase(c, NEW_RELEASE_PHRASES)) {
-    out.push({ kind: 'yearFrom', value: new Date().getFullYear() - 1 });
+    push({ kind: 'yearFrom', value: new Date().getFullYear() - 1 });
   }
 
-  /* A media type word only means "all movies / all TV" when nothing is
-     qualifying it: "anime shows" is about anime, not about television. */
-  const typeTokens = normTokens(c);
-  const movieIdx = firstIndexOf(typeTokens, MOVIE_WORDS);
-  const tvIdx    = firstIndexOf(typeTokens, TV_WORDS);
-  const qualifies = idx => idx > 0 && typeTokens.slice(Math.max(0, idx - 3), idx).some(w => GENRE_ADJECTIVES.includes(w));
-  const wantsMovie = movieIdx >= 0 && !qualifies(movieIdx);
-  const wantsTV    = tvIdx >= 0 && !qualifies(tvIdx);
-  const typeKind   = mode === 'include' ? 'onlyType' : 'excludeType';
-  if (wantsMovie && !wantsTV) out.push({ kind: typeKind, value: 'movie' });
-  if (wantsTV && !wantsMovie) out.push({ kind: typeKind, value: 'tv' });
+  /* A type word by itself ("no movies", "only TV") is a type effect.
+     If this clause already has a scoped year/rating/genre effect, the type
+     word was the object of that constraint — do not also drop the whole type. */
+  const typeKind = mode === 'include' ? 'onlyType' : 'excludeType';
+  const alreadyScoped = out.slice(before).some(e => e.type === scope && e.kind !== 'excludeType' && e.kind !== 'onlyType');
+  if (wantsMovie && !wantsTV && !alreadyScoped) out.push({ kind: typeKind, value: 'movie' });
+  if (wantsTV && !wantsMovie && !alreadyScoped) out.push({ kind: typeKind, value: 'tv' });
 
   if (mode === 'exclude' && hasTerm(c, NON_ENGLISH_TERMS)) {
-    out.push({ kind: 'excludeNonEnglish' });
+    push({ kind: 'excludeNonEnglish' });
   }
   if (mode === 'exclude') {
     LANGUAGE_WORDS.forEach(([re, code]) => {
       if (!re.test(c)) return;
-      out.push({ kind: 'excludeLanguage', value: code });
+      push({ kind: 'excludeLanguage', value: code });
     });
   }
 
@@ -2618,7 +2884,7 @@ function parseClause(clause, out, forceMode) {
       .replace(/[.!?]+$/, '')
       .replace(/\s+/g, ' ')
       .trim();
-    if (cleaned.length >= 2) out.push({ kind: 'excludeKeyword', value: cleaned });
+    if (cleaned.length >= 2) push({ kind: 'excludeKeyword', value: cleaned });
   }
 }
 
@@ -2867,7 +3133,7 @@ async function aiFetchModels() {
     aiSetStatus(`Found ${ids.length} models — start typing in the Model box to pick one.`, 'ok');
     toast(`Loaded ${ids.length} models`);
   } catch (e) {
-    aiSetStatus(`Could not list models: ${esc(e.message)}. You can still type a model id by hand.`, 'warn');
+    aiSetStatus(`Could not list models: ${esc(friendlyError(e))}. You can still type a model id by hand.`, 'warn');
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = 'Fetch list'; }
   }
@@ -3167,12 +3433,13 @@ function openAiPanel(tab) {
   renderAiRules();
   renderAiSettings();
   showAiTab(tab || state.aiTab || 'chat');
-  setTimeout(() => document.getElementById('ai-input')?.focus(), 180);
+  enterDialog(panel, document.getElementById('ai-input'));
 }
 
 function closeAiPanel() {
   document.getElementById('ai-panel')?.classList.remove('open');
   document.getElementById('ai-scrim')?.classList.remove('open');
+  leaveDialog();
 }
 
 function toggleAiPanel() {
@@ -3277,7 +3544,7 @@ async function aiTestLlm() {
     ], { maxTokens: 60 });
     aiSetStatus(`Connection works — the model replied “${esc(String(res.reply || 'ok'))}”.`, 'ok');
   } catch (e) {
-    aiSetStatus(`Connection failed: ${esc(e.message)}`, 'warn');
+    aiSetStatus(`Connection failed: ${esc(friendlyError(e))}`, 'warn');
   }
 }
 
@@ -3426,7 +3693,12 @@ async function tmdb(path, params = {}) {
         lastError = new Error(`TMDB ${res.status}: ${path}`);
         continue;
       }
-      if (!res.ok) throw new Error(`TMDB ${res.status}: ${path}`);
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          document.getElementById('config-warning')?.classList.add('show');
+        }
+        throw new Error(`TMDB ${res.status}: ${path}`);
+      }
       const data = await res.json();
       cacheSet(key, data, cacheTTL(path));
       return data;
@@ -3765,16 +4037,45 @@ async function syncSimklLibrary() {
 function updateSimklUI() {
   const btn  = document.getElementById('simkl-btn');
   const user = document.getElementById('simkl-user');
+  const more = document.getElementById('more-simkl');
+  if (!btn) return;
+
+  if (isLocalHost()) {
+    const label = 'Simkl (deploy to enable)';
+    btn.textContent = label;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'not-allowed';
+    btn.style.background = '#2e2e38';
+    btn.style.color = '#f0f0f5';
+    btn.style.border = '1px solid #4a4a58';
+    btn.onclick = () => toast('Connect Simkl after deploying this page.');
+    if (user) {
+      user.textContent = '⚠ Running locally';
+      user.style.color = 'var(--text-muted)';
+    }
+    if (more) {
+      more.textContent = label;
+      more.onclick = () => { closeMoreSheet(); toast('Connect Simkl after deploying this page.'); };
+    }
+    return;
+  }
+
+  btn.style.opacity = '';
+  btn.style.cursor = '';
+  btn.onclick = simklAuth;
   if (state.simklToken && state.simklUser) {
     btn.textContent  = 'Disconnect';
     btn.style.background = '#444';
     btn.style.color = '#fff';
-    user.textContent = `👤 ${state.simklUser}`;
+    btn.onclick = simklDisconnect;
+    if (user) user.textContent = `👤 ${state.simklUser}`;
+    if (more) { more.textContent = 'Disconnect Simkl'; more.onclick = () => { closeMoreSheet(); simklDisconnect(); }; }
   } else {
     btn.innerHTML    = '<span>▶</span> Connect Simkl';
     btn.style.background = '#1ce783';
     btn.style.color = '#000';
-    user.textContent = '';
+    if (user) user.textContent = '';
+    if (more) { more.textContent = '▶ Connect Simkl'; more.onclick = () => { closeMoreSheet(); simklAuth(); }; }
   }
 }
 
@@ -4002,7 +4303,7 @@ async function openDNAModal(id, type, title) {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('DNA modal error:', e);
-    main.innerHTML = emptyStateHTML('⚠️', 'Could not load DNA matches', esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load DNA matches', esc(friendlyError(e)), 'retry');
   }
 }
 
@@ -4044,7 +4345,7 @@ async function openCollectionModal(id, title) {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('Collection error:', e);
-    main.innerHTML = emptyStateHTML('⚠️', 'Could not load collection', esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load collection', esc(friendlyError(e)), 'retry');
   }
 }
 
@@ -4160,6 +4461,22 @@ function recomputeAffinity() {
   LS.set('genre_counts', counts);
 }
 
+function whyFor(item, affinityMap) {
+  if (item && item._why) return item._why;
+  const gids = (item && item.genre_ids) || [];
+  const liked = gids
+    .map(id => ({ id, n: Number(affinityMap && affinityMap[id]) || 0 }))
+    .filter(x => x.n > 0)
+    .sort((a, b) => b.n - a.n);
+  if (liked.length && GENRE_MAP[liked[0].id]) {
+    return `Because you like ${GENRE_MAP[liked[0].id]}`;
+  }
+  if ((item.vote_average || 0) >= 7.5 && (item.vote_count || 0) < 800) {
+    return 'A well-liked title fewer people have rated';
+  }
+  return 'Matches your taste profile';
+}
+
 function recScore(item, affinityMap) {
   const type  = item.media_type || (item.title ? 'movie' : 'tv');
   const key   = mediaKey(type, item.id);
@@ -4223,10 +4540,8 @@ function buildCard(item, dismiss = false) {
   card.dataset.type = type;
   card.dataset.obscurity = osc;
   if (item.genre_ids) card.dataset.genres = item.genre_ids.join(',');
-  card.setAttribute('tabindex', '0');
-  card.setAttribute('role', 'button');
   const blind = state.obscurityMode || state.blindDateMode;
-  card.setAttribute('aria-label', blind ? 'View details for a hidden title' : `View details for ${title}`);
+  card.setAttribute('data-open-label', blind ? 'View details for a hidden title' : `View details for ${title}`);
 
   const cardEl = card;
   const titleHTML = `<div class="card-title${blind ? ' blind-secret' : ''}"${blind ? ' hidden' : ''}>${esc(title)}</div>`;
@@ -4253,18 +4568,23 @@ function buildCard(item, dismiss = false) {
       title="Not interested" aria-label="Not interested">🚫</button>` : '';
   const watchBtn = !blind ? `<button class="card-watch" type="button" aria-haspopup="menu" aria-controls="watch-menu" aria-expanded="false"
       aria-label="Watch ${esc(title)}" title="Watch free">▶</button>` : '';
+  const openLabel = blind ? 'View details for a hidden title' : `View details for ${esc(title)}`;
+  const whyHTML = !blind && item._why ? `<div class="why-chip">${esc(item._why)}</div>` : '';
   cardEl.innerHTML = `
     ${dismissBtn}
     <span class="card-badge ${type}">${type === 'movie' ? '🎬' : '📺'}</span>
     <div class="card-poster-wrap">
+      <button type="button" class="card-open" aria-label="${openLabel}">
       ${poster
         ? `<img class="card-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" style="${blind ? 'filter:blur(6px) brightness(0.6)' : ''}" />`
         : `<div class="card-poster-placeholder">${blind ? '❓' : '🎬'}</div>`}
+      </button>
       ${watchBtn}
     </div>
     <div class="card-body">
       ${titleHTML}
       ${metaHTML}
+      ${whyHTML}
       ${meterHTML}
       <div class="card-rate-wrap">
         <div class="card-rate-row">
@@ -4484,6 +4804,8 @@ function handleAction(action, el) {
     case 'upcoming':    document.querySelector('[data-view="upcoming"]')?.click(); break;
     case 'quickrate':   document.querySelector('[data-view="quickrate"]')?.click(); break;
     case 'watchlist':   document.querySelector('[data-view="watchlist"]')?.click(); break;
+    case 'recommended': document.querySelector('[data-view="recommended"]')?.click(); break;
+    case 'stats-view':  document.querySelector('[data-view="stats"]')?.click(); break;
     case 'reset-filters': resetFilters(); break;
     case 'refresh-taste': recomputeAffinity(); renderView(); break;
     case 'export-ics':  exportCalendarICS(); break;
@@ -4555,9 +4877,11 @@ document.getElementById('main-content').addEventListener('click', e => {
   const actionEl = e.target.closest('[data-action]');
   if (actionEl) { handleAction(actionEl.dataset.action, actionEl); return; }
 
-  if (e.target.closest('.thumbs-btn') || e.target.classList.contains('card-rate-bar')) {
+  if (e.target.closest('.thumbs-btn, .card-watch, .card-dismiss, .card-rate-row, input, select, textarea, a') &&
+      !e.target.closest('.card-open')) {
     return;
   }
+  if (e.target.classList.contains('card-rate-bar')) return;
 
   const card = e.target.closest('.card');
   if (card) {
@@ -4567,11 +4891,12 @@ document.getElementById('main-content').addEventListener('click', e => {
   }
 });
 
-// Keyboard activation for cards (they carry role=button + tabindex).
+// Keyboard: .card-open is a real button, so Enter/Space activate it natively
+// and bubble to the click handler below. No role=button on the card itself.
 document.getElementById('main-content').addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
+  if (e.target.closest('.card-open')) return; // native button activation
   const card = e.target.closest('.card');
-  // Only when the card itself is focused, not its inner slider/handles.
   if (!card || e.target !== card) return;
   e.preventDefault();
   const type = card.dataset.type;
@@ -4648,12 +4973,68 @@ document.getElementById('modal-overlay').addEventListener('change', e => {
 /* ─────────────────────────────────────────────────────────────────────
    MODAL CONTROLLER & HELP MODAL
    ───────────────────────────────────────────────────────────────────── */
+let _focusRestore = null;
+let _dialogDepth = 0;
+
+function dialogFocusables(root) {
+  if (!root) return [];
+  return [...root.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter(el => !el.hasAttribute('hidden') && !el.closest('[hidden]') && el.getAttribute('aria-hidden') !== 'true');
+}
+
+function trapFocusIn(root, e) {
+  if (e.key !== 'Tab') return;
+  const list = dialogFocusables(root);
+  if (!list.length) { e.preventDefault(); return; }
+  const first = list[0], last = list[list.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
+
+function setChromeInert(on, keep) {
+  const selectors = ['nav.topnav', 'nav.bottom-nav', '.search-wrap', '.recent-searches',
+    '#filter-row', '#filters-toggle', '#main-content', '#config-warning', '#welcome-banner',
+    '#more-sheet', '#more-scrim', '#ai-panel', '#ai-scrim', '#watch-menu', '#modal-overlay', '#toast'];
+  document.querySelectorAll(selectors.join(',')).forEach(el => {
+    if (el === keep || (keep && keep.contains(el))) {
+      el.removeAttribute('inert');
+      return;
+    }
+    if (on) el.setAttribute('inert', '');
+    else el.removeAttribute('inert');
+  });
+}
+
+function enterDialog(root, focusEl) {
+  if (_dialogDepth === 0) _focusRestore = document.activeElement;
+  _dialogDepth++;
+  setChromeInert(true, root);
+  const el = focusEl || dialogFocusables(root)[0];
+  if (el) setTimeout(() => { try { el.focus({ preventScroll: true }); } catch (_) {} }, 40);
+}
+
+function leaveDialog() {
+  _dialogDepth = Math.max(0, _dialogDepth - 1);
+  const modalOpen = document.getElementById('modal-overlay')?.classList.contains('open');
+  const aiOpen = document.getElementById('ai-panel')?.classList.contains('open');
+  if (modalOpen) { setChromeInert(true, document.getElementById('modal-overlay')); return; }
+  if (aiOpen) { setChromeInert(true, document.getElementById('ai-panel')); return; }
+  setChromeInert(false);
+  const dest = _focusRestore;
+  _focusRestore = null;
+  if (dest && typeof dest.focus === 'function') {
+    try { dest.focus({ preventScroll: true }); } catch (_) {}
+  }
+}
+
 function openHelpModal() {
   closeWatchMenu();
   modalToken++;
   const inner = document.getElementById('modal-inner');
   delete inner.dataset.key;
-  document.getElementById('modal-overlay').classList.add('open');
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('open');
+  enterDialog(overlay, document.getElementById('modal-close'));
   inner.innerHTML = `
     <h3 style="font-size:1.2rem;margin-bottom:12px">⌨️ Keyboard Shortcuts</h3>
     <table style="width:100%;font-size:0.85rem;border-collapse:collapse;color:var(--text-muted)">
@@ -4672,7 +5053,7 @@ function openHelpModal() {
       <tr><td style="padding:4px 0"><strong>p</strong></td><td>Where to Watch</td></tr>
       <tr><td style="padding:4px 0"><strong>a</strong></td><td>AI Director (tell it what to show or hide)</td></tr>
       <tr><td style="padding:4px 0"><strong>d</strong></td><td>Toggle Light/Dark Theme</td></tr>
-      <tr><td style="padding:4px 0"><strong>Enter</strong> / <strong>Space</strong></td><td>Open focused card</td></tr>
+      <tr><td style="padding:4px 0"><strong>Enter</strong> / <strong>Space</strong></td><td>Open the focused title (the card’s details button)</td></tr>
       <tr><td style="padding:4px 0"><strong>0–9</strong></td><td>Rate the first Quick Rate card</td></tr>
       <tr><td style="padding:4px 0"><strong>Esc</strong></td><td>Close Modal / AI Director</td></tr>
     </table>
@@ -4680,20 +5061,86 @@ function openHelpModal() {
 }
 
 let modalToken = 0;
+function detailFromCache(type, id, cached, basicItem = {}) {
+  if (!cached) return null;
+  return {
+    id,
+    title: cached.title || cached.name || basicItem.title || basicItem.name,
+    name: cached.name || cached.title || basicItem.name,
+    poster_path: cached.poster_path || basicItem.poster_path,
+    backdrop_path: cached.backdrop_path,
+    overview: cached.overview,
+    tagline: cached.tagline,
+    vote_average: cached.vote_average ?? basicItem.vote_average,
+    vote_count: cached.vote_count,
+    release_date: cached.release_date || basicItem.release_date,
+    first_air_date: cached.first_air_date || basicItem.first_air_date,
+    runtime: cached.runtime,
+    episode_run_time: cached.episode_run_time,
+    genres: cached.genres || (cached.genre_ids || []).map(gid => ({ id: gid, name: GENRE_MAP[gid] || '' })).filter(g => g.name),
+    genre_ids: cached.genre_ids,
+    status: cached.status,
+    number_of_seasons: cached.number_of_seasons,
+    networks: cached.networks,
+    next_episode_to_air: cached.next_episode_to_air,
+    media_type: type,
+  };
+}
+
+function rememberModalRecord(type, id, detail, credits, providers, contentRating, videos) {
+  const key = mediaKey(type, id);
+  state.mediaDetails[key] = {
+    ...(state.mediaDetails[key] || {}),
+    title: detail.title || detail.name,
+    name: detail.name,
+    poster_path: detail.poster_path,
+    backdrop_path: detail.backdrop_path,
+    overview: detail.overview,
+    tagline: detail.tagline,
+    media_type: type,
+    id,
+    vote_average: detail.vote_average,
+    vote_count: detail.vote_count,
+    release_date: detail.release_date,
+    first_air_date: detail.first_air_date,
+    runtime: detail.runtime,
+    episode_run_time: detail.episode_run_time,
+    genres: detail.genres,
+    genre_ids: (detail.genres || []).map(g => g.id),
+    status: detail.status,
+    number_of_seasons: detail.number_of_seasons,
+    networks: detail.networks,
+    next_episode_to_air: detail.next_episode_to_air,
+    contentRating,
+    _credits: credits,
+    _providers: providers,
+    _videos: videos,
+    _full: true,
+    _ts: Date.now(),
+  };
+  saveMediaDetails();
+}
+
 async function openModal(type, id, basicItem = {}) {
   closeWatchMenu();
   const token = ++modalToken;
-  document.getElementById('modal-overlay').classList.add('open');
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('open');
   const inner = document.getElementById('modal-inner');
   delete inner.dataset.key;
-  inner.innerHTML = `
-    <div class="skeleton" style="height:200px;border-radius:8px;margin-bottom:16px"></div>
-    <div class="skeleton" style="height:20px;width:60%;border-radius:4px;margin-bottom:8px"></div>
-    <div class="skeleton" style="height:80px;border-radius:4px"></div>
-  `;
+  enterDialog(overlay, document.getElementById('modal-close'));
 
-  // If we already have a full record, render immediately and refresh in place.
   const cached = state.mediaDetails[mediaKey(type, id)];
+  const cachedDetail = (cached && cached._full) ? detailFromCache(type, id, cached, basicItem) : null;
+  if (cachedDetail) {
+    renderModal(type, cachedDetail, cached._credits || { cast: [] }, cached._providers || null, cached.contentRating, cached._videos);
+  } else {
+    inner.innerHTML = `
+      <div class="skeleton" style="height:200px;border-radius:8px;margin-bottom:16px"></div>
+      <div class="skeleton" style="height:20px;width:60%;border-radius:4px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:80px;border-radius:4px"></div>
+    `;
+  }
 
   try {
     const apiPath = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
@@ -4706,30 +5153,15 @@ async function openModal(type, id, basicItem = {}) {
     ]);
 
     if (token !== modalToken) return;
-    const key = mediaKey(type, id);
-    state.mediaDetails[key] = {
-      ...(state.mediaDetails[key] || {}),
-      title: detail.title || detail.name,
-      poster_path: detail.poster_path,
-      media_type: type,
-      id,
-      vote_average: detail.vote_average,
-      release_date: detail.release_date,
-      first_air_date: detail.first_air_date,
-      genre_ids: (detail.genres || []).map(g => g.id),
-      contentRating,
-      _full: true,
-      _ts: Date.now(),
-    };
-    saveMediaDetails();
+    rememberModalRecord(type, id, detail, credits, providers, contentRating, videos);
     if (getRating(type, id) > 0) recomputeAffinity();
-
     renderModal(type, detail, credits, providers, contentRating, videos);
   } catch (e) {
     if (token !== modalToken) return;
+    if (cachedDetail) return; // keep the cached modal; refresh failed silently
     const fallbackTitle = cached?.title || basicItem.title || basicItem.name;
     inner.innerHTML = `<p style="padding:20px;color:var(--text-muted)">
-      Could not load details${fallbackTitle ? ` for <strong>${esc(fallbackTitle)}</strong>` : ''}: ${esc(e.message)}.
+      Could not load details${fallbackTitle ? ` for <strong>${esc(fallbackTitle)}</strong>` : ''}: ${esc(friendlyError(e))}.
       <button class="link-btn" style="margin-left:8px">Try again</button>
     </p>`;
     inner.querySelector('button').addEventListener('click', () => openModal(type, id, basicItem));
@@ -4941,6 +5373,7 @@ function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   const inner = document.getElementById('modal-inner');
   if (inner) { delete inner.dataset.key; inner.innerHTML = ''; }
+  leaveDialog();
 }
 
 document.getElementById('modal-overlay').addEventListener('click', e => {
@@ -4955,6 +5388,16 @@ document.addEventListener('keydown', e => {
     // Escape always dismisses an open modal, even from inside an input.
     if (overlayOpen) closeModal();
     else if (aiOpen) closeAiPanel();
+    else if (document.getElementById('more-sheet')?.classList.contains('open')) closeMoreSheet();
+    return;
+  }
+
+  if (overlayOpen && e.key === 'Tab') {
+    trapFocusIn(document.getElementById('modal-box') || document.getElementById('modal-overlay'), e);
+    return;
+  }
+  if (aiOpen && e.key === 'Tab') {
+    trapFocusIn(document.getElementById('ai-panel'), e);
     return;
   }
 
@@ -5066,14 +5509,26 @@ async function renderView() {
   syncFilterControls();
   const main = document.getElementById('main-content');
 
-  document.querySelectorAll('.nav-tab').forEach(t => {
+  const PRIMARY = new Set(['trending', 'recommended', 'watchlist', 'calendar']);
+  document.querySelectorAll('.nav-tab, .bn-item[data-view], .more-item[data-view]').forEach(t => {
     const active = t.dataset.view === state.view;
     t.classList.toggle('active', active);
-    /* Keep the active tab visible in the swipeable mobile strip. */
-    if (active && window.matchMedia('(max-width: 700px)').matches) {
+    if (active) t.setAttribute('aria-current', 'page');
+    else t.removeAttribute('aria-current');
+    if (active && t.classList.contains('nav-tab') && t.scrollIntoView) {
       t.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
     }
   });
+  const moreBtn = document.getElementById('bn-more');
+  if (moreBtn) {
+    const moreActive = !PRIMARY.has(state.view);
+    moreBtn.classList.toggle('active', moreActive);
+    if (moreActive) moreBtn.setAttribute('aria-current', 'page');
+    else moreBtn.removeAttribute('aria-current');
+  }
+  closeMoreSheet();
+  updateWelcome();
+  window.scrollTo({ top: 0, behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' });
 
   main.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading…</p></div>';
 
@@ -5094,7 +5549,7 @@ async function renderView() {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('Render error:', e);
-    main.innerHTML = emptyStateHTML('⚠️', 'Could not load this view', esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load this view', esc(friendlyError(e)), 'retry');
   }
   observeLazyCards();
 }
@@ -5330,7 +5785,7 @@ async function renderTrending(main, token) {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('renderTrending error:', e);
-    main.innerHTML = emptyStateHTML('⚠️', 'Could not load trending', esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load trending', esc(friendlyError(e)), 'retry');
   }
 }
 
@@ -5371,7 +5826,7 @@ async function personBrowse(personId, name) {
     renderRow(main, `📺 Shows with ${esc(label)} (${shows.length})`, shows);
   } catch (e) {
     if (token !== renderToken) return;
-    main.innerHTML = emptyStateHTML('⚠️', "Could not load this person's titles", esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', "Could not load this person's titles", esc(friendlyError(e)), 'retry');
   }
 }
 
@@ -5976,7 +6431,7 @@ async function renderUpcoming(main, token) {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('renderUpcoming error:', e);
-    main.innerHTML = emptyStateHTML('⚠️', 'Could not load upcoming releases', esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load upcoming releases', esc(friendlyError(e)), 'retry');
   }
 }
 function debounce(fn, ms = 250) {
@@ -6375,6 +6830,9 @@ async function renderRecommended(main, token) {
   `;
   main.appendChild(summary);
 
+  const stampWhy = (list) => (list || []).forEach(i => { i._why = whyFor(i, affinity); });
+  stampWhy(recMovies.results);
+  stampWhy(recTV.results);
   renderRow(main, recMovies.label, recMovies.results, true);
   renderRow(main, recTV.label, recTV.results, true);
 
@@ -6410,6 +6868,7 @@ async function renderRecommended(main, token) {
       if (token !== renderToken) return;
 
       if (results.length) {
+        results.forEach(i => { i._why = `Because you loved ${title}`; });
         renderRow(main, `Because you loved ${type === 'movie' ? '🎬' : '📺'} ${esc(title)}`, results);
       }
     } catch (e) { console.warn('Recommendations fetch error:', e); }
@@ -6436,6 +6895,7 @@ async function renderRecommended(main, token) {
         .slice(0, 8);
       if (token !== renderToken) return;
       if (gapItems.length) {
+        gapItems.forEach(i => { i._why = `A ${GENRE_MAP[gapGenre]} title you haven't explored`; });
         renderRow(main, `🕵️ Genre Gap — Unrated ${GENRE_MAP[gapGenre]}`, gapItems);
       }
     } catch (e) { console.warn('Genre gap error:', e); }
@@ -6708,7 +7168,7 @@ async function renderSearch(main, token) {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('Search error:', e);
-    main.innerHTML = emptyStateHTML('⚠️', 'Search failed', esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', 'Search failed', esc(friendlyError(e)), 'retry');
   }
 }
 
@@ -6772,7 +7232,7 @@ async function renderQuickRate(main, token) {
     }
   } catch(e) {
     if (token !== renderToken) return;
-    main.innerHTML = emptyStateHTML('⚠️', 'Could not load Quick Rate', esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load Quick Rate', esc(friendlyError(e)), 'retry');
   }
 }
 
@@ -6959,7 +7419,7 @@ async function renderDiscoveries(main, token) {
   } catch (e) {
     if (token !== renderToken) return;
     console.warn('renderDiscoveries error:', e);
-    main.innerHTML = emptyStateHTML('⚠️', 'Could not load discoveries', esc(e.message), 'retry');
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load discoveries', esc(friendlyError(e)), 'retry');
   }
 }
 
@@ -7299,11 +7759,14 @@ function getStorageUsage() {
 }
 
 function clearCache() {
+  if (!confirm('Clear cached title details? Ratings, your list and AI rules are kept. Some filters and My List details may need to be refetched.')) {
+    return;
+  }
   _cache.clear();
   _inflight.clear();
   state.mediaDetails = {};
-  saveMediaDetails();
-  toast('Cache cleared successfully');
+  const ok = saveMediaDetails();
+  toast(ok === false ? 'Could not update storage.' : 'Cached details cleared');
   renderView();
 }
 function resetSeen() {
@@ -7998,6 +8461,68 @@ async function whatsOnTonight() {
 /* ─────────────────────────────────────────────────────────────────────
    INITIALIZATION
    ───────────────────────────────────────────────────────────────────── */
+function updateWelcome() {
+  const el = document.getElementById('welcome-banner');
+  if (!el) return;
+  const rated = Object.keys(state.ratings || {}).filter(k => state.ratings[k] > 0).length;
+  const dismissed = !!LS.get('welcome_dismissed');
+  el.classList.toggle('show', !dismissed && rated < 5);
+  const qr = el.querySelector('[data-action="quickrate"]');
+  if (qr && typeof TMDB_TOKEN === 'string' && TMDB_TOKEN.startsWith('__TMDB')) {
+    qr.textContent = 'Open Stats (import a backup)';
+    qr.dataset.action = 'stats-view';
+  }
+}
+
+function closeMoreSheet() {
+  const sheet = document.getElementById('more-sheet');
+  const scrim = document.getElementById('more-scrim');
+  const btn = document.getElementById('bn-more');
+  if (sheet) { sheet.classList.remove('open'); sheet.hidden = true; }
+  if (scrim) { scrim.classList.remove('open'); scrim.hidden = true; }
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+function openMoreSheet() {
+  const sheet = document.getElementById('more-sheet');
+  const scrim = document.getElementById('more-scrim');
+  const btn = document.getElementById('bn-more');
+  if (sheet) { sheet.hidden = false; sheet.classList.add('open'); }
+  if (scrim) { scrim.hidden = false; scrim.classList.add('open'); }
+  if (btn) btn.setAttribute('aria-expanded', 'true');
+  const first = sheet?.querySelector('button');
+  first?.focus({ preventScroll: true });
+}
+
+function toggleMoreSheet() {
+  const sheet = document.getElementById('more-sheet');
+  if (sheet?.classList.contains('open')) closeMoreSheet();
+  else openMoreSheet();
+}
+
+document.getElementById('bn-more')?.addEventListener('click', e => {
+  e.preventDefault();
+  toggleMoreSheet();
+});
+document.getElementById('more-scrim')?.addEventListener('click', closeMoreSheet);
+document.querySelectorAll('.bottom-nav .bn-item[data-view], #more-sheet .more-item[data-view]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    closeMoreSheet();
+    state.view = btn.dataset.view;
+    renderView();
+  });
+});
+
+/* handleAction helper used by the welcome banner when the catalog is offline */
+const _handleActionOrig = handleAction;
+handleAction = function(action, el) {
+  if (action === 'stats-view') {
+    document.querySelector('[data-view="stats"]')?.click() || ((state.view = 'stats') && renderView());
+    return;
+  }
+  _handleActionOrig(action, el);
+};
+
 async function refreshSimklIfNeeded() {
   if (!state.simklToken) return;
   try {
@@ -8027,10 +8552,9 @@ async function refreshSimklIfNeeded() {
   document.getElementById('theme-toggle').textContent = state.theme === 'dark' ? '🌙' : '☀️';
 
   if (TMDB_TOKEN.startsWith('__TMDB')) {
-    document.getElementById('config-warning').classList.add('show');
-    console.warn('[Media Calendar] TMDB_TOKEN placeholder still present. ' +
-      'This is expected if you opened the raw source locally. ' +
-      'The CI workflow injects the real token before deploy.');
+    console.warn('[Media Calendar] Catalog token is not set in this copy. ' +
+      'Browsing the catalog will be empty until a token is injected at deploy, ' +
+      'or the page is opened with a working catalog. List, ratings and Stats still work.');
   }
 
   /* Shared AI Director rules arrive as #rules=<base64>. Imported once,
@@ -8068,21 +8592,21 @@ async function refreshSimklIfNeeded() {
       : 'Tell me what you want to see — or never want to see again. Works offline for the common phrasings; add a model key under <strong>Setup</strong> for anything unusual.';
   }
 
-  const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  if (isLocal) {
-    const btn  = document.getElementById('simkl-btn');
-    const user = document.getElementById('simkl-user');
-    btn.textContent   = 'Simkl (deploy to enable)';
-    btn.style.opacity = '0.4';
-    btn.style.cursor  = 'not-allowed';
-    btn.onclick       = () => toast('Connect Simkl after deploying');
-    user.textContent  = '⚠ Running locally';
-    user.style.color  = 'var(--text-muted)';
-  } else {
-    updateSimklUI();
+  updateSimklUI();
+  if (!isLocalHost()) {
     await handleSimklCallback();
     await refreshSimklIfNeeded();
   }
+
+  updateWelcome();
+  document.getElementById('welcome-dismiss')?.addEventListener('click', () => {
+    LS.set('welcome_dismissed', true);
+    updateWelcome();
+  });
+  document.getElementById('welcome-banner')?.addEventListener('click', e => {
+    const el = e.target.closest('[data-action]');
+    if (el && el.id !== 'welcome-dismiss') handleAction(el.dataset.action, el);
+  });
 
   renderView();
 })();
