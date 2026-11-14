@@ -68,6 +68,12 @@
   .note-meta { color:var(--muted); font-size:.8rem; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   #noteMsg:empty { display:none; }
   #noteMsg { font-size:.85rem; margin-top:8px; }
+  .ac { position:relative; flex:1; min-width:160px; display:flex; }
+  .ac input { width:100%; }
+  .ac-list { position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:1200; margin:0; padding:4px; list-style:none; background:#0f172a; border:1px solid #475569; border-radius:8px; box-shadow:0 10px 26px rgba(0,0,0,.45); max-height:260px; overflow:auto; }
+  .ac-list li { padding:7px 10px; border-radius:6px; cursor:pointer; font-size:.9rem; }
+  .ac-list li[aria-selected="true"] { background:#334155; }
+  .ac-sub { display:block; color:var(--muted); font-size:.75rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   @media(max-width:700px){ #map{height:320px;} }
 </style>
 </head>
@@ -82,14 +88,14 @@
 
   <section class="card">
     <h2>1. 🗺️ Route map — start, end &amp; stops</h2>
-    <p class="muted">Set your start/end, then add stops in between. Click the map to drop a pin too. Route connects in list order.</p>
+    <p class="muted">Set your start/end, then add stops in between. Start typing a city, park or address and pick it from the suggestions — or click the map to drop a pin. Route connects in list order.</p>
     <div class="row" style="margin-bottom:8px">
-      <input id="tripStart" placeholder="Trip start — e.g. Denver, CO" />
-      <input id="tripEnd" placeholder="Trip end — e.g. Las Vegas, NV" />
+      <div class="ac"><input id="tripStart" placeholder="Trip start — e.g. Denver, CO" /></div>
+      <div class="ac"><input id="tripEnd" placeholder="Trip end — e.g. Las Vegas, NV" /></div>
       <button id="setEnds" type="button">Set start/end</button>
     </div>
     <div class="row" style="margin-bottom:10px">
-      <input id="locInput" placeholder="Add a stop in between — city, park, address…" />
+      <div class="ac"><input id="locInput" placeholder="Add a stop in between — city, park, address…" /></div>
       <button id="addLoc" type="button">Add stop</button>
       <button id="clearStops" class="ghost" type="button">Clear trip</button>
     </div>
@@ -242,6 +248,98 @@ async function write(method, path, payload){
   }
 }
 
+/* ---------- address suggestions ---------- */
+const pickedPlaces = new Map();
+let acTimer = null, acController = null;
+
+async function acSearch(q, signal){
+  const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(q);
+  const res = await fetch(url, { signal });
+  if (!res.ok) return [];
+  const rows = await res.json();
+  if (!Array.isArray(rows)) return [];
+  return rows.map(r => ({
+    label: String(r.display_name).split(',').slice(0, 2).join(','),
+    full: String(r.display_name),
+    lat: +r.lat,
+    lng: +r.lon
+  }));
+}
+
+function acSetup(input){
+  const box = document.createElement('ul');
+  box.className = 'ac-list';
+  box.id = input.id + 'List';
+  box.setAttribute('role', 'listbox');
+  box.hidden = true;
+  input.parentElement.appendChild(box);
+  input.setAttribute('autocomplete', 'off');
+  input.setAttribute('role', 'combobox');
+  input.setAttribute('aria-autocomplete', 'list');
+  input.setAttribute('aria-expanded', 'false');
+  input.setAttribute('aria-controls', box.id);
+
+  let items = [], active = -1;
+
+  const paint = () => {
+    box.innerHTML = items.map((it, i) =>
+      '<li role="option" id="' + box.id + '-' + i + '" data-i="' + i + '" aria-selected="' + (i === active) + '">'
+      + esc(it.label) + '<span class="ac-sub">' + esc(it.full) + '</span></li>').join('');
+    box.hidden = !items.length;
+    input.setAttribute('aria-expanded', String(items.length > 0));
+    if (active >= 0) {
+      const el = box.querySelector('[aria-selected="true"]');
+      if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+    }
+  };
+
+  const choose = i => {
+    const it = items[i];
+    if (!it) return;
+    input.value = it.label;
+    pickedPlaces.set(input.id, { label: it.label, lat: it.lat, lng: it.lng });
+    items = []; active = -1; paint();
+  };
+
+  input.addEventListener('input', () => {
+    const picked = pickedPlaces.get(input.id);
+    if (picked && picked.label !== input.value.trim()) pickedPlaces.delete(input.id);
+    const q = input.value.trim();
+    if (acTimer) clearTimeout(acTimer);
+    if (acController) acController.abort();
+    if (q.length < 3) { items = []; active = -1; paint(); return; }
+    acTimer = setTimeout(async () => {
+      acController = new AbortController();
+      try {
+        const found = await acSearch(q, acController.signal);
+        if (input.value.trim() !== q) return;
+        items = found; active = -1; paint();
+      } catch (err) { /* aborted, offline or nothing found — leave the list closed */ }
+    }, 400);
+  });
+
+  input.addEventListener('keydown', e => {
+    if (box.hidden || !items.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); active = (active + 1) % items.length; paint(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); active = (active - 1 + items.length) % items.length; paint(); }
+    else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); e.stopImmediatePropagation(); choose(active); }
+    else if (e.key === 'Escape') { items = []; active = -1; paint(); }
+  });
+
+  box.addEventListener('mousedown', e => {
+    const li = e.target.closest('li[data-i]');
+    if (!li) return;
+    e.preventDefault();
+    choose(+li.dataset.i);
+  });
+
+  input.addEventListener('blur', () => setTimeout(() => { box.hidden = true; box.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); }, 150));
+}
+
+acSetup($('tripStart'));
+acSetup($('tripEnd'));
+acSetup($('locInput'));
+
 /* ---------- 1. map & stops ---------- */
 const map = L.map('map').setView([39.5,-98.35],4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
@@ -334,12 +432,21 @@ async function addLocation(name){
   if (!name) return;
   const btn = $('addLoc');
   btn.disabled = true;
+  const picked = pickedPlaces.get('locInput');
+  if (picked && picked.label === name) {
+    hint('Adding ' + name + '…');
+    await write('POST', '/api/stops', { name: picked.label, lat: picked.lat, lng: picked.lng });
+    pickedPlaces.delete('locInput');
+    hint('');
+    btn.disabled = false;
+    return;
+  }
   hint('Looking up “' + name + '”…');
   try {
     const place = await geocode(name);
     hint(await write('POST', '/api/stops', place) ? '' : '');
   } catch (err) {
-    hint('Place not found — try a city or park name, or click the map.');
+    hint('Place not found — pick one from the suggestions, or click the map.');
   } finally {
     btn.disabled = false;
   }
@@ -356,8 +463,14 @@ $('setEnds').onclick = async () => {
   btn.disabled = true;
   hint('Looking up your route…');
   try {
-    const start = await geocode(s);
-    const end = await geocode(e);
+    const pickedStart = pickedPlaces.get('tripStart');
+    const pickedEnd = pickedPlaces.get('tripEnd');
+    const start = pickedStart && pickedStart.label === s
+      ? { name: pickedStart.label, lat: pickedStart.lat, lng: pickedStart.lng }
+      : await geocode(s);
+    const end = pickedEnd && pickedEnd.label === e
+      ? { name: pickedEnd.label, lat: pickedEnd.lat, lng: pickedEnd.lng }
+      : await geocode(e);
     hint(await write('POST', '/api/trip/ends', { start, end }) ? '' : '');
   } catch (err) {
     hint('Could not find that start or end — check spelling and try again.');
