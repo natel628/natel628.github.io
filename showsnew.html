@@ -7731,7 +7731,7 @@ async function loadMoreSearchResults() {
     }
     state.searchPage = page;
 
-    const existingRow = main.querySelector('.card-row[data-search-row]');
+    const existingRow = main.querySelector('[data-search-row]');
     if (existingRow) {
       newResults.forEach(item => existingRow.appendChild(buildCard(item)));
       updateSearchMeta(main);
@@ -7775,12 +7775,8 @@ function renderSearchRow(main) {
       <span class="section-title">Search results for "${esc(searchQuery)}"</span>
       <span class="search-meta" style="margin-left:auto;font-size: var(--text-sm);color:var(--text-muted)">${searchResults.length} results</span>
     </div>
-    <div class="row-wrap">
-      <button class="row-scroll-btn left" aria-label="Scroll left">&#8249;</button>
-      <div class="card-row" data-search-row></div>
-      <button class="row-scroll-btn right" aria-label="Scroll right">&#8250;</button>
-    </div>`;
-  const row = sec.querySelector('.card-row');
+    <div class="watchlist-grid" data-search-row></div>`;
+  const row = sec.querySelector('[data-search-row]');
   searchResults.forEach(item => row.appendChild(buildCard(item)));
   main.appendChild(sec);
   updateSearchMeta(main);
