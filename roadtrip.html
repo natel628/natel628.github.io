@@ -91,6 +91,14 @@
   .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
   #golfMsg:empty { display:none; }
   #golfMsg { font-size:.85rem; margin-top:8px; }
+  #eventList { display:grid; gap:8px; margin-top:12px; }
+  .event { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+  .event-name { font-weight:700; }
+  .event-meta { color:var(--muted); font-size:.8rem; display:flex; gap:8px; flex-wrap:wrap; margin-top:3px; }
+  .event-links { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .event-links a { text-decoration:none; border:1px solid #475569; border-radius:8px; padding:6px 10px; font-size:.85rem; }
+  #eventMsg:empty { display:none; }
+  #eventMsg { font-size:.85rem; margin-top:8px; }
   @media(max-width:700px){ #map{height:320px;} }
 </style>
 </head>
@@ -226,6 +234,23 @@
     <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="golfMap"></div>
     <div id="golfList"></div>
+  </section>
+
+  <section class="card">
+    <h2>8. 🏟️ Sporting events</h2>
+    <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page.</p>
+    <div class="row">
+      <div class="ac"><input id="eventArea" placeholder="Area — e.g. Denver, CO" aria-label="Area to search for events" /></div>
+      <input id="eventDate" type="date" style="max-width:190px;flex:none" aria-label="Event date" />
+      <select id="eventRadius" aria-label="Event search radius" style="max-width:170px;flex:none">
+        <option value="25">Within 25 mi</option>
+        <option value="50" selected>Within 50 mi</option>
+        <option value="100">Within 100 mi</option>
+      </select>
+      <button type="button" id="eventFind">Find events</button>
+    </div>
+    <p id="eventMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="eventList"></div>
   </section>
 </main>
 
@@ -1025,6 +1050,78 @@ $('golfFind').onclick = async () => {
   }
 };
 $('golfQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFind').click(); } });
+
+/* ---------- 8. sporting events ---------- */
+function eventsMsg(t){
+  const m = $('eventMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 8000);
+}
+function eventLinks(area, date){
+  const q = encodeURIComponent('sports ' + area);
+  return '<div class="event-links">'
+    + '<a href="https://www.ticketmaster.com/search?q=' + q + '&startDate=' + encodeURIComponent(date) + '&endDate=' + encodeURIComponent(date) + '" target="_blank" rel="noopener noreferrer">Search Ticketmaster ↗</a>'
+    + '<a href="https://seatgeek.com/search?q=' + q + '" target="_blank" rel="noopener noreferrer">Search SeatGeek ↗</a>'
+    + '</div>';
+}
+function renderEvents(data, place, date){
+  const el = $('eventList');
+  const where = place.name;
+  if (!data.configured) {
+    el.innerHTML = '<p class="muted">Live event search is not switched on for this site yet — it needs a Ticketmaster Discovery API key stored as TICKETMASTER_API_KEY in the site settings. Until then these open the same area and date on the ticketing sites:</p>'
+      + eventLinks(where, date);
+    return;
+  }
+  if (data.error) {
+    el.innerHTML = '<p class="muted">' + esc(data.error) + '</p>' + eventLinks(where, date);
+    return;
+  }
+  if (!data.events.length) {
+    el.innerHTML = '<p class="muted">No sporting events found near ' + esc(where) + ' on ' + esc(date) + ' — try a bigger radius or another date.</p>'
+      + eventLinks(where, date);
+    return;
+  }
+  el.innerHTML = data.events.map(ev =>
+    '<div class="event">'
+    + '<div><div class="event-name">' + esc(ev.name) + '</div>'
+    + '<div class="event-meta"><span>' + esc(ev.date) + (ev.time ? ' · ' + esc(ev.time) : '') + '</span>'
+    + (ev.venue ? '<span>' + esc(ev.venue) + (ev.city ? ', ' + esc(ev.city) : '') + '</span>' : '')
+    + (ev.genre ? '<span>' + esc(ev.genre) + '</span>' : '') + '</div></div>'
+    + (ev.url ? '<a class="small" href="' + esc(ev.url) + '" target="_blank" rel="noopener noreferrer">Tickets ↗</a>' : '')
+    + '</div>').join('');
+}
+
+$('eventFind').onclick = async () => {
+  const area = $('eventArea').value.trim();
+  const date = $('eventDate').value;
+  if (!area) { eventsMsg('Choose an area first.'); return; }
+  if (!date) { eventsMsg('Choose a date.'); return; }
+  const btn = $('eventFind');
+  btn.disabled = true;
+  eventsMsg('Looking for sport near ' + area + ' on ' + date + '…');
+  try {
+    const picked = pickedPlaces.get('eventArea');
+    const place = picked && picked.label === area
+      ? { name: picked.label, lat: picked.lat, lng: picked.lng }
+      : await geocode(area);
+    const res = await fetch(API_BASE + '/api/events?lat=' + place.lat + '&lng=' + place.lng
+      + '&date=' + encodeURIComponent(date) + '&radius=' + encodeURIComponent($('eventRadius').value));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'The event search failed.');
+    eventsMsg('');
+    renderEvents(data, place, date);
+  } catch (err) {
+    eventsMsg(err.message || 'Could not search for events right now.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('eventArea').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('eventFind').click(); } });
+acSetup($('eventArea'));
+(function setToday(){
+  const now = new Date();
+  $('eventDate').value = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+})();
 
 /* ---------- boot + live refresh ---------- */
 const savedLookup = JSON.parse(localStorage.getItem('rt_lookup') || '{}');
