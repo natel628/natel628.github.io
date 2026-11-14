@@ -78,7 +78,7 @@
   .ac-sub { display:block; color:var(--muted); font-size:.75rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #photoGrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:12px; }
   .photo { background:#0f172a; border:1px solid #334155; border-radius:10px; overflow:hidden; margin:0; }
-  .photo img { display:block; width:100%; height:150px; object-fit:cover; background:#0b1220; }
+  .photo img, .photo video { display:block; width:100%; height:150px; object-fit:cover; background:#0b1220; }
   .photo-meta { padding:8px 10px; display:flex; gap:8px; align-items:center; justify-content:space-between; font-size:.8rem; color:var(--muted); }
   .photo-meta span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #photoMsg:empty { display:none; }
@@ -207,12 +207,12 @@
   </section>
 
   <section class="card">
-    <h2>6. 📸 Photos</h2>
-    <p class="muted">Share a shot from the road — everyone who opens this page sees it. JPEG, PNG, WebP or GIF up to 5&nbsp;MB.</p>
+    <h2>6. 📸 Photos &amp; videos</h2>
+    <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 5&nbsp;MB, videos up to 25&nbsp;MB (MP4, WebM, MOV).</p>
     <div class="row">
-      <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Photo file" style="flex:1;min-width:200px;padding:8px" />
-      <input id="photoCaption" placeholder="Caption (optional) — e.g. Moab at sunrise" aria-label="Photo caption" />
-      <button type="button" id="photoUpload">Upload photo</button>
+      <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
+      <input id="photoCaption" placeholder="Caption (optional) — e.g. Moab at sunrise" aria-label="Photo or video caption" />
+      <button type="button" id="photoUpload">Upload</button>
       <button type="button" id="photoClear" class="ghost">Clear album</button>
     </div>
     <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
@@ -221,7 +221,7 @@
 
   <section class="card">
     <h2>7. ⛳ Golf courses</h2>
-    <p class="muted">Search a town or area, look over the courses on the map, then add one straight to your route.</p>
+    <p class="muted">Search a town or area, or click the map to drop a search pin, then look over the courses and add one straight to your route.</p>
     <div class="row">
       <input id="golfQuery" placeholder="Search near — e.g. Moab, UT" aria-label="Search golf courses near" />
       <select id="golfRadius" aria-label="Search radius" style="max-width:170px;flex:none">
@@ -230,7 +230,9 @@
         <option value="80">Within 50 mi</option>
       </select>
       <button type="button" id="golfFind">Find courses</button>
+      <button type="button" id="golfClearPin" class="ghost">Clear pin</button>
     </div>
+    <p class="muted" id="golfPinState" style="margin-top:6px"></p>
     <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="golfMap"></div>
     <div id="golfList"></div>
@@ -882,12 +884,14 @@ function photoSize(n){ return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : M
 function renderPhotos(){
   const el = $('photoGrid');
   if (!state.photos.length) {
-    el.innerHTML = '<p class="muted">No photos yet — upload the first one above.</p>';
+    el.innerHTML = '<p class="muted">Nothing shared yet — upload the first photo or video above.</p>';
     return;
   }
   el.innerHTML = state.photos.map(p =>
     '<figure class="photo">'
-    + '<img src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" alt="' + esc(p.caption || 'Trip photo') + '" loading="lazy" />'
+    + ((p.type || '').indexOf('video/') === 0
+      ? '<video src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" controls preload="metadata" playsinline aria-label="' + esc(p.caption || 'Trip video') + '"></video>'
+      : '<img src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" alt="' + esc(p.caption || 'Trip photo') + '" loading="lazy" />')
     + '<figcaption class="photo-meta"><span>' + esc(p.caption || 'Untitled') + ' · ' + esc(new Date(p.at).toLocaleDateString()) + '</span>'
     + '<button type="button" class="small ghost" data-photo="' + esc(p.id) + '" aria-label="Delete photo ' + esc(p.caption || '') + '">✕</button></figcaption>'
     + '</figure>').join('');
@@ -895,9 +899,17 @@ function renderPhotos(){
 $('photoUpload').onclick = async () => {
   const input = $('photoFile');
   const file = input.files && input.files[0];
-  if (!file) { photoMsg('Choose an image first.'); return; }
-  if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) { photoMsg('Only JPEG, PNG, WebP or GIF images.'); return; }
-  if (file.size > 5242880) { photoMsg('That image is ' + photoSize(file.size) + ' — the limit is 5 MB.'); return; }
+  if (!file) { photoMsg('Choose a photo or video first.'); return; }
+  const isVideo = /^video\/(mp4|webm|quicktime)$/.test(file.type);
+  if (!isVideo && !/^image\/(jpeg|png|webp|gif)$/.test(file.type)) {
+    photoMsg('Only JPEG, PNG, WebP, GIF, MP4, WebM or MOV files.');
+    return;
+  }
+  const limit = isVideo ? 26214400 : 5242880;
+  if (file.size > limit) {
+    photoMsg('That ' + (isVideo ? 'video' : 'image') + ' is ' + photoSize(file.size) + ' — the limit is ' + (isVideo ? '25 MB' : '5 MB') + '.');
+    return;
+  }
   const btn = $('photoUpload');
   btn.disabled = true;
   photoMsg('Uploading ' + photoSize(file.size) + '…');
@@ -911,7 +923,7 @@ $('photoUpload').onclick = async () => {
     applyState(data);
     input.value = '';
     $('photoCaption').value = '';
-    photoMsg('Photo shared with everyone.');
+    photoMsg((isVideo ? 'Video' : 'Photo') + ' shared with everyone.');
   } catch (err) {
     photoMsg(err.message || 'Could not upload that photo.');
   } finally {
@@ -931,7 +943,7 @@ const golfMap = L.map('golfMap').setView([39.5, -98.35], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(golfMap);
 const golfLayer = L.layerGroup().addTo(golfMap);
 const golfCenterLayer = L.layerGroup().addTo(golfMap);
-let golfCourses = [], golfCenter = null, golfSelected = -1;
+let golfCourses = [], golfCenter = null, golfSelected = -1, golfPin = null, golfPinMarker = null;
 
 function golfMsg(t){
   const m = $('golfMsg');
@@ -939,8 +951,7 @@ function golfMsg(t){
   setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 8000);
 }
 
-async function findGolfCourses(place, radiusKm){
-  const center = await geocode(place);
+async function findGolfCourses(center, radiusKm){
   const dLat = radiusKm / 111;
   const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
   const bbox = [center.lng - dLon, center.lat - dLat, center.lng + dLon, center.lat + dLat]
@@ -991,7 +1002,7 @@ function renderGolf(){
   golfCenterLayer.clearLayers();
   golfSelected = -1;
 
-  if (golfCenter) {
+  if (golfCenter && !golfPin) {
     L.circleMarker([golfCenter.lat, golfCenter.lng], { radius: 6, color: '#f59e0b', weight: 2, fillColor: '#f59e0b', fillOpacity: 0.6 })
       .addTo(golfCenterLayer)
       .bindPopup('Search centre: ' + esc(golfCenter.name));
@@ -1034,14 +1045,50 @@ $('golfList').addEventListener('click', async e => {
   golfMsg(ok ? course.name + ' added to your route.' : 'Could not add that course.');
 });
 
+function clearGolfPin(){
+  golfPin = null;
+  if (golfPinMarker) { golfMap.removeLayer(golfPinMarker); golfPinMarker = null; }
+  $('golfPinState').textContent = '';
+}
+
+function setGolfPin(lat, lng){
+  golfPin = { lat, lng };
+  if (golfPinMarker) golfMap.removeLayer(golfPinMarker);
+  $('golfPinState').textContent = 'Search pin at ' + lat.toFixed(3) + ', ' + lng.toFixed(3) + ' — press Find courses to search around it.';
+  golfPinMarker = L.marker([lat, lng], { draggable: true }).addTo(golfMap)
+    .bindPopup('Search pin — drag to move, then press Find courses.');
+  golfPinMarker.on('dragend', ev => {
+    const moved = ev.target.getLatLng();
+    golfPin = { lat: moved.lat, lng: moved.lng };
+    $('golfPinState').textContent = 'Search pin at ' + golfPin.lat.toFixed(3) + ', ' + golfPin.lng.toFixed(3) + ' — press Find courses to search around it.';
+    golfMsg('Pin moved — press Find courses to search here.');
+  });
+  golfPinMarker.openPopup();
+  golfMsg('Pin set — press Find courses to search around it.');
+}
+
+golfMap.on('click', e => setGolfPin(e.latlng.lat, e.latlng.lng));
+$('golfClearPin').onclick = () => {
+  if (!golfPin) { golfMsg('No pin set — click the map to drop one.'); return; }
+  clearGolfPin();
+  golfMsg('Pin cleared — search uses the typed area again.');
+};
+$('golfQuery').addEventListener('input', () => { if (golfPin) clearGolfPin(); });
+
 $('golfFind').onclick = async () => {
-  const place = $('golfQuery').value.trim();
-  if (!place) { golfMsg('Type a town or area to search near.'); return; }
   const btn = $('golfFind');
+  const place = $('golfQuery').value.trim();
+  if (!golfPin && !place) {
+    golfMsg('Type a town or area, or click the map to drop a search pin.');
+    return;
+  }
   btn.disabled = true;
-  golfMsg('Looking for golf courses near ' + place + '…');
   try {
-    const found = await findGolfCourses(place, +$('golfRadius').value);
+    const center = golfPin
+      ? { name: 'the map pin', lat: golfPin.lat, lng: golfPin.lng }
+      : await geocode(place);
+    golfMsg('Looking for golf courses near ' + center.name + '…');
+    const found = await findGolfCourses(center, +$('golfRadius').value);
     golfCenter = found.center;
     golfCourses = found.courses;
     renderGolf();
