@@ -27,6 +27,7 @@
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
   #stops li { display:flex; align-items:center; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
+  #stops li.leg { display:flex; gap:6px; background:transparent; border:none; padding:0 0 0 36px; color:var(--muted); font-size:.8rem; }
   .num { background:var(--accent); color:#111; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-weight:800; flex-shrink:0; }
   a { color:var(--accent); }
   #itinerary { display:grid; gap:10px; margin-top:12px; }
@@ -525,7 +526,90 @@ function distanceLabel(place, anchor){
 }
 
 function legMi(a,b){ return hav(a,b)*CIRC; }
-function totalDriveMi(){ let t=0; for(let i=1;i<state.stops.length;i++) t+=legMi(state.stops[i-1],state.stops[i]); return t; }
+
+let legInfo = [], legKey = '', legsPending = false;
+
+// Road distance for the stops a..b, falling back to the straight-line estimate
+// for any leg the router has not answered for yet.
+function segMiles(a, b){
+  let straight = 0;
+  for (let i = a; i < b; i++) straight += legMi(state.stops[i], state.stops[i+1]);
+  if (!legInfo.length || legInfo.length < b) return { mi: straight, mins: null, real: false };
+  let mi = 0, mins = 0;
+  for (let i = a; i < b; i++) {
+    const leg = legInfo[i];
+    if (!leg) return { mi: straight, mins: null, real: false };
+    mi += leg.mi;
+    mins += leg.mins;
+  }
+  return { mi, mins, real: true };
+}
+
+function legText(i){
+  const a = state.stops[i], b = state.stops[i + 1];
+  if (!a || !b) return '';
+  const leg = legInfo[i];
+  if (leg) {
+    const mi = leg.mi < 10 ? leg.mi.toFixed(1) : Math.round(leg.mi).toLocaleString();
+    return mi + ' mi · ' + minsText(leg.mins);
+  }
+  if (legsPending) return 'working out the drive…';
+  return '~' + Math.round(legMi(a, b)).toLocaleString() + ' mi straight line · drive time unavailable';
+}
+
+function paintLegs(){
+  const ul = $('stops');
+  [...ul.querySelectorAll('li.leg')].forEach(el => el.remove());
+  const items = [...ul.querySelectorAll('li[data-stop]')];
+  items.forEach((li, i) => {
+    if (i === items.length - 1) return;
+    const row = document.createElement('li');
+    row.className = 'leg';
+    row.innerHTML = '<span aria-hidden="true">↓</span><span>' + esc(legText(i)) + '</span>';
+    li.after(row);
+  });
+}
+
+function updateTripStats(){
+  if (state.stops.length < 2) return;
+  const total = segMiles(0, state.stops.length - 1);
+  $('tripStats').textContent = state.stops.length + ' stops (' + state.stops[0].name + ' → '
+    + state.stops[state.stops.length-1].name + ') · ' + (total.real ? '' : '~')
+    + Math.round(total.mi).toLocaleString() + ' miles'
+    + (total.real ? ' · ' + minsText(total.mins) + ' drive' : ' straight-line');
+}
+
+async function refreshLegs(){
+  const stops = state.stops;
+  const key = stops.map(s => s.id).join(',');
+  if (stops.length < 2) { legInfo = []; legKey = key; legsPending = false; paintLegs(); return; }
+  if (key === legKey) { paintLegs(); return; }
+  legKey = key;
+  legInfo = [];
+  legsPending = true;
+  paintLegs();
+
+  const coords = stops.map(s => s.lng.toFixed(5) + ',' + s.lat.toFixed(5)).join(';');
+  let rows = null;
+  try {
+    const res = await fetch('https://router.project-osrm.org/table/v1/driving/' + coords + '?annotations=distance,duration');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.distances && data.durations) {
+        rows = stops.slice(1).map((_, i) => {
+          const d = data.distances[i][i + 1], t = data.durations[i][i + 1];
+          return Number.isFinite(d) && Number.isFinite(t) ? { mi: d / 1609.344, mins: t / 60 } : null;
+        });
+      }
+    }
+  } catch (e) { /* straight-line legs remain */ }
+  if (legKey !== key) return;
+  legsPending = false;
+  legInfo = rows || [];
+  paintLegs();
+  updateTripStats();
+  renderPlan();
+}
 function fmtDate(d){ return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}); }
 function hint(text){ $('tripHint').textContent = text || ''; }
 
@@ -556,6 +640,7 @@ function renderStops(){
     markers.push(L.marker([s.lat, s.lng]).addTo(map).bindPopup('<b>' + esc(label) + '</b>'));
 
     const li = document.createElement('li');
+    li.dataset.stop = s.id;
     li.innerHTML = '<span class="num">' + (i + 1) + '</span>'
       + '<span style="flex:1">' + esc(s.name)
       + (isStart ? ' <span class="tag">start</span>' : '')
@@ -572,16 +657,16 @@ function renderStops(){
   if (state.stops.length > 1) {
     line = L.polyline(state.stops.map(s => [s.lat, s.lng]), { color:'#f59e0b', weight:4 }).addTo(map);
     map.fitBounds(line.getBounds().pad(0.2));
-    let mi = 0;
-    for (let i = 1; i < state.stops.length; i++) mi += hav(state.stops[i-1], state.stops[i]);
-    $('tripStats').textContent = state.stops.length + ' stops (' + state.stops[0].name + ' → '
-      + state.stops[state.stops.length-1].name + ') · ~' + Math.round(mi).toLocaleString() + ' miles straight-line';
+    updateTripStats();
   } else if (state.stops.length === 1) {
     map.setView([state.stops[0].lat, state.stops[0].lng], 8);
     $('tripStats').textContent = '1 stop — set a start/end or add another stop to draw a route.';
   } else {
     $('tripStats').textContent = '';
   }
+
+  paintLegs();
+  refreshLegs();
 }
 
 $('stops').addEventListener('click', e => {
@@ -674,10 +759,11 @@ function renderPlan(){
       const a = Math.round(c * legs / chunks), b = Math.round((c + 1) * legs / chunks);
       const seg = state.stops.slice(a, b + 1);
       if (!seg.length) continue;
-      let mi = 0;
-      for (let i = a; i < b; i++) mi += legMi(state.stops[i], state.stops[i+1]);
+      const segmentMiles = segMiles(a, b);
       const date = d0 ? fmtDate(new Date(d0.getTime() + c * 864e5)) : 'Day ' + (c + 1);
-      html += '<div class="day"><h3>' + date + ' <span class="muted">· ~' + Math.round(mi) + ' mi driving</span></h3><ol>'
+      html += '<div class="day"><h3>' + date + ' <span class="muted">· ' + (segmentMiles.real ? '' : '~')
+        + Math.round(segmentMiles.mi).toLocaleString() + ' mi driving'
+        + (segmentMiles.real ? ' · ' + minsText(segmentMiles.mins) : '') + '</span></h3><ol>'
         + seg.map(s => '<li>' + esc(s.name) + '</li>').join('') + '</ol><div class="muted">🌙 Overnight: '
         + esc(seg[seg.length-1].name) + '</div></div>';
     }
@@ -690,12 +776,12 @@ function renderPlan(){
   }
 
   if (state.stops.length > 1) {
-    const tmi = totalDriveMi();
-    pr.innerHTML = '<div class="prac-grid"><div><b>' + Math.round(tmi).toLocaleString() + ' mi</b><span>est. driving</span></div>'
-      + '<div><b>' + (tmi / MPH).toFixed(1) + ' h</b><span>behind the wheel</span></div>'
+    const total = segMiles(0, state.stops.length - 1);
+    pr.innerHTML = '<div class="prac-grid"><div><b>' + Math.round(total.mi).toLocaleString() + ' mi</b><span>' + (total.real ? 'driving' : 'est. driving') + '</span></div>'
+      + '<div><b>' + (total.real ? minsText(total.mins) : (total.mi / MPH).toFixed(1) + ' h') + '</b><span>behind the wheel</span></div>'
       + '<div><b>' + state.stops.length + '</b><span>stops</span></div>'
       + '<div><b>' + days + '</b><span>days</span></div>'
-      + '<div><b>' + Math.round(tmi / MPG) + ' gal</b><span>fuel ≈ @25mpg</span></div></div>';
+      + '<div><b>' + Math.round(total.mi / MPG) + ' gal</b><span>fuel ≈ @25mpg</span></div></div>';
   } else {
     pr.innerHTML = '<p class="muted">Estimates appear once your route has 2+ stops.</p>';
   }
