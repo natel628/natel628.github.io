@@ -28,8 +28,6 @@
   #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
   #stops li { display:flex; align-items:center; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
   .num { background:var(--accent); color:#111; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-weight:800; flex-shrink:0; }
-  .mkt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; margin-top:10px; }
-  .mkt-grid button { font-size:.9rem; }
   a { color:var(--accent); }
   #itinerary { display:grid; gap:10px; margin-top:12px; }
   .day { background:#0f172a; border:1px solid #334155; border-left:4px solid var(--accent); border-radius:10px; padding:12px 14px; }
@@ -41,26 +39,7 @@
   .prac-grid > div { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; text-align:center; }
   .prac-grid b { display:block; font-size:1.25rem; color:var(--accent); }
   .prac-grid span { color:var(--muted); font-size:.8rem; }
-  #watchList { display:grid; gap:10px; margin-top:12px; }
-  .watch { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px 14px; }
-  .watch.stale { border-color:#7f1d1d; }
-  .watch-head { display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; margin-bottom:4px; }
-  .watch-head strong { font-size:1rem; }
-  .watch-price { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; font-size:.9rem; margin-bottom:2px; }
-  .watch-price .price { font-size:1.4rem; font-weight:800; color:var(--accent); }
-  .delta.down { color:var(--green); font-weight:700; }
-  .delta.up { color:#f87171; font-weight:700; }
-  .spark { width:100%; height:30px; color:var(--muted); margin:6px 0 2px; display:block; }
-  .watch-note { color:var(--muted); font-size:.8rem; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-  .watch-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:8px; }
-  .watch-actions input { max-width:120px; flex:none; }
-  .warn { color:#f87171; font-weight:700; }
-  .hit { color:var(--green); font-weight:700; }
   .tag { display:inline-block; background:#334155; border-radius:20px; padding:2px 10px; font-size:.8rem; margin:2px 4px 2px 0; }
-  .watch-actions a.small { text-decoration:none; border:1px solid #475569; border-radius:8px; padding:6px 10px; font-size:.85rem; color:var(--accent); }
-  .watch-actions a.small:hover { border-color:var(--accent); }
-  #watchMsg:empty { display:none; }
-  #watchMsg { font-size:.85rem; margin-top:8px; }
   textarea { background:#0f172a; color:var(--text); border:1px solid #475569; border-radius:8px; padding:10px 12px; font:inherit; width:100%; resize:vertical; min-height:76px; }
   #noteList { display:grid; gap:10px; margin-top:12px; }
   .note { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px 14px; }
@@ -97,6 +76,14 @@
   .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
   #golfMsg:empty { display:none; }
   #golfMsg { font-size:.85rem; margin-top:8px; }
+  #foodMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
+  #foodList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
+  .food-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
+  .food-item.sel { border-color:var(--green); }
+  .food-pick { flex:1; text-align:left; background:transparent; color:var(--text); border:none; padding:0; display:grid; gap:2px; cursor:pointer; font-weight:600; }
+  .food-sub { color:var(--muted); font-size:.78rem; font-weight:400; }
+  #foodMsg:empty { display:none; }
+  #foodMsg { font-size:.85rem; margin-top:8px; }
   #eventList { display:grid; gap:8px; margin-top:12px; }
   .event { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap; }
   .event-name { font-weight:700; }
@@ -155,53 +142,7 @@
   </section>
 
   <section class="card">
-    <h2>4. 💰 RV &amp; van prices — live lookup + watch</h2>
-    <p class="muted">Marketplaces block automated price feeds (RV Trader serves a CAPTCHA, RVT returns 403), so the lookup opens your <strong>real search on each site</strong> — current inventory, current prices. Save anything you find below and this page keeps its price history: drops show green, targets turn green when hit, and anything unverified for 7+ days is flagged. The watch list is shared with everyone who opens this page.</p>
-    <div class="row">
-      <input id="q" placeholder="What? e.g. Sprinter, Solis, Basecamp, Class B…" />
-      <input id="loc" placeholder="Where? e.g. Denver, CO" />
-      <select id="radius" style="max-width:170px;flex:none" aria-label="Search radius">
-        <option value="100">Within 100 mi</option>
-        <option value="250" selected>Within 250 mi</option>
-        <option value="500">Within 500 mi</option>
-      </select>
-      <input id="priceMax" type="number" min="0" step="500" placeholder="Max $" style="max-width:130px;flex:none" aria-label="Maximum price" />
-    </div>
-    <div class="mkt-grid">
-      <button type="button" data-mkt="rvtrader">RV Trader</button>
-      <button type="button" data-mkt="rvt">RVT.com</button>
-      <button type="button" data-mkt="rvusa">RVUSA</button>
-      <button type="button" data-mkt="campingworld">Camping World</button>
-      <button type="button" data-mkt="autotrader">Autotrader</button>
-      <button type="button" data-mkt="ebay">eBay Motors</button>
-      <button type="button" data-mkt="craigslist">Craigslist</button>
-      <button type="button" data-mkt="facebook">Facebook Marketplace</button>
-    </div>
-    <p class="muted" id="searchHint" role="status" aria-live="polite" style="margin-top:10px"></p>
-    <p class="muted" style="margin-top:2px">Craigslist uses the city from <em>Where</em> (e.g. Denver &rarr; denver.craigslist.org); with no city it searches every Craigslist region.</p>
-
-    <h3 style="margin:20px 0 4px;font-size:1rem">Watch list</h3>
-    <p class="muted">Paste a rig you found, then log its price whenever you re-check. History is shared and saved on the server.</p>
-    <div class="row">
-      <input id="wTitle" placeholder="Listing title — e.g. 2021 Sprinter 144 4x4" aria-label="Listing title" />
-      <input id="wPrice" type="number" min="0" step="100" placeholder="Price $" style="max-width:120px;flex:none" aria-label="Current price" />
-      <input id="wTarget" type="number" min="0" step="100" placeholder="Target $" style="max-width:120px;flex:none" aria-label="Target price" />
-    </div>
-    <div class="row" style="margin-top:8px">
-      <input id="wUrl" placeholder="Listing URL (https://…)" aria-label="Listing URL" />
-      <select id="wSource" style="max-width:190px;flex:none" aria-label="Source"></select>
-      <button type="button" id="wAdd">+ Save listing</button>
-    </div>
-    <p id="watchMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="watchList"></div>
-    <div class="row" style="margin-top:12px">
-      <button type="button" id="wExport" class="ghost">Export CSV</button>
-      <button type="button" id="wClear" class="ghost">Clear watch list</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>5. 📝 Notes</h2>
+    <h2>4. 📝 Notes</h2>
     <p class="muted">Anything worth remembering — campsites to book, contacts, gear to pack, detours to try. Notes are shared with everyone who opens this page.</p>
     <textarea id="noteBody" rows="3" placeholder="e.g. Book the Moab campsite before April — it fills up fast." aria-label="Note text"></textarea>
     <div class="row" style="margin-top:8px">
@@ -213,7 +154,7 @@
   </section>
 
   <section class="card">
-    <h2>6. 📸 Photos &amp; videos</h2>
+    <h2>5. 📸 Photos &amp; videos</h2>
     <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 10&nbsp;MB, videos up to 75&nbsp;MB (MP4, WebM, MOV).</p>
     <div class="row">
       <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
@@ -230,7 +171,7 @@
   </section>
 
   <section class="card">
-    <h2>7. ⛳ Golf courses</h2>
+    <h2>6. ⛳ Golf courses</h2>
     <p class="muted">Search a town or area, or click the map to drop a search pin, then look over the courses and add one straight to your route.</p>
     <div class="row">
       <input id="golfQuery" placeholder="Search near — e.g. Moab, UT" aria-label="Search golf courses near" />
@@ -250,6 +191,29 @@
     <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="golfMap"></div>
     <div id="golfList"></div>
+  </section>
+
+  <section class="card">
+    <h2>7. 🍽️ Places to eat</h2>
+    <p class="muted">Search a town or area — or click the map to drop a pin — to list restaurants and cafés around it, then add the ones you like to your route. Distances are straight-line from the search point.</p>
+    <div class="row">
+      <input id="foodQuery" placeholder="Search near — e.g. Moab, UT" aria-label="Search places to eat near" />
+      <select id="foodRadius" style="max-width:170px;flex:none" aria-label="Search radius">
+        <option value="3">Within 3 mi</option>
+        <option value="10" selected>Within 10 mi</option>
+        <option value="30">Within 30 mi</option>
+      </select>
+      <button type="button" id="foodFind">Find places to eat</button>
+      <button type="button" id="foodClearPin" class="ghost">Clear pin</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="foodName" placeholder="Or search a place by name — e.g. Franklin Barbecue" aria-label="Search a place to eat by name" />
+      <button type="button" id="foodFindName">Find by name</button>
+    </div>
+    <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
+    <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="foodMap"></div>
+    <div id="foodList"></div>
   </section>
 
   <section class="card">
@@ -279,10 +243,7 @@ const API_BASE = /(^|\.)github\.io$/.test(location.hostname)
   ? 'https://site-40527424745f40ee94a923a69d477c05.freebuff.page'
   : '';
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const money = n => '$' + Math.round(+n).toLocaleString();
-const DAY = 864e5;
 const CIRC = 1.28, MPH = 55, MPG = 25;
-const SITES = ['RV Trader','RVT.com','RVUSA','Camping World','eBay Motors','Autotrader','Craigslist','Facebook Marketplace','Other'];
 
 /* ---------- shared state ---------- */
 let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [], notes: [], photos: [] };
@@ -310,7 +271,6 @@ function applyState(next){
   renderStops();
   renderPlan();
   syncPlanInputs();
-  renderWatch();
   renderNotes();
   renderPhotos();
 }
@@ -720,138 +680,6 @@ $('planDays').addEventListener('change', () => {
   write('PUT', '/api/plan', { days: v });
 });
 
-/* ---------- 4. lookups + watch list ---------- */
-function lookupParams(){
-  return {
-    q: $('q').value.trim() || 'camper van',
-    loc: $('loc').value.trim(),
-    radius: $('radius').value,
-    max: Math.round(+$('priceMax').value) || 0
-  };
-}
-function marketplaceUrl(key, p){
-  const q = encodeURIComponent(p.q), where = encodeURIComponent(p.loc);
-  const near = encodeURIComponent(p.loc ? p.q + ' near ' + p.loc : p.q);
-  const loc = p.loc ? '&location=' + where : '';
-  const max = p.max ? '&maxPrice=' + p.max : '';
-  switch (key) {
-    case 'rvtrader':    return 'https://www.rvtrader.com/search-results?keywords=' + q + loc + '&searchRadius=' + p.radius + max;
-    case 'rvt':         return 'https://www.rvt.com/rv-search-results?query=' + q;
-    case 'rvusa':       return 'https://www.rvusa.com/rvs-for-sale?search=' + q;
-    case 'campingworld':return 'https://www.campingworld.com/search?q=' + q;
-    case 'autotrader':  return 'https://www.autotrader.com/cars-for-sale/all-cars?keywords=' + q + '&searchRadius=' + p.radius + max;
-    case 'ebay':        return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(p.q + ' camper van rv') + '&_sacat=6001' + (p.max ? '&_udhi=' + p.max : '');
-    case 'craigslist': {
-      const city = (p.loc.split(',')[0] || '').toLowerCase().replace(/[^a-z]/g, '');
-      return city ? 'https://' + city + '.craigslist.org/search/rva?query=' + q + '&sort=priceasc'
-                  : 'https://www.google.com/search?q=site%3Acraigslist.org+%22' + encodeURIComponent(p.q) + '%22';
-    }
-    case 'facebook':    return 'https://www.facebook.com/marketplace/search/?query=' + near;
-  }
-  return null;
-}
-document.querySelectorAll('[data-mkt]').forEach(b => {
-  b.onclick = () => {
-    const p = lookupParams();
-    localStorage.setItem('rt_lookup', JSON.stringify(p));
-    $('searchHint').textContent = 'Opened ' + b.textContent.trim() + ' — “' + p.q + '”' + (p.loc ? ' near ' + p.loc : '') + ' in a new tab.';
-    window.open(marketplaceUrl(b.dataset.mkt, p), '_blank', 'noopener');
-  };
-});
-
-function msg(t){
-  const m = $('watchMsg');
-  m.textContent = t;
-  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
-}
-function sparkSVG(hist){
-  if (hist.length < 2) return '';
-  const ps = hist.map(h => h.p), min = Math.min(...ps), max = Math.max(...ps), span = (max - min) || 1;
-  const pts = ps.map((v, i) => (i / (ps.length - 1) * 100).toFixed(1) + ',' + (27 - (v - min) / span * 24).toFixed(1)).join(' ');
-  return '<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>';
-}
-
-function renderWatch(){
-  const el = $('watchList');
-  if (el.contains(document.activeElement)) return;
-  if (!state.watch.length) {
-    el.innerHTML = '<p class="muted">Nothing saved yet — run a lookup above, then paste the rig’s title, price and URL here to start tracking it.</p>';
-    return;
-  }
-  el.innerHTML = state.watch.map(w => {
-    const hist = w.history && w.history.length ? w.history : [{ p: w.price, t: Date.now() }];
-    const first = hist[0].p, lastT = hist[hist.length - 1].t;
-    const diff = first - w.price, pct = first ? Math.round(diff / first * 100) : 0;
-    const idle = Math.floor((Date.now() - lastT) / DAY);
-    const stale = idle >= 7;
-    const hit = w.target && w.price <= w.target;
-    const delta = diff > 0 ? '<span class="delta down">↓ ' + money(diff) + ' (' + Math.abs(pct) + '%) since first check</span>'
-                : diff < 0 ? '<span class="delta up">↑ ' + money(-diff) + ' (' + Math.abs(pct) + '%) since first check</span>'
-                : '<span class="watch-note">no change since first check</span>';
-    return '<div class="watch' + (stale ? ' stale' : '') + '">'
-      + '<div class="watch-head"><strong>' + esc(w.title) + '</strong><span class="tag">' + esc(w.source) + '</span>'
-      + (hit ? '<span class="hit">✓ at target</span>' : '') + '</div>'
-      + '<div class="watch-price"><span class="price">' + money(w.price) + '</span>' + delta
-      + (w.target ? '<span class="tag">target ' + money(w.target) + '</span>' : '') + '</div>'
-      + sparkSVG(hist)
-      + '<div class="watch-note">' + hist.length + ' price' + (hist.length === 1 ? '' : 's') + ' logged · last ' + (idle === 0 ? 'today' : idle + 'd ago')
-      + (stale ? ' <span class="warn">⚠ re-check this one</span>' : '') + '</div>'
-      + '<div class="watch-actions">'
-      + '<input type="number" min="0" step="100" value="' + w.price + '" data-role="price" aria-label="New price for ' + esc(w.title) + '" />'
-      + '<button type="button" class="small" data-act="log" data-id="' + esc(w.id) + '" aria-label="Log a new price for ' + esc(w.title) + '">Log price</button>'
-      + (w.url ? '<a class="small" href="' + esc(w.url) + '" target="_blank" rel="noopener noreferrer">Open listing ↗</a>' : '')
-      + '<button type="button" class="small ghost" data-act="remove" data-id="' + esc(w.id) + '" aria-label="Remove ' + esc(w.title) + ' from the watch list">✕</button>'
-      + '</div></div>';
-  }).join('');
-}
-
-$('watchList').addEventListener('click', e => {
-  const b = e.target.closest('button[data-act]');
-  if (!b) return;
-  const id = b.dataset.id;
-  if (b.dataset.act === 'remove') { write('DELETE', '/api/watch/' + encodeURIComponent(id)); return; }
-  if (b.dataset.act === 'log') {
-    const input = b.parentElement.querySelector('input[data-role="price"]');
-    const price = Math.round(+input.value);
-    input.blur();
-    if (!price || price < 0) { msg('Enter a whole-dollar price, e.g. 72500.'); return; }
-    write('POST', '/api/watch/' + encodeURIComponent(id) + '/price', { price }).then(ok => {
-      if (ok) msg('Price logged.');
-    });
-  }
-});
-
-$('wSource').innerHTML = SITES.map(s => '<option>' + s + '</option>').join('');
-$('wAdd').onclick = () => {
-  const title = $('wTitle').value.trim();
-  const price = Math.round(+$('wPrice').value);
-  const target = Math.round(+$('wTarget').value) || 0;
-  if (!title || !price) { msg('A listing needs a title and its current price.'); return; }
-  write('POST', '/api/watch', { title, price, target, url: $('wUrl').value.trim(), source: $('wSource').value }).then(ok => {
-    if (!ok) return;
-    ['wTitle','wPrice','wTarget','wUrl'].forEach(id => { $(id).value = ''; });
-    msg('Saved “' + title + '” — log its price whenever you re-check.');
-  });
-};
-$('wExport').onclick = () => {
-  if (!state.watch.length) { msg('Nothing to export yet.'); return; }
-  const rows = [['title','source','price','target','url','logged','last_checked']];
-  state.watch.forEach(w => {
-    const h = w.history || [];
-    rows.push([w.title, w.source, w.price, w.target || '', w.url || '', h.length, h.length ? new Date(h[h.length-1].t).toISOString().slice(0,10) : '']);
-  });
-  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-  a.download = 'rv-price-watch.csv';
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  msg('Exported ' + state.watch.length + ' listings.');
-};
-$('wClear').onclick = () => {
-  if (state.watch.length && confirm('Clear all watched listings for everyone? Price history is lost.')) write('DELETE', '/api/watch');
-};
-
 /* ---------- 5. shared notes ---------- */
 function noteMsg(t){
   const m = $('noteMsg');
@@ -1218,6 +1046,222 @@ $('golfFindName').onclick = async () => {
 };
 $('golfName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFindName').click(); } });
 
+/* ---------- 7. places to eat ---------- */
+const foodMap = L.map('foodMap').setView([39.5, -98.35], 4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(foodMap);
+const foodLayer = L.layerGroup().addTo(foodMap);
+let foodPlaces = [], foodAnchor = null, foodPin = null, foodPinMarker = null, foodSelected = -1;
+
+function foodMsg(t){
+  const m = $('foodMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 8000);
+}
+
+const foodKind = type => ({ restaurant: 'restaurant', cafe: 'café', fast_food: 'takeaway', bar: 'bar', pub: 'pub' }[type] || String(type || '').replace(/_/g, ' '));
+
+// Nominatim understands category searches ("restaurant") inside a viewbox, which
+// lists a whole area rather than only names containing the word.
+async function nominatim(query, center, radiusKm){
+  const params = new URLSearchParams({ format: 'jsonv2', limit: '40', q: query });
+  if (center) {
+    const dLat = radiusKm / 111;
+    const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
+    params.set('viewbox', [center.lng - dLon, center.lat + dLat, center.lng + dLon, center.lat - dLat].join(','));
+    params.set('bounded', '1');
+  }
+  const res = await fetch('https://nominatim.openstreetmap.org/search?' + params.toString());
+  if (!res.ok) throw new Error('The restaurant index is busy right now — try again in a moment.');
+  return res.json();
+}
+
+function foodFromNominatim(rows, center){
+  const seen = new Set();
+  const places = [];
+  for (const r of rows || []) {
+    const lat = +r.lat, lng = +r.lon;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || !r.name) continue;
+    const key = r.name.toLowerCase() + '|' + lat.toFixed(4) + '|' + lng.toFixed(4);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    places.push({
+      name: r.name,
+      kind: r.type || '',
+      cuisine: (r.extratags && r.extratags.cuisine ? r.extratags.cuisine : '').replace(/;/g, ', '),
+      lat, lng,
+      dist: center ? hav(center, { lat, lng }) : null,
+      where: (r.display_name || '').split(',').slice(1, 4).map(t => t.trim()).join(', ')
+    });
+  }
+  return places;
+}
+
+async function findFoodNear(center, radiusKm){
+  // Nominatim asks for one request a second, so the café pass waits its turn
+  // instead of firing alongside the restaurant pass.
+  const places = foodFromNominatim(await nominatim('restaurant', center, radiusKm), center);
+  await new Promise(r => setTimeout(r, 1100));
+  try {
+    places.push(...foodFromNominatim(await nominatim('cafe', center, radiusKm), center));
+  } catch (e) { /* a café lookup failing should not hide the restaurants */ }
+  const seen = new Set();
+  const merged = places.filter(p => {
+    const key = p.name.toLowerCase() + '|' + p.lat.toFixed(4) + '|' + p.lng.toFixed(4);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  merged.sort((a, b) => a.dist - b.dist);
+  return merged.slice(0, 40);
+}
+
+async function findFoodByName(name){
+  return foodFromNominatim(await nominatim(name, null, 0), null).slice(0, 25);
+}
+
+function foodSubText(place){
+  const bits = [];
+  if (place.kind) bits.push(foodKind(place.kind));
+  if (place.cuisine) bits.push(place.cuisine);
+  if (place.dist === null || place.dist === undefined) {
+    if (place.where) bits.push(place.where);
+  } else {
+    bits.push(place.dist.toFixed(1) + ' mi from ' + (foodAnchor || 'search'));
+  }
+  return bits.join(' · ');
+}
+
+function selectFood(i, pan){
+  foodSelected = i;
+  [...document.querySelectorAll('#foodList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  const place = foodPlaces[i];
+  if (!place) return;
+  const marker = foodLayer.getLayers()[i];
+  if (!marker) return;
+  if (pan) foodMap.setView([place.lat, place.lng], Math.max(foodMap.getZoom(), 14));
+  marker.openPopup();
+}
+
+function renderFood(){
+  const el = $('foodList');
+  foodLayer.clearLayers();
+  foodSelected = -1;
+
+  if (!foodPlaces.length) {
+    el.innerHTML = '<p class="muted">No places found — try a wider radius, or search a place by name.</p>';
+    return;
+  }
+
+  el.innerHTML = foodPlaces.map((p, i) =>
+    '<div class="food-item">'
+    + '<button type="button" class="food-pick" data-pick="' + i + '">'
+    + '<span class="food-name">' + esc(p.name) + '</span>'
+    + '<span class="food-sub">' + esc(foodSubText(p)) + '</span>'
+    + '</button>'
+    + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(p.name) + ' to the trip">Add to trip</button>'
+    + '</div>').join('');
+
+  foodPlaces.forEach((p, i) => {
+    L.circleMarker([p.lat, p.lng], { radius: 7, color: '#f97316', weight: 2, fillColor: '#f97316', fillOpacity: 0.55 })
+      .addTo(foodLayer)
+      .bindPopup('<b>' + esc(p.name) + '</b><br><span class="muted">' + esc(foodSubText(p)) + '</span>')
+      .on('click', () => selectFood(i, false));
+  });
+
+  foodMap.fitBounds(L.featureGroup(foodLayer.getLayers()).getBounds().pad(0.15));
+}
+
+$('foodList').addEventListener('click', async e => {
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { selectFood(+pick.dataset.pick, true); return; }
+  const add = e.target.closest('[data-add]');
+  if (!add) return;
+  const place = foodPlaces[+add.dataset.add];
+  if (!place) return;
+  add.disabled = true;
+  const ok = await write('POST', '/api/stops', { name: place.name, lat: place.lat, lng: place.lng });
+  add.disabled = false;
+  foodMsg(ok ? place.name + ' added to your route.' : 'Could not add that place.');
+});
+
+function clearFoodPin(){
+  foodPin = null;
+  if (foodPinMarker) { foodMap.removeLayer(foodPinMarker); foodPinMarker = null; }
+  $('foodPinState').textContent = '';
+}
+
+function setFoodPin(lat, lng){
+  foodPin = { lat, lng };
+  if (foodPinMarker) foodMap.removeLayer(foodPinMarker);
+  $('foodPinState').textContent = 'Search pin at ' + lat.toFixed(3) + ', ' + lng.toFixed(3) + ' — press Find places to eat to search around it.';
+  foodPinMarker = L.marker([lat, lng], { draggable: true }).addTo(foodMap)
+    .bindPopup('Search pin — drag to move, then press Find places to eat.');
+  foodPinMarker.on('dragend', ev => {
+    const moved = ev.target.getLatLng();
+    foodPin = { lat: moved.lat, lng: moved.lng };
+    $('foodPinState').textContent = 'Search pin at ' + foodPin.lat.toFixed(3) + ', ' + foodPin.lng.toFixed(3) + ' — press Find places to eat to search around it.';
+    foodMsg('Pin moved — press Find places to eat to search here.');
+  });
+  foodPinMarker.openPopup();
+  foodMsg('Pin set — press Find places to eat to search around it.');
+}
+
+foodMap.on('click', e => setFoodPin(e.latlng.lat, e.latlng.lng));
+$('foodClearPin').onclick = () => {
+  if (!foodPin) { foodMsg('No pin set — click the map to drop one.'); return; }
+  clearFoodPin();
+  foodMsg('Pin cleared — search uses the typed area again.');
+};
+$('foodQuery').addEventListener('input', () => { if (foodPin) clearFoodPin(); });
+
+$('foodFind').onclick = async () => {
+  const btn = $('foodFind');
+  const place = $('foodQuery').value.trim();
+  if (!foodPin && !place) { foodMsg('Type a town or area, or click the map to drop a search pin.'); return; }
+  btn.disabled = true;
+  try {
+    const center = foodPin
+      ? { name: 'the map pin', lat: foodPin.lat, lng: foodPin.lng }
+      : await geocode(place);
+    foodMsg('Looking for places to eat near ' + center.name + '…');
+    const found = await findFoodNear(center, +$('foodRadius').value);
+    foodAnchor = center.name;
+    foodPlaces = found;
+    renderFood();
+    foodMsg(found.length
+      ? found.length + ' place' + (found.length === 1 ? '' : 's') + ' to eat near ' + center.name + '.'
+      : 'Nothing found near ' + center.name + ' — try a wider radius.');
+  } catch (err) {
+    foodMsg(err.message || 'Could not search for places to eat right now.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('foodQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFind').click(); } });
+
+$('foodFindName').onclick = async () => {
+  const btn = $('foodFindName');
+  const name = $('foodName').value.trim();
+  if (!name) { foodMsg('Type a place name first.'); return; }
+  if (foodPin) clearFoodPin();
+  btn.disabled = true;
+  foodMsg('Looking for “' + name + '”…');
+  try {
+    const found = await findFoodByName(name);
+    foodAnchor = null;
+    foodPlaces = found;
+    renderFood();
+    foodMsg(found.length
+      ? found.length + ' match' + (found.length === 1 ? '' : 'es') + ' for “' + name + '”.'
+      : 'Nothing matched “' + name + '”.');
+  } catch (err) {
+    foodMsg(err.message || 'Could not search for that place right now.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('foodName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFindName').click(); } });
+
 /* ---------- 8. sporting events ---------- */
 function eventsMsg(t){
   const m = $('eventMsg');
@@ -1291,11 +1335,6 @@ acSetup($('eventArea'), { cityFirst: true });
 })();
 
 /* ---------- boot + live refresh ---------- */
-const savedLookup = JSON.parse(localStorage.getItem('rt_lookup') || '{}');
-if (savedLookup.q) $('q').value = savedLookup.q;
-if (savedLookup.loc) $('loc').value = savedLookup.loc;
-if (savedLookup.radius) $('radius').value = savedLookup.radius;
-if (savedLookup.max) $('priceMax').value = savedLookup.max;
 
 applyState(state);
 loadState();
