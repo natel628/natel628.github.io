@@ -83,6 +83,12 @@
   .photo-meta span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #photoMsg:empty { display:none; }
   #photoMsg { font-size:.85rem; margin-top:8px; }
+  #photoProgress { margin-top:10px; }
+  .progress-track { height:8px; background:#0b1220; border:1px solid #334155; border-radius:99px; overflow:hidden; }
+  .progress-fill { height:100%; width:0%; background:var(--accent); transition:width .15s linear; }
+  .progress-row { display:flex; gap:12px; align-items:center; margin-top:6px; font-size:.8rem; color:var(--muted); flex-wrap:wrap; }
+  .progress-row #photoPct { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
+  @media (prefers-reduced-motion: reduce) { .progress-fill { transition:none; } }
   #golfMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
   #golfList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .golf-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
@@ -214,6 +220,10 @@
       <input id="photoCaption" placeholder="Caption (optional) — e.g. Moab at sunrise" aria-label="Photo or video caption" />
       <button type="button" id="photoUpload">Upload</button>
       <button type="button" id="photoClear" class="ghost">Clear album</button>
+    </div>
+    <div id="photoProgress" hidden>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Upload progress"><div class="progress-fill" id="photoBar"></div></div>
+      <div class="progress-row"><span id="photoPct">0%</span><span id="photoSent"></span><button type="button" id="photoCancel" class="small ghost">Cancel</button></div>
     </div>
     <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="photoGrid"></div>
@@ -881,6 +891,30 @@ function photoMsg(t){
   setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
 }
 function photoSize(n){ return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
+let activeUpload = null;
+
+// fetch() cannot report upload progress, so uploads go through XHR.
+function uploadMedia(file, caption, onProgress){
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    activeUpload = xhr;
+    xhr.open('POST', API_BASE + '/api/photos');
+    xhr.responseType = 'json';
+    xhr.upload.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded, e.total); };
+    xhr.onload = () => {
+      activeUpload = null;
+      const data = xhr.response || {};
+      if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+      else reject(new Error(data.error || ('Upload failed (' + xhr.status + ')')));
+    };
+    xhr.onerror = () => { activeUpload = null; reject(new Error('The upload could not be sent — check your connection.')); };
+    xhr.onabort = () => { activeUpload = null; const err = new Error('Upload cancelled.'); err.cancelled = true; reject(err); };
+    const form = new FormData();
+    form.append('file', file);
+    form.append('caption', caption);
+    xhr.send(form);
+  });
+}
 function renderPhotos(){
   const el = $('photoGrid');
   if (!state.photos.length) {
@@ -911,25 +945,51 @@ $('photoUpload').onclick = async () => {
     return;
   }
   const btn = $('photoUpload');
+  const panel = $('photoProgress');
+  const bar = $('photoBar');
+  const pctLabel = $('photoPct');
+  const sentLabel = $('photoSent');
+  const track = panel.querySelector('.progress-track');
+
   btn.disabled = true;
+  panel.hidden = false;
+  bar.style.width = '0%';
+  pctLabel.textContent = '0%';
+  sentLabel.textContent = '0 KB of ' + photoSize(file.size);
+  track.setAttribute('aria-valuenow', '0');
   photoMsg('Uploading ' + photoSize(file.size) + '…');
-  const form = new FormData();
-  form.append('file', file);
-  form.append('caption', $('photoCaption').value.trim());
+
   try {
-    const res = await fetch(API_BASE + '/api/photos', { method: 'POST', body: form });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Upload failed');
+    const data = await uploadMedia(file, $('photoCaption').value.trim(), (loaded, total) => {
+      const ratio = total ? Math.min(loaded / total, 1) : 0;
+      const percent = Math.round(ratio * 100);
+      bar.style.width = percent + '%';
+      pctLabel.textContent = percent + '%';
+      sentLabel.textContent = photoSize(loaded) + ' of ' + photoSize(total);
+      track.setAttribute('aria-valuenow', String(percent));
+    });
     applyState(data);
     input.value = '';
     $('photoCaption').value = '';
     photoMsg((isVideo ? 'Video' : 'Photo') + ' shared with everyone.');
   } catch (err) {
-    photoMsg(err.message || 'Could not upload that photo.');
+    if (err.cancelled) {
+      // Cancelling after the file has been sent cannot stop the save, so check what
+      // actually landed instead of claiming the upload was discarded.
+      const latest = await api('GET', '/api/state').catch(() => null);
+      const landed = latest && latest.photos.some(p => p.size === file.size && p.type === file.type);
+      if (latest) applyState(latest);
+      photoMsg(landed ? 'That upload had already finished — it is in the album.' : 'Upload cancelled — nothing was saved.');
+    } else {
+      photoMsg(err.message || 'Could not upload that file.');
+    }
   } finally {
+    panel.hidden = true;
     btn.disabled = false;
   }
 };
+
+$('photoCancel').onclick = () => { if (activeUpload) activeUpload.abort(); };
 $('photoClear').onclick = () => {
   if (state.photos.length && confirm('Delete every shared photo?')) write('DELETE', '/api/photos');
 };
