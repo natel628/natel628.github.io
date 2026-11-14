@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Road Trip Planner — Sample Setup</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root { --bg:#0f172a; --card:#1e293b; --accent:#f59e0b; --green:#22c55e; --text:#e2e8f0; --muted:#94a3b8; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:24px; text-align:center; background:linear-gradient(135deg,#0f172a,#334155); border-bottom:2px solid var(--accent); }
+  header h1 { margin:0; font-size:2rem; } header p { color:var(--muted); margin:6px 0 0; }
+  main { max-width:1100px; margin:0 auto; padding:20px; display:grid; gap:24px; }
+  .card { background:var(--card); border-radius:12px; padding:18px; border:1px solid #334155; }
+  .card h2 { margin-top:0; } .muted { color:var(--muted); font-size:.9rem; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; } input,select,button { padding:10px 12px; border-radius:8px; border:1px solid #475569; font-size:1rem; }
+  input,select { background:#0f172a; color:var(--text); flex:1; min-width:160px; }
+  button { background:var(--accent); border:none; color:#111; font-weight:700; cursor:pointer; }
+  button.ghost { background:transparent; color:var(--text); border:1px solid #475569; }
+  button.small { padding:6px 10px; font-size:.85rem; }
+  #listings { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin-top:12px; }
+  .van { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px; }
+  .van h3 { margin:0 0 4px; font-size:1.05rem; } .van .price { font-size:1.3rem; font-weight:800; color:var(--accent); }
+  .tag { display:inline-block; background:#334155; border-radius:20px; padding:2px 10px; font-size:.8rem; margin:2px 4px 2px 0; }
+  #watchList { margin-top:12px; display:grid; gap:8px; }
+  .watch-item { display:flex; justify-content:space-between; align-items:center; gap:10px; background:#0f172a; border:1px solid #334155; padding:10px 12px; border-radius:8px; }
+  .good { color:var(--green); font-weight:700; } .bad { color:var(--accent); font-weight:700; }
+  #map { height:420px; border-radius:12px; border:1px solid #334155; }
+  #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
+  #stops li { display:flex; align-items:center; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
+  .num { background:var(--accent); color:#111; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-weight:800; flex-shrink:0; }
+  @media(max-width:700px){ #map{height:320px;} }
+</style>
+</head>
+<body>
+<header>
+  <h1>🚐 Road Trip Planner</h1>
+  <p>Sample setup — search vans & RVs, watch prices, and plot your route</p>
+</header>
+<main>
+  <section class="card">
+    <h2>1. Find Vans / RVs</h2>
+    <p class="muted">Sample listings (no live data yet). Search, filter, and add any rig to your price watch.</p>
+    <div class="row">
+      <input id="search" placeholder="Search e.g. Winnebago, Sprinter, Class B…" />
+      <select id="typeFilter">
+        <option value="">All types</option>
+        <option>Class B</option><option>Class C</option><option>Travel Trailer</option><option>Camper Van</option>
+      </select>
+      <select id="sort">
+        <option value="price-asc">Price: low → high</option>
+        <option value="price-desc">Price: high → low</option>
+        <option value="year-desc">Newest first</option>
+      </select>
+    </div>
+    <div id="listings"></div>
+  </section>
+
+  <section class="card">
+    <h2>2. 💰 Price Watch</h2>
+    <p class="muted">Set a target price. Hit “Check prices” to simulate a market update — items at or below target light up green.</p>
+    <div class="row">
+      <button id="checkPrices">Check prices now</button>
+      <button id="clearWatch" class="ghost">Clear watchlist</button>
+    </div>
+    <div id="watchList"></div>
+  </section>
+
+  <section class="card">
+    <h2>3. 🗺️ Trip Map</h2>
+    <p class="muted">Add stops by name (e.g. “Grand Canyon”) or click anywhere on the map. Drag to reorder visually — route connects in list order.</p>
+    <div class="row" style="margin-bottom:10px">
+      <input id="locInput" placeholder="Add a stop — city, park, address…" />
+      <button id="addLoc">Add stop</button>
+      <button id="clearStops" class="ghost">Clear trip</button>
+    </div>
+    <div id="map"></div>
+    <p class="muted" id="tripStats" style="margin-top:8px"></p>
+    <ul id="stops"></ul>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const SAMPLE_VANS = [
+  { id:'v1', name:'2022 Winnebago Solis 59P', type:'Class B', price:89900, year:2022, miles:'18,200 mi', location:'Denver, CO', note:'Pop-top, solar, sleeps 4' },
+  { id:'v2', name:'2021 Mercedes Sprinter 144 Conversion', type:'Camper Van', price:74500, year:2021, miles:'32,500 mi', location:'Salt Lake City, UT', note:'4x4, heater, kitchen' },
+  { id:'v3', name:'2020 Airstream Basecamp 16X', type:'Travel Trailer', price:42900, year:2020, miles:'—', location:'Phoenix, AZ', note:'Off-road package' },
+  { id:'v4', name:'2023 Thor Four Winds 28Z', type:'Class C', price:98500, year:2023, miles:'9,800 mi', location:'Las Vegas, NV', note:'Bunkhouse, generator' },
+  { id:'v5', name:'2019 Ford Transit DIY Camper', type:'Camper Van', price:38750, year:2019, miles:'61,000 mi', location:'Austin, TX', note:'Full build, shower' },
+  { id:'v6', name:'2021 Jayco Greyhawk 29MV', type:'Class C', price:79900, year:2021, miles:'24,300 mi', location:'Albuquerque, NM', note:'2 slides, solar' },
+  { id:'v7', name:'2023 Winnebago Hike 100 H1316SB', type:'Travel Trailer', price:31500, year:2023, miles:'—', location:'Moab, UT', note:'Lightweight, off-grid' },
+  { id:'v8', name:'2020 Roadtrek Zion SRT', type:'Class B', price:92900, year:2020, miles:'27,900 mi', location:'Flagstaff, AZ', note:'Dodge ProMaster base' },
+];
+let livePrices = Object.fromEntries(SAMPLE_VANS.map(v=>[v.id,v.price]));
+let watch = JSON.parse(localStorage.getItem('rt_watch')||'[]');
+let stops = JSON.parse(localStorage.getItem('rt_stops')||'[]');
+
+const fmt = n => '$'+n.toLocaleString();
+function renderListings(){
+  const q = document.getElementById('search').value.toLowerCase();
+  const t = document.getElementById('typeFilter').value;
+  const s = document.getElementById('sort').value;
+  let arr = SAMPLE_VANS.filter(v =>
+    (!t || v.type===t) &&
+    (v.name.toLowerCase().includes(q)||v.location.toLowerCase().includes(q)||v.type.toLowerCase().includes(q)));
+  if(s==='price-asc') arr.sort((a,b)=>livePrices[a.id]-livePrices[b.id]);
+  if(s==='price-desc') arr.sort((a,b)=>livePrices[b.id]-livePrices[a.id]);
+  if(s==='year-desc') arr.sort((a,b)=>b.year-a.year);
+  document.getElementById('listings').innerHTML = arr.map(v=>`
+    <div class="van">
+      <h3>${v.name}</h3>
+      <div class="price">${fmt(livePrices[v.id])}</div>
+      <div style="margin:6px 0"><span class="tag">${v.type}</span><span class="tag">${v.year}</span><span class="tag">${v.location}</span></div>
+      <div class="muted">${v.miles} · ${v.note}</div>
+      <div class="row" style="margin-top:8px">
+        <button class="small" onclick="addWatch('${v.id}')">👀 Watch</button>
+      </div>
+    </div>`).join('') || '<p class="muted">No matches — try another search.</p>';
+}
+window.addWatch = id => {
+  if(!watch.find(w=>w.id===id)) watch.push({id, target: livePrices[id]});
+  saveWatch(); renderWatch();
+};
+function renderWatch(){
+  const el = document.getElementById('watchList');
+  if(!watch.length){ el.innerHTML='<p class="muted">Nothing watched yet — hit 👀 Watch on a listing above.</p>'; return; }
+  el.innerHTML = watch.map(w=>{
+    const v = SAMPLE_VANS.find(x=>x.id===w.id); const cur = livePrices[w.id];
+    const deal = cur <= w.target;
+    return `<div class="watch-item">
+      <div><strong>${v.name}</strong><br><span class="muted">Now ${fmt(cur)} · Target ${fmt(w.target)}</span>
+      <br><span class="${deal?'good':'bad'}">${deal?'✅ At/below target!':'👀 Watching'}</span></div>
+      <div class="row"><input type="number" style="max-width:120px;flex:none" value="${w.target}" onchange="setTarget('${w.id}',this.value)" />
+      <button class="small ghost" onclick="removeWatch('${w.id}')">✕</button></div>
+    </div>`;
+  }).join('');
+}
+window.setTarget = (id,val)=>{ watch.find(w=>w.id===id).target=+val||0; saveWatch(); renderWatch(); };
+window.removeWatch = id=>{ watch=watch.filter(w=>w.id!==id); saveWatch(); renderWatch(); };
+function saveWatch(){ localStorage.setItem('rt_watch',JSON.stringify(watch)); }
+document.getElementById('checkPrices').onclick = ()=>{
+  SAMPLE_VANS.forEach(v=>{
+    const delta = (Math.random()-0.55)*0.08; // slight downward bias
+    livePrices[v.id]=Math.max(5000,Math.round(livePrices[v.id]*(1+delta)/100)*100);
+  });
+  renderListings(); renderWatch();
+};
+document.getElementById('clearWatch').onclick = ()=>{ watch=[]; saveWatch(); renderWatch(); };
+['search','typeFilter','sort'].forEach(id=>document.getElementById(id).oninput=renderListings);
+
+// --- Map ---
+const map = L.map('map').setView([39.5,-98.35],4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+let markers=[], line=null;
+function saveStops(){ localStorage.setItem('rt_stops',JSON.stringify(stops)); }
+function hav(a,b){ const R=3958.8,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180;
+  const h=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h)); }
+function renderStops(){
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+  if(line) map.removeLayer(line);
+  const ul=document.getElementById('stops'); ul.innerHTML='';
+  stops.forEach((s,i)=>{
+    const m=L.marker([s.lat,s.lng]).addTo(map).bindPopup(`<b>${i+1}. ${s.name}</b>`);
+    markers.push(m);
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="num">${i+1}</span><span style="flex:1">${s.name}<br><span class="muted">${s.lat.toFixed(3)}, ${s.lng.toFixed(3)}</span></span>`;
+    const up=document.createElement('button'); up.textContent='↑'; up.className='small ghost';
+    up.onclick=()=>{ if(i>0){ [stops[i-1],stops[i]]=[stops[i],stops[i-1]]; saveStops(); renderStops(); } };
+    const dn=document.createElement('button'); dn.textContent='↓'; dn.className='small ghost';
+    dn.onclick=()=>{ if(i<stops.length-1){ [stops[i+1],stops[i]]=[stops[i],stops[i+1]]; saveStops(); renderStops(); } };
+    const del=document.createElement('button'); del.textContent='✕'; del.className='small ghost';
+    del.onclick=()=>{ stops.splice(i,1); saveStops(); renderStops(); };
+    li.append(up,dn,del); ul.appendChild(li);
+  });
+  if(stops.length>1){
+    line=L.polyline(stops.map(s=>[s.lat,s.lng]),{color:'#f59e0b',weight:4}).addTo(map);
+    map.fitBounds(line.getBounds().pad(0.2));
+    let mi=0; for(let i=1;i<stops.length;i++) mi+=hav(stops[i-1],stops[i]);
+    document.getElementById('tripStats').textContent=`${stops.length} stops · ~${Math.round(mi).toLocaleString()} miles straight-line`;
+  } else if(stops.length===1){ map.setView([stops[0].lat,stops[0].lng],8);
+    document.getElementById('tripStats').textContent='1 stop — add another to draw a route.';
+  } else document.getElementById('tripStats').textContent='';
+}
+async function addLocation(name){
+  if(!name) return;
+  const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(name)}`).then(r=>r.json());
+  if(!r.length){ alert('Place not found — try a city or park name, or click the map.'); return; }
+  stops.push({name:r[0].display_name.split(',').slice(0,2).join(','), lat:+r[0].lat, lng:+r[0].lon});
+  saveStops(); renderStops();
+}
+document.getElementById('addLoc').onclick=()=>{ const i=document.getElementById('locInput'); addLocation(i.value.trim()); i.value=''; };
+document.getElementById('locInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ addLocation(e.target.value.trim()); e.target.value=''; }});
+document.getElementById('clearStops').onclick=()=>{ stops=[]; saveStops(); renderStops(); };
+map.on('click',e=>{ const n=prompt('Name this stop:','Custom stop'); if(n){ stops.push({name:n,lat:e.latlng.lat,lng:e.latlng.lng}); saveStops(); renderStops(); } });
+
+renderListings(); renderWatch(); renderStops();
+</script>
+</body>
+</html>
