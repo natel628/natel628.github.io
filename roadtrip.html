@@ -492,6 +492,38 @@ let markers=[], line=null;
 function hav(a,b){ const R=3958.8,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180;
   const h=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;
   return 2*R*Math.asin(Math.sqrt(h)); }
+function minsText(minutes){
+  const t = Math.max(1, Math.round(minutes));
+  return t >= 60 ? Math.floor(t / 60) + ' h ' + String(t % 60).padStart(2, '0') + ' min' : t + ' min';
+}
+
+// One OSRM table request returns road distance and drive time from the search
+// point to every result, which beats guessing from a straight line.
+async function attachDriving(origin, places){
+  if (!origin || !places.length) return;
+  const coords = [[origin.lng, origin.lat]].concat(places.map(p => [p.lng, p.lat]))
+    .map(([lng, lat]) => lng.toFixed(5) + ',' + lat.toFixed(5)).join(';');
+  try {
+    const res = await fetch('https://router.project-osrm.org/table/v1/driving/' + coords + '?sources=0&annotations=distance,duration');
+    if (!res.ok) return;
+    const data = await res.json();
+    const dist = data && data.distances && data.distances[0];
+    const dur = data && data.durations && data.durations[0];
+    if (!dist || !dur) return;
+    places.forEach((p, i) => {
+      const d = dist[i + 1], t = dur[i + 1];
+      if (Number.isFinite(d) && Number.isFinite(t)) p.drive = { mi: d / 1609.344, mins: t / 60 };
+    });
+  } catch (e) { /* keep the straight-line estimate when routing is unavailable */ }
+}
+
+function distanceLabel(place, anchor){
+  const from = anchor ? ' from ' + anchor : '';
+  if (place.drive) return place.drive.mi.toFixed(1) + ' mi · ' + minsText(place.drive.mins) + ' drive' + from;
+  if (place.dist === null || place.dist === undefined) return place.where || '';
+  return place.dist.toFixed(1) + ' mi straight line' + from;
+}
+
 function legMi(a,b){ return hav(a,b)*CIRC; }
 function totalDriveMi(){ let t=0; for(let i=1;i<state.stops.length;i++) t+=legMi(state.stops[i-1],state.stops[i]); return t; }
 function fmtDate(d){ return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}); }
@@ -900,7 +932,10 @@ async function findGolfCourses(center, radiusKm){
     }
   }
   courses.sort((a, b) => a.dist - b.dist);
-  return { center, courses: courses.slice(0, 40) };
+  const nearest = courses.slice(0, 40);
+  await attachDriving(center, nearest);
+  nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  return { center, courses: nearest };
 }
 
 function selectGolf(i, pan){
@@ -935,9 +970,7 @@ function renderGolf(){
     '<div class="golf-item">'
     + '<button type="button" class="golf-pick" data-pick="' + i + '">'
     + '<span class="golf-name">' + esc(c.name) + '</span>'
-    + '<span class="golf-dist">' + (c.dist === null || c.dist === undefined
-        ? esc(c.where || 'location unknown')
-        : c.dist.toFixed(1) + ' mi from ' + esc(golfCenter ? golfCenter.name : 'search')) + '</span>'
+    + '<span class="golf-dist">' + esc(distanceLabel(c, golfCenter ? golfCenter.name : 'search')) + '</span>'
     + '</button>'
     + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(c.name) + ' to the trip">Add to trip</button>'
     + '</div>').join('');
@@ -945,7 +978,7 @@ function renderGolf(){
   golfCourses.forEach((c, i) => {
     L.circleMarker([c.lat, c.lng], { radius: 7, color: '#22c55e', weight: 2, fillColor: '#22c55e', fillOpacity: 0.55 })
       .addTo(golfLayer)
-      .bindPopup('<b>' + esc(c.name) + '</b><br><span class="muted">' + (c.dist === null || c.dist === undefined ? esc(c.where || '') : c.dist.toFixed(1) + ' mi away') + '</span>')
+      .bindPopup('<b>' + esc(c.name) + '</b><br><span class="muted">' + esc(distanceLabel(c, golfCenter ? golfCenter.name : 'search')) + '</span>')
       .on('click', () => selectGolf(i, false));
   });
 
@@ -1112,7 +1145,10 @@ async function findFoodNear(center, radiusKm){
     return true;
   });
   merged.sort((a, b) => a.dist - b.dist);
-  return merged.slice(0, 40);
+  const nearest = merged.slice(0, 40);
+  await attachDriving(center, nearest);
+  nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  return nearest;
 }
 
 async function findFoodByName(name){
@@ -1126,7 +1162,7 @@ function foodSubText(place){
   if (place.dist === null || place.dist === undefined) {
     if (place.where) bits.push(place.where);
   } else {
-    bits.push(place.dist.toFixed(1) + ' mi from ' + (foodAnchor || 'search'));
+    bits.push(distanceLabel(place, foodAnchor || 'search'));
   }
   return bits.join(' · ');
 }
