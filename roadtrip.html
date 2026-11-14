@@ -83,6 +83,14 @@
   .photo-meta span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #photoMsg:empty { display:none; }
   #photoMsg { font-size:.85rem; margin-top:8px; }
+  #golfMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
+  #golfList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
+  .golf-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
+  .golf-item.sel { border-color:var(--green); }
+  .golf-pick { flex:1; text-align:left; background:transparent; color:var(--text); border:none; padding:0; display:grid; gap:2px; cursor:pointer; font-weight:600; }
+  .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
+  #golfMsg:empty { display:none; }
+  #golfMsg { font-size:.85rem; margin-top:8px; }
   @media(max-width:700px){ #map{height:320px;} }
 </style>
 </head>
@@ -201,6 +209,23 @@
     </div>
     <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="photoGrid"></div>
+  </section>
+
+  <section class="card">
+    <h2>7. ⛳ Golf courses</h2>
+    <p class="muted">Search a town or area, look over the courses on the map, then add one straight to your route.</p>
+    <div class="row">
+      <input id="golfQuery" placeholder="Search near — e.g. Moab, UT" aria-label="Search golf courses near" />
+      <select id="golfRadius" aria-label="Search radius" style="max-width:170px;flex:none">
+        <option value="16">Within 10 mi</option>
+        <option value="40" selected>Within 25 mi</option>
+        <option value="80">Within 50 mi</option>
+      </select>
+      <button type="button" id="golfFind">Find courses</button>
+    </div>
+    <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="golfMap"></div>
+    <div id="golfList"></div>
   </section>
 </main>
 
@@ -870,6 +895,136 @@ $('photoGrid').addEventListener('click', e => {
   const b = e.target.closest('button[data-photo]');
   if (b) write('DELETE', '/api/photos/' + encodeURIComponent(b.dataset.photo));
 });
+
+/* ---------- 7. golf courses ---------- */
+const golfMap = L.map('golfMap').setView([39.5, -98.35], 4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(golfMap);
+const golfLayer = L.layerGroup().addTo(golfMap);
+const golfCenterLayer = L.layerGroup().addTo(golfMap);
+let golfCourses = [], golfCenter = null, golfSelected = -1;
+
+function golfMsg(t){
+  const m = $('golfMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 8000);
+}
+
+async function findGolfCourses(place, radiusKm){
+  const center = await geocode(place);
+  const dLat = radiusKm / 111;
+  const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
+  const bbox = [center.lng - dLon, center.lat - dLat, center.lng + dLon, center.lat + dLat]
+    .map(n => n.toFixed(4)).join(',');
+
+  // The tag filter only matches names that contain the search term, so ask a few
+  // ways a course is usually named and merge the answers.
+  const terms = ['golf', 'country club', 'links', 'golf club'];
+  const answers = await Promise.allSettled(terms.map(term =>
+    fetch('https://photon.komoot.io/api/?limit=30&lang=en&osm_tag=leisure:golf_course&bbox=' + bbox + '&q=' + encodeURIComponent(term))
+      .then(res => (res.ok ? res.json() : null))
+  ));
+
+  const seen = new Set();
+  const courses = [];
+  for (const answer of answers) {
+    if (answer.status !== 'fulfilled' || !answer.value) continue;
+    for (const feature of answer.value.features || []) {
+      const p = feature.properties || {};
+      if (p.osm_value !== 'golf_course') continue;
+      const coords = (feature.geometry && feature.geometry.coordinates) || [];
+      const lat = +coords[1], lng = +coords[0];
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+      const key = lat.toFixed(4) + '|' + lng.toFixed(4);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      courses.push({ name: p.name || 'Unnamed golf course', lat, lng, dist: hav(center, { lat, lng }) });
+    }
+  }
+  courses.sort((a, b) => a.dist - b.dist);
+  return { center, courses: courses.slice(0, 40) };
+}
+
+function selectGolf(i, pan){
+  golfSelected = i;
+  [...document.querySelectorAll('#golfList .golf-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  const course = golfCourses[i];
+  if (!course) return;
+  const marker = golfLayer.getLayers()[i];
+  if (!marker) return;
+  if (pan) golfMap.setView([course.lat, course.lng], Math.max(golfMap.getZoom(), 13));
+  marker.openPopup();
+}
+
+function renderGolf(){
+  const el = $('golfList');
+  golfLayer.clearLayers();
+  golfCenterLayer.clearLayers();
+  golfSelected = -1;
+
+  if (golfCenter) {
+    L.circleMarker([golfCenter.lat, golfCenter.lng], { radius: 6, color: '#f59e0b', weight: 2, fillColor: '#f59e0b', fillOpacity: 0.6 })
+      .addTo(golfCenterLayer)
+      .bindPopup('Search centre: ' + esc(golfCenter.name));
+  }
+
+  if (!golfCourses.length) {
+    el.innerHTML = '<p class="muted">No golf courses found nearby — try a wider radius.</p>';
+    return;
+  }
+
+  el.innerHTML = golfCourses.map((c, i) =>
+    '<div class="golf-item">'
+    + '<button type="button" class="golf-pick" data-pick="' + i + '">'
+    + '<span class="golf-name">' + esc(c.name) + '</span>'
+    + '<span class="golf-dist">' + c.dist.toFixed(1) + ' mi from ' + esc(golfCenter ? golfCenter.name : 'search') + '</span>'
+    + '</button>'
+    + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(c.name) + ' to the trip">Add to trip</button>'
+    + '</div>').join('');
+
+  golfCourses.forEach((c, i) => {
+    L.circleMarker([c.lat, c.lng], { radius: 7, color: '#22c55e', weight: 2, fillColor: '#22c55e', fillOpacity: 0.55 })
+      .addTo(golfLayer)
+      .bindPopup('<b>' + esc(c.name) + '</b><br><span class="muted">' + c.dist.toFixed(1) + ' mi away</span>')
+      .on('click', () => selectGolf(i, false));
+  });
+
+  golfMap.fitBounds(L.featureGroup(golfLayer.getLayers()).getBounds().pad(0.15));
+}
+
+$('golfList').addEventListener('click', async e => {
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { selectGolf(+pick.dataset.pick, true); return; }
+  const add = e.target.closest('[data-add]');
+  if (!add) return;
+  const course = golfCourses[+add.dataset.add];
+  if (!course) return;
+  add.disabled = true;
+  const ok = await write('POST', '/api/stops', { name: course.name, lat: course.lat, lng: course.lng });
+  add.disabled = false;
+  golfMsg(ok ? course.name + ' added to your route.' : 'Could not add that course.');
+});
+
+$('golfFind').onclick = async () => {
+  const place = $('golfQuery').value.trim();
+  if (!place) { golfMsg('Type a town or area to search near.'); return; }
+  const btn = $('golfFind');
+  btn.disabled = true;
+  golfMsg('Looking for golf courses near ' + place + '…');
+  try {
+    const found = await findGolfCourses(place, +$('golfRadius').value);
+    golfCenter = found.center;
+    golfCourses = found.courses;
+    renderGolf();
+    golfMsg(golfCourses.length
+      ? golfCourses.length + ' course' + (golfCourses.length === 1 ? '' : 's') + ' near ' + golfCenter.name + '.'
+      : 'No golf courses found — try a wider radius.');
+  } catch (err) {
+    golfMsg(err.message || 'Could not search for golf courses right now.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('golfQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFind').click(); } });
 
 /* ---------- boot + live refresh ---------- */
 const savedLookup = JSON.parse(localStorage.getItem('rt_lookup') || '{}');
