@@ -73,7 +73,16 @@
   .ac-list { position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:1200; margin:0; padding:4px; list-style:none; background:#0f172a; border:1px solid #475569; border-radius:8px; box-shadow:0 10px 26px rgba(0,0,0,.45); max-height:260px; overflow:auto; }
   .ac-list li { padding:7px 10px; border-radius:6px; cursor:pointer; font-size:.9rem; }
   .ac-list li[aria-selected="true"] { background:#334155; }
+  .ac-main { display:inline-block; }
+  .ac-kind { display:inline-block; margin-left:6px; padding:1px 8px; border-radius:20px; background:#334155; font-size:.7rem; color:var(--muted); text-transform:capitalize; }
   .ac-sub { display:block; color:var(--muted); font-size:.75rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #photoGrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:12px; }
+  .photo { background:#0f172a; border:1px solid #334155; border-radius:10px; overflow:hidden; margin:0; }
+  .photo img { display:block; width:100%; height:150px; object-fit:cover; background:#0b1220; }
+  .photo-meta { padding:8px 10px; display:flex; gap:8px; align-items:center; justify-content:space-between; font-size:.8rem; color:var(--muted); }
+  .photo-meta span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #photoMsg:empty { display:none; }
+  #photoMsg { font-size:.85rem; margin-top:8px; }
   @media(max-width:700px){ #map{height:320px;} }
 </style>
 </head>
@@ -88,7 +97,7 @@
 
   <section class="card">
     <h2>1. 🗺️ Route map — start, end &amp; stops</h2>
-    <p class="muted">Set your start/end, then add stops in between. Start typing a city, park or address and pick it from the suggestions — or click the map to drop a pin. Route connects in list order.</p>
+    <p class="muted">Set your start/end, then add stops in between. Start typing a city, park, landmark or address and pick it from the suggestions — or click the map to drop a pin. Route connects in list order.</p>
     <div class="row" style="margin-bottom:8px">
       <div class="ac"><input id="tripStart" placeholder="Trip start — e.g. Denver, CO" /></div>
       <div class="ac"><input id="tripEnd" placeholder="Trip end — e.g. Las Vegas, NV" /></div>
@@ -180,6 +189,19 @@
     <p id="noteMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="noteList"></div>
   </section>
+
+  <section class="card">
+    <h2>6. 📸 Photos</h2>
+    <p class="muted">Share a shot from the road — everyone who opens this page sees it. JPEG, PNG, WebP or GIF up to 5&nbsp;MB.</p>
+    <div class="row">
+      <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Photo file" style="flex:1;min-width:200px;padding:8px" />
+      <input id="photoCaption" placeholder="Caption (optional) — e.g. Moab at sunrise" aria-label="Photo caption" />
+      <button type="button" id="photoUpload">Upload photo</button>
+      <button type="button" id="photoClear" class="ghost">Clear album</button>
+    </div>
+    <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="photoGrid"></div>
+  </section>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -197,7 +219,7 @@ const CIRC = 1.28, MPH = 55, MPG = 25;
 const SITES = ['RV Trader','RVT.com','RVUSA','Camping World','eBay Motors','Autotrader','Craigslist','Facebook Marketplace','Other'];
 
 /* ---------- shared state ---------- */
-let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [], notes: [] };
+let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [], notes: [], photos: [] };
 let syncing = false;
 
 function setSync(kind, text){
@@ -224,6 +246,7 @@ function applyState(next){
   syncPlanInputs();
   renderWatch();
   renderNotes();
+  renderPhotos();
 }
 async function loadState(){
   try {
@@ -252,18 +275,106 @@ async function write(method, path, payload){
 const pickedPlaces = new Map();
 let acTimer = null, acController = null;
 
-async function acSearch(q, signal){
-  const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(q);
+const PLACE_CLASSES = /^(tourism|leisure|natural|historic|amenity|shop|building|waterway|boundary|place|man_made|railway)$/;
+
+// Name-first search: Photon matches landmarks, parks, towns and venues, which
+// the address-oriented geocoder below tends to bury under street addresses.
+async function photonSearch(q, signal){
+  const res = await fetch('https://photon.komoot.io/api/?limit=12&lang=en&q=' + encodeURIComponent(q), { signal });
+  if (!res.ok) return [];
+  const data = await res.json();
+  const feats = data && Array.isArray(data.features) ? data.features : [];
+  const out = [];
+  for (const f of feats) {
+    const p = f.properties || {};
+    const coords = (f.geometry && f.geometry.coordinates) || [];
+    const where = [p.city || p.district, p.state, p.country].filter(Boolean).join(', ');
+    const label = p.name || where;
+    const lat = +coords[1], lng = +coords[0];
+    if (!label || !Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    out.push({
+      label,
+      kind: String(p.osm_value || p.type || '').replace(/_/g, ' '),
+      isPlace: true,
+      full: where || label,
+      lat,
+      lng
+    });
+  }
+  return out;
+}
+
+async function nominatimSearch(q, signal){
+  const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=12&dedupe=1&q=' + encodeURIComponent(q);
   const res = await fetch(url, { signal });
   if (!res.ok) return [];
   const rows = await res.json();
   if (!Array.isArray(rows)) return [];
-  return rows.map(r => ({
-    label: String(r.display_name).split(',').slice(0, 2).join(','),
-    full: String(r.display_name),
-    lat: +r.lat,
-    lng: +r.lon
-  }));
+
+  const seen = new Set();
+  const found = [];
+  for (const r of rows) {
+    const full = String(r.display_name || '');
+    if (!full) continue;
+    const label = r.name || full.split(',').slice(0, 2).join(',');
+    const key = label + '|' + r.lat + '|' + r.lon;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    found.push({
+      label,
+      kind: String(r.addresstype || r.type || '').replace(/_/g, ' '),
+      isPlace: PLACE_CLASSES.test(String(r.class || '')),
+      full,
+      lat: +r.lat,
+      lng: +r.lon
+    });
+  }
+
+  // Street addresses keep their natural order; for a name like "Yellowstone" or
+  // "Zion", surface landmarks, parks and towns ahead of plain addresses.
+  if (/^\s*\d/.test(q)) return found;
+  return found.slice().sort((a, b) => (b.isPlace ? 1 : 0) - (a.isPlace ? 1 : 0));
+}
+
+const LANDMARK_KIND = /(national park|nature reserve|protected area|park|forest|monument|memorial|attraction|viewpoint|waterfall|lake|reservoir|river|canyon|peak|mountain|glacier|beach|trail|camp ?site|campground|museum|zoo|garden|historic|ruins|castle|monastery|temple|stadium|airport|marina|hot spring|geyser|valley|bay|island|wilderness)/i;
+const SETTLEMENT_KIND = /^(city|town|village|hamlet|suburb|neighbourhood|locality|isolated dwelling|borough)$/i;
+const REGION_KIND = /^(county|state|region|district|province|country|municipality|department|territory|census)$/i;
+
+function scoreSuggestion(item, query){
+  const label = item.label.toLowerCase();
+  let score = 0;
+  if (label === query) score += 2;
+  else if (label.startsWith(query)) score += 1;
+  if (LANDMARK_KIND.test(item.kind || '')) score += 3;
+  if (SETTLEMENT_KIND.test(item.kind || '')) score += 1;
+  if (REGION_KIND.test(item.kind || '')) score -= 1;
+  return score;
+}
+
+async function acSearch(q, signal){
+  const [named, addressed] = await Promise.allSettled([photonSearch(q, signal), nominatimSearch(q, signal)]);
+  const merged = [
+    ...(named.status === 'fulfilled' ? named.value : []),
+    ...(addressed.status === 'fulfilled' ? addressed.value : [])
+  ];
+  const seen = new Set();
+  const unique = [];
+  for (const item of merged) {
+    const key = item.label.toLowerCase() + '|' + item.lat.toFixed(3) + '|' + item.lng.toFixed(3);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(item);
+  }
+
+  // A street address already has a natural order; a place name is better served by
+  // ranking landmarks above counties, hamlets and other administrative labels.
+  if (/^\s*\d/.test(q)) return unique.slice(0, 8);
+  const query = q.trim().toLowerCase();
+  return unique
+    .map(item => ({ item, score: scoreSuggestion(item, query) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(row => row.item);
 }
 
 function acSetup(input){
@@ -284,7 +395,9 @@ function acSetup(input){
   const paint = () => {
     box.innerHTML = items.map((it, i) =>
       '<li role="option" id="' + box.id + '-' + i + '" data-i="' + i + '" aria-selected="' + (i === active) + '">'
-      + esc(it.label) + '<span class="ac-sub">' + esc(it.full) + '</span></li>').join('');
+      + '<span class="ac-main">' + esc(it.label) + '</span>'
+      + (it.kind ? '<span class="ac-kind">' + esc(it.kind) + '</span>' : '')
+      + '<span class="ac-sub">' + esc(it.full) + '</span></li>').join('');
     box.hidden = !items.length;
     input.setAttribute('aria-expanded', String(items.length > 0));
     if (active >= 0) {
@@ -702,6 +815,60 @@ $('noteClear').onclick = () => {
 $('noteList').addEventListener('click', e => {
   const b = e.target.closest('button[data-note]');
   if (b) write('DELETE', '/api/notes/' + encodeURIComponent(b.dataset.note));
+});
+
+/* ---------- 6. shared photos ---------- */
+function photoMsg(t){
+  const m = $('photoMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
+}
+function photoSize(n){ return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
+function renderPhotos(){
+  const el = $('photoGrid');
+  if (!state.photos.length) {
+    el.innerHTML = '<p class="muted">No photos yet — upload the first one above.</p>';
+    return;
+  }
+  el.innerHTML = state.photos.map(p =>
+    '<figure class="photo">'
+    + '<img src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" alt="' + esc(p.caption || 'Trip photo') + '" loading="lazy" />'
+    + '<figcaption class="photo-meta"><span>' + esc(p.caption || 'Untitled') + ' · ' + esc(new Date(p.at).toLocaleDateString()) + '</span>'
+    + '<button type="button" class="small ghost" data-photo="' + esc(p.id) + '" aria-label="Delete photo ' + esc(p.caption || '') + '">✕</button></figcaption>'
+    + '</figure>').join('');
+}
+$('photoUpload').onclick = async () => {
+  const input = $('photoFile');
+  const file = input.files && input.files[0];
+  if (!file) { photoMsg('Choose an image first.'); return; }
+  if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) { photoMsg('Only JPEG, PNG, WebP or GIF images.'); return; }
+  if (file.size > 5242880) { photoMsg('That image is ' + photoSize(file.size) + ' — the limit is 5 MB.'); return; }
+  const btn = $('photoUpload');
+  btn.disabled = true;
+  photoMsg('Uploading ' + photoSize(file.size) + '…');
+  const form = new FormData();
+  form.append('file', file);
+  form.append('caption', $('photoCaption').value.trim());
+  try {
+    const res = await fetch(API_BASE + '/api/photos', { method: 'POST', body: form });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Upload failed');
+    applyState(data);
+    input.value = '';
+    $('photoCaption').value = '';
+    photoMsg('Photo shared with everyone.');
+  } catch (err) {
+    photoMsg(err.message || 'Could not upload that photo.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('photoClear').onclick = () => {
+  if (state.photos.length && confirm('Delete every shared photo?')) write('DELETE', '/api/photos');
+};
+$('photoGrid').addEventListener('click', e => {
+  const b = e.target.closest('button[data-photo]');
+  if (b) write('DELETE', '/api/photos/' + encodeURIComponent(b.dataset.photo));
 });
 
 /* ---------- boot + live refresh ---------- */
