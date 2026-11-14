@@ -208,7 +208,7 @@
 
   <section class="card">
     <h2>6. 📸 Photos &amp; videos</h2>
-    <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 10&nbsp;MB, videos up to 50&nbsp;MB (MP4, WebM, MOV).</p>
+    <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 10&nbsp;MB, videos up to 75&nbsp;MB (MP4, WebM, MOV).</p>
     <div class="row">
       <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
       <input id="photoCaption" placeholder="Caption (optional) — e.g. Moab at sunrise" aria-label="Photo or video caption" />
@@ -905,9 +905,9 @@ $('photoUpload').onclick = async () => {
     photoMsg('Only JPEG, PNG, WebP, GIF, MP4, WebM or MOV files.');
     return;
   }
-  const limit = isVideo ? 52428800 : 10485760;
+  const limit = isVideo ? 78643200 : 10485760;
   if (file.size > limit) {
-    photoMsg('That ' + (isVideo ? 'video' : 'image') + ' is ' + photoSize(file.size) + ' — the limit is ' + (isVideo ? '50 MB' : '10 MB') + '.');
+    photoMsg('That ' + (isVideo ? 'video' : 'image') + ' is ' + photoSize(file.size) + ' — the limit is ' + (isVideo ? '75 MB' : '10 MB') + '.');
     return;
   }
   const btn = $('photoUpload');
