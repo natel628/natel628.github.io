@@ -130,6 +130,14 @@
       <h3 id="hotelTitle" style="margin:0 0 4px;font-size:1rem">🏨 Hotels nearby</h3>
       <p class="muted" style="margin:0 0 8px">Rooms around this stop, nearest first. OpenStreetMap carries no rates, so use the booking link for prices.</p>
       <div class="row">
+        <label class="muted" for="hotelRadius" style="align-self:center">Within</label>
+        <select id="hotelRadius" style="max-width:150px;flex:none" aria-label="How far from the stop to search for hotels">
+          <option value="2">2 miles</option>
+          <option value="5">5 miles</option>
+          <option value="10" selected>10 miles</option>
+          <option value="25">25 miles</option>
+          <option value="50">50 miles</option>
+        </select>
         <button type="button" id="hotelBooking" class="small">Search Booking.com ↗</button>
         <button type="button" id="hotelClose" class="small ghost">Close</button>
       </div>
@@ -1402,7 +1410,7 @@ $('foodFindName').onclick = async () => {
 $('foodName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFindName').click(); } });
 
 /* ---------- hotels near a stop ---------- */
-let hotelResults = [];
+let hotelResults = [], hotelStop = null;
 
 async function hotelsNear(stop, radiusKm){
   const batches = [];
@@ -1428,7 +1436,8 @@ async function hotelsNear(stop, radiusKm){
 function renderHotels(stop){
   const el = $('hotelList');
   if (!hotelResults.length) {
-    el.innerHTML = '<p class="muted">No hotels within 10 miles — try a bigger town or a booking site.</p>';
+    el.innerHTML = '<p class="muted">No hotels within ' + (+$('hotelRadius').value || 10)
+      + ' miles — pick a wider radius, or use the booking link.</p>';
     return;
   }
   el.innerHTML = hotelResults.map((h, i) =>
@@ -1453,30 +1462,37 @@ $('hotelList').addEventListener('click', async e => {
 });
 
 async function findHotelsForStop(stop){
+  hotelStop = stop;
+  const miles = +$('hotelRadius').value || 10;
   const panel = $('hotelPanel');
   panel.hidden = false;
   $('hotelTitle').textContent = '🏨 Hotels near ' + stop.name;
   $('hotelBooking').onclick = () => window.open(
     'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(stop.name), '_blank', 'noopener');
   $('hotelList').innerHTML = '';
-  $('hotelMsg').textContent = 'Looking for hotels near ' + stop.name + '…';
+  $('hotelMsg').textContent = 'Looking for hotels within ' + miles + ' miles of ' + stop.name + '…';
   hotelResults = [];
   try {
-    const found = await hotelsNear(stop, 10);
+    const found = await hotelsNear(stop, miles * 1.609344);
+    if (hotelStop !== stop || (+$('hotelRadius').value || 10) !== miles) return;
     hotelResults = found;
     renderHotels(stop);
+    const shown = found.length >= 30 ? '30 or more' : String(found.length);
     $('hotelMsg').textContent = found.length
-      ? found.length + ' hotel' + (found.length === 1 ? '' : 's') + ' within 10 miles of ' + stop.name + '.'
-      : 'No hotels found within 10 miles of ' + stop.name + ' — try the booking link.';
+      ? shown + ' hotel' + (found.length === 1 ? '' : 's') + ' within ' + miles + ' miles of ' + stop.name + '.'
+      : 'No hotels found within ' + miles + ' miles of ' + stop.name + ' — pick a wider radius or use the booking link.';
   } catch (err) {
     $('hotelMsg').textContent = err.message || 'Could not look up hotels right now.';
   }
 }
 
+$('hotelRadius').addEventListener('change', () => { if (hotelStop) findHotelsForStop(hotelStop); });
+
 $('hotelClose').onclick = () => {
   $('hotelPanel').hidden = true;
   $('hotelList').innerHTML = '';
   hotelResults = [];
+  hotelStop = null;
 };
 
 /* ---------- 8. sporting events ---------- */
