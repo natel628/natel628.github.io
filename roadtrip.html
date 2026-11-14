@@ -24,26 +24,82 @@
   .van h3 { margin:0 0 4px; font-size:1.05rem; } .van .price { font-size:1.3rem; font-weight:800; color:var(--accent); }
   .tag { display:inline-block; background:#334155; border-radius:20px; padding:2px 10px; font-size:.8rem; margin:2px 4px 2px 0; }
   #watchList { margin-top:12px; display:grid; gap:8px; }
-  .watch-item { display:flex; justify-content:space-between; align-items:center; gap:10px; background:#0f172a; border:1px solid #334155; padding:10px 12px; border-radius:8px; }
+  .watch-item { display:flex; justify-content:space-between; align-items:center; gap:10px; background:#0f172a; border:1px solid #334155; padding:10px 12px; border-radius:8px; flex-wrap:wrap; }
   .good { color:var(--green); font-weight:700; } .bad { color:var(--accent); font-weight:700; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
   #stops li { display:flex; align-items:center; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
   .num { background:var(--accent); color:#111; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-weight:800; flex-shrink:0; }
+  .mkt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; margin-top:10px; }
+  .mkt-grid button { font-size:.9rem; }
+  a { color:var(--accent); }
   @media(max-width:700px){ #map{height:320px;} }
 </style>
 </head>
 <body>
 <header>
   <h1>🚐 Road Trip Planner</h1>
-  <p>Sample setup — search vans & RVs, watch prices, and plot your route</p>
+  <p>Real marketplace search + price watch + trip map</p>
 </header>
 <main>
   <section class="card">
-    <h2>1. Find Vans / RVs</h2>
-    <p class="muted">Sample listings (no live data yet). Search, filter, and add any rig to your price watch.</p>
+    <h2>1. 🔎 Live search — real prices, multiple places</h2>
+    <p class="muted">Static pages can't scrape RV sites directly (they block it), so this builds a <strong>real search on each marketplace</strong> for you. Enter what you want + start/end, pick a marketplace, then save anything you like to the watchlist below with its real price.</p>
     <div class="row">
-      <input id="search" placeholder="Search e.g. Winnebago, Sprinter, Class B…" />
+      <input id="q" placeholder="What? e.g. Sprinter, Solis, Basecamp, Class B…" />
+      <input id="startLoc" placeholder="Start location — e.g. Denver, CO" />
+      <input id="endLoc" placeholder="End location — e.g. Grand Canyon (optional)" />
+      <select id="radius" style="max-width:170px;flex:none">
+        <option value="100">Within 100 mi</option>
+        <option value="250" selected>Within 250 mi</option>
+        <option value="500">Within 500 mi</option>
+        <option value="0">Nationwide</option>
+      </select>
+    </div>
+    <div class="mkt-grid">
+      <button data-mkt="rvtrader">RV Trader</button>
+      <button data-mkt="rvt">RVT.com</button>
+      <button data-mkt="campingworld">Camping World</button>
+      <button data-mkt="rvusa">RVUSA</button>
+      <button data-mkt="autotrader">Autotrader</button>
+      <button data-mkt="ebay">eBay Motors</button>
+      <button data-mkt="craigslist">Craigslist</button>
+      <button data-mkt="facebook">Facebook Marketplace</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button id="sendToMap" class="ghost">📍 Send start/end to trip map</button>
+      <span class="muted" id="searchHint" style="align-self:center"></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. 💰 Price Watch — real listings</h2>
+    <p class="muted">Found a rig on one of the sites above? Paste it here with its <strong>real price</strong>. Update the price when it changes — drops show green, history is kept.</p>
+    <div class="row">
+      <input id="realTitle" placeholder="Listing title — e.g. 2021 Sprinter 144 4x4" />
+      <input id="realPrice" type="number" placeholder="Price $" style="max-width:140px;flex:none" />
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="realUrl" placeholder="Listing URL (https://…)" />
+      <select id="realSource" style="max-width:190px;flex:none">
+        <option>RV Trader</option><option>RVT.com</option><option>Camping World</option>
+        <option>RVUSA</option><option>Autotrader</option><option>eBay</option>
+        <option>Craigslist</option><option>Facebook</option><option>Other</option>
+      </select>
+      <button id="addReal">+ Save real listing</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button id="checkPrices" class="ghost">🎲 Simulate sample-price update</button>
+      <button id="clearWatch" class="ghost">Clear watchlist</button>
+    </div>
+    <div id="watchList"></div>
+  </section>
+
+  <section class="card">
+    <h2>3. Sample listings (for demo)</h2>
+    <p class="muted">Sample data to try the watchlist. Real shopping happens in section 1 above.</p>
+    <div class="row">
+      <input id="search" placeholder="Search samples…" />
       <select id="typeFilter">
         <option value="">All types</option>
         <option>Class B</option><option>Class C</option><option>Travel Trailer</option><option>Camper Van</option>
@@ -58,20 +114,15 @@
   </section>
 
   <section class="card">
-    <h2>2. 💰 Price Watch</h2>
-    <p class="muted">Set a target price. Hit “Check prices” to simulate a market update — items at or below target light up green.</p>
-    <div class="row">
-      <button id="checkPrices">Check prices now</button>
-      <button id="clearWatch" class="ghost">Clear watchlist</button>
+    <h2>4. 🗺️ Trip Map — start, end &amp; stops</h2>
+    <p class="muted">Set your start/end, then add stops in between. Click the map to drop a pin too. Route connects in list order.</p>
+    <div class="row" style="margin-bottom:8px">
+      <input id="tripStart" placeholder="Trip start — e.g. Denver, CO" />
+      <input id="tripEnd" placeholder="Trip end — e.g. Las Vegas, NV" />
+      <button id="setEnds">Set start/end</button>
     </div>
-    <div id="watchList"></div>
-  </section>
-
-  <section class="card">
-    <h2>3. 🗺️ Trip Map</h2>
-    <p class="muted">Add stops by name (e.g. “Grand Canyon”) or click anywhere on the map. Drag to reorder visually — route connects in list order.</p>
     <div class="row" style="margin-bottom:10px">
-      <input id="locInput" placeholder="Add a stop — city, park, address…" />
+      <input id="locInput" placeholder="Add a stop in between — city, park, address…" />
       <button id="addLoc">Add stop</button>
       <button id="clearStops" class="ghost">Clear trip</button>
     </div>
@@ -94,10 +145,53 @@ const SAMPLE_VANS = [
   { id:'v8', name:'2020 Roadtrek Zion SRT', type:'Class B', price:92900, year:2020, miles:'27,900 mi', location:'Flagstaff, AZ', note:'Dodge ProMaster base' },
 ];
 let livePrices = Object.fromEntries(SAMPLE_VANS.map(v=>[v.id,v.price]));
-let watch = JSON.parse(localStorage.getItem('rt_watch')||'[]');
+let watch = JSON.parse(localStorage.getItem('rt_watch')||'[]');       // sample ids: [{id,target}]
+let realWatch = JSON.parse(localStorage.getItem('rt_real')||'[]');     // real listings
 let stops = JSON.parse(localStorage.getItem('rt_stops')||'[]');
+let savedSearch = JSON.parse(localStorage.getItem('rt_search')||'{}');
+if(savedSearch.q) document.getElementById('q').value = savedSearch.q;
+if(savedSearch.start) { document.getElementById('startLoc').value = savedSearch.start; document.getElementById('tripStart').value = savedSearch.start; }
+if(savedSearch.end) { document.getElementById('endLoc').value = savedSearch.end; document.getElementById('tripEnd').value = savedSearch.end; }
 
-const fmt = n => '$'+n.toLocaleString();
+const fmt = n => '$'+(+n).toLocaleString();
+function saveAll(){ localStorage.setItem('rt_watch',JSON.stringify(watch)); localStorage.setItem('rt_real',JSON.stringify(realWatch)); }
+
+// --- 1. Live multi-marketplace search ---
+function currentQuery(){
+  const q = document.getElementById('q').value.trim() || 'camper van';
+  const start = document.getElementById('startLoc').value.trim();
+  const end = document.getElementById('endLoc').value.trim();
+  const radius = document.getElementById('radius').value;
+  localStorage.setItem('rt_search', JSON.stringify({q,start,end}));
+  return {q,start,end,radius};
+}
+function buildUrl(mkt){
+  const {q,start,radius} = currentQuery();
+  const qe = encodeURIComponent(q), se = encodeURIComponent(start||'');
+  const qNear = encodeURIComponent(start ? `${q} near ${start}` : q);
+  switch(mkt){
+    case 'rvtrader': return `https://www.rvtrader.com/search-results?keywords=${qe}&location=${se}&searchRadius=${radius}`;
+    case 'rvt': return `https://www.rvt.com/search-results?query=${qe}`;
+    case 'campingworld': return `https://www.campingworld.com/search?q=${qe}`;
+    case 'rvusa': return `https://www.rvusa.com/rvs-for-sale?search=${qe}`;
+    case 'autotrader': return `https://www.autotrader.com/cars-for-sale/all-cars?keywords=${qe}&searchRadius=${radius}&startYear=2015&listingTypes=USED`;
+    case 'ebay': return `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(q+' camper van rv')}`;
+    case 'craigslist': return `https://www.craigslist.org/search/rvs?query=${qe}#search=2~gallery~0`;
+    case 'facebook': return `https://www.facebook.com/marketplace/search/?query=${qNear}`;
+    default: return null;
+  }
+}
+document.querySelectorAll('[data-mkt]').forEach(b=>{
+  b.onclick = ()=>{
+    const {q,start} = currentQuery();
+    const url = buildUrl(b.dataset.mkt);
+    document.getElementById('searchHint').textContent =
+      `Searching "${q}"${start?` near ${start}`:''} on ${b.textContent}… (opens in new tab)`;
+    window.open(url,'_blank','noopener');
+  };
+});
+
+// --- 2+3. Watchlist (samples + real) ---
 function renderListings(){
   const q = document.getElementById('search').value.toLowerCase();
   const t = document.getElementById('typeFilter').value;
@@ -114,43 +208,78 @@ function renderListings(){
       <div class="price">${fmt(livePrices[v.id])}</div>
       <div style="margin:6px 0"><span class="tag">${v.type}</span><span class="tag">${v.year}</span><span class="tag">${v.location}</span></div>
       <div class="muted">${v.miles} · ${v.note}</div>
-      <div class="row" style="margin-top:8px">
-        <button class="small" onclick="addWatch('${v.id}')">👀 Watch</button>
-      </div>
-    </div>`).join('') || '<p class="muted">No matches — try another search.</p>';
+      <div class="row" style="margin-top:8px"><button class="small" onclick="addWatch('${v.id}')">👀 Watch</button></div>
+    </div>`).join('') || '<p class="muted">No matches.</p>';
 }
 window.addWatch = id => {
   if(!watch.find(w=>w.id===id)) watch.push({id, target: livePrices[id]});
-  saveWatch(); renderWatch();
+  saveAll(); renderWatch();
 };
 function renderWatch(){
   const el = document.getElementById('watchList');
-  if(!watch.length){ el.innerHTML='<p class="muted">Nothing watched yet — hit 👀 Watch on a listing above.</p>'; return; }
-  el.innerHTML = watch.map(w=>{
-    const v = SAMPLE_VANS.find(x=>x.id===w.id); const cur = livePrices[w.id];
-    const deal = cur <= w.target;
+  if(!watch.length && !realWatch.length){ el.innerHTML='<p class="muted">Nothing watched yet — save a real listing above, or 👀 Watch a sample below.</p>'; return; }
+  const realHtml = realWatch.map(r=>{
+    const first = r.history && r.history.length ? r.history[0].price : r.price;
+    const drop = r.price < first;
+    const deal = r.price <= r.target;
     return `<div class="watch-item">
-      <div><strong>${v.name}</strong><br><span class="muted">Now ${fmt(cur)} · Target ${fmt(w.target)}</span>
+      <div style="flex:1;min-width:200px"><strong>${r.title}</strong> <span class="tag">${r.source}</span><br>
+        <span class="muted">Now ${fmt(r.price)} · Target ${fmt(r.target)} · Was ${fmt(first)}${drop?` (↓ ${fmt(first-r.price)})`:''}</span><br>
+        <span class="${deal?'good':'bad'}">${deal?'✅ At/below target!':'👀 Watching'}</span>
+        ${r.url?`<br><a href="${r.url}" target="_blank" rel="noopener">View listing ↗</a>`:''}
+        <br><span class="muted">Checked ${r.history.length}x · last ${r.history.length?new Date(r.history[r.history.length-1].t).toLocaleDateString(): '—'}</span>
+      </div>
+      <div class="row" style="flex:none">
+        <input type="number" style="max-width:110px;flex:none" value="${r.target}" title="Target price" onchange="setRealTarget('${r.id}',this.value)" />
+        <button class="small" onclick="updateRealPrice('${r.id}')">Update $</button>
+        <button class="small ghost" onclick="removeReal('${r.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+  const sampleHtml = watch.map(w=>{
+    const v = SAMPLE_VANS.find(x=>x.id===w.id); if(!v) return '';
+    const cur = livePrices[w.id]; const deal = cur <= w.target;
+    return `<div class="watch-item">
+      <div><strong>${v.name}</strong> <span class="tag">sample</span><br><span class="muted">Now ${fmt(cur)} · Target ${fmt(w.target)}</span>
       <br><span class="${deal?'good':'bad'}">${deal?'✅ At/below target!':'👀 Watching'}</span></div>
       <div class="row"><input type="number" style="max-width:120px;flex:none" value="${w.target}" onchange="setTarget('${w.id}',this.value)" />
       <button class="small ghost" onclick="removeWatch('${w.id}')">✕</button></div>
     </div>`;
   }).join('');
+  el.innerHTML = realHtml + sampleHtml;
 }
-window.setTarget = (id,val)=>{ watch.find(w=>w.id===id).target=+val||0; saveWatch(); renderWatch(); };
-window.removeWatch = id=>{ watch=watch.filter(w=>w.id!==id); saveWatch(); renderWatch(); };
-function saveWatch(){ localStorage.setItem('rt_watch',JSON.stringify(watch)); }
+window.setTarget = (id,val)=>{ const w=watch.find(x=>x.id===id); if(w) w.target=+val||0; saveAll(); renderWatch(); };
+window.removeWatch = id=>{ watch=watch.filter(w=>w.id!==id); saveAll(); renderWatch(); };
+window.setRealTarget = (id,val)=>{ const r=realWatch.find(x=>x.id===id); if(r) r.target=+val||0; saveAll(); renderWatch(); };
+window.removeReal = id=>{ realWatch=realWatch.filter(r=>r.id!==id); saveAll(); renderWatch(); };
+window.updateRealPrice = id=>{
+  const r = realWatch.find(x=>x.id===id); if(!r) return;
+  const v = prompt(`Current price for "${r.title}"? (was ${fmt(r.price)})`, r.price);
+  if(v===null) return; const p = +String(v).replace(/[^0-9]/g,'');
+  if(!p) { alert('Enter a number like 72500.'); return; }
+  r.price = p; r.history.push({price:p, t:Date.now()}); saveAll(); renderWatch();
+};
+document.getElementById('addReal').onclick = ()=>{
+  const title = document.getElementById('realTitle').value.trim();
+  const price = +document.getElementById('realPrice').value;
+  const url = document.getElementById('realUrl').value.trim();
+  const source = document.getElementById('realSource').value;
+  if(!title || !price){ alert('Give the listing a title and its real price.'); return; }
+  realWatch.unshift({id:'r'+Date.now(), title, price, target:price, url, source, history:[{price, t:Date.now()}]});
+  document.getElementById('realTitle').value=''; document.getElementById('realPrice').value=''; document.getElementById('realUrl').value='';
+  saveAll(); renderWatch();
+};
 document.getElementById('checkPrices').onclick = ()=>{
   SAMPLE_VANS.forEach(v=>{
-    const delta = (Math.random()-0.55)*0.08; // slight downward bias
+    const delta = (Math.random()-0.55)*0.08;
     livePrices[v.id]=Math.max(5000,Math.round(livePrices[v.id]*(1+delta)/100)*100);
   });
   renderListings(); renderWatch();
 };
-document.getElementById('clearWatch').onclick = ()=>{ watch=[]; saveWatch(); renderWatch(); };
+document.getElementById('clearWatch').onclick = ()=>{ if(confirm('Clear all watched items?')){ watch=[]; realWatch=[]; saveAll(); renderWatch(); } };
 ['search','typeFilter','sort'].forEach(id=>document.getElementById(id).oninput=renderListings);
 
-// --- Map ---
+// --- 4. Map ---
 const map = L.map('map').setView([39.5,-98.35],4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
 let markers=[], line=null;
@@ -158,15 +287,21 @@ function saveStops(){ localStorage.setItem('rt_stops',JSON.stringify(stops)); }
 function hav(a,b){ const R=3958.8,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180;
   const h=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;
   return 2*R*Math.asin(Math.sqrt(h)); }
+async function geocode(name){
+  const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(name)}`).then(r=>r.json());
+  if(!r.length) throw new Error('not found');
+  return {name:r[0].display_name.split(',').slice(0,2).join(','), lat:+r[0].lat, lng:+r[0].lon};
+}
 function renderStops(){
   markers.forEach(m=>map.removeLayer(m)); markers=[];
   if(line) map.removeLayer(line);
   const ul=document.getElementById('stops'); ul.innerHTML='';
   stops.forEach((s,i)=>{
-    const m=L.marker([s.lat,s.lng]).addTo(map).bindPopup(`<b>${i+1}. ${s.name}</b>`);
+    const label = `${i+1}. ${s.name}${i===0&&stops.length>1?' (START)':''}${i===stops.length-1&&stops.length>1?' (END)':''}`;
+    const m=L.marker([s.lat,s.lng]).addTo(map).bindPopup(`<b>${label}</b>`);
     markers.push(m);
     const li=document.createElement('li');
-    li.innerHTML=`<span class="num">${i+1}</span><span style="flex:1">${s.name}<br><span class="muted">${s.lat.toFixed(3)}, ${s.lng.toFixed(3)}</span></span>`;
+    li.innerHTML=`<span class="num">${i+1}</span><span style="flex:1">${label}<br><span class="muted">${s.lat.toFixed(3)}, ${s.lng.toFixed(3)}</span></span>`;
     const up=document.createElement('button'); up.textContent='↑'; up.className='small ghost';
     up.onclick=()=>{ if(i>0){ [stops[i-1],stops[i]]=[stops[i],stops[i-1]]; saveStops(); renderStops(); } };
     const dn=document.createElement('button'); dn.textContent='↓'; dn.className='small ghost';
@@ -179,21 +314,42 @@ function renderStops(){
     line=L.polyline(stops.map(s=>[s.lat,s.lng]),{color:'#f59e0b',weight:4}).addTo(map);
     map.fitBounds(line.getBounds().pad(0.2));
     let mi=0; for(let i=1;i<stops.length;i++) mi+=hav(stops[i-1],stops[i]);
-    document.getElementById('tripStats').textContent=`${stops.length} stops · ~${Math.round(mi).toLocaleString()} miles straight-line`;
+    document.getElementById('tripStats').textContent=`${stops.length} stops (${stops[0].name} → ${stops[stops.length-1].name}) · ~${Math.round(mi).toLocaleString()} miles straight-line`;
   } else if(stops.length===1){ map.setView([stops[0].lat,stops[0].lng],8);
-    document.getElementById('tripStats').textContent='1 stop — add another to draw a route.';
+    document.getElementById('tripStats').textContent='1 stop — set a start/end or add another stop to draw a route.';
   } else document.getElementById('tripStats').textContent='';
 }
 async function addLocation(name){
   if(!name) return;
-  const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(name)}`).then(r=>r.json());
-  if(!r.length){ alert('Place not found — try a city or park name, or click the map.'); return; }
-  stops.push({name:r[0].display_name.split(',').slice(0,2).join(','), lat:+r[0].lat, lng:+r[0].lon});
-  saveStops(); renderStops();
+  try{ const g = await geocode(name); stops.push(g); saveStops(); renderStops(); }
+  catch{ alert('Place not found — try a city or park name, or click the map.'); }
 }
 document.getElementById('addLoc').onclick=()=>{ const i=document.getElementById('locInput'); addLocation(i.value.trim()); i.value=''; };
 document.getElementById('locInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ addLocation(e.target.value.trim()); e.target.value=''; }});
 document.getElementById('clearStops').onclick=()=>{ stops=[]; saveStops(); renderStops(); };
+document.getElementById('setEnds').onclick = async ()=>{
+  const s = document.getElementById('tripStart').value.trim();
+  const e = document.getElementById('tripEnd').value.trim();
+  if(!s || !e){ alert('Enter both a start and an end location.'); return; }
+  try{
+    const gs = await geocode(s), ge = await geocode(e);
+    gs.name = 'START: '+gs.name; ge.name = 'END: '+ge.name;
+    if(stops.length>=2){ stops[0]=gs; stops[stops.length-1]=ge; }
+    else if(stops.length===1){ stops=[gs, stops[0], ge]; }
+    else { stops=[gs,ge]; }
+    saveStops(); renderStops();
+    document.getElementById('startLoc').value = s; document.getElementById('endLoc').value = e;
+    currentQuery();
+  }catch{ alert('Could not find start or end — check spelling and try again.'); }
+};
+document.getElementById('sendToMap').onclick = async ()=>{
+  const {start,end} = currentQuery();
+  if(start) document.getElementById('tripStart').value = start;
+  if(end) document.getElementById('tripEnd').value = end;
+  if(start && end) document.getElementById('setEnds').click();
+  else if(start) addLocation(start);
+  else alert('Enter a start location first.');
+};
 map.on('click',e=>{ const n=prompt('Name this stop:','Custom stop'); if(n){ stops.push({name:n,lat:e.latlng.lat,lng:e.latlng.lng}); saveStops(); renderStops(); } });
 
 renderListings(); renderWatch(); renderStops();
