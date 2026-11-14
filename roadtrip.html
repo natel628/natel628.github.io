@@ -61,6 +61,13 @@
   .watch-actions a.small:hover { border-color:var(--accent); }
   #watchMsg:empty { display:none; }
   #watchMsg { font-size:.85rem; margin-top:8px; }
+  textarea { background:#0f172a; color:var(--text); border:1px solid #475569; border-radius:8px; padding:10px 12px; font:inherit; width:100%; resize:vertical; min-height:76px; }
+  #noteList { display:grid; gap:10px; margin-top:12px; }
+  .note { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px 14px; }
+  .note-body { white-space:pre-wrap; margin:0 0 6px; overflow-wrap:anywhere; }
+  .note-meta { color:var(--muted); font-size:.8rem; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  #noteMsg:empty { display:none; }
+  #noteMsg { font-size:.85rem; margin-top:8px; }
   @media(max-width:700px){ #map{height:320px;} }
 </style>
 </head>
@@ -155,6 +162,18 @@
       <button type="button" id="wClear" class="ghost">Clear watch list</button>
     </div>
   </section>
+
+  <section class="card">
+    <h2>5. 📝 Notes</h2>
+    <p class="muted">Anything worth remembering — campsites to book, contacts, gear to pack, detours to try. Notes are shared with everyone who opens this page.</p>
+    <textarea id="noteBody" rows="3" placeholder="e.g. Book the Moab campsite before April — it fills up fast." aria-label="Note text"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button type="button" id="noteAdd">+ Add note</button>
+      <button type="button" id="noteClear" class="ghost">Clear all notes</button>
+    </div>
+    <p id="noteMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="noteList"></div>
+  </section>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -172,7 +191,7 @@ const CIRC = 1.28, MPH = 55, MPG = 25;
 const SITES = ['RV Trader','RVT.com','RVUSA','Camping World','eBay Motors','Autotrader','Craigslist','Facebook Marketplace','Other'];
 
 /* ---------- shared state ---------- */
-let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [] };
+let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [], notes: [] };
 let syncing = false;
 
 function setSync(kind, text){
@@ -198,6 +217,7 @@ function applyState(next){
   renderPlan();
   syncPlanInputs();
   renderWatch();
+  renderNotes();
 }
 async function loadState(){
   try {
@@ -534,6 +554,42 @@ $('wExport').onclick = () => {
 $('wClear').onclick = () => {
   if (state.watch.length && confirm('Clear all watched listings for everyone? Price history is lost.')) write('DELETE', '/api/watch');
 };
+
+/* ---------- 5. shared notes ---------- */
+function noteMsg(t){
+  const m = $('noteMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
+}
+function renderNotes(){
+  const el = $('noteList');
+  if (!state.notes.length) {
+    el.innerHTML = '<p class="muted">No notes yet — jot down campsites, contacts, or gear to pack.</p>';
+    return;
+  }
+  el.innerHTML = state.notes.map(n =>
+    '<div class="note">'
+    + '<p class="note-body">' + esc(n.body) + '</p>'
+    + '<div class="note-meta"><span>' + esc(new Date(n.at).toLocaleString()) + '</span>'
+    + '<button type="button" class="small ghost" data-note="' + esc(n.id) + '" aria-label="Delete this note">✕</button></div>'
+    + '</div>').join('');
+}
+$('noteAdd').onclick = () => {
+  const body = $('noteBody').value.trim();
+  if (!body) { noteMsg('Write something in the note first.'); return; }
+  write('POST', '/api/notes', { body }).then(ok => {
+    if (!ok) return;
+    $('noteBody').value = '';
+    noteMsg('Note saved for everyone.');
+  });
+};
+$('noteClear').onclick = () => {
+  if (state.notes.length && confirm('Delete every shared note?')) write('DELETE', '/api/notes');
+};
+$('noteList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-note]');
+  if (b) write('DELETE', '/api/notes/' + encodeURIComponent(b.dataset.note));
+});
 
 /* ---------- boot + live refresh ---------- */
 const savedLookup = JSON.parse(localStorage.getItem('rt_lookup') || '{}');
