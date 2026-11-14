@@ -242,6 +242,10 @@
       <button type="button" id="golfFind">Find courses</button>
       <button type="button" id="golfClearPin" class="ghost">Clear pin</button>
     </div>
+    <div class="row" style="margin-top:8px">
+      <input id="golfName" placeholder="Or search a course by name — e.g. Pebble Beach" aria-label="Search a golf course by name" />
+      <button type="button" id="golfFindName">Find by name</button>
+    </div>
     <p class="muted" id="golfPinState" style="margin-top:6px"></p>
     <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="golfMap"></div>
@@ -1011,6 +1015,32 @@ function golfMsg(t){
   setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 8000);
 }
 
+async function findGolfByName(name){
+  const res = await fetch('https://photon.komoot.io/api/?limit=30&lang=en&osm_tag=leisure:golf_course&q=' + encodeURIComponent(name));
+  if (!res.ok) throw new Error('The course index is busy right now — try again in a moment.');
+  const data = await res.json();
+  const seen = new Set();
+  const courses = [];
+  for (const feature of data.features || []) {
+    const p = feature.properties || {};
+    if (p.osm_value !== 'golf_course') continue;
+    const coords = (feature.geometry && feature.geometry.coordinates) || [];
+    const lat = +coords[1], lng = +coords[0];
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    const key = lat.toFixed(4) + '|' + lng.toFixed(4);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    courses.push({
+      name: p.name || 'Unnamed golf course',
+      lat,
+      lng,
+      dist: null,
+      where: [p.city, p.state, p.country].filter(Boolean).join(', ')
+    });
+  }
+  return courses;
+}
+
 async function findGolfCourses(center, radiusKm){
   const dLat = radiusKm / 111;
   const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
@@ -1069,7 +1099,7 @@ function renderGolf(){
   }
 
   if (!golfCourses.length) {
-    el.innerHTML = '<p class="muted">No golf courses found nearby — try a wider radius.</p>';
+    el.innerHTML = '<p class="muted">No golf courses found — try a wider radius, or search a course by name.</p>';
     return;
   }
 
@@ -1077,7 +1107,9 @@ function renderGolf(){
     '<div class="golf-item">'
     + '<button type="button" class="golf-pick" data-pick="' + i + '">'
     + '<span class="golf-name">' + esc(c.name) + '</span>'
-    + '<span class="golf-dist">' + c.dist.toFixed(1) + ' mi from ' + esc(golfCenter ? golfCenter.name : 'search') + '</span>'
+    + '<span class="golf-dist">' + (c.dist === null || c.dist === undefined
+        ? esc(c.where || 'location unknown')
+        : c.dist.toFixed(1) + ' mi from ' + esc(golfCenter ? golfCenter.name : 'search')) + '</span>'
     + '</button>'
     + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(c.name) + ' to the trip">Add to trip</button>'
     + '</div>').join('');
@@ -1085,7 +1117,7 @@ function renderGolf(){
   golfCourses.forEach((c, i) => {
     L.circleMarker([c.lat, c.lng], { radius: 7, color: '#22c55e', weight: 2, fillColor: '#22c55e', fillOpacity: 0.55 })
       .addTo(golfLayer)
-      .bindPopup('<b>' + esc(c.name) + '</b><br><span class="muted">' + c.dist.toFixed(1) + ' mi away</span>')
+      .bindPopup('<b>' + esc(c.name) + '</b><br><span class="muted">' + (c.dist === null || c.dist === undefined ? esc(c.where || '') : c.dist.toFixed(1) + ' mi away') + '</span>')
       .on('click', () => selectGolf(i, false));
   });
 
@@ -1162,6 +1194,29 @@ $('golfFind').onclick = async () => {
   }
 };
 $('golfQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFind').click(); } });
+
+$('golfFindName').onclick = async () => {
+  const btn = $('golfFindName');
+  const name = $('golfName').value.trim();
+  if (!name) { golfMsg('Type a course name first.'); return; }
+  if (golfPin) clearGolfPin();
+  btn.disabled = true;
+  golfMsg('Looking for “' + name + '”…');
+  try {
+    const found = await findGolfByName(name);
+    golfCenter = null;
+    golfCourses = found;
+    renderGolf();
+    golfMsg(found.length
+      ? found.length + ' course' + (found.length === 1 ? '' : 's') + ' matching “' + name + '”.'
+      : 'No courses matched “' + name + '”.');
+  } catch (err) {
+    golfMsg(err.message || 'Could not search for that course right now.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('golfName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFindName').click(); } });
 
 /* ---------- 8. sporting events ---------- */
 function eventsMsg(t){
