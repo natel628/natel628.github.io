@@ -77,6 +77,11 @@
   .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
   #golfMsg:empty { display:none; }
   #golfMsg { font-size:.85rem; margin-top:8px; }
+  .golf-rating { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; background:#64748b; vertical-align:1px; }
+  .golf-rating.r5 { background:#22c55e; }
+  .golf-rating.r4 { background:#84cc16; }
+  .golf-rating.r3 { background:#f59e0b; }
+  .golf-rating.r2 { background:#ef4444; }
   #foodMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
   #foodList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .food-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
@@ -1012,6 +1017,49 @@ async function findGolfByName(name){
   return courses;
 }
 
+const golfRatingKey = c => c.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().slice(0, 80) + '@' + c.lat.toFixed(3) + ',' + c.lng.toFixed(3);
+let golfRatings = new Map(), golfRatingToken = 0;
+
+// The rating is only a colour dot: enough to spot a good course at a glance
+// without turning the list into a scoreboard.
+const golfRatingClass = r => r >= 4.5 ? 'r5' : r >= 4 ? 'r4' : r >= 3.5 ? 'r3' : 'r2';
+
+function applyGolfRatings(){
+  [...document.querySelectorAll('#golfList .golf-item')].forEach((el, i) => {
+    const course = golfCourses[i];
+    const nameEl = el.querySelector('.golf-name');
+    if (!course || !nameEl) return;
+    const old = nameEl.querySelector('.golf-rating');
+    if (old) old.remove();
+    const hit = golfRatings.get(golfRatingKey(course));
+    if (!hit || typeof hit.rating !== 'number') return;
+    const dot = document.createElement('span');
+    dot.className = 'golf-rating ' + golfRatingClass(hit.rating);
+    dot.title = 'Rated ' + hit.rating.toFixed(1) + ' of 5' + (hit.count ? ' · ' + hit.count.toLocaleString() + ' reviews' : '');
+    dot.setAttribute('role', 'img');
+    dot.setAttribute('aria-label', dot.title);
+    nameEl.prepend(dot);
+  });
+}
+
+async function loadGolfRatings(){
+  const token = ++golfRatingToken;
+  const wanted = golfCourses.filter(c => !golfRatings.has(golfRatingKey(c))).slice(0, 24);
+  if (!wanted.length) return;
+  for (let i = 0; i < wanted.length; i += 12) {
+    let data = null;
+    try {
+      data = await api('POST', '/api/ratings', {
+        places: wanted.slice(i, i + 12).map(c => ({ name: c.name, lat: c.lat, lng: c.lng }))
+      });
+    } catch (e) { return; }
+    if (token !== golfRatingToken) return;
+    if (!data || !data.configured) return;
+    for (const r of data.ratings || []) if (typeof r.rating === 'number') golfRatings.set(r.k, r);
+    applyGolfRatings();
+  }
+}
+
 async function findGolfCourses(center, radiusKm){
   const dLat = radiusKm / 111;
   const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
@@ -1094,6 +1142,8 @@ function renderGolf(){
   });
 
   golfMap.fitBounds(L.featureGroup(golfLayer.getLayers()).getBounds().pad(0.15));
+  applyGolfRatings();
+  loadGolfRatings();
 }
 
 $('golfList').addEventListener('click', async e => {
