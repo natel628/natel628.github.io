@@ -85,6 +85,9 @@
   .food-sub { color:var(--muted); font-size:.78rem; font-weight:400; }
   #foodMsg:empty { display:none; }
   #foodMsg { font-size:.85rem; margin-top:8px; }
+  #hotelList { display:grid; gap:8px; margin-top:10px; max-height:300px; overflow:auto; }
+  #hotelMsg:empty { display:none; }
+  #hotelMsg { font-size:.85rem; margin-top:8px; }
   #eventList { display:grid; gap:8px; margin-top:12px; }
   .event { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap; }
   .event-name { font-weight:700; }
@@ -123,6 +126,16 @@
     <p class="muted" id="tripHint" role="status" aria-live="polite"></p>
     <p class="muted" id="stopsEmpty">No stops yet — set a start and an end above, or click the map.</p>
     <ul id="stops"></ul>
+    <div id="hotelPanel" hidden style="margin-top:16px;border-top:1px solid #334155;padding-top:12px">
+      <h3 id="hotelTitle" style="margin:0 0 4px;font-size:1rem">🏨 Hotels nearby</h3>
+      <p class="muted" style="margin:0 0 8px">Rooms around this stop, nearest first. OpenStreetMap carries no rates, so use the booking link for prices.</p>
+      <div class="row">
+        <button type="button" id="hotelBooking" class="small">Search Booking.com ↗</button>
+        <button type="button" id="hotelClose" class="small ghost">Close</button>
+      </div>
+      <p id="hotelMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="hotelList"></div>
+    </div>
   </section>
 
   <section class="card">
@@ -138,7 +151,7 @@
 
   <section class="card">
     <h2>3. 🧰 Practical estimates</h2>
-    <p class="muted">Driving distance assumes real roads wander ~28% beyond straight-line miles; time assumes a 55&nbsp;mph average, stops uncounted.</p>
+    <p class="muted">Distances and drive times are real road routing; when the router is unreachable you get a straight-line estimate instead, which understates the drive.</p>
     <div id="practical"></div>
   </section>
 
@@ -637,7 +650,9 @@ function renderStops(){
     const isStart = i === 0 && state.stops.length > 1;
     const isEnd = i === state.stops.length - 1 && state.stops.length > 1;
     const label = (i + 1) + '. ' + s.name + (isStart ? ' (START)' : '') + (isEnd ? ' (END)' : '');
-    markers.push(L.marker([s.lat, s.lng]).addTo(map).bindPopup('<b>' + esc(label) + '</b>'));
+    markers.push(L.marker([s.lat, s.lng]).addTo(map)
+      .bindPopup('<b>' + esc(label) + '</b><br><span class="muted">Click the pin for hotels here.</span>')
+      .on('click', () => findHotelsForStop(s)));
 
     const li = document.createElement('li');
     li.dataset.stop = s.id;
@@ -649,6 +664,7 @@ function renderStops(){
     li.append(
       stopButton('↑', 'Move ' + s.name + ' up', 'up', s.id, i === 0),
       stopButton('↓', 'Move ' + s.name + ' down', 'down', s.id, i === state.stops.length - 1),
+      stopButton('🏨', 'Search hotels near ' + s.name, 'hotels', s.id, false),
       stopButton('✕', 'Remove ' + s.name, 'del', s.id, false)
     );
     ul.appendChild(li);
@@ -674,6 +690,7 @@ $('stops').addEventListener('click', e => {
   if (!b) return;
   const i = state.stops.findIndex(s => s.id === b.dataset.id);
   if (i < 0) return;
+  if (b.dataset.act === 'hotels') { findHotelsForStop(state.stops[i]); return; }
   if (b.dataset.act === 'del') { write('DELETE', '/api/stops/' + encodeURIComponent(b.dataset.id)); return; }
   const j = b.dataset.act === 'up' ? i - 1 : i + 1;
   if (j < 0 || j >= state.stops.length) return;
@@ -1383,6 +1400,84 @@ $('foodFindName').onclick = async () => {
   }
 };
 $('foodName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFindName').click(); } });
+
+/* ---------- hotels near a stop ---------- */
+let hotelResults = [];
+
+async function hotelsNear(stop, radiusKm){
+  const batches = [];
+  for (const term of ['hotel', 'motel']) {
+    try { batches.push(foodFromNominatim(await nominatim(term, stop, radiusKm), stop)); }
+    catch (e) { /* one category failing should not hide the other */ }
+    await new Promise(r => setTimeout(r, 1100));
+  }
+  const seen = new Set();
+  const places = batches.flat().filter(p => {
+    const key = p.name.toLowerCase() + '|' + p.lat.toFixed(4) + '|' + p.lng.toFixed(4);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  places.sort((a, b) => a.dist - b.dist);
+  const nearest = places.slice(0, 30);
+  await attachDriving(stop, nearest);
+  nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  return nearest;
+}
+
+function renderHotels(stop){
+  const el = $('hotelList');
+  if (!hotelResults.length) {
+    el.innerHTML = '<p class="muted">No hotels within 10 miles — try a bigger town or a booking site.</p>';
+    return;
+  }
+  el.innerHTML = hotelResults.map((h, i) =>
+    '<div class="food-item">'
+    + '<span class="food-pick" style="cursor:default">'
+    + '<span class="food-name">' + esc(h.name) + '</span>'
+    + '<span class="food-sub">' + esc(h.kind ? foodKind(h.kind) + ' · ' : '') + esc(distanceLabel(h, stop.name)) + '</span>'
+    + '</span>'
+    + '<button type="button" class="small" data-hotel-add="' + i + '" aria-label="Add ' + esc(h.name) + ' to the trip">Add to trip</button>'
+    + '</div>').join('');
+}
+
+$('hotelList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-hotel-add]');
+  if (!b) return;
+  const hotel = hotelResults[+b.dataset.hotelAdd];
+  if (!hotel) return;
+  b.disabled = true;
+  const ok = await write('POST', '/api/stops', { name: hotel.name, lat: hotel.lat, lng: hotel.lng });
+  b.disabled = false;
+  $('hotelMsg').textContent = ok ? hotel.name + ' added to your route.' : 'Could not add that hotel.';
+});
+
+async function findHotelsForStop(stop){
+  const panel = $('hotelPanel');
+  panel.hidden = false;
+  $('hotelTitle').textContent = '🏨 Hotels near ' + stop.name;
+  $('hotelBooking').onclick = () => window.open(
+    'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(stop.name), '_blank', 'noopener');
+  $('hotelList').innerHTML = '';
+  $('hotelMsg').textContent = 'Looking for hotels near ' + stop.name + '…';
+  hotelResults = [];
+  try {
+    const found = await hotelsNear(stop, 10);
+    hotelResults = found;
+    renderHotels(stop);
+    $('hotelMsg').textContent = found.length
+      ? found.length + ' hotel' + (found.length === 1 ? '' : 's') + ' within 10 miles of ' + stop.name + '.'
+      : 'No hotels found within 10 miles of ' + stop.name + ' — try the booking link.';
+  } catch (err) {
+    $('hotelMsg').textContent = err.message || 'Could not look up hotels right now.';
+  }
+}
+
+$('hotelClose').onclick = () => {
+  $('hotelPanel').hidden = true;
+  $('hotelList').innerHTML = '';
+  hotelResults = [];
+};
 
 /* ---------- 8. sporting events ---------- */
 function eventsMsg(t){
