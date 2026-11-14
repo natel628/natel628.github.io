@@ -401,7 +401,8 @@ function scoreSuggestion(item, query){
   return score;
 }
 
-async function acSearch(q, signal){
+async function acSearch(q, signal, options){
+  const opts = options || {};
   const [named, addressed] = await Promise.allSettled([photonSearch(q, signal), nominatimSearch(q, signal)]);
   const merged = [
     ...(named.status === 'fulfilled' ? named.value : []),
@@ -420,14 +421,18 @@ async function acSearch(q, signal){
   // ranking landmarks above counties, hamlets and other administrative labels.
   if (/^\s*\d/.test(q)) return unique.slice(0, 8);
   const query = q.trim().toLowerCase();
-  return unique
+  const ranked = unique
     .map(item => ({ item, score: scoreSuggestion(item, query) }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, 8)
     .map(row => row.item);
+  // Some fields want the town itself first (events), others the landmark (stops).
+  if (opts.cityFirst) {
+    return ranked.slice().sort((a, b) => (SETTLEMENT_KIND.test(b.kind || '') ? 1 : 0) - (SETTLEMENT_KIND.test(a.kind || '') ? 1 : 0)).slice(0, 8);
+  }
+  return ranked.slice(0, 8);
 }
 
-function acSetup(input){
+function acSetup(input, options){
   const box = document.createElement('ul');
   box.className = 'ac-list';
   box.id = input.id + 'List';
@@ -474,7 +479,7 @@ function acSetup(input){
     acTimer = setTimeout(async () => {
       acController = new AbortController();
       try {
-        const found = await acSearch(q, acController.signal);
+        const found = await acSearch(q, acController.signal, options);
         if (input.value.trim() !== q) return;
         items = found; active = -1; paint();
       } catch (err) { /* aborted, offline or nothing found — leave the list closed */ }
@@ -1117,7 +1122,7 @@ $('eventFind').onclick = async () => {
   }
 };
 $('eventArea').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('eventFind').click(); } });
-acSetup($('eventArea'));
+acSetup($('eventArea'), { cityFirst: true });
 (function setToday(){
   const now = new Date();
   $('eventDate').value = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
