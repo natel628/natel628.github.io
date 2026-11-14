@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Road Trip Planner — Sample Setup</title>
+<title>Road Trip Planner</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root { --bg:#0f172a; --card:#1e293b; --accent:#f59e0b; --green:#22c55e; --text:#e2e8f0; --muted:#94a3b8; }
@@ -33,88 +33,28 @@
   .mkt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; margin-top:10px; }
   .mkt-grid button { font-size:.9rem; }
   a { color:var(--accent); }
+  #itinerary { display:grid; gap:10px; margin-top:12px; }
+  .day { background:#0f172a; border:1px solid #334155; border-left:4px solid var(--accent); border-radius:10px; padding:12px 14px; }
+  .day.open { border-left-color:#334155; }
+  .day h3 { margin:0 0 6px; font-size:1rem; }
+  .day ol { margin:6px 0; padding-left:20px; }
+  .day li { margin:2px 0; }
+  .prac-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-top:12px; }
+  .prac-grid > div { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; text-align:center; }
+  .prac-grid b { display:block; font-size:1.25rem; color:var(--accent); }
+  .prac-grid span { color:var(--muted); font-size:.8rem; }
   @media(max-width:700px){ #map{height:320px;} }
 </style>
 </head>
 <body>
 <header>
   <h1>🚐 Road Trip Planner</h1>
-  <p>Real marketplace search + price watch + trip map</p>
+  <p>Route map · day-by-day itinerary · practical estimates</p>
 </header>
 <main>
-  <section class="card">
-    <h2>1. 🔎 Live search — real prices, multiple places</h2>
-    <p class="muted">Static pages can't scrape RV sites directly (they block it), so this builds a <strong>real search on each marketplace</strong> for you. Enter what you want + start/end, pick a marketplace, then save anything you like to the watchlist below with its real price.</p>
-    <div class="row">
-      <input id="q" placeholder="What? e.g. Sprinter, Solis, Basecamp, Class B…" />
-      <input id="startLoc" placeholder="Start location — e.g. Denver, CO" />
-      <input id="endLoc" placeholder="End location — e.g. Grand Canyon (optional)" />
-      <select id="radius" style="max-width:170px;flex:none">
-        <option value="100">Within 100 mi</option>
-        <option value="250" selected>Within 250 mi</option>
-        <option value="500">Within 500 mi</option>
-        <option value="0">Nationwide</option>
-      </select>
-    </div>
-    <div class="mkt-grid">
-      <button data-mkt="rvtrader">RV Trader</button>
-      <button data-mkt="rvt">RVT.com</button>
-      <button data-mkt="campingworld">Camping World</button>
-      <button data-mkt="rvusa">RVUSA</button>
-      <button data-mkt="autotrader">Autotrader</button>
-      <button data-mkt="ebay">eBay Motors</button>
-      <button data-mkt="craigslist">Craigslist</button>
-      <button data-mkt="facebook">Facebook Marketplace</button>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <button id="sendToMap" class="ghost">📍 Send start/end to trip map</button>
-      <span class="muted" id="searchHint" style="align-self:center"></span>
-    </div>
-  </section>
 
   <section class="card">
-    <h2>2. 💰 Price Watch — real listings</h2>
-    <p class="muted">Found a rig on one of the sites above? Paste it here with its <strong>real price</strong>. Update the price when it changes — drops show green, history is kept.</p>
-    <div class="row">
-      <input id="realTitle" placeholder="Listing title — e.g. 2021 Sprinter 144 4x4" />
-      <input id="realPrice" type="number" placeholder="Price $" style="max-width:140px;flex:none" />
-    </div>
-    <div class="row" style="margin-top:8px">
-      <input id="realUrl" placeholder="Listing URL (https://…)" />
-      <select id="realSource" style="max-width:190px;flex:none">
-        <option>RV Trader</option><option>RVT.com</option><option>Camping World</option>
-        <option>RVUSA</option><option>Autotrader</option><option>eBay</option>
-        <option>Craigslist</option><option>Facebook</option><option>Other</option>
-      </select>
-      <button id="addReal">+ Save real listing</button>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <button id="checkPrices" class="ghost">🎲 Simulate sample-price update</button>
-      <button id="clearWatch" class="ghost">Clear watchlist</button>
-    </div>
-    <div id="watchList"></div>
-  </section>
-
-  <section class="card">
-    <h2>3. Sample listings (for demo)</h2>
-    <p class="muted">Sample data to try the watchlist. Real shopping happens in section 1 above.</p>
-    <div class="row">
-      <input id="search" placeholder="Search samples…" />
-      <select id="typeFilter">
-        <option value="">All types</option>
-        <option>Class B</option><option>Class C</option><option>Travel Trailer</option><option>Camper Van</option>
-      </select>
-      <select id="sort">
-        <option value="price-asc">Price: low → high</option>
-        <option value="price-desc">Price: high → low</option>
-        <option value="year-desc">Newest first</option>
-      </select>
-    </div>
-    <div id="listings"></div>
-  </section>
-
-  <section class="card">
-    <h2>4. 🗺️ Trip Map — start, end &amp; stops</h2>
+    <h2>1. 🗺️ Route map — start, end &amp; stops</h2>
     <p class="muted">Set your start/end, then add stops in between. Click the map to drop a pin too. Route connects in list order.</p>
     <div class="row" style="margin-bottom:8px">
       <input id="tripStart" placeholder="Trip start — e.g. Denver, CO" />
@@ -130,163 +70,73 @@
     <p class="muted" id="tripStats" style="margin-top:8px"></p>
     <ul id="stops"></ul>
   </section>
+
+  <section class="card">
+    <h2>2. 📅 Day-by-day itinerary</h2>
+    <p class="muted">Stops split across your days in route order — reorder stops on the map to reshape the plan.</p>
+    <div class="row" style="margin-bottom:4px">
+      <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
+      <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
+      <span class="muted" style="align-self:center">start date + trip days</span>
+    </div>
+    <div id="itinerary"></div>
+  </section>
+
+  <section class="card">
+    <h2>3. 🧰 Practical estimates</h2>
+    <p class="muted">Driving distance assumes real roads wander ~28% beyond straight-line miles; time assumes a 55&nbsp;mph average, stops uncounted.</p>
+    <div id="practical"></div>
+  </section>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const SAMPLE_VANS = [
-  { id:'v1', name:'2022 Winnebago Solis 59P', type:'Class B', price:89900, year:2022, miles:'18,200 mi', location:'Denver, CO', note:'Pop-top, solar, sleeps 4' },
-  { id:'v2', name:'2021 Mercedes Sprinter 144 Conversion', type:'Camper Van', price:74500, year:2021, miles:'32,500 mi', location:'Salt Lake City, UT', note:'4x4, heater, kitchen' },
-  { id:'v3', name:'2020 Airstream Basecamp 16X', type:'Travel Trailer', price:42900, year:2020, miles:'—', location:'Phoenix, AZ', note:'Off-road package' },
-  { id:'v4', name:'2023 Thor Four Winds 28Z', type:'Class C', price:98500, year:2023, miles:'9,800 mi', location:'Las Vegas, NV', note:'Bunkhouse, generator' },
-  { id:'v5', name:'2019 Ford Transit DIY Camper', type:'Camper Van', price:38750, year:2019, miles:'61,000 mi', location:'Austin, TX', note:'Full build, shower' },
-  { id:'v6', name:'2021 Jayco Greyhawk 29MV', type:'Class C', price:79900, year:2021, miles:'24,300 mi', location:'Albuquerque, NM', note:'2 slides, solar' },
-  { id:'v7', name:'2023 Winnebago Hike 100 H1316SB', type:'Travel Trailer', price:31500, year:2023, miles:'—', location:'Moab, UT', note:'Lightweight, off-grid' },
-  { id:'v8', name:'2020 Roadtrek Zion SRT', type:'Class B', price:92900, year:2020, miles:'27,900 mi', location:'Flagstaff, AZ', note:'Dodge ProMaster base' },
-];
-let livePrices = Object.fromEntries(SAMPLE_VANS.map(v=>[v.id,v.price]));
-let watch = JSON.parse(localStorage.getItem('rt_watch')||'[]');       // sample ids: [{id,target}]
-let realWatch = JSON.parse(localStorage.getItem('rt_real')||'[]');     // real listings
-let stops = JSON.parse(localStorage.getItem('rt_stops')||'[]');
-let savedSearch = JSON.parse(localStorage.getItem('rt_search')||'{}');
-if(savedSearch.q) document.getElementById('q').value = savedSearch.q;
-if(savedSearch.start) { document.getElementById('startLoc').value = savedSearch.start; document.getElementById('tripStart').value = savedSearch.start; }
-if(savedSearch.end) { document.getElementById('endLoc').value = savedSearch.end; document.getElementById('tripEnd').value = savedSearch.end; }
-
-const fmt = n => '$'+(+n).toLocaleString();
-function saveAll(){ localStorage.setItem('rt_watch',JSON.stringify(watch)); localStorage.setItem('rt_real',JSON.stringify(realWatch)); }
-
-// --- 1. Live multi-marketplace search ---
-function currentQuery(){
-  const q = document.getElementById('q').value.trim() || 'camper van';
-  const start = document.getElementById('startLoc').value.trim();
-  const end = document.getElementById('endLoc').value.trim();
-  const radius = document.getElementById('radius').value;
-  localStorage.setItem('rt_search', JSON.stringify({q,start,end}));
-  return {q,start,end,radius};
-}
-function buildUrl(mkt){
-  const {q,start,radius} = currentQuery();
-  const qe = encodeURIComponent(q), se = encodeURIComponent(start||'');
-  const qNear = encodeURIComponent(start ? `${q} near ${start}` : q);
-  switch(mkt){
-    case 'rvtrader': return `https://www.rvtrader.com/search-results?keywords=${qe}&location=${se}&searchRadius=${radius}`;
-    case 'rvt': return `https://www.rvt.com/search-results?query=${qe}`;
-    case 'campingworld': return `https://www.campingworld.com/search?q=${qe}`;
-    case 'rvusa': return `https://www.rvusa.com/rvs-for-sale?search=${qe}`;
-    case 'autotrader': return `https://www.autotrader.com/cars-for-sale/all-cars?keywords=${qe}&searchRadius=${radius}&startYear=2015&listingTypes=USED`;
-    case 'ebay': return `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(q+' camper van rv')}`;
-    case 'craigslist': return `https://www.craigslist.org/search/rvs?query=${qe}#search=2~gallery~0`;
-    case 'facebook': return `https://www.facebook.com/marketplace/search/?query=${qNear}`;
-    default: return null;
-  }
-}
-document.querySelectorAll('[data-mkt]').forEach(b=>{
-  b.onclick = ()=>{
-    const {q,start} = currentQuery();
-    const url = buildUrl(b.dataset.mkt);
-    document.getElementById('searchHint').textContent =
-      `Searching "${q}"${start?` near ${start}`:''} on ${b.textContent}… (opens in new tab)`;
-    window.open(url,'_blank','noopener');
-  };
-});
-
-// --- 2+3. Watchlist (samples + real) ---
-function renderListings(){
-  const q = document.getElementById('search').value.toLowerCase();
-  const t = document.getElementById('typeFilter').value;
-  const s = document.getElementById('sort').value;
-  let arr = SAMPLE_VANS.filter(v =>
-    (!t || v.type===t) &&
-    (v.name.toLowerCase().includes(q)||v.location.toLowerCase().includes(q)||v.type.toLowerCase().includes(q)));
-  if(s==='price-asc') arr.sort((a,b)=>livePrices[a.id]-livePrices[b.id]);
-  if(s==='price-desc') arr.sort((a,b)=>livePrices[b.id]-livePrices[a.id]);
-  if(s==='year-desc') arr.sort((a,b)=>b.year-a.year);
-  document.getElementById('listings').innerHTML = arr.map(v=>`
-    <div class="van">
-      <h3>${v.name}</h3>
-      <div class="price">${fmt(livePrices[v.id])}</div>
-      <div style="margin:6px 0"><span class="tag">${v.type}</span><span class="tag">${v.year}</span><span class="tag">${v.location}</span></div>
-      <div class="muted">${v.miles} · ${v.note}</div>
-      <div class="row" style="margin-top:8px"><button class="small" onclick="addWatch('${v.id}')">👀 Watch</button></div>
-    </div>`).join('') || '<p class="muted">No matches.</p>';
-}
-window.addWatch = id => {
-  if(!watch.find(w=>w.id===id)) watch.push({id, target: livePrices[id]});
-  saveAll(); renderWatch();
-};
-function renderWatch(){
-  const el = document.getElementById('watchList');
-  if(!watch.length && !realWatch.length){ el.innerHTML='<p class="muted">Nothing watched yet — save a real listing above, or 👀 Watch a sample below.</p>'; return; }
-  const realHtml = realWatch.map(r=>{
-    const first = r.history && r.history.length ? r.history[0].price : r.price;
-    const drop = r.price < first;
-    const deal = r.price <= r.target;
-    return `<div class="watch-item">
-      <div style="flex:1;min-width:200px"><strong>${r.title}</strong> <span class="tag">${r.source}</span><br>
-        <span class="muted">Now ${fmt(r.price)} · Target ${fmt(r.target)} · Was ${fmt(first)}${drop?` (↓ ${fmt(first-r.price)})`:''}</span><br>
-        <span class="${deal?'good':'bad'}">${deal?'✅ At/below target!':'👀 Watching'}</span>
-        ${r.url?`<br><a href="${r.url}" target="_blank" rel="noopener">View listing ↗</a>`:''}
-        <br><span class="muted">Checked ${r.history.length}x · last ${r.history.length?new Date(r.history[r.history.length-1].t).toLocaleDateString(): '—'}</span>
-      </div>
-      <div class="row" style="flex:none">
-        <input type="number" style="max-width:110px;flex:none" value="${r.target}" title="Target price" onchange="setRealTarget('${r.id}',this.value)" />
-        <button class="small" onclick="updateRealPrice('${r.id}')">Update $</button>
-        <button class="small ghost" onclick="removeReal('${r.id}')">✕</button>
-      </div>
-    </div>`;
-  }).join('');
-  const sampleHtml = watch.map(w=>{
-    const v = SAMPLE_VANS.find(x=>x.id===w.id); if(!v) return '';
-    const cur = livePrices[w.id]; const deal = cur <= w.target;
-    return `<div class="watch-item">
-      <div><strong>${v.name}</strong> <span class="tag">sample</span><br><span class="muted">Now ${fmt(cur)} · Target ${fmt(w.target)}</span>
-      <br><span class="${deal?'good':'bad'}">${deal?'✅ At/below target!':'👀 Watching'}</span></div>
-      <div class="row"><input type="number" style="max-width:120px;flex:none" value="${w.target}" onchange="setTarget('${w.id}',this.value)" />
-      <button class="small ghost" onclick="removeWatch('${w.id}')">✕</button></div>
-    </div>`;
-  }).join('');
-  el.innerHTML = realHtml + sampleHtml;
-}
-window.setTarget = (id,val)=>{ const w=watch.find(x=>x.id===id); if(w) w.target=+val||0; saveAll(); renderWatch(); };
-window.removeWatch = id=>{ watch=watch.filter(w=>w.id!==id); saveAll(); renderWatch(); };
-window.setRealTarget = (id,val)=>{ const r=realWatch.find(x=>x.id===id); if(r) r.target=+val||0; saveAll(); renderWatch(); };
-window.removeReal = id=>{ realWatch=realWatch.filter(r=>r.id!==id); saveAll(); renderWatch(); };
-window.updateRealPrice = id=>{
-  const r = realWatch.find(x=>x.id===id); if(!r) return;
-  const v = prompt(`Current price for "${r.title}"? (was ${fmt(r.price)})`, r.price);
-  if(v===null) return; const p = +String(v).replace(/[^0-9]/g,'');
-  if(!p) { alert('Enter a number like 72500.'); return; }
-  r.price = p; r.history.push({price:p, t:Date.now()}); saveAll(); renderWatch();
-};
-document.getElementById('addReal').onclick = ()=>{
-  const title = document.getElementById('realTitle').value.trim();
-  const price = +document.getElementById('realPrice').value;
-  const url = document.getElementById('realUrl').value.trim();
-  const source = document.getElementById('realSource').value;
-  if(!title || !price){ alert('Give the listing a title and its real price.'); return; }
-  realWatch.unshift({id:'r'+Date.now(), title, price, target:price, url, source, history:[{price, t:Date.now()}]});
-  document.getElementById('realTitle').value=''; document.getElementById('realPrice').value=''; document.getElementById('realUrl').value='';
-  saveAll(); renderWatch();
-};
-document.getElementById('checkPrices').onclick = ()=>{
-  SAMPLE_VANS.forEach(v=>{
-    const delta = (Math.random()-0.55)*0.08;
-    livePrices[v.id]=Math.max(5000,Math.round(livePrices[v.id]*(1+delta)/100)*100);
-  });
-  renderListings(); renderWatch();
-};
-document.getElementById('clearWatch').onclick = ()=>{ if(confirm('Clear all watched items?')){ watch=[]; realWatch=[]; saveAll(); renderWatch(); } };
-['search','typeFilter','sort'].forEach(id=>document.getElementById(id).oninput=renderListings);
-
 // --- 4. Map ---
 const map = L.map('map').setView([39.5,-98.35],4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+let stops = JSON.parse(localStorage.getItem('rt_stops')||'[]');
 let markers=[], line=null;
 function saveStops(){ localStorage.setItem('rt_stops',JSON.stringify(stops)); }
 function hav(a,b){ const R=3958.8,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180;
   const h=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;
   return 2*R*Math.asin(Math.sqrt(h)); }
+// --- Trip plan: itinerary + practical estimates ---
+let plan = Object.assign({start:'', days:3}, JSON.parse(localStorage.getItem('rt_plan')||'{}'));
+function savePlan(){ localStorage.setItem('rt_plan', JSON.stringify(plan)); }
+const CIRC=1.28, MPH=55, MPG=25;
+function legMi(a,b){ return hav(a,b)*CIRC; }
+function totalDriveMi(){ let t=0; for(let i=1;i<stops.length;i++) t+=legMi(stops[i-1],stops[i]); return t; }
+function fmtDate(d){ return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}); }
+function renderPlan(){
+  const it=document.getElementById('itinerary'), pr=document.getElementById('practical');
+  if(!it||!pr) return;
+  const days=Math.min(60,Math.max(1,+plan.days||1));
+  if(stops.length<2){
+    it.innerHTML='<p class="muted">Add at least a start and an end on the map above — your day-by-day plan appears here.</p>';
+  } else {
+    const legs=stops.length-1, chunks=Math.min(days,legs);
+    const d0=plan.start?new Date(plan.start+'T12:00:00'):null;
+    let html='';
+    for(let c=0;c<chunks;c++){
+      const a=Math.round(c*legs/chunks), b=Math.round((c+1)*legs/chunks);
+      const seg=stops.slice(a,b+1);
+      if(!seg.length) continue;
+      let mi=0;
+      for(let i=a;i<b;i++) mi+=legMi(stops[i],stops[i+1]);
+      const date=d0?fmtDate(new Date(d0.getTime()+c*864e5)):'Day '+(c+1);
+      html+='<div class="day"><h3>'+date+' <span class="muted">· ~'+Math.round(mi)+' mi driving</span></h3><ol>'+seg.map(s=>'<li>'+s.name+'</li>').join('')+'</ol><div class="muted">🌙 Overnight: '+seg[seg.length-1].name+'</div></div>';
+    }
+    for(let k=chunks;k<days;k++){
+      const date=d0?fmtDate(new Date(d0.getTime()+k*864e5)):'Day '+(k+1);
+      html+='<div class="day open"><h3>'+date+'</h3><p class="muted">Open day in '+stops[stops.length-1].name+' — explore, rest, or detour.</p></div>';
+    }
+    it.innerHTML=html;
+  }
+  if(stops.length>1){
+    const tmi=totalDriveMi();
+    pr.innerHTML='<div class="prac-grid"><div><b>'+Math.round(tmi).toLocaleString()+' mi</b><span>est. driving</span></div><div><b>'+(tmi/MPH).toFixed(1)+' h</b><span>behind the wheel</span></div><div><b>'+stops.length+'</b><span>stops</span></div><div><b>'+days+'</b><span>days</span></div><div><b>'+Math.round(tmi/MPG)+' gal</b><span>fuel ≈ @25mpg</span></div></div>';
+  } else pr.innerHTML='<p class="muted">Estimates appear once your route has 2+ stops.</p>';
+}
 async function geocode(name){
   const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(name)}`).then(r=>r.json());
   if(!r.length) throw new Error('not found');
@@ -318,6 +168,7 @@ function renderStops(){
   } else if(stops.length===1){ map.setView([stops[0].lat,stops[0].lng],8);
     document.getElementById('tripStats').textContent='1 stop — set a start/end or add another stop to draw a route.';
   } else document.getElementById('tripStats').textContent='';
+  renderPlan();
 }
 async function addLocation(name){
   if(!name) return;
@@ -338,21 +189,16 @@ document.getElementById('setEnds').onclick = async ()=>{
     else if(stops.length===1){ stops=[gs, stops[0], ge]; }
     else { stops=[gs,ge]; }
     saveStops(); renderStops();
-    document.getElementById('startLoc').value = s; document.getElementById('endLoc').value = e;
-    currentQuery();
   }catch{ alert('Could not find start or end — check spelling and try again.'); }
-};
-document.getElementById('sendToMap').onclick = async ()=>{
-  const {start,end} = currentQuery();
-  if(start) document.getElementById('tripStart').value = start;
-  if(end) document.getElementById('tripEnd').value = end;
-  if(start && end) document.getElementById('setEnds').click();
-  else if(start) addLocation(start);
-  else alert('Enter a start location first.');
 };
 map.on('click',e=>{ const n=prompt('Name this stop:','Custom stop'); if(n){ stops.push({name:n,lat:e.latlng.lat,lng:e.latlng.lng}); saveStops(); renderStops(); } });
 
-renderListings(); renderWatch(); renderStops();
+const planStartEl=document.getElementById('planStart'), planDaysEl=document.getElementById('planDays');
+if(planStartEl&&plan.start) planStartEl.value=plan.start;
+if(planDaysEl) planDaysEl.value=plan.days;
+if(planStartEl) planStartEl.onchange=()=>{ plan.start=planStartEl.value; savePlan(); renderPlan(); };
+if(planDaysEl) planDaysEl.onchange=()=>{ plan.days=Math.min(60,Math.max(1,+planDaysEl.value||1)); planDaysEl.value=plan.days; savePlan(); renderPlan(); };
+renderStops();
 </script>
 </body>
 </html>
