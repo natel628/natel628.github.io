@@ -11,21 +11,19 @@
   body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
   header { padding:24px; text-align:center; background:linear-gradient(135deg,#0f172a,#334155); border-bottom:2px solid var(--accent); }
   header h1 { margin:0; font-size:2rem; } header p { color:var(--muted); margin:6px 0 0; }
+  .sync { display:inline-block; margin-top:10px; font-size:.78rem; border-radius:20px; padding:3px 10px; border:1px solid #334155; color:var(--muted); }
+  .sync.saving { color:var(--accent); border-color:#7c5a13; }
+  .sync.ok { color:var(--green); border-color:#14532d; }
+  .sync.error { color:#f87171; border-color:#7f1d1d; }
   main { max-width:1100px; margin:0 auto; padding:20px; display:grid; gap:24px; }
   .card { background:var(--card); border-radius:12px; padding:18px; border:1px solid #334155; }
   .card h2 { margin-top:0; } .muted { color:var(--muted); font-size:.9rem; }
   .row { display:flex; gap:8px; flex-wrap:wrap; } input,select,button { padding:10px 12px; border-radius:8px; border:1px solid #475569; font-size:1rem; }
   input,select { background:#0f172a; color:var(--text); flex:1; min-width:160px; }
   button { background:var(--accent); border:none; color:#111; font-weight:700; cursor:pointer; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
   button.ghost { background:transparent; color:var(--text); border:1px solid #475569; }
   button.small { padding:6px 10px; font-size:.85rem; }
-  #listings { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin-top:12px; }
-  .van { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px; }
-  .van h3 { margin:0 0 4px; font-size:1.05rem; } .van .price { font-size:1.3rem; font-weight:800; color:var(--accent); }
-  .tag { display:inline-block; background:#334155; border-radius:20px; padding:2px 10px; font-size:.8rem; margin:2px 4px 2px 0; }
-  #watchList { margin-top:12px; display:grid; gap:8px; }
-  .watch-item { display:flex; justify-content:space-between; align-items:center; gap:10px; background:#0f172a; border:1px solid #334155; padding:10px 12px; border-radius:8px; flex-wrap:wrap; }
-  .good { color:var(--green); font-weight:700; } .bad { color:var(--accent); font-weight:700; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
   #stops li { display:flex; align-items:center; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
@@ -58,6 +56,7 @@
   .watch-actions input { max-width:120px; flex:none; }
   .warn { color:#f87171; font-weight:700; }
   .hit { color:var(--green); font-weight:700; }
+  .tag { display:inline-block; background:#334155; border-radius:20px; padding:2px 10px; font-size:.8rem; margin:2px 4px 2px 0; }
   .watch-actions a.small { text-decoration:none; border:1px solid #475569; border-radius:8px; padding:6px 10px; font-size:.85rem; color:var(--accent); }
   .watch-actions a.small:hover { border-color:var(--accent); }
   #watchMsg:empty { display:none; }
@@ -69,6 +68,8 @@
 <header>
   <h1>🚐 Road Trip Planner</h1>
   <p>Route map · day-by-day itinerary · practical estimates</p>
+  <p class="muted" style="margin-top:8px">One shared trip — anything anyone adds shows up for everyone who opens this page.</p>
+  <span id="syncState" class="sync" role="status" aria-live="polite">Connecting…</span>
 </header>
 <main>
 
@@ -78,15 +79,17 @@
     <div class="row" style="margin-bottom:8px">
       <input id="tripStart" placeholder="Trip start — e.g. Denver, CO" />
       <input id="tripEnd" placeholder="Trip end — e.g. Las Vegas, NV" />
-      <button id="setEnds">Set start/end</button>
+      <button id="setEnds" type="button">Set start/end</button>
     </div>
     <div class="row" style="margin-bottom:10px">
       <input id="locInput" placeholder="Add a stop in between — city, park, address…" />
-      <button id="addLoc">Add stop</button>
-      <button id="clearStops" class="ghost">Clear trip</button>
+      <button id="addLoc" type="button">Add stop</button>
+      <button id="clearStops" class="ghost" type="button">Clear trip</button>
     </div>
     <div id="map"></div>
     <p class="muted" id="tripStats" style="margin-top:8px"></p>
+    <p class="muted" id="tripHint" role="status" aria-live="polite"></p>
+    <p class="muted" id="stopsEmpty">No stops yet — set a start and an end above, or click the map.</p>
     <ul id="stops"></ul>
   </section>
 
@@ -109,7 +112,7 @@
 
   <section class="card">
     <h2>4. 💰 RV &amp; van prices — live lookup + watch</h2>
-    <p class="muted">Marketplaces block automated price feeds (RV Trader serves a CAPTCHA, RVT returns 403), so the lookup opens your <strong>real search on each site</strong> — current inventory, current prices. Save anything you find below and this page keeps its price history: drops show green, targets turn green when hit, and anything unverified for 7+ days is flagged.</p>
+    <p class="muted">Marketplaces block automated price feeds (RV Trader serves a CAPTCHA, RVT returns 403), so the lookup opens your <strong>real search on each site</strong> — current inventory, current prices. Save anything you find below and this page keeps its price history: drops show green, targets turn green when hit, and anything unverified for 7+ days is flagged. The watch list is shared with everyone who opens this page.</p>
     <div class="row">
       <input id="q" placeholder="What? e.g. Sprinter, Solis, Basecamp, Class B…" />
       <input id="loc" placeholder="Where? e.g. Denver, CO" />
@@ -134,7 +137,7 @@
     <p class="muted" style="margin-top:2px">Craigslist uses the city from <em>Where</em> (e.g. Denver &rarr; denver.craigslist.org); with no city it searches every Craigslist region.</p>
 
     <h3 style="margin:20px 0 4px;font-size:1rem">Watch list</h3>
-    <p class="muted">Paste a rig you found, then log its price whenever you re-check. History stays on this device.</p>
+    <p class="muted">Paste a rig you found, then log its price whenever you re-check. History is shared and saved on the server.</p>
     <div class="row">
       <input id="wTitle" placeholder="Listing title — e.g. 2021 Sprinter 144 4x4" aria-label="Listing title" />
       <input id="wPrice" type="number" min="0" step="100" placeholder="Price $" style="max-width:120px;flex:none" aria-label="Current price" />
@@ -156,127 +159,257 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// --- 4. Map ---
+const $ = id => document.getElementById(id);
+// The GitHub Pages copy of this page is static hosting with no backend of its own,
+// so it talks to the deployed Worker; the Sites copy stays same-origin.
+const API_BASE = /(^|\.)github\.io$/.test(location.hostname)
+  ? 'https://site-40527424745f40ee94a923a69d477c05.freebuff.page'
+  : '';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = n => '$' + Math.round(+n).toLocaleString();
+const DAY = 864e5;
+const CIRC = 1.28, MPH = 55, MPG = 25;
+const SITES = ['RV Trader','RVT.com','RVUSA','Camping World','eBay Motors','Autotrader','Craigslist','Facebook Marketplace','Other'];
+
+/* ---------- shared state ---------- */
+let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [] };
+let syncing = false;
+
+function setSync(kind, text){
+  const el = $('syncState');
+  el.className = 'sync ' + kind;
+  el.textContent = text;
+}
+async function api(method, path, payload){
+  const res = await fetch(API_BASE + path, {
+    method,
+    headers: payload ? { 'content-type': 'application/json' } : undefined,
+    body: payload ? JSON.stringify(payload) : undefined,
+    cache: 'no-store'
+  });
+  let data = null;
+  try { data = await res.json(); } catch {}
+  if (!res.ok) throw new Error((data && data.error) || ('Request failed (' + res.status + ')'));
+  return data;
+}
+function applyState(next){
+  state = next;
+  renderStops();
+  renderPlan();
+  syncPlanInputs();
+  renderWatch();
+}
+async function loadState(){
+  try {
+    applyState(await api('GET', '/api/state'));
+    setSync('ok', 'Shared · synced');
+  } catch (err) {
+    setSync('error', 'Offline — changes are not being saved');
+  }
+}
+async function write(method, path, payload){
+  syncing = true;
+  setSync('saving', 'Saving…');
+  try {
+    applyState(await api(method, path, payload));
+    setSync('ok', 'Shared · synced');
+    return true;
+  } catch (err) {
+    setSync('error', err.message || 'Could not save');
+    return false;
+  } finally {
+    syncing = false;
+  }
+}
+
+/* ---------- 1. map & stops ---------- */
 const map = L.map('map').setView([39.5,-98.35],4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-let stops = JSON.parse(localStorage.getItem('rt_stops')||'[]');
 let markers=[], line=null;
-function saveStops(){ localStorage.setItem('rt_stops',JSON.stringify(stops)); }
+
 function hav(a,b){ const R=3958.8,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180;
   const h=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;
   return 2*R*Math.asin(Math.sqrt(h)); }
-// --- Trip plan: itinerary + practical estimates ---
-let plan = Object.assign({start:'', days:3}, JSON.parse(localStorage.getItem('rt_plan')||'{}'));
-function savePlan(){ localStorage.setItem('rt_plan', JSON.stringify(plan)); }
-const CIRC=1.28, MPH=55, MPG=25;
 function legMi(a,b){ return hav(a,b)*CIRC; }
-function totalDriveMi(){ let t=0; for(let i=1;i<stops.length;i++) t+=legMi(stops[i-1],stops[i]); return t; }
+function totalDriveMi(){ let t=0; for(let i=1;i<state.stops.length;i++) t+=legMi(state.stops[i-1],state.stops[i]); return t; }
 function fmtDate(d){ return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}); }
-function renderPlan(){
-  const it=document.getElementById('itinerary'), pr=document.getElementById('practical');
-  if(!it||!pr) return;
-  const days=Math.min(60,Math.max(1,+plan.days||1));
-  if(stops.length<2){
-    it.innerHTML='<p class="muted">Add at least a start and an end on the map above — your day-by-day plan appears here.</p>';
-  } else {
-    const legs=stops.length-1, chunks=Math.min(days,legs);
-    const d0=plan.start?new Date(plan.start+'T12:00:00'):null;
-    let html='';
-    for(let c=0;c<chunks;c++){
-      const a=Math.round(c*legs/chunks), b=Math.round((c+1)*legs/chunks);
-      const seg=stops.slice(a,b+1);
-      if(!seg.length) continue;
-      let mi=0;
-      for(let i=a;i<b;i++) mi+=legMi(stops[i],stops[i+1]);
-      const date=d0?fmtDate(new Date(d0.getTime()+c*864e5)):'Day '+(c+1);
-      html+='<div class="day"><h3>'+date+' <span class="muted">· ~'+Math.round(mi)+' mi driving</span></h3><ol>'+seg.map(s=>'<li>'+s.name+'</li>').join('')+'</ol><div class="muted">🌙 Overnight: '+seg[seg.length-1].name+'</div></div>';
-    }
-    for(let k=chunks;k<days;k++){
-      const date=d0?fmtDate(new Date(d0.getTime()+k*864e5)):'Day '+(k+1);
-      html+='<div class="day open"><h3>'+date+'</h3><p class="muted">Open day in '+stops[stops.length-1].name+' — explore, rest, or detour.</p></div>';
-    }
-    it.innerHTML=html;
-  }
-  if(stops.length>1){
-    const tmi=totalDriveMi();
-    pr.innerHTML='<div class="prac-grid"><div><b>'+Math.round(tmi).toLocaleString()+' mi</b><span>est. driving</span></div><div><b>'+(tmi/MPH).toFixed(1)+' h</b><span>behind the wheel</span></div><div><b>'+stops.length+'</b><span>stops</span></div><div><b>'+days+'</b><span>days</span></div><div><b>'+Math.round(tmi/MPG)+' gal</b><span>fuel ≈ @25mpg</span></div></div>';
-  } else pr.innerHTML='<p class="muted">Estimates appear once your route has 2+ stops.</p>';
+function hint(text){ $('tripHint').textContent = text || ''; }
+
+function stopButton(glyph, label, act, id, disabled){
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'small ghost';
+  b.textContent = glyph;
+  b.dataset.act = act;
+  b.dataset.id = id;
+  b.disabled = !!disabled;
+  b.setAttribute('aria-label', label);
+  b.title = label;
+  return b;
 }
-async function geocode(name){
-  const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(name)}`).then(r=>r.json());
-  if(!r.length) throw new Error('not found');
-  return {name:r[0].display_name.split(',').slice(0,2).join(','), lat:+r[0].lat, lng:+r[0].lon};
-}
+
 function renderStops(){
-  markers.forEach(m=>map.removeLayer(m)); markers=[];
-  if(line) map.removeLayer(line);
-  const ul=document.getElementById('stops'); ul.innerHTML='';
-  stops.forEach((s,i)=>{
-    const label = `${i+1}. ${s.name}${i===0&&stops.length>1?' (START)':''}${i===stops.length-1&&stops.length>1?' (END)':''}`;
-    const m=L.marker([s.lat,s.lng]).addTo(map).bindPopup(`<b>${label}</b>`);
-    markers.push(m);
-    const li=document.createElement('li');
-    li.innerHTML=`<span class="num">${i+1}</span><span style="flex:1">${label}<br><span class="muted">${s.lat.toFixed(3)}, ${s.lng.toFixed(3)}</span></span>`;
-    const up=document.createElement('button'); up.textContent='↑'; up.className='small ghost';
-    up.onclick=()=>{ if(i>0){ [stops[i-1],stops[i]]=[stops[i],stops[i-1]]; saveStops(); renderStops(); } };
-    const dn=document.createElement('button'); dn.textContent='↓'; dn.className='small ghost';
-    dn.onclick=()=>{ if(i<stops.length-1){ [stops[i+1],stops[i]]=[stops[i],stops[i+1]]; saveStops(); renderStops(); } };
-    const del=document.createElement('button'); del.textContent='✕'; del.className='small ghost';
-    del.onclick=()=>{ stops.splice(i,1); saveStops(); renderStops(); };
-    li.append(up,dn,del); ul.appendChild(li);
+  markers.forEach(m => map.removeLayer(m)); markers = [];
+  if (line) { map.removeLayer(line); line = null; }
+  const ul = $('stops');
+  ul.innerHTML = '';
+  $('stopsEmpty').style.display = state.stops.length ? 'none' : 'block';
+
+  state.stops.forEach((s, i) => {
+    const isStart = i === 0 && state.stops.length > 1;
+    const isEnd = i === state.stops.length - 1 && state.stops.length > 1;
+    const label = (i + 1) + '. ' + s.name + (isStart ? ' (START)' : '') + (isEnd ? ' (END)' : '');
+    markers.push(L.marker([s.lat, s.lng]).addTo(map).bindPopup('<b>' + esc(label) + '</b>'));
+
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="num">' + (i + 1) + '</span>'
+      + '<span style="flex:1">' + esc(s.name)
+      + (isStart ? ' <span class="tag">start</span>' : '')
+      + (isEnd ? ' <span class="tag">end</span>' : '')
+      + '<br><span class="muted">' + s.lat.toFixed(3) + ', ' + s.lng.toFixed(3) + '</span></span>';
+    li.append(
+      stopButton('↑', 'Move ' + s.name + ' up', 'up', s.id, i === 0),
+      stopButton('↓', 'Move ' + s.name + ' down', 'down', s.id, i === state.stops.length - 1),
+      stopButton('✕', 'Remove ' + s.name, 'del', s.id, false)
+    );
+    ul.appendChild(li);
   });
-  if(stops.length>1){
-    line=L.polyline(stops.map(s=>[s.lat,s.lng]),{color:'#f59e0b',weight:4}).addTo(map);
+
+  if (state.stops.length > 1) {
+    line = L.polyline(state.stops.map(s => [s.lat, s.lng]), { color:'#f59e0b', weight:4 }).addTo(map);
     map.fitBounds(line.getBounds().pad(0.2));
-    let mi=0; for(let i=1;i<stops.length;i++) mi+=hav(stops[i-1],stops[i]);
-    document.getElementById('tripStats').textContent=`${stops.length} stops (${stops[0].name} → ${stops[stops.length-1].name}) · ~${Math.round(mi).toLocaleString()} miles straight-line`;
-  } else if(stops.length===1){ map.setView([stops[0].lat,stops[0].lng],8);
-    document.getElementById('tripStats').textContent='1 stop — set a start/end or add another stop to draw a route.';
-  } else document.getElementById('tripStats').textContent='';
-  renderPlan();
+    let mi = 0;
+    for (let i = 1; i < state.stops.length; i++) mi += hav(state.stops[i-1], state.stops[i]);
+    $('tripStats').textContent = state.stops.length + ' stops (' + state.stops[0].name + ' → '
+      + state.stops[state.stops.length-1].name + ') · ~' + Math.round(mi).toLocaleString() + ' miles straight-line';
+  } else if (state.stops.length === 1) {
+    map.setView([state.stops[0].lat, state.stops[0].lng], 8);
+    $('tripStats').textContent = '1 stop — set a start/end or add another stop to draw a route.';
+  } else {
+    $('tripStats').textContent = '';
+  }
 }
+
+$('stops').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]');
+  if (!b) return;
+  const i = state.stops.findIndex(s => s.id === b.dataset.id);
+  if (i < 0) return;
+  if (b.dataset.act === 'del') { write('DELETE', '/api/stops/' + encodeURIComponent(b.dataset.id)); return; }
+  const j = b.dataset.act === 'up' ? i - 1 : i + 1;
+  if (j < 0 || j >= state.stops.length) return;
+  const order = state.stops.map(s => s.id);
+  const tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+  write('PUT', '/api/stops', { order });
+});
+
+async function geocode(name){
+  const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(name))
+    .then(res => { if (!res.ok) throw new Error('geocoder unavailable'); return res.json(); });
+  if (!r.length) throw new Error('not found');
+  return { name: r[0].display_name.split(',').slice(0, 2).join(','), lat: +r[0].lat, lng: +r[0].lon };
+}
+
 async function addLocation(name){
-  if(!name) return;
-  try{ const g = await geocode(name); stops.push(g); saveStops(); renderStops(); }
-  catch{ alert('Place not found — try a city or park name, or click the map.'); }
+  if (!name) return;
+  const btn = $('addLoc');
+  btn.disabled = true;
+  hint('Looking up “' + name + '”…');
+  try {
+    const place = await geocode(name);
+    hint(await write('POST', '/api/stops', place) ? '' : '');
+  } catch (err) {
+    hint('Place not found — try a city or park name, or click the map.');
+  } finally {
+    btn.disabled = false;
+  }
 }
-document.getElementById('addLoc').onclick=()=>{ const i=document.getElementById('locInput'); addLocation(i.value.trim()); i.value=''; };
-document.getElementById('locInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ addLocation(e.target.value.trim()); e.target.value=''; }});
-document.getElementById('clearStops').onclick=()=>{ stops=[]; saveStops(); renderStops(); };
-document.getElementById('setEnds').onclick = async ()=>{
-  const s = document.getElementById('tripStart').value.trim();
-  const e = document.getElementById('tripEnd').value.trim();
-  if(!s || !e){ alert('Enter both a start and an end location.'); return; }
-  try{
-    const gs = await geocode(s), ge = await geocode(e);
-    gs.name = 'START: '+gs.name; ge.name = 'END: '+ge.name;
-    if(stops.length>=2){ stops[0]=gs; stops[stops.length-1]=ge; }
-    else if(stops.length===1){ stops=[gs, stops[0], ge]; }
-    else { stops=[gs,ge]; }
-    saveStops(); renderStops();
-  }catch{ alert('Could not find start or end — check spelling and try again.'); }
+
+$('addLoc').onclick = () => { const i = $('locInput'); addLocation(i.value.trim()); i.value = ''; };
+$('locInput').addEventListener('keydown', e => { if (e.key === 'Enter') { addLocation(e.target.value.trim()); e.target.value = ''; } });
+$('clearStops').onclick = () => { if (state.stops.length && confirm('Clear every stop on this shared trip?')) write('DELETE', '/api/stops'); };
+$('setEnds').onclick = async () => {
+  const s = $('tripStart').value.trim();
+  const e = $('tripEnd').value.trim();
+  if (!s || !e) { hint('Enter both a start and an end location.'); return; }
+  const btn = $('setEnds');
+  btn.disabled = true;
+  hint('Looking up your route…');
+  try {
+    const start = await geocode(s);
+    const end = await geocode(e);
+    hint(await write('POST', '/api/trip/ends', { start, end }) ? '' : '');
+  } catch (err) {
+    hint('Could not find that start or end — check spelling and try again.');
+  } finally {
+    btn.disabled = false;
+  }
 };
-map.on('click',e=>{ const n=prompt('Name this stop:','Custom stop'); if(n){ stops.push({name:n,lat:e.latlng.lat,lng:e.latlng.lng}); saveStops(); renderStops(); } });
+map.on('click', e => {
+  const n = prompt('Name this stop:', 'Custom stop');
+  if (n && n.trim()) write('POST', '/api/stops', { name: n.trim(), lat: e.latlng.lat, lng: e.latlng.lng });
+});
 
-const planStartEl=document.getElementById('planStart'), planDaysEl=document.getElementById('planDays');
-if(planStartEl&&plan.start) planStartEl.value=plan.start;
-if(planDaysEl) planDaysEl.value=plan.days;
-if(planStartEl) planStartEl.onchange=()=>{ plan.start=planStartEl.value; savePlan(); renderPlan(); };
-if(planDaysEl) planDaysEl.onchange=()=>{ plan.days=Math.min(60,Math.max(1,+planDaysEl.value||1)); planDaysEl.value=plan.days; savePlan(); renderPlan(); };
-// --- RV & van prices: live lookup + watch ledger ---
-const DAY = 864e5;
-let watch = JSON.parse(localStorage.getItem('rt_watch_v2') || '[]');
-const money = n => '$' + Math.round(+n).toLocaleString();
-const SITES = ['RV Trader','RVT.com','RVUSA','Camping World','eBay Motors','Autotrader','Craigslist','Facebook Marketplace','Other'];
-const qEl = id => document.getElementById(id);
-const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* ---------- 2 & 3. itinerary + practical estimates ---------- */
+function renderPlan(){
+  const it = $('itinerary'), pr = $('practical');
+  const days = Math.min(60, Math.max(1, +state.plan.days || 1));
 
+  if (state.stops.length < 2) {
+    it.innerHTML = '<p class="muted">Add at least a start and an end on the map above — your day-by-day plan appears here.</p>';
+  } else {
+    const legs = state.stops.length - 1, chunks = Math.min(days, legs);
+    const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
+    let html = '';
+    for (let c = 0; c < chunks; c++) {
+      const a = Math.round(c * legs / chunks), b = Math.round((c + 1) * legs / chunks);
+      const seg = state.stops.slice(a, b + 1);
+      if (!seg.length) continue;
+      let mi = 0;
+      for (let i = a; i < b; i++) mi += legMi(state.stops[i], state.stops[i+1]);
+      const date = d0 ? fmtDate(new Date(d0.getTime() + c * 864e5)) : 'Day ' + (c + 1);
+      html += '<div class="day"><h3>' + date + ' <span class="muted">· ~' + Math.round(mi) + ' mi driving</span></h3><ol>'
+        + seg.map(s => '<li>' + esc(s.name) + '</li>').join('') + '</ol><div class="muted">🌙 Overnight: '
+        + esc(seg[seg.length-1].name) + '</div></div>';
+    }
+    for (let k = chunks; k < days; k++) {
+      const date = d0 ? fmtDate(new Date(d0.getTime() + k * 864e5)) : 'Day ' + (k + 1);
+      html += '<div class="day open"><h3>' + date + '</h3><p class="muted">Open day in '
+        + esc(state.stops[state.stops.length-1].name) + ' — explore, rest, or detour.</p></div>';
+    }
+    it.innerHTML = html;
+  }
+
+  if (state.stops.length > 1) {
+    const tmi = totalDriveMi();
+    pr.innerHTML = '<div class="prac-grid"><div><b>' + Math.round(tmi).toLocaleString() + ' mi</b><span>est. driving</span></div>'
+      + '<div><b>' + (tmi / MPH).toFixed(1) + ' h</b><span>behind the wheel</span></div>'
+      + '<div><b>' + state.stops.length + '</b><span>stops</span></div>'
+      + '<div><b>' + days + '</b><span>days</span></div>'
+      + '<div><b>' + Math.round(tmi / MPG) + ' gal</b><span>fuel ≈ @25mpg</span></div></div>';
+  } else {
+    pr.innerHTML = '<p class="muted">Estimates appear once your route has 2+ stops.</p>';
+  }
+}
+
+function syncPlanInputs(){
+  if (document.activeElement !== $('planStart')) $('planStart').value = state.plan.start || '';
+  if (document.activeElement !== $('planDays')) $('planDays').value = state.plan.days || 3;
+}
+$('planStart').addEventListener('change', () => write('PUT', '/api/plan', { start: $('planStart').value }));
+$('planDays').addEventListener('change', () => {
+  const v = Math.min(60, Math.max(1, Math.round(+$('planDays').value || 1)));
+  $('planDays').value = v;
+  write('PUT', '/api/plan', { days: v });
+});
+
+/* ---------- 4. lookups + watch list ---------- */
 function lookupParams(){
   return {
-    q: qEl('q').value.trim() || 'camper van',
-    loc: qEl('loc').value.trim(),
-    radius: qEl('radius').value,
-    max: Math.round(+qEl('priceMax').value) || 0
+    q: $('q').value.trim() || 'camper van',
+    loc: $('loc').value.trim(),
+    radius: $('radius').value,
+    max: Math.round(+$('priceMax').value) || 0
   };
 }
 function marketplaceUrl(key, p){
@@ -304,26 +437,31 @@ document.querySelectorAll('[data-mkt]').forEach(b => {
   b.onclick = () => {
     const p = lookupParams();
     localStorage.setItem('rt_lookup', JSON.stringify(p));
-    qEl('searchHint').textContent = 'Opened ' + b.textContent.trim() + ' — “' + p.q + '”' + (p.loc ? ' near ' + p.loc : '') + ' in a new tab.';
+    $('searchHint').textContent = 'Opened ' + b.textContent.trim() + ' — “' + p.q + '”' + (p.loc ? ' near ' + p.loc : '') + ' in a new tab.';
     window.open(marketplaceUrl(b.dataset.mkt, p), '_blank', 'noopener');
   };
 });
 
-function saveWatch(){ localStorage.setItem('rt_watch_v2', JSON.stringify(watch)); }
-function msg(t){ const m = qEl('watchMsg'); m.textContent = t; setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000); }
+function msg(t){
+  const m = $('watchMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
+}
 function sparkSVG(hist){
   if (hist.length < 2) return '';
   const ps = hist.map(h => h.p), min = Math.min(...ps), max = Math.max(...ps), span = (max - min) || 1;
   const pts = ps.map((v, i) => (i / (ps.length - 1) * 100).toFixed(1) + ',' + (27 - (v - min) / span * 24).toFixed(1)).join(' ');
   return '<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>';
 }
+
 function renderWatch(){
-  const el = qEl('watchList');
-  if (!watch.length){
-    el.innerHTML = '<p class="muted">Nothing saved yet — run a lookup above, then paste the rig\u2019s title, price and URL here to start tracking it.</p>';
+  const el = $('watchList');
+  if (el.contains(document.activeElement)) return;
+  if (!state.watch.length) {
+    el.innerHTML = '<p class="muted">Nothing saved yet — run a lookup above, then paste the rig’s title, price and URL here to start tracking it.</p>';
     return;
   }
-  el.innerHTML = watch.map(w => {
+  el.innerHTML = state.watch.map(w => {
     const hist = w.history && w.history.length ? w.history : [{ p: w.price, t: Date.now() }];
     const first = hist[0].p, lastT = hist[hist.length - 1].t;
     const diff = first - w.price, pct = first ? Math.round(diff / first * 100) : 0;
@@ -342,54 +480,82 @@ function renderWatch(){
       + '<div class="watch-note">' + hist.length + ' price' + (hist.length === 1 ? '' : 's') + ' logged · last ' + (idle === 0 ? 'today' : idle + 'd ago')
       + (stale ? ' <span class="warn">⚠ re-check this one</span>' : '') + '</div>'
       + '<div class="watch-actions">'
-      + '<input type="number" min="0" step="100" value="' + w.price + '" aria-label="New price for ' + esc(w.title) + '" onchange="rtSetPrice(\'' + w.id + '\', this.value)" />'
-      + '<button type="button" class="small" onclick="rtSetPrice(\'' + w.id + '\', this.previousElementSibling.value)">Log price</button>'
+      + '<input type="number" min="0" step="100" value="' + w.price + '" data-role="price" aria-label="New price for ' + esc(w.title) + '" />'
+      + '<button type="button" class="small" data-act="log" data-id="' + esc(w.id) + '" aria-label="Log a new price for ' + esc(w.title) + '">Log price</button>'
       + (w.url ? '<a class="small" href="' + esc(w.url) + '" target="_blank" rel="noopener noreferrer">Open listing ↗</a>' : '')
-      + '<button type="button" class="small ghost" onclick="rtRemove(\'' + w.id + '\')">✕</button>'
+      + '<button type="button" class="small ghost" data-act="remove" data-id="' + esc(w.id) + '" aria-label="Remove ' + esc(w.title) + ' from the watch list">✕</button>'
       + '</div></div>';
   }).join('');
 }
-window.rtSetPrice = (id, val) => {
-  const w = watch.find(x => x.id === id); if (!w) return;
-  const p = Math.round(+val);
-  if (!p || p < 0){ msg('Enter a whole-dollar price, e.g. 72500.'); return; }
-  if (p !== w.price){
-    w.price = p; w.history.push({ p, t: Date.now() });
-    msg(w.history.length > 1 && p < w.history[w.history.length - 2].p ? 'Price drop logged for “' + w.title + '”.' : 'Price logged for “' + w.title + '”.');
-  } else msg('Same price — history unchanged.');
-  saveWatch(); renderWatch();
-};
-window.rtRemove = id => { watch = watch.filter(x => x.id !== id); saveWatch(); renderWatch(); msg('Removed from watch list.'); };
 
-qEl('wSource').innerHTML = SITES.map(s => '<option>' + s + '</option>').join('');
-qEl('wAdd').onclick = () => {
-  const title = qEl('wTitle').value.trim();
-  const price = Math.round(+qEl('wPrice').value);
-  if (!title || !price){ msg('A listing needs a title and its current price.'); return; }
-  watch.unshift({ id: 'w' + Date.now(), title, price, target: Math.round(+qEl('wTarget').value) || 0, url: qEl('wUrl').value.trim(), source: qEl('wSource').value, history: [{ p: price, t: Date.now() }] });
-  ['wTitle','wPrice','wTarget','wUrl'].forEach(i => qEl(i).value = '');
-  saveWatch(); renderWatch(); msg('Saved “' + title + '” — log its price whenever you re-check.');
+$('watchList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]');
+  if (!b) return;
+  const id = b.dataset.id;
+  if (b.dataset.act === 'remove') { write('DELETE', '/api/watch/' + encodeURIComponent(id)); return; }
+  if (b.dataset.act === 'log') {
+    const input = b.parentElement.querySelector('input[data-role="price"]');
+    const price = Math.round(+input.value);
+    input.blur();
+    if (!price || price < 0) { msg('Enter a whole-dollar price, e.g. 72500.'); return; }
+    write('POST', '/api/watch/' + encodeURIComponent(id) + '/price', { price }).then(ok => {
+      if (ok) msg('Price logged.');
+    });
+  }
+});
+
+$('wSource').innerHTML = SITES.map(s => '<option>' + s + '</option>').join('');
+$('wAdd').onclick = () => {
+  const title = $('wTitle').value.trim();
+  const price = Math.round(+$('wPrice').value);
+  const target = Math.round(+$('wTarget').value) || 0;
+  if (!title || !price) { msg('A listing needs a title and its current price.'); return; }
+  write('POST', '/api/watch', { title, price, target, url: $('wUrl').value.trim(), source: $('wSource').value }).then(ok => {
+    if (!ok) return;
+    ['wTitle','wPrice','wTarget','wUrl'].forEach(id => { $(id).value = ''; });
+    msg('Saved “' + title + '” — log its price whenever you re-check.');
+  });
 };
-qEl('wExport').onclick = () => {
-  if (!watch.length){ msg('Nothing to export yet.'); return; }
+$('wExport').onclick = () => {
+  if (!state.watch.length) { msg('Nothing to export yet.'); return; }
   const rows = [['title','source','price','target','url','logged','last_checked']];
-  watch.forEach(w => { const h = w.history || []; rows.push([w.title, w.source, w.price, w.target || '', w.url || '', h.length, h.length ? new Date(h[h.length-1].t).toISOString().slice(0,10) : '']); });
+  state.watch.forEach(w => {
+    const h = w.history || [];
+    rows.push([w.title, w.source, w.price, w.target || '', w.url || '', h.length, h.length ? new Date(h[h.length-1].t).toISOString().slice(0,10) : '']);
+  });
   const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
   a.download = 'rv-price-watch.csv';
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  msg('Exported ' + watch.length + ' listings.');
+  msg('Exported ' + state.watch.length + ' listings.');
 };
-qEl('wClear').onclick = () => { if (watch.length && confirm('Clear all watched listings? Price history is lost.')){ watch = []; saveWatch(); renderWatch(); msg('Watch list cleared.'); } };
+$('wClear').onclick = () => {
+  if (state.watch.length && confirm('Clear all watched listings for everyone? Price history is lost.')) write('DELETE', '/api/watch');
+};
+
+/* ---------- boot + live refresh ---------- */
 const savedLookup = JSON.parse(localStorage.getItem('rt_lookup') || '{}');
-if (savedLookup.q) qEl('q').value = savedLookup.q;
-if (savedLookup.loc) qEl('loc').value = savedLookup.loc;
-if (savedLookup.radius) qEl('radius').value = savedLookup.radius;
-if (savedLookup.max) qEl('priceMax').value = savedLookup.max;
-renderWatch();
-renderStops();
+if (savedLookup.q) $('q').value = savedLookup.q;
+if (savedLookup.loc) $('loc').value = savedLookup.loc;
+if (savedLookup.radius) $('radius').value = savedLookup.radius;
+if (savedLookup.max) $('priceMax').value = savedLookup.max;
+
+applyState(state);
+loadState();
+
+setInterval(async () => {
+  if (document.hidden || syncing) return;
+  try {
+    const r = await api('GET', '/api/rev');
+    if (r && r.rev !== state.rev) applyState(await api('GET', '/api/state'));
+  } catch (err) {
+    setSync('error', 'Offline — changes are not being saved');
+  }
+}, 8000);
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden) loadState(); });
 </script>
 </body>
 </html>
