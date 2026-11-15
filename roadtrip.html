@@ -394,7 +394,7 @@
     <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
     <details id="driveBox" style="margin-top:8px">
       <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
-      <p class="muted" style="margin:6px 0 0;font-size:.8rem">You set this up once — everyone else just taps ☁️ on a photo or video. They sign in with their own Google account; nobody else touches these settings.</p>
+      <p class="muted" style="margin:6px 0 0;font-size:.8rem">You set this up once. Anyone signed into Google can also send straight from the page — everyone else's clips land in the folder automatically, no account needed on their end.</p>
       <div class="row" style="margin-top:8px">
         <input id="driveClient" placeholder="Google OAuth client ID (…apps.googleusercontent.com)" aria-label="Google OAuth client ID" autocomplete="off" style="flex:1;min-width:200px" />
       </div>
@@ -1986,7 +1986,7 @@ $('driveSave').onclick = async () => {
   extra.drive.folderId = folderId;
   await saveExtras();
   $('driveMsg').textContent = clientId && folderId
-    ? 'Saved for everyone. Each person signs in with their own Google account — share the folder with them as Editors or only your sign-in can write to it.'
+    ?     'Saved for everyone. Anyone sending from the page signs in with their own Google account, so share the folder with them as Editors if they will — the automatic backup needs no sharing.'
     : 'Saved. Both fields are needed before sending works.';
   setTimeout(() => { const m = $('driveMsg'); if (m && m.textContent.indexOf('Saved') === 0) m.textContent = ''; }, 10000);
 };
