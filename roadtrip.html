@@ -317,9 +317,10 @@
 
   <section class="card" id="sec-budget">
     <h2>💵 Budget</h2>
-    <p class="muted">Fuel comes from your route and MPG. Fill in the rest; the total splits by traveler count.</p>
+    <p class="muted">Fuel comes from your route and the rig's towing MPG, priced at the gas figure below — the same number as $ per gallon in Practical estimates, so set it in either place. Fill in the rest; the total splits by traveler count.</p>
     <div class="rv-grid">
       <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
+      <label>Gas $/gal<input id="budGas" type="number" min="0" max="20" step="0.05" value="3.60" aria-label="Gas price per gallon" /></label>
       <label>Lodging $<input id="budLodging" type="number" min="0" step="25" value="0" /></label>
       <label>Food $<input id="budFood" type="number" min="0" step="25" value="0" /></label>
       <label>Tolls &amp; bridges $<input id="budTolls" type="number" min="0" step="5" value="0" /></label>
@@ -1234,7 +1235,7 @@ function loadFuel(){
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(FUEL_KEY) || '{}') || {}; } catch (e) { saved = {}; }
   if (saved.mpg) $('fuelMpg').value = saved.mpg;
-  if (saved.price) $('fuelPrice').value = saved.price;
+  if (saved.price) { $('fuelPrice').value = saved.price; $('budGas').value = saved.price; }
 }
 function saveFuel(){
   try { localStorage.setItem(FUEL_KEY, JSON.stringify({ mpg: $('fuelMpg').value, price: $('fuelPrice').value })); } catch (e) {}
@@ -2790,13 +2791,13 @@ function totals(){
   const lodging = +b.lodging || 0;
   const other = (+b.food || 0) + (+b.tolls || 0) + (+b.propane || 0) + (+b.fun || 0) + (+b.misc || 0);
   const people = Math.max(1, +extra.travelers || 1);
-  return { lodging, miles, gallons, fuel, other, total: lodging + fuel + other, people };
+  return { lodging, miles, gallons, fuel, other, total: lodging + fuel + other, people, price, mpg };
 }
 function renderBudget(){
   const t = totals();
   const rows = [
     ['Lodging', t.lodging, ''],
-    ['Fuel', t.fuel, Math.round(t.gallons) + ' gal at ' + money(+$('fuelPrice').value || 0) + '/gal'],
+    ['Gas', t.fuel, Math.round(t.gallons) + ' gal at $' + t.price.toFixed(2) + '/gal · ' + t.mpg + ' MPG'],
     ['Food', +extra.budget.food || 0, ''],
     ['Tolls and bridges', +extra.budget.tolls || 0, ''],
     ['Propane refills', +extra.budget.propane || 0, ''],
@@ -2919,7 +2920,22 @@ bindExtra('rvWeight', ['rv', 'weight'], v => +v || 0);
 bindExtra('rvMpg', ['rv', 'mpg'], v => +v || 0);
 bindExtra('rvWater', ['rv', 'water'], v => +v || 0);
 bindExtra('rvPropane', ['rv', 'propane'], v => +v || 0);
-$('fuelPrice').addEventListener('input', () => { renderGlance(); renderBudget(); });
+// The gas price is one setting with two fields: Budget and Practical estimates
+// show the same number, and whichever you type into updates the other.
+let gasPlanTimer = 0;
+function syncGasPrice(value){
+  if ($('budGas').value !== value) $('budGas').value = value;
+  if ($('fuelPrice').value !== value) $('fuelPrice').value = value;
+  saveFuel();
+  renderBudget();
+  renderGlance();
+  // The estimates grid shows a fuel cost too, but rebuilding it reruns weather,
+  // so wait until typing stops rather than on every keystroke.
+  clearTimeout(gasPlanTimer);
+  gasPlanTimer = setTimeout(renderPlan, 400);
+}
+$('budGas').addEventListener('input', e => syncGasPrice(e.target.value));
+$('fuelPrice').addEventListener('input', () => syncGasPrice($('fuelPrice').value));
 // input as well as change: a phone time picker commits on input, and desktop
 // typing only fires change on blur.
 ['input', 'change'].forEach(evt => $('planDepart').addEventListener(evt, () => {
