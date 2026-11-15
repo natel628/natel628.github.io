@@ -1686,7 +1686,10 @@ async function findHotelsForStop(stop){
   hotelStop = stop;
   const miles = +$('hotelRadius').value || 10;
   const panel = $('hotelPanel');
+  const wasHidden = panel.hidden;
   panel.hidden = false;
+  // The itinerary's "find a bed" button lives further down the page than this panel.
+  if (wasHidden) panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
   $('hotelTitle').textContent = '🏨 Hotels near ' + stop.name;
   $('hotelBooking').onclick = () => window.open(
     'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(stop.name), '_blank', 'noopener');
