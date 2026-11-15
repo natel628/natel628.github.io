@@ -162,6 +162,17 @@
      stayed visible when their card was collapsed. !important wins it back. */
   .card.collapsed > *:not(h2) { display:none !important; }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior:smooth; } }
+  /* Full-screen gallery: the grid stays a compact strip, viewing happens here. */
+  #gallery{position:fixed;inset:0;z-index:3000;}
+  #gallery[hidden]{display:none;}
+  .gal-backdrop{position:absolute;inset:0;background:rgba(2,6,23,.92);}
+  .gal-box{position:absolute;inset:0;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;pointer-events:none;}
+  .gal-box button{pointer-events:auto;}
+  .gal-media{pointer-events:auto;max-width:min(92vw,900px);max-height:72vh;display:flex;align-items:center;justify-content:center;}
+  .gal-media img,.gal-media video{max-width:100%;max-height:72vh;border-radius:12px;border:1px solid #475569;background:#000;}
+  .gal-box figcaption{display:flex;gap:10px;align-items:center;color:var(--text);font-size:.9rem;flex-wrap:wrap;justify-content:center;pointer-events:auto;}
+  .gal-nav{display:flex;gap:10px;align-items:center;pointer-events:auto;color:var(--muted);}
+  #photoGrid img{cursor:pointer;}
   /* Overview and Notes sit side by side on a wide screen, stacked on a phone. */
   .top-pair { display:grid; gap:24px; align-items:start; }
   @media(min-width:900px){ .top-pair { grid-template-columns:1.15fr .85fr; } }
@@ -510,6 +521,15 @@
     </details>
   </section>
 </main>
+
+<div id="gallery" hidden>
+  <div class="gal-backdrop" data-galclose></div>
+  <figure class="gal-box" role="dialog" aria-modal="true" aria-label="Album viewer">
+    <div class="gal-media" id="galMedia"></div>
+    <figcaption><span id="galCap"></span><button type="button" id="galDrive" class="small ghost">☁️ Send to Drive</button><span id="galBadge" class="tag" hidden>☁️ Drive</span><button type="button" id="galDel" class="small ghost" aria-label="Delete this photo or video">✕</button></figcaption>
+    <div class="gal-nav"><button type="button" id="galPrev" class="small ghost" aria-label="Previous photo or video">←</button><span id="galCount"></span><button type="button" id="galNext" class="small ghost" aria-label="Next photo or video">→</button><button type="button" id="galClose" class="small ghost">Close ✕</button></div>
+  </figure>
+</div>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1553,6 +1573,7 @@ function renderPhotos(){
     return;
   }
   const shown = filter ? viewable.filter(p => stopMatches(p.caption, filter)) : viewable;
+  galShown = shown;
   if (!shown.length) {
     el.innerHTML = '<p class="muted">Nothing filed under ' + esc(filter) + ' yet.</p>';
     return;
@@ -1562,9 +1583,8 @@ function renderPhotos(){
   el.innerHTML = shown.map(p =>
     '<figure class="photo">'
     + ((p.type || '').indexOf('video/') === 0
-      ? '<div class="video-wrap"><button type="button" class="video-tile" data-id="' + esc(p.id) + '" data-src="' + esc(API_BASE + '/api/photos/' + encodeURIComponent(p.id)) + '" data-type="' + esc(p.type || 'video/mp4') + '"' + (posters[p.id] ? ' data-has-poster="1" style="background-image:url(&quot;' + esc(API_BASE + '/api/photos/' + encodeURIComponent(posters[p.id])) + '&quot;)"' : '') + ' aria-label="Play ' + esc(p.caption || 'trip video') + ' (' + esc(photoSize(p.size || 0)) + ')"><span class="video-play" aria-hidden="true">▶</span><span class="video-hint">' + esc(((p.type || '').split('/')[1] || 'video').toUpperCase()) + ' · ' + esc(photoSize(p.size || 0)) + ' — tap to play</span></button>'
-      + '<video controls playsinline preload="none" hidden aria-label="' + esc(p.caption || 'Trip video') + '"></video></div>'
-      : '<img src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" alt="' + esc(p.caption || 'Trip photo') + '" loading="lazy" />')
+      ? '<div class="video-wrap"><button type="button" class="video-tile" data-id="' + esc(p.id) + '" data-src="' + esc(API_BASE + '/api/photos/' + encodeURIComponent(p.id)) + '" data-type="' + esc(p.type || 'video/mp4') + '"' + (posters[p.id] ? ' data-has-poster="1" style="background-image:url(&quot;' + esc(API_BASE + '/api/photos/' + encodeURIComponent(posters[p.id])) + '&quot;)"' : '') + ' aria-label="View ' + esc(p.caption || 'trip video') + ' (' + esc(photoSize(p.size || 0)) + ')"><span class="video-play" aria-hidden="true">▶</span><span class="video-hint">' + esc(((p.type || '').split('/')[1] || 'video').toUpperCase()) + ' · ' + esc(photoSize(p.size || 0)) + ' — tap to view</span></button></div>'
+      : '<img data-id="' + esc(p.id) + '" src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" alt="' + esc(p.caption || 'Trip photo') + '" loading="lazy" />')
     + '<figcaption class="photo-meta"><span>' + esc(p.caption || 'Untitled') + ' · ' + esc(photoSize(p.size || 0)) + '</span>'
     + driveControl(p)
     + '<button type="button" class="small ghost" data-photo="' + esc(p.id) + '" aria-label="Delete photo ' + esc(p.caption || '') + '">✕</button></figcaption>'
@@ -1641,42 +1661,7 @@ function makeVideoThumb(btn){
     });
     probe.addEventListener('error', () => { clearTimeout(timer); cleanup(); });
     probe.src = btn.dataset.src;
-  } catch (e) { /* thumbnails are best-effort — the tile still plays on tap */ }
-}
-function playTileVideo(tile){
-  const wrap = tile.closest('.video-wrap');
-  const v = wrap && wrap.querySelector('video');
-  if (!v) return;
-  const oldNote = wrap.querySelector('.video-note');
-  if (oldNote) oldNote.remove();
-
-  // The file is fetched only now — tapping is the only thing that loads it.
-  if (!v.getAttribute('src')) v.src = tile.dataset.src;
-
-  v.onerror = () => {
-    tile.hidden = false;
-    v.hidden = true;
-    try { v.removeAttribute('src'); v.load(); } catch (e) {}
-    if (!wrap.querySelector('.video-note')) {
-      const note = document.createElement('p');
-      note.className = 'video-note';
-      note.innerHTML = 'This browser cannot decode this clip. '
-        + '<a href="' + esc(tile.dataset.src) + '" target="_blank" rel="noopener" download>Open the file</a>';
-      wrap.appendChild(note);
-    }
-  };
-
-  tile.hidden = true;
-  v.hidden = false;
-  try {
-    const pr = v.play();
-    // A refused autoplay is not a failure: the player is visible with its own
-    // controls, so the next tap starts it.
-    if (pr && pr.catch) pr.catch(() => {});
-  } catch (e) {
-    tile.hidden = false;
-    v.hidden = true;
-  }
+  } catch (e) { /* thumbnails are best-effort — the tile still opens the gallery */ }
 }
 $('photoUpload').onclick = async () => {
   const input = $('photoFile');
@@ -1790,24 +1775,101 @@ $('photoOptimise').onclick = async () => {
 };
 
 $('photoFilter').addEventListener('change', renderPhotos);
+/* ---------- full-screen gallery ---------- */
+let galShown = [], galIndex = -1;
+function openGallery(id){
+  if (!galShown.length) return;
+  const i = galShown.findIndex(p => p.id === id);
+  galIndex = i < 0 ? 0 : i;
+  renderGal();
+  $('gallery').hidden = false;
+  document.body.style.overflow = 'hidden';
+  $('galClose').focus();
+}
+function closeGallery(){
+  $('galMedia').innerHTML = '';
+  $('gallery').hidden = true;
+  document.body.style.overflow = '';
+  galIndex = -1;
+}
+function renderGal(){
+  const p = galShown[galIndex];
+  const media = $('galMedia');
+  media.innerHTML = '';
+  if (!p) { closeGallery(); return; }
+  if ((p.type || '').indexOf('video/') === 0) {
+    const v = document.createElement('video');
+    v.controls = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    v.setAttribute('aria-label', p.caption || 'Trip video');
+    v.src = API_BASE + '/api/photos/' + encodeURIComponent(p.id);
+    v.onerror = () => {
+      media.innerHTML = '<p class="muted">This browser cannot decode this clip. '
+        + '<a href="' + esc(API_BASE + '/api/photos/' + encodeURIComponent(p.id)) + '" target="_blank" rel="noopener">Open the file</a></p>';
+    };
+    media.appendChild(v);
+    try { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } catch (e) {}
+  } else {
+    const img = document.createElement('img');
+    img.src = API_BASE + '/api/photos/' + encodeURIComponent(p.id);
+    img.alt = p.caption || 'Trip photo';
+    media.appendChild(img);
+  }
+  $('galCap').textContent = (p.caption || 'Untitled') + ' · ' + photoSize(p.size || 0);
+  $('galCount').textContent = (galIndex + 1) + ' of ' + galShown.length;
+  const done = driveFileFor(p.id);
+  $('galDrive').style.display = done ? 'none' : '';
+  $('galBadge').style.display = done ? '' : 'none';
+  const multi = galShown.length > 1;
+  $('galPrev').disabled = !multi;
+  $('galNext').disabled = !multi;
+}
+async function deletePhoto(id){
+  const target = (state.photos || []).find(p => p.id === id);
+  const poster = target && (target.type || '').indexOf('video/') === 0
+    ? (state.photos || []).find(q => (q.caption || '') === 'poster:' + id) : null;
+  const kept = (target && (target.type || '').indexOf('video/') === 0) ? driveFileFor(id) : null;
+  if (!confirm('Delete this photo or video for everyone?\n\nIt is removed from storage and cannot be recovered.' + (kept ? '\n\nYour Google Drive copy stays put.' : ''))) return false;
+  const ok = await write('DELETE', '/api/photos/' + encodeURIComponent(id));
+  if (ok && poster) write('DELETE', '/api/photos/' + encodeURIComponent(poster.id));
+  if (ok && extra && extra.driveFiles && extra.driveFiles[id]) { delete extra.driveFiles[id]; queueExtraSave(); }
+  return ok;
+}
+$('galClose').onclick = closeGallery;
+$('gallery').querySelector('[data-galclose]').onclick = closeGallery;
+$('galPrev').onclick = () => { if (galShown.length) { galIndex = (galIndex - 1 + galShown.length) % galShown.length; renderGal(); } };
+$('galNext').onclick = () => { if (galShown.length) { galIndex = (galIndex + 1) % galShown.length; renderGal(); } };
+$('galDrive').onclick = async e => {
+  const p = galShown[galIndex];
+  if (!p) return;
+  await sendToDrive(p.id, e.target.closest('button'));
+  renderGal();
+};
+$('galDel').onclick = async () => {
+  const p = galShown[galIndex];
+  if (!p) return;
+  if (await deletePhoto(p.id)) {
+    if (!galShown.length) closeGallery();
+    else { galIndex = Math.min(galIndex, galShown.length - 1); renderGal(); }
+  }
+};
+document.addEventListener('keydown', e => {
+  if ($('gallery').hidden) return;
+  if (e.key === 'Escape') closeGallery();
+  else if (e.key === 'ArrowLeft') $('galPrev').click();
+  else if (e.key === 'ArrowRight') $('galNext').click();
+});
+
 $('photoGrid').addEventListener('click', async e => {
   const b = e.target.closest('button[data-photo]');
-  if (b) {
-    const id = b.dataset.photo;
-    const target = (state.photos || []).find(p => p.id === id);
-    const poster = target && (target.type || '').indexOf('video/') === 0
-      ? (state.photos || []).find(q => (q.caption || '') === 'poster:' + id) : null;
-    const kept = (target && (target.type || '').indexOf('video/') === 0) ? driveFileFor(id) : null;
-    if (!confirm('Delete this photo or video for everyone?\n\nIt is removed from storage and cannot be recovered.' + (kept ? '\n\nYour Google Drive copy stays put.' : ''))) return;
-    const ok = await write('DELETE', '/api/photos/' + encodeURIComponent(id));
-    if (ok && poster) write('DELETE', '/api/photos/' + encodeURIComponent(poster.id));
-    if (ok && extra && extra.driveFiles && extra.driveFiles[id]) { delete extra.driveFiles[id]; queueExtraSave(); }
-    return;
-  }
+  if (b) { await deletePhoto(b.dataset.photo); return; }
   const d = e.target.closest('button[data-drive]');
   if (d) { sendToDrive(d.dataset.drive, d); return; }
   const t = e.target.closest('button.video-tile');
-  if (t) playTileVideo(t);
+  if (t) { openGallery(t.dataset.id); return; }
+  const img = e.target.closest('#photoGrid img');
+  if (img && img.dataset.id) { openGallery(img.dataset.id); return; }
 });
 
 /* ---------- Google Drive backup for videos ---------- */
