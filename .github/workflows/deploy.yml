@@ -51,6 +51,12 @@ jobs:
             exit 1
           fi
           echo "PAGE_PASSWORD is set (length: ${#PAGE_PASSWORD})"
+
+          if [ ! -f roadtrip.html ]; then
+            echo "::error::roadtrip.html not found in repo root."
+            exit 1
+          fi
+          echo "OK: roadtrip.html present ($(wc -c < roadtrip.html) bytes)"
         env:
           PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
 
@@ -114,6 +120,29 @@ jobs:
             exit 1
           fi
           echo "OK: showsnew.html is encrypted ($(wc -c < showsnew.html) bytes)."
+
+      # ── Encrypt roadtrip.html (same password as showsnew.html) ─────
+      - name: Encrypt roadtrip.html
+        env:
+          PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
+        run: |
+          echo "Input size: $(wc -c < roadtrip.html) bytes"
+          pagecrypt roadtrip.html roadtrip.html.enc "$PAGE_PASSWORD"
+
+          if [ ! -f roadtrip.html.enc ]; then
+            echo "::error::pagecrypt produced no output for roadtrip.html."
+            exit 1
+          fi
+
+          echo "Encrypted size: $(wc -c < roadtrip.html.enc) bytes"
+          mv roadtrip.html.enc roadtrip.html
+          echo "Final size: $(wc -c < roadtrip.html) bytes"
+
+          if grep -q "sec-photos" roadtrip.html; then
+            echo "::error::roadtrip.html still contains plaintext — encryption failed."
+            exit 1
+          fi
+          echo "OK: roadtrip.html is encrypted ($(wc -c < roadtrip.html) bytes)."
 
       # ── Upload & deploy ────────────────────────────────────────────
       - name: Setup Pages
