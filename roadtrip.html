@@ -144,6 +144,8 @@
   #sideList a { color:var(--text); text-decoration:none; padding:10px 12px; border-radius:8px; font-size:.92rem; }
   #sideList a:hover { background:#1e293b; }
   .side-foot { margin-top:auto; padding:14px 16px; border-top:1px solid #334155; color:var(--muted); text-decoration:none; font-size:.9rem; }
+  body.ts-s { font-size:14.5px; }
+  body.ts-l { font-size:18px; }
   main > section { scroll-margin-top:72px; }
   /* --- trip overview + planning sections --- */
   .glance { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
@@ -553,6 +555,25 @@
     <p class="muted">Tick anything you don't want to see. Settings itself can't be hidden, so you can always come back and untick.</p>
     <div id="hideList"></div>
     <p class="muted" id="hiddenNow" style="margin-top:8px"></p>
+    <h3 style="margin:12px 0 4px;font-size:.95rem">Reading</h3>
+    <label style="display:block;margin:4px 0"><input type="radio" name="textsize" value="s" /> Smaller text</label>
+    <label style="display:block;margin:4px 0"><input type="radio" name="textsize" value="m" /> Medium text</label>
+    <label style="display:block;margin:4px 0"><input type="radio" name="textsize" value="l" /> Larger text</label>
+    <label style="display:block;margin:8px 0 4px"><input type="checkbox" id="prefHour24" /> 24-hour time (14:30 instead of 2:30 PM)</label>
+    <h3 style="margin:12px 0 4px;font-size:.95rem">Uploads &amp; data</h3>
+    <label style="display:block;margin:4px 0">Remember me as
+      <select id="prefUploadName" style="max-width:190px">
+        <option value="">Ask every time</option>
+        <option value="kyle">kyle</option>
+        <option value="chuck">chuck</option>
+        <option value="justin">justin</option>
+        <option value="nate">nate</option>
+      </select>
+      <span class="muted">on this device</span>
+    </label>
+    <label style="display:block;margin:4px 0"><input type="checkbox" id="prefLowData" /> Low-data mode (no video previews or forecasts; Drive auto-send pauses off Wi-Fi)</label>
+    <h3 style="margin:12px 0 4px;font-size:.95rem">Startup</h3>
+    <label style="display:block;margin:4px 0"><input type="checkbox" id="prefStartCollapsed" /> Start with sections collapsed (takes effect on next load)</label>
   </section>
 </main>
 
@@ -991,6 +1012,7 @@ function clock(mins){
   let t = Math.round(mins) % 1440;
   if (t < 0) t += 1440;
   const h = Math.floor(t / 60), m = t % 60;
+  if (devicePrefs().hour24) return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
   return (h % 12 === 0 ? 12 : h % 12) + ':' + String(m).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM');
 }
 function legMins(i){
@@ -1434,7 +1456,7 @@ function renderPlan(){
         + esc(state.stops[state.stops.length-1].name) + ' — explore, rest, or detour.</p></div>';
     }
     it.innerHTML = html;
-    loadDayWeather(spans, d0);
+    if (!devicePrefs().lowData) loadDayWeather(spans, d0);
   }
 
   if (state.stops.length > 1) {
@@ -1627,6 +1649,7 @@ function renderPhotos(){
     + driveControl(p)
     + '<button type="button" class="small ghost" data-photo="' + esc(p.id) + '" aria-label="Delete photo ' + esc(p.caption || '') + '">✕</button></figcaption>'
     + '</figure>').join('');
+  if (devicePrefs().lowData) el.querySelectorAll('.video-tile').forEach(t => { t.style.backgroundImage = ''; t.removeAttribute('data-has-poster'); });
   observeVideoTiles();
 }
 
@@ -1658,6 +1681,7 @@ function shareVideoPoster(id, canvas){
 let thumbObserver = null;
 function observeVideoTiles(){
   if (!('IntersectionObserver' in window)) return;
+  if (devicePrefs().lowData) return;
   if (thumbObserver) thumbObserver.disconnect();
   else {
     thumbObserver = new IntersectionObserver(entries => {
@@ -2059,6 +2083,8 @@ function autoSendNew(data, known){
   const cfg = (extra && extra.drive) || {};
   if (!cfg.auto || !cfg.ownerRefresh) return;
   if ((navigator.connection || {}).saveData) { photoMsg('Saved — auto-send skipped (data saver is on). Tap the cloud on Wi-Fi.'); return; }
+  const conn = navigator.connection || {};
+  if (devicePrefs().lowData && conn.type && conn.type !== 'wifi' && conn.type !== 'ethernet') { photoMsg('Saved — auto-send held (low-data mode). Tap the cloud on Wi-Fi.'); return; }
   // Match by id, not size: uploaded photos come back compressed, so the filed
   // copy is smaller than the file that left the phone.
   const cand = ((data && data.photos) || []).filter(p => !known.has(p.id) && !isPoster(p) && !driveFileFor(p.id)).sort((a, b) => (b.at || 0) - (a.at || 0))[0];
@@ -3303,6 +3329,7 @@ function renderGlance(){
 /* ---------- upload name gate ---------- */
 function uploadAllowed(){
   const input = $('photoPass');
+  try { const remembered = devicePrefs().uploadName; if (remembered) { input.value = remembered; return true; } } catch (e) {}
   const v = (input.value || '').trim().toLowerCase();
   if (!v) { photoMsg('Enter your name to upload.'); input.focus(); return false; }
   if (UPLOAD_NAMES.indexOf(v) < 0) {
@@ -3434,7 +3461,12 @@ function devicePrefs(){
   try { p = JSON.parse(localStorage.getItem('rt-prefs') || '{}'); } catch (e) { p = {}; }
   return {
     nav: p.nav === 'side' ? 'side' : 'bar',
-    hidden: Array.isArray(p.hidden) ? p.hidden.filter(id => id !== 'sec-settings') : []
+    hidden: Array.isArray(p.hidden) ? p.hidden.filter(id => id !== 'sec-settings') : [],
+    uploadName: ['kyle', 'chuck', 'justin', 'nate'].indexOf((p.uploadName || '').toLowerCase()) >= 0 ? (p.uploadName || '').toLowerCase() : '',
+    lowData: p.lowData === true,
+    textSize: p.textSize === 'l' ? 'l' : (p.textSize === 's' ? 's' : 'm'),
+    startCollapsed: p.startCollapsed === true,
+    hour24: p.hour24 === true
   };
 }
 function savePrefs(p){ try { localStorage.setItem('rt-prefs', JSON.stringify(p)); } catch (e) {} }
@@ -3443,6 +3475,14 @@ function closeSidebar(){ const s = $('sidebar'), b = $('sideBackdrop'); if (s) s
 function applyPrefs(){
   const p = devicePrefs();
   document.body.classList.toggle('nav-side', p.nav === 'side');
+  document.body.classList.toggle('ts-s', p.textSize === 's');
+  document.body.classList.toggle('ts-l', p.textSize === 'l');
+  document.querySelectorAll('input[name="textsize"]').forEach(r => { r.checked = r.value === p.textSize; });
+  const h24 = $('prefHour24'); if (h24) h24.checked = p.hour24;
+  const ld = $('prefLowData'); if (ld) ld.checked = p.lowData;
+  const sc = $('prefStartCollapsed'); if (sc) sc.checked = p.startCollapsed;
+  const un = $('prefUploadName'); if (un) un.value = p.uploadName;
+  const pp = $('photoPass'); if (pp && p.uploadName && !pp.value) pp.value = p.uploadName;
   document.querySelectorAll('input[name="navmode"]').forEach(r => { r.checked = r.value === p.nav; });
   const names = {};
   NAV_LINKS.forEach(a => { names[a.getAttribute('href').slice(1)] = a.textContent.trim().replace(/\s+/g, ' '); });
@@ -3506,6 +3546,38 @@ $('hideList').addEventListener('change', e => {
     if (sec && typeof fixMapsIn === 'function') { try { fixMapsIn(sec); } catch (err) {} }
   }
 });
+document.querySelectorAll('input[name="textsize"]').forEach(r => r.addEventListener('change', () => {
+  const checked = document.querySelector('input[name="textsize"]:checked');
+  const p = devicePrefs();
+  p.textSize = checked ? checked.value : 'm';
+  savePrefs(p);
+  applyPrefs();
+}));
+$('prefHour24').addEventListener('change', e => {
+  const p = devicePrefs(); p.hour24 = e.target.checked; savePrefs(p); applyPrefs(); renderPlan();
+});
+$('prefLowData').addEventListener('change', e => {
+  const p = devicePrefs(); p.lowData = e.target.checked; savePrefs(p); applyPrefs(); renderPlan(); renderPhotos();
+});
+$('prefStartCollapsed').addEventListener('change', e => {
+  const p = devicePrefs(); p.startCollapsed = e.target.checked; savePrefs(p); applyPrefs();
+});
+$('prefUploadName').addEventListener('change', e => {
+  const p = devicePrefs(); p.uploadName = (e.target.value || '').toLowerCase(); savePrefs(p); applyPrefs();
+});
+let startCollapsedDone = false;
+function applyStartCollapsed(){
+  if (startCollapsedDone) return;
+  startCollapsedDone = true;
+  if (!devicePrefs().startCollapsed) return;
+  document.querySelectorAll('main section.card').forEach(sec => {
+    if (sec.id === 'sec-glance' || sec.hidden) return;
+    sec.classList.add('collapsed');
+    const btn = sec.querySelector('.collapse-btn');
+    if (btn) { btn.textContent = 'Show'; btn.setAttribute('aria-expanded', 'false'); }
+    try { localStorage.setItem('rt_collapsed_' + sec.id, '1'); } catch (e) {}
+  });
+}
 applyPrefs();
 
 /* ---------- backup ---------- */
@@ -3684,7 +3756,10 @@ function stopPanelMsg(t){
   const m = $('stopPanelMsg');
   m.textContent = t;
 }
-function savedUploader(){ try { return sessionStorage.getItem('rt_uploader') || ''; } catch (e) { return ''; } }
+function savedUploader(){
+  try { const remembered = devicePrefs().uploadName; if (remembered) return remembered; } catch (e) {}
+  try { return sessionStorage.getItem('rt_uploader') || ''; } catch (e) { return ''; }
+}
 function openStopPanel(stop){
   panelStop = stop;
   $('stopPanelTitle').textContent = stop.name;
@@ -3821,6 +3896,7 @@ document.querySelectorAll('main section.card').forEach(sec => {
     }
   } catch (e) {}
 });
+applyStartCollapsed();
 
 /* ---------- boot + live refresh ---------- */
 
