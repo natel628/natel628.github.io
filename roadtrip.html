@@ -130,6 +130,37 @@
   .secnav-sep { width:1px; align-self:stretch; background:#334155; flex:none; margin:2px 4px; }
   .secnav .to-top { margin-left:auto; border-color:#334155; }
   main > section { scroll-margin-top:72px; }
+  /* --- trip overview + planning sections --- */
+  .glance { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
+  .glance > div { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; }
+  .glance b { display:block; font-size:1.15rem; color:var(--accent); }
+  .glance span { color:var(--muted); font-size:.78rem; }
+  .glance > div.warn b { color:#f87171; }
+  #nightsList, #checkList { display:grid; gap:10px; margin-top:12px; }
+  .night { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; display:grid; gap:8px; }
+  .night-head { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; }
+  .night-date { font-weight:700; }
+  .night-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
+  .night label, .rv-grid label { display:grid; gap:3px; font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .night input, .night select, .rv-grid input { padding:7px 9px; font-size:.9rem; min-width:0; width:100%; }
+  .pill { border-radius:999px; padding:2px 10px; font-size:.72rem; font-weight:800; border:1px solid; }
+  .pill.todo { color:#fca5a5; border-color:#7f1d1d; background:#2a1010; }
+  .pill.done { color:#86efac; border-color:#14532d; background:#0f2417; }
+  .rv-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-top:10px; }
+  .caution { background:#0f172a; border:1px solid #334155; border-left:4px solid #f59e0b; border-radius:8px; padding:10px 12px; margin-top:8px; font-size:.9rem; }
+  .caution b { display:block; margin-bottom:2px; }
+  .check-group { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; }
+  .check-group h3 { margin:0 0 4px; font-size:.95rem; }
+  .check-item { display:flex; gap:9px; align-items:flex-start; padding:4px 0; font-size:.92rem; cursor:pointer; }
+  .check-item input { margin-top:3px; flex:none; }
+  .check-item.done span { text-decoration:line-through; color:var(--muted); }
+  .budget-lines { display:grid; gap:8px; margin-top:10px; }
+  .budget-row { display:flex; gap:8px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; flex-wrap:wrap; }
+  .budget-row b { color:var(--accent); font-variant-numeric:tabular-nums; }
+  .budget-row.total { border-color:#7c5a13; }
+  .collapse-btn { float:right; background:transparent; border:1px solid #475569; color:var(--muted); border-radius:8px; padding:1px 9px; font-size:.85rem; cursor:pointer; }
+  .card.collapsed > *:not(h2) { display:none; }
+  .util-list { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior:smooth; } }
   @media(max-width:700px){
     #map{height:320px;}
@@ -138,21 +169,34 @@
     /* Five buttons beside a stop name outgrow a phone, so let them wrap. */
     #stops li{flex-wrap:wrap;}
     #stops li > span{min-width:0;}
+    /* One thumb, one column: the planning cards stack and controls get taller. */
+    .card{padding:14px;}
+    .glance{grid-template-columns:1fr 1fr;}
+    .night-grid{grid-template-columns:1fr 1fr;}
+    .rv-grid{grid-template-columns:1fr 1fr;}
+    input,select,button{font-size:16px;}
+    button, .small{padding:10px 12px;}
+    .secnav a{font-size:.8rem;padding:5px 9px;}
   }
 </style>
 </head>
 <body id="top">
 <header>
   <h1>🚐 Road Trip Planner</h1>
-  <p>Route map · day-by-day itinerary · practical estimates</p>
+  <p>Nashville → Rhode Island · hotels + campgrounds · one shared plan</p>
   <p class="muted" style="margin-top:8px">One shared trip — anything anyone adds shows up for everyone who opens this page.</p>
   <span id="syncState" class="sync" role="status" aria-live="polite">Connecting…</span>
 </header>
 <nav class="secnav" aria-label="Jump to a section">
   <div class="secnav-inner">
     <span class="secnav-label">Plan</span>
+    <a href="#sec-glance">📊 Overview</a>
     <a href="#sec-route">🗺️ Map</a>
     <a href="#sec-itinerary">📅 Itinerary</a>
+    <a href="#sec-nights">🛏 Nights</a>
+    <a href="#sec-budget">💵 Budget</a>
+    <a href="#sec-rv">🚐 RV</a>
+    <a href="#sec-check">✅ Checklists</a>
     <a href="#sec-practical">🧰 Estimates</a>
     <a href="#sec-notes">📝 Notes</a>
     <a href="#sec-photos">📸 Photos</a>
@@ -161,18 +205,30 @@
     <a href="#sec-golf">⛳ Golf</a>
     <a href="#sec-food">🍽️ Food</a>
     <a href="#sec-camp">🏕️ Camping</a>
+    <a href="#sec-util">🛠 Utilities</a>
     <a href="#sec-events">🏟️ Events</a>
     <a class="to-top" href="#top">↑ Top</a>
   </div>
 </nav>
 <main>
 
+  <section class="card" id="sec-glance">
+    <h2>📊 Trip at a glance</h2>
+    <p class="muted">Nashville to Rhode Island, mixing hotel nights and campground nights. Everything on this page is shared — anyone who opens it sees the same plan and can change it.</p>
+    <div id="glanceGrid" class="glance"></div>
+    <p id="glanceMsg" class="muted" role="status" aria-live="polite"></p>
+    <div class="row" style="margin-top:12px">
+      <button type="button" id="backupExport" class="small ghost">⬇ Export a backup</button>
+      <label class="small ghost" style="padding:8px 12px;border:1px solid #475569;border-radius:8px;cursor:pointer;font-size:.85rem">⬆ Restore a backup<input type="file" id="backupImport" accept="application/json,.json" hidden /></label>
+    </div>
+  </section>
+
   <section class="card" id="sec-route">
-    <h2>1. 🗺️ Route map — start, end &amp; stops</h2>
+    <h2>🗺️ Route map — start, end &amp; stops</h2>
     <p class="muted">Set your start/end, then add stops in between. Start typing a city, park, landmark or address and pick it from the suggestions — or click the map to drop a pin. Route connects in list order.</p>
     <div class="row" style="margin-bottom:8px">
-      <div class="ac"><input id="tripStart" placeholder="Trip start — e.g. Denver, CO" /></div>
-      <div class="ac"><input id="tripEnd" placeholder="Trip end — e.g. Las Vegas, NV" /></div>
+      <div class="ac"><input id="tripStart" placeholder="Trip start — e.g. Nashville, TN" /></div>
+      <div class="ac"><input id="tripEnd" placeholder="Trip end — e.g. Narragansett, RI" /></div>
       <button id="setEnds" type="button">Set start/end</button>
     </div>
     <div class="row" style="margin-bottom:10px">
@@ -219,8 +275,54 @@
     <div id="itinerary"></div>
   </section>
 
+  <section class="card" id="sec-nights">
+    <h2>🛏 Nights &amp; lodging</h2>
+    <p class="muted">One row per night — hotel or campground, whether it is booked, and what it costs. The costs feed the budget below. Shared with everyone.</p>
+    <div class="row" style="margin-top:8px">
+      <button type="button" id="nightsSync" class="small ghost">Rebuild from the itinerary</button>
+      <button type="button" id="nightsClear" class="small ghost">Clear all nights</button>
+    </div>
+    <p id="nightsMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="nightsList"></div>
+  </section>
+
+  <section class="card" id="sec-budget">
+    <h2>💵 Budget</h2>
+    <p class="muted">Lodging comes from the nights above and fuel from your route and MPG. Fill in the rest; the total splits by traveler count.</p>
+    <div class="rv-grid">
+      <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
+      <label>Food $<input id="budFood" type="number" min="0" step="25" value="0" /></label>
+      <label>Tolls &amp; bridges $<input id="budTolls" type="number" min="0" step="5" value="0" /></label>
+      <label>Propane refills $<input id="budPropane" type="number" min="0" step="5" value="0" /></label>
+      <label>Golf &amp; activities $<input id="budFun" type="number" min="0" step="25" value="0" /></label>
+      <label>Misc / repairs $<input id="budMisc" type="number" min="0" step="25" value="0" /></label>
+    </div>
+    <div id="budgetLines" class="budget-lines"></div>
+  </section>
+
+  <section class="card" id="sec-rv">
+    <h2>🚐 RV profile &amp; route cautions</h2>
+    <p class="muted">Your rig's numbers, then the restrictions worth checking before you drive this corridor. Confirm with the operator — heights and rules change.</p>
+    <div class="rv-grid">
+      <label>Height ft<input id="rvHeight" type="number" min="6" max="15" step="0.1" value="12.5" /></label>
+      <label>Length ft<input id="rvLength" type="number" min="10" max="60" step="1" value="30" /></label>
+      <label>Weight lb<input id="rvWeight" type="number" min="0" step="500" value="0" /></label>
+      <label>MPG towing<input id="rvMpg" type="number" min="3" max="30" step="0.5" value="8" /></label>
+      <label>Fresh water gal<input id="rvWater" type="number" min="0" step="5" value="60" /></label>
+      <label>Propane lb<input id="rvPropane" type="number" min="0" step="5" value="40" /></label>
+    </div>
+    <div id="rvWarn"></div>
+    <div id="cautionList"></div>
+  </section>
+
+  <section class="card" id="sec-check">
+    <h2>✅ Checklists</h2>
+    <p class="muted">Pre-trip, packing, campground setup and departure. Ticks are shared, so everyone sees what is still missing.</p>
+    <div id="checkList"></div>
+  </section>
+
   <section class="card" id="sec-practical">
-    <h2>3. 🧰 Practical estimates</h2>
+    <h2>🧰 Practical estimates</h2>
     <p class="muted">Distances and drive times are real road routing; when the router is unreachable you get a straight-line estimate instead, which understates the drive.</p>
     <div class="row" style="margin-top:10px">
       <label class="muted" for="fuelMpg" style="align-self:center">MPG</label>
@@ -232,7 +334,7 @@
   </section>
 
   <section class="card" id="sec-notes">
-    <h2>4. 📝 Notes</h2>
+    <h2>📝 Notes</h2>
     <p class="muted">Anything worth remembering — campsites to book, contacts, gear to pack, detours to try. Notes are shared with everyone who opens this page.</p>
     <textarea id="noteBody" rows="3" placeholder="e.g. Bridgeport should get added to the list." aria-label="Note text"></textarea>
     <div class="row" style="margin-top:8px">
@@ -244,11 +346,12 @@
   </section>
 
   <section class="card" id="sec-photos">
-    <h2>5. 📸 Photos &amp; videos</h2>
+    <h2>📸 Photos &amp; videos</h2>
     <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 10&nbsp;MB, videos up to 75&nbsp;MB (MP4, WebM, MOV).</p>
     <div class="row">
       <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
-      <input id="photoCaption" placeholder="Caption (optional) — e.g. Moab at sunrise" aria-label="Photo or video caption" />
+      <input id="photoCaption" placeholder="Caption (optional) — e.g. Bethpage at dawn" aria-label="Photo or video caption" />
+      <input id="photoPass" placeholder="Your name — kyle, chuck, justin or nate" aria-label="Name required to upload photos" autocomplete="off" style="max-width:280px;flex:none" />
       <button type="button" id="photoUpload">Upload</button>
       <button type="button" id="photoClear" class="ghost">Clear album</button>
     </div>
@@ -261,10 +364,10 @@
   </section>
 
   <section class="card" id="sec-golf">
-    <h2>6. ⛳ Golf courses</h2>
+    <h2>⛳ Golf courses</h2>
     <p class="muted">Search a town or area, or click the map to drop a search pin, then look over the courses and add one straight to your route.</p>
     <div class="row">
-      <input id="golfQuery" placeholder="Search near — e.g. Moab, UT" aria-label="Search golf courses near" />
+      <input id="golfQuery" placeholder="Search near — e.g. Bethpage, NY" aria-label="Search golf courses near" />
       <select id="golfRadius" aria-label="Search radius" style="max-width:170px;flex:none">
         <option value="16">Within 10 mi</option>
         <option value="40" selected>Within 25 mi</option>
@@ -284,10 +387,10 @@
   </section>
 
   <section class="card" id="sec-food">
-    <h2>7. 🍽️ Places to eat</h2>
+    <h2>🍽️ Places to eat</h2>
     <p class="muted">Search a town or area — or click the map to drop a pin — to list restaurants and cafés around it, then add the ones you like to your route. Distances and drive times are real roads from the search point.</p>
     <div class="row">
-      <input id="foodQuery" placeholder="Search near — e.g. Moab, UT" aria-label="Search places to eat near" />
+      <input id="foodQuery" placeholder="Search near — e.g. Nashville, TN" aria-label="Search places to eat near" />
       <select id="foodRadius" style="max-width:170px;flex:none" aria-label="Search radius">
         <option value="3">Within 3 mi</option>
         <option value="10" selected>Within 10 mi</option>
@@ -307,7 +410,7 @@
   </section>
 
   <section class="card" id="sec-camp">
-    <h2>8. 🏕️ Campgrounds &amp; rest areas</h2>
+    <h2>🏕️ Campgrounds &amp; rest areas</h2>
     <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
     <div class="row">
       <select id="campRadius" style="max-width:170px;flex:none" aria-label="Campground search radius">
@@ -318,7 +421,7 @@
       <button type="button" id="campAlong">Find along my route</button>
     </div>
     <div class="row" style="margin-top:8px">
-      <input id="campArea" placeholder="Or search near a town — e.g. Moab, UT" aria-label="Search campgrounds near a town" />
+      <input id="campArea" placeholder="Or search near a town — e.g. Lexington, VA" aria-label="Search campgrounds near a town" />
       <button type="button" id="campFind">Find near town</button>
     </div>
     <p id="campMsg" class="muted" role="status" aria-live="polite"></p>
@@ -326,8 +429,25 @@
     <div id="campList"></div>
   </section>
 
+  <section class="card" id="sec-util">
+    <h2>🛠 Dump stations, propane &amp; water</h2>
+    <p class="muted">Sanitary dumps, propane refills and potable water near your stops, from OpenStreetMap. Call ahead — hours change.</p>
+    <div class="row">
+      <input id="utilQuery" placeholder="Or search near a town — e.g. Harrisonburg, VA" aria-label="Search utilities near a town" />
+      <select id="utilRadius" aria-label="Utility search radius" style="max-width:170px;flex:none">
+        <option value="5">Within 5 mi</option>
+        <option value="10" selected>Within 10 mi</option>
+        <option value="25">Within 25 mi</option>
+      </select>
+      <button type="button" id="utilAlong">Find along my route</button>
+      <button type="button" id="utilFind">Find near town</button>
+    </div>
+    <p id="utilMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="utilList" class="util-list"></div>
+  </section>
+
   <section class="card" id="sec-events">
-    <h2>9. 🏟️ Sporting events</h2>
+    <h2>🏟️ Sporting events</h2>
     <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page.</p>
     <div class="row">
       <div class="ac"><input id="eventArea" placeholder="Area — e.g. Denver, CO" aria-label="Area to search for events" /></div>
@@ -384,13 +504,24 @@ function applyState(next){
   renderNotes();
   renderPhotos();
   paintCampStops();
+  if (typeof renderExtras === 'function') renderExtras();
 }
 async function loadState(){
   try {
-    applyState(await api('GET', '/api/state'));
+    const next = await api('GET', '/api/state');
+    applyState(next);
+    // Keep a copy on the device so the plan is still readable with no signal.
+    try { localStorage.setItem('rt_snapshot', JSON.stringify(next)); } catch (e) {}
     setSync('ok', 'Shared · synced');
   } catch (err) {
-    setSync('error', 'Offline — changes are not being saved');
+    let snap = null;
+    try { snap = JSON.parse(localStorage.getItem('rt_snapshot') || 'null'); } catch (e) { snap = null; }
+    if (snap) {
+      applyState(snap);
+      setSync('error', 'Offline — showing the last copy saved on this device');
+    } else {
+      setSync('error', 'Offline — changes are not being saved');
+    }
   }
 }
 async function write(method, path, payload){
@@ -845,7 +976,12 @@ $('stops').addEventListener('click', e => {
   if (i < 0) return;
   if (b.dataset.act === 'map') { openMapMenu(b, state.stops[i]); return; }
   if (b.dataset.act === 'hotels') { findHotelsForStop(state.stops[i]); return; }
-  if (b.dataset.act === 'del') { write('DELETE', '/api/stops/' + encodeURIComponent(b.dataset.id)); return; }
+  if (b.dataset.act === 'del') {
+    const stop = state.stops[i];
+    if (!confirm('Remove “' + stop.name + '” from the route?\n\nThis changes the shared plan for everyone, and the route, mileage and itinerary all move.')) return;
+    write('DELETE', '/api/stops/' + encodeURIComponent(b.dataset.id));
+    return;
+  }
   const j = b.dataset.act === 'up' ? i - 1 : i + 1;
   if (j < 0 || j >= state.stops.length) return;
   const order = state.stops.map(s => s.id);
@@ -886,7 +1022,11 @@ async function addLocation(name){
 
 $('addLoc').onclick = () => { const i = $('locInput'); addLocation(i.value.trim()); i.value = ''; };
 $('locInput').addEventListener('keydown', e => { if (e.key === 'Enter') { addLocation(e.target.value.trim()); e.target.value = ''; } });
-$('clearStops').onclick = () => { if (state.stops.length && confirm('Clear every stop on this shared trip?')) write('DELETE', '/api/stops'); };
+$('clearStops').onclick = () => {
+  if (!state.stops.length) return;
+  if (!confirm('Delete all ' + state.stops.length + ' stops on this shared trip?\n\nThe route, mileage and itinerary go with them. Export a backup first if you are not sure.')) return;
+  write('DELETE', '/api/stops');
+};
 $('setEnds').onclick = async () => {
   const s = $('tripStart').value.trim();
   const e = $('tripEnd').value.trim();
@@ -1099,33 +1239,13 @@ function renderPlan(){
   if (state.stops.length < 2) {
     it.innerHTML = '<p class="muted">Add at least a start and an end on the map above — your day-by-day plan appears here.</p>';
   } else {
-    const legs = state.stops.length - 1, chunks = Math.min(days, legs);
     const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
 
     // Split by driving time rather than stop count, so a day does not end up
-    // carrying nineteen hours behind the wheel.
-    const legHours = [];
-    for (let i = 0; i < legs; i++) {
-      const part = segMiles(i, i + 1);
-      legHours.push(part.real ? part.mins / 60 : part.mi / MPH);
-    }
-    const target = legHours.reduce((t, h) => t + h, 0) / chunks;
-    const spans = [];
-    let at = 0;
-    for (let c = 0; c < chunks; c++) {
-      const daysLeft = chunks - c;
-      const from = at;
-      let hours = 0;
-      while (at < legs) {
-        if (daysLeft > 1 && legs - at <= daysLeft - 1) break;
-        const h = legHours[at];
-        if (hours > 0 && daysLeft > 1 && hours + h > target * 1.25) break;
-        hours += h;
-        at++;
-        if (daysLeft > 1 && hours >= target * 0.9) break;
-      }
-      spans.push({ from, to: at, hours });
-    }
+    // carrying nineteen hours behind the wheel. planSpans() is shared with the
+    // nights ledger so both agree on where each day ends.
+    const ps = planSpans(days);
+    const chunks = ps.chunks, spans = ps.spans, legHours = ps.legHours;
 
     let html = '';
     spans.forEach((span, c) => {
@@ -1189,11 +1309,14 @@ function noteMsg(t){
 }
 function renderNotes(){
   const el = $('noteList');
-  if (!state.notes.length) {
+  // The planning data (nights, budget, RV, checklists) lives in one note that
+  // must never show up as a note.
+  const shown = state.notes.filter(n => String(n.body || '').indexOf('\u27e6rt-data\u27e7') !== 0);
+  if (!shown.length) {
     el.innerHTML = '<p class="muted">No notes yet — jot down campsites, contacts, or gear to pack.</p>';
     return;
   }
-  el.innerHTML = state.notes.map(n =>
+  el.innerHTML = shown.map(n =>
     '<div class="note">'
     + '<p class="note-body">' + esc(n.body) + '</p>'
     + '<div class="note-meta"><span>' + esc(new Date(n.at).toLocaleString()) + '</span>'
@@ -1209,12 +1332,18 @@ $('noteAdd').onclick = () => {
     noteMsg('Note saved for everyone.');
   });
 };
-$('noteClear').onclick = () => {
-  if (state.notes.length && confirm('Delete every shared note?')) write('DELETE', '/api/notes');
+$('noteClear').onclick = async () => {
+  if (!state.notes.length) return;
+  if (!confirm('Delete every shared note?\n\nThis cannot be undone. Nights, budget and checklists are kept.')) return;
+  await write('DELETE', '/api/notes');
+  // The planning data travels in a hidden note, so put it straight back.
+  if (typeof saveExtras === 'function' && extra) saveExtras();
 };
 $('noteList').addEventListener('click', e => {
   const b = e.target.closest('button[data-note]');
-  if (b) write('DELETE', '/api/notes/' + encodeURIComponent(b.dataset.note));
+  if (!b) return;
+  if (!confirm('Delete this note for everyone?\n\nThis cannot be undone.')) return;
+  write('DELETE', '/api/notes/' + encodeURIComponent(b.dataset.note));
 });
 
 /* ---------- 6. shared photos ---------- */
@@ -1362,6 +1491,8 @@ $('photoUpload').onclick = async () => {
     photoMsg('That ' + (isVideo ? 'video' : 'image') + ' is ' + photoSize(file.size) + ' — the limit is ' + (isVideo ? '75 MB' : '10 MB') + '.');
     return;
   }
+  if (!uploadAllowed()) return;
+
   const btn = $('photoUpload');
   const panel = $('photoProgress');
   const bar = $('photoBar');
@@ -1409,11 +1540,17 @@ $('photoUpload').onclick = async () => {
 
 $('photoCancel').onclick = () => { if (activeUpload) activeUpload.abort(); };
 $('photoClear').onclick = () => {
-  if (state.photos.length && confirm('Delete every shared photo?')) write('DELETE', '/api/photos');
+  if (!state.photos.length) return;
+  if (!confirm('Delete all ' + state.photos.length + ' photos and videos for everyone?\n\nThe files are removed from storage and cannot be recovered.')) return;
+  write('DELETE', '/api/photos');
 };
 $('photoGrid').addEventListener('click', e => {
   const b = e.target.closest('button[data-photo]');
-  if (b) { write('DELETE', '/api/photos/' + encodeURIComponent(b.dataset.photo)); return; }
+  if (b) {
+    if (!confirm('Delete this photo or video for everyone?\n\nIt is removed from storage and cannot be recovered.')) return;
+    write('DELETE', '/api/photos/' + encodeURIComponent(b.dataset.photo));
+    return;
+  }
   const t = e.target.closest('button.video-tile');
   if (t) playTileVideo(t);
 });
@@ -2319,6 +2456,550 @@ document.addEventListener('click', e => {
   closeMapMenu();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMapMenu(); });
+
+/* ===================================================================
+   Planning extras: nights & lodging, budget, RV profile, checklists,
+   dump/propane/water finder, backup export/import.
+
+   The Worker only stores stops, plan, notes and photos, so this data
+   travels in one hidden note. It is still shared: anyone who opens the
+   page sees it and can change it, exactly like the rest of the trip.
+   =================================================================== */
+var META_PREFIX = '\u27e6rt-data\u27e7';
+var extra = null;
+var metaNoteId = null;
+var UPLOAD_NAMES = ['kyle', 'chuck', 'justin', 'nate'];
+
+var CHECK_GROUPS = [
+  { key: 'pretrip', title: 'Before you leave', items: [
+    'Route and stops final', 'Every night booked or a backup noted', 'Tire pressure, tread and spare checked',
+    'Oil, coolant, transmission fluid', 'Battery terminals clean and tight', 'Propane filled; valves closed for travel',
+    'Fresh water in, black and gray tanks empty', 'Hitch, chains, breakaway cable, trailer lights',
+    'Registration, insurance, roadside plan in the cab', 'Toll transponder topped up',
+    'Prescriptions and first-aid restocked', 'Mail held, plants watered, neighbour has a key'] },
+  { key: 'packing', title: 'Packing', items: [
+    'Leveling blocks and wheel chocks', 'Water hose, pressure regulator, filter', 'Sewer hose and gloves',
+    '30A/50A adapter and surge protector', 'Basic tools and duct tape', 'Flashlights and headlamps',
+    'Bug spray and sunscreen', 'Cooler and dry goods', 'Golf bags, shoes, balls, tees',
+    'Rain gear and warm layers', 'Camp chairs and door mat', 'Trash bags and paper towels'] },
+  { key: 'setup', title: 'Campground setup', items: [
+    'Pull through or back in with a spotter', 'Chock the wheels, set the brake', 'Level, then stabilizers down',
+    'Power connected, breaker on', 'Water connected through the regulator', 'Sewer hose supported, valves closed',
+    'Fridge and water heater on', 'Awning out and anchored', 'Slides clear of hookups and trees',
+    'Site number and confirmation saved here'] },
+  { key: 'teardown', title: 'Before you drive', items: [
+    'Everything off the ground and stowed', 'Awning in', 'Slides in', 'Sewer disconnected and rinsed',
+    'Water and power disconnected', 'Antenna down, vents closed', 'Levelers up, chocks out',
+    'Walk around: lights, tires, hitch', 'Black tank emptied if the next stop has no dump',
+    'Fuel for the next leg'] }
+];
+
+var NIGHT_TYPES = ['Campground', 'RV park', 'Hotel', 'Motel', 'Dry camping', 'Friends / family', 'Other'];
+var NIGHT_STATUS = ['To book', 'Reserved', 'Paid', 'Not needed'];
+
+function extraDefaults(){
+  return {
+    rv: { height: 12.5, length: 30, weight: 0, mpg: 8, water: 60, propane: 40 },
+    travelers: 2,
+    budget: { food: 0, tolls: 0, propane: 0, fun: 0, misc: 0 },
+    nights: [],
+    checks: {}
+  };
+}
+
+function readExtras(){
+  const notes = state.notes || [];
+  let note = null;
+  for (const n of notes) {
+    if (n && typeof n.body === 'string' && n.body.indexOf(META_PREFIX) === 0) note = n;
+  }
+  metaNoteId = note ? note.id : null;
+  let data = {};
+  if (note) { try { data = JSON.parse(note.body.slice(META_PREFIX.length)) || {}; } catch (e) { data = {}; } }
+  const d = extraDefaults();
+  extra = {
+    rv: Object.assign(d.rv, data.rv || {}),
+    travelers: +data.travelers > 0 ? +data.travelers : 2,
+    budget: Object.assign(d.budget, data.budget || {}),
+    nights: Array.isArray(data.nights) ? data.nights : [],
+    checks: (data.checks && typeof data.checks === 'object') ? data.checks : {}
+  };
+}
+
+let extraSaveTimer = null;
+function queueExtraSave(){ clearTimeout(extraSaveTimer); extraSaveTimer = setTimeout(saveExtras, 650); }
+
+async function saveExtras(){
+  if (!extra) return false;
+  setSync('saving', 'Saving…');
+  try {
+    const oldId = metaNoteId;
+    const next = await api('POST', '/api/notes', { body: META_PREFIX + JSON.stringify(extra) });
+    applyState(next);
+    if (oldId && oldId !== metaNoteId) {
+      applyState(await api('DELETE', '/api/notes/' + encodeURIComponent(oldId)));
+    }
+    setSync('ok', 'Shared · synced');
+    return true;
+  } catch (err) {
+    setSync('error', 'Could not save — ' + (err.message || 'try again'));
+    return false;
+  }
+}
+
+function renderExtras(){
+  // Never rebuild a field someone is typing in.
+  const busy = ['nightsList', 'budgetLines', 'sec-rv', 'sec-budget'].some(id => {
+    const el = $(id);
+    return el && el.contains(document.activeElement);
+  });
+  if (!busy || !extra) readExtras();
+  syncExtraInputs();
+  renderGlance();
+  renderNights();
+  renderBudget();
+  renderRV();
+  renderChecks();
+}
+
+/* ---------- day spans, shared by the itinerary and the nights ledger ---------- */
+function planSpans(days){
+  const legs = state.stops.length - 1, chunks = Math.min(days, legs);
+  const legHours = [];
+  for (let i = 0; i < legs; i++) {
+    const part = segMiles(i, i + 1);
+    legHours.push(part.real ? part.mins / 60 : part.mi / MPH);
+  }
+  const spans = [];
+  if (chunks > 0) {
+    const target = legHours.reduce((t, h) => t + h, 0) / chunks;
+    let at = 0;
+    for (let c = 0; c < chunks; c++) {
+      const daysLeft = chunks - c, from = at;
+      let hours = 0;
+      while (at < legs) {
+        if (daysLeft > 1 && legs - at <= daysLeft - 1) break;
+        const h = legHours[at];
+        if (hours > 0 && daysLeft > 1 && hours + h > target * 1.25) break;
+        hours += h;
+        at++;
+        if (daysLeft > 1 && hours >= target * 0.9) break;
+      }
+      spans.push({ from, to: at, hours });
+    }
+  }
+  return { chunks, spans, legHours };
+}
+
+/* ---------- nights & lodging ---------- */
+function mergedNights(){
+  if (!extra) readExtras();
+  const days = Math.min(60, Math.max(1, +state.plan.days || 1));
+  const spans = planSpans(days).spans;
+  const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
+  const rows = [];
+  for (let k = 0; k < days; k++) {
+    const span = spans[k];
+    const stop = span && span.to > span.from ? state.stops[span.to] : state.stops[state.stops.length - 1];
+    const saved = extra.nights.find(n => +n.day === k + 1);
+    rows.push(Object.assign({
+      day: k + 1,
+      date: d0 ? isoDate(new Date(d0.getTime() + k * 864e5)) : '',
+      place: stop ? stop.name : '',
+      type: 'Campground', name: '', cost: 0, status: 'To book', conf: '', hook: '', len: '', backup: ''
+    }, saved || {}));
+  }
+  return rows;
+}
+
+function money(n){ return '$' + Math.round(+n || 0).toLocaleString(); }
+
+function renderNights(){
+  const el = $('nightsList');
+  if (el.contains(document.activeElement)) return;
+  const rows = mergedNights();
+  if (!rows.length) { el.innerHTML = ''; return; }
+  el.innerHTML = rows.map(n => {
+    const booked = n.status !== 'To book';
+    return '<div class="night">'
+      + '<div class="night-head"><span class="night-date">Night ' + n.day
+      + (n.date ? ' · ' + esc(fmtDate(new Date(n.date + 'T12:00:00'))) : '')
+      + (n.place ? ' · ' + esc(n.place) : '') + '</span>'
+      + '<span class="pill ' + (booked ? 'done' : 'todo') + '">' + esc(n.status || 'To book') + '</span></div>'
+      + '<div class="night-grid">'
+      + nightField(n, 'type', 'Type', NIGHT_TYPES)
+      + nightText(n, 'name', 'Place / site', 'e.g. Bear Creek RV Park')
+      + nightText(n, 'cost', 'Cost $', '0', 'number')
+      + nightField(n, 'status', 'Status', NIGHT_STATUS)
+      + nightText(n, 'conf', 'Confirmation #', 'ABC-123')
+      + nightText(n, 'hook', 'Hookups', '50A full hookup')
+      + nightText(n, 'len', 'Site length needed', '40 ft')
+      + nightText(n, 'backup', 'Backup if it falls through', 'Alternate site or hotel')
+      + '</div></div>';
+  }).join('');
+}
+function nightText(n, field, label, hint, type){
+  return '<label>' + esc(label) + '<input type="' + (type || 'text') + '" data-night="' + n.day + '" data-field="' + field
+    + '" value="' + esc(n[field] || '') + '" placeholder="' + esc(hint) + '" /></label>';
+}
+function nightField(n, field, label, options){
+  return '<label>' + esc(label) + '<select data-night="' + n.day + '" data-field="' + field + '">'
+    + options.map(o => '<option' + (o === n[field] ? ' selected' : '') + '>' + esc(o) + '</option>').join('')
+    + '</select></label>';
+}
+function setNight(day, field, value){
+  let row = extra.nights.find(n => +n.day === day);
+  if (!row) { row = { day }; extra.nights.push(row); }
+  row[field] = field === 'cost' ? (+value || 0) : value;
+  queueExtraSave();
+  renderGlance(); renderBudget();
+}
+$('nightsList').addEventListener('input', e => {
+  const inp = e.target.closest('[data-night]');
+  if (inp) setNight(+inp.dataset.night, inp.dataset.field, inp.value);
+});
+$('nightsList').addEventListener('change', e => {
+  const sel = e.target.closest('select[data-night]');
+  if (!sel) return;
+  setNight(+sel.dataset.night, sel.dataset.field, sel.value);
+  renderNights();
+});
+$('nightsSync').onclick = () => {
+  if (extra.nights.length && !confirm('Rebuild the night list from the itinerary?\n\nAny place names, costs and confirmation numbers you typed are dropped.')) return;
+  extra.nights = [];
+  saveExtras().then(ok => { $('nightsMsg').textContent = ok ? 'Nights rebuilt from the itinerary.' : 'Could not save.'; });
+};
+$('nightsClear').onclick = () => {
+  if (!confirm('Clear every night?\n\nCosts, confirmations and backup plans go with them, for everyone.')) return;
+  extra.nights = [];
+  saveExtras().then(ok => { $('nightsMsg').textContent = ok ? 'Nights cleared.' : 'Could not save.'; });
+};
+
+/* ---------- budget ---------- */
+function totals(){
+  const nights = mergedNights();
+  const lodging = nights.reduce((t, n) => t + (+n.cost || 0), 0);
+  const booked = nights.filter(n => n.status && n.status !== 'To book').length;
+  const miles = state.stops.length > 1 ? segMiles(0, state.stops.length - 1).mi : 0;
+  const mpg = Math.max(3, +extra.rv.mpg || 8);
+  const price = Math.max(0, +$('fuelPrice').value || 0);
+  const gallons = miles / mpg;
+  const fuel = gallons * price;
+  const b = extra.budget;
+  const other = (+b.food || 0) + (+b.tolls || 0) + (+b.propane || 0) + (+b.fun || 0) + (+b.misc || 0);
+  const people = Math.max(1, +extra.travelers || 1);
+  return { nights, lodging, booked, miles, gallons, fuel, other, total: lodging + fuel + other, people };
+}
+function renderBudget(){
+  const t = totals();
+  const rows = [
+    ['Lodging, from the nights', t.lodging, t.nights.length + ' nights'],
+    ['Fuel', t.fuel, Math.round(t.gallons) + ' gal at ' + money(+$('fuelPrice').value || 0) + '/gal'],
+    ['Food', +extra.budget.food || 0, ''],
+    ['Tolls and bridges', +extra.budget.tolls || 0, ''],
+    ['Propane refills', +extra.budget.propane || 0, ''],
+    ['Golf and activities', +extra.budget.fun || 0, ''],
+    ['Misc and repairs', +extra.budget.misc || 0, '']
+  ];
+  $('budgetLines').innerHTML = rows.map(r =>
+    '<div class="budget-row"><span>' + esc(r[0]) + (r[2] ? ' <span class="muted">· ' + esc(r[2]) + '</span>' : '') + '</span><b>' + money(r[1]) + '</b></div>'
+  ).join('')
+    + '<div class="budget-row total"><span>Total for the trip</span><b>' + money(t.total) + '</b></div>'
+    + '<div class="budget-row"><span>Per person, ' + t.people + ' traveling</span><b>' + money(t.total / t.people) + '</b></div>';
+}
+
+/* ---------- RV profile & cautions ---------- */
+var CAUTIONS = [
+  { title: 'New York and Long Island parkways',
+    body: 'Parkways (Northern State, Southern State, Meadowbrook, Hutchinson River) ban RVs, trailers and commercial plates outright — the stone bridges are far too low. Coming off Long Island, use the LIE or I-95, not a parkway.',
+    link: 'https://www.dot.ny.gov' },
+  { title: 'Propane in tunnels',
+    body: 'Open propane cylinders are not allowed through the MTA East River tunnels (Queens-Midtown, Hugh L. Carey, Queens-Battery) or the Baltimore Harbor Tunnel. Take the George Washington Bridge or Fort McHenry Tunnel instead, and shut the tank valve before you go.',
+    link: 'https://new.mta.info' },
+  { title: 'Chesapeake Bay Bridge-Tunnel, if your line goes that way',
+    body: 'US-13 has its own hazmat and propane rules and charges by the axle. Check before you commit to that crossing rather than discovering it at the toll booth.',
+    link: 'https://www.cbbt.com' },
+  { title: 'Mountain grades on the corridor',
+    body: 'I-40 over the Blue Ridge at Fancy Gap, I-77 at Fancy Gap Mountain, I-81 around Christiansburg and the I-78/I-84 climbs through Connecticut and Massachusetts are the long pulls. Downshift early and use the engine, not the brakes.',
+    link: '' },
+  { title: 'Boston parkways',
+    body: 'Storrow Drive and Memorial Drive along the Charles are posted for cars only and eat tall vehicles every year. Loop around on the Mass Pike instead.',
+    link: '' },
+  { title: 'Anything off the interstate',
+    body: 'Treat 13 ft 6 in as your ceiling and check the posted clearance yourself. Mapping data is often missing or a year out of date on rural bridges.',
+    link: '' }
+];
+function renderRV(){
+  const h = +extra.rv.height || 0, len = +extra.rv.length || 0;
+  const msgs = [];
+  if (h > 13.5) msgs.push('At ' + h.toFixed(1) + ' ft you are over the 13 ft 6 in interstate ceiling — every non-interstate leg needs checking, and some states want a permit.');
+  if (len >= 40) msgs.push('At ' + len + ' ft, parkways and older town roads often exclude you. Keep to interstates, US highways and signed truck routes.');
+  if (!+extra.rv.weight) msgs.push('Add the loaded weight — it decides bridge postings and whether a permit is needed.');
+  $('rvWarn').innerHTML = msgs.map(m => '<p class="caution">⚠️ ' + esc(m) + '</p>').join('');
+  $('cautionList').innerHTML = CAUTIONS.map(c =>
+    '<div class="caution"><b>' + esc(c.title) + '</b>' + esc(c.body)
+    + (c.link ? ' <a href="' + esc(c.link) + '" target="_blank" rel="noopener">Check current rules ↗</a>' : '')
+    + '</div>').join('');
+}
+
+/* ---------- checklists ---------- */
+function renderChecks(){
+  const el = $('checkList');
+  el.innerHTML = CHECK_GROUPS.map(g => {
+    const marks = extra.checks[g.key] || {};
+    const done = g.items.filter((_, i) => marks[i]).length;
+    return '<div class="check-group"><h3>' + esc(g.title) + ' <span class="muted">· ' + done + '/' + g.items.length + '</span></h3>'
+      + g.items.map((item, i) =>
+        '<label class="check-item' + (marks[i] ? ' done' : '') + '"><input type="checkbox" data-check="' + g.key + '" data-i="' + i + '"'
+        + (marks[i] ? ' checked' : '') + ' /><span>' + esc(item) + '</span></label>').join('')
+      + '<button type="button" class="small ghost" data-checkreset="' + g.key + '" style="margin-top:8px">Reset this list</button></div>';
+  }).join('');
+}
+$('checkList').addEventListener('change', e => {
+  const cb = e.target.closest('input[data-check]');
+  if (!cb) return;
+  const key = cb.dataset.check;
+  extra.checks[key] = extra.checks[key] || {};
+  if (cb.checked) extra.checks[key][+cb.dataset.i] = true;
+  else delete extra.checks[key][+cb.dataset.i];
+  queueExtraSave();
+  renderChecks();
+});
+$('checkList').addEventListener('click', e => {
+  const b = e.target.closest('[data-checkreset]');
+  if (!b) return;
+  if (!confirm('Untick everything in this list?\n\nIt is shared, so everyone loses the ticks.')) return;
+  extra.checks[b.dataset.checkreset] = {};
+  queueExtraSave();
+  renderChecks();
+});
+
+/* ---------- trip at a glance ---------- */
+function renderGlance(){
+  const t = totals();
+  const first = state.stops[0], last = state.stops[state.stops.length - 1];
+  const hotels = t.nights.filter(n => n.type === 'Hotel' || n.type === 'Motel').length;
+  const camps = t.nights.filter(n => n.type === 'Campground' || n.type === 'RV park' || n.type === 'Dry camping').length;
+  const unbooked = t.nights.filter(n => n.status === 'To book').length;
+  const days = Math.min(60, Math.max(1, +state.plan.days || 1));
+  const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
+  const dates = d0 ? fmtDate(d0) + ' – ' + fmtDate(new Date(d0.getTime() + (days - 1) * 864e5)) : 'Dates not set';
+  const cells = [
+    [state.stops.length > 1 ? first.name + ' → ' + last.name : 'Route not set', 'the drive', false],
+    [dates, days + ' days on the road', false],
+    [Math.round(t.miles).toLocaleString() + ' mi', 'driving distance', false],
+    [hotels + ' hotel · ' + camps + ' camp', 'nights by type', false],
+    [String(unbooked), unbooked === 1 ? 'night still to book' : 'nights still to book', unbooked > 0],
+    [money(t.total), 'est. total · ' + money(t.total / t.people) + ' each', false]
+  ];
+  $('glanceGrid').innerHTML = cells.map(c =>
+    '<div' + (c[2] ? ' class="warn"' : '') + '><b>' + esc(c[0]) + '</b><span>' + esc(c[1]) + '</span></div>').join('');
+}
+
+/* ---------- dump stations, propane, water ---------- */
+var UTIL_KINDS = [
+  { phrase: 'sanitary dump station', types: ['sanitary_dump_station'], kind: 'dump station' },
+  { phrase: 'propane', types: ['propane', 'fuel'], kind: 'propane' },
+  { phrase: 'drinking water', types: ['water_point', 'drinking_water'], kind: 'water' }
+];
+var utilRows = [];
+function utilMsg(t){
+  const m = $('utilMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 8000);
+}
+async function utilNear(anchor, radiusKm){
+  const bbox = campBbox(anchor, radiusKm);
+  const found = [];
+  for (const spec of UTIL_KINDS) {
+    for (const row of await campAnswer(spec.phrase, spec.types, bbox)) {
+      const lat = +row.lat, lng = +row.lon;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+      found.push({ name: row.name, kind: spec.kind, lat, lng, anchor: anchor.name, dist: hav(anchor, { lat, lng }) });
+    }
+  }
+  return found;
+}
+async function searchUtils(anchors, label){
+  const radiusKm = (+$('utilRadius').value || 10) * 1.609344;
+  const seen = new Set();
+  let out = [];
+  for (let i = 0; i < anchors.length; i++) {
+    utilMsg('Looking near ' + anchors[i].name + ' (' + (i + 1) + ' of ' + anchors.length + ')…');
+    const batch = (await utilNear(anchors[i], radiusKm)).filter(s => {
+      const key = s.name.toLowerCase() + '|' + s.lat.toFixed(3) + ',' + s.lng.toFixed(3);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    await attachDriving(anchors[i], batch);
+    out = out.concat(batch);
+  }
+  out.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  utilRows = out.slice(0, 60);
+  renderUtils();
+  utilMsg(utilRows.length ? utilRows.length + ' places ' + label + '.' : 'Nothing found ' + label + ' — try a wider radius.');
+}
+function renderUtils(){
+  const el = $('utilList');
+  if (!utilRows.length) { el.innerHTML = '<p class="muted">Nothing listed yet — search along your route or near a town.</p>'; return; }
+  el.innerHTML = utilRows.map((s, i) =>
+    '<div class="food-item"><span class="food-pick" style="cursor:default">'
+    + '<span class="food-name">' + esc(s.name) + '</span>'
+    + '<span class="food-sub">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span></span>'
+    + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(s.name) + '">🗺️</button></div>').join('');
+}
+$('utilAlong').onclick = async () => {
+  const btn = $('utilAlong');
+  if (!state.stops.length) { utilMsg('Add stops to your route first, or search near a town.'); return; }
+  btn.disabled = true;
+  try { await searchUtils(state.stops.slice(0, 3), 'near your stops'); }
+  catch (e) { utilMsg('Could not reach the place index right now.'); }
+  finally { btn.disabled = false; }
+};
+$('utilFind').onclick = async () => {
+  const btn = $('utilFind');
+  const place = $('utilQuery').value.trim();
+  if (!place) { utilMsg('Type a town or area first.'); return; }
+  btn.disabled = true;
+  utilMsg('Looking up ' + place + '…');
+  try {
+    const center = await geocode(place);
+    await searchUtils([{ name: center.name, lat: center.lat, lng: center.lng }], 'near ' + center.name);
+  } catch (e) { utilMsg('Could not find that place — check the spelling.'); }
+  finally { btn.disabled = false; }
+};
+$('utilQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('utilFind').click(); } });
+$('utilList').addEventListener('click', e => {
+  if (handleMapMenuClick(e)) return;
+  const trig = e.target.closest('[data-maptrig]');
+  if (trig) openMapMenu(trig, utilRows[+trig.dataset.maptrig]);
+});
+
+/* ---------- upload name gate ---------- */
+function uploadAllowed(){
+  const input = $('photoPass');
+  const v = (input.value || '').trim().toLowerCase();
+  if (!v) { photoMsg('Type your name to upload — kyle, chuck, justin or nate.'); input.focus(); return false; }
+  if (UPLOAD_NAMES.indexOf(v) < 0) {
+    photoMsg('“' + input.value.trim() + '” is not on the upload list. Allowed: kyle, chuck, justin, nate.');
+    input.select();
+    return false;
+  }
+  try { sessionStorage.setItem('rt_uploader', v); } catch (e) {}
+  return true;
+}
+try { const saved = sessionStorage.getItem('rt_uploader'); if (saved) $('photoPass').value = saved; } catch (e) {}
+
+/* ---------- extras inputs ---------- */
+function syncExtraInputs(){
+  const map = {
+    budTravelers: null,
+    budFood: ['budget', 'food'], budTolls: ['budget', 'tolls'], budPropane: ['budget', 'propane'],
+    budFun: ['budget', 'fun'], budMisc: ['budget', 'misc'],
+    rvHeight: ['rv', 'height'], rvLength: ['rv', 'length'], rvWeight: ['rv', 'weight'],
+    rvMpg: ['rv', 'mpg'], rvWater: ['rv', 'water'], rvPropane: ['rv', 'propane']
+  };
+  Object.keys(map).forEach(id => {
+    const el = $(id);
+    if (!el || el === document.activeElement) return;
+    const v = map[id] ? extra[map[id][0]][map[id][1]] : extra.travelers;
+    if (v !== undefined && el.value !== String(v)) el.value = v;
+  });
+}
+function bindExtra(id, path, parse){
+  $(id).addEventListener('input', e => {
+    const v = parse ? parse(e.target.value) : e.target.value;
+    if (path.length === 1) extra[path[0]] = v;
+    else { extra[path[0]] = extra[path[0]] || {}; extra[path[0]][path[1]] = v; }
+    queueExtraSave();
+    renderGlance(); renderBudget(); renderRV();
+  });
+}
+bindExtra('budTravelers', ['travelers'], v => Math.max(1, Math.round(+v || 1)));
+bindExtra('budFood', ['budget', 'food'], v => +v || 0);
+bindExtra('budTolls', ['budget', 'tolls'], v => +v || 0);
+bindExtra('budPropane', ['budget', 'propane'], v => +v || 0);
+bindExtra('budFun', ['budget', 'fun'], v => +v || 0);
+bindExtra('budMisc', ['budget', 'misc'], v => +v || 0);
+bindExtra('rvHeight', ['rv', 'height'], v => +v || 0);
+bindExtra('rvLength', ['rv', 'length'], v => +v || 0);
+bindExtra('rvWeight', ['rv', 'weight'], v => +v || 0);
+bindExtra('rvMpg', ['rv', 'mpg'], v => +v || 0);
+bindExtra('rvWater', ['rv', 'water'], v => +v || 0);
+bindExtra('rvPropane', ['rv', 'propane'], v => +v || 0);
+$('fuelPrice').addEventListener('input', () => { renderGlance(); renderBudget(); });
+
+/* ---------- backup ---------- */
+$('backupExport').onclick = () => {
+  const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), extras: extra, state }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'roadtrip-backup-' + isoDate(new Date()) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  $('glanceMsg').textContent = 'Backup downloaded — keep it where you can reach it offline.';
+};
+$('backupImport').addEventListener('change', async e => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  if (!confirm('Restore this backup?\n\nIt replaces the nights, budget, RV details and checklists for everyone, and re-adds any stops that are missing.')) return;
+  let data = null;
+  try { data = JSON.parse(await file.text()); } catch (err) { data = null; }
+  if (!data) { $('glanceMsg').textContent = 'That file is not a Road Trip backup.'; return; }
+  const ex = data.extras || null;
+  if (ex) {
+    const d = extraDefaults();
+    extra = {
+      rv: Object.assign(d.rv, ex.rv || {}),
+      travelers: +ex.travelers > 0 ? +ex.travelers : 2,
+      budget: Object.assign(d.budget, ex.budget || {}),
+      nights: Array.isArray(ex.nights) ? ex.nights : [],
+      checks: (ex.checks && typeof ex.checks === 'object') ? ex.checks : {}
+    };
+    syncExtraInputs();
+    await saveExtras();
+  }
+  const stops = (data.state && Array.isArray(data.state.stops)) ? data.state.stops : [];
+  const have = new Set(state.stops.map(s => s.name + '|' + (+s.lat).toFixed(3)));
+  let added = 0;
+  for (const s of stops) {
+    if (have.has(s.name + '|' + (+s.lat).toFixed(3))) continue;
+    if (await write('POST', '/api/stops', { name: s.name, lat: s.lat, lng: s.lng })) added++;
+  }
+  $('glanceMsg').textContent = 'Backup restored' + (added ? ' — ' + added + ' stop' + (added === 1 ? '' : 's') + ' added back' : '') + '. Photos and notes are not part of a backup.';
+});
+
+/* ---------- collapsible cards ---------- */
+document.querySelectorAll('main > section.card').forEach(sec => {
+  const h = sec.querySelector('h2');
+  if (!h || h.querySelector('.collapse-btn')) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'collapse-btn';
+  btn.textContent = '–';
+  btn.setAttribute('aria-expanded', 'true');
+  btn.setAttribute('aria-label', 'Collapse ' + h.textContent.trim());
+  btn.addEventListener('click', ev => {
+    ev.preventDefault();
+    const collapsed = sec.classList.toggle('collapsed');
+    btn.textContent = collapsed ? '+' : '–';
+    btn.setAttribute('aria-expanded', String(!collapsed));
+    btn.setAttribute('aria-label', (collapsed ? 'Expand ' : 'Collapse ') + h.textContent.trim());
+    try { localStorage.setItem('rt_collapsed_' + sec.id, collapsed ? '1' : '0'); } catch (e) {}
+  });
+  h.appendChild(btn);
+  try {
+    if (localStorage.getItem('rt_collapsed_' + sec.id) === '1') {
+      sec.classList.add('collapsed');
+      btn.textContent = '+';
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  } catch (e) {}
+});
 
 /* ---------- boot + live refresh ---------- */
 
