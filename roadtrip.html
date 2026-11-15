@@ -1047,6 +1047,28 @@ const ratingValue = place => {
 // instead of sorting as zero.
 const driveMi = place => place.drive ? place.drive.mi : (place.dist === null || place.dist === undefined ? Infinity : place.dist);
 
+const SORTS_KEY = 'rt_sorts';
+const sortChoice = v => (v === 'rating' ? 'rating' : 'dist');
+
+// Sort order is a personal preference, so it lives in this browser rather than
+// in the shared trip.
+function loadSorts(){
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(SORTS_KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  golfSortMode = sortChoice(saved.golf);
+  foodSortMode = sortChoice(saved.food);
+  hotelSortMode = sortChoice(saved.hotel);
+  $('golfSort').value = golfSortMode;
+  $('foodSort').value = foodSortMode;
+  $('hotelSort').value = hotelSortMode;
+}
+
+function saveSorts(){
+  try {
+    localStorage.setItem(SORTS_KEY, JSON.stringify({ golf: golfSortMode, food: foodSortMode, hotel: hotelSortMode }));
+  } catch (e) { /* private mode or full storage: the pick just is not remembered */ }
+}
+
 // Sorts in place so the array identity that pending lookups capture stays valid.
 function sortInPlace(list, mode){
   if (mode === 'rating') {
@@ -1311,6 +1333,7 @@ $('golfName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.prev
 
 $('golfSort').addEventListener('change', () => {
   golfSortMode = $('golfSort').value;
+  saveSorts();
   if (golfCourses.length) { sortInPlace(golfCourses, golfSortMode); renderGolf(); }
 });
 
@@ -1515,6 +1538,7 @@ $('foodQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.pre
 
 $('foodSort').addEventListener('change', () => {
   foodSortMode = $('foodSort').value;
+  saveSorts();
   if (foodPlaces.length) { sortInPlace(foodPlaces, foodSortMode); renderFood(); }
 });
 
@@ -1625,6 +1649,7 @@ $('hotelRadius').addEventListener('change', () => { if (hotelStop) findHotelsFor
 
 $('hotelSort').addEventListener('change', () => {
   hotelSortMode = $('hotelSort').value;
+  saveSorts();
   if (hotelStop && hotelResults.length) { sortInPlace(hotelResults, hotelSortMode); renderHotels(hotelStop); }
 });
 
@@ -1709,6 +1734,7 @@ acSetup($('eventArea'), { cityFirst: true });
 
 /* ---------- boot + live refresh ---------- */
 
+loadSorts();
 applyState(state);
 loadState();
 
