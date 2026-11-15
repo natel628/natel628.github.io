@@ -394,14 +394,19 @@
     <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
     <details id="driveBox" style="margin-top:8px">
       <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
-      <p class="muted" style="margin:6px 0 0;font-size:.8rem">Nobody who taps ☁️ signs in to anything — the relay below uploads as you. Set it up once and the button just works for everyone.</p>
+      <p class="muted" style="margin:6px 0 0;font-size:.8rem">The owner signs in once below — after that, anyone taps ☁️ and it lands in the folder, no sign-in for anyone else. The login lives in the shared plan, so only keep it while the trip needs it.</p>
       <div class="row" style="margin-top:8px">
-        <input id="driveRelay" placeholder="Relay web-app URL (…/exec)" aria-label="Drive relay web-app URL" autocomplete="off" style="flex:1;min-width:200px" />
+        <input id="driveSecret" type="password" placeholder="Client secret (readable by anyone opening this page)" aria-label="Google OAuth client secret" autocomplete="off" style="flex:1;min-width:200px" />
       </div>
       <div class="row" style="margin-top:8px">
         <input id="driveFolder" placeholder="Drive folder link or ID" aria-label="Google Drive folder link or ID" autocomplete="off" style="flex:1;min-width:200px" />
         <button type="button" id="driveSave">Save</button>
       </div>
+      <div class="row" style="margin-top:8px">
+        <button type="button" id="driveConnect" class="small">Connect my Drive</button>
+        <button type="button" id="driveDisconnect" class="small ghost">Disconnect</button>
+      </div>
+      <p class="muted" id="driveStatus" style="margin:6px 0 0"></p>
       <p class="muted" id="driveMsg" style="margin:6px 0 0"></p>
       <p style="margin:6px 0 0"><a id="driveOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>📂 Open the Drive folder ↗</a></p>
     </details>
@@ -1879,84 +1884,152 @@ function driveFileFor(id){ return (extra && extra.driveFiles && extra.driveFiles
 function driveControl(p){
   if (isPoster(p)) return '';
   if (driveFileFor(p.id)) return ' <span class="tag" title="Backed up to Google Drive">☁️ Drive</span>';
-  // No relay yet means nobody can send — hide the button, not a dead end.
-  if (!((extra && extra.drive && extra.drive.relayUrl) || '')) return '';
+  // Nobody is connected yet — hide the button, not a dead end.
+  if (!((extra && extra.drive && extra.drive.ownerRefresh) || '')) return '';
   return ' <button type="button" class="small ghost" data-drive="' + esc(p.id) + '" aria-label="Send to Google Drive">☁️</button>';
 }
 
-// Handoff notes the relay answers through: the page cannot read the relay's
-// replies directly, so upload slots travel through shared state instead.
-var DRIVE_SESSION_PREFIX = '\u27e6drive-up\u27e7';
-async function waitDriveSession(videoId, timeoutMs){
-  const t0 = Date.now();
-  while (Date.now() - t0 < timeoutMs) {
+// Owner sign-in: you connect your Google account once, and the page keeps the
+// keys in the shared plan so every tap after that uploads as you. Anyone
+// opening this page can read them — that is the price of nobody signing in —
+// so the token is scoped to files this trip app creates, and Disconnect wipes it.
+let ownerToken = null, ownerTokenExp = 0;
+function driveRedirectUri(){ return location.origin + location.pathname; }
+$('driveConnect').onclick = () => {
+  const cfg = (extra && extra.drive) || {};
+  if (!cfg.clientId) { photoMsg('The client ID is missing from the shared plan — re-open this page and try again.'); return; }
+  location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({
+    client_id: cfg.clientId, redirect_uri: driveRedirectUri(), response_type: 'code',
+    scope: 'https://www.googleapis.com/auth/drive.file', access_type: 'offline',
+    prompt: 'consent', state: 'rt-drive', include_granted_scopes: 'false'
+  });
+};
+async function finishOwnerReturn(){
+  const q = new URLSearchParams(location.search);
+  if (q.get('state') !== 'rt-drive' || !q.get('code')) return;
+  history.replaceState(null, '', driveRedirectUri());
+  const cfg = (extra && extra.drive) || {};
+  if (!cfg.clientId || !cfg.clientSecret) { photoMsg('Sign-in came back but the client ID or secret is missing — save both first.'); return; }
+  photoMsg('Finishing Google sign-in…');
+  try {
+    const res = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'authorization_code', code: q.get('code'), client_id: cfg.clientId, client_secret: cfg.clientSecret, redirect_uri: driveRedirectUri() })
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data || !data.refresh_token) throw new Error((data && data.error_description) || 'Google refused the sign-in');
+    extra.drive = extra.drive || {};
+    extra.drive.ownerRefresh = data.refresh_token;
     try {
-      const st = await api('GET', '/api/state');
-      applyState(st);
-      const hit = (st.notes || []).map(n => {
-        try { return JSON.parse(String(n.body || '').slice(DRIVE_SESSION_PREFIX.length)); }
-        catch (e) { return null; }
-      }).find(s => s && s.videoId === videoId && (Date.now() - (+s.at || 0)) < 10 * 60 * 1000);
-      if (hit && hit.session) return hit.session;
-    } catch (e) { /* keep waiting through blips */ }
-    await new Promise(r => setTimeout(r, 2500));
+      const me = await (await fetch('https://oauth2.googleapis.com/tokeninfo?access_token=' + encodeURIComponent(data.access_token))).json();
+      if (me && me.email) extra.drive.ownerEmail = me.email;
+    } catch (e) {}
+    await saveExtras();
+    renderDriveStatus();
+    renderPhotos();
+    photoMsg('Connected — every tap now uploads to your Drive.');
+  } catch (err) {
+    photoMsg('Google sign-in failed (' + (err.message || 'try again') + '). Nothing was stored.');
   }
-  return null;
 }
+async function mintDriveToken(){
+  const cfg = (extra && extra.drive) || {};
+  if (!cfg.ownerRefresh || !cfg.clientId || !cfg.clientSecret) return null;
+  if (ownerToken && Date.now() < ownerTokenExp - 60000) return ownerToken;
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: cfg.ownerRefresh, client_id: cfg.clientId, client_secret: cfg.clientSecret })
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data || !data.access_token) { ownerToken = null; ownerTokenExp = 0; return null; }
+  ownerToken = data.access_token;
+  ownerTokenExp = Date.now() + (+data.expires_in || 3600) * 1000;
+  return ownerToken;
+}
+function renderDriveStatus(){
+  const el = $('driveStatus');
+  if (!el) return;
+  const cfg = (extra && extra.drive) || {};
+  el.textContent = cfg.ownerRefresh
+    ? 'Connected' + (cfg.ownerEmail ? ' as ' + cfg.ownerEmail : '') + ' — taps upload as you.'
+    : 'Not connected — tap “Connect my Drive” above on the owner’s phone.';
+}
+$('driveDisconnect').onclick = async () => {
+  if (!(extra && extra.drive && extra.drive.ownerRefresh)) { photoMsg('Nothing to disconnect.'); return; }
+  if (!confirm('Disconnect Google Drive?\n\nNew taps will stop working until the owner signs in again. Videos already in Drive stay there.')) return;
+  extra.drive.ownerRefresh = '';
+  extra.drive.ownerEmail = '';
+  ownerToken = null; ownerTokenExp = 0;
+  await saveExtras();
+  renderDriveStatus();
+  renderPhotos();
+  photoMsg('Disconnected.');
+};
 
 async function sendToDrive(id, btn){
   const item = (state.photos || []).find(p => p.id === id);
   if (!item) return;
   const cfg = (extra && extra.drive) || {};
-  // The relay runs as you, so whoever taps this never signs in to anything.
-  if (!cfg.relayUrl) { photoMsg('Google Drive backup is not switched on yet — the relay link goes in “Google Drive backup” below.'); return; }
+  if (!cfg.ownerRefresh) { photoMsg('Drive is not connected — the owner taps “Connect my Drive” in “Google Drive backup” below first.'); return; }
   if (driveFileFor(id)) { renderPhotos(); return; }
   if (btn) btn.disabled = true;
   try {
-    photoMsg('Asking your Drive to take it…');
-    await fetch(cfg.relayUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'init', videoId: id }) });
-    const session = await waitDriveSession(id, 60000);
-    if (!session) { photoMsg('Your Drive did not answer — the file is still here, try again in a bit.'); return; }
+    photoMsg('Connecting…');
+    const token = await mintDriveToken();
+    if (!token) { photoMsg('Drive is not connected — the owner taps “Connect my Drive” below first.'); return; }
     photoMsg('Fetching ' + photoSize(item.size || 0) + '…');
     const blob = await (await fetch(API_BASE + '/api/photos/' + encodeURIComponent(id), { cache: 'no-store' })).blob();
     photoMsg('Uploading to your Drive folder — leave this open…');
-    // Upload slots need no login: the address itself is the permission.
+    const folderId = (cfg.folderId || '');
+    const init = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify(Object.assign({ name: driveFileName(item), mimeType: item.type || 'application/octet-stream' }, folderId ? { parents: [folderId] } : {}))
+    });
+    if (!init.ok) throw new Error('Google refused the upload slot (' + init.status + ')');
+    const session = init.headers.get('Location');
+    if (!session) throw new Error('Google gave no upload address');
     const put = await fetch(session, { method: 'PUT', body: blob });
     if (put.status !== 200 && put.status !== 201) { photoMsg('Drive refused the file (' + put.status + ') — it is still here.'); return; }
     const done = await put.json().catch(() => null);
-    if (!done || !done.id) { photoMsg('Drive gave no confirmation — check the folder before retrying.'); return; }
-    await fetch(cfg.relayUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'mark', videoId: id, fileId: done.id }) });
-    const t0 = Date.now();
-    while (!driveFileFor(id) && Date.now() - t0 < 30000) {
-      await new Promise(r => setTimeout(r, 2000));
-      try { applyState(await api('GET', '/api/state')); } catch (e) { /* keep waiting */ }
-    }
+    if (!done || !done.id) throw new Error('Drive gave no confirmation');
+    const entry = { id: done.id, at: Date.now() };
+    extra.driveFiles = extra.driveFiles || {};
+    extra.driveFiles[id] = entry;
+    await saveExtras();
+    // A refresh racing the save rebuilds extras from the old note; re-assert.
+    extra.driveFiles = extra.driveFiles || {};
+    extra.driveFiles[id] = entry;
     renderPhotos();
-    photoMsg(driveFileFor(id)
-      ? '☁️ Backed up to your Drive — the badge is saved for everyone.'
-      : 'The file landed — if no badge shows in a minute, check the Drive folder.');
+    photoMsg('☁️ Backed up to your Drive — the badge is saved for everyone.');
   } catch (err) {
+    ownerToken = null; ownerTokenExp = 0;
     photoMsg(err && err.message ? err.message : 'Drive upload failed — the file is still here.');
   } finally {
     if (btn && btn.isConnected) btn.disabled = false;
   }
 }
 
+function driveFileName(item){
+  const base = String((item.caption || '').trim() || 'trip upload').replace(/[/\\]+/g, '-');
+  const ext = ({ 'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/webm': '.webm', 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' })[item.type] || '';
+  return ext && base.toLowerCase().endsWith(ext) ? base : base + ext;
+}
 function parseDriveFolder(v){
   v = (v || '').trim();
   const m = v.match(/folders\/([a-zA-Z0-9_-]+)/);
   return m ? m[1] : v;
 }
 $('driveSave').onclick = async () => {
-  const relayUrl = ($('driveRelay').value || '').trim();
+  const clientSecret = ($('driveSecret').value || '').trim();
   const folderId = parseDriveFolder($('driveFolder').value);
   extra.drive = extra.drive || {};
-  extra.drive.relayUrl = relayUrl;
+  extra.drive.clientSecret = clientSecret;
   extra.drive.folderId = folderId;
   await saveExtras();
-  $('driveMsg').textContent = relayUrl && folderId
-    ? 'Saved for everyone — ☁️ now uploads as you, no sign-in for anyone.'
-    : 'Saved. Both fields are needed before sending works.';
+  $('driveMsg').textContent = folderId
+    ? 'Saved for everyone — connect below once and ☁️ just works.'
+    : 'Saved. A folder is needed before sending works.';
   setTimeout(() => { const m = $('driveMsg'); if (m && m.textContent.indexOf('Saved') === 0) m.textContent = ''; }, 10000);
 };
 
@@ -2984,7 +3057,7 @@ function extraDefaults(){
     budget: { lodging: 0, food: 0, tolls: 0, propane: 0, fun: 0, misc: 0 },
     players: { Nate: 17.3, Kyle: 24.0, Chuck: 31, Justin: 10.4 },
     bets: [],
-    drive: { clientId: '', folderId: '' },
+    drive: { clientId: '', folderId: '', clientSecret: '', ownerRefresh: '', ownerEmail: '' },
     driveFiles: {}
   };
 }
@@ -3049,6 +3122,7 @@ function renderExtras(){
   // Photos render before extras are read, so refresh them once the shared
   // settings (Drive config and badges) are actually in memory.
   renderPhotos();
+  renderDriveStatus();
 }
 
 /* ---------- day spans, shared by the itinerary ---------- */
@@ -3205,8 +3279,8 @@ function syncExtraInputs(){
   const bg = $('budGas');
   if (bg && bg !== document.activeElement && $('fuelPrice') && bg.value !== $('fuelPrice').value) bg.value = $('fuelPrice').value;
   const dd = (extra && extra.drive) || {};
-  const dr = $('driveRelay'), df = $('driveFolder');
-  if (dr && dr !== document.activeElement && dr.value !== (dd.relayUrl || '')) dr.value = dd.relayUrl || '';
+  const ds = $('driveSecret'), df = $('driveFolder');
+  if (ds && ds !== document.activeElement && ds.value !== (dd.clientSecret || '')) ds.value = dd.clientSecret || '';
   if (df && df !== document.activeElement && df.value !== (dd.folderId || '')) df.value = dd.folderId || '';
   const dl = $('driveOpen');
   if (dl) {
@@ -3588,8 +3662,8 @@ document.querySelectorAll('main section.card').forEach(sec => {
 
 loadRadii();
 loadFuel();
-applyState(state);
-loadState();
+  applyState(state);
+  loadState().then(() => finishOwnerReturn());
 
 setInterval(async () => {
   if (document.hidden || syncing) return;
