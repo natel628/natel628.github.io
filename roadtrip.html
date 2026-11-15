@@ -136,24 +136,9 @@
   .glance b { display:block; font-size:1.15rem; color:var(--accent); }
   .glance span { color:var(--muted); font-size:.78rem; }
   .glance > div.warn b { color:#f87171; }
-  #nightsList, #checkList { display:grid; gap:10px; margin-top:12px; }
-  .night { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; display:grid; gap:8px; }
-  .night-head { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; }
-  .night-date { font-weight:700; }
-  .night-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
-  .night label, .rv-grid label { display:grid; gap:3px; font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
-  .night input, .night select, .rv-grid input { padding:7px 9px; font-size:.9rem; min-width:0; width:100%; }
-  .pill { border-radius:999px; padding:2px 10px; font-size:.72rem; font-weight:800; border:1px solid; }
-  .pill.todo { color:#fca5a5; border-color:#7f1d1d; background:#2a1010; }
-  .pill.done { color:#86efac; border-color:#14532d; background:#0f2417; }
   .rv-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-top:10px; }
   .caution { background:#0f172a; border:1px solid #334155; border-left:4px solid #f59e0b; border-radius:8px; padding:10px 12px; margin-top:8px; font-size:.9rem; }
   .caution b { display:block; margin-bottom:2px; }
-  .check-group { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; }
-  .check-group h3 { margin:0 0 4px; font-size:.95rem; }
-  .check-item { display:flex; gap:9px; align-items:flex-start; padding:4px 0; font-size:.92rem; cursor:pointer; }
-  .check-item input { margin-top:3px; flex:none; }
-  .check-item.done span { text-decoration:line-through; color:var(--muted); }
   .budget-lines { display:grid; gap:8px; margin-top:10px; }
   .budget-row { display:flex; gap:8px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; flex-wrap:wrap; }
   .budget-row b { color:var(--accent); font-variant-numeric:tabular-nums; }
@@ -172,7 +157,6 @@
     /* One thumb, one column: the planning cards stack and controls get taller. */
     .card{padding:14px;}
     .glance{grid-template-columns:1fr 1fr;}
-    .night-grid{grid-template-columns:1fr 1fr;}
     .rv-grid{grid-template-columns:1fr 1fr;}
     input,select,button{font-size:16px;}
     button, .small{padding:10px 12px;}
@@ -193,10 +177,8 @@
     <a href="#sec-glance">📊 Overview</a>
     <a href="#sec-route">🗺️ Map</a>
     <a href="#sec-itinerary">📅 Itinerary</a>
-    <a href="#sec-nights">🛏 Nights</a>
     <a href="#sec-budget">💵 Budget</a>
     <a href="#sec-rv">🚐 RV</a>
-    <a href="#sec-check">✅ Checklists</a>
     <a href="#sec-practical">🧰 Estimates</a>
     <a href="#sec-notes">📝 Notes</a>
     <a href="#sec-photos">📸 Photos</a>
@@ -275,22 +257,12 @@
     <div id="itinerary"></div>
   </section>
 
-  <section class="card" id="sec-nights">
-    <h2>🛏 Nights &amp; lodging</h2>
-    <p class="muted">One row per night — hotel or campground, whether it is booked, and what it costs. The costs feed the budget below. Shared with everyone.</p>
-    <div class="row" style="margin-top:8px">
-      <button type="button" id="nightsSync" class="small ghost">Rebuild from the itinerary</button>
-      <button type="button" id="nightsClear" class="small ghost">Clear all nights</button>
-    </div>
-    <p id="nightsMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="nightsList"></div>
-  </section>
-
   <section class="card" id="sec-budget">
     <h2>💵 Budget</h2>
-    <p class="muted">Lodging comes from the nights above and fuel from your route and MPG. Fill in the rest; the total splits by traveler count.</p>
+    <p class="muted">Fuel comes from your route and MPG. Fill in the rest; the total splits by traveler count.</p>
     <div class="rv-grid">
       <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
+      <label>Lodging $<input id="budLodging" type="number" min="0" step="25" value="0" /></label>
       <label>Food $<input id="budFood" type="number" min="0" step="25" value="0" /></label>
       <label>Tolls &amp; bridges $<input id="budTolls" type="number" min="0" step="5" value="0" /></label>
       <label>Propane refills $<input id="budPropane" type="number" min="0" step="5" value="0" /></label>
@@ -313,12 +285,6 @@
     </div>
     <div id="rvWarn"></div>
     <div id="cautionList"></div>
-  </section>
-
-  <section class="card" id="sec-check">
-    <h2>✅ Checklists</h2>
-    <p class="muted">Pre-trip, packing, campground setup and departure. Ticks are shared, so everyone sees what is still missing.</p>
-    <div id="checkList"></div>
   </section>
 
   <section class="card" id="sec-practical">
@@ -1309,8 +1275,8 @@ function noteMsg(t){
 }
 function renderNotes(){
   const el = $('noteList');
-  // The planning data (nights, budget, RV, checklists) lives in one note that
-  // must never show up as a note.
+  // The planning data (budget, RV profile) lives in one note that must never
+  // show up as a note.
   const shown = state.notes.filter(n => String(n.body || '').indexOf('\u27e6rt-data\u27e7') !== 0);
   if (!shown.length) {
     el.innerHTML = '<p class="muted">No notes yet — jot down campsites, contacts, or gear to pack.</p>';
@@ -2458,8 +2424,8 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMapMenu(); });
 
 /* ===================================================================
-   Planning extras: nights & lodging, budget, RV profile, checklists,
-   dump/propane/water finder, backup export/import.
+   Planning extras: budget, RV profile, dump/propane/water finder,
+   backup export/import.
 
    The Worker only stores stops, plan, notes and photos, so this data
    travels in one hidden note. It is still shared: anyone who opens the
@@ -2470,48 +2436,23 @@ var extra = null;
 var metaNoteId = null;
 var UPLOAD_NAMES = ['kyle', 'chuck', 'justin', 'nate'];
 
-var CHECK_GROUPS = [
-  { key: 'pretrip', title: 'Before you leave', items: [
-    'Route and stops final', 'Every night booked or a backup noted', 'Tire pressure, tread and spare checked',
-    'Oil, coolant, transmission fluid', 'Battery terminals clean and tight', 'Propane filled; valves closed for travel',
-    'Fresh water in, black and gray tanks empty', 'Hitch, chains, breakaway cable, trailer lights',
-    'Registration, insurance, roadside plan in the cab', 'Toll transponder topped up',
-    'Prescriptions and first-aid restocked', 'Mail held, plants watered, neighbour has a key'] },
-  { key: 'packing', title: 'Packing', items: [
-    'Leveling blocks and wheel chocks', 'Water hose, pressure regulator, filter', 'Sewer hose and gloves',
-    '30A/50A adapter and surge protector', 'Basic tools and duct tape', 'Flashlights and headlamps',
-    'Bug spray and sunscreen', 'Cooler and dry goods', 'Golf bags, shoes, balls, tees',
-    'Rain gear and warm layers', 'Camp chairs and door mat', 'Trash bags and paper towels'] },
-  { key: 'setup', title: 'Campground setup', items: [
-    'Pull through or back in with a spotter', 'Chock the wheels, set the brake', 'Level, then stabilizers down',
-    'Power connected, breaker on', 'Water connected through the regulator', 'Sewer hose supported, valves closed',
-    'Fridge and water heater on', 'Awning out and anchored', 'Slides clear of hookups and trees',
-    'Site number and confirmation saved here'] },
-  { key: 'teardown', title: 'Before you drive', items: [
-    'Everything off the ground and stowed', 'Awning in', 'Slides in', 'Sewer disconnected and rinsed',
-    'Water and power disconnected', 'Antenna down, vents closed', 'Levelers up, chocks out',
-    'Walk around: lights, tires, hitch', 'Black tank emptied if the next stop has no dump',
-    'Fuel for the next leg'] }
-];
-
-var NIGHT_TYPES = ['Campground', 'RV park', 'Hotel', 'Motel', 'Dry camping', 'Friends / family', 'Other'];
-var NIGHT_STATUS = ['To book', 'Reserved', 'Paid', 'Not needed'];
-
 function extraDefaults(){
   return {
     rv: { height: 12.5, length: 30, weight: 0, mpg: 8, water: 60, propane: 40 },
     travelers: 2,
-    budget: { food: 0, tolls: 0, propane: 0, fun: 0, misc: 0 },
-    nights: [],
-    checks: {}
+    budget: { lodging: 0, food: 0, tolls: 0, propane: 0, fun: 0, misc: 0 }
   };
 }
 
+function isMetaNote(n){ return !!n && typeof n.body === 'string' && n.body.indexOf(META_PREFIX) === 0; }
 function readExtras(){
   const notes = state.notes || [];
+  // Newest copy wins. The notes list is not guaranteed to come back in order,
+  // and reading an older copy was what kept resetting fields mid-edit.
   let note = null;
   for (const n of notes) {
-    if (n && typeof n.body === 'string' && n.body.indexOf(META_PREFIX) === 0) note = n;
+    if (!isMetaNote(n)) continue;
+    if (!note || (+n.at || 0) >= (+note.at || 0)) note = n;
   }
   metaNoteId = note ? note.id : null;
   let data = {};
@@ -2520,9 +2461,7 @@ function readExtras(){
   extra = {
     rv: Object.assign(d.rv, data.rv || {}),
     travelers: +data.travelers > 0 ? +data.travelers : 2,
-    budget: Object.assign(d.budget, data.budget || {}),
-    nights: Array.isArray(data.nights) ? data.nights : [],
-    checks: (data.checks && typeof data.checks === 'object') ? data.checks : {}
+    budget: Object.assign(d.budget, data.budget || {})
   };
 }
 
@@ -2533,12 +2472,11 @@ async function saveExtras(){
   if (!extra) return false;
   setSync('saving', 'Saving…');
   try {
-    const oldId = metaNoteId;
-    const next = await api('POST', '/api/notes', { body: META_PREFIX + JSON.stringify(extra) });
+    // Keep exactly one copy: add the new note, then drop every older one.
+    const stale = (state.notes || []).filter(isMetaNote).map(n => n.id);
+    let next = await api('POST', '/api/notes', { body: META_PREFIX + JSON.stringify(extra) });
+    for (const id of stale) next = await api('DELETE', '/api/notes/' + encodeURIComponent(id));
     applyState(next);
-    if (oldId && oldId !== metaNoteId) {
-      applyState(await api('DELETE', '/api/notes/' + encodeURIComponent(oldId)));
-    }
     setSync('ok', 'Shared · synced');
     return true;
   } catch (err) {
@@ -2549,20 +2487,18 @@ async function saveExtras(){
 
 function renderExtras(){
   // Never rebuild a field someone is typing in.
-  const busy = ['nightsList', 'budgetLines', 'sec-rv', 'sec-budget'].some(id => {
+  const busy = ['budgetLines', 'sec-rv', 'sec-budget'].some(id => {
     const el = $(id);
     return el && el.contains(document.activeElement);
   });
   if (!busy || !extra) readExtras();
   syncExtraInputs();
   renderGlance();
-  renderNights();
   renderBudget();
   renderRV();
-  renderChecks();
 }
 
-/* ---------- day spans, shared by the itinerary and the nights ledger ---------- */
+/* ---------- day spans, shared by the itinerary ---------- */
 function planSpans(days){
   const legs = state.stops.length - 1, chunks = Math.min(days, legs);
   const legHours = [];
@@ -2591,109 +2527,23 @@ function planSpans(days){
   return { chunks, spans, legHours };
 }
 
-/* ---------- nights & lodging ---------- */
-function mergedNights(){
-  if (!extra) readExtras();
-  const days = Math.min(60, Math.max(1, +state.plan.days || 1));
-  const spans = planSpans(days).spans;
-  const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
-  const rows = [];
-  for (let k = 0; k < days; k++) {
-    const span = spans[k];
-    const stop = span && span.to > span.from ? state.stops[span.to] : state.stops[state.stops.length - 1];
-    const saved = extra.nights.find(n => +n.day === k + 1);
-    rows.push(Object.assign({
-      day: k + 1,
-      date: d0 ? isoDate(new Date(d0.getTime() + k * 864e5)) : '',
-      place: stop ? stop.name : '',
-      type: 'Campground', name: '', cost: 0, status: 'To book', conf: '', hook: '', len: '', backup: ''
-    }, saved || {}));
-  }
-  return rows;
-}
-
-function money(n){ return '$' + Math.round(+n || 0).toLocaleString(); }
-
-function renderNights(){
-  const el = $('nightsList');
-  if (el.contains(document.activeElement)) return;
-  const rows = mergedNights();
-  if (!rows.length) { el.innerHTML = ''; return; }
-  el.innerHTML = rows.map(n => {
-    const booked = n.status !== 'To book';
-    return '<div class="night">'
-      + '<div class="night-head"><span class="night-date">Night ' + n.day
-      + (n.date ? ' · ' + esc(fmtDate(new Date(n.date + 'T12:00:00'))) : '')
-      + (n.place ? ' · ' + esc(n.place) : '') + '</span>'
-      + '<span class="pill ' + (booked ? 'done' : 'todo') + '">' + esc(n.status || 'To book') + '</span></div>'
-      + '<div class="night-grid">'
-      + nightField(n, 'type', 'Type', NIGHT_TYPES)
-      + nightText(n, 'name', 'Place / site', 'e.g. Bear Creek RV Park')
-      + nightText(n, 'cost', 'Cost $', '0', 'number')
-      + nightField(n, 'status', 'Status', NIGHT_STATUS)
-      + nightText(n, 'conf', 'Confirmation #', 'ABC-123')
-      + nightText(n, 'hook', 'Hookups', '50A full hookup')
-      + nightText(n, 'len', 'Site length needed', '40 ft')
-      + nightText(n, 'backup', 'Backup if it falls through', 'Alternate site or hotel')
-      + '</div></div>';
-  }).join('');
-}
-function nightText(n, field, label, hint, type){
-  return '<label>' + esc(label) + '<input type="' + (type || 'text') + '" data-night="' + n.day + '" data-field="' + field
-    + '" value="' + esc(n[field] || '') + '" placeholder="' + esc(hint) + '" /></label>';
-}
-function nightField(n, field, label, options){
-  return '<label>' + esc(label) + '<select data-night="' + n.day + '" data-field="' + field + '">'
-    + options.map(o => '<option' + (o === n[field] ? ' selected' : '') + '>' + esc(o) + '</option>').join('')
-    + '</select></label>';
-}
-function setNight(day, field, value){
-  let row = extra.nights.find(n => +n.day === day);
-  if (!row) { row = { day }; extra.nights.push(row); }
-  row[field] = field === 'cost' ? (+value || 0) : value;
-  queueExtraSave();
-  renderGlance(); renderBudget();
-}
-$('nightsList').addEventListener('input', e => {
-  const inp = e.target.closest('[data-night]');
-  if (inp) setNight(+inp.dataset.night, inp.dataset.field, inp.value);
-});
-$('nightsList').addEventListener('change', e => {
-  const sel = e.target.closest('select[data-night]');
-  if (!sel) return;
-  setNight(+sel.dataset.night, sel.dataset.field, sel.value);
-  renderNights();
-});
-$('nightsSync').onclick = () => {
-  if (extra.nights.length && !confirm('Rebuild the night list from the itinerary?\n\nAny place names, costs and confirmation numbers you typed are dropped.')) return;
-  extra.nights = [];
-  saveExtras().then(ok => { $('nightsMsg').textContent = ok ? 'Nights rebuilt from the itinerary.' : 'Could not save.'; });
-};
-$('nightsClear').onclick = () => {
-  if (!confirm('Clear every night?\n\nCosts, confirmations and backup plans go with them, for everyone.')) return;
-  extra.nights = [];
-  saveExtras().then(ok => { $('nightsMsg').textContent = ok ? 'Nights cleared.' : 'Could not save.'; });
-};
-
 /* ---------- budget ---------- */
 function totals(){
-  const nights = mergedNights();
-  const lodging = nights.reduce((t, n) => t + (+n.cost || 0), 0);
-  const booked = nights.filter(n => n.status && n.status !== 'To book').length;
   const miles = state.stops.length > 1 ? segMiles(0, state.stops.length - 1).mi : 0;
   const mpg = Math.max(3, +extra.rv.mpg || 8);
   const price = Math.max(0, +$('fuelPrice').value || 0);
   const gallons = miles / mpg;
   const fuel = gallons * price;
   const b = extra.budget;
+  const lodging = +b.lodging || 0;
   const other = (+b.food || 0) + (+b.tolls || 0) + (+b.propane || 0) + (+b.fun || 0) + (+b.misc || 0);
   const people = Math.max(1, +extra.travelers || 1);
-  return { nights, lodging, booked, miles, gallons, fuel, other, total: lodging + fuel + other, people };
+  return { lodging, miles, gallons, fuel, other, total: lodging + fuel + other, people };
 }
 function renderBudget(){
   const t = totals();
   const rows = [
-    ['Lodging, from the nights', t.lodging, t.nights.length + ' nights'],
+    ['Lodging', t.lodging, ''],
     ['Fuel', t.fuel, Math.round(t.gallons) + ' gal at ' + money(+$('fuelPrice').value || 0) + '/gal'],
     ['Food', +extra.budget.food || 0, ''],
     ['Tolls and bridges', +extra.budget.tolls || 0, ''],
@@ -2742,45 +2592,10 @@ function renderRV(){
     + '</div>').join('');
 }
 
-/* ---------- checklists ---------- */
-function renderChecks(){
-  const el = $('checkList');
-  el.innerHTML = CHECK_GROUPS.map(g => {
-    const marks = extra.checks[g.key] || {};
-    const done = g.items.filter((_, i) => marks[i]).length;
-    return '<div class="check-group"><h3>' + esc(g.title) + ' <span class="muted">· ' + done + '/' + g.items.length + '</span></h3>'
-      + g.items.map((item, i) =>
-        '<label class="check-item' + (marks[i] ? ' done' : '') + '"><input type="checkbox" data-check="' + g.key + '" data-i="' + i + '"'
-        + (marks[i] ? ' checked' : '') + ' /><span>' + esc(item) + '</span></label>').join('')
-      + '<button type="button" class="small ghost" data-checkreset="' + g.key + '" style="margin-top:8px">Reset this list</button></div>';
-  }).join('');
-}
-$('checkList').addEventListener('change', e => {
-  const cb = e.target.closest('input[data-check]');
-  if (!cb) return;
-  const key = cb.dataset.check;
-  extra.checks[key] = extra.checks[key] || {};
-  if (cb.checked) extra.checks[key][+cb.dataset.i] = true;
-  else delete extra.checks[key][+cb.dataset.i];
-  queueExtraSave();
-  renderChecks();
-});
-$('checkList').addEventListener('click', e => {
-  const b = e.target.closest('[data-checkreset]');
-  if (!b) return;
-  if (!confirm('Untick everything in this list?\n\nIt is shared, so everyone loses the ticks.')) return;
-  extra.checks[b.dataset.checkreset] = {};
-  queueExtraSave();
-  renderChecks();
-});
-
 /* ---------- trip at a glance ---------- */
 function renderGlance(){
   const t = totals();
   const first = state.stops[0], last = state.stops[state.stops.length - 1];
-  const hotels = t.nights.filter(n => n.type === 'Hotel' || n.type === 'Motel').length;
-  const camps = t.nights.filter(n => n.type === 'Campground' || n.type === 'RV park' || n.type === 'Dry camping').length;
-  const unbooked = t.nights.filter(n => n.status === 'To book').length;
   const days = Math.min(60, Math.max(1, +state.plan.days || 1));
   const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
   const dates = d0 ? fmtDate(d0) + ' – ' + fmtDate(new Date(d0.getTime() + (days - 1) * 864e5)) : 'Dates not set';
@@ -2788,8 +2603,7 @@ function renderGlance(){
     [state.stops.length > 1 ? first.name + ' → ' + last.name : 'Route not set', 'the drive', false],
     [dates, days + ' days on the road', false],
     [Math.round(t.miles).toLocaleString() + ' mi', 'driving distance', false],
-    [hotels + ' hotel · ' + camps + ' camp', 'nights by type', false],
-    [String(unbooked), unbooked === 1 ? 'night still to book' : 'nights still to book', unbooked > 0],
+    [String(Math.max(0, days - 1)) + ' nights', 'sleeping on the road', false],
     [money(t.total), 'est. total · ' + money(t.total / t.people) + ' each', false]
   ];
   $('glanceGrid').innerHTML = cells.map(c =>
@@ -2895,6 +2709,7 @@ try { const saved = sessionStorage.getItem('rt_uploader'); if (saved) $('photoPa
 function syncExtraInputs(){
   const map = {
     budTravelers: null,
+    budLodging: ['budget', 'lodging'],
     budFood: ['budget', 'food'], budTolls: ['budget', 'tolls'], budPropane: ['budget', 'propane'],
     budFun: ['budget', 'fun'], budMisc: ['budget', 'misc'],
     rvHeight: ['rv', 'height'], rvLength: ['rv', 'length'], rvWeight: ['rv', 'weight'],
@@ -2917,6 +2732,7 @@ function bindExtra(id, path, parse){
   });
 }
 bindExtra('budTravelers', ['travelers'], v => Math.max(1, Math.round(+v || 1)));
+bindExtra('budLodging', ['budget', 'lodging'], v => +v || 0);
 bindExtra('budFood', ['budget', 'food'], v => +v || 0);
 bindExtra('budTolls', ['budget', 'tolls'], v => +v || 0);
 bindExtra('budPropane', ['budget', 'propane'], v => +v || 0);
@@ -2946,7 +2762,7 @@ $('backupImport').addEventListener('change', async e => {
   const file = e.target.files && e.target.files[0];
   e.target.value = '';
   if (!file) return;
-  if (!confirm('Restore this backup?\n\nIt replaces the nights, budget, RV details and checklists for everyone, and re-adds any stops that are missing.')) return;
+  if (!confirm('Restore this backup?\n\nIt replaces the budget and RV details for everyone, and re-adds any stops that are missing.')) return;
   let data = null;
   try { data = JSON.parse(await file.text()); } catch (err) { data = null; }
   if (!data) { $('glanceMsg').textContent = 'That file is not a Road Trip backup.'; return; }
@@ -2956,9 +2772,7 @@ $('backupImport').addEventListener('change', async e => {
     extra = {
       rv: Object.assign(d.rv, ex.rv || {}),
       travelers: +ex.travelers > 0 ? +ex.travelers : 2,
-      budget: Object.assign(d.budget, ex.budget || {}),
-      nights: Array.isArray(ex.nights) ? ex.nights : [],
-      checks: (ex.checks && typeof ex.checks === 'object') ? ex.checks : {}
+      budget: Object.assign(d.budget, ex.budget || {})
     };
     syncExtraInputs();
     await saveExtras();
