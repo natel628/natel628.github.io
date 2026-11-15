@@ -157,7 +157,6 @@
   .budget-row.total { border-color:#7c5a13; }
   .collapse-btn { float:right; background:transparent; border:1px solid #475569; color:var(--muted); border-radius:8px; padding:1px 9px; font-size:.85rem; cursor:pointer; }
   .card.collapsed > *:not(h2) { display:none; }
-  .util-list { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior:smooth; } }
   @media(max-width:700px){
     #map{height:320px;}
@@ -199,7 +198,6 @@
     <a href="#sec-golf">⛳ Golf</a>
     <a href="#sec-food">🍽️ Food</a>
     <a href="#sec-camp">🏕️ Camping</a>
-    <a href="#sec-util">🛠 Utilities</a>
     <a href="#sec-events">🏟️ Events</a>
     <a href="#sec-bets">🏆 Bets</a>
     <a class="to-top" href="#top">↑ Top</a>
@@ -407,23 +405,6 @@
     <p id="campMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="campMap"></div>
     <div id="campList"></div>
-  </section>
-
-  <section class="card" id="sec-util">
-    <h2>🛠 Dump stations, propane &amp; water</h2>
-    <p class="muted">Sanitary dumps, propane refills and potable water near your stops, from OpenStreetMap. Call ahead — hours change.</p>
-    <div class="row">
-      <input id="utilQuery" placeholder="Or search near a town — e.g. Harrisonburg, VA" aria-label="Search utilities near a town" />
-      <select id="utilRadius" aria-label="Utility search radius" style="max-width:170px;flex:none">
-        <option value="5">Within 5 mi</option>
-        <option value="10" selected>Within 10 mi</option>
-        <option value="25">Within 25 mi</option>
-      </select>
-      <button type="button" id="utilAlong">Find along my route</button>
-      <button type="button" id="utilFind">Find near town</button>
-    </div>
-    <p id="utilMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="utilList" class="util-list"></div>
   </section>
 
   <section class="card" id="sec-events">
@@ -2683,86 +2664,6 @@ function renderGlance(){
   $('glanceGrid').innerHTML = cells.map(c =>
     '<div' + (c[2] ? ' class="warn"' : '') + '><b>' + esc(c[0]) + '</b><span>' + esc(c[1]) + '</span></div>').join('');
 }
-
-/* ---------- dump stations, propane, water ---------- */
-var UTIL_KINDS = [
-  { phrase: 'sanitary dump station', types: ['sanitary_dump_station'], kind: 'dump station' },
-  { phrase: 'propane', types: ['propane', 'fuel'], kind: 'propane' },
-  { phrase: 'drinking water', types: ['water_point', 'drinking_water'], kind: 'water' }
-];
-var utilRows = [];
-function utilMsg(t){
-  const m = $('utilMsg');
-  m.textContent = t;
-  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 8000);
-}
-async function utilNear(anchor, radiusKm){
-  const bbox = campBbox(anchor, radiusKm);
-  const found = [];
-  for (const spec of UTIL_KINDS) {
-    for (const row of await campAnswer(spec.phrase, spec.types, bbox)) {
-      const lat = +row.lat, lng = +row.lon;
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
-      found.push({ name: row.name, kind: spec.kind, lat, lng, anchor: anchor.name, dist: hav(anchor, { lat, lng }) });
-    }
-  }
-  return found;
-}
-async function searchUtils(anchors, label){
-  const radiusKm = (+$('utilRadius').value || 10) * 1.609344;
-  const seen = new Set();
-  let out = [];
-  for (let i = 0; i < anchors.length; i++) {
-    utilMsg('Looking near ' + anchors[i].name + ' (' + (i + 1) + ' of ' + anchors.length + ')…');
-    const batch = (await utilNear(anchors[i], radiusKm)).filter(s => {
-      const key = s.name.toLowerCase() + '|' + s.lat.toFixed(3) + ',' + s.lng.toFixed(3);
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    await attachDriving(anchors[i], batch);
-    out = out.concat(batch);
-  }
-  out.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
-  utilRows = out.slice(0, 60);
-  renderUtils();
-  utilMsg(utilRows.length ? utilRows.length + ' places ' + label + '.' : 'Nothing found ' + label + ' — try a wider radius.');
-}
-function renderUtils(){
-  const el = $('utilList');
-  if (!utilRows.length) { el.innerHTML = '<p class="muted">Nothing listed yet — search along your route or near a town.</p>'; return; }
-  el.innerHTML = utilRows.map((s, i) =>
-    '<div class="food-item"><span class="food-pick" style="cursor:default">'
-    + '<span class="food-name">' + esc(s.name) + '</span>'
-    + '<span class="food-sub">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span></span>'
-    + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(s.name) + '">🗺️</button></div>').join('');
-}
-$('utilAlong').onclick = async () => {
-  const btn = $('utilAlong');
-  if (!state.stops.length) { utilMsg('Add stops to your route first, or search near a town.'); return; }
-  btn.disabled = true;
-  try { await searchUtils(state.stops.slice(0, 3), 'near your stops'); }
-  catch (e) { utilMsg('Could not reach the place index right now.'); }
-  finally { btn.disabled = false; }
-};
-$('utilFind').onclick = async () => {
-  const btn = $('utilFind');
-  const place = $('utilQuery').value.trim();
-  if (!place) { utilMsg('Type a town or area first.'); return; }
-  btn.disabled = true;
-  utilMsg('Looking up ' + place + '…');
-  try {
-    const center = await geocode(place);
-    await searchUtils([{ name: center.name, lat: center.lat, lng: center.lng }], 'near ' + center.name);
-  } catch (e) { utilMsg('Could not find that place — check the spelling.'); }
-  finally { btn.disabled = false; }
-};
-$('utilQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('utilFind').click(); } });
-$('utilList').addEventListener('click', e => {
-  if (handleMapMenuClick(e)) return;
-  const trig = e.target.closest('[data-maptrig]');
-  if (trig) openMapMenu(trig, utilRows[+trig.dataset.maptrig]);
-});
 
 /* ---------- upload name gate ---------- */
 function uploadAllowed(){
