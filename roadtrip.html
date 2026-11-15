@@ -3012,12 +3012,12 @@ function renderExtras(){
     const el = $(id);
     return el && el.contains(document.activeElement);
   });
-  if (!busy || !extra) readExtras();
+    if (!busy || !extra) readExtras();
   syncExtraInputs();
-  renderGlance();
-  renderBudget();
-  renderRV();
-  renderBets();
+  renderGlance(); renderBudget(); renderRV(); renderBets();
+  // Photos render before extras are read, so refresh them once the shared
+  // settings (Drive config and badges) are actually in memory.
+  renderPhotos();
 }
 
 /* ---------- day spans, shared by the itinerary ---------- */
