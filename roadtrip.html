@@ -2031,6 +2031,7 @@ acSetup($('eventArea'), { cityFirst: true });
   if (!sections.length) return;
 
   let queued = false;
+  let hold = 0; // while a jump is animating, the clicked link wins
   const bar = document.querySelector('.secnav');
 
   const setCurrent = (id) => {
@@ -2064,14 +2065,14 @@ acSetup($('eventArea'), { cityFirst: true });
       const id = link.getAttribute('href').slice(1);
       if (!byId.has(id)) return;
       setCurrent(id);
-      setTimeout(mark, 700);
+      hold = Date.now() + 1200;
     });
   }
-  addEventListener('hashchange', mark);
+  addEventListener('hashchange', () => { hold = Date.now() + 400; });
 
   // rAF keeps this off the scroll hot path, but a hidden tab never runs frames.
   addEventListener('scroll', () => {
-    if (queued) return;
+    if (queued || Date.now() < hold) return;
     queued = true;
     if (document.hidden) mark();
     else requestAnimationFrame(mark);
