@@ -1781,7 +1781,8 @@ async function searchCamps(anchors, label){
   sortCamps();
   renderCamps();
   campMsg(campSites.length
-    ? campSites.length + ' campsites, RV parks and rest areas ' + label + '.'
+    ? campSites.length + ' campsites, RV parks and rest areas ' + label
+      + (campSites.length > 60 ? ' — the 60 nearest are listed.' : '.')
     : 'Nothing found ' + label + ' — try a wider radius.');
 }
 
