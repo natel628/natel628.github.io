@@ -2476,7 +2476,9 @@ async function saveExtras(){
     const stale = (state.notes || []).filter(isMetaNote).map(n => n.id);
     let next = await api('POST', '/api/notes', { body: META_PREFIX + JSON.stringify(extra) });
     for (const id of stale) next = await api('DELETE', '/api/notes/' + encodeURIComponent(id));
-    applyState(next);
+    // The save is already done at this point, so a rendering slip must not
+    // look like a failed save (that is how stale copies piled up before).
+    try { applyState(next); } catch (e) { setSync('error', 'Saved, but part of the page failed to redraw'); return true; }
     setSync('ok', 'Shared · synced');
     return true;
   } catch (err) {
@@ -2528,6 +2530,7 @@ function planSpans(days){
 }
 
 /* ---------- budget ---------- */
+function money(n){ return '$' + Math.round(+n || 0).toLocaleString(); }
 function totals(){
   const miles = state.stops.length > 1 ? segMiles(0, state.stops.length - 1).mi : 0;
   const mpg = Math.max(3, +extra.rv.mpg || 8);
