@@ -90,6 +90,11 @@
   .food-sub { color:var(--muted); font-size:.78rem; font-weight:400; }
   #foodMsg:empty { display:none; }
   #foodMsg { font-size:.85rem; margin-top:8px; }
+  #campMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; display:none; }
+  #campMap.show { display:block; }
+  #campList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
+  #campMsg:empty { display:none; }
+  #campMsg { font-size:.85rem; margin-top:8px; }
   #hotelList { display:grid; gap:8px; margin-top:10px; max-height:300px; overflow:auto; }
   #hotelMsg:empty { display:none; }
   #hotelMsg { font-size:.85rem; margin-top:8px; }
@@ -253,7 +258,27 @@
   </section>
 
   <section class="card">
-    <h2>8. 🏟️ Sporting events</h2>
+    <h2>8. 🏕️ Campgrounds &amp; rest areas</h2>
+    <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
+    <div class="row">
+      <select id="campRadius" style="max-width:170px;flex:none" aria-label="Campground search radius">
+        <option value="5">Within 5 mi</option>
+        <option value="15" selected>Within 15 mi</option>
+        <option value="40">Within 40 mi</option>
+      </select>
+      <button type="button" id="campAlong">Find along my route</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="campArea" placeholder="Or search near a town — e.g. Moab, UT" aria-label="Search campgrounds near a town" />
+      <button type="button" id="campFind">Find near town</button>
+    </div>
+    <p id="campMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="campMap"></div>
+    <div id="campList"></div>
+  </section>
+
+  <section class="card">
+    <h2>9. 🏟️ Sporting events</h2>
     <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page.</p>
     <div class="row">
       <div class="ac"><input id="eventArea" placeholder="Area — e.g. Denver, CO" aria-label="Area to search for events" /></div>
@@ -1205,7 +1230,7 @@ async function findGolfByName(name){
 }
 
 const RADII_KEY = 'rt_radii';
-const RADIUS_FIELDS = [['golfRadius', 'golf'], ['foodRadius', 'food'], ['hotelRadius', 'hotel']];
+const RADIUS_FIELDS = [['golfRadius', 'golf'], ['foodRadius', 'food'], ['hotelRadius', 'hotel'], ['campRadius', 'camp']];
 
 // Search radii are a local habit too, so they follow the sort choices.
 function loadRadii(){
@@ -1223,7 +1248,8 @@ function saveRadii(){
     localStorage.setItem(RADII_KEY, JSON.stringify({
       golf: $('golfRadius').value,
       food: $('foodRadius').value,
-      hotel: $('hotelRadius').value
+      hotel: $('hotelRadius').value,
+      camp: $('campRadius').value
     }));
   } catch (e) { /* private mode or full storage: the radius just is not remembered */ }
 }
@@ -1629,6 +1655,170 @@ $('foodFindName').onclick = async () => {
   }
 };
 $('foodName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFindName').click(); } });
+
+/* ---------- 8. campgrounds & rest areas ---------- */
+const campMap = L.map('campMap').setView([39.5, -98.35], 4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(campMap);
+const campLayer = L.layerGroup().addTo(campMap);
+let campSites = [];
+
+function campMsg(t){
+  const m = $('campMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 8000);
+}
+
+// Nominatim reads these three phrases as OSM categories, which plain
+// "campground" does not (it matches roads called Campground Road instead).
+const CAMP_KINDS = [
+  { phrase: 'camp site', types: ['camp_site'], kind: 'campground', colour: '#22c55e' },
+  { phrase: 'caravan site', types: ['caravan_site'], kind: 'RV park', colour: '#f59e0b' },
+  { phrase: 'rest stop', types: ['rest_area'], kind: 'rest area', colour: '#38bdf8' }
+];
+const CAMP_GAP = 1100; // Nominatim asks for at most one request per second
+const campAnswers = new Map();
+let campLast = 0;
+
+function campBbox(center, radiusKm){
+  const dLat = radiusKm / 111;
+  const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
+  return [center.lng - dLon, center.lat - dLat, center.lng + dLon, center.lat + dLat].map(n => n.toFixed(4)).join(',');
+}
+
+async function campAnswer(phrase, types, bbox){
+  const key = bbox + '|' + phrase;
+  if (campAnswers.has(key)) return campAnswers.get(key);
+  const wait = CAMP_GAP - (Date.now() - campLast);
+  if (wait > 0) await new Promise(r => setTimeout(r, wait));
+  campLast = Date.now();
+  let rows = [];
+  try {
+    const res = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=40&bounded=1&q='
+      + encodeURIComponent(phrase) + '&viewbox=' + bbox, { signal: AbortSignal.timeout(12000) });
+    if (res.ok) {
+      const data = await res.json();
+      rows = (data || []).filter(r => r.name && types.includes(r.type) && Number.isFinite(+r.lat));
+    }
+  } catch (e) { rows = []; }
+  campAnswers.set(key, rows);
+  return rows;
+}
+
+async function campsNear(anchor, radiusKm){
+  const bbox = campBbox(anchor, radiusKm);
+  const found = [];
+  for (const spec of CAMP_KINDS) {
+    for (const row of await campAnswer(spec.phrase, spec.types, bbox)) {
+      const lat = +row.lat, lng = +row.lon;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+      found.push({
+        name: row.name, kind: spec.kind, colour: spec.colour,
+        lat, lng, anchor: anchor.name, anchorRef: anchor, dist: hav(anchor, { lat, lng })
+      });
+    }
+  }
+  return found;
+}
+
+function renderCamps(){
+  const el = $('campList');
+  campLayer.clearLayers();
+  const shown = campSites.slice(0, 60);
+  if (!shown.length) {
+    el.innerHTML = '<p class="muted">Nothing found — try a wider radius, or a town just off the highway.</p>';
+    return;
+  }
+  el.innerHTML = shown.map((s, i) =>
+    '<div class="food-item">'
+    + '<span class="food-pick" style="cursor:default">'
+    + '<span class="food-name">' + esc(s.name) + '</span>'
+    + '<span class="food-sub">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span>'
+    + '</span>'
+    + '<button type="button" class="small" data-camp-add="' + i + '" aria-label="Add ' + esc(s.name) + ' to the trip">Add to trip</button>'
+    + '</div>').join('');
+
+  shown.forEach(s => {
+    L.circleMarker([s.lat, s.lng], { radius: 7, color: s.colour, weight: 2, fillColor: s.colour, fillOpacity: 0.55 })
+      .addTo(campLayer)
+      .bindPopup('<b>' + esc(s.name) + '</b><br><span class="muted">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span>');
+  });
+
+  campMap.fitBounds(L.featureGroup(campLayer.getLayers()).getBounds().pad(0.15));
+  revealMap(campMap, 'campMap');
+}
+
+function sortCamps(){
+  campSites.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+}
+
+async function searchCamps(anchors, label){
+  const radiusKm = +$('campRadius').value * 1.609344;
+  const seen = new Set();
+  campSites = [];
+
+  for (let i = 0; i < anchors.length; i++) {
+    campMsg('Searching near ' + anchors[i].name + ' (' + (i + 1) + ' of ' + anchors.length + ')…');
+    const batch = (await campsNear(anchors[i], radiusKm)).filter(s => {
+      const key = s.name.toLowerCase() + '|' + s.lat.toFixed(3) + ',' + s.lng.toFixed(3);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    // Drive times are measured from the stop each site belongs to.
+    await attachDriving(anchors[i], batch);
+    campSites.push(...batch);
+    if (campSites.length) { sortCamps(); renderCamps(); }
+  }
+
+  campSites = campSites.slice(0, 80);
+  sortCamps();
+  renderCamps();
+  campMsg(campSites.length
+    ? campSites.length + ' campsites, RV parks and rest areas ' + label + '.'
+    : 'Nothing found ' + label + ' — try a wider radius.');
+}
+
+$('campAlong').onclick = async () => {
+  const btn = $('campAlong');
+  if (!state.stops.length) { campMsg('Add stops to your route first, or search near a town instead.'); return; }
+  btn.disabled = true;
+  try {
+    await searchCamps(state.stops.slice(0, 6), 'near your stops');
+  } catch (err) {
+    campMsg('Could not reach the campsite index right now.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+$('campFind').onclick = async () => {
+  const btn = $('campFind');
+  const place = $('campArea').value.trim();
+  if (!place) { campMsg('Type a town or area first, or use "Find along my route".'); return; }
+  btn.disabled = true;
+  campMsg('Looking up ' + place + '…');
+  try {
+    const center = await geocode(place);
+    await searchCamps([{ name: center.name, lat: center.lat, lng: center.lng, id: 'area' }], 'near ' + center.name);
+  } catch (err) {
+    campMsg('Could not find that place — check the spelling and try again.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('campArea').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('campFind').click(); } });
+$('campRadius').addEventListener('change', saveRadii);
+
+$('campList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-camp-add]');
+  if (!b) return;
+  const site = campSites[+b.dataset.campAdd];
+  if (!site) return;
+  b.disabled = true;
+  const ok = await write('POST', '/api/stops', { name: site.name, lat: site.lat, lng: site.lng });
+  b.disabled = false;
+  campMsg(ok ? site.name + ' added to your route.' : 'Could not add that site.');
+});
 
 /* ---------- hotels near a stop ---------- */
 let hotelResults = [], hotelStop = null;
