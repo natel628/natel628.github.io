@@ -1069,6 +1069,30 @@ function saveSorts(){
   } catch (e) { /* private mode or full storage: the pick just is not remembered */ }
 }
 
+const RADII_KEY = 'rt_radii';
+const RADIUS_FIELDS = [['golfRadius', 'golf'], ['foodRadius', 'food'], ['hotelRadius', 'hotel']];
+
+// Search radii are a local habit too, so they follow the sort choices.
+function loadRadii(){
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(RADII_KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  for (const [id, key] of RADIUS_FIELDS) {
+    const el = $(id);
+    const value = String(saved[key] || '');
+    if (value && [...el.options].some(o => o.value === value)) el.value = value;
+  }
+}
+
+function saveRadii(){
+  try {
+    localStorage.setItem(RADII_KEY, JSON.stringify({
+      golf: $('golfRadius').value,
+      food: $('foodRadius').value,
+      hotel: $('hotelRadius').value
+    }));
+  } catch (e) { /* private mode or full storage: the radius just is not remembered */ }
+}
+
 // Sorts in place so the array identity that pending lookups capture stays valid.
 function sortInPlace(list, mode){
   if (mode === 'rating') {
@@ -1536,6 +1560,9 @@ $('foodFind').onclick = async () => {
 };
 $('foodQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFind').click(); } });
 
+$('foodRadius').addEventListener('change', saveRadii);
+$('golfRadius').addEventListener('change', saveRadii);
+
 $('foodSort').addEventListener('change', () => {
   foodSortMode = $('foodSort').value;
   saveSorts();
@@ -1645,7 +1672,10 @@ async function findHotelsForStop(stop){
   }
 }
 
-$('hotelRadius').addEventListener('change', () => { if (hotelStop) findHotelsForStop(hotelStop); });
+$('hotelRadius').addEventListener('change', () => {
+  saveRadii();
+  if (hotelStop) findHotelsForStop(hotelStop);
+});
 
 $('hotelSort').addEventListener('change', () => {
   hotelSortMode = $('hotelSort').value;
@@ -1735,6 +1765,7 @@ acSetup($('eventArea'), { cityFirst: true });
 /* ---------- boot + live refresh ---------- */
 
 loadSorts();
+loadRadii();
 applyState(state);
 loadState();
 
