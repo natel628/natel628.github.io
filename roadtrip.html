@@ -203,12 +203,6 @@
 </style>
 </head>
 <body id="top">
-<header>
-  <h1>🚐 Road Trip Planner</h1>
-  <p>Nashville → Rhode Island · hotels + campgrounds · one shared plan</p>
-  <p class="muted" style="margin-top:8px">One shared trip — anything anyone adds shows up for everyone who opens this page.</p>
-  <span id="syncState" class="sync" role="status" aria-live="polite">Connecting…</span>
-</header>
 <nav class="secnav" aria-label="Jump to a section">
   <div class="secnav-inner">
     <span class="secnav-label">Plan</span>
@@ -232,9 +226,8 @@
 </nav>
 <main>
 
-  <div class="top-pair">
   <section class="card" id="sec-glance">
-    <h2>📊 Trip at a glance</h2>
+    <h2>📊 Trip at a glance <span id="syncState" class="sync" role="status" aria-live="polite" style="margin:0 0 0 8px;vertical-align:middle">Connecting…</span></h2>
     <p class="muted">Nashville to Rhode Island, mixing hotel nights and campground nights. Everything on this page is shared — anyone who opens it sees the same plan and can change it.</p>
     <div id="glanceGrid" class="glance"></div>
     <p id="glanceMsg" class="muted" role="status" aria-live="polite"></p>
@@ -244,6 +237,7 @@
     </div>
   </section>
 
+  <div class="top-pair">
   <section class="card" id="sec-notes">
     <h2>📝 Notes</h2>
     <p class="muted">Anything worth remembering — campsites to book, contacts, gear to pack, detours to try. Notes are shared with everyone who opens this page.</p>
@@ -254,6 +248,51 @@
     </div>
     <p id="noteMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="noteList"></div>
+  </section>
+
+  <section class="card" id="sec-photos">
+    <h2>📸 Photos &amp; videos</h2>
+    <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 10&nbsp;MB, videos up to 75&nbsp;MB (MP4, WebM, MOV).</p>
+    <div class="row">
+      <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
+      <input id="photoCaption" placeholder="Caption (optional) — e.g. Bethpage at dawn" aria-label="Photo or video caption" />
+      <input id="photoPass" placeholder="Enter your name" aria-label="Name required to upload photos" autocomplete="off" style="max-width:280px;flex:none" />
+      <button type="button" id="photoUpload">Upload</button>
+      <button type="button" id="photoOptimise" class="ghost">Optimise images</button>
+      <button type="button" id="photoClear" class="ghost">Clear album</button>
+    </div>
+    <div id="photoProgress" hidden>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Upload progress"><div class="progress-fill" id="photoBar"></div></div>
+      <div class="progress-row"><span id="photoPct">0%</span><span id="photoSent"></span><button type="button" id="photoCancel" class="small ghost">Cancel</button></div>
+    </div>
+    <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
+    <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
+    <details id="driveBox" style="margin-top:8px">
+      <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
+      <p class="muted" style="margin:6px 0 0;font-size:.8rem">The owner signs in once below — after that, anyone taps ☁️ and it lands in the folder, no sign-in for anyone else. The login lives in the shared plan, so only keep it while the trip needs it.</p>
+      <div class="row" style="margin-top:8px">
+        <input id="driveSecret" type="password" placeholder="Client secret (readable by anyone opening this page)" aria-label="Google OAuth client secret" autocomplete="off" style="flex:1;min-width:200px" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="driveFolder" placeholder="Drive folder link or ID" aria-label="Google Drive folder link or ID" autocomplete="off" style="flex:1;min-width:200px" />
+        <button type="button" id="driveSave">Save</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button type="button" id="driveConnect" class="small">Connect my Drive</button>
+        <button type="button" id="driveDisconnect" class="small ghost">Disconnect</button>
+      </div>
+      <label class="muted" style="display:block;margin-top:8px;font-size:.8rem"><input type="checkbox" id="driveAuto" style="vertical-align:-2px" /> Automatically send new photos and videos to Drive <span style="opacity:.75">(uses the uploader’s connection once more per file)</span></label>
+      <p class="muted" id="driveStatus" style="margin:6px 0 0"></p>
+      <p class="muted" id="driveMsg" style="margin:6px 0 0"></p>
+      <p style="margin:6px 0 0"><a id="driveOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>📂 Open the Drive folder ↗</a></p>
+    </details>
+    <div class="row" style="margin-top:10px">
+      <label class="muted" for="photoFilter" style="align-self:center">Show</label>
+      <select id="photoFilter" aria-label="Filter photos and videos by stop" style="max-width:300px;flex:none">
+        <option value="">All stops</option>
+      </select>
+    </div>
+    <div id="photoGrid"></div>
   </section>
 
   </div>
@@ -373,51 +412,6 @@
       <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
     </div>
     <div id="practical"></div>
-  </section>
-
-  <section class="card" id="sec-photos">
-    <h2>📸 Photos &amp; videos</h2>
-    <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 10&nbsp;MB, videos up to 75&nbsp;MB (MP4, WebM, MOV).</p>
-    <div class="row">
-      <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
-      <input id="photoCaption" placeholder="Caption (optional) — e.g. Bethpage at dawn" aria-label="Photo or video caption" />
-      <input id="photoPass" placeholder="Enter your name" aria-label="Name required to upload photos" autocomplete="off" style="max-width:280px;flex:none" />
-      <button type="button" id="photoUpload">Upload</button>
-      <button type="button" id="photoOptimise" class="ghost">Optimise images</button>
-      <button type="button" id="photoClear" class="ghost">Clear album</button>
-    </div>
-    <div id="photoProgress" hidden>
-      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Upload progress"><div class="progress-fill" id="photoBar"></div></div>
-      <div class="progress-row"><span id="photoPct">0%</span><span id="photoSent"></span><button type="button" id="photoCancel" class="small ghost">Cancel</button></div>
-    </div>
-    <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
-    <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
-    <details id="driveBox" style="margin-top:8px">
-      <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
-      <p class="muted" style="margin:6px 0 0;font-size:.8rem">The owner signs in once below — after that, anyone taps ☁️ and it lands in the folder, no sign-in for anyone else. The login lives in the shared plan, so only keep it while the trip needs it.</p>
-      <div class="row" style="margin-top:8px">
-        <input id="driveSecret" type="password" placeholder="Client secret (readable by anyone opening this page)" aria-label="Google OAuth client secret" autocomplete="off" style="flex:1;min-width:200px" />
-      </div>
-      <div class="row" style="margin-top:8px">
-        <input id="driveFolder" placeholder="Drive folder link or ID" aria-label="Google Drive folder link or ID" autocomplete="off" style="flex:1;min-width:200px" />
-        <button type="button" id="driveSave">Save</button>
-      </div>
-      <div class="row" style="margin-top:8px">
-        <button type="button" id="driveConnect" class="small">Connect my Drive</button>
-        <button type="button" id="driveDisconnect" class="small ghost">Disconnect</button>
-      </div>
-      <label class="muted" style="display:block;margin-top:8px;font-size:.8rem"><input type="checkbox" id="driveAuto" style="vertical-align:-2px" /> Automatically send new photos and videos to Drive <span style="opacity:.75">(uses the uploader’s connection once more per file)</span></label>
-      <p class="muted" id="driveStatus" style="margin:6px 0 0"></p>
-      <p class="muted" id="driveMsg" style="margin:6px 0 0"></p>
-      <p style="margin:6px 0 0"><a id="driveOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>📂 Open the Drive folder ↗</a></p>
-    </details>
-    <div class="row" style="margin-top:10px">
-      <label class="muted" for="photoFilter" style="align-self:center">Show</label>
-      <select id="photoFilter" aria-label="Filter photos and videos by stop" style="max-width:300px;flex:none">
-        <option value="">All stops</option>
-      </select>
-    </div>
-    <div id="photoGrid"></div>
   </section>
 
   <section class="card" id="sec-golf">
