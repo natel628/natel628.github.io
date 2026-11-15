@@ -176,7 +176,8 @@
     #stops .stop-info{flex:1 1 100%;}
     #stops .stop-actions{flex:1 1 100%; margin-left:0; gap:4px;}
     /* Six actions on one row keeps the list short; 44px stays a fair tap target. */
-    #stops .stop-actions button{padding:7px 8px; min-width:44px;}
+    /* Seven actions share the row evenly, so the count can grow without wrapping. */
+    #stops .stop-actions button{flex:1 1 0; min-width:0; padding:7px 0;}
     #stops .col, #stops .num{align-self:flex-start;}
     /* One thumb, one column: the planning cards stack and controls get taller. */
     .card{padding:14px;}
@@ -1015,6 +1016,7 @@ function renderStops(){
       stopButton('↓', 'Move ' + s.name + ' down', 'down', s.id, i === state.stops.length - 1),
       stopButton('🗺️', 'Open ' + s.name + ' in a map app', 'map', s.id, false),
       stopButton('🏨', 'Search hotels near ' + s.name, 'hotels', s.id, false),
+      stopButton('🍽️', 'Find places to eat near ' + s.name, 'food', s.id, false),
       stopButton('📎', 'Add a note or photo for ' + s.name, 'note', s.id, false),
       stopButton('✕', 'Remove ' + s.name, 'del', s.id, false)
     );
@@ -1047,6 +1049,7 @@ $('stops').addEventListener('click', e => {
   if (i < 0) return;
   if (b.dataset.act === 'map') { openMapMenu(b, state.stops[i]); return; }
   if (b.dataset.act === 'hotels') { findHotelsForStop(state.stops[i]); return; }
+  if (b.dataset.act === 'food') { findFoodForStop(state.stops[i]); return; }
   if (b.dataset.act === 'note') { openStopPanel(state.stops[i]); return; }
   if (b.dataset.act === 'del') {
     const stop = state.stops[i];
