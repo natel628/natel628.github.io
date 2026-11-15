@@ -1789,6 +1789,7 @@ $('photoUpload').onclick = async () => {
   panel.hidden = false;
   const baseCap = $('photoCaption').value.trim();
   const known = new Set((state.photos || []).map(p => p.id));
+  const who = (($('photoPass').value || '').trim().toLowerCase()) || savedUploader();
   let done = 0;
   try {
     for (const file of files) {
@@ -1808,7 +1809,7 @@ $('photoUpload').onclick = async () => {
       });
       applyState(data);
       done++;
-      autoSendNew(data, known);
+      autoSendNew(data, known, file.lastModified || Date.now(), who);
     }
     input.value = '';
     $('photoCaption').value = '';
@@ -2069,7 +2070,7 @@ $('driveDisconnect').onclick = async () => {
   photoMsg('Disconnected.');
 };
 
-async function sendToDrive(id, btn){
+async function sendToDrive(id, btn, opts){
   const item = (state.photos || []).find(p => p.id === id);
   if (!item) return;
   const cfg = (extra && extra.drive) || {};
@@ -2087,7 +2088,7 @@ async function sendToDrive(id, btn){
     const init = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json; charset=UTF-8' },
-      body: JSON.stringify(Object.assign({ name: driveFileName(item), mimeType: item.type || 'application/octet-stream' }, folderId ? { parents: [folderId] } : {}))
+      body: JSON.stringify(Object.assign({ name: driveFileName(item, opts && opts.taken, opts && opts.uploader), mimeType: item.type || 'application/octet-stream' }, folderId ? { parents: [folderId] } : {}))
     });
     if (!init.ok) throw new Error('Google refused the upload slot (' + init.status + ')');
     const session = init.headers.get('Location');
@@ -2119,7 +2120,7 @@ $('driveAuto').onchange = async () => {
   await saveExtras();
   photoMsg(extra.drive.auto ? 'Auto-send on — new clips back themselves up.' : 'Auto-send off — the button still works by hand.');
 };
-function autoSendNew(data, known){
+function autoSendNew(data, known, taken, uploader){
   const cfg = (extra && extra.drive) || {};
   if (!cfg.auto || !cfg.ownerRefresh) return;
   if ((navigator.connection || {}).saveData) { photoMsg('Saved — auto-send skipped (data saver is on). Tap the cloud on Wi-Fi.'); return; }
@@ -2131,12 +2132,20 @@ function autoSendNew(data, known){
   if (!cand) return;
   known.add(cand.id);
   photoMsg('Saved — sending it to Drive automatically…');
-  sendToDrive(cand.id, null);
+  sendToDrive(cand.id, null, { taken: taken, uploader: uploader });
 }
-function driveFileName(item){
-  const base = String((item.caption || '').trim() || 'trip upload').replace(/[/\\]+/g, '-');
-  const ext = ({ 'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/webm': '.webm', 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' })[item.type] || '';
-  return ext && base.toLowerCase().endsWith(ext) ? base : base + ext;
+function driveStamp(taken){
+  const d = new Date(+taken || 0);
+  if (isNaN(d.getTime())) return '';
+  const p2 = n => String(n).padStart(2, '0');
+  return d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate()) + '-' + p2(d.getHours()) + p2(d.getMinutes());
+}
+function driveFileName(item, taken, uploader){
+  const stamp = driveStamp(taken || (item && item.at)) || driveStamp(Date.now());
+  const who = String(uploader || savedUploader() || 'crew').toLowerCase().replace(/[^a-z0-9]+/g, '') || 'crew';
+  const cap = String((item && item.caption) || '').replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase().slice(0, 40).replace(/-+$/g, '');
+  const ext = ({ 'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/webm': '.webm', 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' })[(item && item.type) || ''] || '';
+  return stamp + '_' + who + (cap ? '_' + cap : '') + ext;
 }
 function parseDriveFolder(v){
   v = (v || '').trim();
@@ -3933,7 +3942,7 @@ $('stopUpload').onclick = async () => {
       const data = await uploadMedia(file, prefixed, () => {});
       applyState(data);
       done++;
-      autoSendNew(data, known);
+      autoSendNew(data, known, file.lastModified || Date.now(), who.name);
     }
     input.value = '';
     $('stopCaption').value = '';
