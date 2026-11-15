@@ -216,7 +216,6 @@
     <div class="row" style="margin-bottom:10px">
       <div class="ac"><input id="locInput" placeholder="Add a stop in between — city, park, address…" /></div>
       <button id="addLoc" type="button">Add stop</button>
-      <button id="clearStops" class="ghost" type="button">Clear trip</button>
     </div>
     <div id="map"></div>
     <p class="muted" id="tripStats" style="margin-top:8px"></p>
@@ -317,7 +316,7 @@
     <div class="row">
       <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
       <input id="photoCaption" placeholder="Caption (optional) — e.g. Bethpage at dawn" aria-label="Photo or video caption" />
-      <input id="photoPass" placeholder="Your name — kyle, chuck, justin or nate" aria-label="Name required to upload photos" autocomplete="off" style="max-width:280px;flex:none" />
+      <input id="photoPass" placeholder="Enter your name" aria-label="Name required to upload photos" autocomplete="off" style="max-width:280px;flex:none" />
       <button type="button" id="photoUpload">Upload</button>
       <button type="button" id="photoClear" class="ghost">Clear album</button>
     </div>
@@ -988,11 +987,6 @@ async function addLocation(name){
 
 $('addLoc').onclick = () => { const i = $('locInput'); addLocation(i.value.trim()); i.value = ''; };
 $('locInput').addEventListener('keydown', e => { if (e.key === 'Enter') { addLocation(e.target.value.trim()); e.target.value = ''; } });
-$('clearStops').onclick = () => {
-  if (!state.stops.length) return;
-  if (!confirm('Delete all ' + state.stops.length + ' stops on this shared trip?\n\nThe route, mileage and itinerary go with them. Export a backup first if you are not sure.')) return;
-  write('DELETE', '/api/stops');
-};
 $('setEnds').onclick = async () => {
   const s = $('tripStart').value.trim();
   const e = $('tripEnd').value.trim();
@@ -2697,9 +2691,9 @@ $('utilList').addEventListener('click', e => {
 function uploadAllowed(){
   const input = $('photoPass');
   const v = (input.value || '').trim().toLowerCase();
-  if (!v) { photoMsg('Type your name to upload — kyle, chuck, justin or nate.'); input.focus(); return false; }
+  if (!v) { photoMsg('Enter your name to upload.'); input.focus(); return false; }
   if (UPLOAD_NAMES.indexOf(v) < 0) {
-    photoMsg('“' + input.value.trim() + '” is not on the upload list. Allowed: kyle, chuck, justin, nate.');
+    photoMsg('“' + input.value.trim() + '” is not on the upload list.');
     input.select();
     return false;
   }
