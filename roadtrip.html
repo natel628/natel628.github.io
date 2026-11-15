@@ -162,6 +162,11 @@
   .glance b { display:block; font-size:1.15rem; color:var(--accent); }
   .glance span { color:var(--muted); font-size:.78rem; }
   .glance > div.warn b { color:#f87171; }
+  #sec-glance { padding:14px 16px; }
+  #sec-glance .glance { gap:8px; margin-top:8px; }
+  #sec-glance .glance > div { padding:8px 10px; }
+  #sec-glance .glance b { font-size:1.05rem; }
+  #sec-glance > p.muted { margin:6px 0 0; }
   .rv-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-top:10px; }
   /* Inputs inside a grid must be allowed to shrink, or their 160px minimum
      pushes the last cell past the card edge on a narrow window. */
@@ -259,27 +264,6 @@
     <p class="muted">Nashville to Rhode Island, mixing hotel nights and campground nights. Everything on this page is shared — anyone who opens it sees the same plan and can change it.</p>
     <div id="glanceGrid" class="glance"></div>
     <p id="glanceMsg" class="muted" role="status" aria-live="polite"></p>
-    <div class="row" style="margin-top:12px">
-      <button type="button" id="backupExport" class="small ghost">⬇ Export a backup</button>
-      <label class="small ghost" style="padding:8px 12px;border:1px solid #475569;border-radius:8px;cursor:pointer;font-size:.85rem">⬆ Restore a backup<input type="file" id="backupImport" accept="application/json,.json" hidden /></label>
-    </div>
-    <details id="driveSetup" style="margin-top:12px">
-      <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive setup (owner)</summary>
-      <p class="muted" style="margin:6px 0 0;font-size:.8rem">Sign in once and every tap or auto-send files to your Drive — nobody else signs in. The login lives in the shared plan, so only keep it while the trip needs it.</p>
-      <div class="row" style="margin-top:8px">
-        <input id="driveSecret" type="password" placeholder="Client secret (readable by anyone opening this page)" aria-label="Google OAuth client secret" autocomplete="off" style="flex:1;min-width:200px" />
-      </div>
-      <div class="row" style="margin-top:8px">
-        <input id="driveFolder" placeholder="Drive folder link or ID" aria-label="Google Drive folder link or ID" autocomplete="off" style="flex:1;min-width:200px" />
-        <button type="button" id="driveSave">Save</button>
-      </div>
-      <div class="row" style="margin-top:8px">
-        <button type="button" id="driveConnect" class="small">Connect my Drive</button>
-        <button type="button" id="driveDisconnect" class="small ghost">Disconnect</button>
-      </div>
-      <p class="muted" id="driveStatus" style="margin:6px 0 0"></p>
-      <p class="muted" id="driveMsg" style="margin:6px 0 0"></p>
-    </details>
   </section>
 
   <section class="card" id="sec-notes">
@@ -356,7 +340,7 @@
   </section>
 
   <section class="card" id="sec-itinerary">
-    <h2>2. 📅 Day-by-day itinerary</h2>
+    <h2>📅 Day-by-day itinerary</h2>
     <p class="muted">Stops split across your days in route order — reorder stops on the map to reshape the plan. Arrival times are your departure time plus the real drive time for each leg.</p>
     <div class="row" style="margin-bottom:4px">
       <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
@@ -388,7 +372,7 @@
     <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
     <details id="driveBox" style="margin-top:8px">
       <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
-      <p class="muted" style="margin:6px 0 0;font-size:.8rem">Needs the owner's one-time sign-in (Trip at a glance → Google Drive setup). Tick the box and new clips file themselves — no sign-in for anyone else.</p>
+      <p class="muted" style="margin:6px 0 0;font-size:.8rem">Needs the owner's one-time sign-in (⚙️ Settings → Backup &amp; owner). Tick the box and new clips file themselves — no sign-in for anyone else.</p>
       <label class="muted" style="display:block;margin-top:8px;font-size:.8rem"><input type="checkbox" id="driveAuto" style="vertical-align:-2px" /> Automatically send new photos and videos to Drive <span style="opacity:.75">(uses the uploader’s connection once more per file)</span></label>
       <p style="margin:6px 0 0"><a id="driveOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>📂 Open the Drive folder ↗</a></p>
     </details>
@@ -574,19 +558,41 @@
     <label style="display:block;margin:4px 0"><input type="radio" name="textsize" value="l" /> Larger text</label>
     <label style="display:block;margin:8px 0 4px"><input type="checkbox" id="prefHour24" /> 24-hour time (14:30 instead of 2:30 PM)</label>
     <h3 style="margin:12px 0 4px;font-size:.95rem">Uploads &amp; data</h3>
-    <label style="display:block;margin:4px 0">Remember me as
-      <select id="prefUploadName" style="max-width:190px">
+    <label style="display:block;margin:4px 0">Remember me on this device
+      <select id="prefUploadName" style="display:block;width:100%;margin-top:4px">
         <option value="">Ask every time</option>
         <option value="kyle">kyle</option>
         <option value="chuck">chuck</option>
         <option value="justin">justin</option>
         <option value="nate">nate</option>
       </select>
-      <span class="muted">on this device</span>
     </label>
     <label style="display:block;margin:4px 0"><input type="checkbox" id="prefLowData" /> Low-data mode (no video previews or forecasts; Drive auto-send pauses off Wi-Fi)</label>
     <h3 style="margin:12px 0 4px;font-size:.95rem">Startup</h3>
     <label style="display:block;margin:4px 0"><input type="checkbox" id="prefStartCollapsed" /> Start with sections collapsed (takes effect on next load)</label>
+
+    <h3 style="margin:12px 0 4px;font-size:.95rem">Backup &amp; owner</h3>
+    <div class="row" style="margin-top:12px">
+      <button type="button" id="backupExport" class="small ghost">⬇ Export a backup</button>
+      <label class="small ghost" style="padding:8px 12px;border:1px solid #475569;border-radius:8px;cursor:pointer;font-size:.85rem">⬆ Restore a backup<input type="file" id="backupImport" accept="application/json,.json" hidden /></label>
+    </div>
+    <details id="driveSetup" style="margin-top:12px">
+      <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive setup (owner)</summary>
+      <p class="muted" style="margin:6px 0 0;font-size:.8rem">Sign in once and every tap or auto-send files to your Drive — nobody else signs in. The login lives in the shared plan, so only keep it while the trip needs it.</p>
+      <div class="row" style="margin-top:8px">
+        <input id="driveSecret" type="password" placeholder="Client secret (readable by anyone opening this page)" aria-label="Google OAuth client secret" autocomplete="off" style="flex:1;min-width:200px" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="driveFolder" placeholder="Drive folder link or ID" aria-label="Google Drive folder link or ID" autocomplete="off" style="flex:1;min-width:200px" />
+        <button type="button" id="driveSave">Save</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button type="button" id="driveConnect" class="small">Connect my Drive</button>
+        <button type="button" id="driveDisconnect" class="small ghost">Disconnect</button>
+      </div>
+      <p class="muted" id="driveStatus" style="margin:6px 0 0"></p>
+      <p class="muted" id="driveMsg" style="margin:6px 0 0"></p>
+    </details>
   </div>
   <div class="set-foot"><button type="button" id="setSave">Save</button><button type="button" id="setClose2" class="ghost">Close</button></div>
 </div>
