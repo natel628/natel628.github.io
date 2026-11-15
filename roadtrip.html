@@ -292,6 +292,7 @@
           <option value="25">25 miles</option>
           <option value="50">50 miles</option>
         </select>
+        <button type="button" id="hotelFood" class="small" aria-label="Find places to eat near this stop">🍽️ Places to eat here</button>
         <button type="button" id="hotelBooking" class="small">Search Booking.com ↗</button>
         <button type="button" id="hotelClose" class="small ghost">Close</button>
       </div>
@@ -996,7 +997,7 @@ function renderStops(){
     const isEnd = i === state.stops.length - 1 && state.stops.length > 1;
     const label = (i + 1) + '. ' + s.name + (isStart ? ' (START)' : '') + (isEnd ? ' (END)' : '');
     markers.push(L.marker([s.lat, s.lng]).addTo(map)
-      .bindPopup('<b>' + esc(label) + '</b><br><span class="muted">Click the pin for hotels here.</span>')
+      .bindPopup('<b>' + esc(label) + '</b><br><span class="muted">Click the pin for hotels and places to eat here.</span>')
       .on('click', () => findHotelsForStop(s)));
 
     const li = document.createElement('li');
@@ -2174,7 +2175,7 @@ $('foodClearPin').onclick = () => {
 };
 $('foodQuery').addEventListener('input', () => { if (foodPin) clearFoodPin(); });
 
-$('foodFind').onclick = async () => {
+async function findFoodPlaces(){
   const btn = $('foodFind');
   const place = $('foodQuery').value.trim();
   if (!foodPin && !place) { foodMsg('Type a town or area, or click the map to drop a search pin.'); return; }
@@ -2196,7 +2197,8 @@ $('foodFind').onclick = async () => {
   } finally {
     btn.disabled = false;
   }
-};
+}
+$('foodFind').onclick = findFoodPlaces;
 $('foodQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFind').click(); } });
 
 $('foodRadius').addEventListener('change', saveRadii);
@@ -2501,6 +2503,25 @@ $('hotelClose').onclick = () => {
   hotelResults = [];
   hotelStop = null;
 };
+
+// Eating near the same stop: point the food search at it, open that section so
+// the map is on screen, and run the search there.
+function findFoodForStop(stop){
+  if (!stop) return;
+  $('foodQuery').value = '';
+  setFoodPin(stop.lat, stop.lng);
+  $('foodPinState').textContent = 'Search pin at ' + stop.name
+    + ' — places to eat around it, nearest first.';
+  revealMap(foodMap, 'foodMap');
+  const sec = $('sec-food');
+  if (sec) {
+    if (location.hash !== '#sec-food') history.replaceState(null, '', '#sec-food');
+    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  findFoodPlaces();
+}
+
+$('hotelFood').onclick = () => findFoodForStop(hotelStop);
 
 /* ---------- 8. sporting events ---------- */
 function eventsMsg(t){
