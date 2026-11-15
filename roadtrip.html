@@ -152,6 +152,7 @@
   .set-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #334155; }
   .set-body { overflow-y:auto; padding:6px 16px 16px; }
   .set-foot { display:flex; gap:8px; justify-content:flex-end; padding:12px 16px; border-top:1px solid #334155; }
+  #hiddenNotice { border:1px dashed #475569; border-radius:12px; padding:10px 14px; color:var(--muted); font-size:.85rem; }
   body.ts-s { font-size:14.5px; }
   body.ts-l { font-size:18px; }
   main > section { scroll-margin-top:72px; }
@@ -225,7 +226,6 @@
 <body id="top">
 <nav class="secnav" aria-label="Jump to a section">
   <div class="secnav-inner">
-    <span class="secnav-label">Plan</span>
     <a href="#sec-glance" aria-label="Overview">📊 <span>Overview</span></a>
     <a href="#sec-notes" aria-label="Notes">📝 <span>Notes</span></a>
     <a href="#sec-route" aria-label="Route map">🗺️ <span>Map</span></a>
@@ -235,13 +235,11 @@
     <a href="#sec-practical" aria-label="Practical estimates">🧰 <span>Estimates</span></a>
     <a href="#sec-photos" aria-label="Photos and videos">📸 <span>Photos</span></a>
     <a href="#sec-bets" aria-label="Bets">🏆 <span>Bets</span></a>
-    <span class="secnav-sep" aria-hidden="true"></span>
-    <span class="secnav-label">Find</span>
     <a href="#sec-golf" aria-label="Golf courses">⛳ <span>Golf</span></a>
     <a href="#sec-food" aria-label="Places to eat">🍽️ <span>Food</span></a>
     <a href="#sec-camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
     <a href="#sec-events" aria-label="Sporting events">🏟️ <span>Events</span></a>
-    <a href="#" data-open-settings aria-label="Display settings">⚙️ <span>Display</span></a>
+    <a href="#" data-open-settings aria-label="Settings">⚙️ <span>Settings</span></a>
     <a class="to-top" href="#top">↑ Top</a>
   </div>
 </nav>
@@ -3492,6 +3490,10 @@ function closeSidebar(){ const s = $('sidebar'), b = $('sideBackdrop'); if (s) s
 function applyPrefs(){
   const p = devicePrefs();
   document.body.classList.toggle('nav-side', p.nav === 'side');
+  const topBar = document.querySelector('.secnav');
+  if (topBar) topBar.style.display = p.nav === 'side' ? 'none' : '';
+  const nt = $('navToggle');
+  if (nt) nt.style.display = p.nav === 'side' ? 'flex' : 'none';
   document.body.classList.toggle('ts-s', p.textSize === 's');
   document.body.classList.toggle('ts-l', p.textSize === 'l');
   document.querySelectorAll('input[name="textsize"]').forEach(r => { r.checked = r.value === p.textSize; });
@@ -3532,7 +3534,7 @@ function applyPrefs(){
   const notice = $('hiddenNotice');
   if (notice) {
     notice.hidden = !gone.length;
-    if (gone.length) notice.innerHTML = 'Hiding ' + gone.map(esc).join(', ') + ' (your display settings) · <a href="#" data-open-settings>Change</a>';
+    if (gone.length) notice.innerHTML = 'Hidden by your display settings: ' + gone.map(esc).join(', ') + ' · <a href="#" data-open-settings>Change</a>';
   }
   closeSidebar();
 }
