@@ -2802,11 +2802,10 @@ function betMsg(t){
 function renderBoard(){
   const net = netBalances();
   const order = betPeople().sort((a, b) => (+extra.players[a] || 99) - (+extra.players[b] || 99));
-  const low = order[0];
   $('betBoard').innerHTML = order.map(p => {
     const v = net[p] || 0;
     const cls = v > 0.004 ? 'pos' : v < -0.004 ? 'neg' : 'zero';
-    return '<div><b>' + esc(p) + (p === low ? ' <span class="tag">low</span>' : '') + '</b>'
+    return '<div><b>' + esc(p) + '</b>'
       + '<span class="hcp">HCP ' + esc(hcpText(extra.players[p])) + '</span>'
       + '<span class="net ' + cls + '">' + (v > 0.004 ? '+' : v < -0.004 ? '−' : '') + flat(v) + '</span></div>';
   }).join('');
