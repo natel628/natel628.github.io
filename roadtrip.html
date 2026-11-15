@@ -636,6 +636,7 @@ const API_BASE = /(^|\.)github\.io$/.test(location.hostname)
   : '';
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const CIRC = 1.28, MPH = 55, MPG = 25;
+const SEATGEEK_ID = 'NjIzNDI3OTV8MTc5NDc4NTM0Ni40NTk2OTI3';
 
 /* ---------- shared state ---------- */
 let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [], notes: [], photos: [] };
@@ -3042,6 +3043,13 @@ function eventLinks(area, date){
     + '<a href="https://seatgeek.com/search?q=' + q + '" target="_blank" rel="noopener noreferrer">Search SeatGeek ↗</a>'
     + '</div>';
 }
+async function seatGeekEvents(place, date, miles){
+  const url = 'https://api.seatgeek.com/2/events?client_id=' + SEATGEEK_ID + '&lat=' + place.lat + '&lon=' + place.lng + '&range=' + miles + 'mi&datetime_local.gte=' + date + 'T00:00:00&datetime_local.lte=' + date + 'T23:59:59&taxonomies.name=sports&per_page=50&sort=datetime_local.asc';
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) throw new Error('SeatGeek failed');
+  return (data.events || []).map(e => ({ name: e.short_title || e.title, date: (e.datetime_local || '').slice(0, 10), time: (e.datetime_local || '').slice(11, 16), venue: e.venue ? e.venue.name : '', city: e.venue ? e.venue.city : '', genre: e.taxonomies && e.taxonomies[0] ? e.taxonomies[0].name : '', url: e.url, source: 'SeatGeek' }));
+}
 function renderEvents(data, place, date){
   const el = $('eventList');
   const where = place.name;
@@ -3064,7 +3072,7 @@ function renderEvents(data, place, date){
     + '<div><div class="event-name">' + esc(ev.name) + '</div>'
     + '<div class="event-meta"><span>' + esc(ev.date) + (ev.time ? ' · ' + esc(ev.time) : '') + '</span>'
     + (ev.venue ? '<span>' + esc(ev.venue) + (ev.city ? ', ' + esc(ev.city) : '') + '</span>' : '')
-    + (ev.genre ? '<span>' + esc(ev.genre) + '</span>' : '') + '</div></div>'
+    + (ev.genre ? '<span>' + esc(ev.genre) + '</span>' : '') + (ev.source ? '<span>' + esc(ev.source) + '</span>' : '') + '</div></div>'
     + (ev.url ? '<a class="small" href="' + esc(ev.url) + '" target="_blank" rel="noopener noreferrer">Tickets ↗</a>' : '')
     + '</div>').join('');
 }
@@ -3082,12 +3090,21 @@ $('eventFind').onclick = async () => {
     const place = picked && picked.label === area
       ? { name: picked.label, lat: picked.lat, lng: picked.lng }
       : await geocode(area);
-    const res = await fetch(API_BASE + '/api/events?lat=' + place.lat + '&lng=' + place.lng
-      + '&date=' + encodeURIComponent(date) + '&radius=' + encodeURIComponent($('eventRadius').value));
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'The event search failed.');
+    const miles = $('eventRadius').value;
+    const tmP = fetch(API_BASE + '/api/events?lat=' + place.lat + '&lng=' + place.lng + '&date=' + encodeURIComponent(date) + '&radius=' + encodeURIComponent(miles)).then(async res => { const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.error || 'Ticketmaster failed'); return d; });
+    const sgP = seatGeekEvents(place, date, miles).catch(() => []);
+    const results = await Promise.allSettled([tmP, sgP]);
+    const tm = results[0].status === 'fulfilled' ? results[0].value : { configured: false, events: [] };
+    const sg = results[1].status === 'fulfilled' ? results[1].value : [];
+    const seen = new Set();
+    const merged = [];
+    (tm.events || []).forEach(ev => { ev.source = ev.source || 'TM'; const k = (ev.name + '|' + ev.venue + '|' + ev.time).toLowerCase(); if (!seen.has(k)) { seen.add(k); merged.push(ev); } });
+    sg.forEach(ev => { const k = (ev.name + '|' + ev.venue + '|' + ev.time).toLowerCase(); if (!seen.has(k)) { seen.add(k); merged.push(ev); } });
+    merged.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
     eventsMsg('');
-    renderEvents(data, place, date);
+    if (tm.configured === false && !merged.length) { renderEvents({ configured: false }, place, date); return; }
+    if (tm.configured === false) { renderEvents({ configured: true, events: merged }, place, date); return; }
+    renderEvents({ configured: true, events: merged }, place, date);
   } catch (err) {
     eventsMsg(err.message || 'Could not search for events right now.');
   } finally {
