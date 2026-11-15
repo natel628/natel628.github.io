@@ -132,6 +132,18 @@
   .secnav a[aria-current="true"] { background:var(--accent); color:#111; font-weight:700; }
   .secnav-sep { width:1px; align-self:stretch; background:#334155; flex:none; margin:2px 4px; }
   .secnav .to-top { margin-left:auto; border-color:#334155; }
+  #navToggle { display:none; position:fixed; left:12px; bottom:12px; z-index:1500; width:48px; height:48px; border-radius:50%; background:#0f172a; border:1px solid #475569; color:var(--text); font-size:22px; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.5); }
+  body.nav-side #navToggle { display:flex; }
+  body.nav-side .secnav { display:none; }
+  #sideBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1590; opacity:0; pointer-events:none; transition:opacity .2s; }
+  #sideBackdrop.open { opacity:1; pointer-events:auto; }
+  #sidebar { position:fixed; top:0; left:0; bottom:0; width:min(280px,84vw); z-index:1600; background:#0f172a; border-right:1px solid #334155; transform:translateX(-105%); transition:transform .22s ease; display:flex; flex-direction:column; }
+  #sidebar.open { transform:none; }
+  .side-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #334155; }
+  #sideList { overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:2px; }
+  #sideList a { color:var(--text); text-decoration:none; padding:10px 12px; border-radius:8px; font-size:.92rem; }
+  #sideList a:hover { background:#1e293b; }
+  .side-foot { margin-top:auto; padding:14px 16px; border-top:1px solid #334155; color:var(--muted); text-decoration:none; font-size:.9rem; }
   main > section { scroll-margin-top:72px; }
   /* --- trip overview + planning sections --- */
   .glance { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
@@ -174,8 +186,6 @@
   .gal-nav{display:flex;gap:10px;align-items:center;pointer-events:auto;color:var(--muted);}
   #photoGrid img{cursor:pointer;}
   /* Overview and Notes sit side by side on a wide screen, stacked on a phone. */
-  .top-pair { display:grid; gap:24px; align-items:start; }
-  @media(min-width:900px){ .top-pair { grid-template-columns:1.15fr .85fr; } }
   @media(max-width:700px){
     #map{height:320px;}
     .secnav-inner{padding:6px 12px;gap:8px;}
@@ -221,10 +231,19 @@
     <a href="#sec-food" aria-label="Places to eat">🍽️ <span>Food</span></a>
     <a href="#sec-camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
     <a href="#sec-events" aria-label="Sporting events">🏟️ <span>Events</span></a>
+    <a href="#sec-settings" aria-label="Display settings">⚙️ <span>Display</span></a>
     <a class="to-top" href="#top">↑ Top</a>
   </div>
 </nav>
+<button type="button" id="navToggle" aria-label="Open section menu">☰</button>
+<div id="sideBackdrop"></div>
+<aside id="sidebar" aria-label="Section menu">
+  <div class="side-head"><b>Sections</b><button type="button" id="sideClose" class="small ghost" aria-label="Close section menu">✕</button></div>
+  <nav id="sideList" aria-label="Sections"></nav>
+  <a class="side-foot" href="#sec-settings">⚙️ Display settings</a>
+</aside>
 <main>
+<p class="muted" id="hiddenNotice" hidden style="margin:0 0 12px"></p>
 
   <section class="card" id="sec-glance">
     <h2>📊 Trip at a glance <span id="syncState" class="sync" role="status" aria-live="polite" style="margin:0 0 0 8px;vertical-align:middle">Connecting…</span></h2>
@@ -254,7 +273,6 @@
     </details>
   </section>
 
-  <div class="top-pair">
   <section class="card" id="sec-notes">
     <h2>📝 Notes</h2>
     <p class="muted">Anything worth remembering — campsites to book, contacts, gear to pack, detours to try. Notes are shared with everyone who opens this page.</p>
@@ -265,38 +283,6 @@
     </div>
     <p id="noteMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="noteList"></div>
-  </section>
-
-  <section class="card" id="sec-photos">
-    <h2>📸 Photos &amp; videos</h2>
-    <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 10&nbsp;MB, videos up to 75&nbsp;MB (MP4, WebM, MOV).</p>
-    <div class="row">
-      <input id="photoFile" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
-      <input id="photoCaption" placeholder="Caption (optional) — e.g. Bethpage at dawn" aria-label="Photo or video caption" />
-      <input id="photoPass" placeholder="Enter your name" aria-label="Name required to upload photos" autocomplete="off" style="max-width:280px;flex:none" />
-      <button type="button" id="photoUpload">Upload</button>
-      <button type="button" id="photoOptimise" class="ghost">Optimise images</button>
-      <button type="button" id="photoClear" class="ghost">Clear album</button>
-    </div>
-    <div id="photoProgress" hidden>
-      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Upload progress"><div class="progress-fill" id="photoBar"></div></div>
-      <div class="progress-row"><span id="photoPct">0%</span><span id="photoSent"></span><button type="button" id="photoCancel" class="small ghost">Cancel</button></div>
-    </div>
-    <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
-    <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
-    <details id="driveBox" style="margin-top:8px">
-      <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
-      <p class="muted" style="margin:6px 0 0;font-size:.8rem">Needs the owner's one-time sign-in (Trip at a glance → Google Drive setup). Tick the box and new clips file themselves — no sign-in for anyone else.</p>
-      <label class="muted" style="display:block;margin-top:8px;font-size:.8rem"><input type="checkbox" id="driveAuto" style="vertical-align:-2px" /> Automatically send new photos and videos to Drive <span style="opacity:.75">(uses the uploader’s connection once more per file)</span></label>
-      <p style="margin:6px 0 0"><a id="driveOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>📂 Open the Drive folder ↗</a></p>
-    </details>
-    <div class="row" style="margin-top:10px">
-      <label class="muted" for="photoFilter" style="align-self:center">Show</label>
-      <select id="photoFilter" aria-label="Filter photos and videos by stop" style="max-width:300px;flex:none">
-        <option value="">All stops</option>
-      </select>
-    </div>
-    <div id="photoGrid"></div>
   </section>
 
   </div>
@@ -372,6 +358,38 @@
     </div>
     <div id="itinerary"></div>
     <div class="row" style="margin-top:12px"><button type="button" class="small ghost" data-collapse-jump="sec-itinerary">▲ Hide this section</button></div>
+  </section>
+
+  <section class="card" id="sec-photos">
+    <h2>📸 Photos &amp; videos</h2>
+    <p class="muted">Share a shot or a clip from the road — everyone who opens this page sees it. Images up to 10&nbsp;MB, videos up to 75&nbsp;MB (MP4, WebM, MOV).</p>
+    <div class="row">
+      <input id="photoFile" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" aria-label="Photo or video file" style="flex:1;min-width:200px;padding:8px" />
+      <input id="photoCaption" placeholder="Caption (optional) — e.g. Bethpage at dawn" aria-label="Photo or video caption" />
+      <input id="photoPass" placeholder="Enter your name" aria-label="Name required to upload photos" autocomplete="off" style="max-width:280px;flex:none" />
+      <button type="button" id="photoUpload">Upload</button>
+      <button type="button" id="photoOptimise" class="ghost">Optimise images</button>
+      <button type="button" id="photoClear" class="ghost">Clear album</button>
+    </div>
+    <div id="photoProgress" hidden>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Upload progress"><div class="progress-fill" id="photoBar"></div></div>
+      <div class="progress-row"><span id="photoPct">0%</span><span id="photoSent"></span><button type="button" id="photoCancel" class="small ghost">Cancel</button></div>
+    </div>
+    <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
+    <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
+    <details id="driveBox" style="margin-top:8px">
+      <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
+      <p class="muted" style="margin:6px 0 0;font-size:.8rem">Needs the owner's one-time sign-in (Trip at a glance → Google Drive setup). Tick the box and new clips file themselves — no sign-in for anyone else.</p>
+      <label class="muted" style="display:block;margin-top:8px;font-size:.8rem"><input type="checkbox" id="driveAuto" style="vertical-align:-2px" /> Automatically send new photos and videos to Drive <span style="opacity:.75">(uses the uploader’s connection once more per file)</span></label>
+      <p style="margin:6px 0 0"><a id="driveOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>📂 Open the Drive folder ↗</a></p>
+    </details>
+    <div class="row" style="margin-top:10px">
+      <label class="muted" for="photoFilter" style="align-self:center">Show</label>
+      <select id="photoFilter" aria-label="Filter photos and videos by stop" style="max-width:300px;flex:none">
+        <option value="">All stops</option>
+      </select>
+    </div>
+    <div id="photoGrid"></div>
   </section>
 
   <section class="card" id="sec-budget">
@@ -523,6 +541,18 @@
       <summary class="muted" style="cursor:pointer;font-size:.85rem">Edit handicaps</summary>
       <div id="betHcp" class="rv-grid" style="margin-top:8px"></div>
     </details>
+  </section>
+
+  <section class="card" id="sec-settings">
+    <h2>⚙️ Display settings</h2>
+    <p class="muted">These live on this device only — everyone else keeps their own view.</p>
+    <h3 style="margin:12px 0 4px;font-size:.95rem">Navigation</h3>
+    <label style="display:block;margin:4px 0"><input type="radio" name="navmode" value="bar" /> Top bar (scrolls with the sections)</label>
+    <label style="display:block;margin:4px 0"><input type="radio" name="navmode" value="side" /> Sidebar (a ☰ button, bottom-left)</label>
+    <h3 style="margin:12px 0 4px;font-size:.95rem">Hidden sections</h3>
+    <p class="muted">Tick anything you don't want to see. Settings itself can't be hidden, so you can always come back and untick.</p>
+    <div id="hideList"></div>
+    <p class="muted" id="hiddenNow" style="margin-top:8px"></p>
   </section>
 </main>
 
@@ -1694,6 +1724,7 @@ $('photoUpload').onclick = async () => {
   btn.disabled = true;
   panel.hidden = false;
   const baseCap = $('photoCaption').value.trim();
+  const known = new Set((state.photos || []).map(p => p.id));
   let done = 0;
   try {
     for (const file of files) {
@@ -1713,7 +1744,7 @@ $('photoUpload').onclick = async () => {
       });
       applyState(data);
       done++;
-      maybeAutoDrive(file, data);
+      autoSendNew(data, known);
     }
     input.value = '';
     $('photoCaption').value = '';
@@ -2024,12 +2055,15 @@ $('driveAuto').onchange = async () => {
   await saveExtras();
   photoMsg(extra.drive.auto ? 'Auto-send on — new clips back themselves up.' : 'Auto-send off — the button still works by hand.');
 };
-async function maybeAutoDrive(file, data){
+function autoSendNew(data, known){
   const cfg = (extra && extra.drive) || {};
   if (!cfg.auto || !cfg.ownerRefresh) return;
   if ((navigator.connection || {}).saveData) { photoMsg('Saved — auto-send skipped (data saver is on). Tap the cloud on Wi-Fi.'); return; }
-  const cand = ((data && data.photos) || []).filter(p => !isPoster(p) && p.size === file.size && p.type === file.type && !driveFileFor(p.id)).sort((a, b) => (b.at || 0) - (a.at || 0))[0];
+  // Match by id, not size: uploaded photos come back compressed, so the filed
+  // copy is smaller than the file that left the phone.
+  const cand = ((data && data.photos) || []).filter(p => !known.has(p.id) && !isPoster(p) && !driveFileFor(p.id)).sort((a, b) => (b.at || 0) - (a.at || 0))[0];
   if (!cand) return;
+  known.add(cand.id);
   photoMsg('Saved — sending it to Drive automatically…');
   sendToDrive(cand.id, null);
 }
@@ -3392,6 +3426,88 @@ $('itinerary').addEventListener('change', e => {
   renderPlan();
 });
 
+/* ---------- display settings: nav style + hidden sections (this device) ---------- */
+const NAV_LINKS = [...document.querySelectorAll('.secnav-inner a[href^="#sec-"]')]
+  .filter(a => a.getAttribute('href') !== '#sec-settings');
+function devicePrefs(){
+  let p = {};
+  try { p = JSON.parse(localStorage.getItem('rt-prefs') || '{}'); } catch (e) { p = {}; }
+  return {
+    nav: p.nav === 'side' ? 'side' : 'bar',
+    hidden: Array.isArray(p.hidden) ? p.hidden.filter(id => id !== 'sec-settings') : []
+  };
+}
+function savePrefs(p){ try { localStorage.setItem('rt-prefs', JSON.stringify(p)); } catch (e) {} }
+function openSidebar(){ const s = $('sidebar'), b = $('sideBackdrop'); if (s) s.classList.add('open'); if (b) b.classList.add('open'); }
+function closeSidebar(){ const s = $('sidebar'), b = $('sideBackdrop'); if (s) s.classList.remove('open'); if (b) b.classList.remove('open'); }
+function applyPrefs(){
+  const p = devicePrefs();
+  document.body.classList.toggle('nav-side', p.nav === 'side');
+  document.querySelectorAll('input[name="navmode"]').forEach(r => { r.checked = r.value === p.nav; });
+  const names = {};
+  NAV_LINKS.forEach(a => { names[a.getAttribute('href').slice(1)] = a.textContent.trim().replace(/\s+/g, ' '); });
+  const list = $('sideList');
+  if (list && !list.children.length) {
+    list.innerHTML = NAV_LINKS.map(a => '<a href="' + a.getAttribute('href') + '">' + esc(names[a.getAttribute('href').slice(1)]) + '</a>').join('');
+  }
+  const box = $('hideList');
+  if (box && !box.children.length) {
+    box.innerHTML = NAV_LINKS.map(a => {
+      const id = a.getAttribute('href').slice(1);
+      return '<label style="display:block;margin:4px 0"><input type="checkbox" data-hide-sec="' + id + '" /> ' + esc(names[id]) + '</label>';
+    }).join('');
+  }
+  const hidden = new Set(p.hidden.filter(id => names[id]));
+  NAV_LINKS.forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    const hide = hidden.has(id);
+    const sec = document.getElementById(id);
+    if (sec) sec.hidden = hide;
+    document.querySelectorAll('.secnav-inner a[href="#' + id + '"], #sideList a[href="#' + id + '"]').forEach(l => { l.style.display = hide ? 'none' : ''; });
+    const cb = box && box.querySelector('[data-hide-sec="' + id + '"]');
+    if (cb) cb.checked = hide;
+  });
+  const gone = [...hidden].map(id => names[id]);
+  const hn = $('hiddenNow');
+  if (hn) hn.textContent = gone.length
+    ? 'Hidden right now: ' + gone.join(', ') + ' — untick above to bring them back.'
+    : 'Nothing hidden.';
+  const notice = $('hiddenNotice');
+  if (notice) {
+    notice.hidden = !gone.length;
+    if (gone.length) notice.innerHTML = 'Hiding ' + gone.map(esc).join(', ') + ' (your display settings) · <a href="#sec-settings">Change</a>';
+  }
+  closeSidebar();
+}
+$('navToggle').onclick = openSidebar;
+$('sideClose').onclick = closeSidebar;
+$('sideBackdrop').onclick = closeSidebar;
+$('sideList').addEventListener('click', e => { if (e.target.closest('a')) closeSidebar(); });
+$('sidebar').querySelector('.side-foot').addEventListener('click', closeSidebar);
+document.querySelectorAll('input[name="navmode"]').forEach(r => r.addEventListener('change', () => {
+  const checked = document.querySelector('input[name="navmode"]:checked');
+  const p = devicePrefs();
+  p.nav = checked ? checked.value : 'bar';
+  savePrefs(p);
+  applyPrefs();
+}));
+$('hideList').addEventListener('change', e => {
+  const cb = e.target.closest('[data-hide-sec]');
+  if (!cb) return;
+  const p = devicePrefs();
+  const set = new Set(p.hidden);
+  const id = cb.getAttribute('data-hide-sec');
+  if (cb.checked) set.add(id); else set.delete(id);
+  p.hidden = [...set];
+  savePrefs(p);
+  applyPrefs();
+  if (!cb.checked) {
+    const sec = document.getElementById(id);
+    if (sec && typeof fixMapsIn === 'function') { try { fixMapsIn(sec); } catch (err) {} }
+  }
+});
+applyPrefs();
+
 /* ---------- backup ---------- */
 $('backupExport').onclick = () => {
   const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), extras: extra, state }, null, 2)], { type: 'application/json' });
@@ -3633,6 +3749,7 @@ $('stopUpload').onclick = async () => {
   const caption = $('stopCaption').value.trim();
   const btn = $('stopUpload');
   btn.disabled = true;
+  const known = new Set((state.photos || []).map(p => p.id));
   let done = 0;
   try {
     for (const file of files) {
@@ -3641,7 +3758,7 @@ $('stopUpload').onclick = async () => {
       const data = await uploadMedia(file, prefixed, () => {});
       applyState(data);
       done++;
-      maybeAutoDrive(file, data);
+      autoSendNew(data, known);
     }
     input.value = '';
     $('stopCaption').value = '';
