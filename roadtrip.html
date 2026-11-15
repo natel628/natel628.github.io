@@ -383,6 +383,7 @@
     <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
     <details id="driveBox" style="margin-top:8px">
       <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
+      <p class="muted" style="margin:6px 0 0;font-size:.8rem">You set this up once — everyone else just taps ☁️ on a photo or video. They sign in with their own Google account; nobody else touches these settings.</p>
       <div class="row" style="margin-top:8px">
         <input id="driveClient" placeholder="Google OAuth client ID (…apps.googleusercontent.com)" aria-label="Google OAuth client ID" autocomplete="off" style="flex:1;min-width:200px" />
       </div>
@@ -391,6 +392,7 @@
         <button type="button" id="driveSave">Save</button>
       </div>
       <p class="muted" id="driveMsg" style="margin:6px 0 0"></p>
+      <p style="margin:6px 0 0"><a id="driveOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>📂 Open the Drive folder ↗</a></p>
     </details>
     <div class="row" style="margin-top:10px">
       <label class="muted" for="photoFilter" style="align-self:center">Show</label>
@@ -1803,7 +1805,7 @@ $('photoGrid').addEventListener('click', async e => {
     return;
   }
   const d = e.target.closest('button[data-drive]');
-  if (d) { sendVideoToDrive(d.dataset.drive, d); return; }
+  if (d) { sendToDrive(d.dataset.drive, d); return; }
   const t = e.target.closest('button.video-tile');
   if (t) playTileVideo(t);
 });
@@ -1814,8 +1816,10 @@ $('photoGrid').addEventListener('click', async e => {
 // and the page remembers which ones made it, with a badge everyone can see.
 function driveFileFor(id){ return (extra && extra.driveFiles && extra.driveFiles[id]) || null; }
 function driveControl(p){
-  if ((p.type || '').indexOf('video/') !== 0 || isPoster(p)) return '';
+  if (isPoster(p)) return '';
   if (driveFileFor(p.id)) return ' <span class="tag" title="Backed up to Google Drive">☁️ Drive</span>';
+  // No client ID yet means nobody can send — hide the button, not a dead end.
+  if (!((extra && extra.drive && extra.drive.clientId) || '')) return '';
   return ' <button type="button" class="small ghost" data-drive="' + esc(p.id) + '" aria-label="Send to Google Drive">☁️</button>';
 }
 
@@ -1839,15 +1843,19 @@ function ensureDriveToken(){
         },
         error_callback: () => resolve(null)
       });
-      client.requestAccessToken({ prompt: driveToken ? '' : 'consent' });
+      // Account chooser, not a login form: everyone is already signed into
+      // Google on their phone, so sending is one tap after the first approval.
+      client.requestAccessToken({ prompt: driveToken ? '' : 'select_account' });
     } catch (e) { resolve(null); }
   });
 }
 
-async function driveUploadFile(token, folderId, video, blob){
-  const base = ((video.caption || '').trim() || 'trip video');
-  const name = /\.(mp4|mov|webm)$/i.test(base) ? base : base + '.mp4';
-  const meta = { name, mimeType: video.type || 'video/mp4' };
+const DRIVE_EXT = { 'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/webm': '.webm', 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' };
+async function driveUploadFile(token, folderId, item, blob){
+  const base = (((item.caption || '').trim() || 'trip upload').replace(/[\/\\]+/g, '-'));
+  const ext = DRIVE_EXT[item.type] || '';
+  const name = ext && base.toLowerCase().endsWith(ext) ? base : base + ext;
+  const meta = { name, mimeType: item.type || 'application/octet-stream' };
   if (folderId) meta.parents = [folderId];
   const init = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
     method: 'POST',
@@ -1871,21 +1879,22 @@ async function driveUploadFile(token, folderId, video, blob){
   return done.id;
 }
 
-async function sendVideoToDrive(id, btn){
-  const video = (state.photos || []).find(p => p.id === id);
-  if (!video) return;
+async function sendToDrive(id, btn){
+  const item = (state.photos || []).find(p => p.id === id);
+  if (!item) return;
   const cfg = (extra && extra.drive) || {};
-  if (!cfg.clientId || !cfg.folderId) { photoMsg('Open “Google Drive backup” below and save your client ID and folder first.'); return; }
+  if (!cfg.clientId) { photoMsg('Google Drive backup is not set up yet.'); return; }
+  if (!cfg.folderId) { photoMsg('Save your Drive folder in “Google Drive backup” below first.'); return; }
   if (driveFileFor(id)) { renderPhotos(); return; }
   if (btn) btn.disabled = true;
   try {
     photoMsg('Talking to Google…');
     const token = await ensureDriveToken();
     if (!token) { photoMsg('Google sign-in was cancelled or failed — nothing was sent.'); return; }
-    photoMsg('Fetching ' + photoSize(video.size || 0) + '…');
+    photoMsg('Fetching ' + photoSize(item.size || 0) + '…');
     const blob = await (await fetch(API_BASE + '/api/photos/' + encodeURIComponent(id), { cache: 'no-store' })).blob();
     photoMsg('Uploading to your Drive folder — leave this open…');
-    const fileId = await driveUploadFile(token, cfg.folderId, video, blob);
+    const fileId = await driveUploadFile(token, cfg.folderId, item, blob);
     const entry = { id: fileId, at: Date.now() };
     extra.driveFiles = extra.driveFiles || {};
     extra.driveFiles[id] = entry;
@@ -3168,6 +3177,11 @@ function syncExtraInputs(){
   const dc = $('driveClient'), df = $('driveFolder');
   if (dc && dc !== document.activeElement && dc.value !== (dd.clientId || '')) dc.value = dd.clientId || '';
   if (df && df !== document.activeElement && df.value !== (dd.folderId || '')) df.value = dd.folderId || '';
+  const dl = $('driveOpen');
+  if (dl) {
+    if (dd.folderId) { dl.hidden = false; dl.href = 'https://drive.google.com/drive/folders/' + dd.folderId; }
+    else dl.hidden = true;
+  }
 }
 function bindExtra(id, path, parse){
   $(id).addEventListener('input', e => {
