@@ -26,7 +26,10 @@
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
-  #stops li { position:relative; display:flex; align-items:center; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
+  #stops li { position:relative; display:flex; flex-wrap:wrap; align-items:flex-start; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
+  /* The name gets its own room and the buttons can never sit on top of it. */
+  #stops .stop-info { flex:1 1 150px; min-width:0; overflow-wrap:anywhere; }
+  #stops .stop-actions { display:flex; gap:6px; flex-wrap:wrap; margin-left:auto; }
   .row { position:relative; }
   .mapmenu { position:absolute; right:8px; top:calc(100% + 4px); z-index:1600; display:grid; gap:4px; min-width:220px; padding:6px; background:#0f172a; border:1px solid #475569; border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,.5); }
   .row > .mapmenu { left:8px; right:auto; }
@@ -169,6 +172,10 @@
     /* Five buttons beside a stop name outgrow a phone, so let them wrap. */
     #stops li{flex-wrap:wrap;}
     #stops li > span{min-width:0;}
+    /* Phone: the buttons drop to their own row under the name. */
+    #stops .stop-info{flex:1 1 100%;}
+    #stops .stop-actions{flex:1 1 100%; margin-left:0;}
+    #stops .col, #stops .num{align-self:flex-start;}
     /* One thumb, one column: the planning cards stack and controls get taller. */
     .card{padding:14px;}
     .glance{grid-template-columns:1fr 1fr;}
@@ -992,12 +999,14 @@ function renderStops(){
     const li = document.createElement('li');
     li.dataset.stop = s.id;
     li.innerHTML = '<span class="num">' + (i + 1) + '</span>'
-      + '<span style="flex:1">' + esc(s.name)
+      + '<span class="stop-info">' + esc(s.name)
       + (isStart ? ' <span class="tag">start</span>' : '')
       + (isEnd ? ' <span class="tag">end</span>' : '')
       + '<br><span class="muted">' + s.lat.toFixed(3) + ', ' + s.lng.toFixed(3) + '</span>'
       + attBadge(s.name) + '</span>';
-    li.append(
+    const actions = document.createElement('div');
+    actions.className = 'stop-actions';
+    actions.append(
       stopButton('↑', 'Move ' + s.name + ' up', 'up', s.id, i === 0),
       stopButton('↓', 'Move ' + s.name + ' down', 'down', s.id, i === state.stops.length - 1),
       stopButton('🗺️', 'Open ' + s.name + ' in a map app', 'map', s.id, false),
@@ -1005,6 +1014,7 @@ function renderStops(){
       stopButton('📎', 'Add a note or photo for ' + s.name, 'note', s.id, false),
       stopButton('✕', 'Remove ' + s.name, 'del', s.id, false)
     );
+    li.append(actions);
     ul.appendChild(li);
   });
 
