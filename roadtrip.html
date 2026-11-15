@@ -64,6 +64,12 @@
   #photoGrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:12px; }
   .photo { background:#0f172a; border:1px solid #334155; border-radius:10px; overflow:hidden; margin:0; }
   .photo img, .photo video { display:block; width:100%; height:150px; object-fit:cover; background:#0b1220; }
+  .video-wrap { position:relative; background:#0b1220; }
+  .video-wrap video[hidden] { display:none; }
+  .video-tile { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; width:100%; height:150px; padding:8px; border:none; border-radius:0; background:#0b1220 center/cover no-repeat; color:#fff; cursor:pointer; }
+  .video-tile[hidden] { display:none; }
+  .video-tile .video-play { width:52px; height:52px; border-radius:50%; background:rgba(245,158,11,.93); color:#111; font-size:20px; display:flex; align-items:center; justify-content:center; }
+  .video-tile .video-hint { font-size:.75rem; color:#e2e8f0; background:rgba(0,0,0,.6); padding:2px 10px; border-radius:12px; }
   .photo-meta { padding:8px 10px; display:flex; gap:8px; align-items:center; justify-content:space-between; font-size:.8rem; color:var(--muted); }
   .photo-meta span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #photoMsg:empty { display:none; }
@@ -1249,11 +1255,81 @@ function renderPhotos(){
   el.innerHTML = state.photos.map(p =>
     '<figure class="photo">'
     + ((p.type || '').indexOf('video/') === 0
-      ? '<video src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" controls preload="metadata" playsinline aria-label="' + esc(p.caption || 'Trip video') + '"></video>'
+      ? '<div class="video-wrap"><button type="button" class="video-tile" data-src="' + esc(API_BASE + '/api/photos/' + encodeURIComponent(p.id)) + '" data-type="' + esc(p.type || 'video/mp4') + '" aria-label="Play ' + esc(p.caption || 'trip video') + ' (' + esc(photoSize(p.size || 0)) + ')"><span class="video-play" aria-hidden="true">▶</span><span class="video-hint">' + esc(((p.type || '').split('/')[1] || 'video').toUpperCase()) + ' · ' + esc(photoSize(p.size || 0)) + ' — tap to play</span></button>'
+      + '<video controls playsinline preload="none" hidden aria-label="' + esc(p.caption || 'Trip video') + '"></video></div>'
       : '<img src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" alt="' + esc(p.caption || 'Trip photo') + '" loading="lazy" />')
-    + '<figcaption class="photo-meta"><span>' + esc(p.caption || 'Untitled') + ' · ' + esc(new Date(p.at).toLocaleDateString()) + '</span>'
+    + '<figcaption class="photo-meta"><span>' + esc(p.caption || 'Untitled') + ' · ' + esc(photoSize(p.size || 0)) + '</span>'
     + '<button type="button" class="small ghost" data-photo="' + esc(p.id) + '" aria-label="Delete photo ' + esc(p.caption || '') + '">✕</button></figcaption>'
     + '</figure>').join('');
+  observeVideoTiles();
+}
+
+/* Video tiles: no video data downloads until tapped. Thumbnails are grabbed
+   lazily (one small frame per tile, only when scrolled into view). */
+let thumbObserver = null;
+function observeVideoTiles(){
+  if (!('IntersectionObserver' in window)) return;
+  if (thumbObserver) thumbObserver.disconnect();
+  else {
+    thumbObserver = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        thumbObserver.unobserve(en.target);
+        makeVideoThumb(en.target);
+      });
+    }, { rootMargin: '200px' });
+  }
+  document.querySelectorAll('.video-tile').forEach(t => thumbObserver.observe(t));
+}
+function makeVideoThumb(btn){
+  try {
+    const probe = document.createElement('video');
+    if (probe.canPlayType && probe.canPlayType(btn.dataset.type || '') === '') return; // browser can't play it — keep the generic tile
+    probe.muted = true;
+    probe.playsInline = true;
+    probe.preload = 'auto';
+    probe.crossOrigin = 'anonymous';
+    const cleanup = () => { try { probe.removeAttribute('src'); probe.load(); } catch (e) {} };
+    const timer = setTimeout(cleanup, 15000);
+    probe.addEventListener('loadeddata', () => {
+      try { probe.currentTime = Math.min(1.5, (probe.duration && isFinite(probe.duration) ? probe.duration : 2) / 2); }
+      catch (e) { clearTimeout(timer); cleanup(); }
+    });
+    probe.addEventListener('seeked', () => {
+      clearTimeout(timer);
+      try {
+        const w = probe.videoWidth, h = probe.videoHeight;
+        if (!w || !h) { cleanup(); return; }
+        const scale = Math.min(1, 480 / w);
+        const c = document.createElement('canvas');
+        c.width = Math.round(w * scale);
+        c.height = Math.round(h * scale);
+        c.getContext('2d').drawImage(probe, 0, 0, c.width, c.height);
+        btn.style.backgroundImage = 'url(' + c.toDataURL('image/jpeg', 0.6) + ')';
+      } catch (e) { /* tainted canvas or decode error — generic tile stays */ }
+      cleanup();
+    });
+    probe.addEventListener('error', () => { clearTimeout(timer); cleanup(); });
+    probe.src = btn.dataset.src;
+  } catch (e) { /* thumbnails are best-effort — the tile still plays on tap */ }
+}
+function playTileVideo(tile){
+  const type = tile.dataset.type || '';
+  const test = document.createElement('video');
+  if (!test.canPlayType || test.canPlayType(type) === '') {
+    window.open(tile.dataset.src, '_blank', 'noopener'); // browser can't play it — open the file itself
+    return;
+  }
+  const wrap = tile.closest('.video-wrap');
+  const v = wrap && wrap.querySelector('video');
+  if (!v) return;
+  if (!v.getAttribute('src')) v.src = tile.dataset.src;
+  tile.hidden = true;
+  v.hidden = false;
+  try {
+    const pr = v.play();
+    if (pr && pr.catch) pr.catch(() => { tile.hidden = false; v.hidden = true; });
+  } catch (e) { tile.hidden = false; v.hidden = true; }
 }
 $('photoUpload').onclick = async () => {
   const input = $('photoFile');
@@ -1320,7 +1396,9 @@ $('photoClear').onclick = () => {
 };
 $('photoGrid').addEventListener('click', e => {
   const b = e.target.closest('button[data-photo]');
-  if (b) write('DELETE', '/api/photos/' + encodeURIComponent(b.dataset.photo));
+  if (b) { write('DELETE', '/api/photos/' + encodeURIComponent(b.dataset.photo)); return; }
+  const t = e.target.closest('button.video-tile');
+  if (t) playTileVideo(t);
 });
 
 /* ---------- 7. golf courses ---------- */
