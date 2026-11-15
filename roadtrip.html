@@ -77,12 +77,12 @@
   .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
   #golfMsg:empty { display:none; }
   #golfMsg { font-size:.85rem; margin-top:8px; }
-  .rating-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; background:#64748b; vertical-align:1px; }
-  .rating-dot.r5 { background:#22c55e; }
-  .rating-dot.r4 { background:#84cc16; }
-  .rating-dot.r3 { background:#f59e0b; }
-  .rating-dot.r2 { background:#ef4444; }
   #foodMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
+  #golfMap, #foodMap { display:none; }
+  #golfMap.show, #foodMap.show { display:block; }
+  .day.long { border-left-color:#f59e0b; }
+  .day-weather { font-size:.8rem; font-weight:600; color:var(--muted); margin-left:6px; }
+  .warn-text { color:#f59e0b; font-size:.8rem; margin-top:6px; }
   #foodList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .food-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
   .food-item.sel { border-color:var(--green); }
@@ -128,6 +128,9 @@
     </div>
     <div id="map"></div>
     <p class="muted" id="tripStats" style="margin-top:8px"></p>
+    <div class="row" style="margin-top:2px">
+      <button type="button" id="openMaps" class="small ghost" hidden>Open route in Google Maps ↗</button>
+    </div>
     <p class="muted" id="tripHint" role="status" aria-live="polite"></p>
     <p class="muted" id="stopsEmpty">No stops yet — set a start and an end above, or click the map.</p>
     <ul id="stops"></ul>
@@ -142,10 +145,6 @@
           <option value="10" selected>10 miles</option>
           <option value="25">25 miles</option>
           <option value="50">50 miles</option>
-        </select>
-        <select id="hotelSort" style="max-width:180px;flex:none" aria-label="Sort hotels">
-          <option value="dist" selected>Nearest first</option>
-          <option value="rating">Best rated first</option>
         </select>
         <button type="button" id="hotelBooking" class="small">Search Booking.com ↗</button>
         <button type="button" id="hotelClose" class="small ghost">Close</button>
@@ -169,6 +168,12 @@
   <section class="card">
     <h2>3. 🧰 Practical estimates</h2>
     <p class="muted">Distances and drive times are real road routing; when the router is unreachable you get a straight-line estimate instead, which understates the drive.</p>
+    <div class="row" style="margin-top:10px">
+      <label class="muted" for="fuelMpg" style="align-self:center">MPG</label>
+      <input id="fuelMpg" type="number" min="4" max="40" step="0.5" value="25" style="max-width:110px;flex:none" aria-label="Miles per gallon" />
+      <label class="muted" for="fuelPrice" style="align-self:center">$ per gallon</label>
+      <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
+    </div>
     <div id="practical"></div>
   </section>
 
@@ -213,12 +218,7 @@
       </select>
       <button type="button" id="golfFind">Find courses</button>
       <button type="button" id="golfClearPin" class="ghost">Clear pin</button>
-      <select id="golfSort" style="max-width:180px;flex:none" aria-label="Sort golf courses">
-        <option value="dist" selected>Nearest first</option>
-        <option value="rating">Best rated first</option>
-      </select>
     </div>
-    <p class="muted" id="ratingNote" hidden style="margin:10px 0 0">★ Rating dots are switched off — they need a Google Places key stored as GOOGLE_PLACES_API_KEY in the site settings. Golf, food and hotel searches all work without it.</p>
     <div class="row" style="margin-top:8px">
       <input id="golfName" placeholder="Or search a course by name — e.g. Pebble Beach" aria-label="Search a golf course by name" />
       <button type="button" id="golfFindName">Find by name</button>
@@ -231,7 +231,7 @@
 
   <section class="card">
     <h2>7. 🍽️ Places to eat</h2>
-    <p class="muted">Search a town or area — or click the map to drop a pin — to list restaurants and cafés around it, then add the ones you like to your route. Distances are straight-line from the search point.</p>
+    <p class="muted">Search a town or area — or click the map to drop a pin — to list restaurants and cafés around it, then add the ones you like to your route. Distances and drive times are real roads from the search point.</p>
     <div class="row">
       <input id="foodQuery" placeholder="Search near — e.g. Moab, UT" aria-label="Search places to eat near" />
       <select id="foodRadius" style="max-width:170px;flex:none" aria-label="Search radius">
@@ -245,10 +245,6 @@
     <div class="row" style="margin-top:8px">
       <input id="foodName" placeholder="Or search a place by name — e.g. Franklin Barbecue" aria-label="Search a place to eat by name" />
       <button type="button" id="foodFindName">Find by name</button>
-      <select id="foodSort" style="max-width:180px;flex:none" aria-label="Sort places to eat">
-        <option value="dist" selected>Nearest first</option>
-        <option value="rating">Best rated first</option>
-      </select>
     </div>
     <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
     <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
@@ -707,6 +703,7 @@ function renderStops(){
     $('tripStats').textContent = '';
   }
 
+  $('openMaps').hidden = state.stops.length < 2;
   paintLegs();
   refreshLegs();
 }
@@ -787,6 +784,147 @@ map.on('click', e => {
   if (n && n.trim()) write('POST', '/api/stops', { name: n.trim(), lat: e.latlng.lat, lng: e.latlng.lng });
 });
 
+/* ---------- itinerary helpers: weather, maps handoff, fuel memory ---------- */
+const isoDate = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const WMO = { 0: '☀️ clear', 1: '🌤 mostly clear', 2: '⛅️ partly cloudy', 3: '☁️ cloudy', 45: '🌫 fog', 48: '🌫 fog',
+  51: '🌦 drizzle', 53: '🌦 drizzle', 55: '🌧 drizzle', 61: '🌧 rain', 63: '🌧 rain', 65: '🌧 heavy rain',
+  66: '🌧 freezing rain', 67: '🌧 freezing rain', 71: '🌨 snow', 73: '🌨 snow', 75: '❄️ heavy snow', 77: '🌨 snow',
+  80: '🌦 showers', 81: '🌧 showers', 82: '⛈ heavy showers', 85: '🌨 snow showers', 86: '❄️ snow showers',
+  95: '⛈ storm', 96: '⛈ storm', 99: '⛈ storm' };
+
+// Forecasts are free and keyless, and only exist about two weeks ahead, so a
+// date outside that window simply shows nothing.
+async function loadDayWeather(spans, d0){
+  if (!d0) return;
+  const wanted = [];
+  spans.forEach((span, c) => {
+    const stop = state.stops[span.to];
+    if (!stop || span.to <= span.from) return;
+    wanted.push({ c, date: isoDate(new Date(d0.getTime() + c * 864e5)), lat: stop.lat, lng: stop.lng });
+  });
+  if (!wanted.length) return;
+  const dates = wanted.map(w => w.date).sort();
+  const params = new URLSearchParams({
+    latitude: wanted.map(w => w.lat.toFixed(4)).join(','),
+    longitude: wanted.map(w => w.lng.toFixed(4)).join(','),
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
+    temperature_unit: 'fahrenheit',
+    timezone: 'auto',
+    start_date: dates[0],
+    end_date: dates[dates.length - 1]
+  });
+  let data = null;
+  try {
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
+    if (!res.ok) return;
+    data = await res.json();
+  } catch (e) { return; }
+  const list = Array.isArray(data) ? data : (data && data.daily ? [data] : []);
+  list.forEach((loc, i) => {
+    const want = wanted[i], daily = (loc && loc.daily) || {};
+    const at = (daily.time || []).indexOf(want.date);
+    const cell = document.querySelector('.day-weather[data-day="' + want.c + '"]');
+    if (!cell || at < 0) return;
+    const hi = Math.round(daily.temperature_2m_max[at]), lo = Math.round(daily.temperature_2m_min[at]);
+    const pop = daily.precipitation_probability_max ? daily.precipitation_probability_max[at] : null;
+    cell.textContent = (WMO[daily.weather_code[at]] || '') + ' ' + hi + '°/' + lo + '°'
+      + (pop === null || pop === undefined ? '' : ' · ' + pop + '% rain');
+  });
+}
+
+// Maps stay hidden until they have something to show, which keeps the page short.
+function revealMap(mapObj, id){
+  const el = $(id);
+  if (!el || el.classList.contains('show')) return;
+  el.classList.add('show');
+  mapObj.invalidateSize();
+}
+
+function routeForMaps(){
+  const stops = state.stops;
+  if (stops.length < 2) return null;
+  const pt = p => p.lat.toFixed(5) + ',' + p.lng.toFixed(5);
+  const via = stops.slice(1, -1).slice(0, 8).map(pt);
+  return 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + pt(stops[0])
+    + '&destination=' + pt(stops[stops.length - 1]) + (via.length ? '&waypoints=' + via.join('|') : '');
+}
+$('openMaps').onclick = () => {
+  const url = routeForMaps();
+  if (url) window.open(url, '_blank', 'noopener');
+};
+
+const FUEL_KEY = 'rt_fuel';
+function loadFuel(){
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(FUEL_KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  if (saved.mpg) $('fuelMpg').value = saved.mpg;
+  if (saved.price) $('fuelPrice').value = saved.price;
+}
+function saveFuel(){
+  try { localStorage.setItem(FUEL_KEY, JSON.stringify({ mpg: $('fuelMpg').value, price: $('fuelPrice').value })); } catch (e) {}
+}
+$('fuelMpg').addEventListener('change', () => { saveFuel(); renderPlan(); });
+$('fuelPrice').addEventListener('change', () => { saveFuel(); renderPlan(); });
+
+$('itinerary').addEventListener('click', e => {
+  const beds = e.target.closest('[data-beds]');
+  if (beds) {
+    const stop = state.stops.find(s => s.id === beds.dataset.beds);
+    if (stop) findHotelsForStop(stop);
+    return;
+  }
+  const split = e.target.closest('[data-split]');
+  if (split) {
+    const [firstId, secondId] = split.dataset.split.split('|');
+    addOvernightBetween(firstId, secondId, split);
+  }
+});
+
+// A single 19-hour leg cannot be spread across days, so offer a real town at the
+// halfway point and slot it into the route between the two stops.
+function longDayHelp(span, legHours){
+  let worst = span.from;
+  for (let i = span.from; i < span.to; i++) if (legHours[i] > legHours[worst]) worst = i;
+  const a = state.stops[worst], b = state.stops[worst + 1];
+  if (!a || !b) return '';
+  return '<div class="warn-text">Long day — book a bed partway, or split the drive. '
+    + '<button type="button" class="small ghost" data-split="' + esc(a.id) + '|' + esc(b.id)
+    + '" aria-label="Find a town between ' + esc(a.name) + ' and ' + esc(b.name) + ' to split the drive">Suggest an overnight</button></div>';
+}
+
+async function addOvernightBetween(firstId, secondId, btn){
+  const a = state.stops.find(s => s.id === firstId);
+  const b = state.stops.find(s => s.id === secondId);
+  if (!a || !b) return;
+  const label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Looking for a town…';
+  try {
+    const lat = (a.lat + b.lat) / 2, lng = (a.lng + b.lng) / 2;
+    const res = await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=11&lat=' + lat.toFixed(4) + '&lon=' + lng.toFixed(4));
+    if (!res.ok) throw new Error('lookup failed');
+    const place = await res.json();
+    const addr = place.address || {};
+    const town = addr.city || addr.town || addr.village || addr.hamlet || addr.county;
+    if (!town || !place.lat || !place.lon) throw new Error('no town');
+
+    const before = new Set(state.stops.map(s => s.id));
+    await write('POST', '/api/stops', { name: town, lat: +place.lat, lng: +place.lon });
+    const added = state.stops.find(s => !before.has(s.id));
+    if (added) {
+      const order = state.stops.map(s => s.id).filter(id => id !== added.id);
+      order.splice(order.indexOf(a.id) + 1, 0, added.id);
+      await write('PUT', '/api/stops', { order });
+    }
+    hint('Added ' + town + ' between ' + a.name + ' and ' + b.name + ' — the drive is split.');
+  } catch (e) {
+    hint('Could not find a town midway — add a stop by hand and the plan will rebalance.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = label;
+  }
+}
+
 /* ---------- 2 & 3. itinerary + practical estimates ---------- */
 function renderPlan(){
   const it = $('itinerary'), pr = $('practical');
@@ -797,34 +935,70 @@ function renderPlan(){
   } else {
     const legs = state.stops.length - 1, chunks = Math.min(days, legs);
     const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
-    let html = '';
-    for (let c = 0; c < chunks; c++) {
-      const a = Math.round(c * legs / chunks), b = Math.round((c + 1) * legs / chunks);
-      const seg = state.stops.slice(a, b + 1);
-      if (!seg.length) continue;
-      const segmentMiles = segMiles(a, b);
-      const date = d0 ? fmtDate(new Date(d0.getTime() + c * 864e5)) : 'Day ' + (c + 1);
-      html += '<div class="day"><h3>' + date + ' <span class="muted">· ' + (segmentMiles.real ? '' : '~')
-        + Math.round(segmentMiles.mi).toLocaleString() + ' mi driving'
-        + (segmentMiles.real ? ' · ' + minsText(segmentMiles.mins) : '') + '</span></h3><ol>'
-        + seg.map(s => '<li>' + esc(s.name) + '</li>').join('') + '</ol><div class="muted">🌙 Overnight: '
-        + esc(seg[seg.length-1].name) + '</div></div>';
+
+    // Split by driving time rather than stop count, so a day does not end up
+    // carrying nineteen hours behind the wheel.
+    const legHours = [];
+    for (let i = 0; i < legs; i++) {
+      const part = segMiles(i, i + 1);
+      legHours.push(part.real ? part.mins / 60 : part.mi / MPH);
     }
+    const target = legHours.reduce((t, h) => t + h, 0) / chunks;
+    const spans = [];
+    let at = 0;
+    for (let c = 0; c < chunks; c++) {
+      const daysLeft = chunks - c;
+      const from = at;
+      let hours = 0;
+      while (at < legs) {
+        if (daysLeft > 1 && legs - at <= daysLeft - 1) break;
+        const h = legHours[at];
+        if (hours > 0 && daysLeft > 1 && hours + h > target * 1.25) break;
+        hours += h;
+        at++;
+        if (daysLeft > 1 && hours >= target * 0.9) break;
+      }
+      spans.push({ from, to: at, hours });
+    }
+
+    let html = '';
+    spans.forEach((span, c) => {
+      if (span.to <= span.from) return;
+      const seg = state.stops.slice(span.from, span.to + 1);
+      const part = segMiles(span.from, span.to);
+      const date = d0 ? fmtDate(new Date(d0.getTime() + c * 864e5)) : 'Day ' + (c + 1);
+      const last = seg[seg.length - 1];
+      const long = span.hours >= 8;
+      html += '<div class="day' + (long ? ' long' : '') + '"><h3>' + date + ' <span class="muted">· '
+        + (part.real ? '' : '~') + Math.round(part.mi).toLocaleString() + ' mi driving'
+        + (part.real ? ' · ' + minsText(part.mins) : '') + '</span>'
+        + '<span class="day-weather" data-day="' + c + '"></span></h3>'
+        + '<ol>' + seg.map(s => '<li>' + esc(s.name) + '</li>').join('') + '</ol>'
+        + '<div class="muted">🌙 Overnight: ' + esc(last.name)
+        + ' <button type="button" class="small ghost" data-beds="' + esc(last.id) + '" aria-label="Find a bed near ' + esc(last.name) + '">🛏 Find a bed</button></div>'
+        + (long ? longDayHelp(span, legHours) : '')
+        + '</div>';
+    });
     for (let k = chunks; k < days; k++) {
       const date = d0 ? fmtDate(new Date(d0.getTime() + k * 864e5)) : 'Day ' + (k + 1);
       html += '<div class="day open"><h3>' + date + '</h3><p class="muted">Open day in '
         + esc(state.stops[state.stops.length-1].name) + ' — explore, rest, or detour.</p></div>';
     }
     it.innerHTML = html;
+    loadDayWeather(spans, d0);
   }
 
   if (state.stops.length > 1) {
     const total = segMiles(0, state.stops.length - 1);
+    const mpg = Math.min(40, Math.max(4, +$('fuelMpg').value || 25));
+    const price = Math.max(0, +$('fuelPrice').value || 0);
+    const gallons = total.mi / mpg;
     pr.innerHTML = '<div class="prac-grid"><div><b>' + Math.round(total.mi).toLocaleString() + ' mi</b><span>' + (total.real ? 'driving' : 'est. driving') + '</span></div>'
       + '<div><b>' + (total.real ? minsText(total.mins) : (total.mi / MPH).toFixed(1) + ' h') + '</b><span>behind the wheel</span></div>'
       + '<div><b>' + state.stops.length + '</b><span>stops</span></div>'
       + '<div><b>' + days + '</b><span>days</span></div>'
-      + '<div><b>' + Math.round(total.mi / MPG) + ' gal</b><span>fuel ≈ @25mpg</span></div></div>';
+      + '<div><b>' + Math.round(gallons) + ' gal</b><span>fuel @ ' + mpg + ' mpg</span></div>'
+      + '<div><b>$' + Math.round(gallons * price).toLocaleString() + '</b><span>fuel cost</span></div></div>';
   } else {
     pr.innerHTML = '<p class="muted">Estimates appear once your route has 2+ stops.</p>';
   }
@@ -1030,46 +1204,6 @@ async function findGolfByName(name){
   return courses;
 }
 
-/* ---------- ratings shared by golf, food and hotels ---------- */
-const ratingKeyOf = p => p.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().slice(0, 80) + '@' + p.lat.toFixed(3) + ',' + p.lng.toFixed(3);
-const placeRatings = new Map();
-
-// A rating is only a colour dot: enough to spot a good place at a glance
-// without turning a list into a scoreboard.
-const ratingClass = r => r >= 4.5 ? 'r5' : r >= 4 ? 'r4' : r >= 3.5 ? 'r3' : 'r2';
-
-let foodSortMode = 'dist', hotelSortMode = 'dist', golfSortMode = 'dist';
-
-const ratingValue = place => {
-  const hit = placeRatings.get(ratingKeyOf(place));
-  return hit && typeof hit.rating === 'number' ? hit.rating : -1;
-};
-// Name searches have no origin, so an unknown distance sinks to the bottom
-// instead of sorting as zero.
-const driveMi = place => place.drive ? place.drive.mi : (place.dist === null || place.dist === undefined ? Infinity : place.dist);
-
-const SORTS_KEY = 'rt_sorts';
-const sortChoice = v => (v === 'rating' ? 'rating' : 'dist');
-
-// Sort order is a personal preference, so it lives in this browser rather than
-// in the shared trip.
-function loadSorts(){
-  let saved = {};
-  try { saved = JSON.parse(localStorage.getItem(SORTS_KEY) || '{}') || {}; } catch (e) { saved = {}; }
-  golfSortMode = sortChoice(saved.golf);
-  foodSortMode = sortChoice(saved.food);
-  hotelSortMode = sortChoice(saved.hotel);
-  $('golfSort').value = golfSortMode;
-  $('foodSort').value = foodSortMode;
-  $('hotelSort').value = hotelSortMode;
-}
-
-function saveSorts(){
-  try {
-    localStorage.setItem(SORTS_KEY, JSON.stringify({ golf: golfSortMode, food: foodSortMode, hotel: hotelSortMode }));
-  } catch (e) { /* private mode or full storage: the pick just is not remembered */ }
-}
-
 const RADII_KEY = 'rt_radii';
 const RADIUS_FIELDS = [['golfRadius', 'golf'], ['foodRadius', 'food'], ['hotelRadius', 'hotel']];
 
@@ -1092,94 +1226,6 @@ function saveRadii(){
       hotel: $('hotelRadius').value
     }));
   } catch (e) { /* private mode or full storage: the radius just is not remembered */ }
-}
-
-// Sorts in place so the array identity that pending lookups capture stays valid.
-function sortInPlace(list, mode){
-  if (mode === 'rating') {
-    list.sort((a, b) => ratingValue(b) - ratingValue(a) || driveMi(a) - driveMi(b));
-  } else {
-    list.sort((a, b) => driveMi(a) - driveMi(b));
-  }
-  return list;
-}
-
-function ratingDot(place){
-  const hit = placeRatings.get(ratingKeyOf(place));
-  if (!hit || typeof hit.rating !== 'number') return null;
-  const dot = document.createElement('span');
-  dot.className = 'rating-dot ' + ratingClass(hit.rating);
-  dot.title = 'Rated ' + hit.rating.toFixed(1) + ' of 5' + (hit.count ? ' · ' + hit.count.toLocaleString() + ' reviews' : '');
-  dot.setAttribute('role', 'img');
-  dot.setAttribute('aria-label', dot.title);
-  return dot;
-}
-
-function applyRatings(selector, places){
-  [...document.querySelectorAll(selector)].forEach((el, i) => {
-    const place = places[i];
-    const nameEl = el.querySelector('.golf-name, .food-name');
-    if (!place || !nameEl) return;
-    const old = nameEl.querySelector('.rating-dot');
-    if (old) old.remove();
-    const dot = ratingDot(place);
-    if (dot) nameEl.prepend(dot);
-  });
-}
-
-// Ratings come through the Worker in batches and stay cached for two months.
-function setRatingNote(configured){
-  const note = $('ratingNote');
-  if (note) note.hidden = !!configured;
-}
-
-async function loadRatings(places, apply, isCurrent){
-  const wanted = places.filter(p => !placeRatings.has(ratingKeyOf(p))).slice(0, 24);
-  if (!wanted.length) return;
-  for (let i = 0; i < wanted.length; i += 12) {
-    let data = null;
-    try {
-      data = await api('POST', '/api/ratings', {
-        places: wanted.slice(i, i + 12).map(p => ({ name: p.name, lat: p.lat, lng: p.lng }))
-      });
-    } catch (e) { return; }
-    if (!data) return;
-    setRatingNote(data.configured);
-    if (!data.configured) return;
-    if (isCurrent && !isCurrent()) return;
-    for (const r of data.ratings || []) if (typeof r.rating === 'number') placeRatings.set(r.k, r);
-    apply();
-  }
-}
-
-function loadGolfRatings(){
-  const snapshot = golfCourses;
-  return loadRatings(snapshot,
-    () => {
-      applyRatings('#golfList .golf-item', snapshot);
-      if (golfSortMode === 'rating') { sortInPlace(snapshot, 'rating'); renderGolf(); }
-    },
-    () => golfCourses === snapshot);
-}
-
-function loadFoodRatings(){
-  const snapshot = foodPlaces;
-  return loadRatings(snapshot,
-    () => {
-      applyRatings('#foodList .food-item', snapshot);
-      if (foodSortMode === 'rating') { sortInPlace(snapshot, 'rating'); renderFood(); }
-    },
-    () => foodPlaces === snapshot);
-}
-
-function loadHotelRatings(){
-  const snapshot = hotelResults;
-  return loadRatings(snapshot,
-    () => {
-      applyRatings('#hotelList .food-item', snapshot);
-      if (hotelSortMode === 'rating' && hotelStop) { sortInPlace(snapshot, 'rating'); renderHotels(hotelStop); }
-    },
-    () => hotelResults === snapshot);
 }
 
 async function findGolfCourses(center, radiusKm){
@@ -1235,7 +1281,6 @@ function renderGolf(){
   golfLayer.clearLayers();
   golfCenterLayer.clearLayers();
   golfSelected = -1;
-  sortInPlace(golfCourses, golfSortMode);
 
   if (golfCenter && !golfPin) {
     L.circleMarker([golfCenter.lat, golfCenter.lng], { radius: 6, color: '#f59e0b', weight: 2, fillColor: '#f59e0b', fillOpacity: 0.6 })
@@ -1265,8 +1310,7 @@ function renderGolf(){
   });
 
   golfMap.fitBounds(L.featureGroup(golfLayer.getLayers()).getBounds().pad(0.15));
-  applyRatings('#golfList .golf-item', golfCourses);
-  loadGolfRatings();
+  revealMap(golfMap, 'golfMap');
 }
 
 $('golfList').addEventListener('click', async e => {
@@ -1362,12 +1406,6 @@ $('golfFindName').onclick = async () => {
   }
 };
 $('golfName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFindName').click(); } });
-
-$('golfSort').addEventListener('change', () => {
-  golfSortMode = $('golfSort').value;
-  saveSorts();
-  if (golfCourses.length) { sortInPlace(golfCourses, golfSortMode); renderGolf(); }
-});
 
 /* ---------- 7. places to eat ---------- */
 const foodMap = L.map('foodMap').setView([39.5, -98.35], 4);
@@ -1472,7 +1510,6 @@ function renderFood(){
   const el = $('foodList');
   foodLayer.clearLayers();
   foodSelected = -1;
-  sortInPlace(foodPlaces, foodSortMode);
 
   if (!foodPlaces.length) {
     el.innerHTML = '<p class="muted">No places found — try a wider radius, or search a place by name.</p>';
@@ -1496,8 +1533,7 @@ function renderFood(){
   });
 
   foodMap.fitBounds(L.featureGroup(foodLayer.getLayers()).getBounds().pad(0.15));
-  applyRatings('#foodList .food-item', foodPlaces);
-  loadFoodRatings();
+  revealMap(foodMap, 'foodMap');
 }
 
 $('foodList').addEventListener('click', async e => {
@@ -1571,12 +1607,6 @@ $('foodQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.pre
 $('foodRadius').addEventListener('change', saveRadii);
 $('golfRadius').addEventListener('change', saveRadii);
 
-$('foodSort').addEventListener('change', () => {
-  foodSortMode = $('foodSort').value;
-  saveSorts();
-  if (foodPlaces.length) { sortInPlace(foodPlaces, foodSortMode); renderFood(); }
-});
-
 $('foodFindName').onclick = async () => {
   const btn = $('foodFindName');
   const name = $('foodName').value.trim();
@@ -1631,7 +1661,6 @@ function renderHotels(stop){
       + ' miles — pick a wider radius, or use the booking link.</p>';
     return;
   }
-  sortInPlace(hotelResults, hotelSortMode);
   el.innerHTML = hotelResults.map((h, i) =>
     '<div class="food-item">'
     + '<span class="food-pick" style="cursor:default">'
@@ -1640,8 +1669,6 @@ function renderHotels(stop){
     + '</span>'
     + '<button type="button" class="small" data-hotel-add="' + i + '" aria-label="Add ' + esc(h.name) + ' to the trip">Add to trip</button>'
     + '</div>').join('');
-  applyRatings('#hotelList .food-item', hotelResults);
-  loadHotelRatings();
 }
 
 $('hotelList').addEventListener('click', async e => {
@@ -1683,12 +1710,6 @@ async function findHotelsForStop(stop){
 $('hotelRadius').addEventListener('change', () => {
   saveRadii();
   if (hotelStop) findHotelsForStop(hotelStop);
-});
-
-$('hotelSort').addEventListener('change', () => {
-  hotelSortMode = $('hotelSort').value;
-  saveSorts();
-  if (hotelStop && hotelResults.length) { sortInPlace(hotelResults, hotelSortMode); renderHotels(hotelStop); }
 });
 
 $('hotelClose').onclick = () => {
@@ -1772,8 +1793,8 @@ acSetup($('eventArea'), { cityFirst: true });
 
 /* ---------- boot + live refresh ---------- */
 
-loadSorts();
 loadRadii();
+loadFuel();
 applyState(state);
 loadState();
 
