@@ -740,6 +740,7 @@ function renderStops(){
     li.append(
       stopButton('↑', 'Move ' + s.name + ' up', 'up', s.id, i === 0),
       stopButton('↓', 'Move ' + s.name + ' down', 'down', s.id, i === state.stops.length - 1),
+      stopButton('🗺️', 'Open ' + s.name + ' in a map app', 'map', s.id, false),
       stopButton('🏨', 'Search hotels near ' + s.name, 'hotels', s.id, false),
       stopButton('✕', 'Remove ' + s.name, 'del', s.id, false)
     );
@@ -767,6 +768,7 @@ $('stops').addEventListener('click', e => {
   if (!b) return;
   const i = state.stops.findIndex(s => s.id === b.dataset.id);
   if (i < 0) return;
+  if (b.dataset.act === 'map') { window.open(mapAppUrl(state.stops[i]), '_blank', 'noopener'); return; }
   if (b.dataset.act === 'hotels') { findHotelsForStop(state.stops[i]); return; }
   if (b.dataset.act === 'del') { write('DELETE', '/api/stops/' + encodeURIComponent(b.dataset.id)); return; }
   const j = b.dataset.act === 'up' ? i - 1 : i + 1;
@@ -913,6 +915,22 @@ $('openMaps').onclick = () => {
   const url = routeForMaps();
   if (url) window.open(url, '_blank', 'noopener');
 };
+
+// Hand a place to whichever map app the device opens by itself: Apple Maps on
+// iPhone and iPad, Google Maps elsewhere (Android hands those to the Maps app).
+function mapAppUrl(point, mode){
+  const coords = (+point.lat).toFixed(5) + ',' + (+point.lng).toFixed(5);
+  const ua = navigator.userAgent;
+  const apple = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  if (apple) {
+    return mode === 'directions'
+      ? 'https://maps.apple.com/?daddr=' + coords + '&dirflg=d'
+      : 'https://maps.apple.com/?ll=' + coords + '&q=' + encodeURIComponent(point.name || coords);
+  }
+  return mode === 'directions'
+    ? 'https://www.google.com/maps/dir/?api=1&destination=' + coords + '&travelmode=driving'
+    : 'https://www.google.com/maps/search/?api=1&query=' + coords;
+}
 
 const FUEL_KEY = 'rt_fuel';
 function loadFuel(){
