@@ -363,6 +363,7 @@
       <input id="photoCaption" placeholder="Caption (optional) — e.g. Bethpage at dawn" aria-label="Photo or video caption" />
       <input id="photoPass" placeholder="Enter your name" aria-label="Name required to upload photos" autocomplete="off" style="max-width:280px;flex:none" />
       <button type="button" id="photoUpload">Upload</button>
+      <button type="button" id="photoOptimise" class="ghost">Optimise images</button>
       <button type="button" id="photoClear" class="ghost">Clear album</button>
     </div>
     <div id="photoProgress" hidden>
@@ -1430,9 +1431,56 @@ function photoMsg(t){
 }
 function photoSize(n){ return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
 let activeUpload = null;
+let lastCompression = null;
+
+// Re-encode in the page before the file leaves the device: WebP at 0.92 is
+// visually identical to the eye but usually a fraction of a camera JPEG.
+// Anything that would not shrink is left exactly as it was.
+const IMAGE_MAX_EDGE = 2400;
+const IMAGE_QUALITY = 0.92;
+
+function loadBitmap(file){
+  return new Promise((resolve, reject) => {
+    if (window.createImageBitmap) {
+      createImageBitmap(file).then(resolve, () => fallback());
+    } else fallback();
+    function fallback(){
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('could not read image')); };
+      img.src = url;
+    }
+  });
+}
+
+async function compressImage(file){
+  if (!file || !/^image\/(jpeg|png|webp)$/.test(file.type)) return file;  // gifs stay animated
+  try {
+    const src = await loadBitmap(file);
+    const sw = src.width, sh = src.height;
+    const scale = Math.min(1, IMAGE_MAX_EDGE / Math.max(sw, sh));
+    const blob = await new Promise(resolve => {
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(sw * scale));
+      canvas.height = Math.max(1, Math.round(sh * scale));
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(src, 0, 0, canvas.width, canvas.height);
+      if (src.close) src.close();
+      canvas.toBlob(resolve, 'image/webp', IMAGE_QUALITY);
+    });
+    if (!blob || blob.size >= file.size) return file;
+    return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' });
+  } catch (e) {
+    return file;  // never block an upload over compression
+  }
+}
 
 // fetch() cannot report upload progress, so uploads go through XHR.
-function uploadMedia(file, caption, onProgress){
+async function uploadMedia(file, caption, onProgress){
+  const ready = await compressImage(file);
+  lastCompression = ready === file ? null : { before: file.size, after: ready.size };
+  file = ready;
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     activeUpload = xhr;
@@ -1612,7 +1660,8 @@ $('photoUpload').onclick = async () => {
     applyState(data);
     input.value = '';
     $('photoCaption').value = '';
-    photoMsg((isVideo ? 'Video' : 'Photo') + ' shared with everyone.');
+    photoMsg((isVideo ? 'Video' : 'Photo') + ' shared with everyone'
+      + (lastCompression ? ' — compressed ' + photoSize(lastCompression.before - lastCompression.after) : '') + '.');
   } catch (err) {
     if (err.cancelled) {
       // Cancelling after the file has been sent cannot stop the save, so check what
@@ -1636,6 +1685,48 @@ $('photoClear').onclick = () => {
   if (!confirm('Delete all ' + state.photos.length + ' photos and videos for everyone?\n\nThe files are removed from storage and cannot be recovered.')) return;
   write('DELETE', '/api/photos');
 };
+$('photoOptimise').onclick = async () => {
+  const imgs = state.photos.filter(p => /^image\//.test(p.type || ''));
+  if (!imgs.length) {
+    photoMsg(state.photos.length ? 'Only videos left — those need re-encoding outside the browser.' : 'No photos yet.');
+    return;
+  }
+  if (!confirm('Recompress ' + imgs.length + ' image' + (imgs.length === 1 ? '' : 's') + '?\n\nEach one is downloaded, re-encoded at high quality, re-uploaded, then the original is deleted. Captions are kept.')) return;
+  const btn = $('photoOptimise');
+  btn.disabled = true;
+  let saved = 0, done = 0, skipped = 0;
+  for (const p of imgs) {
+    photoMsg('Optimising ' + (done + skipped + 1) + ' of ' + imgs.length + '…');
+    try {
+      const res = await fetch(API_BASE + '/api/photos/' + encodeURIComponent(p.id), { cache: 'no-store' });
+      if (!res.ok) throw new Error('download failed');
+      const blob = await res.blob();
+      if (!/^image\//.test(blob.type || '')) throw new Error('not an image');
+      const file = new File([blob], 'optimise.' + (blob.type.split('/')[1] || 'jpg'), { type: blob.type });
+      const smaller = await compressImage(file);
+      if (smaller.size >= blob.size) { skipped++; continue; }
+      const form = new FormData();
+      form.append('file', smaller);
+      form.append('caption', p.caption || '');
+      const up = await fetch(API_BASE + '/api/photos', { method: 'POST', body: form });
+      if (!up.ok) throw new Error('upload failed');
+      applyState(await up.json());
+      const del = await fetch(API_BASE + '/api/photos/' + encodeURIComponent(p.id), { method: 'DELETE' });
+      if (!del.ok) throw new Error('could not remove the original');
+      applyState(await del.json());
+      saved += blob.size - smaller.size;
+      done++;
+    } catch (err) {
+      skipped++;
+    }
+  }
+  btn.disabled = false;
+  renderPhotos();
+  photoMsg(done
+    ? 'Optimised ' + done + ' image' + (done === 1 ? '' : 's') + ' — ' + photoSize(saved) + ' saved' + (skipped ? ', ' + skipped + ' left alone' : '') + '.'
+    : 'Nothing needed replacing' + (skipped ? ' — ' + skipped + ' could not be optimised' : '') + '.');
+};
+
 $('photoFilter').addEventListener('change', renderPhotos);
 $('photoGrid').addEventListener('click', e => {
   const b = e.target.closest('button[data-photo]');
@@ -3061,7 +3152,8 @@ $('stopUpload').onclick = async () => {
     applyState(await uploadMedia(file, prefixed, () => {}));
     input.value = '';
     $('stopCaption').value = '';
-    stopPanelMsg('Added to Photos & videos under ' + panelStop.name + '.');
+    stopPanelMsg('Added to Photos & videos under ' + panelStop.name
+      + (lastCompression ? ' — compressed ' + photoSize(lastCompression.before - lastCompression.after) : '') + '.');
   } catch (err) {
     stopPanelMsg(err.message || 'Could not upload that file.');
   } finally {

@@ -1,0 +1,6 @@
+# Local-only working files
+video-backup/
+image-backup/
+
+# Node
+node_modules/
