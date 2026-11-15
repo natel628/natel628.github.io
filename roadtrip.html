@@ -829,6 +829,13 @@ async function loadDayWeather(spans, d0){
   });
   if (!wanted.length) return;
   const dates = wanted.map(w => w.date).sort();
+  // Open-Meteo forecasts about two weeks ahead; a trip further out has no data yet.
+  const lead = Math.round((new Date(dates[0] + 'T12:00:00').getTime() - Date.now()) / 864e5);
+  if (lead > 14 || lead < -1) {
+    const note = lead > 14 ? 'forecast 2 weeks out' : '';
+    document.querySelectorAll('.day-weather').forEach(cell => { cell.textContent = note; });
+    return;
+  }
   const params = new URLSearchParams({
     latitude: wanted.map(w => w.lat.toFixed(4)).join(','),
     longitude: wanted.map(w => w.lng.toFixed(4)).join(','),
