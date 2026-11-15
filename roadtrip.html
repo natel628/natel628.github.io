@@ -145,14 +145,16 @@
   #sideList a:hover { background:#1e293b; }
   .side-foot { margin-top:auto; padding:14px 16px; border-top:1px solid #334155; color:var(--muted); text-decoration:none; font-size:.9rem; }
   #setOpen { position:fixed; right:12px; bottom:12px; z-index:1500; width:48px; height:48px; border-radius:50%; background:#0f172a; border:1px solid #475569; color:var(--text); font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.5); }
-  #settingsBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
-  #settingsBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
-  #settingsModal { position:fixed; z-index:1710; left:50%; top:50%; width:min(500px,93vw); max-height:86vh; display:flex; flex-direction:column; background:#0f172a; border:1px solid #334155; border-radius:14px; box-shadow:0 18px 50px rgba(0,0,0,.6); opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%,-46%); transition:opacity .18s, transform .18s; }
-  #settingsModal.open { opacity:1; visibility:visible; pointer-events:auto; transform:translate(-50%,-50%); }
+  #settingsBackdrop, #tourBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
+  #settingsBackdrop.open, #tourBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
+  #settingsModal, #tourModal { position:fixed; z-index:1710; left:50%; top:50%; width:min(500px,93vw); max-height:86vh; display:flex; flex-direction:column; background:#0f172a; border:1px solid #334155; border-radius:14px; box-shadow:0 18px 50px rgba(0,0,0,.6); opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%,-46%); transition:opacity .18s, transform .18s; }
+  #settingsModal.open, #tourModal.open { opacity:1; visibility:visible; pointer-events:auto; transform:translate(-50%,-50%); }
   .set-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #334155; }
   .set-body { overflow-y:auto; padding:6px 16px 16px; }
   .set-foot { display:flex; gap:8px; justify-content:flex-end; padding:12px 16px; border-top:1px solid #334155; }
   #hiddenNotice { border:1px dashed #475569; border-radius:12px; padding:10px 14px; color:var(--muted); font-size:.85rem; }
+  #tourModal h3 { margin:12px 0 4px; font-size:.95rem; }
+  #tourModal .set-body p { margin:6px 0; }
   body.ts-s { font-size:14.5px; }
   body.ts-l { font-size:18px; }
   main > section { scroll-margin-top:72px; }
@@ -570,6 +572,7 @@
     <label style="display:block;margin:4px 0"><input type="checkbox" id="prefLowData" /> Low-data mode (no video previews or forecasts; Drive auto-send pauses off Wi-Fi)</label>
     <h3 style="margin:12px 0 4px;font-size:.95rem">Startup</h3>
     <label style="display:block;margin:4px 0"><input type="checkbox" id="prefStartCollapsed" /> Start with sections collapsed (takes effect on next load)</label>
+    <div class="row" style="margin-top:8px"><button type="button" id="showTour" class="small ghost">Replay the welcome tour</button></div>
 
     <h3 style="margin:12px 0 4px;font-size:.95rem">Backup &amp; owner</h3>
     <div class="row" style="margin-top:12px">
@@ -595,6 +598,22 @@
     </details>
   </div>
   <div class="set-foot"><button type="button" id="setSave">Save</button><button type="button" id="setClose2" class="ghost">Close</button></div>
+</div>
+<div id="tourBackdrop"></div>
+<div id="tourModal" role="dialog" aria-modal="true" aria-label="What's new" aria-hidden="true">
+  <div class="set-head"><b>🎉 What up you Road Sluts - let's fuckin' go!</b><button type="button" id="tourClose" class="small ghost" aria-label="Close">✕</button></div>
+  <div class="set-body">
+    <p class="muted">Everything on this page is shared — anything anyone adds shows up for the whole crew instantly. Quick tour:</p>
+    <h3>📝 Notes</h3>
+    <p>Type it, hit <b>+ Add note</b>, done — campsites to book, contacts, gear to pack, detours to try.</p>
+    <h3>📸 Photos, videos &amp; Drive</h3>
+    <p>Pick one file or a whole batch, add a caption, and <b>enter your name</b> (kyle, chuck, justin, nate) — that's the gate that keeps randos from uploading shit. Tick auto-send and new clips file themselves to the shared Drive folder; or tap ☁️ on anything later. The folder link sits right under the auto-send box.</p>
+    <h3>🗺️ Stops, food, golf, camping</h3>
+    <p>Set your start and end on the route map, then add stops in between. Search <b>Golf</b>, <b>Food</b>, or <b>Camping</b> and hit add on anything you like — it lands straight on the route. Every stop has ↑ ↓ buttons to rearrange, and the days, drive times, and gas math reshape themselves.</p>
+    <h3>⚙️ Settings</h3>
+    <p>Top bar or sidebar, hide sections you don't care about, bigger text, 24-hour time, remember-your-name, low-data mode for dead zones — plus backups and the Drive owner setup under Backup &amp; owner.</p>
+  </div>
+  <div class="set-foot"><button type="button" id="tourGo">Let's fuckin' go</button></div>
 </div>
 </main>
 
@@ -3565,7 +3584,25 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && $('settingsModal') && $('settingsModal').classList.contains('open')) closeSettings();
+  if (e.key === 'Escape' && $('tourModal') && $('tourModal').classList.contains('open')) closeTour();
 });
+function openTour(){
+  const m = $('tourModal'), b = $('tourBackdrop');
+  if (m) { m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); }
+  if (b) b.classList.add('open');
+  const f = $('tourGo'); if (f) f.focus();
+}
+function closeTour(){
+  const m = $('tourModal'), b = $('tourBackdrop');
+  if (m) { m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); }
+  if (b) b.classList.remove('open');
+  try { localStorage.setItem('rt-tour-v1', 'seen'); } catch (e) {}
+}
+$('tourGo').onclick = closeTour;
+$('tourClose').onclick = closeTour;
+$('tourBackdrop').onclick = closeTour;
+$('showTour').onclick = openTour;
+try { if (!localStorage.getItem('rt-tour-v1')) openTour(); } catch (e) {}
 $('hideAll').onclick = () => {
   const p = devicePrefs();
   p.hidden = NAV_LINKS.map(a => a.getAttribute('href').slice(1));
