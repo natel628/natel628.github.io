@@ -47,6 +47,7 @@
   .prac-grid b { display:block; font-size:1.25rem; color:var(--accent); }
   .prac-grid span { color:var(--muted); font-size:.8rem; }
   .tag { display:inline-block; background:#334155; border-radius:20px; padding:2px 10px; font-size:.8rem; margin:2px 4px 2px 0; }
+  .att { display:inline-block; margin-top:2px; color:var(--muted); font-size:.75rem; font-variant-numeric:tabular-nums; }
   textarea { background:#0f172a; color:var(--text); border:1px solid #475569; border-radius:8px; padding:10px 12px; font:inherit; width:100%; resize:vertical; min-height:76px; }
   #noteList { display:grid; gap:10px; margin-top:12px; }
   .note { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px 14px; }
@@ -360,6 +361,12 @@
       <div class="progress-row"><span id="photoPct">0%</span><span id="photoSent"></span><button type="button" id="photoCancel" class="small ghost">Cancel</button></div>
     </div>
     <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
+    <div class="row" style="margin-top:10px">
+      <label class="muted" for="photoFilter" style="align-self:center">Show</label>
+      <select id="photoFilter" aria-label="Filter photos and videos by stop" style="max-width:300px;flex:none">
+        <option value="">All stops</option>
+      </select>
+    </div>
     <div id="photoGrid"></div>
   </section>
 
@@ -816,6 +823,26 @@ function paintLegs(){
   });
 }
 
+// Notes and media created from a stop panel are saved as "<stop> — <text>", so
+// the stop's name at the front is the link back to the place.
+function stopMatches(text, name){
+  if (typeof text !== 'string' || !name) return false;
+  return text === name || text.indexOf(name + ' — ') === 0 || text.indexOf(name + ' - ') === 0;
+}
+function stopTally(name){
+  const notes = (state.notes || []).filter(n => !(n.body || '').startsWith('\u27e6rt-data\u27e7') && stopMatches(n.body, name)).length;
+  const media = (state.photos || []).filter(p => stopMatches(p.caption, name)).length;
+  return { notes, media };
+}
+function attBadge(name){
+  const t = stopTally(name);
+  if (!t.notes && !t.media) return '';
+  const bits = [];
+  if (t.notes) bits.push('\ud83d\udcdd ' + t.notes);
+  if (t.media) bits.push('\ud83d\udcf8 ' + t.media);
+  return ' <span class="att" title="' + t.notes + ' note(s), ' + t.media + ' photo/video(s) for this stop">' + bits.join(' · ') + '</span>';
+}
+
 function updateTripStats(){
   if (state.stops.length < 2) return;
   const total = segMiles(0, state.stops.length - 1);
@@ -968,7 +995,8 @@ function renderStops(){
       + '<span style="flex:1">' + esc(s.name)
       + (isStart ? ' <span class="tag">start</span>' : '')
       + (isEnd ? ' <span class="tag">end</span>' : '')
-      + '<br><span class="muted">' + s.lat.toFixed(3) + ', ' + s.lng.toFixed(3) + '</span></span>';
+      + '<br><span class="muted">' + s.lat.toFixed(3) + ', ' + s.lng.toFixed(3) + '</span>'
+      + attBadge(s.name) + '</span>';
     li.append(
       stopButton('↑', 'Move ' + s.name + ' up', 'up', s.id, i === 0),
       stopButton('↓', 'Move ' + s.name + ' down', 'down', s.id, i === state.stops.length - 1),
@@ -1413,13 +1441,29 @@ function uploadMedia(file, caption, onProgress){
     xhr.send(form);
   });
 }
+// Anything filed from a stop panel starts with the stop's name, so the prefix
+// is what ties a note or a clip back to the place.
+function stopsWithMedia(){
+  return state.stops.filter(s => (state.photos || []).some(p => stopMatches(p.caption, s.name)));
+}
 function renderPhotos(){
   const el = $('photoGrid');
+  const sel = $('photoFilter');
+  const keep = sel.value;
+  sel.innerHTML = '<option value="">All stops</option>'
+    + stopsWithMedia().map(s => '<option value="' + esc(s.name) + '">' + esc(s.name) + '</option>').join('');
+  sel.value = [...sel.options].some(o => o.value === keep) ? keep : '';
+  const filter = sel.value;
   if (!state.photos.length) {
     el.innerHTML = '<p class="muted">Nothing shared yet — upload the first photo or video above.</p>';
     return;
   }
-  el.innerHTML = state.photos.map(p =>
+  const shown = filter ? state.photos.filter(p => stopMatches(p.caption, filter)) : state.photos;
+  if (!shown.length) {
+    el.innerHTML = '<p class="muted">Nothing filed under ' + esc(filter) + ' yet.</p>';
+    return;
+  }
+  el.innerHTML = shown.map(p =>
     '<figure class="photo">'
     + ((p.type || '').indexOf('video/') === 0
       ? '<div class="video-wrap"><button type="button" class="video-tile" data-src="' + esc(API_BASE + '/api/photos/' + encodeURIComponent(p.id)) + '" data-type="' + esc(p.type || 'video/mp4') + '" aria-label="Play ' + esc(p.caption || 'trip video') + ' (' + esc(photoSize(p.size || 0)) + ')"><span class="video-play" aria-hidden="true">▶</span><span class="video-hint">' + esc(((p.type || '').split('/')[1] || 'video').toUpperCase()) + ' · ' + esc(photoSize(p.size || 0)) + ' — tap to play</span></button>'
@@ -1580,6 +1624,7 @@ $('photoClear').onclick = () => {
   if (!confirm('Delete all ' + state.photos.length + ' photos and videos for everyone?\n\nThe files are removed from storage and cannot be recovered.')) return;
   write('DELETE', '/api/photos');
 };
+$('photoFilter').addEventListener('change', renderPhotos);
 $('photoGrid').addEventListener('click', e => {
   const b = e.target.closest('button[data-photo]');
   if (b) {
