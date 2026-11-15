@@ -394,9 +394,9 @@
     <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
     <details id="driveBox" style="margin-top:8px">
       <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
-      <p class="muted" style="margin:6px 0 0;font-size:.8rem">You set this up once. Anyone signed into Google can also send straight from the page — everyone else's clips land in the folder automatically, no account needed on their end.</p>
+      <p class="muted" style="margin:6px 0 0;font-size:.8rem">Nobody who taps ☁️ signs in to anything — the relay below uploads as you. Set it up once and the button just works for everyone.</p>
       <div class="row" style="margin-top:8px">
-        <input id="driveClient" placeholder="Google OAuth client ID (…apps.googleusercontent.com)" aria-label="Google OAuth client ID" autocomplete="off" style="flex:1;min-width:200px" />
+        <input id="driveRelay" placeholder="Relay web-app URL (…/exec)" aria-label="Drive relay web-app URL" autocomplete="off" style="flex:1;min-width:200px" />
       </div>
       <div class="row" style="margin-top:8px">
         <input id="driveFolder" placeholder="Drive folder link or ID" aria-label="Google Drive folder link or ID" autocomplete="off" style="flex:1;min-width:200px" />
@@ -531,7 +531,6 @@
   </figure>
 </div>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -886,7 +885,7 @@ function stopMatches(text, name){
   return text === name || text.indexOf(name + ' — ') === 0 || text.indexOf(name + ' - ') === 0;
 }
 function stopTally(name){
-  const notes = (state.notes || []).filter(n => !(n.body || '').startsWith('\u27e6rt-data\u27e7') && stopMatches(n.body, name)).length;
+  const notes = (state.notes || []).filter(n => !(n.body || '').startsWith('\u27e6rt-data\u27e7') && !(n.body || '').startsWith('\u27e6drive-up\u27e7') && stopMatches(n.body, name)).length;
   const media = (state.photos || []).filter(p => stopMatches(p.caption, name)).length;
   return { notes, media };
 }
@@ -1436,7 +1435,7 @@ function renderNotes(){
   const el = $('noteList');
   // The planning data (budget, RV profile) lives in one note that must never
   // show up as a note.
-  const shown = state.notes.filter(n => String(n.body || '').indexOf('\u27e6rt-data\u27e7') !== 0);
+  const shown = state.notes.filter(n => String(n.body || '').indexOf('\u27e6rt-data\u27e7') !== 0 && String(n.body || '').indexOf('\u27e6drive-up\u27e7') !== 0);
   if (!shown.length) {
     el.innerHTML = '<p class="muted">No notes yet — jot down campsites, contacts, or gear to pack.</p>';
     return;
@@ -1880,94 +1879,64 @@ function driveFileFor(id){ return (extra && extra.driveFiles && extra.driveFiles
 function driveControl(p){
   if (isPoster(p)) return '';
   if (driveFileFor(p.id)) return ' <span class="tag" title="Backed up to Google Drive">☁️ Drive</span>';
-  // No client ID yet means nobody can send — hide the button, not a dead end.
-  if (!((extra && extra.drive && extra.drive.clientId) || '')) return '';
+  // No relay yet means nobody can send — hide the button, not a dead end.
+  if (!((extra && extra.drive && extra.drive.relayUrl) || '')) return '';
   return ' <button type="button" class="small ghost" data-drive="' + esc(p.id) + '" aria-label="Send to Google Drive">☁️</button>';
 }
 
-let driveToken = null, driveTokenExp = 0;
-function ensureDriveToken(){
-  const cfg = (extra && extra.drive) || {};
-  if (!cfg.clientId) return Promise.resolve(null);
-  if (driveToken && Date.now() < driveTokenExp - 60000) return Promise.resolve(driveToken);
-  if (!window.google || !google.accounts || !google.accounts.oauth2) return Promise.resolve(null);
-  return new Promise(resolve => {
+// Handoff notes the relay answers through: the page cannot read the relay's
+// replies directly, so upload slots travel through shared state instead.
+var DRIVE_SESSION_PREFIX = '\u27e6drive-up\u27e7';
+async function waitDriveSession(videoId, timeoutMs){
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeoutMs) {
     try {
-      const client = google.accounts.oauth2.initTokenClient({
-        client_id: cfg.clientId,
-        scope: 'https://www.googleapis.com/auth/drive.file',
-        callback: resp => {
-          if (resp && resp.access_token) {
-            driveToken = resp.access_token;
-            driveTokenExp = Date.now() + (+resp.expires_in || 3600) * 1000;
-            resolve(driveToken);
-          } else resolve(null);
-        },
-        error_callback: () => resolve(null)
-      });
-      // Account chooser, not a login form: everyone is already signed into
-      // Google on their phone, so sending is one tap after the first approval.
-      client.requestAccessToken({ prompt: driveToken ? '' : 'select_account' });
-    } catch (e) { resolve(null); }
-  });
-}
-
-const DRIVE_EXT = { 'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/webm': '.webm', 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' };
-async function driveUploadFile(token, folderId, item, blob){
-  const base = (((item.caption || '').trim() || 'trip upload').replace(/[\/\\]+/g, '-'));
-  const ext = DRIVE_EXT[item.type] || '';
-  const name = ext && base.toLowerCase().endsWith(ext) ? base : base + ext;
-  const meta = { name, mimeType: item.type || 'application/octet-stream' };
-  if (folderId) meta.parents = [folderId];
-  const init = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json; charset=UTF-8' },
-    body: JSON.stringify(meta)
-  });
-  if (!init.ok) {
-    if (init.status === 401 || init.status === 403) throw new Error('Google refused (' + init.status + ') — sign in with the account that owns the folder.');
-    throw new Error('Google refused the upload (' + init.status + ').');
+      const st = await api('GET', '/api/state');
+      applyState(st);
+      const hit = (st.notes || []).map(n => {
+        try { return JSON.parse(String(n.body || '').slice(DRIVE_SESSION_PREFIX.length)); }
+        catch (e) { return null; }
+      }).find(s => s && s.videoId === videoId && (Date.now() - (+s.at || 0)) < 10 * 60 * 1000);
+      if (hit && hit.session) return hit.session;
+    } catch (e) { /* keep waiting through blips */ }
+    await new Promise(r => setTimeout(r, 2500));
   }
-  const session = init.headers.get('Location');
-  if (!session) throw new Error('Google did not return an upload address.');
-  // One PUT carries the whole clip; progress is not reported, so this just takes a while.
-  const put = await fetch(session, { method: 'PUT', body: blob });
-  if (put.status !== 200 && put.status !== 201) {
-    if (put.status === 401 || put.status === 403) throw new Error('Google refused (' + put.status + ') — sign in with the account that owns the folder.');
-    throw new Error('Drive upload failed (' + put.status + ').');
-  }
-  const done = await put.json();
-  if (!done || !done.id) throw new Error('Drive did not confirm the file.');
-  return done.id;
+  return null;
 }
 
 async function sendToDrive(id, btn){
   const item = (state.photos || []).find(p => p.id === id);
   if (!item) return;
   const cfg = (extra && extra.drive) || {};
-  if (!cfg.clientId) { photoMsg('Google Drive backup is not set up yet.'); return; }
-  if (!cfg.folderId) { photoMsg('Save your Drive folder in “Google Drive backup” below first.'); return; }
+  // The relay runs as you, so whoever taps this never signs in to anything.
+  if (!cfg.relayUrl) { photoMsg('Google Drive backup is not switched on yet — the relay link goes in “Google Drive backup” below.'); return; }
   if (driveFileFor(id)) { renderPhotos(); return; }
   if (btn) btn.disabled = true;
   try {
-    photoMsg('Talking to Google…');
-    const token = await ensureDriveToken();
-    if (!token) { photoMsg('Google sign-in was cancelled or failed — nothing was sent.'); return; }
+    photoMsg('Asking your Drive to take it…');
+    await fetch(cfg.relayUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'init', videoId: id }) });
+    const session = await waitDriveSession(id, 60000);
+    if (!session) { photoMsg('Your Drive did not answer — the file is still here, try again in a bit.'); return; }
     photoMsg('Fetching ' + photoSize(item.size || 0) + '…');
     const blob = await (await fetch(API_BASE + '/api/photos/' + encodeURIComponent(id), { cache: 'no-store' })).blob();
     photoMsg('Uploading to your Drive folder — leave this open…');
-    const fileId = await driveUploadFile(token, cfg.folderId, item, blob);
-    const entry = { id: fileId, at: Date.now() };
-    extra.driveFiles = extra.driveFiles || {};
-    extra.driveFiles[id] = entry;
-    await saveExtras();
-    // A refresh racing the save rebuilds extras from the old note; re-assert.
-    extra.driveFiles = extra.driveFiles || {};
-    extra.driveFiles[id] = entry;
+    // Upload slots need no login: the address itself is the permission.
+    const put = await fetch(session, { method: 'PUT', body: blob });
+    if (put.status !== 200 && put.status !== 201) { photoMsg('Drive refused the file (' + put.status + ') — it is still here.'); return; }
+    const done = await put.json().catch(() => null);
+    if (!done || !done.id) { photoMsg('Drive gave no confirmation — check the folder before retrying.'); return; }
+    await fetch(cfg.relayUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'mark', videoId: id, fileId: done.id }) });
+    const t0 = Date.now();
+    while (!driveFileFor(id) && Date.now() - t0 < 30000) {
+      await new Promise(r => setTimeout(r, 2000));
+      try { applyState(await api('GET', '/api/state')); } catch (e) { /* keep waiting */ }
+    }
     renderPhotos();
-    photoMsg('☁️ Backed up to your Drive — the badge is saved for everyone.');
+    photoMsg(driveFileFor(id)
+      ? '☁️ Backed up to your Drive — the badge is saved for everyone.'
+      : 'The file landed — if no badge shows in a minute, check the Drive folder.');
   } catch (err) {
-    photoMsg(err && err.message ? err.message : 'Drive upload failed — the video is still here.');
+    photoMsg(err && err.message ? err.message : 'Drive upload failed — the file is still here.');
   } finally {
     if (btn && btn.isConnected) btn.disabled = false;
   }
@@ -1979,14 +1948,14 @@ function parseDriveFolder(v){
   return m ? m[1] : v;
 }
 $('driveSave').onclick = async () => {
-  const clientId = ($('driveClient').value || '').trim();
+  const relayUrl = ($('driveRelay').value || '').trim();
   const folderId = parseDriveFolder($('driveFolder').value);
   extra.drive = extra.drive || {};
-  extra.drive.clientId = clientId;
+  extra.drive.relayUrl = relayUrl;
   extra.drive.folderId = folderId;
   await saveExtras();
-  $('driveMsg').textContent = clientId && folderId
-    ?     'Saved for everyone. Anyone sending from the page signs in with their own Google account, so share the folder with them as Editors if they will — the automatic backup needs no sharing.'
+  $('driveMsg').textContent = relayUrl && folderId
+    ? 'Saved for everyone — ☁️ now uploads as you, no sign-in for anyone.'
     : 'Saved. Both fields are needed before sending works.';
   setTimeout(() => { const m = $('driveMsg'); if (m && m.textContent.indexOf('Saved') === 0) m.textContent = ''; }, 10000);
 };
@@ -3236,8 +3205,8 @@ function syncExtraInputs(){
   const bg = $('budGas');
   if (bg && bg !== document.activeElement && $('fuelPrice') && bg.value !== $('fuelPrice').value) bg.value = $('fuelPrice').value;
   const dd = (extra && extra.drive) || {};
-  const dc = $('driveClient'), df = $('driveFolder');
-  if (dc && dc !== document.activeElement && dc.value !== (dd.clientId || '')) dc.value = dd.clientId || '';
+  const dr = $('driveRelay'), df = $('driveFolder');
+  if (dr && dr !== document.activeElement && dr.value !== (dd.relayUrl || '')) dr.value = dd.relayUrl || '';
   if (df && df !== document.activeElement && df.value !== (dd.folderId || '')) df.value = dd.folderId || '';
   const dl = $('driveOpen');
   if (dl) {
