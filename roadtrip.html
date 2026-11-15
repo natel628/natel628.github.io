@@ -174,7 +174,9 @@
     #stops li > span{min-width:0;}
     /* Phone: the buttons drop to their own row under the name. */
     #stops .stop-info{flex:1 1 100%;}
-    #stops .stop-actions{flex:1 1 100%; margin-left:0;}
+    #stops .stop-actions{flex:1 1 100%; margin-left:0; gap:4px;}
+    /* Six actions on one row keeps the list short; 44px stays a fair tap target. */
+    #stops .stop-actions button{padding:7px 8px; min-width:44px;}
     #stops .col, #stops .num{align-self:flex-start;}
     /* One thumb, one column: the planning cards stack and controls get taller. */
     .card{padding:14px;}
