@@ -218,6 +218,7 @@
         <option value="rating">Best rated first</option>
       </select>
     </div>
+    <p class="muted" id="ratingNote" hidden style="margin:10px 0 0">★ Rating dots are switched off — they need a Google Places key stored as GOOGLE_PLACES_API_KEY in the site settings. Golf, food and hotel searches all work without it.</p>
     <div class="row" style="margin-top:8px">
       <input id="golfName" placeholder="Or search a course by name — e.g. Pebble Beach" aria-label="Search a golf course by name" />
       <button type="button" id="golfFindName">Find by name</button>
@@ -1127,6 +1128,11 @@ function applyRatings(selector, places){
 }
 
 // Ratings come through the Worker in batches and stay cached for two months.
+function setRatingNote(configured){
+  const note = $('ratingNote');
+  if (note) note.hidden = !!configured;
+}
+
 async function loadRatings(places, apply, isCurrent){
   const wanted = places.filter(p => !placeRatings.has(ratingKeyOf(p))).slice(0, 24);
   if (!wanted.length) return;
@@ -1137,7 +1143,9 @@ async function loadRatings(places, apply, isCurrent){
         places: wanted.slice(i, i + 12).map(p => ({ name: p.name, lat: p.lat, lng: p.lng }))
       });
     } catch (e) { return; }
-    if (!data || !data.configured) return;
+    if (!data) return;
+    setRatingNote(data.configured);
+    if (!data.configured) return;
     if (isCurrent && !isCurrent()) return;
     for (const r of data.ratings || []) if (typeof r.rating === 'number') placeRatings.set(r.k, r);
     apply();
