@@ -2783,11 +2783,15 @@ bindExtra('rvMpg', ['rv', 'mpg'], v => +v || 0);
 bindExtra('rvWater', ['rv', 'water'], v => +v || 0);
 bindExtra('rvPropane', ['rv', 'propane'], v => +v || 0);
 $('fuelPrice').addEventListener('input', () => { renderGlance(); renderBudget(); });
-$('planDepart').addEventListener('change', () => {
-  extra.depart = $('planDepart').value || '08:00';
+// input as well as change: a phone time picker commits on input, and desktop
+// typing only fires change on blur.
+['input', 'change'].forEach(evt => $('planDepart').addEventListener(evt, () => {
+  const v = $('planDepart').value;
+  if (!/^\d{1,2}:\d{2}$/.test(v || '')) return;
+  extra.depart = v;
   queueExtraSave();
   renderPlan();
-});
+}));
 
 /* ---------- backup ---------- */
 $('backupExport').onclick = () => {
