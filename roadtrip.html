@@ -381,6 +381,17 @@
     </div>
     <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
     <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
+    <details id="driveBox" style="margin-top:8px">
+      <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive backup</summary>
+      <div class="row" style="margin-top:8px">
+        <input id="driveClient" placeholder="Google OAuth client ID (…apps.googleusercontent.com)" aria-label="Google OAuth client ID" autocomplete="off" style="flex:1;min-width:200px" />
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="driveFolder" placeholder="Drive folder link or ID" aria-label="Google Drive folder link or ID" autocomplete="off" style="flex:1;min-width:200px" />
+        <button type="button" id="driveSave">Save</button>
+      </div>
+      <p class="muted" id="driveMsg" style="margin:6px 0 0"></p>
+    </details>
     <div class="row" style="margin-top:10px">
       <label class="muted" for="photoFilter" style="align-self:center">Show</label>
       <select id="photoFilter" aria-label="Filter photos and videos by stop" style="max-width:300px;flex:none">
@@ -498,6 +509,7 @@
   </section>
 </main>
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -1552,6 +1564,7 @@ function renderPhotos(){
       + '<video controls playsinline preload="none" hidden aria-label="' + esc(p.caption || 'Trip video') + '"></video></div>'
       : '<img src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" alt="' + esc(p.caption || 'Trip photo') + '" loading="lazy" />')
     + '<figcaption class="photo-meta"><span>' + esc(p.caption || 'Untitled') + ' · ' + esc(photoSize(p.size || 0)) + '</span>'
+    + driveControl(p)
     + '<button type="button" class="small ghost" data-photo="' + esc(p.id) + '" aria-label="Delete photo ' + esc(p.caption || '') + '">✕</button></figcaption>'
     + '</figure>').join('');
   observeVideoTiles();
@@ -1782,14 +1795,130 @@ $('photoGrid').addEventListener('click', async e => {
     const target = (state.photos || []).find(p => p.id === id);
     const poster = target && (target.type || '').indexOf('video/') === 0
       ? (state.photos || []).find(q => (q.caption || '') === 'poster:' + id) : null;
-    if (!confirm('Delete this photo or video for everyone?\n\nIt is removed from storage and cannot be recovered.')) return;
+    const kept = (target && (target.type || '').indexOf('video/') === 0) ? driveFileFor(id) : null;
+    if (!confirm('Delete this photo or video for everyone?\n\nIt is removed from storage and cannot be recovered.' + (kept ? '\n\nYour Google Drive copy stays put.' : ''))) return;
     const ok = await write('DELETE', '/api/photos/' + encodeURIComponent(id));
     if (ok && poster) write('DELETE', '/api/photos/' + encodeURIComponent(poster.id));
+    if (ok && extra && extra.driveFiles && extra.driveFiles[id]) { delete extra.driveFiles[id]; queueExtraSave(); }
     return;
   }
+  const d = e.target.closest('button[data-drive]');
+  if (d) { sendVideoToDrive(d.dataset.drive, d); return; }
   const t = e.target.closest('button.video-tile');
   if (t) playTileVideo(t);
 });
+
+/* ---------- Google Drive backup for videos ---------- */
+// Videos are the bulk of the album. Each video can be filed to your Drive
+// folder straight from the page (Google sign-in, their servers, no middleman)
+// and the page remembers which ones made it, with a badge everyone can see.
+function driveFileFor(id){ return (extra && extra.driveFiles && extra.driveFiles[id]) || null; }
+function driveControl(p){
+  if ((p.type || '').indexOf('video/') !== 0 || isPoster(p)) return '';
+  if (driveFileFor(p.id)) return ' <span class="tag" title="Backed up to Google Drive">☁️ Drive</span>';
+  return ' <button type="button" class="small ghost" data-drive="' + esc(p.id) + '" aria-label="Send to Google Drive">☁️</button>';
+}
+
+let driveToken = null, driveTokenExp = 0;
+function ensureDriveToken(){
+  const cfg = (extra && extra.drive) || {};
+  if (!cfg.clientId) return Promise.resolve(null);
+  if (driveToken && Date.now() < driveTokenExp - 60000) return Promise.resolve(driveToken);
+  if (!window.google || !google.accounts || !google.accounts.oauth2) return Promise.resolve(null);
+  return new Promise(resolve => {
+    try {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: cfg.clientId,
+        scope: 'https://www.googleapis.com/auth/drive.file',
+        callback: resp => {
+          if (resp && resp.access_token) {
+            driveToken = resp.access_token;
+            driveTokenExp = Date.now() + (+resp.expires_in || 3600) * 1000;
+            resolve(driveToken);
+          } else resolve(null);
+        },
+        error_callback: () => resolve(null)
+      });
+      client.requestAccessToken({ prompt: driveToken ? '' : 'consent' });
+    } catch (e) { resolve(null); }
+  });
+}
+
+async function driveUploadFile(token, folderId, video, blob){
+  const base = ((video.caption || '').trim() || 'trip video');
+  const name = /\.(mp4|mov|webm)$/i.test(base) ? base : base + '.mp4';
+  const meta = { name, mimeType: video.type || 'video/mp4' };
+  if (folderId) meta.parents = [folderId];
+  const init = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json; charset=UTF-8' },
+    body: JSON.stringify(meta)
+  });
+  if (!init.ok) {
+    if (init.status === 401 || init.status === 403) throw new Error('Google refused (' + init.status + ') — sign in with the account that owns the folder.');
+    throw new Error('Google refused the upload (' + init.status + ').');
+  }
+  const session = init.headers.get('Location');
+  if (!session) throw new Error('Google did not return an upload address.');
+  // One PUT carries the whole clip; progress is not reported, so this just takes a while.
+  const put = await fetch(session, { method: 'PUT', body: blob });
+  if (put.status !== 200 && put.status !== 201) {
+    if (put.status === 401 || put.status === 403) throw new Error('Google refused (' + put.status + ') — sign in with the account that owns the folder.');
+    throw new Error('Drive upload failed (' + put.status + ').');
+  }
+  const done = await put.json();
+  if (!done || !done.id) throw new Error('Drive did not confirm the file.');
+  return done.id;
+}
+
+async function sendVideoToDrive(id, btn){
+  const video = (state.photos || []).find(p => p.id === id);
+  if (!video) return;
+  const cfg = (extra && extra.drive) || {};
+  if (!cfg.clientId || !cfg.folderId) { photoMsg('Open “Google Drive backup” below and save your client ID and folder first.'); return; }
+  if (driveFileFor(id)) { renderPhotos(); return; }
+  if (btn) btn.disabled = true;
+  try {
+    photoMsg('Talking to Google…');
+    const token = await ensureDriveToken();
+    if (!token) { photoMsg('Google sign-in was cancelled or failed — nothing was sent.'); return; }
+    photoMsg('Fetching ' + photoSize(video.size || 0) + '…');
+    const blob = await (await fetch(API_BASE + '/api/photos/' + encodeURIComponent(id), { cache: 'no-store' })).blob();
+    photoMsg('Uploading to your Drive folder — leave this open…');
+    const fileId = await driveUploadFile(token, cfg.folderId, video, blob);
+    const entry = { id: fileId, at: Date.now() };
+    extra.driveFiles = extra.driveFiles || {};
+    extra.driveFiles[id] = entry;
+    await saveExtras();
+    // A refresh racing the save rebuilds extras from the old note; re-assert.
+    extra.driveFiles = extra.driveFiles || {};
+    extra.driveFiles[id] = entry;
+    renderPhotos();
+    photoMsg('☁️ Backed up to your Drive — the badge is saved for everyone.');
+  } catch (err) {
+    photoMsg(err && err.message ? err.message : 'Drive upload failed — the video is still here.');
+  } finally {
+    if (btn && btn.isConnected) btn.disabled = false;
+  }
+}
+
+function parseDriveFolder(v){
+  v = (v || '').trim();
+  const m = v.match(/folders\/([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : v;
+}
+$('driveSave').onclick = async () => {
+  const clientId = ($('driveClient').value || '').trim();
+  const folderId = parseDriveFolder($('driveFolder').value);
+  extra.drive = extra.drive || {};
+  extra.drive.clientId = clientId;
+  extra.drive.folderId = folderId;
+  await saveExtras();
+  $('driveMsg').textContent = clientId && folderId
+    ? 'Saved for everyone. Each person signs in with their own Google account — share the folder with them as Editors or only your sign-in can write to it.'
+    : 'Saved. Both fields are needed before sending works.';
+  setTimeout(() => { const m = $('driveMsg'); if (m && m.textContent.indexOf('Saved') === 0) m.textContent = ''; }, 10000);
+};
 
 /* ---------- 7. golf courses ---------- */
 const golfMap = L.map('golfMap').setView([39.5, -98.35], 4);
@@ -2814,7 +2943,9 @@ function extraDefaults(){
     depart: '08:00',
     budget: { lodging: 0, food: 0, tolls: 0, propane: 0, fun: 0, misc: 0 },
     players: { Nate: 17.3, Kyle: 24.0, Chuck: 31, Justin: 10.4 },
-    bets: []
+    bets: [],
+    drive: { clientId: '', folderId: '' },
+    driveFiles: {}
   };
 }
 
@@ -2838,7 +2969,9 @@ function readExtras(){
     depart: /^\d{1,2}:\d{2}$/.test(data.depart || '') ? data.depart : '08:00',
     budget: Object.assign(d.budget, data.budget || {}),
     players: Object.assign(d.players, data.players || {}),
-    bets: Array.isArray(data.bets) ? data.bets : []
+    bets: Array.isArray(data.bets) ? data.bets : [],
+    drive: Object.assign(d.drive, data.drive || {}),
+    driveFiles: (data.driveFiles && typeof data.driveFiles === 'object') ? data.driveFiles : {}
   };
 }
 
@@ -3031,6 +3164,10 @@ function syncExtraInputs(){
   if (pd && pd !== document.activeElement && pd.value !== dv) pd.value = dv;
   const bg = $('budGas');
   if (bg && bg !== document.activeElement && $('fuelPrice') && bg.value !== $('fuelPrice').value) bg.value = $('fuelPrice').value;
+  const dd = (extra && extra.drive) || {};
+  const dc = $('driveClient'), df = $('driveFolder');
+  if (dc && dc !== document.activeElement && dc.value !== (dd.clientId || '')) dc.value = dd.clientId || '';
+  if (df && df !== document.activeElement && df.value !== (dd.folderId || '')) df.value = dd.folderId || '';
 }
 function bindExtra(id, path, parse){
   $(id).addEventListener('input', e => {
@@ -3120,7 +3257,9 @@ $('backupImport').addEventListener('change', async e => {
     extra = {
       rv: Object.assign(d.rv, ex.rv || {}),
       travelers: +ex.travelers > 0 ? +ex.travelers : 2,
-      budget: Object.assign(d.budget, ex.budget || {})
+      budget: Object.assign(d.budget, ex.budget || {}),
+      drive: Object.assign(d.drive, ex.drive || {}),
+      driveFiles: (ex.driveFiles && typeof ex.driveFiles === 'object') ? ex.driveFiles : {}
     };
     syncExtraInputs();
     await saveExtras();
