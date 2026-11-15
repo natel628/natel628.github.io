@@ -1547,7 +1547,19 @@ function renderGolf(){
       .on('click', () => selectGolf(i, false));
   });
 
-  golfMap.fitBounds(L.featureGroup(golfLayer.getLayers()).getBounds().pad(0.15));
+  // Name searches match courses worldwide — fitting all of them zooms out to
+  // the whole planet. If the results span a wide area, show the top match
+  // instead; tapping any list row zooms to that course.
+  const courseLayers = golfLayer.getLayers();
+  if (courseLayers.length === 1) {
+    golfMap.setView([golfCourses[0].lat, golfCourses[0].lng], 14);
+  } else {
+    const bounds = L.featureGroup(courseLayers).getBounds().pad(0.15);
+    const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
+    const spanMi = hav({ lat: sw.lat, lng: sw.lng }, { lat: ne.lat, lng: ne.lng });
+    if (spanMi > 300) golfMap.setView([golfCourses[0].lat, golfCourses[0].lng], 12);
+    else golfMap.fitBounds(bounds);
+  }
   revealMap(golfMap, 'golfMap');
 }
 
