@@ -87,7 +87,7 @@
   .progress-row { display:flex; gap:12px; align-items:center; margin-top:6px; font-size:.8rem; color:var(--muted); flex-wrap:wrap; }
   .progress-row #photoPct { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
   @media (prefers-reduced-motion: reduce) { .progress-fill { transition:none; } }
-  #golfMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
+  #golfMap, #foodMap, #campMap, #hotelMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
   #golfList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .golf-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
   .golf-item.sel { border-color:var(--green); }
@@ -95,9 +95,8 @@
   .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
   #golfMsg:empty { display:none; }
   #golfMsg { font-size:.85rem; margin-top:8px; }
-  #foodMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
-  #golfMap, #foodMap { display:none; }
-  #golfMap.show, #foodMap.show { display:block; }
+  #golfMap, #foodMap, #campMap, #hotelMap { display:none; }
+  #golfMap.show, #foodMap.show, #campMap.show, #hotelMap.show { display:block; }
   .day.long { border-left-color:#f59e0b; }
   .day-weather { font-size:.8rem; font-weight:600; color:var(--muted); margin-left:6px; }
   .warn-text { color:#f59e0b; font-size:.8rem; margin-top:6px; }
@@ -109,7 +108,6 @@
   .food-sub { color:var(--muted); font-size:.78rem; font-weight:400; }
   #foodMsg:empty { display:none; }
   #foodMsg { font-size:.85rem; margin-top:8px; }
-  #campMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
   #campList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   #campMsg:empty { display:none; }
   #campMsg { font-size:.85rem; margin-top:8px; }
@@ -160,7 +158,9 @@
   .budget-row b { color:var(--accent); font-variant-numeric:tabular-nums; }
   .budget-row.total { border-color:#7c5a13; }
   .collapse-btn { float:right; background:transparent; border:1px solid #475569; color:var(--muted); border-radius:8px; padding:1px 9px; font-size:.85rem; cursor:pointer; }
-  .card.collapsed > *:not(h2) { display:none; }
+  /* ID and inline display rules outrank a plain class selector, so the lists
+     stayed visible when their card was collapsed. !important wins it back. */
+  .card.collapsed > *:not(h2) { display:none !important; }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior:smooth; } }
   /* Overview and Notes sit side by side on a wide screen, stacked on a phone. */
   .top-pair { display:grid; gap:24px; align-items:start; }
@@ -186,6 +186,8 @@
     input,select,button{font-size:16px;}
     button, .small{padding:10px 12px;}
     .secnav a{font-size:.8rem;padding:5px 9px;}
+    /* Thirteen sections fit a phone bar as icons; labels return on desktop. */
+    .secnav a span{display:none;}
   }
 </style>
 </head>
@@ -199,21 +201,21 @@
 <nav class="secnav" aria-label="Jump to a section">
   <div class="secnav-inner">
     <span class="secnav-label">Plan</span>
-    <a href="#sec-glance">📊 Overview</a>
-    <a href="#sec-notes">📝 Notes</a>
-    <a href="#sec-route">🗺️ Map</a>
-    <a href="#sec-itinerary">📅 Itinerary</a>
-    <a href="#sec-budget">💵 Budget</a>
-    <a href="#sec-rv">🚐 RV</a>
-    <a href="#sec-practical">🧰 Estimates</a>
-    <a href="#sec-photos">📸 Photos</a>
+    <a href="#sec-glance" aria-label="Overview">📊 <span>Overview</span></a>
+    <a href="#sec-notes" aria-label="Notes">📝 <span>Notes</span></a>
+    <a href="#sec-route" aria-label="Route map">🗺️ <span>Map</span></a>
+    <a href="#sec-itinerary" aria-label="Itinerary">📅 <span>Itinerary</span></a>
+    <a href="#sec-budget" aria-label="Budget">💵 <span>Budget</span></a>
+    <a href="#sec-rv" aria-label="RV profile">🚐 <span>RV</span></a>
+    <a href="#sec-practical" aria-label="Practical estimates">🧰 <span>Estimates</span></a>
+    <a href="#sec-photos" aria-label="Photos and videos">📸 <span>Photos</span></a>
+    <a href="#sec-bets" aria-label="Bets">🏆 <span>Bets</span></a>
     <span class="secnav-sep" aria-hidden="true"></span>
     <span class="secnav-label">Find</span>
-    <a href="#sec-golf">⛳ Golf</a>
-    <a href="#sec-food">🍽️ Food</a>
-    <a href="#sec-camp">🏕️ Camping</a>
-    <a href="#sec-events">🏟️ Events</a>
-    <a href="#sec-bets">🏆 Bets</a>
+    <a href="#sec-golf" aria-label="Golf courses">⛳ <span>Golf</span></a>
+    <a href="#sec-food" aria-label="Places to eat">🍽️ <span>Food</span></a>
+    <a href="#sec-camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
+    <a href="#sec-events" aria-label="Sporting events">🏟️ <span>Events</span></a>
     <a class="to-top" href="#top">↑ Top</a>
   </div>
 </nav>
@@ -298,8 +300,10 @@
         <button type="button" id="hotelClose" class="small ghost">Close</button>
       </div>
       <p id="hotelMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="hotelMap"></div>
       <div id="hotelList"></div>
     </div>
+    <div class="row" style="margin-top:12px"><button type="button" class="small ghost" data-collapse-jump="sec-route">▲ Hide this section</button></div>
   </section>
 
   <section class="card" id="sec-itinerary">
@@ -313,14 +317,16 @@
       <span class="muted" style="align-self:center">start date, trip days, daily departure</span>
     </div>
     <div id="itinerary"></div>
+    <div class="row" style="margin-top:12px"><button type="button" class="small ghost" data-collapse-jump="sec-itinerary">▲ Hide this section</button></div>
   </section>
 
   <section class="card" id="sec-budget">
     <h2>💵 Budget</h2>
-    <p class="muted">Fuel comes from your route and the rig's towing MPG, priced at the gas figure below — the same number as $ per gallon in Practical estimates, so set it in either place. Fill in the rest; the total splits by traveler count.</p>
+    <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
     <div class="rv-grid">
       <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
       <label>Gas $/gal<input id="budGas" type="number" min="0" max="20" step="0.05" value="3.60" aria-label="Gas price per gallon" /></label>
+      <label>MPG towing<input id="budMpg" type="number" min="3" max="30" step="0.5" value="8" aria-label="Miles per gallon while towing" /></label>
       <label>Lodging $<input id="budLodging" type="number" min="0" step="25" value="0" /></label>
       <label>Food $<input id="budFood" type="number" min="0" step="25" value="0" /></label>
       <label>Tolls &amp; bridges $<input id="budTolls" type="number" min="0" step="5" value="0" /></label>
@@ -439,7 +445,9 @@
         <option value="40">Within 40 mi</option>
       </select>
       <button type="button" id="campAlong">Find along my route</button>
+      <button type="button" id="campClearPin" class="ghost">Clear pin</button>
     </div>
+    <p class="muted" id="campPinState" style="margin:8px 0 0"></p>
     <div class="row" style="margin-top:8px">
       <input id="campArea" placeholder="Or search near a town — e.g. Lexington, VA" aria-label="Search campgrounds near a town" />
       <button type="button" id="campFind">Find near town</button>
@@ -1511,6 +1519,9 @@ async function uploadMedia(file, caption, onProgress){
 function stopsWithMedia(){
   return state.stops.filter(s => (state.photos || []).some(p => stopMatches(p.caption, s.name)));
 }
+// Posters are thumbnails filed for videos (caption "poster:<video id>") — they
+// power the tiles but are never album entries themselves.
+function isPoster(p){ return /^image\//.test((p && p.type) || '') && /^poster:/.test((p && p.caption) || ''); }
 function renderPhotos(){
   const el = $('photoGrid');
   const sel = $('photoFilter');
@@ -1519,25 +1530,51 @@ function renderPhotos(){
     + stopsWithMedia().map(s => '<option value="' + esc(s.name) + '">' + esc(s.name) + '</option>').join('');
   sel.value = [...sel.options].some(o => o.value === keep) ? keep : '';
   const filter = sel.value;
-  if (!state.photos.length) {
+  const viewable = state.photos.filter(p => !isPoster(p));
+  if (!viewable.length) {
     el.innerHTML = '<p class="muted">Nothing shared yet — upload the first photo or video above.</p>';
     return;
   }
-  const shown = filter ? state.photos.filter(p => stopMatches(p.caption, filter)) : state.photos;
+  const shown = filter ? viewable.filter(p => stopMatches(p.caption, filter)) : viewable;
   if (!shown.length) {
     el.innerHTML = '<p class="muted">Nothing filed under ' + esc(filter) + ' yet.</p>';
     return;
   }
+  const posters = {};
+  state.photos.forEach(q => { if (isPoster(q)) posters[(q.caption || '').slice(7)] = q.id; });
   el.innerHTML = shown.map(p =>
     '<figure class="photo">'
     + ((p.type || '').indexOf('video/') === 0
-      ? '<div class="video-wrap"><button type="button" class="video-tile" data-src="' + esc(API_BASE + '/api/photos/' + encodeURIComponent(p.id)) + '" data-type="' + esc(p.type || 'video/mp4') + '" aria-label="Play ' + esc(p.caption || 'trip video') + ' (' + esc(photoSize(p.size || 0)) + ')"><span class="video-play" aria-hidden="true">▶</span><span class="video-hint">' + esc(((p.type || '').split('/')[1] || 'video').toUpperCase()) + ' · ' + esc(photoSize(p.size || 0)) + ' — tap to play</span></button>'
+      ? '<div class="video-wrap"><button type="button" class="video-tile" data-id="' + esc(p.id) + '" data-src="' + esc(API_BASE + '/api/photos/' + encodeURIComponent(p.id)) + '" data-type="' + esc(p.type || 'video/mp4') + '"' + (posters[p.id] ? ' data-has-poster="1" style="background-image:url(&quot;' + esc(API_BASE + '/api/photos/' + encodeURIComponent(posters[p.id])) + '&quot;)"' : '') + ' aria-label="Play ' + esc(p.caption || 'trip video') + ' (' + esc(photoSize(p.size || 0)) + ')"><span class="video-play" aria-hidden="true">▶</span><span class="video-hint">' + esc(((p.type || '').split('/')[1] || 'video').toUpperCase()) + ' · ' + esc(photoSize(p.size || 0)) + ' — tap to play</span></button>'
       + '<video controls playsinline preload="none" hidden aria-label="' + esc(p.caption || 'Trip video') + '"></video></div>'
       : '<img src="' + API_BASE + '/api/photos/' + encodeURIComponent(p.id) + '" alt="' + esc(p.caption || 'Trip photo') + '" loading="lazy" />')
     + '<figcaption class="photo-meta"><span>' + esc(p.caption || 'Untitled') + ' · ' + esc(photoSize(p.size || 0)) + '</span>'
     + '<button type="button" class="small ghost" data-photo="' + esc(p.id) + '" aria-label="Delete photo ' + esc(p.caption || '') + '">✕</button></figcaption>'
     + '</figure>').join('');
   observeVideoTiles();
+}
+
+// The first frame a tile decodes is filed back as the video's shared poster,
+// so every later visit shows the thumbnail with zero video bytes. Best effort:
+// a failed share just means the next visitor decodes it again.
+const posterShared = new Set();
+function shareVideoPoster(id, canvas){
+  if (!id || posterShared.has(id)) return;
+  if ((state.photos || []).some(p => (p.caption || '') === 'poster:' + id)) return;
+  posterShared.add(id);
+  try {
+    canvas.toBlob(async blob => {
+      if (!blob) { posterShared.delete(id); return; }
+      try {
+        const form = new FormData();
+        form.append('file', new File([blob], 'poster.jpg', { type: 'image/jpeg' }));
+        form.append('caption', 'poster:' + id);
+        const res = await fetch(API_BASE + '/api/photos', { method: 'POST', body: form });
+        if (res.ok) applyState(await res.json());
+        else posterShared.delete(id);
+      } catch (e) { posterShared.delete(id); }
+    }, 'image/jpeg', 0.7);
+  } catch (e) { posterShared.delete(id); }
 }
 
 /* Video tiles: no video data downloads until tapped. Thumbnails are grabbed
@@ -1555,7 +1592,7 @@ function observeVideoTiles(){
       });
     }, { rootMargin: '200px' });
   }
-  document.querySelectorAll('.video-tile').forEach(t => thumbObserver.observe(t));
+  document.querySelectorAll('.video-tile:not([data-has-poster])').forEach(t => thumbObserver.observe(t));
 }
 // Grab frame zero: preload="metadata" stops at the first decoded frame, so the
 // tile costs a few KB rather than the whole clip. No seeking — seeking pulls
@@ -1580,6 +1617,7 @@ function makeVideoThumb(btn){
         c.height = Math.round(h * scale);
         c.getContext('2d').drawImage(probe, 0, 0, c.width, c.height);
         btn.style.backgroundImage = 'url(' + c.toDataURL('image/jpeg', 0.6) + ')';
+        shareVideoPoster(btn.dataset.id, c);
       } catch (e) { /* tainted canvas or decode error — generic tile stays */ }
       cleanup();
     });
@@ -1686,12 +1724,13 @@ $('photoUpload').onclick = async () => {
 
 $('photoCancel').onclick = () => { if (activeUpload) activeUpload.abort(); };
 $('photoClear').onclick = () => {
-  if (!state.photos.length) return;
-  if (!confirm('Delete all ' + state.photos.length + ' photos and videos for everyone?\n\nThe files are removed from storage and cannot be recovered.')) return;
+  const real = state.photos.filter(p => !isPoster(p));
+  if (!real.length) return;
+  if (!confirm('Delete all ' + real.length + ' photos and videos for everyone?\n\nThe files are removed from storage and cannot be recovered.')) return;
   write('DELETE', '/api/photos');
 };
 $('photoOptimise').onclick = async () => {
-  const imgs = state.photos.filter(p => /^image\//.test(p.type || ''));
+  const imgs = state.photos.filter(p => /^image\//.test(p.type || '') && !isPoster(p));
   if (!imgs.length) {
     photoMsg(state.photos.length ? 'Only videos left — those need re-encoding outside the browser.' : 'No photos yet.');
     return;
@@ -1733,11 +1772,16 @@ $('photoOptimise').onclick = async () => {
 };
 
 $('photoFilter').addEventListener('change', renderPhotos);
-$('photoGrid').addEventListener('click', e => {
+$('photoGrid').addEventListener('click', async e => {
   const b = e.target.closest('button[data-photo]');
   if (b) {
+    const id = b.dataset.photo;
+    const target = (state.photos || []).find(p => p.id === id);
+    const poster = target && (target.type || '').indexOf('video/') === 0
+      ? (state.photos || []).find(q => (q.caption || '') === 'poster:' + id) : null;
     if (!confirm('Delete this photo or video for everyone?\n\nIt is removed from storage and cannot be recovered.')) return;
-    write('DELETE', '/api/photos/' + encodeURIComponent(b.dataset.photo));
+    const ok = await write('DELETE', '/api/photos/' + encodeURIComponent(id));
+    if (ok && poster) write('DELETE', '/api/photos/' + encodeURIComponent(poster.id));
     return;
   }
   const t = e.target.closest('button.video-tile');
@@ -2189,7 +2233,9 @@ async function findFoodPlaces(){
       ? { name: 'the map pin', lat: foodPin.lat, lng: foodPin.lng }
       : await geocode(place);
     foodMsg('Looking for places to eat near ' + center.name + '…');
-    const found = await findFoodNear(center, +$('foodRadius').value);
+    // The options read miles but the lookup takes kilometres — without this,
+    // "within 10 mi" only searched about 6 miles.
+    const found = await findFoodNear(center, +$('foodRadius').value * 1.609344);
     foodAnchor = center.name;
     foodPlaces = found;
     renderFood();
@@ -2312,28 +2358,43 @@ async function campsNear(anchor, radiusKm){
   return found;
 }
 
+let campSelected = -1;
+function selectCamp(i, pan){
+  campSelected = i;
+  [...document.querySelectorAll('#campList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  const site = campSites[i];
+  if (!site) return;
+  const marker = campLayer.getLayers()[i];
+  if (!marker) return;
+  if (pan) campMap.setView([site.lat, site.lng], Math.max(campMap.getZoom(), 13));
+  marker.openPopup();
+}
+
 function renderCamps(){
   const el = $('campList');
   campLayer.clearLayers();
+  campSelected = -1;
   const shown = campSites.slice(0, 60);
+  revealMap(campMap, 'campMap');
   if (!shown.length) {
     el.innerHTML = '<p class="muted">Nothing found — try a wider radius, or a town just off the highway.</p>';
     return;
   }
   el.innerHTML = shown.map((s, i) =>
     '<div class="food-item">'
-    + '<span class="food-pick" style="cursor:default">'
+    + '<button type="button" class="food-pick" data-pick="' + i + '">'
     + '<span class="food-name">' + esc(s.name) + '</span>'
     + '<span class="food-sub">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span>'
-    + '</span>'
+    + '</button>'
     + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(s.name) + '">🗺️</button>'
     + '<button type="button" class="small" data-camp-add="' + i + '" aria-label="Add ' + esc(s.name) + ' to the trip">Add to trip</button>'
     + '</div>').join('');
 
-  shown.forEach(s => {
+  shown.forEach((s, i) => {
     L.circleMarker([s.lat, s.lng], { radius: 7, color: s.colour, weight: 2, fillColor: s.colour, fillOpacity: 0.55 })
       .addTo(campLayer)
-      .bindPopup('<b>' + esc(s.name) + '</b><br><span class="muted">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span>');
+      .bindPopup('<b>' + esc(s.name) + '</b><br><span class="muted">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span>')
+      .on('click', () => selectCamp(i, false));
   });
 
   campMap.fitBounds(L.featureGroup(campLayer.getLayers()).getBounds().pad(0.15), { animate: false });
@@ -2371,12 +2432,42 @@ async function searchCamps(anchors, label){
     : 'Nothing found ' + label + ' — try a wider radius.');
 }
 
+let campPin = null, campPinMarker = null;
+function clearCampPin(){
+  campPin = null;
+  if (campPinMarker) { campMap.removeLayer(campPinMarker); campPinMarker = null; }
+  $('campPinState').textContent = '';
+}
+function setCampPin(lat, lng){
+  campPin = { lat, lng };
+  if (campPinMarker) campMap.removeLayer(campPinMarker);
+  revealMap(campMap, 'campMap');
+  $('campPinState').textContent = 'Search pin at ' + lat.toFixed(3) + ', ' + lng.toFixed(3) + ' — press Find near town to search around it.';
+  campPinMarker = L.marker([lat, lng], { draggable: true }).addTo(campMap)
+    .bindPopup('Search pin — drag to move, then press Find near town.');
+  campPinMarker.on('dragend', ev => {
+    const moved = ev.target.getLatLng();
+    campPin = { lat: moved.lat, lng: moved.lng };
+    $('campPinState').textContent = 'Search pin at ' + campPin.lat.toFixed(3) + ', ' + campPin.lng.toFixed(3) + ' — press Find near town to search around it.';
+    campMsg('Pin moved — press Find near town to search here.');
+  });
+  campPinMarker.openPopup();
+  campMsg('Pin set — press Find near town to search around it.');
+}
+campMap.on('click', e => setCampPin(e.latlng.lat, e.latlng.lng));
+$('campClearPin').onclick = () => {
+  if (!campPin) { campMsg('No pin set — click the map to drop one.'); return; }
+  clearCampPin();
+  campMsg('Pin cleared — search uses your route or a town again.');
+};
+$('campArea').addEventListener('input', () => { if (campPin) clearCampPin(); });
+
 $('campAlong').onclick = async () => {
   const btn = $('campAlong');
   if (!state.stops.length) { campMsg('Add stops to your route first, or search near a town instead.'); return; }
   btn.disabled = true;
   try {
-    await searchCamps(state.stops.slice(0, 6), 'near your stops');
+    await searchCamps(state.stops, 'near your stops');
   } catch (err) {
     campMsg('Could not reach the campsite index right now.');
   } finally {
@@ -2387,11 +2478,13 @@ $('campAlong').onclick = async () => {
 $('campFind').onclick = async () => {
   const btn = $('campFind');
   const place = $('campArea').value.trim();
-  if (!place) { campMsg('Type a town or area first, or use "Find along my route".'); return; }
+  if (!campPin && !place) { campMsg('Type a town or area, click the map to drop a pin, or use "Find along my route".'); return; }
   btn.disabled = true;
-  campMsg('Looking up ' + place + '…');
   try {
-    const center = await geocode(place);
+    const center = campPin
+      ? { name: 'the map pin', lat: campPin.lat, lng: campPin.lng }
+      : await geocode(place);
+    campMsg('Looking up ' + (campPin ? 'the map pin' : place) + '…');
     await searchCamps([{ name: center.name, lat: center.lat, lng: center.lng, id: 'area' }], 'near ' + center.name);
   } catch (err) {
     campMsg('Could not find that place — check the spelling and try again.');
@@ -2406,6 +2499,8 @@ $('campList').addEventListener('click', async e => {
   if (handleMapMenuClick(e)) return;
   const trig = e.target.closest('[data-maptrig]');
   if (trig) { openMapMenu(trig, campSites[+trig.dataset.maptrig]); return; }
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { selectCamp(+pick.dataset.pick, true); return; }
   const b = e.target.closest('[data-camp-add]');
   if (!b) return;
   const site = campSites[+b.dataset.campAdd];
@@ -2417,7 +2512,21 @@ $('campList').addEventListener('click', async e => {
 });
 
 /* ---------- hotels near a stop ---------- */
-let hotelResults = [], hotelStop = null;
+let hotelResults = [], hotelStop = null, hotelSelected = -1;
+const hotelMap = L.map('hotelMap').setView([39.5, -98.35], 4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(hotelMap);
+const hotelLayer = L.layerGroup().addTo(hotelMap);
+
+function selectHotel(i, pan){
+  hotelSelected = i;
+  [...document.querySelectorAll('#hotelList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  const hotel = hotelResults[i];
+  if (!hotel) return;
+  const marker = hotelLayer.getLayers()[i];
+  if (!marker) return;
+  if (pan) hotelMap.setView([hotel.lat, hotel.lng], Math.max(hotelMap.getZoom(), 14));
+  marker.openPopup();
+}
 
 async function hotelsNear(stop, radiusKm){
   const batches = [];
@@ -2442,6 +2551,9 @@ async function hotelsNear(stop, radiusKm){
 
 function renderHotels(stop){
   const el = $('hotelList');
+  hotelLayer.clearLayers();
+  hotelSelected = -1;
+  revealMap(hotelMap, 'hotelMap');
   if (!hotelResults.length) {
     el.innerHTML = '<p class="muted">No hotels within ' + (+$('hotelRadius').value || 10)
       + ' miles — pick a wider radius, or use the booking link.</p>';
@@ -2449,15 +2561,28 @@ function renderHotels(stop){
   }
   el.innerHTML = hotelResults.map((h, i) =>
     '<div class="food-item">'
-    + '<span class="food-pick" style="cursor:default">'
+    + '<button type="button" class="food-pick" data-hpick="' + i + '">'
     + '<span class="food-name">' + esc(h.name) + '</span>'
     + '<span class="food-sub">' + esc(h.kind ? foodKind(h.kind) + ' · ' : '') + esc(distanceLabel(h, stop.name)) + '</span>'
-    + '</span>'
+    + '</button>'
     + '<button type="button" class="small" data-hotel-add="' + i + '" aria-label="Add ' + esc(h.name) + ' to the trip">Add to trip</button>'
     + '</div>').join('');
+
+  hotelResults.forEach((h, i) => {
+    L.circleMarker([h.lat, h.lng], { radius: 7, color: '#a78bfa', weight: 2, fillColor: '#a78bfa', fillOpacity: 0.55 })
+      .addTo(hotelLayer)
+      .bindPopup('<b>' + esc(h.name) + '</b><br><span class="muted">' + esc(distanceLabel(h, stop.name)) + '</span>')
+      .on('click', () => selectHotel(i, false));
+  });
+
+  const layers = hotelLayer.getLayers();
+  if (layers.length) hotelMap.fitBounds(L.featureGroup(layers).getBounds().pad(0.15));
 }
 
 $('hotelList').addEventListener('click', async e => {
+  if (handleMapMenuClick(e)) return;
+  const pick = e.target.closest('[data-hpick]');
+  if (pick) { selectHotel(+pick.dataset.hpick, true); return; }
   const b = e.target.closest('[data-hotel-add]');
   if (!b) return;
   const hotel = hotelResults[+b.dataset.hotelAdd];
@@ -2780,7 +2905,10 @@ function planSpans(days){
 }
 
 /* ---------- budget ---------- */
-function money(n){ return '$' + Math.round(+n || 0).toLocaleString(); }
+function money(n){
+  const v = Math.round((+n || 0) * 100) / 100;
+  return Number.isInteger(v) ? '$' + v.toLocaleString() : '$' + v.toFixed(2);
+}
 function totals(){
   const miles = state.stops.length > 1 ? segMiles(0, state.stops.length - 1).mi : 0;
   const mpg = Math.max(3, +extra.rv.mpg || 8);
@@ -2883,6 +3011,7 @@ function syncExtraInputs(){
   const map = {
     budTravelers: null,
     budLodging: ['budget', 'lodging'],
+    budMpg: ['rv', 'mpg'],
     budFood: ['budget', 'food'], budTolls: ['budget', 'tolls'], budPropane: ['budget', 'propane'],
     budFun: ['budget', 'fun'], budMisc: ['budget', 'misc'],
     rvHeight: ['rv', 'height'], rvLength: ['rv', 'length'], rvWeight: ['rv', 'weight'],
@@ -2897,6 +3026,8 @@ function syncExtraInputs(){
   const pd = $('planDepart');
   const dv = extra.depart || '08:00';
   if (pd && pd !== document.activeElement && pd.value !== dv) pd.value = dv;
+  const bg = $('budGas');
+  if (bg && bg !== document.activeElement && $('fuelPrice') && bg.value !== $('fuelPrice').value) bg.value = $('fuelPrice').value;
 }
 function bindExtra(id, path, parse){
   $(id).addEventListener('input', e => {
@@ -2936,6 +3067,20 @@ function syncGasPrice(value){
 }
 $('budGas').addEventListener('input', e => syncGasPrice(e.target.value));
 $('fuelPrice').addEventListener('input', () => syncGasPrice($('fuelPrice').value));
+// Towing MPG is one setting too: the Budget field and the RV profile field are
+// the same shared number, since both describe the same rig.
+function syncMpgInputs(value){
+  if ($('budMpg').value !== value) $('budMpg').value = value;
+  if ($('rvMpg').value !== value) $('rvMpg').value = value;
+}
+$('budMpg').addEventListener('input', e => {
+  extra.rv = extra.rv || {};
+  extra.rv.mpg = Math.max(3, +e.target.value || 0);
+  queueExtraSave();
+  syncMpgInputs(e.target.value);
+  renderGlance(); renderBudget(); renderRV();
+});
+$('rvMpg').addEventListener('input', () => syncMpgInputs($('rvMpg').value));
 // input as well as change: a phone time picker commits on input, and desktop
 // typing only fires change on blur.
 ['input', 'change'].forEach(evt => $('planDepart').addEventListener(evt, () => {
@@ -3202,6 +3347,28 @@ $('stopUpload').onclick = async () => {
 };
 
 /* ---------- collapsible cards ---------- */
+// A Leaflet map frozen at zero size paints grey tiles, so refresh any map in
+// a card that was just expanded, and every visible map after a window resize.
+function fixMapsIn(sec){
+  const maps = { map, golfMap, foodMap, campMap, hotelMap };
+  sec.querySelectorAll('#map,#golfMap,#foodMap,#campMap,#hotelMap').forEach(el => {
+    const m = maps[el.id];
+    if (m) { try { m.invalidateSize(); } catch (e) {} }
+  });
+}
+let resizeTimer = 0;
+addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    document.querySelectorAll('main section.card:not(.collapsed)').forEach(fixMapsIn);
+  }, 200);
+});
+document.querySelectorAll('[data-collapse-jump]').forEach(b => b.addEventListener('click', () => {
+  const sec = $(b.dataset.collapseJump);
+  const head = sec && sec.querySelector('.collapse-btn');
+  if (head && !sec.classList.contains('collapsed')) head.click();
+  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}));
 document.querySelectorAll('main section.card').forEach(sec => {
   const h = sec.querySelector('h2');
   if (!h || h.querySelector('.collapse-btn')) return;
@@ -3217,6 +3384,7 @@ document.querySelectorAll('main section.card').forEach(sec => {
     btn.textContent = collapsed ? 'Show' : 'Hide';
     btn.setAttribute('aria-expanded', String(!collapsed));
     btn.setAttribute('aria-label', (collapsed ? 'Expand ' : 'Collapse ') + h.textContent.trim());
+    if (!collapsed) requestAnimationFrame(() => fixMapsIn(sec));
     try { localStorage.setItem('rt_collapsed_' + sec.id, collapsed ? '1' : '0'); } catch (e) {}
   });
   h.appendChild(btn);
