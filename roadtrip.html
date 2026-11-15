@@ -380,6 +380,7 @@
       <div class="progress-row"><span id="photoPct">0%</span><span id="photoSent"></span><button type="button" id="photoCancel" class="small ghost">Cancel</button></div>
     </div>
     <p id="photoMsg" class="muted" role="status" aria-live="polite"></p>
+    <p class="muted" id="photoUsage" style="margin:4px 0 0"></p>
     <div class="row" style="margin-top:10px">
       <label class="muted" for="photoFilter" style="align-self:center">Show</label>
       <select id="photoFilter" aria-label="Filter photos and videos by stop" style="max-width:300px;flex:none">
@@ -1524,6 +1525,8 @@ function stopsWithMedia(){
 function isPoster(p){ return /^image\//.test((p && p.type) || '') && /^poster:/.test((p && p.caption) || ''); }
 function renderPhotos(){
   const el = $('photoGrid');
+  const usage = (state.photos || []).reduce((t, p) => t + (+p.size || 0), 0);
+  if ($('photoUsage')) $('photoUsage').textContent = 'Album uses ' + photoSize(usage) + ' of shared storage.';
   const sel = $('photoFilter');
   const keep = sel.value;
   sel.innerHTML = '<option value="">All stops</option>'
