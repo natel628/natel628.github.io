@@ -143,6 +143,10 @@
           <option value="25">25 miles</option>
           <option value="50">50 miles</option>
         </select>
+        <select id="hotelSort" style="max-width:180px;flex:none" aria-label="Sort hotels">
+          <option value="dist" selected>Nearest first</option>
+          <option value="rating">Best rated first</option>
+        </select>
         <button type="button" id="hotelBooking" class="small">Search Booking.com ↗</button>
         <button type="button" id="hotelClose" class="small ghost">Close</button>
       </div>
@@ -236,6 +240,10 @@
     <div class="row" style="margin-top:8px">
       <input id="foodName" placeholder="Or search a place by name — e.g. Franklin Barbecue" aria-label="Search a place to eat by name" />
       <button type="button" id="foodFindName">Find by name</button>
+      <select id="foodSort" style="max-width:180px;flex:none" aria-label="Sort places to eat">
+        <option value="dist" selected>Nearest first</option>
+        <option value="rating">Best rated first</option>
+      </select>
     </div>
     <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
     <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
@@ -1025,6 +1033,24 @@ const placeRatings = new Map();
 // without turning a list into a scoreboard.
 const ratingClass = r => r >= 4.5 ? 'r5' : r >= 4 ? 'r4' : r >= 3.5 ? 'r3' : 'r2';
 
+let foodSortMode = 'dist', hotelSortMode = 'dist';
+
+const ratingValue = place => {
+  const hit = placeRatings.get(ratingKeyOf(place));
+  return hit && typeof hit.rating === 'number' ? hit.rating : -1;
+};
+const driveMi = place => place.drive ? place.drive.mi : place.dist;
+
+// Sorts in place so the array identity that pending lookups capture stays valid.
+function sortInPlace(list, mode){
+  if (mode === 'rating') {
+    list.sort((a, b) => ratingValue(b) - ratingValue(a) || driveMi(a) - driveMi(b));
+  } else {
+    list.sort((a, b) => driveMi(a) - driveMi(b));
+  }
+  return list;
+}
+
 function ratingDot(place){
   const hit = placeRatings.get(ratingKeyOf(place));
   if (!hit || typeof hit.rating !== 'number') return null;
@@ -1076,14 +1102,20 @@ function loadGolfRatings(){
 function loadFoodRatings(){
   const snapshot = foodPlaces;
   return loadRatings(snapshot,
-    () => applyRatings('#foodList .food-item', snapshot),
+    () => {
+      applyRatings('#foodList .food-item', snapshot);
+      if (foodSortMode === 'rating') { sortInPlace(snapshot, 'rating'); renderFood(); }
+    },
     () => foodPlaces === snapshot);
 }
 
 function loadHotelRatings(){
   const snapshot = hotelResults;
   return loadRatings(snapshot,
-    () => applyRatings('#hotelList .food-item', snapshot),
+    () => {
+      applyRatings('#hotelList .food-item', snapshot);
+      if (hotelSortMode === 'rating' && hotelStop) { sortInPlace(snapshot, 'rating'); renderHotels(hotelStop); }
+    },
     () => hotelResults === snapshot);
 }
 
@@ -1370,6 +1402,7 @@ function renderFood(){
   const el = $('foodList');
   foodLayer.clearLayers();
   foodSelected = -1;
+  sortInPlace(foodPlaces, foodSortMode);
 
   if (!foodPlaces.length) {
     el.innerHTML = '<p class="muted">No places found — try a wider radius, or search a place by name.</p>';
@@ -1465,6 +1498,11 @@ $('foodFind').onclick = async () => {
 };
 $('foodQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFind').click(); } });
 
+$('foodSort').addEventListener('change', () => {
+  foodSortMode = $('foodSort').value;
+  if (foodPlaces.length) { sortInPlace(foodPlaces, foodSortMode); renderFood(); }
+});
+
 $('foodFindName').onclick = async () => {
   const btn = $('foodFindName');
   const name = $('foodName').value.trim();
@@ -1519,6 +1557,7 @@ function renderHotels(stop){
       + ' miles — pick a wider radius, or use the booking link.</p>';
     return;
   }
+  sortInPlace(hotelResults, hotelSortMode);
   el.innerHTML = hotelResults.map((h, i) =>
     '<div class="food-item">'
     + '<span class="food-pick" style="cursor:default">'
@@ -1568,6 +1607,11 @@ async function findHotelsForStop(stop){
 }
 
 $('hotelRadius').addEventListener('change', () => { if (hotelStop) findHotelsForStop(hotelStop); });
+
+$('hotelSort').addEventListener('change', () => {
+  hotelSortMode = $('hotelSort').value;
+  if (hotelStop && hotelResults.length) { sortInPlace(hotelResults, hotelSortMode); renderHotels(hotelStop); }
+});
 
 $('hotelClose').onclick = () => {
   $('hotelPanel').hidden = true;
