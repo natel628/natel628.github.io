@@ -88,6 +88,7 @@
   .warn-text { color:#f59e0b; font-size:.8rem; margin-top:6px; }
   #foodList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .food-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
+  .food-item, .golf-item { position:relative; }
   .food-item.sel { border-color:var(--green); }
   .food-pick { flex:1; text-align:left; background:transparent; color:var(--text); border:none; padding:0; display:grid; gap:2px; cursor:pointer; font-weight:600; }
   .food-sub { color:var(--muted); font-size:.78rem; font-weight:400; }
@@ -706,28 +707,46 @@ function fmtDate(d){ return d.toLocaleDateString(undefined,{weekday:'short',mont
 function hint(text){ $('tripHint').textContent = text || ''; }
 
 let mapMenu = null;
+let mapMenuPoint = null;
+let mapMenuTrigger = null;
+
 function closeMapMenu(){
   document.querySelectorAll('.mapmenu').forEach(m => m.remove());
   mapMenu = null;
+  mapMenuPoint = null;
+  mapMenuTrigger = null;
 }
 
 // The map button asks which a trip wants: directions from where you are now,
-// or the place on its own. Both hands are handed to the device's map app.
-function toggleMapMenu(button, stop){
-  const wasOpen = mapMenu !== null && mapMenu.dataset.for === stop.id;
+// or the place on its own. Either way the device's map app does the work.
+function openMapMenu(trigger, point){
+  const wasOpen = mapMenu !== null && mapMenuTrigger === trigger;
   closeMapMenu();
-  if (wasOpen) return;
+  if (wasOpen || !point) return;
   const menu = document.createElement('div');
   menu.className = 'mapmenu';
-  menu.dataset.for = stop.id;
   menu.setAttribute('role', 'menu');
-  menu.setAttribute('aria-label', 'Map options for ' + stop.name);
+  menu.setAttribute('aria-label', 'Map options for ' + point.name);
   menu.innerHTML = '<button type="button" role="menuitem" data-map="directions">🧭 Directions from here</button>'
     + '<button type="button" role="menuitem" data-map="place">📍 Show on the map</button>';
-  button.closest('li').appendChild(menu);
+  trigger.parentElement.appendChild(menu);
   mapMenu = menu;
+  mapMenuPoint = point;
+  mapMenuTrigger = trigger;
   const first = menu.querySelector('button');
   if (first) first.focus();
+}
+
+// Shared by every list that offers the menu; true when the click was a choice.
+function handleMapMenuClick(ev){
+  const choice = ev.target.closest('[data-map]');
+  if (!choice) return false;
+  const point = mapMenuPoint;
+  if (point) {
+    window.open(mapAppUrl(point, choice.dataset.map === 'directions' ? 'directions' : 'place'), '_blank', 'noopener');
+  }
+  closeMapMenu();
+  return true;
 }
 
 function stopButton(glyph, label, act, id, disabled){
@@ -737,6 +756,7 @@ function stopButton(glyph, label, act, id, disabled){
   b.textContent = glyph;
   b.dataset.act = act;
   b.dataset.id = id;
+  if (act === 'map') b.dataset.maptrig = id;
   b.disabled = !!disabled;
   b.setAttribute('aria-label', label);
   b.title = label;
@@ -792,21 +812,12 @@ function renderStops(){
 }
 
 $('stops').addEventListener('click', e => {
-  const choice = e.target.closest('[data-map]');
-  if (choice) {
-    const menu = choice.closest('.mapmenu');
-    const stop = menu && state.stops.find(s => s.id === menu.dataset.for);
-    if (stop) {
-      window.open(mapAppUrl(stop, choice.dataset.map === 'directions' ? 'directions' : 'place'), '_blank', 'noopener');
-    }
-    closeMapMenu();
-    return;
-  }
+  if (handleMapMenuClick(e)) return;
   const b = e.target.closest('button[data-act]');
   if (!b) return;
   const i = state.stops.findIndex(s => s.id === b.dataset.id);
   if (i < 0) return;
-  if (b.dataset.act === 'map') { toggleMapMenu(b, state.stops[i]); return; }
+  if (b.dataset.act === 'map') { openMapMenu(b, state.stops[i]); return; }
   if (b.dataset.act === 'hotels') { findHotelsForStop(state.stops[i]); return; }
   if (b.dataset.act === 'del') { write('DELETE', '/api/stops/' + encodeURIComponent(b.dataset.id)); return; }
   const j = b.dataset.act === 'up' ? i - 1 : i + 1;
@@ -1417,6 +1428,7 @@ function renderGolf(){
     + '<span class="golf-name">' + esc(c.name) + '</span>'
     + '<span class="golf-dist">' + esc(distanceLabel(c, golfCenter ? golfCenter.name : 'search')) + '</span>'
     + '</button>'
+    + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(c.name) + '">🗺️</button>'
     + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(c.name) + ' to the trip">Add to trip</button>'
     + '</div>').join('');
 
@@ -1432,6 +1444,9 @@ function renderGolf(){
 }
 
 $('golfList').addEventListener('click', async e => {
+  if (handleMapMenuClick(e)) return;
+  const trig = e.target.closest('[data-maptrig]');
+  if (trig) { openMapMenu(trig, golfCourses[+trig.dataset.maptrig]); return; }
   const pick = e.target.closest('[data-pick]');
   if (pick) { selectGolf(+pick.dataset.pick, true); return; }
   const add = e.target.closest('[data-add]');
@@ -1640,6 +1655,7 @@ function renderFood(){
     + '<span class="food-name">' + esc(p.name) + '</span>'
     + '<span class="food-sub">' + esc(foodSubText(p)) + '</span>'
     + '</button>'
+    + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(p.name) + '">🗺️</button>'
     + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(p.name) + ' to the trip">Add to trip</button>'
     + '</div>').join('');
 
@@ -1655,6 +1671,9 @@ function renderFood(){
 }
 
 $('foodList').addEventListener('click', async e => {
+  if (handleMapMenuClick(e)) return;
+  const trig = e.target.closest('[data-maptrig]');
+  if (trig) { openMapMenu(trig, foodPlaces[+trig.dataset.maptrig]); return; }
   const pick = e.target.closest('[data-pick]');
   if (pick) { selectFood(+pick.dataset.pick, true); return; }
   const add = e.target.closest('[data-add]');
@@ -1826,6 +1845,7 @@ function renderCamps(){
     + '<span class="food-name">' + esc(s.name) + '</span>'
     + '<span class="food-sub">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span>'
     + '</span>'
+    + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(s.name) + '">🗺️</button>'
     + '<button type="button" class="small" data-camp-add="' + i + '" aria-label="Add ' + esc(s.name) + ' to the trip">Add to trip</button>'
     + '</div>').join('');
 
@@ -1903,6 +1923,9 @@ $('campArea').addEventListener('keydown', e => { if (e.key === 'Enter') { e.prev
 $('campRadius').addEventListener('change', saveRadii);
 
 $('campList').addEventListener('click', async e => {
+  if (handleMapMenuClick(e)) return;
+  const trig = e.target.closest('[data-maptrig]');
+  if (trig) { openMapMenu(trig, campSites[+trig.dataset.maptrig]); return; }
   const b = e.target.closest('[data-camp-add]');
   if (!b) return;
   const site = campSites[+b.dataset.campAdd];
@@ -2138,7 +2161,7 @@ acSetup($('eventArea'), { cityFirst: true });
 })();
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.mapmenu') && !e.target.closest('button[data-act="map"]')) closeMapMenu();
+  if (!e.target.closest('.mapmenu') && !e.target.closest('[data-maptrig]')) closeMapMenu();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMapMenu(); });
 
