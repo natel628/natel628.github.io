@@ -213,6 +213,10 @@
       </select>
       <button type="button" id="golfFind">Find courses</button>
       <button type="button" id="golfClearPin" class="ghost">Clear pin</button>
+      <select id="golfSort" style="max-width:180px;flex:none" aria-label="Sort golf courses">
+        <option value="dist" selected>Nearest first</option>
+        <option value="rating">Best rated first</option>
+      </select>
     </div>
     <div class="row" style="margin-top:8px">
       <input id="golfName" placeholder="Or search a course by name — e.g. Pebble Beach" aria-label="Search a golf course by name" />
@@ -1033,13 +1037,15 @@ const placeRatings = new Map();
 // without turning a list into a scoreboard.
 const ratingClass = r => r >= 4.5 ? 'r5' : r >= 4 ? 'r4' : r >= 3.5 ? 'r3' : 'r2';
 
-let foodSortMode = 'dist', hotelSortMode = 'dist';
+let foodSortMode = 'dist', hotelSortMode = 'dist', golfSortMode = 'dist';
 
 const ratingValue = place => {
   const hit = placeRatings.get(ratingKeyOf(place));
   return hit && typeof hit.rating === 'number' ? hit.rating : -1;
 };
-const driveMi = place => place.drive ? place.drive.mi : place.dist;
+// Name searches have no origin, so an unknown distance sinks to the bottom
+// instead of sorting as zero.
+const driveMi = place => place.drive ? place.drive.mi : (place.dist === null || place.dist === undefined ? Infinity : place.dist);
 
 // Sorts in place so the array identity that pending lookups capture stays valid.
 function sortInPlace(list, mode){
@@ -1095,7 +1101,10 @@ async function loadRatings(places, apply, isCurrent){
 function loadGolfRatings(){
   const snapshot = golfCourses;
   return loadRatings(snapshot,
-    () => applyRatings('#golfList .golf-item', snapshot),
+    () => {
+      applyRatings('#golfList .golf-item', snapshot);
+      if (golfSortMode === 'rating') { sortInPlace(snapshot, 'rating'); renderGolf(); }
+    },
     () => golfCourses === snapshot);
 }
 
@@ -1172,6 +1181,7 @@ function renderGolf(){
   golfLayer.clearLayers();
   golfCenterLayer.clearLayers();
   golfSelected = -1;
+  sortInPlace(golfCourses, golfSortMode);
 
   if (golfCenter && !golfPin) {
     L.circleMarker([golfCenter.lat, golfCenter.lng], { radius: 6, color: '#f59e0b', weight: 2, fillColor: '#f59e0b', fillOpacity: 0.6 })
@@ -1298,6 +1308,11 @@ $('golfFindName').onclick = async () => {
   }
 };
 $('golfName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFindName').click(); } });
+
+$('golfSort').addEventListener('change', () => {
+  golfSortMode = $('golfSort').value;
+  if (golfCourses.length) { sortInPlace(golfCourses, golfSortMode); renderGolf(); }
+});
 
 /* ---------- 7. places to eat ---------- */
 const foodMap = L.map('foodMap').setView([39.5, -98.35], 4);
