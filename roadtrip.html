@@ -96,8 +96,7 @@
   .food-sub { color:var(--muted); font-size:.78rem; font-weight:400; }
   #foodMsg:empty { display:none; }
   #foodMsg { font-size:.85rem; margin-top:8px; }
-  #campMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; display:none; }
-  #campMap.show { display:block; }
+  #campMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
   #campList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   #campMsg:empty { display:none; }
   #campMsg { font-size:.85rem; margin-top:8px; }
@@ -376,6 +375,7 @@ function applyState(next){
   syncPlanInputs();
   renderNotes();
   renderPhotos();
+  paintCampStops();
 }
 async function loadState(){
   try {
@@ -1801,7 +1801,24 @@ $('foodName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.prev
 const campMap = L.map('campMap').setView([39.5, -98.35], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(campMap);
 const campLayer = L.layerGroup().addTo(campMap);
+const campStopLayer = L.layerGroup().addTo(campMap);
 let campSites = [];
+
+// Until a search fills this map, show the route itself so the section has a map
+// rather than an empty box.
+function paintCampStops(){
+  campStopLayer.clearLayers();
+  state.stops.forEach((s, i) => {
+    L.circleMarker([s.lat, s.lng], { radius: 5, color: '#f59e0b', weight: 2, fillColor: '#f59e0b', fillOpacity: 0.8 })
+      .addTo(campStopLayer)
+      .bindPopup('<b>' + esc((i + 1) + '. ' + s.name) + '</b>');
+  });
+  if (!campSites.length && state.stops.length > 1) {
+    campMap.fitBounds(L.featureGroup(campStopLayer.getLayers()).getBounds().pad(0.2), { animate: false });
+  } else if (!campSites.length && state.stops.length === 1) {
+    campMap.setView([state.stops[0].lat, state.stops[0].lng], 7, { animate: false });
+  }
+}
 
 function campMsg(t){
   const m = $('campMsg');
@@ -1885,8 +1902,7 @@ function renderCamps(){
       .bindPopup('<b>' + esc(s.name) + '</b><br><span class="muted">' + esc(s.kind + ' · ' + distanceLabel(s, s.anchor)) + '</span>');
   });
 
-  campMap.fitBounds(L.featureGroup(campLayer.getLayers()).getBounds().pad(0.15));
-  revealMap(campMap, 'campMap');
+  campMap.fitBounds(L.featureGroup(campLayer.getLayers()).getBounds().pad(0.15), { animate: false });
 }
 
 function sortCamps(){
