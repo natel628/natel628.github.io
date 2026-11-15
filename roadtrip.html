@@ -26,7 +26,10 @@
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
-  #stops li { display:flex; align-items:center; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
+  #stops li { position:relative; display:flex; align-items:center; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
+  .mapmenu { position:absolute; right:8px; top:calc(100% + 4px); z-index:1600; display:grid; gap:4px; min-width:220px; padding:6px; background:#0f172a; border:1px solid #475569; border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,.5); }
+  .mapmenu button { text-align:left; background:transparent; color:var(--text); border:1px solid transparent; border-radius:6px; padding:8px 10px; font-size:.9rem; font-weight:600; }
+  .mapmenu button:hover, .mapmenu button:focus-visible { background:#334155; border-color:#475569; outline:none; }
   #stops li.leg { display:flex; gap:6px; background:transparent; border:none; padding:0 0 0 36px; color:var(--muted); font-size:.8rem; }
   .num { background:var(--accent); color:#111; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-weight:800; flex-shrink:0; }
   a { color:var(--accent); }
@@ -702,6 +705,31 @@ async function refreshLegs(){
 function fmtDate(d){ return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}); }
 function hint(text){ $('tripHint').textContent = text || ''; }
 
+let mapMenu = null;
+function closeMapMenu(){
+  document.querySelectorAll('.mapmenu').forEach(m => m.remove());
+  mapMenu = null;
+}
+
+// The map button asks which a trip wants: directions from where you are now,
+// or the place on its own. Both hands are handed to the device's map app.
+function toggleMapMenu(button, stop){
+  const wasOpen = mapMenu !== null && mapMenu.dataset.for === stop.id;
+  closeMapMenu();
+  if (wasOpen) return;
+  const menu = document.createElement('div');
+  menu.className = 'mapmenu';
+  menu.dataset.for = stop.id;
+  menu.setAttribute('role', 'menu');
+  menu.setAttribute('aria-label', 'Map options for ' + stop.name);
+  menu.innerHTML = '<button type="button" role="menuitem" data-map="directions">🧭 Directions from here</button>'
+    + '<button type="button" role="menuitem" data-map="place">📍 Show on the map</button>';
+  button.closest('li').appendChild(menu);
+  mapMenu = menu;
+  const first = menu.querySelector('button');
+  if (first) first.focus();
+}
+
 function stopButton(glyph, label, act, id, disabled){
   const b = document.createElement('button');
   b.type = 'button';
@@ -764,11 +792,21 @@ function renderStops(){
 }
 
 $('stops').addEventListener('click', e => {
+  const choice = e.target.closest('[data-map]');
+  if (choice) {
+    const menu = choice.closest('.mapmenu');
+    const stop = menu && state.stops.find(s => s.id === menu.dataset.for);
+    if (stop) {
+      window.open(mapAppUrl(stop, choice.dataset.map === 'directions' ? 'directions' : 'place'), '_blank', 'noopener');
+    }
+    closeMapMenu();
+    return;
+  }
   const b = e.target.closest('button[data-act]');
   if (!b) return;
   const i = state.stops.findIndex(s => s.id === b.dataset.id);
   if (i < 0) return;
-  if (b.dataset.act === 'map') { window.open(mapAppUrl(state.stops[i]), '_blank', 'noopener'); return; }
+  if (b.dataset.act === 'map') { toggleMapMenu(b, state.stops[i]); return; }
   if (b.dataset.act === 'hotels') { findHotelsForStop(state.stops[i]); return; }
   if (b.dataset.act === 'del') { write('DELETE', '/api/stops/' + encodeURIComponent(b.dataset.id)); return; }
   const j = b.dataset.act === 'up' ? i - 1 : i + 1;
@@ -2098,6 +2136,11 @@ acSetup($('eventArea'), { cityFirst: true });
   addEventListener('resize', mark);
   mark();
 })();
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.mapmenu') && !e.target.closest('button[data-act="map"]')) closeMapMenu();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMapMenu(); });
 
 /* ---------- boot + live refresh ---------- */
 
