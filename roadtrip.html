@@ -406,6 +406,7 @@
         <button type="button" id="driveConnect" class="small">Connect my Drive</button>
         <button type="button" id="driveDisconnect" class="small ghost">Disconnect</button>
       </div>
+      <label class="muted" style="display:block;margin-top:8px;font-size:.8rem"><input type="checkbox" id="driveAuto" style="vertical-align:-2px" /> Automatically send new photos and videos to Drive <span style="opacity:.75">(uses the uploader’s connection once more per file)</span></label>
       <p class="muted" id="driveStatus" style="margin:6px 0 0"></p>
       <p class="muted" id="driveMsg" style="margin:6px 0 0"></p>
       <p style="margin:6px 0 0"><a id="driveOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>📂 Open the Drive folder ↗</a></p>
@@ -1712,6 +1713,7 @@ $('photoUpload').onclick = async () => {
     $('photoCaption').value = '';
     photoMsg((isVideo ? 'Video' : 'Photo') + ' shared with everyone'
       + (lastCompression ? ' — compressed ' + photoSize(lastCompression.before - lastCompression.after) : '') + '.');
+    maybeAutoDrive(file, data);
   } catch (err) {
     if (err.cancelled) {
       // Cancelling after the file has been sent cannot stop the save, so check what
@@ -2010,6 +2012,21 @@ async function sendToDrive(id, btn){
   }
 }
 
+$('driveAuto').onchange = async () => {
+  extra.drive = extra.drive || {};
+  extra.drive.auto = $('driveAuto').checked;
+  await saveExtras();
+  photoMsg(extra.drive.auto ? 'Auto-send on — new clips back themselves up.' : 'Auto-send off — the button still works by hand.');
+};
+async function maybeAutoDrive(file, data){
+  const cfg = (extra && extra.drive) || {};
+  if (!cfg.auto || !cfg.ownerRefresh) return;
+  if ((navigator.connection || {}).saveData) { photoMsg('Saved — auto-send skipped (data saver is on). Tap the cloud on Wi-Fi.'); return; }
+  const cand = ((data && data.photos) || []).filter(p => !isPoster(p) && p.size === file.size && p.type === file.type && !driveFileFor(p.id)).sort((a, b) => (b.at || 0) - (a.at || 0))[0];
+  if (!cand) return;
+  photoMsg('Saved — sending it to Drive automatically…');
+  sendToDrive(cand.id, null);
+}
 function driveFileName(item){
   const base = String((item.caption || '').trim() || 'trip upload').replace(/[/\\]+/g, '-');
   const ext = ({ 'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/webm': '.webm', 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' })[item.type] || '';
@@ -3057,7 +3074,7 @@ function extraDefaults(){
     budget: { lodging: 0, food: 0, tolls: 0, propane: 0, fun: 0, misc: 0 },
     players: { Nate: 17.3, Kyle: 24.0, Chuck: 31, Justin: 10.4 },
     bets: [],
-    drive: { clientId: '', folderId: '', clientSecret: '', ownerRefresh: '', ownerEmail: '' },
+    drive: { clientId: '', folderId: '', clientSecret: '', ownerRefresh: '', ownerEmail: '', auto: false },
     driveFiles: {}
   };
 }
@@ -3281,6 +3298,8 @@ function syncExtraInputs(){
   const dd = (extra && extra.drive) || {};
   const ds = $('driveSecret'), df = $('driveFolder');
   if (ds && ds !== document.activeElement && ds.value !== (dd.clientSecret || '')) ds.value = dd.clientSecret || '';
+  const da = $('driveAuto');
+  if (da && da !== document.activeElement) da.checked = !!dd.auto;
   if (df && df !== document.activeElement && df.value !== (dd.folderId || '')) df.value = dd.folderId || '';
   const dl = $('driveOpen');
   if (dl) {
