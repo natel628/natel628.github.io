@@ -158,6 +158,9 @@
   .collapse-btn { float:right; background:transparent; border:1px solid #475569; color:var(--muted); border-radius:8px; padding:1px 9px; font-size:.85rem; cursor:pointer; }
   .card.collapsed > *:not(h2) { display:none; }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior:smooth; } }
+  /* Overview and Notes sit side by side on a wide screen, stacked on a phone. */
+  .top-pair { display:grid; gap:24px; align-items:start; }
+  @media(min-width:900px){ .top-pair { grid-template-columns:1.15fr .85fr; } }
   @media(max-width:700px){
     #map{height:320px;}
     .secnav-inner{padding:6px 12px;gap:8px;}
@@ -186,12 +189,12 @@
   <div class="secnav-inner">
     <span class="secnav-label">Plan</span>
     <a href="#sec-glance">📊 Overview</a>
+    <a href="#sec-notes">📝 Notes</a>
     <a href="#sec-route">🗺️ Map</a>
     <a href="#sec-itinerary">📅 Itinerary</a>
     <a href="#sec-budget">💵 Budget</a>
     <a href="#sec-rv">🚐 RV</a>
     <a href="#sec-practical">🧰 Estimates</a>
-    <a href="#sec-notes">📝 Notes</a>
     <a href="#sec-photos">📸 Photos</a>
     <span class="secnav-sep" aria-hidden="true"></span>
     <span class="secnav-label">Find</span>
@@ -205,6 +208,7 @@
 </nav>
 <main>
 
+  <div class="top-pair">
   <section class="card" id="sec-glance">
     <h2>📊 Trip at a glance</h2>
     <p class="muted">Nashville to Rhode Island, mixing hotel nights and campground nights. Everything on this page is shared — anyone who opens it sees the same plan and can change it.</p>
@@ -215,6 +219,20 @@
       <label class="small ghost" style="padding:8px 12px;border:1px solid #475569;border-radius:8px;cursor:pointer;font-size:.85rem">⬆ Restore a backup<input type="file" id="backupImport" accept="application/json,.json" hidden /></label>
     </div>
   </section>
+
+  <section class="card" id="sec-notes">
+    <h2>📝 Notes</h2>
+    <p class="muted">Anything worth remembering — campsites to book, contacts, gear to pack, detours to try. Notes are shared with everyone who opens this page.</p>
+    <textarea id="noteBody" rows="3" placeholder="e.g. Bridgeport should get added to the list." aria-label="Note text"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button type="button" id="noteAdd">+ Add note</button>
+      <button type="button" id="noteClear" class="ghost">Clear all notes</button>
+    </div>
+    <p id="noteMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="noteList"></div>
+  </section>
+
+  </div>
 
   <section class="card" id="sec-route">
     <h2>🗺️ Route map — start, end &amp; stops</h2>
@@ -309,18 +327,6 @@
       <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
     </div>
     <div id="practical"></div>
-  </section>
-
-  <section class="card" id="sec-notes">
-    <h2>📝 Notes</h2>
-    <p class="muted">Anything worth remembering — campsites to book, contacts, gear to pack, detours to try. Notes are shared with everyone who opens this page.</p>
-    <textarea id="noteBody" rows="3" placeholder="e.g. Bridgeport should get added to the list." aria-label="Note text"></textarea>
-    <div class="row" style="margin-top:8px">
-      <button type="button" id="noteAdd">+ Add note</button>
-      <button type="button" id="noteClear" class="ghost">Clear all notes</button>
-    </div>
-    <p id="noteMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="noteList"></div>
   </section>
 
   <section class="card" id="sec-photos">
@@ -2902,7 +2908,7 @@ $('betHcp').addEventListener('input', e => {
 });
 
 /* ---------- collapsible cards ---------- */
-document.querySelectorAll('main > section.card').forEach(sec => {
+document.querySelectorAll('main section.card').forEach(sec => {
   const h = sec.querySelector('h2');
   if (!h || h.querySelector('.collapse-btn')) return;
   const btn = document.createElement('button');
