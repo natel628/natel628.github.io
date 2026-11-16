@@ -1,0 +1,177 @@
+// showers.js — the year's major meteor showers.
+//
+// peak/start/end are [month, day] in local time. Radiant positions are
+// approximate J2000 right ascension/declination in degrees; ZHR is the
+// ideal hourly rate at peak with the radiant overhead under a dark sky.
+// Peak dates drift a day or two year to year, so month/day is intentional.
+
+export const SHOWERS = [
+  {
+    id: 'qua',
+    name: 'Quadrantids',
+    code: 'QUA',
+    peak: [1, 3],
+    start: [12, 28],
+    end: [1, 12],
+    ra: 230,
+    dec: 49,
+    zhr: 110,
+    velocity: 41,
+    parent: 'Asteroid 2003 EH1',
+    note: 'A six-hour spike rather than a long season — the peak is easy to miss entirely.'
+  },
+  {
+    id: 'lyr',
+    name: 'Lyrids',
+    code: 'LYR',
+    peak: [4, 22],
+    start: [4, 16],
+    end: [4, 25],
+    ra: 271,
+    dec: 34,
+    zhr: 18,
+    velocity: 49,
+    parent: 'Comet Thatcher',
+    note: 'Modest but reliable, and it occasionally throws a bright fireball.'
+  },
+  {
+    id: 'eta',
+    name: 'Eta Aquariids',
+    code: 'ETA',
+    peak: [5, 6],
+    start: [4, 19],
+    end: [5, 28],
+    ra: 338,
+    dec: -1,
+    zhr: 50,
+    velocity: 66,
+    parent: 'Comet Halley',
+    note: 'Strong in the southern hemisphere; northern observers get a short pre-dawn window.'
+  },
+  {
+    id: 'sda',
+    name: 'Delta Aquariids',
+    code: 'SDA',
+    peak: [7, 30],
+    start: [7, 12],
+    end: [8, 23],
+    ra: 340,
+    dec: -16,
+    zhr: 25,
+    velocity: 41,
+    parent: 'Comet 96P/Machholz',
+    note: 'Faint, with a low southern radiant — it overlaps the opening nights of the Perseids.'
+  },
+  {
+    id: 'per',
+    name: 'Perseids',
+    code: 'PER',
+    peak: [8, 12],
+    start: [7, 17],
+    end: [8, 24],
+    ra: 48,
+    dec: 58,
+    zhr: 100,
+    velocity: 59,
+    parent: 'Comet Swift–Tuttle',
+    note: 'The reliable summer favourite: high rates, warm nights, bright fast meteors.'
+  },
+  {
+    id: 'dra',
+    name: 'Draconids',
+    code: 'DRA',
+    peak: [10, 8],
+    start: [10, 6],
+    end: [10, 10],
+    ra: 262,
+    dec: 54,
+    zhr: 10,
+    velocity: 20,
+    parent: 'Comet 21P/Giacobini–Zinner',
+    note: 'Slow meteors in a very short window, best in the evening — rarely, it storms.'
+  },
+  {
+    id: 'ori',
+    name: 'Orionids',
+    code: 'ORI',
+    peak: [10, 21],
+    start: [10, 2],
+    end: [11, 7],
+    ra: 95,
+    dec: 16,
+    zhr: 20,
+    velocity: 66,
+    parent: 'Comet Halley',
+    note: 'Fast meteors best after midnight — a second look at Halley debris each year.'
+  },
+  {
+    id: 'sta',
+    name: 'Southern Taurids',
+    code: 'STA',
+    peak: [11, 5],
+    start: [9, 10],
+    end: [11, 20],
+    ra: 52,
+    dec: 15,
+    zhr: 5,
+    velocity: 27,
+    parent: 'Comet Encke',
+    note: 'Low rates but slow, brilliant fireballs — worth the patience.'
+  },
+  {
+    id: 'nta',
+    name: 'Northern Taurids',
+    code: 'NTA',
+    peak: [11, 12],
+    start: [10, 20],
+    end: [12, 10],
+    ra: 58,
+    dec: 22,
+    zhr: 5,
+    velocity: 29,
+    parent: 'Comet Encke',
+    note: 'The northern half of the Taurid complex; fireball season peaks in early November.'
+  },
+  {
+    id: 'leo',
+    name: 'Leonids',
+    code: 'LEO',
+    peak: [11, 17],
+    start: [11, 6],
+    end: [11, 30],
+    ra: 152,
+    dec: 22,
+    zhr: 15,
+    velocity: 71,
+    parent: 'Comet Tempel–Tuttle',
+    note: 'The fastest of the majors; historic storms came from this shower.'
+  },
+  {
+    id: 'gem',
+    name: 'Geminids',
+    code: 'GEM',
+    peak: [12, 14],
+    start: [12, 4],
+    end: [12, 17],
+    ra: 112,
+    dec: 33,
+    zhr: 150,
+    velocity: 35,
+    parent: 'Asteroid 3200 Phaethon',
+    note: "The year's strongest shower: bright, slow meteors visible from early evening."
+  },
+  {
+    id: 'urs',
+    name: 'Ursids',
+    code: 'URS',
+    peak: [12, 22],
+    start: [12, 17],
+    end: [12, 26],
+    ra: 217,
+    dec: 76,
+    zhr: 10,
+    velocity: 33,
+    parent: 'Comet 8P/Tuttle',
+    note: 'A circumpolar radiant that never sets up north, but it is a small shower.'
+  }
+];

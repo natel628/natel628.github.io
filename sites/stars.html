@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteor Shower Tracker — what's visible tonight</title>
+<meta name="description" content="Track the year's major meteor showers: peak dates, the best viewing hours from your location, radiant altitude and moon interference.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/stars.css">
+</head>
+<body>
+<div class="sky" aria-hidden="true"></div>
+
+<main class="wrap">
+  <header class="site">
+    <div class="site-intro">
+      <p class="eyebrow">Night sky</p>
+      <h1>Meteor shower tracker</h1>
+      <p class="lede">Peak dates for the year's major showers, plus the hours tonight when the radiant is actually high enough from where you are to make going outside worth it.</p>
+    </div>
+
+    <div class="loc">
+      <p class="loc-label">Observer <strong id="locName">—</strong></p>
+      <div class="loc-row">
+        <button class="btn" type="button" id="geoBtn">Use my location</button>
+        <button class="btn btn-ghost" type="button" id="manualBtn" aria-expanded="false" aria-controls="manual">Enter coordinates</button>
+      </div>
+      <form class="manual" id="manual" hidden>
+        <label>Lat <input id="lat" name="lat" type="text" inputmode="decimal" placeholder="41.82" required></label>
+        <label>Long <input id="lon" name="lon" type="text" inputmode="decimal" placeholder="-71.40" required></label>
+        <button class="btn btn-sm" type="submit">Apply</button>
+      </form>
+      <p class="loc-msg" id="locMsg" role="status"></p>
+    </div>
+  </header>
+
+  <section class="hero" id="hero" aria-label="Tonight's outlook"></section>
+
+  <section aria-labelledby="gridTitle">
+    <div class="section-head">
+      <h2 id="gridTitle" class="section-title">Showers</h2>
+      <div class="filters" role="group" aria-label="Filter showers">
+        <button type="button" class="filter-btn" data-filter="soon" aria-pressed="true">Active &amp; upcoming</button>
+        <button type="button" class="filter-btn" data-filter="all" aria-pressed="false">All showers</button>
+      </div>
+    </div>
+    <p class="section-hint"><span id="showCount">—</span> · ranked for tonight · all times local</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="strip-wrap" aria-labelledby="stripTitle">
+    <h2 id="stripTitle" class="section-title">The year at a glance</h2>
+    <div class="strip" id="strip"></div>
+    <p class="strip-legend">Dots are shower peaks — gold is still ahead this year, grey has passed. The bright line is today.</p>
+  </section>
+
+  <footer class="note">
+    <p><strong>How the numbers work.</strong> ZHR is the ideal rate at peak with the radiant overhead under a dark sky — real counts are lower, and city lights cut them further. The radiant is the patch of sky the meteors appear to stream from; the higher it sits, the more of them clear the horizon. A shower's best window here is the stretch where the Sun is at least 12° below the horizon and the radiant is above 15°.</p>
+    <p>Peak dates drift a day or two year to year, radiant positions are approximate, and moon illumination comes from the synodic month, so treat this as planning guidance rather than an ephemeris.</p>
+  </footer>
+</main>
+
+<script type="module" src="assets/stars.js"></script>
+</body>
+</html>
