@@ -5995,7 +5995,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
         <div style="font-size: var(--text-sm);font-weight:700;margin-bottom:8px;color:var(--text-muted)">🎵 Soundtrack</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
           <button class="modal-btn" id="soundtrack-btn">Find soundtrack</button>
-          <span style="font-size: var(--text-xs);color:var(--text-muted);align-self:center">Wikipedia track listing + Spotify search, no key needed</span>
+          <span style="font-size: var(--text-xs);color:var(--text-muted);align-self:center">Wikipedia track listing · Spotify links · tap ▶ for a 30-sec preview, no key needed</span>
         </div>
         <div id="modal-soundtrack"><p style="font-size: var(--text-xs);color:var(--text-muted)">No soundtrack loaded yet.</p></div>
       </div>
@@ -6164,11 +6164,70 @@ async function loadModalSoundtrack(type, id, title, year) {
       return;
     }
     wrap.innerHTML = `<p style="font-size: var(--text-xs);color:var(--text-muted);margin-bottom:8px">From Wikipedia: <strong>${esc(found.page)}</strong> (${found.tracks.length} tracks)</p>` +
-      found.tracks.map(t => `<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:6px;font-size: var(--text-sm)"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.title)}${t.artist ? ` <span style="color:var(--text-muted)">— ${esc(t.artist)}</span>` : ''}</span><a class="modal-btn" style="flex:0 0 auto;text-decoration:none" href="${spotifySearchUrl(t.title, t.artist)}" target="_blank" rel="noopener">Spotify ↗</a></div>`).join('');
+      found.tracks.map(t => `<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:6px;font-size: var(--text-sm)"><button class="modal-btn st-preview" data-st-t="${esc(t.title)}" data-st-a="${esc(t.artist || '')}" title="Play 30-second preview" aria-label="Play preview of ${esc(t.title)}" style="flex:0 0 auto">▶</button><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.title)}${t.artist ? ` <span style="color:var(--text-muted)">— ${esc(t.artist)}</span>` : ''}</span><a class="modal-btn" style="flex:0 0 auto;text-decoration:none" href="${spotifySearchUrl(t.title, t.artist)}" target="_blank" rel="noopener">Spotify ↗</a></div>`).join('');
+    wrap.onclick = e => {
+      const btn = e.target.closest('.st-preview');
+      if (!btn || !wrap.contains(btn)) return;
+      playTrackPreview(btn, btn.dataset.stT || '', btn.dataset.stA || '');
+    };
   } catch (e) {
     console.warn('Soundtrack error:', e);
     wrap.innerHTML = `<p style="font-size: var(--text-xs);color:var(--text-muted)">Could not load a soundtrack: ${esc(e.message || e)}.</p>`;
   }
+}
+
+/* ── ITUNES 30-SECOND PREVIEWS (keyless, lazy per tap) ───────────────
+   One shared <audio> element; preview URLs are cached per track so a
+   second tap never re-hits the network. Nothing is stored. */
+const _stPreviewCache = new Map();
+let _stAudio = null, _stPreviewBtn = null;
+const normTitle = s => String(s || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+function pickItunesPreview(results, title) {
+  const want = normTitle(title);
+  if (!want || !Array.isArray(results)) return null;
+  const withUrl = results.filter(r => r && r.previewUrl);
+  return withUrl.find(r => normTitle(r.trackName).includes(want))
+      || withUrl.find(r => want.includes(normTitle(r.trackName)))
+      || withUrl.find(r => normTitle(r.collectionName).includes(want))
+      || withUrl[0] || null;
+}
+function resetPreviewBtn(btn, label) { if (btn) { btn.textContent = label; btn.disabled = false; } }
+async function playTrackPreview(btn, title, artist) {
+  const key = `${title}␟${artist}`;
+  try {
+    if (_stPreviewBtn && _stPreviewBtn !== btn) resetPreviewBtn(_stPreviewBtn, '▶');
+    if (_stAudio && !_stAudio.paused && _stPreviewBtn === btn) { _stAudio.pause(); btn.textContent = '▶'; return; }
+    if (_stPreviewCache.has(key)) {
+      const hit = _stPreviewCache.get(key);
+      if (!hit) { btn.textContent = '—'; btn.disabled = true; btn.title = 'No preview found'; return; }
+      startPreviewAudio(btn, hit); return;
+    }
+    btn.textContent = '…'; btn.disabled = true;
+    const q = encodeURIComponent([title, artist].filter(Boolean).join(' '));
+    const res = await fetchWithTimeout(`https://itunes.apple.com/search?term=${q}&media=music&entity=song&limit=6`, {}, 15000);
+    if (!res.ok) throw new Error(`iTunes ${res.status}`);
+    const data = await res.json();
+    const pick = pickItunesPreview(data.results, title);
+    _stPreviewCache.set(key, pick ? pick.previewUrl : null);
+    if (!pick) { btn.textContent = '—'; btn.title = 'No preview found'; return; }
+    btn.disabled = false;
+    startPreviewAudio(btn, pick.previewUrl);
+  } catch (e) {
+    console.warn('Preview error:', e);
+    resetPreviewBtn(btn, '▶');
+    toast('Could not load a preview');
+  }
+}
+function startPreviewAudio(btn, url) {
+  if (!_stAudio) {
+    _stAudio = new Audio();
+    _stAudio.preload = 'none';
+    _stAudio.onended = () => resetPreviewBtn(_stPreviewBtn, '▶');
+  }
+  _stAudio.pause();
+  if (_stAudio.src !== url) _stAudio.src = url;
+  _stAudio.play().then(() => { _stPreviewBtn = btn; btn.textContent = '⏸'; })
+    .catch(() => resetPreviewBtn(btn, '▶'));
 }
 
 /* ── FANART.TV ARTWORK (optional, key injected at deploy) ────────────
@@ -9876,6 +9935,10 @@ function runSelfTest(verbose = true) {
   eq('a saved note reads back', getNote('movie', 999999), 'selftest note');
       setNote('movie', 999999, '');
     eq('clearing a note removes it', getNote('movie', 999999), '');
+    eq('itunes picker prefers title match', pickItunesPreview([{ trackName: 'Unrelated Song', previewUrl: 'u1' }, { trackName: 'Foo Anthem', previewUrl: 'u2' }], 'Foo').previewUrl, 'u2');
+    eq('itunes picker returns null without urls', pickItunesPreview([{ trackName: 'Foo' }], 'Foo'), null);
+    eq('daysSince today is 0', daysSince(new Date().toISOString().slice(0, 10)), 0);
+    eq('daysSince rejects garbage', daysSince('not-a-date'), Infinity);
     const _sR = state.ratings, _sW = state.watchlist, _sM = state.mediaDetails;
     state.ratings = {}; state.watchlist = { movie_555001: 'plantowatch' };
     state.mediaDetails = { movie_555001: { genre_ids: [28] } };
@@ -9895,6 +9958,48 @@ function runSelfTest(verbose = true) {
     }
   }
   return { passed, failed, total: results.length, results };
+}
+/* ── NEW-EPISODE ALERTS (TMDB last_episode_to_air, cached 12h) ─────────
+   On load, check followed TV for episodes that aired in the last 7 days.
+   One request per followed show (capped at 10, most recently added first),
+   results cached 12h, toast shown at most once a day. Never blocks boot. */
+function daysSince(dateStr) {
+  if (!dateStr) return Infinity;
+  const d = new Date(`${dateStr}T12:00:00`);
+  if (isNaN(d.getTime())) return Infinity;
+  return Math.max(0, Math.floor((Date.now() - d.getTime()) / 86400000));
+}
+async function checkNewEpisodes() {
+  try {
+    const followed = Object.entries(state.watchlist || {})
+      .filter(([k, s]) => k.startsWith('tv_') && (s === 'watching' || s === 'plantowatch'))
+      .sort((a, b) => ((state.wlAdded || {})[b[0]] || 0) - ((state.wlAdded || {})[a[0]] || 0))
+      .slice(0, 10);
+    if (!followed.length) return;
+    const TTL = 12 * 3600 * 1000;
+    let cache = LS.get('new_ep_cache');
+    if (!cache || typeof cache !== 'object' || Date.now() - (cache.ts || 0) > TTL) {
+      const ids = followed.map(([k]) => parseInt(k.slice(3), 10)).filter(Boolean);
+      const found = await promiseAllChunked(ids, async id => {
+        try {
+          const d = await tmdb(`/tv/${id}`);
+          const last = d && d.last_episode_to_air;
+          if (!last || !last.air_date || daysSince(last.air_date) > 7) return null;
+          return { key: `tv_${id}`, title: d.name || 'A followed show', season: last.season_number, episode: last.episode_number, air_date: last.air_date };
+        } catch (e) { return null; }
+      }, 4);
+      cache = { ts: Date.now(), items: found.filter(Boolean) };
+      LS.set('new_ep_cache', cache);
+    }
+    const items = cache.items || [];
+    if (!items.length) return;
+    const today = new Date().toISOString().slice(0, 10);
+    if (LS.get('new_ep_seen_day') === today) return;
+    LS.set('new_ep_seen_day', today);
+    const one = items.length === 1 ? ` — ${items[0].title} S${items[0].season} E${items[0].episode}` : '';
+    setTimeout(() => toast(`🆕 ${items.length} new episode${items.length === 1 ? '' : 's'} from your list this week${one}`,
+      { duration: 8000, actionLabel: 'Calendar', onAction: () => navigateTo('calendar') }), 2500);
+  } catch (e) { console.warn('New-episode check error:', e); }
 }
 window.__selftest = () => runSelfTest(true);
 
@@ -10114,6 +10219,7 @@ function renderOnboarding() {
     toast(`Skipped ${_droppedOnLoad} unreadable saved ${_droppedOnLoad === 1 ? 'entry' : 'entries'}. Everything else loaded normally.`, 5000);
   }
 
+  checkNewEpisodes();
   renderView();
 
   if (new URLSearchParams(location.search).get('selftest') === '1') runSelfTest(true);
