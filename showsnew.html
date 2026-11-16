@@ -1119,6 +1119,18 @@
     .list-picker-row:hover { background: var(--surface2); }
     .list-picker-row .tick { width: 16px; color: var(--accent2); }
     .list-picker-actions { padding: 10px 16px 14px; display: flex; gap: 8px; justify-content: flex-end; }
+    /* Creating and renaming lists used window.prompt: unstyleable, suppressed
+       in embedded browsers and unable to take a name and a description in one
+       step. These fields sit inside the same .list-picker shell. */
+    .list-editor-form { padding: 0 16px; }
+    .list-editor-form label { display: block; font-size: var(--text-sm); color: var(--text-muted); margin: 8px 0 4px; }
+    .list-editor-form input,
+    .list-editor-form textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font: inherit; font-size: var(--text-sm); padding: 8px 10px; }
+    .list-editor-form textarea { resize: vertical; min-height: 56px; }
+    .list-editor-form input:focus-visible,
+    .list-editor-form textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+    .list-editor-error { min-height: 18px; padding: 6px 16px 0; font-size: var(--text-sm); color: #ff8080; }
+    #share-url { font-size: var(--text-xs); }
     .list-item-ctl { display: flex; gap: 4px; margin-top: 4px; }
     .list-item-ctl button { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); border-radius: var(--radius-sm); font-size: var(--text-xs); padding: 3px 0; cursor: pointer; }
     .list-item-ctl button:hover { color: var(--text); border-color: var(--accent); }
@@ -4760,8 +4772,11 @@ async function pkceChallenge() {
 async function simklAuth() {
   if (state.simklToken) { simklDisconnect(); return; }
   const { verifier, challenge } = await pkceChallenge();
-  const oauthState = base64urlEncode(crypto.getRandomValues(new Uint8Array(32)));
-  LS.set('pkce_verifier', verifier);
+  /* The state names its provider: Simkl and Trakt both return to this same
+     page with ?code, and the prefix is what lets one dispatcher route the
+     response before either side clears a verifier. */
+  const oauthState = 'simkl_' + base64urlEncode(crypto.getRandomValues(new Uint8Array(32)));
+  LS.set('simkl_pkce_verifier', verifier);
   LS.set('simkl_oauth_state', oauthState);
   const params = new URLSearchParams({
     state: oauthState,
@@ -4781,6 +4796,7 @@ function simklDisconnect() {
   state.simklLibrary = [];
   LS.set('simkl_token', null);
   LS.set('simkl_user', null);
+  LS.set('simkl_pkce_verifier', null);
   LS.set('pkce_verifier', null);
   LS.set('simkl_oauth_state', null);
   LS.set('simkl_last_sync', null);
@@ -4789,23 +4805,22 @@ function simklDisconnect() {
   renderView();
 }
 
-async function handleSimklCallback() {
-  const params   = new URLSearchParams(window.location.search);
+async function handleSimklCallback(params) {
+  params = params || new URLSearchParams(window.location.search);
   const oauthErr = params.get('error');
   const code     = params.get('code');
-  const verifier = LS.get('pkce_verifier');
-  if (oauthErr && !code) {
-    window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+  /* Older builds stored this as `pkce_verifier`; read both so a sign-in that
+     started before an update can still finish. */
+  const verifier = LS.get('simkl_pkce_verifier') || LS.get('pkce_verifier');
+  const expectedState = LS.get('simkl_oauth_state');
+  const forget = () => {
+    LS.set('simkl_pkce_verifier', null);
     LS.set('pkce_verifier', null);
     LS.set('simkl_oauth_state', null);
-    toast('Simkl connection cancelled.');
-    return;
-  }
+  };
+  if (oauthErr && !code) { forget(); toast('Simkl connection cancelled.'); return; }
   if (!code || !verifier) return;
-  const expectedState = LS.get('simkl_oauth_state');
-  window.history.replaceState({}, '', window.location.pathname + window.location.hash);
-  LS.set('pkce_verifier', null);
-  LS.set('simkl_oauth_state', null);
+  forget();
   if (!expectedState || params.get('state') !== expectedState) {
     toast('Simkl connection failed: invalid authorization response. Please reconnect.');
     return;
@@ -4967,15 +4982,17 @@ function updateSimklUI() {
   btn.style.opacity = '';
   btn.style.cursor = '';
   btn.onclick = simklAuth;
-  if (state.simklToken && state.simklUser) {
-    /* "Disconnect" alone in the header could have been anything. */
+  if (state.simklToken) {
+    /* The token is what authenticates. The username is decoration, and a
+       failed /users/settings call used to read as "Not connected" while a
+       perfectly good token sat in storage. */
     btn.textContent  = 'Disconnect Simkl';
     btn.title = 'Unlink your Simkl account from this browser. Ratings and your list stay on this device.';
     btn.setAttribute('aria-label', 'Disconnect Simkl account from this browser');
     btn.style.background = '#444';
     btn.style.color = '#fff';
     btn.onclick = simklDisconnect;
-    if (user) user.textContent = `👤 ${state.simklUser}`;
+    if (user) user.textContent = state.simklUser ? `👤 ${state.simklUser}` : '✅ Connected';
     if (more) { more.textContent = 'Disconnect Simkl'; more.onclick = () => { closeMoreSheet(); simklDisconnect(); }; }
   } else {
     btn.innerHTML    = '<span>▶</span> Connect Simkl';
@@ -5741,6 +5758,14 @@ function buildCard(item, dismiss = false) {
   card.dataset.id = id;
   card.dataset.type = type;
   card.dataset.obscurity = osc;
+  /* The card's own "Add to list" button builds its snapshot from these, so a
+     list can be filled straight from a grid, without opening the detail view
+     first (the button had a data-action but no handler). */
+  card.dataset.title = title;
+  card.dataset.posterPath = item.poster_path || '';
+  card.dataset.date = item.release_date || item.first_air_date || '';
+  card.dataset.vote = item.vote_average || 0;
+  card.dataset.votes = item.vote_count || 0;
   if (item.genre_ids) card.dataset.genres = item.genre_ids.join(',');
 
   const cardEl = card;
@@ -6070,6 +6095,23 @@ function handleAction(action, el) {
         duration: 8000,
         actionLabel: 'Undo',
         onAction: () => { setRuleEnabled(id, true); afterRuleChange(); toast('Rule active again'); },
+      });
+      break;
+    }
+    case 'add-to-list': {
+      const card = el && el.closest('.card');
+      if (!card) break;
+      openListPicker({
+        media_type: card.dataset.type,
+        id: Number(card.dataset.id),
+        title: card.dataset.title || '',
+        name: card.dataset.title || '',
+        poster_path: card.dataset.posterPath || '',
+        release_date: card.dataset.date || '',
+        first_air_date: card.dataset.date || '',
+        vote_average: Number(card.dataset.vote) || 0,
+        vote_count: Number(card.dataset.votes) || 0,
+        genre_ids: (card.dataset.genres || '').split(',').filter(Boolean).map(Number),
       });
       break;
     }
@@ -9922,12 +9964,13 @@ function renderSettings(main) {
   main.querySelector('#settings-import')?.addEventListener('change', e => importData(e.target));
 
   /* Connections card: Simkl reuses the same flows as the topnav button. */
-  const simklOn = !!(state.simklToken && state.simklUser);
+  const simklOn = !!state.simklToken;
   const simklLocal = isLocalHost();
   const simklBtn = main.querySelector('#settings-simkl-btn');
   const simklState = main.querySelector('#settings-simkl-state');
   if (simklState) {
-    simklState.textContent = simklLocal ? 'Not in this copy' : (simklOn ? 'Connected' : 'Not connected');
+    simklState.textContent = simklLocal ? 'Not in this copy'
+      : (simklOn ? (state.simklUser ? 'Connected as ' + state.simklUser : 'Connected') : 'Not connected');
     simklState.closest('li')?.querySelector('.conn-dot')?.classList.toggle('on', simklOn && !simklLocal);
   }
   if (simklBtn) {
@@ -10085,10 +10128,11 @@ function shareList(list) {
   const hash = '#list=' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
   const url = location.origin + location.pathname + hash;
   const done = () => toast('Share link copied — ' + list.items.length + ' titles.');
+  const manual = () => openShareDialog(url, list.items.length);
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url).then(done).catch(() => window.prompt('Copy this link:', url));
+    navigator.clipboard.writeText(url).then(done).catch(manual);
   } else {
-    window.prompt('Copy this link:', url);
+    manual();
   }
 }
 
@@ -10154,14 +10198,9 @@ function renderLists(main) {
   addBtn.type = 'button';
   addBtn.className = 'modal-btn primary';
   addBtn.textContent = '+ New list';
-  addBtn.addEventListener('click', () => {
-    const name = window.prompt('Name this list:', '');
-    if (!name || !name.trim()) return;
-    const desc = window.prompt('Description (optional):', '') || '';
-    const list = createList(name.trim(), desc.trim());
-    state.activeList = list.id;
-    renderView();
-  });
+  addBtn.addEventListener('click', () => openListEditor({
+    onSave: list => { state.activeList = list.id; renderView(); },
+  }));
   bar.appendChild(addBtn);
   wrap.appendChild(bar);
 
@@ -10210,14 +10249,7 @@ function renderListDetail(main, list) {
   };
   mk('← All lists', '', () => { state.activeList = null; renderView(); });
   mk('Share', '', () => { if (!list.items.length) { toast('Add a title first.'); return; } shareList(list); });
-  mk('Rename', '', () => {
-    const name = window.prompt('List name:', list.name);
-    if (!name || !name.trim()) return;
-    list.name = name.trim().slice(0, 80);
-    const desc = window.prompt('Description:', list.desc);
-    if (desc != null) list.desc = desc.trim().slice(0, 240);
-    saveLists(); renderView();
-  });
+  mk('Rename', '', () => openListEditor({ list, onSave: () => renderView() }));
   mk('Delete list', '', () => {
     if (!confirm(`Delete "${list.name}"? The titles stay in your ratings and My List.`)) return;
     state.lists = state.lists.filter(l => l.id !== list.id);
@@ -10289,6 +10321,119 @@ function renderListDetail(main, list) {
   main.appendChild(wrap);
 }
 
+/* One modal for creating and renaming. Keyboard: Enter submits, Escape
+   closes, focus starts in the name field. */
+function openListEditor({ list = null, onSave = null } = {}) {
+  document.querySelector('.list-editor-scrim')?.remove();
+  const scrim = document.createElement('div');
+  scrim.className = 'list-picker-scrim list-editor-scrim';
+  scrim.setAttribute('role', 'dialog');
+  scrim.setAttribute('aria-modal', 'true');
+  scrim.setAttribute('aria-label', list ? 'Rename list' : 'New list');
+
+  const box = document.createElement('form');
+  box.className = 'list-picker list-editor';
+  box.noValidate = true;
+  box.innerHTML = `
+    <h2>${list ? 'Rename list' : 'New list'}</h2>
+    <div class="list-editor-form">
+      <label for="list-editor-name">Name</label>
+      <input id="list-editor-name" name="name" type="text" maxlength="80" autocomplete="off" required
+        value="${esc(list ? list.name : '')}" placeholder="Halloween marathon" />
+      <label for="list-editor-desc">Description <span style="opacity:.7">(optional)</span></label>
+      <textarea id="list-editor-desc" name="desc" maxlength="240" rows="2"
+        placeholder="What ties these together?">${esc(list ? list.desc : '')}</textarea>
+    </div>
+    <p class="list-editor-error" id="list-editor-error" role="alert"></p>
+    <div class="list-picker-actions">
+      <button type="button" class="modal-btn" data-cancel>Cancel</button>
+      <button type="submit" class="modal-btn primary">${list ? 'Save' : 'Create list'}</button>
+    </div>`;
+  scrim.appendChild(box);
+  document.body.appendChild(scrim);
+
+  const nameEl = box.querySelector('#list-editor-name');
+  const descEl = box.querySelector('#list-editor-desc');
+  const errEl = box.querySelector('#list-editor-error');
+  const close = () => { scrim.remove(); document.removeEventListener('keydown', onKey); };
+  const submit = e => {
+    e.preventDefault();
+    const name = nameEl.value.trim();
+    if (!name) { errEl.textContent = 'Give the list a name.'; nameEl.focus(); return; }
+    if (state.lists.some(l => l !== list && l.name.toLowerCase() === name.toLowerCase())) {
+      errEl.textContent = 'You already have a list with that name.';
+      nameEl.focus();
+      return;
+    }
+    let target = list;
+    if (target) {
+      target.name = name.slice(0, 80);
+      target.desc = descEl.value.trim().slice(0, 240);
+      saveLists();
+    } else {
+      target = createList(name, descEl.value.trim());
+    }
+    close();
+    if (onSave) onSave(target);
+  };
+  const onKey = e => {
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+  };
+  box.addEventListener('submit', submit);
+  box.querySelector('[data-cancel]').addEventListener('click', close);
+  scrim.addEventListener('click', e => { if (e.target === scrim) close(); });
+  document.addEventListener('keydown', onKey);
+  nameEl.focus();
+  nameEl.select();
+}
+
+/* A blocked clipboard (any non-HTTPS origin, a denied permission) used to fall
+   back to window.prompt. Show the link somewhere it can be selected instead. */
+function openShareDialog(url, count) {
+  document.querySelector('.share-scrim')?.remove();
+  const scrim = document.createElement('div');
+  scrim.className = 'list-picker-scrim share-scrim';
+  scrim.setAttribute('role', 'dialog');
+  scrim.setAttribute('aria-modal', 'true');
+  scrim.setAttribute('aria-label', 'Share list');
+  const box = document.createElement('div');
+  box.className = 'list-picker';
+  box.innerHTML = `
+    <h2>Share this list</h2>
+    <div class="list-editor-form">
+      <p style="font-size:var(--text-sm);color:var(--text-muted);margin:0 0 8px">
+        Anyone with this link can import ${count} title${count === 1 ? '' : 's'} into their own copy.
+      </p>
+      <label for="share-url">Link</label>
+      <input id="share-url" type="text" readonly value="${esc(url)}" />
+    </div>
+    <p class="list-editor-error" id="share-msg" role="status"></p>
+    <div class="list-picker-actions">
+      <button type="button" class="modal-btn" data-close>Done</button>
+      <button type="button" class="modal-btn primary" data-copy>Copy</button>
+    </div>`;
+  scrim.appendChild(box);
+  document.body.appendChild(scrim);
+  const input = box.querySelector('#share-url');
+  const msg = box.querySelector('#share-msg');
+  const close = () => { scrim.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = e => { if (e.key === 'Escape') { e.preventDefault(); close(); } };
+  box.querySelector('[data-close]').addEventListener('click', close);
+  box.querySelector('[data-copy]').addEventListener('click', () => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => { msg.textContent = 'Copied.'; })
+        .catch(() => { input.select(); msg.textContent = 'Press Ctrl/Cmd+C to copy.'; });
+    } else {
+      input.select();
+      msg.textContent = 'Press Ctrl/Cmd+C to copy.';
+    }
+  });
+  scrim.addEventListener('click', e => { if (e.target === scrim) close(); });
+  document.addEventListener('keydown', onKey);
+  input.focus();
+  input.select();
+}
+
 /* One picker for both entry points: the detail modal and a card menu. */
 function openListPicker(item) {
   document.querySelector('.list-picker-scrim')?.remove();
@@ -10327,14 +10472,13 @@ function openListPicker(item) {
     newRow.type = 'button';
     newRow.className = 'list-picker-row';
     newRow.innerHTML = '<span class="tick">＋</span><span>New list…</span>';
-    newRow.addEventListener('click', () => {
-      const name = window.prompt('Name this list:', '');
-      if (!name || !name.trim()) return;
-      const list = createList(name.trim());
-      toggleListMembership(list.id, item);
-      paint();
-      toast(`Added to "${list.name}".`);
-    });
+    newRow.addEventListener('click', () => openListEditor({
+      onSave: list => {
+        toggleListMembership(list.id, item);
+        paint();
+        toast(`Added to "${list.name}".`);
+      },
+    }));
     items.appendChild(newRow);
   };
   paint();
@@ -10343,15 +10487,19 @@ function openListPicker(item) {
   actions.className = 'list-picker-actions';
   const done = document.createElement('button');
   done.type = 'button'; done.className = 'modal-btn primary'; done.textContent = 'Done';
-  done.addEventListener('click', () => scrim.remove());
+  /* Every exit goes through close(). Done and backdrop clicks used to remove
+     the panel but leave the keydown listener attached, so each opening left
+     another handler behind. */
+  const close = () => { scrim.remove(); document.removeEventListener('keydown', onKey); };
+  done.addEventListener('click', close);
   actions.appendChild(done);
 
   box.append(items, actions);
   scrim.appendChild(box);
-  scrim.addEventListener('click', e => { if (e.target === scrim) scrim.remove(); });
+  scrim.addEventListener('click', e => { if (e.target === scrim) close(); });
   document.body.appendChild(scrim);
   done.focus();
-  const onKey = e => { if (e.key === 'Escape') { scrim.remove(); document.removeEventListener('keydown', onKey); } };
+  const onKey = e => { if (e.key === 'Escape') { e.preventDefault(); close(); } };
   document.addEventListener('keydown', onKey);
 }
 
@@ -10818,7 +10966,7 @@ async function traktConnect() {
 
 async function traktConnectPkce(clientId) {
   const { verifier, challenge } = await pkceChallenge();
-  const oauthState = base64urlEncode(crypto.getRandomValues(new Uint8Array(32)));
+  const oauthState = 'trakt_' + base64urlEncode(crypto.getRandomValues(new Uint8Array(32)));
   LS.set('trakt_pkce_verifier', verifier);
   LS.set('trakt_oauth_state', oauthState);
   const params = new URLSearchParams({
@@ -10833,14 +10981,13 @@ async function traktConnectPkce(clientId) {
 }
 
 /* Trakt sends the browser back here with ?code & ?state. */
-async function handleTraktCallback() {
-  const params = new URLSearchParams(location.search);
+async function handleTraktCallback(params) {
+  params = params || new URLSearchParams(location.search);
   const code = params.get('code');
   const err = params.get('error');
   if (!code && !err) return;
   const verifier = LS.get('trakt_pkce_verifier');
   const expected = LS.get('trakt_oauth_state');
-  history.replaceState(null, '', location.pathname + location.hash);
   LS.set('trakt_pkce_verifier', null);
   LS.set('trakt_oauth_state', null);
 
@@ -10876,6 +11023,56 @@ async function handleTraktCallback() {
   } catch (e) {
     toast('Trakt: ' + e.message);
   }
+}
+
+/* Which sign-in does this state belong to? Pure, so the self-check can
+   exercise it without touching storage. */
+function oauthProviderFromState(state) {
+  const st = String(state || '');
+  if (st.startsWith('trakt_')) return 'trakt';
+  if (st.startsWith('simkl_')) return 'simkl';
+  return '';
+}
+
+/* One callback for every provider.
+   Simkl and Trakt both send the browser back to this page with ?code. The
+   Trakt handler used to run first, see Simkl's code, strip the query and
+   clear its own verifier — so a Simkl sign-in was announced as "Trakt:
+   invalid authorization response" and Simkl's handler then had no URL left
+   to read. Nothing is cleared now until the response has an owner. */
+async function handleOAuthCallback() {
+  const params = new URLSearchParams(location.search);
+  const code = params.get('code');
+  const err = params.get('error');
+  if (!code && !err) return;
+
+  const st = params.get('state') || '';
+  let provider = oauthProviderFromState(st);
+
+  /* Older links, and providers that omit state on error, are matched against
+     the half-finished sign-in this browser is holding. */
+  if (!provider) {
+    const traktState = LS.get('trakt_oauth_state');
+    const simklState = LS.get('simkl_oauth_state');
+    const hasTrakt = !!LS.get('trakt_pkce_verifier');
+    const hasSimkl = !!(LS.get('simkl_pkce_verifier') || LS.get('pkce_verifier'));
+    if (traktState && st === traktState) provider = 'trakt';
+    else if (simklState && st === simklState) provider = 'simkl';
+    else if (code && hasTrakt && !hasSimkl) provider = 'trakt';
+    else if (code && hasSimkl && !hasTrakt) provider = 'simkl';
+  }
+
+  /* The address bar is cleaned once here, before either handler runs. */
+  history.replaceState(null, '', location.pathname + location.hash);
+
+  if (provider === 'trakt') return handleTraktCallback(params);
+  if (provider === 'simkl') return handleSimklCallback(params);
+
+  /* No owner: drop both halves of anything that was mid-flight, so a stray
+     code cannot leave a verifier behind for the next sign-in to inherit. */
+  ['trakt_pkce_verifier', 'trakt_oauth_state', 'simkl_pkce_verifier', 'pkce_verifier', 'simkl_oauth_state']
+    .forEach(k => LS.set(k, null));
+  toast('Sign-in failed: this authorization response is not for this browser.');
 }
 
 async function traktUnlink() {
@@ -11980,6 +12177,23 @@ function runSelfTest(verbose = true) {
     eq('watchlist seeds genre affinity', (LS.get('genre_affinity') || {})['28'] > 0, true);
     state.ratings = _sR; state.watchlist = _sW; state.mediaDetails = _sM; recomputeAffinity();
 
+  /* OAuth routing: the state prefix decides which sign-in a ?code belongs
+     to, before either handler clears anything. */
+  eq('oauth state routes a simkl sign-in', oauthProviderFromState('simkl_abc'), 'simkl');
+  eq('oauth state routes a trakt sign-in', oauthProviderFromState('trakt_abc'), 'trakt');
+  eq('a state with no provider claims nothing', oauthProviderFromState('plain123'), '');
+  eq('a missing state claims nothing', oauthProviderFromState(null), '');
+
+  /* Lists: the create path the UI now uses, then the shelf is put back. */
+  const _listsBefore = state.lists.slice();
+  const _testList = createList('__selftest list', 'temporary');
+  eq('a created list starts empty and is findable', [findList(_testList.id) !== null, _testList.items.length], [true, 0]);
+  eq('a title can be added to and removed from a list',
+    [toggleListMembership(_testList.id, { media_type: 'movie', id: 1, title: 'T' }),
+     toggleListMembership(_testList.id, { media_type: 'movie', id: 1, title: 'T' })], [true, false]);
+  state.lists = _listsBefore;
+  saveLists();
+
   const passed = results.filter(r => r.ok).length;
   const failed = results.length - passed;
   if (verbose) {
@@ -12220,11 +12434,12 @@ function renderOnboarding() {
 
   updateSimklUI();
   if (state.simklToken && !state.simklUser) loadSimklUser();
-  if (!isLocalHost()) {
-    await handleTraktCallback();
-    await handleSimklCallback();
-    await refreshSimklIfNeeded();
-  }
+  /* Runs on any origin: it only acts when the URL carries a code AND this
+     browser is holding the matching verifier, so a stray ?code does nothing.
+     Background syncing stays deploy-only, because the Simkl app is
+     registered against the deployed URL. */
+  await handleOAuthCallback();
+  if (!isLocalHost()) await refreshSimklIfNeeded();
 
   updateWelcome();
   document.getElementById('welcome-dismiss')?.addEventListener('click', () => {
