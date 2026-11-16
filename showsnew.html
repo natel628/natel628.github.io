@@ -3603,9 +3603,10 @@ function firstIndexOf(tokens, words) { for (let i = 0; i < tokens.length; i++) {
 function parseClause(clause, out, forceMode) {
   const c = String(clause || '').toLowerCase().trim();
   if (!c) return;
-  const neg = /\b(no|not|don'?t|dont|doesn'?t|isn'?t|without|never|avoid|skip|block|exclude|hide|hides|removes?|stop|filter out|nothing|none|less|fewer|enough of|tired of|sick of)\b/.test(c);
-  const pos = /\b(only|just|want|wanna|prefer|like|love|interested|more|show me|give me|include|stick to|favour|favor|instead)\b/.test(c);
-  const mode = forceMode || ((pos && !neg) ? 'include' : 'exclude');
+  const neg = /\b(no|not|don'?t|dont|doesn'?t|isn'?t|can'?t|cannot|without|never|avoid|skip|block|exclude|hide|hides|removes?|stop|filter out|nothing|none|less|fewer|enough of|tired of|sick of|bored of|bored with|hate|hates|dislike|dislikes|not a fan|done with|anything but|get rid of|ditch|ban)\b/.test(c);
+  /* Absence of a positive keyword is not a negation. Defaulting to exclude
+     turned "top ten comedies this year" into "hide Comedy". */
+  const mode = forceMode || (neg ? 'exclude' : 'include');
   const before = out.length;
 
   /* Resolve a media-type scope first so year, rating and genre effects can
@@ -3687,7 +3688,9 @@ function parseClause(clause, out, forceMode) {
     else                push({ kind: 'yearTo',   value: Number(toY[1]) });
   }
   }
-  if (hasPhrase(c, NEW_RELEASE_PHRASES)) {
+  if (/\bthis year\b|\bthis year's\b/.test(c)) {
+    push({ kind: 'yearFrom', value: new Date().getFullYear() });
+  } else if (hasPhrase(c, NEW_RELEASE_PHRASES)) {
     push({ kind: 'yearFrom', value: new Date().getFullYear() - 1 });
   }
 
@@ -3741,13 +3744,19 @@ function aiVocab() {
     'of', 'to', 'in', 'on', 'with', 'that', 'this', 'and', 'or', 'but', 'also', 'then', 'only', 'just', 'no', 'not',
     'nothing', 'never', 'dont', 'don', 't', 'under', 'below', 'above', 'over', 'more', 'less', 'than', 'least',
     'at', 'minimum', 'max', 'maximum', 'between', 'before', 'after', 'since', 'until', 'years', 'year', 'old',
-    'low', 'lows', 'high', 'plus', 'anything', 'else', 'again', 'them', 'it']);
+    'low', 'lows', 'high', 'plus', 'anything', 'else', 'again', 'them', 'it',
+    'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+    'eleven', 'twelve', 'fifteen', 'twenty', 'hundred', 'best', 'greatest', 'comedies']);
   /* These tables are declared further down the file. If this ever runs before
      they exist, skip the enrichment and do not cache the result — better a
      smaller vocabulary than a dead page. */
   try {
     Object.values(GENRE_MAP).forEach(n => String(n || '').toLowerCase().split(/\s+/).forEach(w => words.add(w)));
     Object.values(LANG_NAMES || {}).forEach(n => String(n || '').toLowerCase().split(/\s+/).forEach(w => words.add(w)));
+    GENRE_ADJECTIVES.forEach(w => words.add(String(w || '').toLowerCase()));
+    ['hate', 'hates', 'dislike', 'dislikes', 'bored', 'stand', 'cannot', 'except', 'rid', 'ditch',
+     'ban', 'done', 'fan', 'sick', 'tired', 'enough', 'avoid', 'skip', 'block', 'comedies'
+    ].forEach(w => words.add(w));
   } catch (_) { return words; }
   _aiVocab = words;
   return _aiVocab;
@@ -3770,7 +3779,11 @@ function parseLocalIntent(raw) {
      form the rating branch already understands. */
   const text = rawText
     .replace(/\bonly\s+(\d+(?:\.\d+)?)\s*\+/gi, 'scored $1+')
-    .replace(/\b(\d+(?:\.\d+)?)\s*\+\s*only\b/gi, 'scored $1+');
+    .replace(/\b(\d+(?:\.\d+)?)\s*\+\s*only\b/gi, 'scored $1+')
+    /* The clause splitter treats " but " as a conjunction, so "anything but
+       horror" became two clauses and "horror" was read as a request for it.
+       Turn the exception into a word the splitter leaves alone. */
+    .replace(/\b(?:anything|everything|all) but\b/gi, 'except');
   const lower = text.toLowerCase();
 
   /* Compound intent: "forget the horror rule and hide sci-fi".
@@ -3889,6 +3902,22 @@ function llmConfigured() {
   const c = llmCfg();
   if (c.provider.kind === 'custom') return !!(c.apiKey && c.base);
   return !!c.apiKey;
+}
+
+/* A local endpoint fails for two reasons the app cannot see from the response:
+   the page is cross-origin to it, or it is not running. Name the first because
+   it needs a server-side change, not a new key. */
+function modelCallHint() {
+  const c = llmCfg();
+  let host = '';
+  try { host = new URL(c.base).hostname; } catch (e) { /* relative base */ }
+  const loopback = /^(localhost|127\.0\.0\.1|::1|\[::1\])$/.test(host);
+  const browser = String(navigator.userAgent || '');
+  if (!loopback) return '';
+  if (location.protocol === 'https:') {
+    return ` The page is HTTPS and the model server is on ${host}, so the browser treats this as a cross-origin call: allow ${location.origin} in the server's allowed origins (Ollama: set OLLAMA_ORIGINS=${location.origin}) and restart it.${/Safari/.test(browser) && !/Chrome/.test(browser) ? ' Safari also blocks HTTP calls from an HTTPS page, so this only works from the local copy.' : ''}`;
+  }
+  return ' Check that the local model server is running and that it allows this page\u2019s origin.';
 }
 
 async function readLlmResponse(res) {
@@ -4042,6 +4071,14 @@ function aiSystemPrompt() {
 describes in plain language what the app should show or stop showing. Instructions become
 permanent filters, so be accurate and conservative.
 
+Today is ${new Date().toISOString().slice(0, 10)}. Resolve "this year", "last year" and
+"recently" against that date.
+
+A ranked request is a browsing instruction, not a blacklist: "top ten comedies this year"
+means add includeGenre 35 and yearFrom ${new Date().getFullYear()}, then say what is showing.
+There is no way to cap the result at N titles, so never invent an effect for "top ten".
+Use includeGenre when they ask for something, excludeGenre only when they ask to hide it.
+
 Translate the request into effects. Allowed kinds and values:
 - excludeGenre / includeGenre: value = ONE numeric TMDB genre id from: ${genres}
 - excludeAnime / includeAnime: no value. Anime = Animation + Japanese original language; TMDB
@@ -4077,13 +4114,32 @@ function aiPushMessage(role, text, meta) {
   renderAiChat();
 }
 
+/* The documented shape is [{text, effects:[…]}], but small local models
+   flatten it to [{kind, value}, …]. qwen2.5:7b does exactly that, and reading
+   it as an empty list made the chat claim a filter had been applied while no
+   rule existed. Accept both shapes; a flat list is one rule. */
+function llmRuleEntries(res, userText) {
+  const raw = res && res.add;
+  const list = Array.isArray(raw) ? raw : (raw && typeof raw === 'object' ? [raw] : []);
+  const entries = [];
+  list.forEach(entry => {
+    if (entry && Array.isArray(entry.effects)) {
+      entries.push({ text: String(entry.text || userText), effects: entry.effects });
+    }
+  });
+  if (!entries.length) {
+    const flat = list.filter(e => e && typeof e.kind === 'string');
+    if (flat.length) entries.push({ text: userText, effects: flat });
+  }
+  return entries;
+}
+
 function applyLlmResult(userText, res) {
   const added = [], removed = [];
-  const list = Array.isArray(res && res.add) ? res.add : [];
-  list.forEach(entry => {
-    const effects = dedupeEffects(entry && entry.effects);
+  llmRuleEntries(res, userText).forEach(({ text, effects: rawEffects }) => {
+    const effects = dedupeEffects(rawEffects);
     if (!effects.length) return;
-    const rule = addRuleFromEffects(String((entry && entry.text) || userText), effects, 'llm');
+    const rule = addRuleFromEffects(text, effects, 'llm');
     if (rule) added.push(rule);
   });
   const dropList = Array.isArray(res && res.remove) ? res.remove : [];
@@ -4127,15 +4183,50 @@ async function aiSend(forced) {
   _aiBusy = true;
   setAiBusy(true);
 
-  /* The offline parser answers instantly and for free, so it gets first go.
-     A model is only consulted for what it cannot work out. */
   const local = parseLocalIntent(text);
+  const exactChip = AI_CHIPS.some(c => c.prompt.toLowerCase() === text.toLowerCase());
+  let modelNote = '';
+
+  /* A configured model interprets the instruction. The exact quick phrases
+     stay on the offline interpreter so they never wait on a network, and the
+     offline interpreter takes over when the call fails — otherwise a local
+     endpoint with the wrong CORS origin would look like a parser bug. */
+  if (llmConfigured() && !exactChip) {
+    _aiThinking = true;
+    renderAiChat();
+    try {
+      const res = await llmChat([
+        { role: 'system', content: aiSystemPrompt() },
+        ...aiHistory(),
+        { role: 'user', content: text },
+      ]);
+      _aiThinking = false;
+      applyLlmResult(text, res);
+      renderAiChat();
+      _aiBusy = false;
+      setAiBusy(false);
+      return;
+    } catch (e) {
+      _aiThinking = false;
+      const why = String(e.message || 'unknown error');
+      modelNote = `The model call failed: ${why}${/[.!?]$/.test(why) ? '' : '.'}${modelCallHint()}`;
+      if (!local.effects.length && !local.forget.length) {
+        aiPushMessage('bot', `${modelNote}\nOffline, I could not turn that into a rule either — try one of the quick buttons or rephrase.`);
+        renderAiChat();
+        _aiBusy = false;
+        setAiBusy(false);
+        return;
+      }
+      aiPushMessage('bot', `${modelNote} Using the offline interpreter instead.`);
+    }
+  }
+
   let handled = false;
 
   if (local.forget.length) {
     const { rule, forgotten } = applyUserMessage(text, 'local');
     const bits = [];
-    if (forgotten.length) bits.push(`Forgotten: ${forgotten.map(r => `"${r.text}"`).join(', ')}. That restriction is lifted.`);
+    if (forgotten.length) bits.push(`Forgotten: ${forgotten.map(r => `\"${r.text}\"`).join(', ')}. That restriction is lifted.`);
     if (rule) bits.push(`Added: ${describeEffects(rule.effects)}.`);
     aiPushMessage('bot', bits.join(' ') || 'No rule changes.');
     handled = true;
@@ -4143,7 +4234,7 @@ async function aiSend(forced) {
     const { rule } = applyUserMessage(text, 'local');
     const ignored = ignoredInstructionWords(text);
     const aside = ignored.length
-      ? ` I could not turn "${ignored.join(' ')}" into a filter, so I left that part out.`
+      ? ` I could not turn \"${ignored.join(' ') }\" into a filter, so I left that part out.`
       : '';
     aiPushMessage('bot', `Done — applied everywhere: ${describeEffects(rule.effects)}.${aside} Remembered until you say otherwise.`);
     handled = true;
@@ -4156,35 +4247,12 @@ async function aiSend(forced) {
     return;
   }
 
-  if (!llmConfigured()) {
-    aiPushMessage('bot',
-      "I couldn't turn that into a rule on my own. Try \"hide anime\", \"no horror movies\", " +
-      "\"only movies scored 8+\", \"nothing before 2010\", \"hide anything I've already rated\", " +
-      "or add an API key under Setup so free-form requests can be understood.");
-    _aiBusy = false;
-    setAiBusy(false);
-    return;
-  }
-
-  _aiThinking = true;
-  renderAiChat();
-  try {
-    const res = await llmChat([
-      { role: 'system', content: aiSystemPrompt() },
-      ...aiHistory(),
-      { role: 'user', content: text },
-    ]);
-    _aiThinking = false;
-    applyLlmResult(text, res);
-  } catch (e) {
-    _aiThinking = false;
-    aiPushMessage('bot', `The model call failed: ${e.message}\nCheck Setup, or rephrase using one of the quick buttons.`);
-  } finally {
-    _aiThinking = false;
-    renderAiChat();
-    _aiBusy = false;
-    setAiBusy(false);
-  }
+  aiPushMessage('bot',
+    "I couldn't turn that into a rule on my own. Try \"hide anime\", \"no horror movies\", " +
+    "\"only movies scored 8+\", \"nothing before 2010\", \"hide anything I've already rated\", " +
+    "or connect a model under Setup so free-form requests can be understood.");
+  _aiBusy = false;
+  setAiBusy(false);
 }
 
 function aiQuick(prompt) {
@@ -4399,7 +4467,7 @@ function renderAiSettings() {
   if (c.usingBakedKey) {
     aiSetStatus(`Using the API key injected at build time with <strong>${esc(c.provider.label)}</strong> / <code>${esc(c.model)}</code>.`, 'ok');
   } else if (llmConfigured()) {
-    aiSetStatus(`Connected to <strong>${esc(c.provider.label)}</strong> using <code>${esc(c.model)}</code>. Rules work offline too — a model only handles unusual phrasing.`, 'ok');
+    aiSetStatus(`Connected to <strong>${esc(c.provider.label)}</strong> using <code>${esc(c.model)}</code>. Instructions go to the model; the offline interpreter takes over if the call fails.`, 'ok');
   } else {
     aiSetStatus('No API key yet. Everything else still works: the offline interpreter understands the common phrasings, and you only need a key for free-form requests.', 'warn');
   }
@@ -12162,6 +12230,24 @@ function runSelfTest(verbose = true) {
     eq('watchlist seeds genre affinity', (LS.get('genre_affinity') || {})['28'] > 0, true);
     state.ratings = _sR; state.watchlist = _sW; state.mediaDetails = _sM; recomputeAffinity();
 
+  /* The parser must not turn a neutral request into a blacklist, and
+     "this year" must mean the current calendar year. */
+  const _neutral = parseLocalIntent('top ten comedies this year');
+  eq('a neutral genre request includes, not hides',
+    [_neutral.effects.some(e => e.kind === 'includeGenre' && e.value === 35),
+     _neutral.effects.some(e => e.kind === 'excludeGenre')], [true, false]);
+  eq('"this year" sets the current year',
+    (_neutral.effects.find(e => e.kind === 'yearFrom') || {}).value, new Date().getFullYear());
+  eq('"anything but horror" still hides horror',
+    parseLocalIntent('anything but horror').effects.map(e => e.kind + ':' + e.value), ['excludeGenre:27']);
+
+  /* Both model-reply shapes resolve to rules, including the flattened one a
+     7B local model returns. */
+  const _flat = llmRuleEntries({ add: [{ kind: 'includeGenre', value: 35 }, { kind: 'yearFrom', value: 2026 }] }, 'top ten comedies');
+  eq('a flattened model reply becomes one rule', [_flat.length, _flat[0].effects.length], [1, 2]);
+  eq('the nested model schema keeps its own text',
+    llmRuleEntries({ add: [{ text: 'no anime', effects: [{ kind: 'excludeAnime' }] }] }, 'x')[0].text, 'no anime');
+
   /* OAuth routing: the state prefix decides which sign-in a ?code belongs
      to, before either handler clears anything. */
   eq('oauth state routes a simkl sign-in', oauthProviderFromState('simkl_abc'), 'simkl');
@@ -12413,8 +12499,8 @@ function renderOnboarding() {
   const llmNote = document.getElementById('ai-chat-hint');
   if (llmNote) {
     llmNote.innerHTML = llmConfigured()
-      ? 'A model is connected for unusual wording. The built-in parser still handles the common instructions below — no key required.'
-      : '<strong>No key needed.</strong> The built-in parser turns the common phrasings below — “no anime”, “nothing before 2010”, “only 7+” — into rules. A model key is optional and only widens what I understand.';
+      ? 'A model is connected and interprets each instruction. If the call fails, the built-in parser handles the common phrasings below — and the exact quick buttons always run offline.'
+      : '<strong>No key needed.</strong> The built-in parser turns the common phrasings below — “no anime”, “nothing before 2010”, “only 7+” — into rules. A model key is optional and lets you phrase requests freely.';
   }
 
   updateSimklUI();
