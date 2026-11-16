@@ -2964,7 +2964,12 @@ async function refreshProviderList() {
       [/^hulu/i,             'Hulu'],
     ];
     const cleanName = raw => {
-      const name = String(raw).replace(/\s*with ads?\b/i, '').replace(/\s+/g, ' ').trim();
+      const name = String(raw)
+        .replace(/\s*with ads?\b/i, '')
+        .replace(/\bamzon\b/gi, 'Amazon')
+        .replace(/\bamazn\b/gi, 'Amazon')
+        .replace(/\s+/g, ' ')
+        .trim();
       const hit = CLEAN.find(([re]) => re.test(name));
       return hit ? hit[1] : name;
     };
@@ -3555,9 +3560,16 @@ function parseClause(clause, out, forceMode) {
 
 /* The offline interpreter: handles the common phrasings without a key. */
 function parseLocalIntent(raw) {
-  const text = String(raw || '').trim();
+  const rawText = String(raw || '').trim();
   const out = { effects: [], forget: [] };
-  if (!text) return out;
+  if (!rawText) return out;
+  /* "only 7+" and "7+ only" are the phrasings the drawer suggests, but
+     "only" sent the clause down the type branch before the rating matcher
+     ran, so exactly those two returned nothing. Normalise them into the
+     form the rating branch already understands. */
+  const text = rawText
+    .replace(/\bonly\s+(\d+(?:\.\d+)?)\s*\+/gi, 'scored $1+')
+    .replace(/\b(\d+(?:\.\d+)?)\s*\+\s*only\b/gi, 'scored $1+');
   const lower = text.toLowerCase();
 
   /* Compound intent: "forget the horror rule and hide sci-fi".
@@ -4447,6 +4459,18 @@ async function discoverSafe(path, baseParams) {
   }
   if (best.length) return { items: best, providerApplied: true, partial: true };
 
+  /* Last resort before giving up: the service alone, with no year, genre or
+     vote floor. A service filter is the user's most concrete instruction
+     ("Netflix"), so dropping it silently to fill a row is the wrong trade —
+     keep the service and drop the other constraints, and mark the result so
+     the caller can say what it did. */
+  try {
+    const solo = await tmdb(path, { ...providerParams({ with_watch_monetization_types: 'flatrate' }), sort_by: 'popularity.desc' });
+    if ((solo.results || []).length) {
+      return { items: solo.results, providerApplied: true, partial: true, serviceOnly: true };
+    }
+  } catch (e) { console.warn('Provider-only fallback failed:', path, e.message); }
+
   _providerVoid.set(voidKey, Date.now() + 5 * 60 * 1000);
   const data = await tmdb(path, params);
   return { items: data.results || [], providerApplied: false, fellBack: true };
@@ -4885,20 +4909,26 @@ function microGenreHTML() { return ''; }
 /* ─── OBSCURITY ENGINE ──────────────────────────────────────────────────
    Flips the popularity bias: rewards high rating + low visibility.
    Score 0-100. Higher = more obscure / less heard of. ────────────────── */
+const _oscSession = new Map();
 function obscurityScore(item) {
-  /* No cache and no data-derived key: the same title arrives from discover,
-     search and the modal with slightly different vote counts, which used to
-     score one film 32 in one row and 33 in another. The math is cheap, so it
-     runs on the values in hand and always agrees with itself. */
+  /* Cached per title per session. TMDB's `popularity` drifts between calls,
+     so recomputing gave one film 34 in a row and 32 in another. The first
+     answer for an id is the answer for the whole session.
+     The old formula also added `10 x rating/10`, which made *better* titles
+     look *more* obscure — backwards. Rating now only gates eligibility. */
+  const idKey = mediaKey(item.media_type || (item.title ? 'movie' : 'tv'), item.id);
+  if (_oscSession.has(idKey)) return _oscSession.get(idKey);
   const votes = item.vote_count || 0;
   const pop   = item.popularity || 0;
   const rating= item.vote_average || 0;
-  if (!votes || rating < 5) return 0;
+  if (!votes || rating < 5) { _oscSession.set(idKey, 0); return 0; }
   // Logarithmic vote and popularity scales favour less-visible titles while
   // leaving enough range for the Deep Cut and Hidden Gem thresholds.
   const voteObscurity = 1 - Math.min(Math.log1p(votes) / Math.log1p(10000), 1);
   const popObscurity = 1 - Math.min(Math.log1p(pop) / Math.log1p(1000), 1);
-  return Math.round(65 * voteObscurity + 25 * popObscurity + 10 * Math.min(rating / 10, 1));
+  const score = Math.round(70 * voteObscurity + 30 * popObscurity);
+  _oscSession.set(idKey, score);
+  return score;
 }
 function obscurityLabel(s) {
   if (s >= 70) return '🕵️ Deep Cut';
@@ -4915,6 +4945,23 @@ function isDeepCut(item) {
   if (!state.deepCutsOnly) return false;
   return obscurityScore(item) >= 50;
 }
+/* The Mood Board groups titles by real TMDB genres; the filter used to
+   guess from words in the overview, so "Romantic" matched Puss in Boots
+   through "love" in a blurb. Both now read the same table. */
+const VIBE_GENRES = {
+  dark:        [80, 53, 27],
+  cozy:        [10751, 35, 10749],
+  trippy:      [878, 9648, 14],
+  melancholic: [18, 10749],
+  gritty:      [80, 53, 28],
+  uplifting:   [10751, 35, 18],
+  eerie:       [27, 9648, 14],
+  cerebral:    [878, 99, 18],
+  romantic:    [10749],
+  adventurous: [12, 14, 28],
+  documentary: [99],
+};
+
 function moodKeywords(mood) {
   const map = {
     dark:       ['noir','dark','gloomy','bleak','sinister','gritty','dystopian'],
@@ -4933,6 +4980,14 @@ function moodKeywords(mood) {
 }
 function moodMatches(item, mood) {
   if (!mood) return true;
+  const wanted = VIBE_GENRES[mood];
+  if (wanted) {
+    /* A vibe is a genre claim, so require the genre. An item with no genre
+       data cannot claim a vibe. */
+    const have = new Set(item.genre_ids || []);
+    if (!have.size) return false;
+    return wanted.some(id => have.has(id));
+  }
   const kws = moodKeywords(mood);
   /* Genres arrive as TMDB ids (10749, 99, 12 …), which never match a
      keyword, so resolve them through GENRE_MAP before matching. */
@@ -6939,11 +6994,11 @@ async function renderTrending(main, token) {
     /* Deep Cuts: intentionally obscure — high rating, almost nobody has heard of them. */
     const deepCutRes = await discoverSafe('/discover/movie', {
       sort_by: 'vote_average.desc', 'vote_average.gte': 7.0,
-      'vote_count.gte': 20, 'vote_count.lte': 400, ...gp, ...yearParams('movie'),
+      'vote_count.gte': 25, 'vote_count.lte': 400, ...gp, ...yearParams('movie'),
     });
     const deepCutTV = await discoverSafe('/discover/tv', {
       sort_by: 'vote_average.desc', 'vote_average.gte': 7.0,
-      'vote_count.gte': 10, 'vote_count.lte': 200, ...gp, ...yearParams('tv'),
+      'vote_count.gte': 25, 'vote_count.lte': 200, ...gp, ...yearParams('tv'),
     });
     const allDeep = await filterResults(
       [...(deepCutRes.items || []).map(m => ({ ...m, media_type: 'movie' })),
@@ -8048,12 +8103,26 @@ async function renderRecommended(main, token) {
     Object.assign(params, filterVisible('era') ? eraParams(mediaType) : {});
 
     const path = mediaType === 'movie' ? '/discover/movie' : '/discover/tv';
-    const pages = await Promise.all([
-      discoverSafe(path, { ...params, page: 1 }),
-      discoverSafe(path, { ...params, page: 2 }),
-      discoverSafe(path, { ...params, sort_by: 'popularity.desc', page: 1 }),
+    const pull = async p => Promise.all([
+      discoverSafe(path, { ...p, page: 1 }),
+      discoverSafe(path, { ...p, page: 2 }),
+      discoverSafe(path, { ...p, sort_by: 'popularity.desc', page: 1 }),
     ]);
+    let pages = await pull(params);
     if (pages.some(p => p.fellBack)) fellBack = true;
+
+    /* The inferred taste genres are a guess built from whatever has been
+       rated, and a guess that returns nothing must not empty the row — that
+       is why "Shows For You" sat on "No results found" until a genre was
+       picked by hand. Retry once without the guess before giving up. */
+    const inferred = !state.genre && !!genreParam;
+    if (inferred && !pages.some(p => (p.items || []).length)) {
+      const relaxed = { ...params };
+      delete relaxed.with_genres;
+      relaxed['vote_count.gte'] = 50;
+      pages = await pull(relaxed);
+      if (pages.some(p => p.fellBack)) fellBack = true;
+    }
 
     const seen = new Set();
     const candidates = pages
@@ -8665,9 +8734,11 @@ async function renderDiscoveries(main, token) {
     /* Pull several pages per endpoint, then rank obscurity blended with
        your taste. The documentary sweep only widens the mix, so it is
        skipped once a genre is picked. */
-    const movieBase = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 10, 'vote_count.lte': 3000, ...gp, ...yearP, ...langP };
-    const tvBase    = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 5,  'vote_count.lte': 2000, ...gp, ...yearTV, ...langP };
-    const docBase   = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 10, 'vote_count.lte': 2000, with_genres: '99', ...yearP, ...langP };
+    /* 25 votes is the floor for anything that claims to be well rated: below
+       that an 8.5 is three people and the row stops meaning anything. */
+    const movieBase = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 25, 'vote_count.lte': 3000, ...gp, ...yearP, ...langP };
+    const tvBase    = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 25, 'vote_count.lte': 2000, ...gp, ...yearTV, ...langP };
+    const docBase   = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 25, 'vote_count.lte': 2000, with_genres: '99', ...yearP, ...langP };
     const pages = await Promise.all([
       discoverSafe('/discover/movie', { ...movieBase, page: 1 }),
       discoverSafe('/discover/movie', { ...movieBase, page: 2 }),
@@ -8721,7 +8792,14 @@ async function renderDiscoveries(main, token) {
       return Math.min(3, avg) * 8;
     };
     unseen.forEach(i => { if (affBonus(i) > 0) i._why = whyFor(i, affinityMap); });
-    unseen.sort((a, b) => (obscurityScore(b) + affBonus(b)) - (obscurityScore(a) + affBonus(a)));
+    /* Obscurity alone sorted by "least seen", which is why the grid read as
+       one flat band of 6.9s: the wrapper scores compress at low vote counts.
+       The raw average still separates a real 8.5 from a real 6.9, so it
+       carries most of the ordering weight; obscurity breaks ties and your
+       taste floats picks up. The number printed on the card stays the
+       weighted score, as everywhere else. */
+    const rankScore = i => (obscurityScore(i) * 0.45) + ((i.vote_average || 0) * 5) + affBonus(i);
+    unseen.sort((a, b) => rankScore(b) - rankScore(a));
 
     if (!unseen.length) {
       const active = [];
@@ -9661,14 +9739,40 @@ function rowItemKey(item) {
   const type = item.media_type || (item.title ? 'movie' : 'tv');
   return `${type}_${item.id}`;
 }
+/* TMDB carries re-releases and regional spellings as separate ids: "War"
+   (1911), "War" (2023) and "WAR" (2023) are three entries for one shelf.
+   Compare on the normalised title and year so they collapse, and keep the
+   entry more people have actually rated. */
+function titleKey(item) {
+  const type = item.media_type || (item.title ? 'movie' : 'tv');
+  const name = String(item.title || item.name || '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '');
+  const date = item.release_date || item.first_air_date || '';
+  return `${type}|${name}|${date.slice(0, 4)}`;
+}
 function dedupeRows(rows) {
-  const seen = new Set();
+  const seenIds = new Set();
+  const seenTitles = new Set();
   return rows.map(([label, items, fetcher, ranked]) => {
-    const kept = [];
+    /* Collapse same-title entries inside the row first, so the survivor is
+       chosen by vote count rather than by whichever fetch answered first. */
+    const byTitle = new Map();
+    const order = [];
     for (const item of (items || [])) {
-      const key = rowItemKey(item);
-      if (seen.has(key)) continue;
-      seen.add(key);
+      const tKey = titleKey(item);
+      const prev = byTitle.get(tKey);
+      if (!prev) { byTitle.set(tKey, item); order.push(tKey); }
+      else if ((item.vote_count || 0) > (prev.vote_count || 0)) byTitle.set(tKey, item);
+    }
+    const kept = [];
+    for (const tKey of order) {
+      const item = byTitle.get(tKey);
+      const idKey = rowItemKey(item);
+      if (seenIds.has(idKey) || seenTitles.has(tKey)) continue;
+      seenIds.add(idKey);
+      seenTitles.add(tKey);
       kept.push(item);
       if (kept.length >= 20) break;   // every row the same length
     }
