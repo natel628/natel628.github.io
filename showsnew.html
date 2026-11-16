@@ -9820,10 +9820,7 @@ function renderSettings(main) {
 
         <h4 style="margin:16px 0 6px">Trakt account</h4>
         <p class="settings-note">Two-way sync of ratings, Want to Watch and Finished. Sign-in uses PKCE, so no client secret is needed. In your Trakt app set <strong>Redirect URI</strong> to <code>${esc(location.origin + location.pathname)}</code> and <strong>Javascript (CORS) origins</strong> to <code>${esc(location.origin)}</code>. Ratings, list and history stay on this device too; syncing only copies changes both ways.</p>
-        ${traktSecretInjected() ? '' : `<div class="settings-row" style="flex-wrap:wrap">
-          <input class="conn-key" id="settings-trakt-secret" type="password" autocomplete="off" spellcheck="false"
-            placeholder="Client secret (optional — PKCE apps do not have one)" aria-label="Trakt client secret, optional" />
-        </div>`}
+        ${traktSecretInjected() ? '<p class="settings-note" style="margin:0 0 8px">A client secret is built into this build, so the device-code sign-in is available too.</p>' : ''}
         <div class="settings-row" style="flex-wrap:wrap">
           <button type="button" class="modal-btn primary" id="settings-trakt-connect">Connect account</button>
           <button type="button" class="modal-btn" id="settings-trakt-sync">Sync now</button>
