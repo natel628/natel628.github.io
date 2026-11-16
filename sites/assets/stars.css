@@ -379,20 +379,54 @@ h1 {
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
+  align-items: start;
   gap: 16px;
 }
 
 .card {
   position: relative;
-  padding: 18px 18px 16px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: linear-gradient(160deg, var(--card), var(--card-2));
   transition: border-color 0.18s ease, transform 0.18s ease;
 }
-.card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+
+.card:not([open]):hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.card[open] { border-color: var(--line-strong); }
 .card.is-off { opacity: 0.66; }
-.card.is-off:hover { opacity: 0.9; }
+.card.is-off:hover, .card.is-off[open] { opacity: 0.92; }
+
+.card-face {
+  display: block;
+  padding: 18px 18px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.card-face::-webkit-details-marker { display: none; }
+.card-face::marker { content: ''; }
+.card-face:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 16px; }
+
+.card-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 13px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.chev { font-size: 0.75rem; transition: transform 0.18s ease; }
+.card[open] .chev { transform: rotate(180deg); }
+
+.card-detail {
+  display: grid;
+  gap: 18px;
+  padding: 16px 18px 18px;
+  border-top: 1px solid var(--line);
+}
 
 .card-top {
   display: flex;
@@ -466,11 +500,67 @@ h1 {
 }
 
 .card-note {
-  margin-top: 13px;
   font-size: 0.78rem;
   line-height: 1.5;
   color: var(--muted);
 }
+
+.card-range {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: #c2cbe1;
+}
+.card-range strong { font-weight: 600; color: var(--cream); }
+
+/* ── Charts ─────────────────────────────────────────────────── */
+.chart-block h4 {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart .dark { fill: rgba(255, 255, 255, 0.055); }
+.chart .window { fill: rgba(240, 193, 97, 0.17); }
+.chart .area { fill: rgba(240, 193, 97, 0.16); }
+.chart .line { fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-linejoin: round; }
+.chart .base { stroke: var(--line); stroke-width: 1; }
+
+.chart-season .bar { fill: rgba(163, 183, 222, 0.34); }
+.chart-season .bar.peak { fill: var(--gold); }
+.chart-season .bar.today { fill: var(--teal); }
+
+.chart-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.64rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-caption {
+  margin-top: 7px;
+  font-size: 0.7rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.card-facts {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.card-facts b { color: var(--cream); font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* ── Footer note ────────────────────────────────────────────── */
 .note {

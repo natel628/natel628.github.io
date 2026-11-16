@@ -196,12 +196,52 @@ export function darkWindow(latDeg, lonDeg, now = new Date(), hours = 30, stepMin
   return start ? { start, end } : null;
 }
 
+function addDays(date, days) {
+  const shifted = new Date(date);
+  shifted.setDate(shifted.getDate() + days);
+  return shifted;
+}
+
+// The active period that contains today, or the next one if the shower is
+// between seasons. Handles windows that wrap around New Year.
+export function seasonWindow(shower, now = new Date()) {
+  const base = new Date(now);
+  base.setHours(0, 0, 0, 0);
+  const year = base.getFullYear();
+  let upcoming = null;
+
+  for (const y of [year - 1, year, year + 1]) {
+    const peakDoy = dayOfYear(y, shower.peak[0], shower.peak[1]);
+    const startDoy = dayOfYear(y, shower.start[0], shower.start[1]);
+    const endDoy = dayOfYear(y, shower.end[0], shower.end[1]);
+    const peak = new Date(y, shower.peak[0] - 1, shower.peak[1]);
+    const start = addDays(peak, -circular(peakDoy - startDoy));
+    const end = addDays(peak, circular(endDoy - peakDoy));
+
+    if (base >= start && base <= end) return { peak, start, end };
+    if (!upcoming && start > base) upcoming = { peak, start, end };
+  }
+  return upcoming;
+}
+
+// One entry per night of the season, for the season chart.
+export function seasonDays(shower, window_) {
+  const days = [];
+  const cursor = new Date(window_.start);
+  while (cursor <= window_.end) {
+    days.push({ date: new Date(cursor), activity: activityFor(shower, cursor).activity });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return days;
+}
+
 // Score every 10-minute step of the next `hours` for one shower.
 export function evaluateNight(shower, latDeg, lonDeg, now = new Date(), hours = 24, stepMinutes = 10) {
   const stepMs = stepMinutes * 60000;
   const steps = Math.round((hours * 60) / stepMinutes);
   const moon = moonPhase(now);
   const windows = [];
+  const samples = [];
   let open = null;
   let best = null;
 
@@ -215,6 +255,7 @@ export function evaluateNight(shower, latDeg, lonDeg, now = new Date(), hours = 
     const usable = darkness > 0 && radiantAlt >= 15;
 
     const sample = { time, rate, radiantAlt, darkness, glow };
+    samples.push(sample);
     if (!best || rate > best.rate) best = sample;
 
     if (usable) {
@@ -235,5 +276,5 @@ export function evaluateNight(shower, latDeg, lonDeg, now = new Date(), hours = 
       windows.reduce((a, b) => (b.peak.rate > a.peak.rate ? b : a))
     : null;
 
-  return { best, windows, bestWindow, moon };
+  return { best, windows, bestWindow, moon, samples };
 }

@@ -8,9 +8,11 @@ import {
   darkWindow,
   evaluateNight,
   moonPhase,
-  nextPeak,
-  norm360
+  norm360,
+  seasonDays as seasonNights,
+  seasonWindow
 } from './astro.js';
+import { nightChart, seasonChart } from './charts.js';
 
 const STORE_KEY = 'meteor-tracker:location';
 const DEFAULT_LOCATION = { lat: 41.82, lon: -71.4, label: 'Rhode Island (default)' };
@@ -34,6 +36,15 @@ function fmtPeak(date, now) {
   return date.toLocaleDateString([], sameYear
     ? { weekday: 'short', month: 'short', day: 'numeric' }
     : { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// "Nov 6 – Nov 30", or with years when the season crosses New Year.
+function fmtRange(start, end) {
+  if (start.getFullYear() === end.getFullYear()) {
+    return `${fmtDay(start)} – ${fmtDay(end)}`;
+  }
+  const withYear = { month: 'short', day: 'numeric', year: 'numeric' };
+  return `${start.toLocaleDateString([], withYear)} – ${end.toLocaleDateString([], withYear)}`;
 }
 
 function loadLocation() {
@@ -88,13 +99,17 @@ function buildRows(now) {
 
   return SHOWERS.map((shower) => {
     const night = evaluateNight(shower, state.lat, state.lon, now);
-    const peak = nextPeak(shower, startOfToday);
+    // The season containing today (or the next one) is what the card talks
+    // about, so the peak shown always belongs to the range beside it.
+    const season = seasonWindow(shower, now);
     const activity = activityFor(shower, now);
     return {
       shower,
       night,
-      peak,
-      daysToPeak: Math.round((peak - startOfToday) / 86400000),
+      season,
+      seasonDays: seasonNights(shower, season),
+      peak: season.peak,
+      daysToPeak: Math.round((season.peak - startOfToday) / 86400000),
       active: activity.inRange
     };
   }).sort((a, b) => {
@@ -163,6 +178,10 @@ function cardHTML(row, now) {
   const showWindow = Boolean(window_) && window_.peak.rate >= 0.5;
   const sampleTime = showWindow ? window_.peak.time : now;
   const moon = moonPhase(sampleTime);
+  const samples = row.night.samples;
+  const highest = samples.reduce((a, b) => (b.radiantAlt > a.radiantAlt ? b : a), samples[0]);
+  const range = fmtRange(row.season.start, row.season.end);
+  const nights = Math.round((row.season.end - row.season.start) / 86400000) + 1;
 
   const stats = showWindow
     ? `<div><dt>Best window</dt><dd>${fmtTime(window_.start)} – ${fmtTime(window_.end)}</dd></div>
@@ -174,16 +193,50 @@ function cardHTML(row, now) {
        <div><dt>Tonight</dt><dd>${row.active ? 'radiant too low' : 'not active'}</dd></div>
        <div><dt>Moon then</dt><dd>${Math.round(moon.illumination * 100)}% lit</dd></div>`;
 
+  const first = samples[0].time.getTime();
+  const last = samples[samples.length - 1].time.getTime();
+  const ticks = [0, 1, 2, 3, 4]
+    .map((i) => fmtTime(new Date(first + ((last - first) * i) / 4)));
+
+  const hourly = nightChart(
+    samples,
+    window_,
+    `Estimated meteors per hour over the next 24 hours, ${ticks[0]} to ${ticks[4]}`
+  );
+  const season = seasonChart(row.seasonDays, {
+    today: now,
+    peak: row.season.peak,
+    label: `${s.name} activity from ${range}, peaking ${fmtDay(row.season.peak)}`
+  });
+
   return `
-    <article class="card${row.active ? '' : ' is-off'}">
-      <div class="card-top">
-        <h3>${s.name} <span class="code">${s.code}</span></h3>
-        ${chipFor(row)}
+    <details class="card${row.active ? '' : ' is-off'}" data-id="${s.id}">
+      <summary class="card-face">
+        <div class="card-top">
+          <h3>${s.name} <span class="code">${s.code}</span></h3>
+          ${chipFor(row)}
+        </div>
+        <p class="card-meta">Peak ${fmtPeak(row.peak, now)} · ZHR ${s.zhr} · ${s.velocity} km/s</p>
+        <p class="card-range">Active <strong>${range}</strong> · ${nights} nights</p>
+        <dl class="stats">${stats}</dl>
+        <p class="card-toggle">Charts &amp; details <span class="chev" aria-hidden="true">▾</span></p>
+      </summary>
+      <div class="card-detail">
+        <div class="chart-block">
+          <h4>Next 24 hours</h4>
+          ${hourly}
+          <p class="chart-axis">${ticks.map((tick) => `<span>${tick}</span>`).join('')}</p>
+          <p class="chart-caption">Gold band is the usable window, grey bands are the dark hours.</p>
+        </div>
+        <div class="chart-block">
+          <h4>Every night of the season</h4>
+          ${season}
+          <p class="chart-caption">${range} · peak ${fmtDay(row.season.peak)}${row.active ? ' · today is the teal bar' : ''}</p>
+        </div>
+        <p class="card-facts">Radiant highest at <b>${fmtTime(highest.time)}</b>, ${Math.round(highest.radiantAlt)}° up · debris from ${s.parent}.</p>
+        <p class="card-note">${s.note}</p>
       </div>
-      <p class="card-meta">Peak ${fmtPeak(row.peak, now)} · ZHR ${s.zhr} · ${s.velocity} km/s · ${s.parent}</p>
-      <dl class="stats">${stats}</dl>
-      <p class="card-note">${s.note}</p>
-    </article>`;
+    </details>`;
 }
 
 // "Upcoming" means a peak inside the next month; anything further out is
@@ -192,12 +245,20 @@ const passesFilter = (row) => filter === 'all' || row.active || row.daysToPeak <
 
 function renderGrid(rows, now) {
   const visible = rows.filter(passesFilter);
+  // The 10-minute refresh rebuilds the markup, so remember which tiles the
+  // reader had opened and put them back.
+  const openIds = [...document.querySelectorAll('#grid .card[open]')].map((el) => el.dataset.id);
+
   $('showCount').textContent = `Showing ${visible.length} of ${rows.length}`;
 
   $('grid').innerHTML = visible.length
     ? visible.map((row) => cardHTML(row, now)).join('')
     : `<p class="empty">No shower is active or peaks within ${UPCOMING_DAYS} days.
         <button type="button" class="btn btn-ghost btn-sm" data-show-all>Show all showers</button></p>`;
+
+  document.querySelectorAll('#grid .card').forEach((el) => {
+    if (openIds.includes(el.dataset.id)) el.open = true;
+  });
 }
 
 function setFilter(next) {
