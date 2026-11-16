@@ -2308,6 +2308,22 @@
   <select class="filter-select" id="year-filter" aria-label="Year">
     <option value="">Any Year</option>
   </select>
+  <select class="filter-select" id="language-filter" aria-label="Original language" title="Original language">
+    <option value="">Any Language</option>
+    <option value="en">English</option>
+    <option value="es">Spanish</option>
+    <option value="fr">French</option>
+    <option value="de">German</option>
+    <option value="it">Italian</option>
+    <option value="pt">Portuguese</option>
+    <option value="ja">Japanese</option>
+    <option value="ko">Korean</option>
+    <option value="zh">Chinese</option>
+    <option value="hi">Hindi</option>
+    <option value="da">Danish</option>
+    <option value="sv">Swedish</option>
+    <option value="nl">Dutch</option>
+  </select>
   <select class="filter-select" id="era-filter" title="Browse by era">
     <option value="">Any Era</option>
     <option value="1950-1959">1950s</option>
@@ -2323,9 +2339,9 @@
     <input type="checkbox" id="hide-rated-toggle" />
     <span>Hide rated</span>
   </label>
-  <label class="filter-toggle" id="obscurity-label" title="Blind discovery: hide titles & ratings until you click">
+  <label class="filter-toggle" id="obscurity-label" title="Hide titles: posters stay visible but names and scores are hidden until you reveal them. Use it to judge by the poster, not the hype.">
     <input type="checkbox" id="obscurity-toggle" />
-    <span>🕵️ Blind mode</span>
+    <span>🕵️ Hide titles</span>
   </label>
   <label class="filter-toggle" id="underseen-label" title="Only show titles with few votes (anti-popularity)">
     <input type="checkbox" id="underseen-toggle" />
@@ -2519,6 +2535,7 @@ const FILTER_VIEWS = {
   region:        ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard', 'wheretowatch'],
   contentRating: ['trending', 'upcoming'],
   year:          ['trending', 'upcoming', 'discoveries'],
+  language:      ['trending', 'upcoming', 'recommended', 'discoveries'],
   hideRated:     ['trending', 'upcoming', 'recommended'],
   /* Era and mood are client-side only, so they belong exactly on the views
      whose pipeline runs them — nowhere else. */
@@ -2750,9 +2767,10 @@ const _savedRatings   = cleanStore(LS.get('my_ratings'), v => Number.isInteger(v
 const _savedWatchlist = cleanStore(LS.get('my_watchlist'), v => WL_STATUSES.includes(v));
 const _savedWlAdded   = cleanStore(LS.get('wl_added'), v => isFiniteNumber(v) && v >= 0);
 const _savedDetails   = cleanMediaDetails(LS.get('media_details_cache'));
-const _savedLlm       = cleanLlm(LS.get('llm_config'));
+const _savedLlm   = cleanLlm(LS.get('llm_config'));
+const _savedNotes = cleanStore(LS.get('my_notes'), v => typeof v === 'string' && v.length <= 2000);
 const _droppedOnLoad  = _savedRatings.dropped + _savedWatchlist.dropped +
-                        _savedWlAdded.dropped + _savedDetails.dropped;
+                        _savedWlAdded.dropped + _savedDetails.dropped + _savedNotes.dropped;
 
 let state = {
   view: 'trending',
@@ -2763,6 +2781,7 @@ let state = {
   region: LS.get('f_region') || 'US',
   contentRating: LS.get('f_rating') || '',
   year: LS.get('f_year') || '',
+  language: LS.get('f_lang') || '',
   hideRated: !!LS.get('hide_rated'),
   wlFilterStatus: 'all',
   wlSort: LS.get('wl_sort') || 'added',
@@ -2773,6 +2792,7 @@ let state = {
   watchlist: _savedWatchlist.value,
   wlAdded: _savedWlAdded.value,
   mediaDetails: _savedDetails.value,
+  notes: _savedNotes.value,
   simklLibrary: [],
   calYear: new Date().getFullYear(),
   calMonth: new Date().getMonth(),
@@ -2802,6 +2822,7 @@ let state = {
 };
 
 function saveRatings()      { LS.set('my_ratings',          state.ratings); }
+function saveNotes()        { LS.set('my_notes',            state.notes); }
 function saveWatchlist()    { LS.set('my_watchlist',        state.watchlist); LS.set('wl_added', state.wlAdded); }
 function saveSimkl()        { LS.set('simkl_token',         state.simklToken); LS.set('simkl_user', state.simklUser); }
 function saveRules()        { LS.set('ai_rules',            state.rules); }
@@ -2815,6 +2836,7 @@ function savePrefs() {
   LS.set('f_region',         state.region);
   LS.set('f_rating',         state.contentRating);
   LS.set('f_year',           state.year);
+  LS.set('f_lang',           state.language);
   LS.set('obscurity_mode',   state.obscurityMode);
   LS.set('underseen_only',   state.underseenOnly);
   LS.set('underseen_ceiling',state.underseenCeiling);
@@ -2916,6 +2938,7 @@ function activeFilterCount() {
   if (state.provider)      n++;
   if (state.contentRating) n++;
   if (state.year)          n++;
+  if (state.language)      n++;
   if (state.hideRated)     n++;
   if (state.sort !== 'popularity.desc') n++;
   if (state.eraFilter) n++;
@@ -2923,7 +2946,7 @@ function activeFilterCount() {
   if (state.obscurityMode) n++;
   if (state.underseenOnly) n++;
   if (state.deepCutsOnly) n++;
-  if (state.blindDateMode) n++;
+  /* blindDateMode is legacy with no UI; never counted so the badge matches visible controls. */
   if (state.underseenOnly && state.underseenCeiling !== 500) n++;
   return n;
 }
@@ -2934,6 +2957,7 @@ function resetFilters() {
   state.provider       = '';
   state.contentRating  = '';
   state.year           = '';
+  state.language       = '';
   state.hideRated      = false;
   state.obscurityMode  = false;
   state.underseenOnly  = false;
@@ -2982,6 +3006,7 @@ function syncFilterControls() {
   set('region-filter', state.region);
   set('rating-filter', state.contentRating);
   set('year-filter', state.year);
+  set('language-filter', state.language);
 
   document.querySelectorAll('[data-filter-type]').forEach(c => {
     const on = c.dataset.filterType === state.filterType;
@@ -3017,7 +3042,7 @@ function syncFilterControls() {
 
   document.getElementById('filter-reset')?.classList.toggle('show', activeFilterCount() > 0);
 
-  ['genre-filter', 'sort-filter', 'provider-filter', 'rating-filter', 'year-filter', 'era-filter'].forEach(id => {
+  ['genre-filter', 'sort-filter', 'provider-filter', 'rating-filter', 'year-filter', 'language-filter', 'era-filter'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     const def = { 'sort-filter': 'popularity.desc' }[id] ?? '';
@@ -4320,7 +4345,7 @@ const _providerVoid = new Map();   // "service has nothing here" verdicts, 5 min
    best partial answer is kept, and only when nothing provider-scoped exists
    at all does the row fall back to unfiltered results. */
 async function discoverSafe(path, baseParams) {
-  const params = mergeRuleParams(baseParams);
+  const params = { ...mergeRuleParams(baseParams), ...langParams() };
   if (!state.provider) {
     const data = await tmdb(path, params);
     return { items: data.results || [], providerApplied: false };
@@ -4377,6 +4402,12 @@ function sortFor(type) {
 function yearParams(type) {
   if (!state.year) return {};
   return type === 'movie' ? { primary_release_year: state.year } : { first_air_date_year: state.year };
+}
+/* Original-language filter: TMDB discover honours with_original_language,
+   and the client pipeline re-checks original_language for trending/search rows. */
+function langParams() {
+  if (!filterVisible('language') || !state.language) return {};
+  return { with_original_language: state.language };
 }
 
 /* Era is a client-side decade filter, but the discover queries can pin the
@@ -5870,6 +5901,24 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
 
       <div id="trailer-box" style="display:none;margin-bottom:16px;aspect-ratio:16/9"></div>
 
+      <div style="margin-bottom:16px">
+        <label for="modal-note" style="font-size: var(--text-sm);font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px">📝 My notes <span style="font-weight:400">(commentary, only on this device)</span></label>
+        <textarea id="modal-note" rows="2" maxlength="2000" placeholder="What did you think? Private to this device." style="width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px;font:inherit;resize:vertical">${esc(getNote(type, id))}</textarea>
+        <div style="display:flex;gap:8px;margin-top:6px;align-items:center">
+          <button class="modal-btn" id="modal-note-save">Save note</button>
+          <span id="modal-note-status" style="font-size: var(--text-xs);color:var(--text-muted)" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size: var(--text-sm);font-weight:700;margin-bottom:8px;color:var(--text-muted)">🎵 Soundtrack</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <button class="modal-btn" id="soundtrack-btn">Find soundtrack</button>
+          <span style="font-size: var(--text-xs);color:var(--text-muted);align-self:center">Wikipedia track listing + Spotify search, no key needed</span>
+        </div>
+        <div id="modal-soundtrack"><p style="font-size: var(--text-xs);color:var(--text-muted)">No soundtrack loaded yet.</p></div>
+      </div>
+
       <div class="modal-actions" style="gap:8px;margin-bottom:18px">
         <span style="font-size: var(--text-sm);color:var(--text-muted)">Or tell the AI Director you're not interested:</span>
         <button class="modal-btn" onclick="notInterested('title')">🚫 Hide this title</button>
@@ -5942,7 +5991,100 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
     });
   }
 
+  const noteBox = document.getElementById('modal-note');
+  const noteSave = document.getElementById('modal-note-save');
+  const noteStatus = document.getElementById('modal-note-status');
+  if (noteBox && noteSave) {
+    noteSave.addEventListener('click', () => {
+      setNote(type, id, noteBox.value);
+      if (noteStatus) noteStatus.textContent = 'Saved on this device.';
+      toast('Note saved');
+    });
+  }
+  const stBtn = document.getElementById('soundtrack-btn');
+  if (stBtn) stBtn.addEventListener('click', () => loadModalSoundtrack(type, id, title, year));
+
   loadSimilar(type, id);
+}
+
+/* ── MY NOTES (private commentary per title) ─────────────────────────
+   Plain text, keyed like ratings, stored only in localStorage. */
+function getNote(type, id) { return state.notes[mediaKey(type, id)] || ''; }
+function setNote(type, id, text) {
+  const key = mediaKey(type, id);
+  const v = String(text || '').slice(0, 2000);
+  if (v) state.notes[key] = v; else delete state.notes[key];
+  saveNotes();
+}
+
+/* ── SOUNDTRACK (adapted from moviesongs.html, no keys needed) ──────
+   Title + year come from the already-open modal; tracks come from
+   Wikipedia, links are plain Spotify searches. Nothing is stored. */
+function spotifySearchUrl(title, artist) {
+  const q = encodeURIComponent(`${title} ${artist || ''}`.trim());
+  return `https://open.spotify.com/search/${q}`;
+}
+function extractWikiTracks(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  let tables = doc.querySelectorAll('table.tracklist');
+  if (!tables.length) {
+    tables = Array.from(doc.querySelectorAll('table')).filter(t =>
+      Array.from(t.querySelectorAll('th')).some(h => /title/i.test(h.textContent)));
+  }
+  for (const table of tables) {
+    const headers = Array.from(table.querySelectorAll('th')).map(h => h.textContent.trim().toLowerCase());
+    const tIdx0 = headers.findIndex(h => h === 'title' || h.startsWith('title'));
+    const aIdx0 = headers.findIndex(h => /artist|performer|writer/.test(h));
+    const rows = table.querySelectorAll('tr');
+    const tracks = [];
+    for (const row of rows) {
+      const cells = row.querySelectorAll('td');
+      if (cells.length < 2) continue;
+      const tIdx = tIdx0 >= 0 ? tIdx0 : 1;
+      const aIdx = aIdx0 >= 0 ? aIdx0 : Math.min(3, cells.length - 1);
+      if (!cells[tIdx]) continue;
+      const title = (cells[tIdx].textContent || '').replace(/\[.*?\]/g, '').replace(/\s+/g, ' ').trim();
+      const artist = cells[aIdx] ? (cells[aIdx].textContent || '').replace(/\[.*?\]/g, '').replace(/\s+/g, ' ').trim() : '';
+      if (title && title.length < 200 && !/^\d+$/.test(title)) tracks.push({ title, artist });
+    }
+    if (tracks.length) return tracks;
+  }
+  return [];
+}
+async function loadModalSoundtrack(type, id, title, year) {
+  const wrap = document.getElementById('modal-soundtrack');
+  if (!wrap) return;
+  wrap.innerHTML = '<p style="font-size: var(--text-xs);color:var(--text-muted)">Searching Wikipedia for a track listing…</p>';
+  try {
+    const queries = [`${title} (soundtrack)`, `${title} soundtrack`, year ? `${title} (${year} soundtrack)` : title, title];
+    let found = null;
+    for (const q of queries) {
+      const sUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*&srlimit=5`;
+      const sRes = await fetchWithTimeout(sUrl, {}, 15000);
+      if (!sRes.ok) continue;
+      const sData = await sRes.json();
+      const results = (sData && sData.query && sData.query.search) || [];
+      if (!results.length) continue;
+      const st = results.find(r => /soundtrack/i.test(r.title)) || results[0];
+      const pUrl = `https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(st.title)}&format=json&origin=*&prop=text`;
+      const pRes = await fetchWithTimeout(pUrl, {}, 15000);
+      if (!pRes.ok) continue;
+      const pData = await pRes.json();
+      const html = pData && pData.parse && pData.parse.text && pData.parse.text['*'];
+      if (!html) continue;
+      const tracks = extractWikiTracks(html);
+      if (tracks.length) { found = { page: st.title, tracks: tracks.slice(0, 40) }; break; }
+    }
+    if (!found) {
+      wrap.innerHTML = '<p style="font-size: var(--text-xs);color:var(--text-muted)">No Wikipedia track listing found for this title.</p>';
+      return;
+    }
+    wrap.innerHTML = `<p style="font-size: var(--text-xs);color:var(--text-muted);margin-bottom:8px">From Wikipedia: <strong>${esc(found.page)}</strong> (${found.tracks.length} tracks)</p>` +
+      found.tracks.map(t => `<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:6px;font-size: var(--text-sm)"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.title)}${t.artist ? ` <span style="color:var(--text-muted)">— ${esc(t.artist)}</span>` : ''}</span><a class="modal-btn" style="flex:0 0 auto;text-decoration:none" href="${spotifySearchUrl(t.title, t.artist)}" target="_blank" rel="noopener">Spotify ↗</a></div>`).join('');
+  } catch (e) {
+    console.warn('Soundtrack error:', e);
+    wrap.innerHTML = `<p style="font-size: var(--text-xs);color:var(--text-muted)">Could not load a soundtrack: ${esc(e.message || e)}.</p>`;
+  }
 }
 
 async function loadSimilar(type, id) {
@@ -8006,20 +8148,45 @@ function buildQuickRateCard(item, onGone) {
    - Not in your ratings, watchlist, or seen list
    - Sorted by obscurity score (rating vs popularity)
    - Mood + underseen filters apply ──────────────────────────────────── */
+/* One-click relief when Discover filters itself empty: keep search text,
+   drop the narrowing filters, keep the service only if it still returns. */
+function relaxDiscoverFilters() {
+  state.genre = '';
+  state.year = '';
+  state.language = '';
+  state.moodFilter = '';
+  state.eraFilter = '';
+  state.underseenOnly = false;
+  state.deepCutsOnly = false;
+  state.obscurityMode = false;
+  savePrefs();
+  syncFilterControls();
+  renderView();
+  toast('Filters relaxed — showing the widest Discover pool');
+}
 async function renderDiscoveries(main, token) {
   const hasRatings = Object.keys(state.ratings).length > 0;
   main.innerHTML = '';
 
+  const catalogDown = typeof TMDB_TOKEN === 'string' && TMDB_TOKEN.startsWith('__TMDB');
   const intro = document.createElement('div');
   intro.className = 'section';
   intro.innerHTML = `
     <div class="section-header"><span class="section-title">🕵️ Discoveries — Things You Havent Heard Of</span></div>
-    <p style="font-size: var(--text-sm);color:var(--text-muted);max-width:600px">
-      These are titles with strong ratings but low visibility, filtered through your AI Director rules, mood, and obscurity settings.
+    <p style="font-size: var(--text-sm);color:var(--text-muted);max-width:640px">
+      Movies, TV shows and documentaries with strong ratings but low visibility, filtered through your AI Director rules, mood, and obscurity settings.
       ${hasRatings ? 'Titles you have already rated or watchlisted are excluded.' : 'Rate some titles to sharpen the obscurity engine.'}
+      “Hide titles” only covers names and scores until you reveal them — use it to judge by the poster, not the hype.
     </p>
   `;
   main.appendChild(intro);
+
+  if (catalogDown) {
+    main.insertAdjacentHTML('beforeend', emptyStateHTML('📡', 'Catalog not connected in this copy',
+      'Browsing needs a catalog connection. Your ratings, notes, My List and Stats all work on this device.',
+      `<div class="empty-actions"><button class="modal-btn primary" data-action="watchlist">Open My List</button> <button class="modal-btn" data-action="stats-view">Open Stats</button></div>`));
+    return;
+  }
 
   try {
     /* Genre and year are offered on this view now (see FILTER_VIEWS), so
@@ -8028,16 +8195,17 @@ async function renderDiscoveries(main, token) {
     const gp     = filterVisible('genre') && state.genre ? { with_genres: state.genre } : {};
     const yearP  = filterVisible('year') ? yearParams('movie') : {};
     const yearTV = filterVisible('year') ? yearParams('tv')    : {};
+    const langP  = langParams();
 
     /* Pull from multiple discover endpoints, then sort by obscurity. The
        documentary sweep only widens the mix, so it is skipped once a genre
        is picked — its own with_genres would be overridden anyway. */
     const [movies, tvShows, docs] = await Promise.all([
-      discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 2000, ...gp, ...yearP }),
-      discoverSafe('/discover/tv',    { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 5,  'vote_count.lte': 1000, ...gp, ...yearTV }),
+      discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 2000, ...gp, ...yearP, ...langP }),
+      discoverSafe('/discover/tv',    { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 5,  'vote_count.lte': 1000, ...gp, ...yearTV, ...langP }),
       gp.with_genres
         ? Promise.resolve({ items: [] })
-        : discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 1500, with_genres: '99', ...yearP }),
+        : discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 1500, with_genres: '99', ...yearP, ...langP }),
     ]);
     if (token !== renderToken) return;
 
@@ -8058,6 +8226,7 @@ async function renderDiscoveries(main, token) {
       if (state.ratings[key] || state.watchlist[key]) return false;
       if (isSeen(i.media_type, i.id)) return false;
       if (!ruleAllows(i)) return false;
+      if (filterVisible('language') && state.language && (i.original_language || '') !== state.language) return false;
       if (filterVisible('mood') && state.moodFilter && !moodMatches(i, state.moodFilter)) return false;
       if (state.underseenOnly) {
         const v = i.vote_count || 0;
@@ -8070,9 +8239,19 @@ async function renderDiscoveries(main, token) {
     unseen.sort((a, b) => obscurityScore(b) - obscurityScore(a));
 
     if (!unseen.length) {
+      const active = [];
+      if (state.provider) active.push(`service: ${providerLabel()}`);
+      if (state.genre) active.push(`genre: ${genreName(Number(state.genre))}`);
+      if (state.year) active.push(`year: ${esc(state.year)}`);
+      if (state.language) active.push(`language: ${esc((LANG_NAMES[state.language] || state.language))}`);
+      if (state.moodFilter) active.push(`vibe: ${esc(state.moodFilter)}`);
+      if (state.underseenOnly) active.push(`under ${state.underseenCeiling} votes`);
+      if (state.deepCutsOnly) active.push('deep cuts');
+      if (state.obscurityMode) active.push('hide titles');
+      const activeNote = active.length ? `Active filters — ${active.join(' · ')}.` : 'No narrowing filters are on.';
       main.insertAdjacentHTML('beforeend', emptyStateHTML('🕵️', 'No discoveries found',
-        'Try lowering the obscurity ceiling, changing your mood filter, or turning off Blind mode.',
-        `<div class="empty-actions"><button class="modal-btn primary" data-action="trending">Browse Trending</button></div>`));
+        `${activeNote} Every shown title is marked seen, so this list shrinks as you browse. Relax the filters or bring back seen titles.`,
+        `<div class="empty-actions"><button class="modal-btn primary" onclick="relaxDiscoverFilters()">Relax filters</button> <button class="modal-btn" onclick="resetSeen();renderView()">Show seen again</button> <button class="modal-btn" data-action="trending">Browse Trending</button></div>`));
       return;
     }
 
@@ -8682,6 +8861,7 @@ function exportData() {
     aiRules: state.rules,
     aiChatLog: state.chatLog,
     seenKeys: state.seenKeys,
+    notes: state.notes,
     prefs: {
       theme: state.theme,
       filterType: state.filterType,
@@ -8691,6 +8871,7 @@ function exportData() {
       region: state.region,
       contentRating: state.contentRating,
       year: state.year,
+      language: state.language,
       hideRated: state.hideRated,
       obscurityMode: state.obscurityMode,
       underseenOnly: state.underseenOnly,
@@ -8702,7 +8883,7 @@ function exportData() {
       calMyOnly: state.calMyOnly,
     },
     exportDate: new Date().toISOString(),
-    version: '1.3'
+    version: '1.4'
   };
   downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
     `media-calendar-backup-${localISO(new Date())}.json`);
@@ -8749,6 +8930,12 @@ function validateBackup(data) {
   if (data.aiRules !== undefined && !Array.isArray(data.aiRules)) throw new Error('Invalid rules');
   if (data.aiChatLog !== undefined && (!Array.isArray(data.aiChatLog) || data.aiChatLog.some(m => !object(m) || !['user', 'bot'].includes(m.role) || typeof m.text !== 'string'))) throw new Error('Invalid chat');
   if (data.seenKeys !== undefined && (!Array.isArray(data.seenKeys) || data.seenKeys.some(k => typeof k !== 'string' || !keyOK(k)))) throw new Error('Invalid seen list');
+  if (data.notes !== undefined) {
+    if (!object(data.notes)) throw new Error('Invalid notes');
+    for (const [key, value] of Object.entries(data.notes)) {
+      if (!keyOK(key) || typeof value !== 'string' || value.length > 2000) throw new Error('Invalid note');
+    }
+  }
   if (data.prefs !== undefined && !object(data.prefs)) throw new Error('Invalid preferences');
   return { ...data, aiRules: (data.aiRules || []).map(validateImportedRule) };
 }
@@ -8767,6 +8954,10 @@ function importData(input) {
       state.watchlist = { ...state.watchlist, ...(data.watchlist || {}) };
       state.wlAdded = { ...state.wlAdded, ...(data.wlAdded || {}) };
       state.mediaDetails = { ...state.mediaDetails, ...(data.mediaDetails || {}) };
+      if (data.notes && typeof data.notes === 'object') {
+        state.notes = { ...state.notes, ...data.notes };
+        saveNotes();
+      }
       if (ruleCount) {
         const known = new Set(state.rules.map(r => r.id));
         state.rules = [...state.rules, ...data.aiRules.filter(r => !known.has(r.id) && known.add(r.id))].slice(0, RULES_CAP);
@@ -8787,7 +8978,7 @@ function importData(input) {
         if (p.theme === 'dark' || p.theme === 'light') state.theme = p.theme;
         str('filterType', ['all', 'movie', 'tv']);
         str('genre'); str('sort'); str('provider'); str('region');
-        str('contentRating'); str('year'); str('moodFilter'); str('eraFilter'); str('wlSort');
+        str('contentRating'); str('year'); str('language'); str('moodFilter'); str('eraFilter'); str('wlSort');
         bool('hideRated'); bool('obscurityMode'); bool('underseenOnly');
         bool('deepCutsOnly'); bool('calMyOnly');
         if (Number.isFinite(p.underseenCeiling) && p.underseenCeiling >= 0 && p.underseenCeiling <= 100000) {
@@ -8834,6 +9025,7 @@ async function filterResults(items, opts = {}) {
   let out = afterRules.filter(i => {
     if (filterVisible('type') && state.filterType !== 'all' && i.media_type !== state.filterType) return false;
     if (filterVisible('genre') && state.genre && !(i.genre_ids || []).includes(parseInt(state.genre, 10))) return false;
+    if (filterVisible('language') && state.language && (i.original_language || '') !== state.language) return false;
     if (filterVisible('hideRated') && state.hideRated && state.ratings[mediaKey(i.media_type, i.id)]) return false;
     // Only re-check the year when the request itself could not express it,
     // otherwise the two checks disagree for re-releases and drop valid items.
@@ -9116,6 +9308,13 @@ yearFilter.addEventListener('change', e => {
   syncFilterControls();
   if (filterVisible('year')) renderView();
 });
+const languageFilter = document.getElementById('language-filter');
+languageFilter.addEventListener('change', e => {
+  state.language = e.target.value;
+  savePrefs();
+  syncFilterControls();
+  if (filterVisible('language')) renderView();
+});
 
 /* Single source of truth for which controls are shown, derived from the same
    map the filter pipeline uses so the two can never disagree. */
@@ -9130,6 +9329,7 @@ function updateFilterVisibility() {
   show('provider-filter', filterVisible('provider'));
   show('region-filter',   filterVisible('region'));
   show('rating-filter',   filterVisible('contentRating'));
+  show('language-filter', filterVisible('language'));
   show('genre-filter',    filterVisible('genre'));
   show('type-label',      filterVisible('type'));
   show('genre-label',     filterVisible('genre'));
@@ -9143,7 +9343,7 @@ function updateFilterVisibility() {
     chip.style.display = filterVisible('type') ? '' : 'none';
   });
 
-  const anyVisible = ['type','genre','provider','region','contentRating','year','era','sort','hideRated','mood','underseen','deepCuts']
+  const anyVisible = ['type','genre','provider','region','contentRating','year','language','era','sort','hideRated','mood','underseen','deepCuts']
     .some(n => filterVisible(n));
   const filtersBtn = document.getElementById('filters-toggle');
   if (filtersBtn) filtersBtn.style.display = anyVisible ? '' : 'none';
@@ -9385,6 +9585,19 @@ function runSelfTest(verbose = true) {
   eq('media details with a bad field are dropped', cleanMediaDetails({ movie_9: { title: 'x', vote_average: 'bad' } }).dropped, 1);
   eq('a model config without a provider is rejected', cleanLlm({ apiKey: 'k' }), null);
   eq('a model config with a non-string key is coerced, not trusted', (cleanLlm({ provider: { kind: 'openai' }, apiKey: 123 }) || {}).apiKey, '');
+
+  /* Language + notes (must-have filters and private commentary). */
+  const _prevLang = state.language; const _prevView = state.view;
+  state.language = ''; state.view = 'discoveries';
+  eq('empty language adds no discover param', langParams(), {});
+  state.language = 'ja';
+  eq('language maps to with_original_language', langParams(), { with_original_language: 'ja' });
+  state.language = _prevLang; state.view = _prevView;
+  eq('overlong notes are dropped at load', cleanStore({ movie_1: 'ok', tv_2: 'x'.repeat(2001) }, v => typeof v === 'string' && v.length <= 2000).dropped, 1);
+  setNote('movie', 999999, 'selftest note');
+  eq('a saved note reads back', getNote('movie', 999999), 'selftest note');
+  setNote('movie', 999999, '');
+  eq('clearing a note removes it', getNote('movie', 999999), '');
 
   const passed = results.filter(r => r.ok).length;
   const failed = results.length - passed;
