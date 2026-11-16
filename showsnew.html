@@ -579,6 +579,19 @@
       overflow: hidden;
     }
     .card-meta { font-size: var(--text-xs); color: var(--text-muted); display: flex; gap: 6px; flex-wrap: wrap; min-height: calc(var(--text-xs) * 1.5 * 2); align-content: flex-start; }
+    /* Keyword-backed vibes. Hidden until the title's own keywords arrive, so
+       a card never shows a guess. */
+    .card-vibes { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+    .vibe-chip {
+      font-size: var(--text-xs);
+      line-height: 1.4;
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
     /* TVmaze weekly schedule cards live in the same horizontal rows. */
     .ep-day { font-size: var(--text-sm); font-weight: 700; color: var(--text-muted); margin: 12px 0 6px; }
     .ep-card {
@@ -4962,6 +4975,141 @@ const VIBE_GENRES = {
   documentary: [99],
 };
 
+/* ─── KEYWORD-BACKED VIBES ─────────────────────────────────────────────
+   TMDB keeps a curated keyword list per title. A chip is shown only when one
+   of those keywords is in the table below, so the label is a fact about the
+   title rather than a word spotted in its blurb. The old keyword-in-overview
+   tagger produced "rom-com" for Dune and "folk horror" for The Simpsons.
+
+   Keywords are not part of a discover/search response, so they are fetched
+   per title — only for cards that come near the viewport, once, and then
+   cached on this device. Coverage is deliberately sparse: no chip is a
+   better outcome than a wrong chip. ──────────────────────────────────── */
+const VIBE_CACHE_LS  = 'vibe_cache';
+const VIBE_CACHE_CAP = 900;
+const VIBE_CACHE_TTL = 30 * 24 * 60 * 60 * 1000;
+
+/* keyword (lowercase, as TMDB spells it) -> chip text. Exact matches only. */
+const VIBE_KEYWORD_MAP = {
+  'time travel':        'time travel',
+  'time loop':          'time loop',
+  'heist':              'heist',
+  'heist film':         'heist',
+  'bank robbery':       'heist',
+  'romantic comedy':    'rom-com',
+  'rom-com':            'rom-com',
+  'screwball comedy':   'rom-com',
+  'folk horror':        'folk horror',
+  'cyberpunk':          'cyberpunk',
+  'road trip':          'road movie',
+  'road movie':         'road movie',
+  'coming of age':      'coming of age',
+  'post-apocalyptic':   'dystopian',
+  'dystopia':           'dystopian',
+  'dystopian future':   'dystopian',
+  'space opera':        'space opera',
+  'neo-noir':           'neo-noir',
+  'film noir':          'neo-noir',
+  'found footage':      'found footage',
+  'mockumentary':       'mockumentary',
+  'body horror':        'body horror',
+  'whodunit':           'whodunit',
+  'murder mystery':     'whodunit',
+  'survival':           'survival',
+  'single location':    'locked room',
+  'bottle movie':       'locked room',
+  'slow burn':          'slow burn',
+  'biography':          'biopic',
+  'biographical':       'biopic',
+  'psychological thriller': 'psychological',
+};
+
+/* Which chips satisfy which filter mood. Empty/absent means "keywords have
+   nothing to say here", and the genre table decides. */
+const MOOD_TAGS = {
+  romantic:    ['rom-com'],
+  eerie:       ['folk horror', 'body horror'],
+  cerebral:    ['time travel', 'time loop', 'space opera'],
+  trippy:      ['cyberpunk'],
+  dark:        ['neo-noir', 'psychological'],
+  melancholic: ['slow burn'],
+  adventurous: ['road movie'],
+  gritty:      ['survival', 'heist'],
+};
+
+function vibesFromKeywords(names) {
+  const seen = new Set();
+  (names || []).forEach(raw => {
+    const tag = VIBE_KEYWORD_MAP[String(raw || '').trim().toLowerCase()];
+    if (tag) seen.add(tag);
+  });
+  return [...seen].slice(0, 2);   // two chips at most: a card, not a tag cloud
+}
+
+function vibeCacheRead() {
+  const c = LS.get(VIBE_CACHE_LS);
+  return c && typeof c === 'object' ? c : {};
+}
+function vibesFor(item) {
+  if (!item) return null;
+  const key = mediaKey(item.media_type || (item.title ? 'movie' : 'tv'), item.id);
+  const hit = vibeCacheRead()[key];
+  if (!hit || Date.now() - (hit.at || 0) > VIBE_CACHE_TTL) return null;
+  return hit.tags || [];
+}
+
+function paintVibes(slot, tags) {
+  if (!slot) return;
+  if (!tags || !tags.length) { slot.hidden = true; slot.innerHTML = ''; return; }
+  slot.innerHTML = tags.map(t => `<span class="vibe-chip">${esc(t)}</span>`).join('');
+  slot.hidden = false;
+}
+
+const _vibeObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    _vibeObserver.unobserve(entry.target);
+    hydrateCardVibes(entry.target);
+  });
+}, { rootMargin: '250px', threshold: 0 });
+
+function observeCardVibes(card) {
+  if (!card || card.dataset.vibeWatched) return;
+  card.dataset.vibeWatched = '1';
+  _vibeObserver.observe(card);
+}
+
+async function hydrateCardVibes(card) {
+  const slot = card.querySelector('.card-vibes');
+  if (!slot) return;
+  const type = card.dataset.type;
+  const id   = card.dataset.id;
+  if (!type || !id) return;
+  const key = mediaKey(type, id);
+  const cache = vibeCacheRead();
+  const hit = cache[key];
+  if (hit && Date.now() - (hit.at || 0) < VIBE_CACHE_TTL) { paintVibes(slot, hit.tags); return; }
+  if (catalogMissing()) return;      // nothing to ask, and no failed requests
+  try {
+    /* Movies return { keywords }, shows return { results }. */
+    const d = await tmdb(`/${type}/${encodeURIComponent(id)}/keywords`).catch(() => null);
+    if (!d) return;
+    const names = (d.keywords || d.results || []).map(k => (k && k.name) || '').filter(Boolean);
+    const tags = vibesFromKeywords(names);
+    const next = { ...cache, [key]: { at: Date.now(), tags } };
+    const keys = Object.keys(next);
+    if (keys.length > VIBE_CACHE_CAP) {
+      keys.sort((a, b) => (next[a].at || 0) - (next[b].at || 0))
+          .slice(0, keys.length - VIBE_CACHE_CAP)
+          .forEach(k => delete next[k]);
+    }
+    LS.set(VIBE_CACHE_LS, next);
+    paintVibes(slot, tags);
+  } catch (e) {
+    /* Decoration only: a failed keyword call leaves the card as it was. */
+  }
+}
+
 function moodKeywords(mood) {
   const map = {
     dark:       ['noir','dark','gloomy','bleak','sinister','gritty','dystopian'],
@@ -4980,6 +5128,14 @@ function moodKeywords(mood) {
 }
 function moodMatches(item, mood) {
   if (!mood) return true;
+
+  /* If this title's keywords are cached, they decide: the filter then agrees
+     exactly with the chips on the card. Otherwise fall through to genres so
+     the filter still works before a card has been scrolled into view. */
+  const cached = vibesFor(item);
+  const tagsForMood = MOOD_TAGS[mood];
+  if (cached && tagsForMood) return cached.some(t => tagsForMood.includes(t));
+
   const wanted = VIBE_GENRES[mood];
   if (wanted) {
     /* A vibe is a genre claim, so require the genre. An item with no genre
@@ -5330,6 +5486,7 @@ function buildCard(item, dismiss = false) {
   const cardEl = card;
   const titleHTML = `<div class="card-title">${esc(title)}</div>`;
   const metaHTML = `
+    <div class="card-vibes" hidden></div>
     <div class="card-meta">
       ${year ? `<span>${esc(year)}</span>` : ''}
       ${sc ? `<span class="card-score" title="Weighted score — held near the catalogue average until a title has ${VOTE_PRIOR}+ votes; ${esc(voteCountLabel(item.vote_count))}">⭐ ${sc}</span>` : ''}
@@ -5390,6 +5547,10 @@ function buildCard(item, dismiss = false) {
     });
     watchBtnEl.addEventListener('keydown', e => e.stopPropagation());
   }
+
+  /* Vibe chips hydrate only once the card is near the viewport, so a grid
+     of 40 costs 40 keyword calls only for the part the user actually sees. */
+  observeCardVibes(cardEl);
 
   /* Paint the slider fill for already-rated cards on first render, so the
      bar does not sit empty until the first input event. */
