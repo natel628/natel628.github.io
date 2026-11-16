@@ -604,6 +604,14 @@
       font-weight: 700;
       color: var(--accent2);
     }
+    /* The vote count sits beside the score so a thin average is visible as
+       one. Muted, not competing with the number itself. */
+    .card-votes {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      opacity: .85;
+      white-space: nowrap;
+    }
     .card-badge {
       position: absolute;
       top: 6px;
@@ -2926,9 +2934,34 @@ async function refreshProviderList() {
       tmdb('/watch/providers/movie', { watch_region: region }).catch(() => ({ results: [] })),
     ]);
     if (token !== providerListToken || state.region !== region) return;
+    /* TMDB lists tiers and near-duplicates as separate rows ("Amazon Prime
+       Video with Ads", "Amzn", "Peacock Premium"). One service should read
+       as one entry, named the way people say it. */
+    const CLEAN = [
+      [/^amzn\b|^amazon\b/i, 'Amazon Prime Video'],
+      [/^prime\s*video/i,   'Amazon Prime Video'],
+      [/^netflix/i,          'Netflix'],
+      [/^disney/i,           'Disney+'],
+      [/^max\b|^hbo\b/i,     'Max'],
+      [/^paramount/i,        'Paramount+'],
+      [/^peacock/i,          'Peacock'],
+      [/^apple\s*tv/i,       'Apple TV'],
+      [/^hulu/i,             'Hulu'],
+    ];
+    const cleanName = raw => {
+      const name = String(raw).replace(/\s*with ads?\b/i, '').replace(/\s+/g, ' ').trim();
+      const hit = CLEAN.find(([re]) => re.test(name));
+      return hit ? hit[1] : name;
+    };
     const byId = new Map();
+    const seenNames = new Set();
     const add = list => (list || []).forEach(p => {
-      if (p && p.provider_id && p.provider_name) byId.set(String(p.provider_id), p.provider_name);
+      if (!p || !p.provider_id || !p.provider_name) return;
+      const name = cleanName(p.provider_name);
+      const key = name.toLowerCase();
+      if (seenNames.has(key)) return;      // first id wins per service name
+      seenNames.add(key);
+      byId.set(String(p.provider_id), name);
     });
     add(tv.results);
     add(movie.results);
@@ -4789,65 +4822,63 @@ function formatDate(d) {
   return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+/* TMDB's own charts pull an average toward the catalogue mean until a
+   title has enough votes to stand on its own. Same idea here: a 10.0 from
+   4 votes is not a 10.0, and showing it beside a real 8.1 makes both
+   numbers meaningless. VOTE_PRIOR is the "votes of doubt" added. */
+const VOTE_PRIOR   = 300;   // votes needed before an average counts as-is
+const CATALOG_MEAN = 6.8;   // rough mean vote for the whole catalogue
+
+function weightedRating(item) {
+  const votes  = item.vote_count || 0;
+  const rating = item.vote_average || 0;
+  if (!votes || !rating) return 0;
+  return (votes * rating + VOTE_PRIOR * CATALOG_MEAN) / (votes + VOTE_PRIOR);
+}
+
 function score(item) {
-  const v = item.vote_average || 0;
-  return v > 0 ? v.toFixed(1) : '';
+  const w = weightedRating(item);
+  return w > 0 ? w.toFixed(1) : '';
+}
+
+function voteCountLabel(n) {
+  const v = Number(n) || 0;
+  if (v >= 1000000) return (v / 1000000).toFixed(1).replace(/\.0$/, '') + 'M votes';
+  if (v >= 1000)    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k votes';
+  return v + (v === 1 ? ' vote' : ' votes');
 }
 
 /* ─── MICRO-GENRE TAGGER ────────────────────────────────────────────────
    Auto-categorizes titles into sub-genres based on title/overview keywords.
    Used for discovery chips and the Mood Board. ────────────────────────── */
-const MICRO_GENRES = [
-  { tag: 'neo-noir',     keywords: ['noir','detective','crime','murder','investigation','dark city'] },
-  { tag: 'body horror',  keywords: ['body horror','transformation','mutation','parasite','infection'] },
-  { tag: 'heist',        keywords: ['heist','robbery','bank','crew','plan','score'] },
-  { tag: 'slow burn',    keywords: ['slow','quiet','meditative','atmospheric','contemplative'] },
-  { tag: 'found footage', keywords: ['found footage','camcorder','documentary style','handheld'] },
-  { tag: 'coming of age', keywords: ['coming of age','teenager','growing up','adolescent','youth'] },
-  { tag: 'survival',     keywords: ['survival','stranded','wilderness','alone','desperate'] },
-  { tag: 'time travel',  keywords: ['time travel','time loop','temporal','past','future','timeline'] },
-  { tag: 'dystopian',    keywords: ['dystopian','post-apocalyptic','wasteland','collapse','society'] },
-  { tag: 'psychological', keywords: ['psychological','mind','sanity','delusion','obsession','paranoia'] },
-  { tag: 'whodunit',     keywords: ['whodunit','murder mystery','detective','clue','suspect'] },
-  { tag: 'rom-com',      keywords: ['romantic comedy','rom-com','meet cute','love','dating'] },
-  { tag: 'space opera',  keywords: ['space opera','galaxy','starship','alien','interstellar','cosmic'] },
-  { tag: 'folk horror',  keywords: ['folk horror','rural','cult','pagan','ancient','village'] },
-  { tag: 'cyberpunk',    keywords: ['cyberpunk','hacker','virtual','digital','neon','matrix'] },
-  { tag: 'biopic',       keywords: ['biopic','biography','true story','real life','based on'] },
-  { tag: 'mockumentary', keywords: ['mockumentary','mock documentary','fake','satire','parody'] },
-  { tag: 'road movie',   keywords: ['road movie','road trip','journey','travel','highway'] },
-  { tag: 'locked room',  keywords: ['locked room','single location','contained','trapped','escape'] },
-  { tag: 'found family', keywords: ['found family','unlikely','group','team','bond'] },
-];
-function microGenres(item) {
-  const hay = `${item.title || item.name || ''} ${item.overview || ''}`.toLowerCase();
-  const genres = item.genre_ids || [];
-  return MICRO_GENRES.filter(mg => mg.keywords.some(k => hay.includes(k))).map(mg => mg.tag);
-}
-function microGenreHTML(item) {
-  const tags = microGenres(item);
-  if (!tags.length) return '';
-  return tags.map(t => `<span class="genre-tag" style="font-size: var(--text-xs);padding:1px 6px">${esc(t)}</span>`).join(' ');
-}
+/* Auto "vibe" tagging is OFF. It matched single keywords against the
+   overview ("love", "future", "past", "alone", "plan", "team"), so Dune
+   came out as "time travel / rom-com / road movie" and any concert film
+   with "survival" in its blurb read as a horror title. Wrong tags on
+   famous titles cost more trust than no tags earn, so the cards show the
+   real genres and nothing invented. Data providers give us genres, not
+   vibes; when there is a trustworthy source for these, bring back the
+   chip markup. */
+function microGenres() { return []; }
+function microGenreHTML() { return ''; }
 
 /* ─── OBSCURITY ENGINE ──────────────────────────────────────────────────
    Flips the popularity bias: rewards high rating + low visibility.
    Score 0-100. Higher = more obscure / less heard of. ────────────────── */
-const _obscurityCache = new Map();
 function obscurityScore(item) {
-  const key = (item.id || '') + '_' + (item.vote_count || 0) + '_' + (item.popularity || 0) + '_' + (item.vote_average || 0);
-  if (_obscurityCache.has(key)) return _obscurityCache.get(key);
+  /* No cache and no data-derived key: the same title arrives from discover,
+     search and the modal with slightly different vote counts, which used to
+     score one film 32 in one row and 33 in another. The math is cheap, so it
+     runs on the values in hand and always agrees with itself. */
   const votes = item.vote_count || 0;
   const pop   = item.popularity || 0;
   const rating= item.vote_average || 0;
-  if (!votes || rating < 5) { _obscurityCache.set(key, 0); return 0; }
+  if (!votes || rating < 5) return 0;
   // Logarithmic vote and popularity scales favour less-visible titles while
   // leaving enough range for the Deep Cut and Hidden Gem thresholds.
   const voteObscurity = 1 - Math.min(Math.log1p(votes) / Math.log1p(10000), 1);
   const popObscurity = 1 - Math.min(Math.log1p(pop) / Math.log1p(1000), 1);
-  const result = Math.round(65 * voteObscurity + 25 * popObscurity + 10 * Math.min(rating / 10, 1));
-  _obscurityCache.set(key, result);
-  return result;
+  return Math.round(65 * voteObscurity + 25 * popObscurity + 10 * Math.min(rating / 10, 1));
 }
 function obscurityLabel(s) {
   if (s >= 70) return '🕵️ Deep Cut';
@@ -5226,11 +5257,11 @@ function buildCard(item, dismiss = false) {
   const metaHTML = `
     <div class="card-meta">
       ${year ? `<span>${esc(year)}</span>` : ''}
-      ${sc ? `<span class="card-score">⭐ ${sc}</span>` : ''}
+      ${sc ? `<span class="card-score" title="Weighted score — held near the catalogue average until a title has ${VOTE_PRIOR}+ votes; ${esc(voteCountLabel(item.vote_count))}">⭐ ${sc}</span>` : ''}
+      ${(item.vote_count || 0) > 0 ? `<span class="card-votes">${esc(voteCountLabel(item.vote_count))}</span>` : ''}
       ${cr ? ratingBadgeHTML(cr) : ''}
       ${osc >= 30 ? `<span class="obscurity-badge ${osc >= 50 ? 'hidden' : ''}" title="Obscurity score ${osc}">💎 ${osc}</span>` : ''}
     </div>
-    <div style="margin-top:3px">${microGenreHTML(item)}</div>
   `;
   const meterHTML = osc >= 30 ? `
     <div class="obscurity-meter">
@@ -5266,10 +5297,10 @@ function buildCard(item, dismiss = false) {
       ${wlStatus ? `<div class="wl-status ${wlStatus}" title="${wlStatus}">${wlStatusLabel(wlStatus)}</div>` : ''}
       <div class="card-rate-wrap">
         <div class="card-rate-row">
-          <span class="card-rate-emoji">${myRating > 0 ? ratingEmoji(myRating) : '·'}</span>
+          <span class="card-rate-emoji" aria-hidden="true">${myRating > 0 ? ratingEmoji(myRating) : '☆'}</span>
           <input type="range" class="card-rate-bar" min="0" max="10" step="1"
             value="${myRating}" aria-label="Rate ${esc(title)} from 0 to 10" />
-          <span class="card-rate-label">${myRating > 0 ? myRating : '—'}</span>
+          <span class="card-rate-label">${myRating > 0 ? myRating : 'Rate'}</span>
         </div>
       </div>
     </div>
@@ -5602,8 +5633,8 @@ document.getElementById('main-content').addEventListener('input', e => {
   const label = card.querySelector('.card-rate-label');
   const val = parseInt(slider.value);
 
-  emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
-  label.textContent = val > 0 ? val : '—';
+  emoji.textContent = val > 0 ? ratingEmoji(val) : '☆';
+  label.textContent = val > 0 ? val : 'Rate';
   const pct = val * 10;
   slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
 });
@@ -5642,8 +5673,8 @@ document.getElementById('modal-overlay').addEventListener('input', e => {
   const emoji  = card.querySelector('.card-rate-emoji');
   const label  = card.querySelector('.card-rate-label');
   const val    = parseInt(slider.value);
-  emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
-  label.textContent = val > 0 ? val : '—';
+  emoji.textContent = val > 0 ? ratingEmoji(val) : '☆';
+  label.textContent = val > 0 ? val : 'Rate';
   const pct = val * 10;
   slider.style.background = `linear-gradient(to right, var(--accent2) ${pct}%, var(--border) ${pct}%)`;
 });
@@ -6719,7 +6750,7 @@ async function renderTrending(main, token) {
             : tmdb('/tv/on_the_air').then(r => ({ items: r.results || [], providerApplied: false })))
         : Promise.resolve({ items: [] }),
       wantRecent
-        ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 20, ...recent7, ...gp })
+        ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 150, ...recent7, ...gp })
         : Promise.resolve({ items: [] }),
       wantRecent
         ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 100, ...recent30, ...gp })
@@ -6763,9 +6794,11 @@ async function renderTrending(main, token) {
          "this week" and "2020" cannot both be true. */
       if (!state.year) {
         const trophy = '\u{1F3C6}';   // escaped so this script stays plain ASCII
-        const weekTop = await filterResults(weekRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: false });
+        const weekTop = (await filterResults(weekRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: false }))
+          .sort((a, b) => weightedRating(b) - weightedRating(a));
         if (weekTop.length) rows.push([trophy + ' Best Rated This Week', weekTop, null, true]);
-        const monthTop = await filterResults(monthRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: false });
+        const monthTop = (await filterResults(monthRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: false }))
+          .sort((a, b) => weightedRating(b) - weightedRating(a));
         if (monthTop.length) rows.push([trophy + ' Best Rated This Month', monthTop, null, true]);
       }
 
@@ -6818,7 +6851,7 @@ async function renderTrending(main, token) {
         `<button class="link-btn" data-action="clear-provider">Show everything</button>`,
         'provider-fallback');
     }
-    rows.forEach(([label, items, fetcher, ranked]) => renderRow(main, label, items, false, fetcher, ranked));
+    dedupeRows(rows).forEach(([label, items, fetcher, ranked]) => renderRow(main, label, items, false, fetcher, ranked));
     observeLazyCards();
   } catch (e) {
     if (token !== renderToken) return;
@@ -8970,8 +9003,8 @@ function renderSettings(main) {
   const rated = ratedCount();
   const listed = Object.keys(state.watchlist || {}).length;
   const details = Object.keys(state.mediaDetails || {}).length;
-  const bytes = Object.keys(localStorage).reduce((n, k) => n + (localStorage.getItem(k) || '').length, 0);
-  const kb = Math.max(1, Math.round(bytes / 1024));
+  const storage = getStorageUsage();   // the same figure Stats prints
+  const kb = Math.max(1, Math.round(storage.bytes / 1024));
   const regionOptions = REGIONS.map(([code, name]) =>
     `<option value="${esc(code)}"${state.region === code ? ' selected' : ''}>${esc(name)}</option>`).join('');
 
@@ -9467,6 +9500,28 @@ async function filterResults(items, opts = {}) {
      maps or spreads; renderRow reads it to explain an empty row. */
   Object.defineProperty(out, '_blame', { value: blame, enumerable: false });
   return out;
+}
+
+/* One title, one card. TMDB's discover endpoints and the merged movie+TV
+   rows hand back the same id more than once, which is how "War" appeared
+   three times inside Deep Cuts (two of them without a poster). */
+function rowItemKey(item) {
+  const type = item.media_type || (item.title ? 'movie' : 'tv');
+  return `${type}_${item.id}`;
+}
+function dedupeRows(rows) {
+  const seen = new Set();
+  return rows.map(([label, items, fetcher, ranked]) => {
+    const kept = [];
+    for (const item of (items || [])) {
+      const key = rowItemKey(item);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      kept.push(item);
+      if (kept.length >= 20) break;   // every row the same length
+    }
+    return [label, kept, fetcher, ranked];
+  }).filter(([, items]) => items.length);
 }
 
 function renderRow(container, title, items, recBadge = false, fetcher = null, ranked = false) {
@@ -10223,9 +10278,12 @@ function renderOnboarding() {
     if (el && el.id !== 'welcome-dismiss') handleAction(el.dataset.action, el);
   });
 
+  /* The banner is the whole onboarding prompt now. A modal that blocked the
+     first visit before any browsing did the same job less politely, so this
+     button opens Quick Rate instead. */
   document.getElementById('welcome-onboard')?.addEventListener('click', () => {
     if (catalogMissing()) navigateTo('stats');
-    else openOnboarding();
+    else navigateTo('quickrate');
   });
   document.getElementById('onboard-skip')?.addEventListener('click', () => closeOnboarding(false));
   document.getElementById('onboard-done')?.addEventListener('click', () => closeOnboarding(true));
@@ -10238,11 +10296,8 @@ function renderOnboarding() {
     }
   });
 
-  /* First run only, and only when there is a catalog to draw from. A user who
-     already said "Not now" is not asked again by a modal. */
-  if (onboardingNeeded() && !catalogMissing() && !LS.get('welcome_dismissed')) {
-    setTimeout(() => openOnboarding(), 400);
-  }
+  /* No auto-opening onboarding modal: the home banner already asks, once,
+     and dismissing it is enough. */
 
   /* Phase 0: say once what the load-time validators had to skip. A newer
      schema is left completely untouched rather than guessed at. */
