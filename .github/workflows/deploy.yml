@@ -133,6 +133,26 @@ jobs:
           fi
           echo "OK: OMDb key injected into showsnew.html."
 
+      # ── Inject MDBList key (optional) ──────────────────────────────
+      - name: Inject MDBList key
+        env:
+          MDBLIST_KEY: ${{ secrets.MDBLIST_KEY }}
+        run: |
+          if [ -z "$MDBLIST_KEY" ]; then
+            echo "::warning::MDBLIST_KEY secret is not set — multi-source scores stay off unless a key is added in Settings."
+            exit 0
+          fi
+          if ! grep -q '__MDBLIST_KEY__' showsnew.html; then
+            echo "::error::Placeholder __MDBLIST_KEY__ not found in showsnew.html."
+            exit 1
+          fi
+          sed -i "s|__MDBLIST_KEY__|${MDBLIST_KEY}|g" showsnew.html
+          if grep -q '__MDBLIST_KEY__' showsnew.html; then
+            echo "::error::Placeholder still present in showsnew.html after sed."
+            exit 1
+          fi
+          echo "OK: MDBList key injected into showsnew.html."
+
       # ── Encrypt showsnew.html ──────────────────────────────────────
       - name: Encrypt showsnew.html
         env:

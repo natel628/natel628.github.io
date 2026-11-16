@@ -2535,6 +2535,7 @@
 const TMDB_TOKEN = '__TMDB_TOKEN__';
 const FANART_KEY = '__FANART_KEY__';   /* optional: injected at deploy; artwork hides itself when unset */
 const OMDB_KEY = '__OMDB_KEY__';       /* optional: injected at deploy; IMDb box hides itself when unset */
+const MDBLIST_KEY = '__MDBLIST_KEY__'; /* optional: injected at deploy; overrides the key typed in Settings */
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
 const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
@@ -6308,7 +6309,12 @@ const MDB_KEY_LS    = 'mdblist_key';
 const MDB_CACHE_LS  = 'mdb_scores';
 const MDB_CACHE_TTL = 14 * 24 * 60 * 60 * 1000;
 
-const mdbKey = () => String(LS.get(MDB_KEY_LS) || '').trim();
+/* Two ways to supply the key: a MDBLIST_KEY secret injected at deploy (the
+   same mechanism as TMDB/OMDb, so it is set once and works for everyone),
+   or a key typed in Settings, which stays in this browser. The injected one
+   wins, because a static page cannot let a visitor remove it. */
+const mdbInjected = () => typeof MDBLIST_KEY === 'string' && !MDBLIST_KEY.startsWith('__MDBLIST');
+const mdbKey = () => mdbInjected() ? String(MDBLIST_KEY).trim() : String(LS.get(MDB_KEY_LS) || '').trim();
 const mdbOn  = () => mdbKey().length >= 8;
 
 /* Every source keeps its own scale; the label says which. */
@@ -9143,11 +9149,14 @@ function renderSettings(main) {
         </ul>
         <div class="settings-row">
           <input class="conn-key" id="settings-mdb-key" type="password" autocomplete="off" spellcheck="false"
-            placeholder="Paste your MDBList API key" aria-label="MDBList API key" />
+            placeholder="${mdbInjected() ? 'Key provided by this deploy' : 'Paste your MDBList API key'}"
+            aria-label="MDBList API key" ${mdbInjected() ? 'disabled' : ''} />
           <button type="button" class="modal-btn" id="settings-mdb-save">Save key</button>
           <button type="button" class="modal-btn" id="settings-mdb-clear">Disconnect</button>
         </div>
-        <p class="settings-note">Optional. Your free MDBList key (1,000 lookups a day) adds IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt scores to the detail view, each labelled with its source. The key is stored in this browser and sent only to api.mdblist.com. Without it, IMDb scores come from OMDb instead.</p>
+        <p class="settings-note">${mdbInjected()
+          ? 'A MDBList key is built into this copy by the deploy, so the scores below work as-is. IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt appear in the detail view, each labelled with its source.'
+          : 'Optional. Your free MDBList key (1,000 lookups a day) adds IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt scores to the detail view, each labelled with its source. The key is stored in this browser and sent only to api.mdblist.com. Without it, IMDb scores come from OMDb instead.'}</p>
       </section>
 
       <section class="settings-card">
@@ -9229,8 +9238,17 @@ function renderSettings(main) {
   /* MDBList key entry. A new key invalidates the score cache, since the old
      tiles were fetched with the previous account. */
   const mdbInput = main.querySelector('#settings-mdb-key');
-  if (mdbInput) mdbInput.value = mdbKey();
-  main.querySelector('#settings-mdb-save')?.addEventListener('click', () => {
+  const mdbBuiltIn = mdbInjected();
+  if (mdbInput && !mdbBuiltIn) mdbInput.value = mdbKey();
+  const saveBtn = main.querySelector('#settings-mdb-save');
+  const clearBtn = main.querySelector('#settings-mdb-clear');
+  if (mdbBuiltIn) {
+    /* Nothing to edit or remove: the key arrives with the page. */
+    if (saveBtn) saveBtn.disabled = true;
+    if (clearBtn) clearBtn.disabled = true;
+  }
+  saveBtn?.addEventListener('click', () => {
+    if (mdbBuiltIn) { toast('This copy has its MDBList key built in at deploy.'); return; }
     const v = String((mdbInput && mdbInput.value) || '').trim();
     if (v.length < 8) { toast('That key looks too short. Copy it from mdblist.com/preferences.'); return; }
     LS.set(MDB_KEY_LS, v);
@@ -9238,7 +9256,8 @@ function renderSettings(main) {
     toast('MDBList connected. Scores appear in a title\u2019s detail view.');
     renderSettings(main);
   });
-  main.querySelector('#settings-mdb-clear')?.addEventListener('click', () => {
+  clearBtn?.addEventListener('click', () => {
+    if (mdbBuiltIn) { toast('The built-in key comes from the deploy and cannot be removed here.'); return; }
     try { localStorage.removeItem(MDB_KEY_LS); } catch (_) {}
     LS.set(MDB_CACHE_LS, {});
     toast('MDBList disconnected. IMDb scores fall back to OMDb when it is available.');
