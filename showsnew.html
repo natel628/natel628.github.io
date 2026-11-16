@@ -850,6 +850,20 @@
     }
     .score-box .score-val { font-size: var(--text-lg); font-weight: 700; color: var(--accent2); }
     .score-box .score-lbl { font-size: var(--text-xs); color: var(--text-muted); }
+    /* Opt-in service key entry. A password field so a pasted key is not left
+       on screen in a shared room; it is only ever read from this browser. */
+    .conn-key {
+      flex: 1 1 190px;
+      min-width: 0;
+      padding: 8px 10px;
+      font: inherit;
+      font-size: var(--text-sm);
+      color: var(--text);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .conn-key:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
     .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
     .modal-btn {
       background: var(--surface2);
@@ -5957,6 +5971,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
           <div class="score-box"><div class="score-val">${sc}</div><div class="score-lbl">TMDB Score</div></div>
           ${d.vote_count ? `<div class="score-box"><div class="score-val">${d.vote_count.toLocaleString()}</div><div class="score-lbl">Votes</div></div>` : ''}
           ${myR ? `<div class="score-box"><div class="score-val" style="color:var(--star-on)">${myR}/10</div><div class="score-lbl">My Rating</div></div>` : ''}
+          <span id="modal-mdb-scores" style="display:none"></span>
           <div class="score-box" id="modal-imdb" style="display:none"></div>
         </div>
       </div>
@@ -6095,7 +6110,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
   const stBtn = document.getElementById('soundtrack-btn');
   if (stBtn) stBtn.addEventListener('click', () => loadModalSoundtrack(type, id, title, year));
   loadModalFanart(type, id);
-  loadModalImdb(type, id);
+  loadModalScores(type, id);
 
   loadSimilar(type, id);
 }
@@ -6282,6 +6297,93 @@ async function loadModalFanart(type, id) {
     if (wrap) wrap.innerHTML = '';
   }
 }
+/* ── MDBLIST: several scores for one title (opt-in key, this device only) ──
+   OMDb answers with a single IMDb number. MDBList aggregates IMDb, Rotten
+   Tomatoes (critics and audience), Metacritic, Letterboxd and Trakt for the
+   same title, so the modal can show what different audiences thought. The
+   key comes from mdblist.com/preferences, lives in localStorage, and is the
+   only thing that reaches MDBList. Free tier is 1,000 requests a day, so a
+   title is looked up once and the tiles are cached for a fortnight. ───── */
+const MDB_KEY_LS    = 'mdblist_key';
+const MDB_CACHE_LS  = 'mdb_scores';
+const MDB_CACHE_TTL = 14 * 24 * 60 * 60 * 1000;
+
+const mdbKey = () => String(LS.get(MDB_KEY_LS) || '').trim();
+const mdbOn  = () => mdbKey().length >= 8;
+
+/* Every source keeps its own scale; the label says which. */
+const MDB_SOURCES = [
+  { id: 'imdb',             label: 'IMDb',        fmt: v => Number(v).toFixed(1) },
+  { id: 'tomatoes',         label: 'RT Critics',  fmt: v => Math.round(v) + '%' },
+  { id: 'tomatoesaudience', label: 'RT Audience', fmt: v => Math.round(v) + '%' },
+  { id: 'popcorn',          label: 'RT Audience', fmt: v => Math.round(v) + '%' },
+  { id: 'metacritic',       label: 'Metacritic',  fmt: v => Math.round(v) },
+  { id: 'letterboxd',       label: 'Letterboxd',  fmt: v => Number(v).toFixed(1) + '/5' },
+  { id: 'trakt',            label: 'Trakt',       fmt: v => Math.round(v) + '%' },
+];
+
+function mdbTiles(ratings) {
+  const byId = {};
+  (ratings || []).forEach(r => { if (r && r.source && r.value != null) byId[r.source] = r.value; });
+  const seen = new Set();
+  const tiles = [];
+  MDB_SOURCES.forEach(src => {
+    if (seen.has(src.label) || byId[src.id] == null) return;
+    const v = Number(byId[src.id]);
+    if (!isFinite(v) || v <= 0) return;
+    seen.add(src.label);
+    tiles.push(`<div class="score-box"><div class="score-val">${esc(src.fmt(v))}</div><div class="score-lbl">${src.label}</div></div>`);
+  });
+  return tiles.join('');
+}
+
+async function loadModalMdb(type, id) {
+  const slot = document.getElementById('modal-mdb-scores');
+  if (!slot) return;
+  const cache = LS.get(MDB_CACHE_LS) || {};
+  const key   = mediaKey(type, id);
+  const paint = html => {
+    if (!html) return;
+    slot.style.display = 'contents';
+    slot.innerHTML = html;
+  };
+  const hit = cache[key];
+  if (hit && Date.now() - (hit.at || 0) < MDB_CACHE_TTL) { paint(hit.html); return; }
+  if (!mdbOn()) return;
+  const token = modalToken;
+  try {
+    const kind = type === 'tv' ? 'show' : 'movie';
+    const url = `https://api.mdblist.com/tmdb/${kind}/${encodeURIComponent(id)}/?apikey=${encodeURIComponent(mdbKey())}`;
+    const res = await fetchWithTimeout(url, {}, 15000);
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) toast('MDBList rejected that key. Check it in Settings > Connections.');
+      else if (res.status === 429) toast('MDBList daily limit reached. Scores fill in again tomorrow.');
+      return;
+    }
+    const d = await res.json();
+    if (token !== modalToken) return;
+    const html = mdbTiles(d && d.ratings);
+    if (!html) return;
+    /* Keep 200 titles, dropping the oldest first. */
+    const next = { ...cache, [key]: { at: Date.now(), html } };
+    const keys = Object.keys(next);
+    if (keys.length > 200) {
+      keys.sort((a, b) => (next[a].at || 0) - (next[b].at || 0))
+          .slice(0, keys.length - 200)
+          .forEach(k => delete next[k]);
+    }
+    LS.set(MDB_CACHE_LS, next);
+    paint(html);
+  } catch (e) { console.warn('MDBList error:', e); }
+}
+
+/* MDBList already carries the IMDb number, so OMDb is the fallback for a
+   copy that has no MDBList key. */
+function loadModalScores(type, id) {
+  if (mdbOn()) loadModalMdb(type, id);
+  else loadModalImdb(type, id);
+}
+
 /* ── OMDB: IMDb score in the modal (optional, key injected at deploy) ─
    Looked up once per title via TMDB external ids, then cached on the
    local media record so the 1k/day free allowance is spent once. */
@@ -9037,8 +9139,15 @@ function renderSettings(main) {
           <li><span class="conn-dot"></span>Movie catalog (TMDB)<span class="conn-state" id="settings-tmdb-state"></span></li>
           <li><span class="conn-dot"></span>Artwork (Fanart.tv)<span class="conn-state" id="settings-fanart-state"></span></li>
           <li><span class="conn-dot"></span>IMDb scores (OMDb)<span class="conn-state" id="settings-omdb-state"></span></li>
+          <li><span class="conn-dot"></span>Multi-source scores (MDBList)<span class="conn-state" id="settings-mdb-state"></span></li>
         </ul>
-        <p class="settings-note">Room for more: each new service gets its own row here with Connect / Disconnect.</p>
+        <div class="settings-row">
+          <input class="conn-key" id="settings-mdb-key" type="password" autocomplete="off" spellcheck="false"
+            placeholder="Paste your MDBList API key" aria-label="MDBList API key" />
+          <button type="button" class="modal-btn" id="settings-mdb-save">Save key</button>
+          <button type="button" class="modal-btn" id="settings-mdb-clear">Disconnect</button>
+        </div>
+        <p class="settings-note">Optional. Your free MDBList key (1,000 lookups a day) adds IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt scores to the detail view, each labelled with its source. The key is stored in this browser and sent only to api.mdblist.com. Without it, IMDb scores come from OMDb instead.</p>
       </section>
 
       <section class="settings-card">
@@ -9111,9 +9220,30 @@ function renderSettings(main) {
   const tmdbOk = typeof TMDB_TOKEN === 'string' && !TMDB_TOKEN.startsWith('__TMDB');
   const fanartOk = fanartOn();
   const omdbOk = omdbOn();
+  const mdbOk = mdbOn();
   setConn('#settings-tmdb-state', tmdbOk, tmdbOk ? 'Connected' : 'Not in this copy');
   setConn('#settings-fanart-state', fanartOk, fanartOk ? 'Active' : 'Off');
   setConn('#settings-omdb-state', omdbOk, omdbOk ? 'Active' : 'Off');
+  setConn('#settings-mdb-state', mdbOk, mdbOk ? 'Active' : 'Off');
+
+  /* MDBList key entry. A new key invalidates the score cache, since the old
+     tiles were fetched with the previous account. */
+  const mdbInput = main.querySelector('#settings-mdb-key');
+  if (mdbInput) mdbInput.value = mdbKey();
+  main.querySelector('#settings-mdb-save')?.addEventListener('click', () => {
+    const v = String((mdbInput && mdbInput.value) || '').trim();
+    if (v.length < 8) { toast('That key looks too short. Copy it from mdblist.com/preferences.'); return; }
+    LS.set(MDB_KEY_LS, v);
+    LS.set(MDB_CACHE_LS, {});
+    toast('MDBList connected. Scores appear in a title\u2019s detail view.');
+    renderSettings(main);
+  });
+  main.querySelector('#settings-mdb-clear')?.addEventListener('click', () => {
+    try { localStorage.removeItem(MDB_KEY_LS); } catch (_) {}
+    LS.set(MDB_CACHE_LS, {});
+    toast('MDBList disconnected. IMDb scores fall back to OMDb when it is available.');
+    renderSettings(main);
+  });
 }
 
 function renderStats(main) {
