@@ -5022,6 +5022,15 @@ const VIBE_KEYWORD_MAP = {
   'biography':          'biopic',
   'biographical':       'biopic',
   'psychological thriller': 'psychological',
+  'space travel':       'space travel',
+  'haunted house':      'haunted house',
+  'serial killer':      'serial killer',
+  'revenge':            'revenge',
+  'prison':             'prison',
+  'wilderness':         'survival',
+  'survival horror':    'survival',
+  'conspiracy':         'conspiracy',
+  'artificial intelligence': 'AI',
 };
 
 /* Which chips satisfy which filter mood. Empty/absent means "keywords have
@@ -5056,6 +5065,44 @@ function vibesFor(item) {
   const hit = vibeCacheRead()[key];
   if (!hit || Date.now() - (hit.at || 0) > VIBE_CACHE_TTL) return null;
   return hit.tags || [];
+}
+
+/* Coverage audit. Chips are only as good as the keyword map, and the only
+   way to know which titles fall through is to count them where they are
+   cached. This is read-only and purely local. */
+function vibeCoverage() {
+  const cache = vibeCacheRead();
+  const fresh = Object.entries(cache)
+    .filter(([, v]) => v && Date.now() - (v.at || 0) < VIBE_CACHE_TTL);
+  const titled = key => {
+    const rec = (state.mediaDetails || {})[key];
+    return (rec && (rec.title || rec.name)) || key.replace(/^(movie|tv)_/, '');
+  };
+  const withChips = fresh.filter(([, v]) => (v.tags || []).length)
+    .map(([k, v]) => ({ title: titled(k), tags: v.tags }));
+  const without = fresh.filter(([, v]) => !(v.tags || []).length)
+    .map(([k]) => titled(k));
+  return { checked: fresh.length, withChips, without };
+}
+
+function paintCoverage(el) {
+  if (!el) return;
+  const { checked, withChips, without } = vibeCoverage();
+  if (!checked) {
+    el.innerHTML = '<p class="settings-note" style="margin:8px 0 0">No titles checked yet. Scroll through Discoveries or Discover so cards go past the viewport, then run this again.</p>';
+    return;
+  }
+  const pct = Math.round((withChips.length / checked) * 100);
+  el.innerHTML = `
+    <p class="settings-note" style="margin:8px 0 6px">
+      <strong>${withChips.length}</strong> of <strong>${checked}</strong> checked titles carry a chip (${pct}%).
+    </p>
+    ${without.length ? `<p class="settings-note" style="margin:0 0 4px"><strong>No chip — keywords not in the map:</strong></p>
+      <ul class="settings-note" style="margin:0;padding-left:18px;max-height:160px;overflow:auto">
+        ${without.slice(0, 30).map(t => `<li>${esc(t)}</li>`).join('')}
+      </ul>
+      ${without.length > 30 ? `<p class="settings-note" style="margin:4px 0 0">…and ${without.length - 30} more.</p>` : ''}` : '<p class="settings-note" style="margin:0">Every checked title has a chip.</p>'}
+  `;
 }
 
 function paintVibes(slot, tags) {
@@ -9403,6 +9450,15 @@ function renderSettings(main) {
       </section>
 
       <section class="settings-card">
+        <h3>Vibe chips</h3>
+        <p>Chips come from TMDB keywords. This counts what the map covers on titles you have already browsed — nothing leaves the device.</p>
+        <div class="settings-row">
+          <button type="button" class="modal-btn" id="settings-vibes-check">Check coverage</button>
+        </div>
+        <div id="settings-vibes-report"></div>
+      </section>
+
+      <section class="settings-card">
         <h3>AI Director</h3>
         <p>Rules work offline — no model key required. A key only adds free-form wording, and stays in this browser.</p>
         <div class="settings-row">
@@ -9444,6 +9500,9 @@ function renderSettings(main) {
     toast('Region updated');
   });
 
+  main.querySelector('#settings-vibes-check')?.addEventListener('click', () => {
+    paintCoverage(main.querySelector('#settings-vibes-report'));
+  });
   main.querySelector('#settings-ai')?.addEventListener('click', () => openAiPanel('settings'));
   main.querySelector('#settings-export')?.addEventListener('click', exportData);
   main.querySelector('#settings-import-btn')?.addEventListener('click', () => main.querySelector('#settings-import')?.click());
