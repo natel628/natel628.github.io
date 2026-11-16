@@ -153,6 +153,26 @@ jobs:
           fi
           echo "OK: MDBList key injected into showsnew.html."
 
+      # ── Inject Trakt client id (optional) ──────────────────────────
+      - name: Inject Trakt client id
+        env:
+          TRAKT_KEY: ${{ secrets.TRAKT_KEY }}
+        run: |
+          if [ -z "$TRAKT_KEY" ]; then
+            echo "::warning::TRAKT_KEY secret is not set — Trakt community ratings stay off unless a key is added in Settings."
+            exit 0
+          fi
+          if ! grep -q '__TRAKT_KEY__' showsnew.html; then
+            echo "::error::Placeholder __TRAKT_KEY__ not found in showsnew.html."
+            exit 1
+          fi
+          sed -i "s|__TRAKT_KEY__|${TRAKT_KEY}|g" showsnew.html
+          if grep -q '__TRAKT_KEY__' showsnew.html; then
+            echo "::error::Placeholder still present in showsnew.html after sed."
+            exit 1
+          fi
+          echo "OK: Trakt client id injected into showsnew.html."
+
       # ── Encrypt showsnew.html ──────────────────────────────────────
       - name: Encrypt showsnew.html
         env:

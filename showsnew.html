@@ -2549,6 +2549,7 @@ const TMDB_TOKEN = '__TMDB_TOKEN__';
 const FANART_KEY = '__FANART_KEY__';   /* optional: injected at deploy; artwork hides itself when unset */
 const OMDB_KEY = '__OMDB_KEY__';       /* optional: injected at deploy; IMDb box hides itself when unset */
 const MDBLIST_KEY = '__MDBLIST_KEY__'; /* optional: injected at deploy; overrides the key typed in Settings */
+const TRAKT_KEY   = '__TRAKT_KEY__';   /* optional: Trakt API app client id, injected at deploy */
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
 const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
@@ -5031,6 +5032,37 @@ const VIBE_KEYWORD_MAP = {
   'survival horror':    'survival',
   'conspiracy':         'conspiracy',
   'artificial intelligence': 'AI',
+  /* Second tranche: common TMDB keywords that name a real, checkable
+     property of the title. Nothing here is inferred from prose. */
+  'based on true story': 'true story',
+  'true story':          'true story',
+  'superhero':           'superhero',
+  'spy':                 'spy',
+  'assassin':            'assassin',
+  'zombie':              'zombie',
+  'vampire':             'vampire',
+  'magic':               'magic',
+  'medieval':            'medieval',
+  'samurai':             'samurai',
+  'martial arts':        'martial arts',
+  'kaiju':               'kaiju',
+  'racing':              'racing',
+  'boxing':              'boxing',
+  'musical':             'musical',
+  'stand-up comedy':     'stand-up',
+  'sports':              'sport',
+  'sport':               'sport',
+  'detective':           'detective',
+  'courtroom':           'courtroom',
+  'parallel world':      'parallel world',
+  'high school':         'high school',
+  'college':             'college',
+  'dysfunctional family': 'dysfunctional family',
+  'small town':          'small town',
+  'noir':                'noir',
+  'space':               'space travel',
+  'island':              'island',
+  'submarine':           'submarine',
 };
 
 /* Which chips satisfy which filter mood. Empty/absent means "keywords have
@@ -5047,12 +5079,16 @@ const MOOD_TAGS = {
 };
 
 function vibesFromKeywords(names) {
-  const seen = new Set();
-  (names || []).forEach(raw => {
-    const tag = VIBE_KEYWORD_MAP[String(raw || '').trim().toLowerCase()];
-    if (tag) seen.add(tag);
-  });
-  return [...seen].slice(0, 2);   // two chips at most: a card, not a tag cloud
+  /* Walk the map, not the keyword list: TMDB does not promise an order, and
+     with only two chips shown the choice must not depend on response order. */
+  const have = new Set((names || []).map(n => String(n || '').trim().toLowerCase()).filter(Boolean));
+  const out = [];
+  for (const [keyword, tag] of Object.entries(VIBE_KEYWORD_MAP)) {
+    if (!have.has(keyword) || out.includes(tag)) continue;
+    out.push(tag);
+    if (out.length >= 2) break;   // two chips at most: a card, not a tag cloud
+  }
+  return out;
 }
 
 function vibeCacheRead() {
@@ -6241,6 +6277,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
           ${d.vote_count ? `<div class="score-box"><div class="score-val">${d.vote_count.toLocaleString()}</div><div class="score-lbl">Votes</div></div>` : ''}
           ${myR ? `<div class="score-box"><div class="score-val" style="color:var(--star-on)">${myR}/10</div><div class="score-lbl">My Rating</div></div>` : ''}
           <span id="modal-mdb-scores" style="display:none"></span>
+          <span id="modal-trakt" style="display:none"></span>
           <div class="score-box" id="modal-imdb" style="display:none"></div>
         </div>
       </div>
@@ -6656,6 +6693,57 @@ async function loadModalMdb(type, id) {
 function loadModalScores(type, id) {
   if (mdbOn()) loadModalMdb(type, id);
   else loadModalImdb(type, id);
+  /* Independent of the sources above: Trakt's rating is a public aggregate,
+     not part of MDBList's set, and it needs no user login. */
+  if (traktOn()) loadModalTrakt(type, id);
+}
+
+/* ── TRAKT: public community rating (no account needed) ────────────────
+   /movies/{id}/ratings and /shows/{id}/ratings take a TMDB id and need only
+   the API key, so this shows what Trakt's users think of a title without any
+   OAuth, token or per-user data. Key comes from the TRAKT_KEY secret or from
+   Settings; either way it is the *client id* of a free Trakt API app. */
+const TRAKT_KEY_LS    = 'trakt_key';
+const TRAKT_CACHE_LS  = 'trakt_scores';
+const TRAKT_CACHE_TTL = 14 * 24 * 60 * 60 * 1000;
+
+const traktInjected = () => typeof TRAKT_KEY === 'string' && !TRAKT_KEY.startsWith('__TRAKT');
+const traktKey = () => traktInjected() ? String(TRAKT_KEY).trim() : String(LS.get(TRAKT_KEY_LS) || '').trim();
+const traktOn  = () => traktKey().length >= 8;
+
+async function loadModalTrakt(type, id) {
+  const slot = document.getElementById('modal-trakt');
+  if (!slot) return;
+  slot.style.display = 'none';
+  slot.innerHTML = '';
+  const key = mediaKey(type, id);
+  const cache = LS.get(TRAKT_CACHE_LS) || {};
+  const hit = cache[key];
+  const paint = rating => {
+    if (!(rating > 0)) return;
+    slot.innerHTML = `<div class="score-box"><div class="score-val">${Math.round(rating)}%</div><div class="score-lbl">Trakt</div></div>`;
+    slot.style.display = 'contents';
+  };
+  if (hit && Date.now() - (hit.at || 0) < TRAKT_CACHE_TTL) { paint(hit.rating); return; }
+  try {
+    const path = type === 'movie' ? 'movies' : 'shows';
+    const res = await fetch(`https://api.trakt.tv/${path}/${encodeURIComponent(id)}/ratings`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'trakt-api-version': '2',
+        'trakt-api-key': traktKey(),
+      },
+    });
+    if (!res.ok) return;                       // private or unrated: no tile
+    const data = await res.json();
+    const rating = Number(data && data.rating);
+    if (!isFinite(rating) || rating <= 0) return;
+    const next = { ...cache, [key]: { at: Date.now(), rating } };
+    LS.set(TRAKT_CACHE_LS, next);
+    paint(rating);
+  } catch (e) {
+    console.warn('Trakt rating lookup failed:', e.message);
+  }
 }
 
 /* ── OMDB: IMDb score in the modal (optional, key injected at deploy) ─
@@ -9434,6 +9522,7 @@ function renderSettings(main) {
           <li><span class="conn-dot"></span>Artwork (Fanart.tv)<span class="conn-state" id="settings-fanart-state"></span></li>
           <li><span class="conn-dot"></span>IMDb scores (OMDb)<span class="conn-state" id="settings-omdb-state"></span></li>
           <li><span class="conn-dot"></span>Multi-source scores (MDBList)<span class="conn-state" id="settings-mdb-state"></span></li>
+          <li><span class="conn-dot"></span>Trakt ratings<span class="conn-state" id="settings-trakt-state"></span></li>
         </ul>
         <div class="settings-row">
           <button type="button" class="modal-btn" id="settings-simkl-btn">…</button>
@@ -9447,6 +9536,16 @@ function renderSettings(main) {
         <p class="settings-note">${mdbInjected()
           ? 'Connected by this deploy. IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt scores appear in a title\u2019s detail view, each labelled with its source. There is no key to enter here.'
           : 'Optional. Your free MDBList key (1,000 lookups a day) adds IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt scores to the detail view, each labelled with its source. The key is stored in this browser and sent only to api.mdblist.com. Without it, IMDb scores come from OMDb instead.'}</p>
+
+        ${traktInjected() ? '' : `<div class="settings-row">
+          <input class="conn-key" id="settings-trakt-key" type="password" autocomplete="off" spellcheck="false"
+            placeholder="Paste your Trakt API client id" aria-label="Trakt API client id" />
+          <button type="button" class="modal-btn" id="settings-trakt-save">Save key</button>
+          <button type="button" class="modal-btn" id="settings-trakt-clear">Disconnect</button>
+        </div>`}
+        <p class="settings-note">${traktInjected()
+          ? 'Connected by this deploy. A title\u2019s public Trakt community rating appears in its detail view. Trakt needs no account for this and no personal data is read, so nothing is synced or signed in.'
+          : 'Optional. Your own Trakt API app\u2019s client id adds the public Trakt community rating to a title\u2019s detail view. Register a free app at trakt.tv/oauth/applications, then paste its client id here. It is stored in this browser and sent only to api.trakt.tv.'}</p>
       </section>
 
       <section class="settings-card">
@@ -9541,6 +9640,7 @@ function renderSettings(main) {
   setConn('#settings-fanart-state', fanartOk, fanartOk ? 'Connected' : 'Not connected');
   setConn('#settings-omdb-state', omdbOk, omdbOk ? 'Connected' : 'Not connected');
   setConn('#settings-mdb-state', mdbOk, mdbOk ? 'Connected' : 'Not connected');
+  setConn('#settings-trakt-state', traktOn(), traktOn() ? 'Connected' : 'Not connected');
 
   /* MDBList key entry. A new key invalidates the score cache, since the old
      tiles were fetched with the previous account. */
@@ -9562,6 +9662,23 @@ function renderSettings(main) {
     try { localStorage.removeItem(MDB_KEY_LS); } catch (_) {}
     LS.set(MDB_CACHE_LS, {});
     toast('MDBList disconnected. IMDb scores fall back to OMDb when it is available.');
+    renderSettings(main);
+  });
+
+  const tInput = main.querySelector('#settings-trakt-key');
+  if (tInput) tInput.value = traktKey();
+  main.querySelector('#settings-trakt-save')?.addEventListener('click', () => {
+    const v = String((tInput && tInput.value) || '').trim();
+    if (v.length < 8) { toast('That looks too short. Paste the client id from your Trakt API app.'); return; }
+    LS.set(TRAKT_KEY_LS, v);
+    LS.set(TRAKT_CACHE_LS, {});
+    toast('Trakt connected. Community ratings appear in a title\u2019s detail view.');
+    renderSettings(main);
+  });
+  main.querySelector('#settings-trakt-clear')?.addEventListener('click', () => {
+    try { localStorage.removeItem(TRAKT_KEY_LS); } catch (_) {}
+    LS.set(TRAKT_CACHE_LS, {});
+    toast('Trakt disconnected. Your ratings are untouched.');
     renderSettings(main);
   });
 }
