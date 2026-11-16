@@ -9147,15 +9147,14 @@ function renderSettings(main) {
           <li><span class="conn-dot"></span>IMDb scores (OMDb)<span class="conn-state" id="settings-omdb-state"></span></li>
           <li><span class="conn-dot"></span>Multi-source scores (MDBList)<span class="conn-state" id="settings-mdb-state"></span></li>
         </ul>
-        <div class="settings-row">
+        ${mdbInjected() ? '' : `<div class="settings-row">
           <input class="conn-key" id="settings-mdb-key" type="password" autocomplete="off" spellcheck="false"
-            placeholder="${mdbInjected() ? 'Key provided by this deploy' : 'Paste your MDBList API key'}"
-            aria-label="MDBList API key" ${mdbInjected() ? 'disabled' : ''} />
+            placeholder="Paste your MDBList API key" aria-label="MDBList API key" />
           <button type="button" class="modal-btn" id="settings-mdb-save">Save key</button>
           <button type="button" class="modal-btn" id="settings-mdb-clear">Disconnect</button>
-        </div>
+        </div>`}
         <p class="settings-note">${mdbInjected()
-          ? 'A MDBList key is built into this copy by the deploy, so the scores below work as-is. IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt appear in the detail view, each labelled with its source.'
+          ? 'Connected by this deploy. IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt scores appear in a title\u2019s detail view, each labelled with its source. There is no key to enter here.'
           : 'Optional. Your free MDBList key (1,000 lookups a day) adds IMDb, Rotten Tomatoes critics and audience, Metacritic, Letterboxd and Trakt scores to the detail view, each labelled with its source. The key is stored in this browser and sent only to api.mdblist.com. Without it, IMDb scores come from OMDb instead.'}</p>
       </section>
 
@@ -9238,17 +9237,12 @@ function renderSettings(main) {
   /* MDBList key entry. A new key invalidates the score cache, since the old
      tiles were fetched with the previous account. */
   const mdbInput = main.querySelector('#settings-mdb-key');
-  const mdbBuiltIn = mdbInjected();
-  if (mdbInput && !mdbBuiltIn) mdbInput.value = mdbKey();
+  if (mdbInput) mdbInput.value = mdbKey();
+  /* With a built-in key the entry row is not rendered at all, so these only
+     exist in a copy where the key is typed by hand. */
   const saveBtn = main.querySelector('#settings-mdb-save');
   const clearBtn = main.querySelector('#settings-mdb-clear');
-  if (mdbBuiltIn) {
-    /* Nothing to edit or remove: the key arrives with the page. */
-    if (saveBtn) saveBtn.disabled = true;
-    if (clearBtn) clearBtn.disabled = true;
-  }
   saveBtn?.addEventListener('click', () => {
-    if (mdbBuiltIn) { toast('This copy has its MDBList key built in at deploy.'); return; }
     const v = String((mdbInput && mdbInput.value) || '').trim();
     if (v.length < 8) { toast('That key looks too short. Copy it from mdblist.com/preferences.'); return; }
     LS.set(MDB_KEY_LS, v);
@@ -9257,7 +9251,6 @@ function renderSettings(main) {
     renderSettings(main);
   });
   clearBtn?.addEventListener('click', () => {
-    if (mdbBuiltIn) { toast('The built-in key comes from the deploy and cannot be removed here.'); return; }
     try { localStorage.removeItem(MDB_KEY_LS); } catch (_) {}
     LS.set(MDB_CACHE_LS, {});
     toast('MDBList disconnected. IMDb scores fall back to OMDb when it is available.');
