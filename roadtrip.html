@@ -590,6 +590,12 @@
       <button type="button" id="backupExport" class="small ghost">⬇ Export a backup</button>
       <label class="small ghost" style="padding:8px 12px;border:1px solid #475569;border-radius:8px;cursor:pointer;font-size:.85rem">⬆ Restore a backup<input type="file" id="backupImport" accept="application/json,.json" hidden /></label>
     </div>
+    <div class="row" style="margin-top:8px">
+      <button type="button" id="backupDrive" class="small ghost">☁️ Send a backup to Drive</button>
+    </div>
+    <p class="muted" style="margin:8px 0 0;font-size:.8rem">Every export is also kept in a list on this device, so you can download it again later for a re-import. Photos and notes ride along in the file; a restore puts the route, budget and RV details back, so stops added after the backup are removed.</p>
+    <div id="backupList" style="margin-top:10px"></div>
+    <p class="muted" id="backupMsg" role="status" aria-live="polite" style="margin:6px 0 0;font-size:.8rem"></p>
     <details id="driveSetup" style="margin-top:12px">
       <summary class="muted" style="cursor:pointer;font-size:.85rem">☁️ Google Drive setup (owner)</summary>
       <p class="muted" style="margin:6px 0 0;font-size:.8rem">Sign in once and every tap or auto-send files to your Drive — nobody else signs in. The login lives in the shared plan, so only keep it while the trip needs it.</p>
@@ -3726,22 +3732,140 @@ function applyStartCollapsed(){
 applyPrefs();
 
 /* ---------- backup ---------- */
-$('backupExport').onclick = () => {
-  const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), extras: extra, state }, null, 2)], { type: 'application/json' });
+/* ---------- backup list: every export is kept on this device ---------- */
+// An export is only useful if it outlives the tab, so each one is also listed
+// here with a download button for re-importing later. Photos and notes ride
+// along in the file; restoring rebuilds extras and re-adds missing stops.
+const BACKUP_KEY = 'rt-backups-v1', BACKUP_MAX = 6;
+function backupNote(t){ const m = $('backupMsg'); if (m) m.textContent = t; }
+function backupStore(){
+  try { const a = JSON.parse(localStorage.getItem(BACKUP_KEY) || '[]'); return Array.isArray(a) ? a.filter(b => b && b.json) : []; } catch (e) { return []; }
+}
+function saveBackupStore(list){
+  try { localStorage.setItem(BACKUP_KEY, JSON.stringify(list)); return true; } catch (e) { return false; }
+}
+function backupStamp(at){
+  const d = new Date(at);
+  if (isNaN(d.getTime())) return 'Backup';
+  const p2 = n => String(n).padStart(2, '0');
+  return isoDate(d) + ' · ' + (devicePrefs().hour24 ? p2(d.getHours()) + ':' + p2(d.getMinutes()) : d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
+}
+function backupSize(n){ return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
+function makeBackup(){
+  let json = '';
+  try { json = JSON.stringify({ exported: new Date().toISOString(), extras: extra, state }, null, 2); } catch (e) { json = ''; }
+  if (!json) { backupNote('Could not read the plan to back it up.'); return null; }
+  const at = new Date();
+  return { at: at.toISOString(), name: 'roadtrip-backup-' + isoDate(at) + '.json', bytes: json.length, stops: ((state && state.stops) || []).length, json: json, driveAt: 0 };
+}
+function keepBackup(entry){
+  const list = backupStore().filter(b => b.at !== entry.at);
+  list.unshift(entry);
+  while (list.length > BACKUP_MAX) list.pop();
+  // Device storage is finite — shed the oldest rather than lose the new one.
+  while (list.length && !saveBackupStore(list)) list.pop();
+  renderBackups();
+  return list.length > 0;
+}
+function downloadBackup(entry){
+  const blob = new Blob([entry.json], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'roadtrip-backup-' + isoDate(new Date()) + '.json';
+  a.download = entry.name;
   document.body.appendChild(a);
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function renderBackups(){
+  const box = $('backupList');
+  if (!box) return;
+  const list = backupStore().slice().sort((a, b) => (a.at < b.at ? 1 : -1));
+  if (!list.length) {
+    box.innerHTML = '<p class="muted" style="margin:0;font-size:.8rem">No backups saved on this device yet — “Export a backup” keeps one here.</p>';
+    return;
+  }
+  box.innerHTML = list.map(b =>
+    '<div class="row" style="align-items:center;gap:6px;padding:7px 0;border-top:1px solid #1e293b">'
+      + '<span style="flex:1;min-width:150px;font-size:.8rem">' + esc(backupStamp(b.at))
+      + '<br><span class="muted">' + esc(b.stops) + ' stop' + (b.stops === 1 ? '' : 's') + ' · ' + esc(backupSize(b.bytes)) + (b.driveAt ? ' · ☁️ in Drive' : '') + '</span></span>'
+      + '<button type="button" class="small ghost" data-backup-dl="' + esc(b.at) + '">⬇ Download</button>'
+      + '<button type="button" class="small ghost" data-backup-drive="' + esc(b.at) + '" aria-label="Send this backup to Google Drive">☁️</button>'
+      + '<button type="button" class="small ghost" data-backup-del="' + esc(b.at) + '" aria-label="Remove this backup from this device">✕</button>'
+      + '</div>').join('');
+}
+// Same owner token and folder as the videos, so a backup lands where the
+// photos already do — everyone in the crew can find it, nobody signs in again.
+async function sendBackupToDrive(entry, btn){
+  const cfg = (extra && extra.drive) || {};
+  if (!cfg.ownerRefresh) { backupNote('Drive is not connected — the owner connects it under “Google Drive setup (owner)” below.'); return; }
+  if (btn) btn.disabled = true;
+  try {
+    backupNote('Connecting to Drive…');
+    const token = await mintDriveToken();
+    if (!token) { backupNote('Drive is not connected — connect it below first.'); return; }
+    backupNote('Filing ' + entry.name + ' in your Drive folder…');
+    const init = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify(Object.assign({ name: entry.name, mimeType: 'application/json' }, cfg.folderId ? { parents: [cfg.folderId] } : {}))
+    });
+    if (!init.ok) throw new Error('Google refused the upload slot (' + init.status + ')');
+    const session = init.headers.get('Location');
+    if (!session) throw new Error('Google gave no upload address');
+    const put = await fetch(session, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: entry.json });
+    if (put.status !== 200 && put.status !== 201) { backupNote('Drive refused the backup (' + put.status + ') — the copy here is still good.'); return; }
+    const done = await put.json().catch(() => null);
+    entry.driveAt = Date.now();
+    entry.driveId = (done && done.id) || '';
+    saveBackupStore(backupStore().map(b => (b.at === entry.at ? entry : b)));
+    renderBackups();
+    backupNote('☁️ Filed in your Drive folder as ' + entry.name + '.');
+  } catch (err) {
+    ownerToken = null; ownerTokenExp = 0;
+    backupNote(err && err.message ? err.message : 'Drive upload failed — the copy here is still good.');
+  } finally {
+    if (btn && btn.isConnected) btn.disabled = false;
+  }
+}
+$('backupExport').onclick = () => {
+  const entry = makeBackup();
+  if (!entry) return;
+  const kept = keepBackup(entry);
+  downloadBackup(entry);
   $('glanceMsg').textContent = 'Backup downloaded — keep it where you can reach it offline.';
+  backupNote(kept ? 'Downloaded, and listed below so you can grab it again.' : 'Downloaded. This device is out of space, so it is not listed below.');
 };
+$('backupDrive').onclick = async e => {
+  const entry = makeBackup();
+  if (!entry) return;
+  keepBackup(entry);
+  await sendBackupToDrive(entry, e.currentTarget);
+};
+$('backupList').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-backup-dl],[data-backup-drive],[data-backup-del]');
+  if (!btn) return;
+  const at = btn.dataset.backupDl || btn.dataset.backupDrive || btn.dataset.backupDel;
+  const list = backupStore();
+  const entry = list.find(b => b.at === at);
+  if (!entry) { renderBackups(); return; }
+  if (btn.dataset.backupDel) {
+    if (!confirm('Remove this backup from the list on this device?\n\nAny copy you downloaded or sent to Drive stays put.')) return;
+    saveBackupStore(list.filter(b => b.at !== at));
+    renderBackups();
+    backupNote('Removed from the list.');
+    return;
+  }
+  if (btn.dataset.backupDrive) { await sendBackupToDrive(entry, btn); return; }
+  downloadBackup(entry);
+  backupNote('Downloaded — restore it with “⬆ Restore a backup”.');
+});
+renderBackups();
 $('backupImport').addEventListener('change', async e => {
   const file = e.target.files && e.target.files[0];
   e.target.value = '';
   if (!file) return;
-  if (!confirm('Restore this backup?\n\nIt replaces the budget and RV details for everyone, and re-adds any stops that are missing.')) return;
+  if (!confirm('Restore this backup?\n\nThis replaces the route for everyone: stops added since the backup are removed, missing ones come back, the order is reset, and the budget and RV details are overwritten. Photos and notes are untouched.')) return;
   let data = null;
   try { data = JSON.parse(await file.text()); } catch (err) { data = null; }
   if (!data) { $('glanceMsg').textContent = 'That file is not a Road Trip backup.'; return; }
@@ -3758,14 +3882,53 @@ $('backupImport').addEventListener('change', async e => {
     syncExtraInputs();
     await saveExtras();
   }
-  const stops = (data.state && Array.isArray(data.state.stops)) ? data.state.stops : [];
-  const have = new Set(state.stops.map(s => s.name + '|' + (+s.lat).toFixed(3)));
-  let added = 0;
-  for (const s of stops) {
-    if (have.has(s.name + '|' + (+s.lat).toFixed(3))) continue;
-    if (await write('POST', '/api/stops', { name: s.name, lat: s.lat, lng: s.lng })) added++;
+  // A restore is a rewind, not a merge: the route ends up exactly as it was in
+  // the backup. Whatever was added since is removed, whatever went missing comes
+  // back, and the order is reset so the days and drive times line up again.
+  const backupStops = (data.state && Array.isArray(data.state.stops)) ? data.state.stops : null;
+  let added = 0, removed = 0;
+  if (backupStops) {
+    const stopKey = s => String(s.name || '').trim().toLowerCase() + '|' + (+s.lat).toFixed(3) + '|' + (+s.lng).toFixed(3);
+    // Count duplicates rather than treating them as one stop, so a route that
+    // visited the same place twice keeps both visits.
+    const need = new Map();
+    backupStops.forEach(s => need.set(stopKey(s), (need.get(stopKey(s)) || 0) + 1));
+    for (const s of state.stops.slice()) {
+      const k = stopKey(s);
+      const left = need.get(k) || 0;
+      if (left > 0) { need.set(k, left - 1); continue; }
+      if (s.id && await write('DELETE', '/api/stops/' + encodeURIComponent(s.id))) removed++;
+    }
+    // Whatever is still owed after the deletions is what the backup had and the
+    // live route lost — put those places back.
+    const missing = new Map();
+    need.forEach((n, k) => { if (n > 0) missing.set(k, n); });
+    for (const s of backupStops) {
+      const k = stopKey(s);
+      const gap = missing.get(k) || 0;
+      if (!gap) continue;
+      if (await write('POST', '/api/stops', { name: s.name, lat: s.lat, lng: s.lng })) {
+        added++;
+        missing.set(k, gap - 1);
+      }
+    }
+    // Rebuild the backup's order; anything that survived without a match sinks
+    // to the end instead of scrambling the stops the backup does know about.
+    if (state.stops.length > 1) {
+      const firstAt = new Map();
+      backupStops.forEach((s, i) => { const k = stopKey(s); if (!firstAt.has(k)) firstAt.set(k, i); });
+      const now = state.stops.map(s => s.id);
+      const order = state.stops.slice()
+        .map((s, i) => ({ id: s.id, rank: firstAt.has(stopKey(s)) ? firstAt.get(stopKey(s)) : 1e9, i }))
+        .sort((a, b) => (a.rank - b.rank) || (a.i - b.i))
+        .map(x => x.id);
+      if (order.join('|') !== now.join('|')) await write('PUT', '/api/stops', { order });
+    }
   }
-  $('glanceMsg').textContent = 'Backup restored' + (added ? ' — ' + added + ' stop' + (added === 1 ? '' : 's') + ' added back' : '') + '. Photos and notes are not part of a backup.';
+  const bits = [];
+  if (removed) bits.push(removed + ' stop' + (removed === 1 ? '' : 's') + ' removed');
+  if (added) bits.push(added + ' stop' + (added === 1 ? '' : 's') + ' added back');
+  $('glanceMsg').textContent = 'Backup restored' + (bits.length ? ' — ' + bits.join(', ') : ' — the route already matched') + '. Photos and notes are not part of a backup.';
 });
 
 /* ---------- bets: who owes who ---------- */
