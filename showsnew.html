@@ -4753,7 +4753,10 @@ function updateSimklUI() {
   btn.style.cursor = '';
   btn.onclick = simklAuth;
   if (state.simklToken && state.simklUser) {
-    btn.textContent  = 'Disconnect';
+    /* "Disconnect" alone in the header could have been anything. */
+    btn.textContent  = 'Disconnect Simkl';
+    btn.title = 'Unlink your Simkl account from this browser. Ratings and your list stay on this device.';
+    btn.setAttribute('aria-label', 'Disconnect Simkl account from this browser');
     btn.style.background = '#444';
     btn.style.color = '#fff';
     btn.onclick = simklDisconnect;
@@ -4761,6 +4764,8 @@ function updateSimklUI() {
     if (more) { more.textContent = 'Disconnect Simkl'; more.onclick = () => { closeMoreSheet(); simklDisconnect(); }; }
   } else {
     btn.innerHTML    = '<span>▶</span> Connect Simkl';
+    btn.title = 'Sign in to Simkl to sync ratings and your list between devices';
+    btn.setAttribute('aria-label', 'Connect a Simkl account');
     btn.style.background = '#1ce783';
     btn.style.color = '#000';
     if (user) user.textContent = '';
@@ -9137,16 +9142,16 @@ function renderSettings(main) {
       <section class="settings-card">
         <h3>Connections</h3>
         <p>Accounts and services linked to this copy.</p>
-        <div class="settings-row">
-          <span id="settings-simkl-status" style="font-size: var(--text-sm)">…</span>
-          <button type="button" class="modal-btn" id="settings-simkl-btn">…</button>
-        </div>
         <ul class="conn-list">
+          <li><span class="conn-dot"></span>Simkl account<span class="conn-state" id="settings-simkl-state"></span></li>
           <li><span class="conn-dot"></span>Movie catalog (TMDB)<span class="conn-state" id="settings-tmdb-state"></span></li>
           <li><span class="conn-dot"></span>Artwork (Fanart.tv)<span class="conn-state" id="settings-fanart-state"></span></li>
           <li><span class="conn-dot"></span>IMDb scores (OMDb)<span class="conn-state" id="settings-omdb-state"></span></li>
           <li><span class="conn-dot"></span>Multi-source scores (MDBList)<span class="conn-state" id="settings-mdb-state"></span></li>
         </ul>
+        <div class="settings-row">
+          <button type="button" class="modal-btn" id="settings-simkl-btn">…</button>
+        </div>
         ${mdbInjected() ? '' : `<div class="settings-row">
           <input class="conn-key" id="settings-mdb-key" type="password" autocomplete="off" spellcheck="false"
             placeholder="Paste your MDBList API key" aria-label="MDBList API key" />
@@ -9208,9 +9213,12 @@ function renderSettings(main) {
   /* Connections card: Simkl reuses the same flows as the topnav button. */
   const simklOn = !!(state.simklToken && state.simklUser);
   const simklLocal = isLocalHost();
-  const simklStatus = main.querySelector('#settings-simkl-status');
   const simklBtn = main.querySelector('#settings-simkl-btn');
-  if (simklStatus) simklStatus.textContent = simklLocal ? 'Simkl is unavailable in this local copy.' : (simklOn ? `👤 ${state.simklUser}` : 'Not connected.');
+  const simklState = main.querySelector('#settings-simkl-state');
+  if (simklState) {
+    simklState.textContent = simklLocal ? 'Not in this copy' : (simklOn ? 'Connected' : 'Not connected');
+    simklState.closest('li')?.querySelector('.conn-dot')?.classList.toggle('on', simklOn && !simklLocal);
+  }
   if (simklBtn) {
     simklBtn.textContent = simklLocal ? 'Deploy to enable' : (simklOn ? 'Disconnect' : '▶ Connect Simkl');
     simklBtn.addEventListener('click', () => {
@@ -9229,10 +9237,12 @@ function renderSettings(main) {
   const fanartOk = fanartOn();
   const omdbOk = omdbOn();
   const mdbOk = mdbOn();
+  /* One word per state across the whole card. "Active" next to "Connected"
+     in the same list made the two look like different kinds of thing. */
   setConn('#settings-tmdb-state', tmdbOk, tmdbOk ? 'Connected' : 'Not in this copy');
-  setConn('#settings-fanart-state', fanartOk, fanartOk ? 'Active' : 'Off');
-  setConn('#settings-omdb-state', omdbOk, omdbOk ? 'Active' : 'Off');
-  setConn('#settings-mdb-state', mdbOk, mdbOk ? 'Active' : 'Off');
+  setConn('#settings-fanart-state', fanartOk, fanartOk ? 'Connected' : 'Not connected');
+  setConn('#settings-omdb-state', omdbOk, omdbOk ? 'Connected' : 'Not connected');
+  setConn('#settings-mdb-state', mdbOk, mdbOk ? 'Connected' : 'Not connected');
 
   /* MDBList key entry. A new key invalidates the score cache, since the old
      tiles were fetched with the previous account. */
