@@ -936,6 +936,8 @@
     .modal-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     .modal-btn.primary:hover { filter: brightness(1.1); color: #fff; }
     .modal-btn.active { border-color: var(--accent2); color: var(--accent2); font-weight: 700; }
+    .modal-btn:disabled,
+    .modal-btn:disabled:hover { opacity: .45; cursor: not-allowed; border-color: var(--border); color: var(--text); filter: none; }
 
     /* Direct "watch free" links to third-party streaming sites. */
     .watch-links { margin-bottom: 16px; }
@@ -10816,6 +10818,14 @@ function paintTraktStatus() {
   el.innerHTML = acct
     ? `Connected${acct.username ? ' as <strong>' + esc(acct.username) + '</strong>' : ''} · last synced ${esc(when)} · ${pending} change${pending === 1 ? '' : 's'} pending${meta.lastError ? ' · <span style="color:var(--danger,#e5484d)">' + esc(meta.lastError) + '</span>' : ''}`
     : `Not connected. Ratings and your list work as before; connecting adds two-way sync.${traktSecretInjected() && traktInjected() ? ' The app credentials are built in — just press Connect account.' : ''}`;
+  /* Sync and Disconnect cannot do anything without an account; showing them
+     enabled made a disconnected card look half-connected. */
+  const syncBtn = document.getElementById('settings-trakt-sync');
+  const unlinkBtn = document.getElementById('settings-trakt-unlink');
+  const connectBtn = document.getElementById('settings-trakt-connect');
+  if (syncBtn) syncBtn.disabled = !acct;
+  if (unlinkBtn) unlinkBtn.disabled = !acct;
+  if (connectBtn) connectBtn.textContent = acct ? 'Reconnect' : 'Connect account';
 }
 
 async function traktFetch(path, opts = {}) {
