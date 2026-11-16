@@ -615,17 +615,30 @@
     /* ─── New Episodes (catch up) ───────────────────────────────────── */
     .catchup-list { display: flex; flex-direction: column; gap: 10px; }
     .catchup-row {
-      display: flex;
-      gap: 12px;
-      align-items: center;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 10px 12px;
+      overflow: hidden;
     }
+    .catchup-row.open { border-color: color-mix(in srgb, var(--accent-2) 45%, var(--border)); }
+    .catchup-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 12px;
+      background: none;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .catchup-head:hover { background: var(--surface2); }
+    .catchup-head:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
     .catchup-poster {
-      width: 54px;
-      height: 80px;
+      width: 44px;
+      height: 64px;
       object-fit: cover;
       flex: 0 0 auto;
       border-radius: var(--radius-sm);
@@ -638,7 +651,7 @@
       font-size: var(--text-lg);
       color: var(--text-muted);
     }
-    .catchup-info { flex: 1 1 auto; min-width: 0; }
+    .catchup-info { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
     .catchup-show {
       font-size: var(--text-md);
       font-weight: 700;
@@ -646,31 +659,74 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .catchup-ep {
-      font-size: var(--text-sm);
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .catchup-ep .ep-code { color: var(--accent-2); font-weight: 700; }
-    .catchup-meta { font-size: var(--text-xs); color: var(--text-muted); margin-top: 3px; }
-    .catchup-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex: 0 0 auto; }
-    .catchup-actions .modal-btn { padding: 7px 12px; }
-    .catchup-done {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 14px;
-      margin-top: 14px;
-      font-size: var(--text-sm);
+    .catchup-meta { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .catchup-count {
+      flex: 0 0 auto;
+      font-size: var(--text-xs);
+      font-weight: 700;
       color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
     }
-    .catchup-done strong { color: var(--text); font-weight: 600; }
-    .catchup-done .cu-name { white-space: nowrap; }
+    .catchup-caret { flex: 0 0 auto; color: var(--text-muted); transition: transform .18s var(--ease-out); }
+    .catchup-row.open .catchup-caret { transform: rotate(180deg); }
+    .catchup-panel { border-top: 1px solid var(--border); padding: 6px 12px 12px; }
+    .catchup-note { font-size: var(--text-sm); color: var(--text-muted); margin: 8px 0; }
+    .catchup-season {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 12px 0 4px;
+    }
+    .catchup-ep {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 6px;
+      border-radius: var(--radius-sm);
+      font-size: var(--text-sm);
+      cursor: pointer;
+    }
+    .catchup-ep:hover { background: var(--surface2); }
+    .catchup-ep input {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      accent-color: var(--accent-2);
+      cursor: pointer;
+    }
+    .ce-code { font-weight: 700; color: var(--accent-2); min-width: 62px; white-space: nowrap; }
+    .ce-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ce-date { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
+    .catchup-ep.watched .ce-code,
+    .catchup-ep.watched .ce-name,
+    .catchup-ep.watched .ce-date { text-decoration: line-through; color: var(--text-muted); }
+    .catchup-panel-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .catchup-panel-actions .modal-btn { padding: 6px 12px; }
+    .catchup-done-group {
+      margin-top: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .catchup-done-group > summary {
+      padding: 10px 12px;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .catchup-done-group > summary:hover { color: var(--text); }
+    .catchup-done-group[open] > summary { border-bottom: 1px solid var(--border); }
+    .catchup-done-group .catchup-list { padding: 10px 12px; }
+    .catchup-done-group .catchup-row { background: var(--surface2); }
     @media (max-width: 700px) {
-      .catchup-row { flex-wrap: wrap; }
-      .catchup-actions { width: 100%; }
-      .catchup-actions .modal-btn.primary { flex: 1 1 auto; }
+      .catchup-head { gap: 10px; padding: 9px 10px; }
+      .catchup-panel { padding: 6px 10px 12px; }
+      .catchup-meta { white-space: normal; }
+      .ce-code { min-width: 54px; }
+      .ce-date { display: none; }
     }
     .card-score {
       font-size: var(--text-xs);
@@ -3037,9 +3093,12 @@ const _savedNotes = cleanStore(LS.get('my_notes'), v => typeof v === 'string' &&
    show only needs the episode actually ticked off to be remembered. */
 const _savedEpProgress = cleanStore(LS.get('ep_progress'), v =>
   isPlainObject(v) && Number.isInteger(v.s) && Number.isInteger(v.e) && v.s >= 1 && v.e >= 0);
+/* Individual episode ticks: {"tv_123": {"2x3": true}}. */
+const _savedEpWatched = cleanStore(LS.get('ep_watched'), v =>
+  isPlainObject(v) && Object.entries(v).every(([k, on]) => /^\d+x\d+$/.test(k) && on === true));
 const _droppedOnLoad  = _savedRatings.dropped + _savedWatchlist.dropped +
                         _savedWlAdded.dropped + _savedDetails.dropped + _savedNotes.dropped +
-                        _savedEpProgress.dropped;
+                        _savedEpProgress.dropped + _savedEpWatched.dropped;
 
 let state = {
   view: 'trending',
@@ -3063,6 +3122,7 @@ let state = {
   mediaDetails: _savedDetails.value,
   notes: _savedNotes.value,
   epProgress: _savedEpProgress.value,
+  epWatched: _savedEpWatched.value,
   /* Custom Lists: named collections, separate from My List's status buckets.
      Kept as their own key so a schema change here can never touch ratings. */
   lists: (Array.isArray(LS.get('custom_lists')) ? LS.get('custom_lists') : [])
@@ -3100,6 +3160,7 @@ let state = {
 function saveRatings()      { LS.set('my_ratings',          state.ratings); }
 function saveNotes()        { LS.set('my_notes',            state.notes); }
 function saveEpProgress()   { LS.set('ep_progress',         state.epProgress); }
+function saveEpWatched()    { LS.set('ep_watched',          state.epWatched); }
 function saveWatchlist()    { LS.set('my_watchlist',        state.watchlist); LS.set('wl_added', state.wlAdded); }
 function saveSimkl()        { LS.set('simkl_token',         state.simklToken); LS.set('simkl_user', state.simklUser); }
 function saveRules()        { LS.set('ai_rules',            state.rules); }
@@ -8741,15 +8802,17 @@ function clearWatchlistSync() { watchlistSync = null; }
 
 /* ── NEW EPISODES: catch up on the shows you follow ───────────────────
    Every TV show on My List marked "Plan to Watch" or "Watching" gets one
-   row: the next episode that has already aired and that has not been
-   marked watched. Progress is a "watched through" marker per show
-   ({ s: season, e: episode }), so only the episode ticked off is stored —
-   everything before it counts as watched. Season lists are cached for the
-   session and marking is local, so this works with or without Simkl.
+   collapsible row. The title line says how many aired episodes are watched
+   and how many are left; opening it lists every aired episode with its own
+   tick, struck through once watched. Ticks are stored per episode
+   (ep_watched), so any episode can be marked or unmarked on its own; a
+   "watched through" marker written by the earlier version is turned into
+   individual ticks the first time the show is touched.
    ───────────────────────────────────────────────────────────────────── */
-const _seasonEps = new Map();   // `${showId}:${season}` → aired episodes
+const _seasonEps = new Map();   // showId:season -> aired episodes
 let catchUpRows = [];           // this view's rows, kept for in-place patching
 let catchUpRun = 0;             // guards a paint from a stale render
+const catchUpOpen = new Set();  // show keys the user has expanded
 
 async function seasonAiredEpisodes(showId, seasonNumber) {
   const key = `${showId}:${seasonNumber}`;
@@ -8779,129 +8842,171 @@ function airedSeasonNumbers(detail) {
     .sort((a, b) => a - b);
 }
 
-const episodeAfterMarker = (ep, marker) =>
-  !marker || ep.s > marker.s || (ep.s === marker.s && ep.e > marker.e);
-
-/* The first aired episode after the show's marker, or null when caught up.
-   Seasons are read in order and the scan stops at the first hit, so a show
-   that is up to date costs one detail call plus one season call. */
-async function nextAiredEpisode(showId, detail) {
-  const marker = state.epProgress[`tv_${showId}`] || null;
-  const seasons = airedSeasonNumbers(detail).filter(n => !marker || n >= marker.s);
-  for (const n of seasons) {
-    const hit = (await seasonAiredEpisodes(showId, n)).find(ep => episodeAfterMarker(ep, marker));
-    if (hit) return hit;
-  }
-  return null;
+/* Every aired episode of a show, oldest first. Season lists are cached for
+   the session, and marking never refetches. */
+async function airedEpisodes(showId, detail) {
+  const seasons = airedSeasonNumbers(detail);
+  const lists = await promiseAllChunked(seasons, n => seasonAiredEpisodes(showId, n), 4);
+  return lists.flat().sort((a, b) => (a.s - b.s) || (a.e - b.e));
 }
 
-function lastAiredEpisode(detail) {
-  const last = detail && detail.last_episode_to_air;
-  if (!last || !last.air_date || last.air_date > todayISO()) return null;
-  if (!(last.season_number > 0) || !Number.isInteger(last.episode_number)) return null;
-  return { s: last.season_number, e: last.episode_number, name: last.name || '', airDate: last.air_date };
+const epKey  = ep => `${ep.s}x${ep.e}`;
+const epCode = ep => `S${pad2(ep.s)}E${pad2(ep.e)}`;
+
+const markerCovers = (marker, ep) =>
+  !!marker && (ep.s < marker.s || (ep.s === marker.s && ep.e <= marker.e));
+
+function isEpisodeWatched(showKey, ep) {
+  const set = state.epWatched[showKey];
+  if (set && set[epKey(ep)]) return true;
+  return markerCovers(state.epProgress[showKey], ep);
 }
 
-function epCode(ep) { return `S${pad2(ep.s)}E${pad2(ep.e)}`; }
-
-function epAiredLabel(iso) {
-  const days = daysSince(iso);
-  if (days === 0) return 'aired today';
-  if (days === 1) return 'aired yesterday';
-  if (Number.isFinite(days)) return `aired ${days} days ago`;
-  return `aired ${formatDate(iso)}`;
+/* An old marker means "everything up to here". The first tick on a show
+   turns it into individual ticks, so episodes can also be unmarked. */
+function materializeMarker(row) {
+  const marker = state.epProgress[row.key];
+  if (!marker) return;
+  const set = state.epWatched[row.key] || (state.epWatched[row.key] = {});
+  row.episodes.forEach(ep => { if (markerCovers(marker, ep)) set[epKey(ep)] = true; });
+  delete state.epProgress[row.key];
+  saveEpProgress();
 }
 
-function catchUpRowHTML(row) {
+function setCatchUpWatched(row, ep, watched) {
+  materializeMarker(row);
+  const set = state.epWatched[row.key] || (state.epWatched[row.key] = {});
+  if (watched) set[epKey(ep)] = true;
+  else delete set[epKey(ep)];
+  if (!Object.keys(set).length) delete state.epWatched[row.key];
+  saveEpWatched();
+}
+
+function catchUpName(row) {
   const detail = row.detail || {};
-  const name = detail.name || (state.mediaDetails[row.key] || {}).title || 'Untitled show';
-  const poster = detail.poster_path ? posterUrl(detail.poster_path) : '';
-  const ep = row.next;
-  const last = lastAiredEpisode(detail);
-  const more = last && (last.s > ep.s || (last.s === ep.s && last.e > ep.e))
-    ? (last.s === ep.s
-        ? `${last.e - ep.e} more episode${last.e - ep.e === 1 ? '' : 's'} already aired`
-        : 'later episodes already aired')
-    : '';
-  return `<div class="catchup-row" data-show="${row.showId}">
-    ${poster
-      ? `<img class="catchup-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" />`
-      : `<div class="catchup-poster catchup-poster-empty" aria-hidden="true">📺</div>`}
-    <div class="catchup-info">
-      <div class="catchup-show">${esc(name)}</div>
-      <div class="catchup-ep"><span class="ep-code">${epCode(ep)}</span>${ep.name ? ` · ${esc(ep.name)}` : ''}</div>
-      <div class="catchup-meta">${esc(epAiredLabel(ep.airDate))}${more ? ` · ${esc(more)}` : ''}</div>
-    </div>
-    <div class="catchup-actions">
-      <button type="button" class="modal-btn primary" data-catchup="watch" data-show="${row.showId}">✓ Watched</button>
-      ${more ? `<button type="button" class="modal-btn" data-catchup="all" data-show="${row.showId}">Mark all aired</button>` : ''}
+  return detail.name || (state.mediaDetails[row.key] || {}).title || 'Untitled show';
+}
+
+function catchUpSummary(row) {
+  const total = row.episodes.length;
+  if (!total) return { text: 'No episodes aired yet', count: '—' };
+  const watched = row.episodes.filter(ep => isEpisodeWatched(row.key, ep)).length;
+  const count = `${watched}/${total}`;
+  if (watched === total) {
+    return { text: `All ${total} aired episode${total === 1 ? '' : 's'} watched`, count };
+  }
+  const next = row.episodes.find(ep => !isEpisodeWatched(row.key, ep));
+  const tail = `${watched} of ${total} watched`;
+  return { text: next ? `Next up ${epCode(next)} · ${tail}` : tail, count };
+}
+
+function catchUpPanelHTML(row) {
+  if (!row.detail) {
+    return `<div class="catchup-panel"><p class="catchup-note">Episode data could not be loaded for this show.</p></div>`;
+  }
+  if (!row.episodes.length) {
+    return `<div class="catchup-panel"><p class="catchup-note">No episodes have aired yet.</p></div>`;
+  }
+  const bySeason = new Map();
+  row.episodes.forEach(ep => {
+    if (!bySeason.has(ep.s)) bySeason.set(ep.s, []);
+    bySeason.get(ep.s).push(ep);
+  });
+  const seasons = [...bySeason.entries()].map(([season, eps]) => {
+    const watched = eps.filter(ep => isEpisodeWatched(row.key, ep)).length;
+    const items = eps.map(ep => {
+      const on = isEpisodeWatched(row.key, ep);
+      return `<label class="catchup-ep${on ? ' watched' : ''}">
+        <input type="checkbox" data-catchup-ep="${epKey(ep)}" data-show="${row.showId}"${on ? ' checked' : ''} />
+        <span class="ce-code">${epCode(ep)}</span>
+        <span class="ce-name">${esc(ep.name || `Episode ${ep.e}`)}</span>
+        <span class="ce-date">${esc(formatDate(ep.airDate))}</span>
+      </label>`;
+    }).join('');
+    return `<div class="catchup-season">Season ${season} · ${watched}/${eps.length} watched</div>${items}`;
+  }).join('');
+  return `<div class="catchup-panel">
+    ${seasons}
+    <div class="catchup-panel-actions">
+      <button type="button" class="modal-btn" data-catchup="all" data-show="${row.showId}">Check all aired</button>
       <button type="button" class="modal-btn" data-catchup="open" data-show="${row.showId}">Details</button>
     </div>
   </div>`;
 }
 
+function catchUpRowHTML(row) {
+  const detail = row.detail || {};
+  const poster = detail.poster_path ? posterUrl(detail.poster_path) : '';
+  const open = catchUpOpen.has(row.key);
+  const summary = catchUpSummary(row);
+  return `<div class="catchup-row${open ? ' open' : ''}" data-show="${row.showId}">
+    <button type="button" class="catchup-head" data-catchup="toggle" data-show="${row.showId}" aria-expanded="${open}">
+      ${poster
+        ? `<img class="catchup-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" />`
+        : `<span class="catchup-poster catchup-poster-empty" aria-hidden="true">📺</span>`}
+      <span class="catchup-info">
+        <span class="catchup-show">${esc(catchUpName(row))}</span>
+        <span class="catchup-meta">${esc(summary.text)}</span>
+      </span>
+      <span class="catchup-count">${esc(summary.count)}</span>
+      <span class="catchup-caret" aria-hidden="true">▾</span>
+    </button>
+    ${open ? catchUpPanelHTML(row) : ''}
+  </div>`;
+}
+
+function updateCatchUpCounts() {
+  const status = document.getElementById('catchup-status');
+  const badge = document.getElementById('catchup-count');
+  let episodes = 0, shows = 0;
+  catchUpRows.forEach(row => {
+    const unwatched = row.episodes.filter(ep => !isEpisodeWatched(row.key, ep)).length;
+    if (unwatched) { shows++; episodes += unwatched; }
+  });
+  if (badge) {
+    badge.hidden = episodes === 0;
+    badge.textContent = String(episodes);
+  }
+  if (status) {
+    status.textContent = episodes
+      ? `${episodes} episode${episodes === 1 ? '' : 's'} waiting across ${shows} show${shows === 1 ? '' : 's'}`
+      : 'Nothing waiting: every aired episode is marked watched.';
+  }
+}
+
+function catchUpLastAired(row) {
+  const last = row.episodes[row.episodes.length - 1];
+  return last ? last.airDate : '';
+}
+
 function paintCatchUp() {
   const list = document.getElementById('catchup-list');
   const doneEl = document.getElementById('catchup-done');
-  const status = document.getElementById('catchup-status');
-  const count = document.getElementById('catchup-count');
   if (!list || !doneEl) return;
 
-  const waiting = catchUpRows
-    .filter(r => r.next)
-    .sort((a, b) => String(b.next.airDate).localeCompare(String(a.next.airDate)));
-  const done = catchUpRows.filter(r => !r.next && r.detail);
-  const failed = catchUpRows.filter(r => !r.detail);
+  const finished = row => !row.episodes.some(ep => !isEpisodeWatched(row.key, ep));
+  const waiting = catchUpRows.filter(row => !finished(row))
+    .sort((a, b) => String(catchUpLastAired(b)).localeCompare(String(catchUpLastAired(a))));
+  const done = catchUpRows.filter(finished)
+    .sort((a, b) => catchUpName(a).localeCompare(catchUpName(b)));
 
   list.innerHTML = waiting.map(catchUpRowHTML).join('');
   list.hidden = waiting.length === 0;
-  if (count) {
-    count.hidden = waiting.length === 0;
-    count.textContent = String(waiting.length);
-  }
-  if (status) {
-    status.textContent = waiting.length
-      ? `${waiting.length} show${waiting.length === 1 ? '' : 's'} with something waiting`
-      : 'Nothing waiting: everything that has aired is marked watched.';
-  }
-  doneEl.innerHTML =
-    (done.length
-      ? `<div class="catchup-done"><strong>✓ Up to date (${done.length}):</strong>${done
-          .map(r => `<span class="cu-name">${esc((r.detail && r.detail.name) || 'Untitled show')}</span>`)
-          .join('')}</div>`
-      : '') +
-    (failed.length
-      ? `<p style="font-size: var(--text-xs);color:var(--text-muted);margin-top:12px">
-           Could not load episode data for ${failed.length} show${failed.length === 1 ? '' : 's'}.
-         </p>`
-      : '');
+  doneEl.innerHTML = done.length
+    ? `<details class="catchup-done-group"><summary>✓ Up to date (${done.length})</summary><div class="catchup-list">${done.map(catchUpRowHTML).join('')}</div></details>`
+    : '';
+  updateCatchUpCounts();
 }
 
-async function markCatchUpEpisode(showId, allAired) {
+function repaintCatchUpRow(showId) {
   const row = catchUpRows.find(r => r.showId === showId);
-  if (!row || !row.detail) return;
-  const target = allAired ? lastAiredEpisode(row.detail) : row.next;
-  if (!target) return;
-  const before = state.epProgress[row.key] || null;
-
-  state.epProgress[row.key] = { s: target.s, e: target.e };
-  saveEpProgress();
-
-  row.next = await nextAiredEpisode(showId, row.detail);
-  paintCatchUp();
-
-  const name = row.detail.name || 'Show';
-  toast(`✅ ${name} ${epCode(target)} marked watched`, {
-    duration: 6000,
-    actionLabel: 'Undo',
-    onAction: async () => {
-      if (before) state.epProgress[row.key] = before;
-      else delete state.epProgress[row.key];
-      saveEpProgress();
-      row.next = await nextAiredEpisode(showId, row.detail);
-      paintCatchUp();
-    },
-  });
+  const el = document.querySelector(`.catchup-row[data-show="${showId}"]`);
+  if (!row || !el) return;
+  const holder = document.createElement('div');
+  holder.innerHTML = catchUpRowHTML(row);
+  const fresh = holder.firstElementChild;
+  el.replaceWith(fresh);
+  fresh.querySelector('.catchup-head')?.focus({ preventScroll: true });
 }
 
 async function renderCatchUp(main, token) {
@@ -8934,10 +9039,10 @@ async function renderCatchUp(main, token) {
       <span class="nav-count" id="catchup-count" hidden></span>
     </div>
     <p style="font-size: var(--text-sm);color:var(--text-muted);margin:-4px 0 14px">
-      Episodes that have already aired, from the shows on your list. Tick one off and the next one moves up.
+      Every aired episode from the shows on your list. Open a show to tick episodes off one by one.
     </p>
     <div class="catchup-list" id="catchup-list">
-      ${followed.map(() => '<div class="catchup-row skeleton" style="height:100px"></div>').join('')}
+      ${followed.map(() => '<div class="catchup-row skeleton" style="height:84px"></div>').join('')}
     </div>
     <div id="catchup-done"></div>
     <div id="catchup-status" aria-live="polite" style="font-size: var(--text-xs);color:var(--text-muted);margin-top:12px"></div>`;
@@ -8948,11 +9053,46 @@ async function renderCatchUp(main, token) {
     if (!btn) return;
     const showId = Number(btn.dataset.show);
     const row = catchUpRows.find(r => r.showId === showId);
+    if (!row) return;
+
     if (btn.dataset.catchup === 'open') {
-      if (row) openModal('tv', showId, row.detail || state.mediaDetails[row.key] || {});
+      openModal('tv', showId, row.detail || state.mediaDetails[row.key] || {});
       return;
     }
-    markCatchUpEpisode(showId, btn.dataset.catchup === 'all');
+    if (btn.dataset.catchup === 'all') {
+      materializeMarker(row);
+      const set = state.epWatched[row.key] || (state.epWatched[row.key] = {});
+      row.episodes.forEach(ep => { set[epKey(ep)] = true; });
+      saveEpWatched();
+      paintCatchUp();
+      return;
+    }
+    if (btn.dataset.catchup === 'toggle') {
+      if (catchUpOpen.has(row.key)) catchUpOpen.delete(row.key);
+      else catchUpOpen.add(row.key);
+      repaintCatchUpRow(showId);
+    }
+  });
+
+  wrap.addEventListener('change', e => {
+    const box = e.target.closest('input[data-catchup-ep]');
+    if (!box) return;
+    const showId = Number(box.dataset.show);
+    const row = catchUpRows.find(r => r.showId === showId);
+    if (!row) return;
+    const ep = row.episodes.find(x => epKey(x) === box.dataset.catchupEp);
+    if (!ep) return;
+    setCatchUpWatched(row, ep, box.checked);
+    box.closest('.catchup-ep')?.classList.toggle('watched', box.checked);
+    const summary = catchUpSummary(row);
+    const el = document.querySelector(`.catchup-row[data-show="${showId}"]`);
+    if (el) {
+      const meta = el.querySelector('.catchup-meta');
+      const count = el.querySelector('.catchup-count');
+      if (meta) meta.textContent = summary.text;
+      if (count) count.textContent = summary.count;
+    }
+    updateCatchUpCounts();
   });
 
   catchUpRows = [];
@@ -8960,12 +9100,12 @@ async function renderCatchUp(main, token) {
     const showId = Number(key.slice(3));
     try {
       const detail = await tmdb(`/tv/${showId}`);
-      return { key, showId, detail, next: await nextAiredEpisode(showId, detail) };
+      return { key, showId, detail, episodes: await airedEpisodes(showId, detail) };
     } catch (e) {
       console.warn(`Catch-up: show ${showId} failed:`, e);
-      return { key, showId, detail: state.mediaDetails[key] || null, next: null };
+      return { key, showId, detail: state.mediaDetails[key] || null, episodes: [] };
     }
-  }, 4);
+  }, 3);
 
   if (token !== renderToken || run !== catchUpRun) return;
   catchUpRows = rows;
