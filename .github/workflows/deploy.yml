@@ -89,6 +89,30 @@ jobs:
 
           echo "OK: token injected into showsnew.html."
 
+      # ── Inject Fanart.tv key (optional) ────────────────────────────
+      - name: Inject Fanart.tv key
+        env:
+          FANART_KEY: ${{ secrets.FANART_KEY }}
+        run: |
+          if [ -z "$FANART_KEY" ]; then
+            echo "::warning::FANART_KEY secret is not set — artwork section will stay hidden."
+            exit 0
+          fi
+
+          if ! grep -q '__FANART_KEY__' showsnew.html; then
+            echo "::error::Placeholder __FANART_KEY__ not found in showsnew.html."
+            exit 1
+          fi
+
+          sed -i "s|__FANART_KEY__|${FANART_KEY}|g" showsnew.html
+
+          if grep -q '__FANART_KEY__' showsnew.html; then
+            echo "::error::Placeholder still present in showsnew.html after sed."
+            exit 1
+          fi
+
+          echo "OK: Fanart.tv key injected into showsnew.html."
+
       # ── Encrypt showsnew.html ──────────────────────────────────────
       - name: Encrypt showsnew.html
         env:

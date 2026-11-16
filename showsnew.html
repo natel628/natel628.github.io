@@ -2516,6 +2516,7 @@
    CONFIG & CONSTANTS
    ───────────────────────────────────────────────────────────────────── */
 const TMDB_TOKEN = '__TMDB_TOKEN__';
+const FANART_KEY = '__FANART_KEY__';   /* optional: injected at deploy; artwork hides itself when unset */
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
 const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
@@ -5977,6 +5978,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
             </div>` : ''}
         </div>` : providers ? `<p style="font-size: var(--text-sm);color:var(--text-muted);margin-bottom:14px">No streaming info published for ${esc(regionLabel())}.</p>` : ''}
 
+      <div id="modal-fanart"></div>
       <div id="modal-similar"></div>
     </div>
   `;
@@ -6028,6 +6030,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
   }
   const stBtn = document.getElementById('soundtrack-btn');
   if (stBtn) stBtn.addEventListener('click', () => loadModalSoundtrack(type, id, title, year));
+  loadModalFanart(type, id);
 
   loadSimilar(type, id);
 }
@@ -6112,6 +6115,49 @@ async function loadModalSoundtrack(type, id, title, year) {
   }
 }
 
+/* ── FANART.TV ARTWORK (optional, key injected at deploy) ────────────
+   Clear logos and backgrounds for the open title. Movies query by TMDB
+   id directly; TV needs a TVDB id via external_ids first. Any failure
+   (no key, no match, no CORS) hides the section silently. */
+const fanartOn = () => typeof FANART_KEY === 'string' && !FANART_KEY.startsWith('__FANART');
+async function loadModalFanart(type, id) {
+  const wrap = document.getElementById('modal-fanart');
+  if (!wrap || !fanartOn()) { if (wrap) wrap.innerHTML = ''; return; }
+  const token = modalToken;
+  try {
+    let data = null;
+    if (type === 'movie') {
+      const r = await fetchWithTimeout(`https://webservice.fanart.tv/v3/movies/${id}?api_key=${FANART_KEY}`, {}, 15000);
+      if (r.ok) data = await r.json();
+    } else {
+      const ex = await tmdb(`/tv/${id}/external_ids`).catch(() => null);
+      if (ex && ex.tvdb_id) {
+        const r = await fetchWithTimeout(`https://webservice.fanart.tv/v3/tv/${ex.tvdb_id}?api_key=${FANART_KEY}`, {}, 15000);
+        if (r.ok) data = await r.json();
+      }
+    }
+    if (token !== modalToken || !wrap.isConnected) return;
+    if (!data) { wrap.innerHTML = ''; return; }
+    const first = keys => {
+      for (const k of keys) {
+        const arr = data[k];
+        if (Array.isArray(arr) && arr.length) return arr;
+      }
+      return [];
+    };
+    const logos = first(['hdmovieclearart', 'hdtvlogo', 'movieclearart', 'tvlogo']);
+    const bgs   = first(['moviebackground', 'showbackground']);
+    if (!logos.length && !bgs.length) { wrap.innerHTML = ''; return; }
+    wrap.innerHTML = `
+      <div style="font-size: var(--text-sm);font-weight:700;margin:0 0 8px;color:var(--text-muted)">🎨 Artwork</div>
+      ${logos.length ? `<img src="${esc(logos[0].url)}" alt="" loading="lazy" decoding="async" style="max-width:100%;max-height:120px;object-fit:contain;margin-bottom:8px" />` : ''}
+      ${bgs.length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">${bgs.slice(0, 3).map(b => `<a href="${esc(b.url)}" target="_blank" rel="noopener"><img src="${esc(b.url)}" alt="" loading="lazy" decoding="async" style="width:150px;height:84px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border)" /></a>`).join('')}</div>` : ''}
+      <p style="font-size: var(--text-xs);color:var(--text-muted);margin-bottom:16px">Artwork: <a href="https://fanart.tv" target="_blank" rel="noopener">fanart.tv</a></p>`;
+  } catch (e) {
+    console.warn('Fanart error:', e);
+    if (wrap) wrap.innerHTML = '';
+  }
+}
 async function loadSimilar(type, id) {
   const token = modalToken;
   try {
