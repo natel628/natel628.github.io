@@ -9819,10 +9819,10 @@ function renderSettings(main) {
           : 'Optional. Your own Trakt API app\u2019s client id adds the public Trakt community rating to a title\u2019s detail view. Register a free app at trakt.tv/oauth/applications, then paste its client id here. It is stored in this browser and sent only to api.trakt.tv.'}</p>
 
         <h4 style="margin:16px 0 6px">Trakt account</h4>
-        <p class="settings-note">Two-way sync of ratings, Want to Watch and Finished. Connect with the device code below — no redirect page to configure beyond the app itself. Ratings, list and history stay on this device too; syncing only copies changes both ways.</p>
+        <p class="settings-note">Two-way sync of ratings, Want to Watch and Finished. Sign-in uses PKCE, so no client secret is needed. In your Trakt app set <strong>Redirect URI</strong> to <code>${esc(location.origin + location.pathname)}</code> and <strong>Javascript (CORS) origins</strong> to <code>${esc(location.origin)}</code>. Ratings, list and history stay on this device too; syncing only copies changes both ways.</p>
         ${traktSecretInjected() ? '' : `<div class="settings-row" style="flex-wrap:wrap">
           <input class="conn-key" id="settings-trakt-secret" type="password" autocomplete="off" spellcheck="false"
-            placeholder="Trakt client secret (needed for the account sync)" aria-label="Trakt client secret" />
+            placeholder="Client secret (optional — PKCE apps do not have one)" aria-label="Trakt client secret, optional" />
         </div>`}
         <div class="settings-row" style="flex-wrap:wrap">
           <button type="button" class="modal-btn primary" id="settings-trakt-connect">Connect account</button>
@@ -10662,7 +10662,10 @@ function showImportReport(report, lead) {
 const TRAKT_AUTH_LS = 'trakt_auth';       // { access, refresh, expiresAt, createdAt }
 const TRAKT_QUEUE_LS = 'trakt_queue';     // [{ kind, type, id, rating, at }]
 const TRAKT_META_LS = 'trakt_meta';       // { lastSync, lastError }
-const TRAKT_API = 'https://api.trakt.tv';
+const TRAKT_API = 'https://api.trakt.tv';        // catalogue + sync data
+const TRAKT_AUTH = 'https://auth.trakt.tv';      // every /oauth call, per Trakt's docs
+/* The redirect must match the app registration character for character. */
+const traktRedirect = () => location.origin + location.pathname;
 
 const traktSecretInjected = () => typeof TRAKT_SECRET === 'string' && !TRAKT_SECRET.startsWith('__TRAKT');
 const traktSecret = () => traktSecretInjected()
@@ -10719,12 +10722,17 @@ async function traktRefresh() {
   const acct = traktAccount();
   if (!acct || !acct.refresh) return false;
   const secret = traktSecret();
-  if (!secret) { traktSetMeta({ lastError: 'client secret missing, cannot refresh' }); return false; }
   try {
-    const res = await fetch(`${TRAKT_API}/oauth/token`, {
+    const res = await fetch(`${TRAKT_AUTH}/oauth/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ grant_type: 'refresh_token', refresh_token: acct.refresh, client_id: traktKey(), client_secret: secret, redirect_uri: 'urn:ietf:wg:oauth:2.0:oob' }),
+      body: JSON.stringify({
+        grant_type: 'refresh_token',
+        refresh_token: acct.refresh,
+        client_id: traktKey(),
+        redirect_uri: traktRedirect(),
+        ...(secret ? { client_secret: secret } : {}),
+      }),
     });
     if (!res.ok) { traktSetMeta({ lastError: 'token refresh failed' }); return false; }
     const d = await res.json();
@@ -10734,14 +10742,20 @@ async function traktRefresh() {
 }
 
 /* Device flow: ask for a code, show it, poll until approved. */
+/* Sign-in is PKCE: Trakt stopped issuing client secrets to browser apps,
+   and PKCE exists precisely so a copied client id cannot be exchanged for a
+   token. The device flow stays as a fallback for apps that do have a secret,
+   or when a redirect URI cannot be registered. */
 async function traktConnect() {
   const clientId = traktKey();
-  const secret = traktSecret();
   if (clientId.length < 8) { toast('Add your Trakt client id first.'); return; }
-  if (!secret) { toast('Add your Trakt client secret — the device flow needs both.'); return; }
+
+  if (!traktSecret()) { await traktConnectPkce(clientId); return; }
+
+  const secret = traktSecret();
   let code;
   try {
-    const res = await fetch(`${TRAKT_API}/oauth/device/code`, {
+    const res = await fetch(`${TRAKT_AUTH}/oauth/device/code`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ client_id: clientId }),
@@ -10781,10 +10795,10 @@ async function traktConnect() {
       await sleep(interval);
       if (stopped) return;
       try {
-        const res = await fetch(`${TRAKT_API}/oauth/device/token`, {
+        const res = await fetch(`${TRAKT_AUTH}/oauth/device/token`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: code.device_code, client_id: clientId, client_secret: secret }),
+          body: JSON.stringify({ code: code.device_code, client_id: clientId, ...(secret ? { client_secret: secret } : {}) }),
         });
         if (res.status === 200) {
           const d = await res.json();
@@ -10805,15 +10819,77 @@ async function traktConnect() {
   })();
 }
 
+async function traktConnectPkce(clientId) {
+  const { verifier, challenge } = await pkceChallenge();
+  const oauthState = base64urlEncode(crypto.getRandomValues(new Uint8Array(32)));
+  LS.set('trakt_pkce_verifier', verifier);
+  LS.set('trakt_oauth_state', oauthState);
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: clientId,
+    redirect_uri: traktRedirect(),
+    state: oauthState,
+    code_challenge: challenge,
+    code_challenge_method: 'S256',
+  });
+  window.location.href = `${TRAKT_AUTH}/oauth/authorize?${params}`;
+}
+
+/* Trakt sends the browser back here with ?code & ?state. */
+async function handleTraktCallback() {
+  const params = new URLSearchParams(location.search);
+  const code = params.get('code');
+  const err = params.get('error');
+  if (!code && !err) return;
+  const verifier = LS.get('trakt_pkce_verifier');
+  const expected = LS.get('trakt_oauth_state');
+  history.replaceState(null, '', location.pathname + location.hash);
+  LS.set('trakt_pkce_verifier', null);
+  LS.set('trakt_oauth_state', null);
+
+  if (err || !code) { toast('Trakt connection cancelled.'); return; }
+  if (!expected || params.get('state') !== expected || !verifier) {
+    /* A mismatched state means someone else started the request. */
+    toast('Trakt connection failed: invalid authorization response. Please reconnect.');
+    return;
+  }
+  try {
+    const res = await fetch(`${TRAKT_AUTH}/oauth/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        grant_type: 'authorization_code',
+        code,
+        client_id: traktKey(),
+        redirect_uri: traktRedirect(),
+        code_verifier: verifier,
+      }),
+    });
+    if (!res.ok) throw new Error(`token exchange failed (${res.status})`);
+    const d = await res.json();
+    traktSaveAuth({
+      access: d.access_token,
+      refresh: d.refresh_token,
+      expiresAt: Date.now() + (Number(d.expires_in) || 7776000) * 1000,
+      createdAt: Date.now(),
+    });
+    toast('Trakt connected. Syncing…');
+    await traktSync('connect');
+    if (state.view === 'settings') renderView();
+  } catch (e) {
+    toast('Trakt: ' + e.message);
+  }
+}
+
 async function traktUnlink() {
   const acct = traktAccount();
   if (!acct) { toast('No Trakt account is connected.'); return; }
   const secret = traktSecret();
   try {
-    await fetch(`${TRAKT_API}/oauth/revoke`, {
+    await fetch(`${TRAKT_AUTH}/oauth/revoke`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: acct.access, client_id: traktKey(), client_secret: secret }),
+      body: JSON.stringify({ token: acct.access, client_id: traktKey(), ...(secret ? { client_secret: secret } : {}) }),
     });
   } catch (e) { /* revoking is best effort; local tokens still go */ }
   localStorage.removeItem(TRAKT_AUTH_LS);
@@ -12148,6 +12224,7 @@ function renderOnboarding() {
   updateSimklUI();
   if (state.simklToken && !state.simklUser) loadSimklUser();
   if (!isLocalHost()) {
+    await handleTraktCallback();
     await handleSimklCallback();
     await refreshSimklIfNeeded();
   }

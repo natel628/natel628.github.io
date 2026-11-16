@@ -179,7 +179,7 @@ jobs:
           TRAKT_SECRET: ${{ secrets.TRAKT_SECRET }}
         run: |
           if [ -z "$TRAKT_SECRET" ]; then
-            echo "::warning::TRAKT_SECRET secret is not set — the Trakt account sync stays off unless the secret is typed in Settings."
+            echo "::notice::TRAKT_SECRET is not set. That is normal: Trakt now issues PKCE apps with no client secret, and the account sync signs in with PKCE."
             exit 0
           fi
           if ! grep -q '__TRAKT_SECRET__' showsnew.html; then
