@@ -181,8 +181,14 @@
   .board .net { display:block; font-weight:800; font-size:.85rem; margin-top:2px; font-variant-numeric:tabular-nums; }
   .net.pos { color:#86efac; } .net.neg { color:#fca5a5; } .net.zero { color:var(--muted); }
   .bet-row { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; flex-wrap:wrap; font-size:.92rem; }
-  .caution { background:#0f172a; border:1px solid #334155; border-left:4px solid #f59e0b; border-radius:8px; padding:10px 12px; margin-top:8px; font-size:.9rem; }
+  .caution { background:#0f172a; border:1px solid #334155; border-left:4px solid #f59e0b; border-radius:8px; padding:8px 10px; margin-top:8px; font-size:.85rem; }
   .caution b { display:block; margin-bottom:2px; }
+  #sec-rv .rv-grid { grid-template-columns:repeat(auto-fit,minmax(105px,1fr)); gap:8px; }
+  #sec-rv .rv-grid input { padding:5px 7px; font-size:.85rem; }
+  #sec-rv .rv-grid label { font-size:.8rem; }
+  .rv-summary { margin:8px 0 0; font-size:.85rem; }
+  details.rv-details { margin-top:6px; }
+  details.rv-details summary { cursor:pointer; color:var(--accent); font-size:.85rem; }
   .budget-lines { display:grid; gap:8px; margin-top:10px; }
   .budget-row { display:flex; gap:8px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; flex-wrap:wrap; }
   .budget-row b { color:var(--accent); font-variant-numeric:tabular-nums; }
@@ -415,8 +421,12 @@
       <label>Fresh water gal<input id="rvWater" type="number" min="0" step="5" value="60" /></label>
       <label>Propane lb<input id="rvPropane" type="number" min="0" step="5" value="40" /></label>
     </div>
-    <div id="rvWarn"></div>
-    <div id="cautionList"></div>
+    <p id="rvSummary" class="muted rv-summary"></p>
+    <details id="rvDetails" class="rv-details">
+      <summary id="rvDetailsLabel">Show warnings &amp; route cautions</summary>
+      <div id="rvWarn"></div>
+      <div id="cautionList"></div>
+    </details>
   </section>
 
   <section class="card" id="sec-practical">
@@ -3367,6 +3377,14 @@ function renderRV(){
   if (h > 13.5) msgs.push('At ' + h.toFixed(1) + ' ft you are over the 13 ft 6 in interstate ceiling — every non-interstate leg needs checking, and some states want a permit.');
   if (len >= 40) msgs.push('At ' + len + ' ft, parkways and older town roads often exclude you. Keep to interstates, US highways and signed truck routes.');
   if (!+extra.rv.weight) msgs.push('Add the loaded weight — it decides bridge postings and whether a permit is needed.');
+  const warnCount = msgs.length;
+  const summary = $('rvSummary');
+  if (summary) summary.textContent = warnCount ? ('⚠️ ' + warnCount + ' warning' + (warnCount > 1 ? 's' : '') + ' for your rig · ' + CAUTIONS.length + ' route cautions below') : ('No rig warnings · ' + CAUTIONS.length + ' route cautions below');
+  const det = $('rvDetails');
+  if (det && !det.dataset.touched) det.open = warnCount > 0;
+  const lab = $('rvDetailsLabel');
+  if (lab) lab.textContent = (det && det.open ? 'Hide' : 'Show') + ' warnings & route cautions';
+  if (det && !det.dataset.bound) { det.dataset.bound = '1'; det.addEventListener('toggle', () => { const l = $('rvDetailsLabel'); if (l) l.textContent = (det.open ? 'Hide' : 'Show') + ' warnings & route cautions'; det.dataset.touched = '1'; }); }
   $('rvWarn').innerHTML = msgs.map(m => '<p class="caution">⚠️ ' + esc(m) + '</p>').join('');
   $('cautionList').innerHTML = CAUTIONS.map(c =>
     '<div class="caution"><b>' + esc(c.title) + '</b>' + esc(c.body)
