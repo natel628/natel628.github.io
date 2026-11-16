@@ -286,53 +286,87 @@ h1 {
   letter-spacing: -0.01em;
 }
 
-.strip { margin-top: 18px; }
-
-.strip-track {
+.gantt {
+  --label-w: 96px;
   position: relative;
-  height: 10px;
-  border-radius: 99px;
-  background: linear-gradient(90deg, rgba(155, 147, 255, 0.22), rgba(95, 208, 189, 0.2), rgba(240, 193, 97, 0.24));
-  border: 1px solid var(--line);
+  margin-top: 18px;
 }
 
-.dot {
-  position: absolute;
-  top: 50%;
-  width: 11px;
-  height: 11px;
-  margin-left: -5.5px;
-  border-radius: 50%;
-  background: var(--gold);
-  transform: translateY(-50%);
-  box-shadow: 0 0 0 3px rgba(240, 193, 97, 0.16);
-}
-.dot.past { background: #46536f; box-shadow: 0 0 0 3px rgba(70, 83, 111, 0.18); }
-.dot:focus-visible { outline: 2px solid var(--cream); outline-offset: 3px; }
-
-.strip-track .now {
-  position: absolute;
-  top: -9px;
-  bottom: -9px;
-  width: 2px;
-  margin-left: -1px;
-  background: linear-gradient(180deg, transparent, #ffffff, transparent);
-  opacity: 0.9;
-}
-
-.strip-months {
+.gantt-months {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  margin-top: 10px;
-  font-size: 0.68rem;
+  margin-left: calc(var(--label-w) + 10px);
+  font-size: 0.64rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
+.gantt-rows {
+  position: relative;
+  list-style: none;
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.gantt-row {
+  display: grid;
+  grid-template-columns: var(--label-w) 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.gantt-name {
+  font-size: 0.73rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gantt-track {
+  position: relative;
+  display: block;
+  height: 14px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.gantt-bar {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 3px;
+  background: rgba(163, 183, 222, 0.3);
+}
+
+.gantt-bar.live { background: rgba(240, 193, 97, 0.5); }
+
+.gantt-peak {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--gold);
+}
+
+.gantt-now {
+  position: absolute;
+  top: 16px;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.55);
+  left: calc(var(--label-w) + 10px + (100% - var(--label-w) - 10px) * var(--now));
+}
+
 .strip-legend {
-  margin-top: 12px;
+  margin-top: 14px;
   font-size: 0.78rem;
+  line-height: 1.5;
   color: var(--muted);
 }
 
@@ -664,6 +698,8 @@ h1 {
   color: var(--muted);
 }
 
+.card-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
 .card-facts {
   font-size: 0.78rem;
   line-height: 1.5;
@@ -690,7 +726,9 @@ h1 {
   .wrap { padding: 28px 16px 56px; }
   .hero { padding: 22px 20px; }
   .site { gap: 20px; }
-  .strip-months span:nth-child(2n) { visibility: hidden; }
+  .gantt { --label-w: 74px; }
+  .gantt-months span:nth-child(2n) { visibility: hidden; }
+  .gantt-name { font-size: 0.66rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

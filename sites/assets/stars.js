@@ -13,6 +13,7 @@ import {
   seasonWindow
 } from './astro.js';
 import { nightChart, seasonChart, skyDial } from './charts.js';
+import { peakEventIcs } from './calendar.js';
 import { clearAt, cloudCover } from './weather.js';
 
 const STORE_KEY = 'meteor-tracker:location';
@@ -31,6 +32,7 @@ let filter = 'soon';
 let lastRows = [];
 let weather = { points: null, key: '', failedAt: 0, pending: false };
 let rowMap = new Map();
+let hashOpen = [];
 // Remembers the hour each tile was scrubbed to, so the 10-minute refresh
 // doesn't reset the dial under the reader.
 const lookIndexByShower = new Map();
@@ -331,6 +333,9 @@ function cardHTML(row, now) {
           ${season}
           <p class="chart-caption">${range} · peak ${fmtDay(row.season.peak)}${row.active ? ' · today is the teal bar' : ''}</p>
         </div>
+        <p class="card-actions">
+          <button type="button" class="btn btn-ghost btn-sm" data-ics="${s.id}">Add peak night to calendar</button>
+        </p>
         <p class="card-facts">The radiant — the patch of sky these meteors appear to come from — is highest at <b>${fmtTime(highest.time)}</b>, <b>${Math.round(highest.radiantAlt)}°</b> above the horizon.${windowCloud === null ? '' : ` Forecast: <b>${windowCloud}%</b> cloud around the window.`} Debris from ${s.parent}.</p>
         <p class="card-note">${s.note}</p>
       </div>
@@ -345,7 +350,10 @@ function renderGrid(rows, now) {
   const visible = rows.filter(passesFilter);
   // The 10-minute refresh rebuilds the markup, so remember which tiles the
   // reader had opened and put them back.
-  const openIds = [...document.querySelectorAll('#grid .card[open]')].map((el) => el.dataset.id);
+  const openIds = new Set([
+    ...[...document.querySelectorAll('#grid .card[open]')].map((el) => el.dataset.id),
+    ...hashOpen
+  ]);
 
   $('showCount').textContent = `Showing ${visible.length} of ${rows.length}`;
 
@@ -357,41 +365,90 @@ function renderGrid(rows, now) {
   rowMap = new Map(visible.map((row) => [row.shower.id, row]));
 
   document.querySelectorAll('#grid .card').forEach((el) => {
-    if (openIds.includes(el.dataset.id)) el.open = true;
+    if (openIds.has(el.dataset.id)) el.open = true;
+    el.addEventListener('toggle', syncHash);
   });
+  hashOpen = [];
+}
+
+function updateFilterButtons() {
+  document.querySelectorAll('.filter-btn').forEach((btn) => {
+    btn.setAttribute('aria-pressed', String(btn.dataset.filter === filter));
+  });
+}
+
+// Keep the address bar in step with what is open, so the link is shareable.
+function syncHash() {
+  const parts = filter === 'all' ? ['all'] : [];
+  parts.push(...[...document.querySelectorAll('#grid .card[open]')].map((el) => el.dataset.id));
+  const base = location.pathname + location.search;
+  history.replaceState(null, '', parts.length ? `${base}#${parts.join(',')}` : base);
+}
+
+function readHash() {
+  const raw = decodeURIComponent(location.hash.replace(/^#/, ''));
+  if (!raw) return;
+
+  const parts = raw.split(',').map((part) => part.trim()).filter(Boolean);
+  if (parts.includes('all')) filter = 'all';
+
+  hashOpen = parts.filter((part) => part !== 'all' && SHOWERS.some((s) => s.id === part));
+  // A shared tile may be filtered out by default, so show everything.
+  if (hashOpen.length) filter = 'all';
 }
 
 function setFilter(next) {
   filter = next;
-  document.querySelectorAll('.filter-btn').forEach((btn) => {
-    btn.setAttribute('aria-pressed', String(btn.dataset.filter === filter));
-  });
+  updateFilterButtons();
   renderGrid(lastRows, new Date());
+  syncHash();
 }
 
-function renderStrip(now) {
+// One row per shower: a bar for every night it is active, a tick at the peak.
+// Windows that cross New Year are drawn as two bars so each stays inside the
+// year on screen.
+function renderGantt(now) {
   const el = $('strip');
-  const startOfYear = new Date(now.getFullYear(), 0, 1);
-  const nextYear = new Date(now.getFullYear() + 1, 0, 1);
-  const yearMs = nextYear - startOfYear;
-  const pct = (date) => Math.min(100, Math.max(0, ((date - startOfYear) / yearMs) * 100)).toFixed(2);
+  const year = now.getFullYear();
+  const startOfYear = new Date(year, 0, 1);
+  const endOfYear = new Date(year + 1, 0, 1);
+  const yearMs = endOfYear - startOfYear;
+  const pct = (date) => Math.min(100, Math.max(0, ((date - startOfYear) / yearMs) * 100));
 
-  const dots = SHOWERS.map((s) => {
-    const peak = new Date(now.getFullYear(), s.peak[0] - 1, s.peak[1]);
-    const label = `${s.name}, peaks ${peak.toLocaleDateString([], { month: 'long', day: 'numeric' })}`;
-    return `<span class="dot${peak < now ? ' past' : ''}" style="left:${pct(peak)}%"
-      tabindex="0" role="img" aria-label="${label}" title="${label}"></span>`;
-  }).join('');
+  const rows = [...SHOWERS]
+    .sort((a, b) => new Date(year, a.peak[0] - 1, a.peak[1]) - new Date(year, b.peak[0] - 1, b.peak[1]))
+    .map((s) => {
+      const peak = new Date(year, s.peak[0] - 1, s.peak[1]);
+      const start = new Date(year, s.start[0] - 1, s.start[1]);
+      const end = new Date(year, s.end[0] - 1, s.end[1] + 1);
+      const active = activityFor(s, now).inRange;
+
+      const segments = start > end
+        ? [[start, endOfYear], [startOfYear, end]]
+        : [[start, end]];
+
+      const bars = segments.map(([from, to]) => {
+        const left = pct(from);
+        const width = Math.max(0.7, pct(to) - left);
+        return `<span class="gantt-bar${active ? ' live' : ''}" style="left:${left.toFixed(2)}%;width:${width.toFixed(2)}%"></span>`;
+      }).join('');
+
+      const range = fmtRange(start, s.end[0] < s.start[0] ? new Date(year + 1, s.end[0] - 1, s.end[1]) : new Date(year, s.end[0] - 1, s.end[1]));
+      const label = `${s.name}: active ${range}, peak ${fmtDay(peak)}`;
+
+      return `<li class="gantt-row" title="${label}">
+        <span class="gantt-name">${s.name}</span>
+        <span class="gantt-track" role="img" aria-label="${label}">${bars}<span class="gantt-peak" style="left:${pct(peak).toFixed(2)}%"></span></span>
+      </li>`;
+    }).join('');
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   el.innerHTML = `
-    <div class="strip-track" aria-hidden="false">
-      ${dots}
-      <span class="now" style="left:${pct(now)}%" aria-hidden="true"></span>
-    </div>
-    <div class="strip-months">${months.map((m) => `<span>${m}</span>`).join('')}</div>`;
+    <div class="gantt-months">${months.map((m) => `<span>${m}</span>`).join('')}</div>
+    <ol class="gantt-rows">${rows}</ol>
+    <span class="gantt-now" style="--now:${(pct(now) / 100).toFixed(4)}" aria-hidden="true"></span>`;
 }
 
 function paint() {
@@ -399,7 +456,7 @@ function paint() {
   $('locName').textContent = `${state.label} · ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`;
   lastRows = buildRows(now);
   renderHero(lastRows, now);
-  renderStrip(now);
+  renderGantt(now);
   renderGrid(lastRows, now);
 }
 
@@ -428,6 +485,23 @@ function ensureWeather() {
 function render() {
   paint();
   ensureWeather();
+}
+
+function downloadIcs(row) {
+  if (!row) return;
+
+  const url = `${location.origin}${location.pathname}#${row.shower.id}`;
+  const text = peakEventIcs({ shower: row.shower, peak: row.season.peak, url });
+  const blob = new Blob([text], { type: 'text/calendar;charset=utf-8' });
+  const href = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = `${row.shower.id}-peak.ics`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(href), 1000);
 }
 
 function setLocation(next, message) {
@@ -494,6 +568,9 @@ document.querySelector('.filters').addEventListener('click', (event) => {
 
 $('grid').addEventListener('click', (event) => {
   if (event.target.closest('[data-show-all]')) setFilter('all');
+
+  const icsButton = event.target.closest('[data-ics]');
+  if (icsButton) downloadIcs(rowMap.get(icsButton.dataset.ics));
 });
 
 // Scrubbing the hour updates the dial in place, so the tile never closes.
@@ -530,5 +607,7 @@ $('sky').addEventListener('change', () => {
 });
 
 $('sky').value = state.sky;
+readHash();
+updateFilterButtons();
 render();
 setInterval(render, 10 * 60 * 1000);
