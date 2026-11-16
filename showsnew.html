@@ -458,6 +458,7 @@
     .card-row {
       display: flex;
       flex: 1;
+      align-items: flex-start;
       gap: 14px;
       overflow-x: auto;
       padding-bottom: 10px;
@@ -557,6 +558,26 @@
       overflow: hidden;
     }
     .card-meta { font-size: var(--text-xs); color: var(--text-muted); display: flex; gap: 6px; flex-wrap: wrap; }
+    /* TVmaze weekly schedule cards live in the same horizontal rows. */
+    .ep-day { font-size: var(--text-sm); font-weight: 700; color: var(--text-muted); margin: 12px 0 6px; }
+    .ep-card {
+      flex: 0 0 250px;
+      display: flex;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px;
+      overflow: hidden;
+      align-items: flex-start;
+    }
+    .ep-poster { width: 54px; height: 80px; object-fit: cover; border-radius: var(--radius-sm); background: var(--surface2); flex: 0 0 auto; }
+    .ep-poster-empty { display: flex; align-items: center; justify-content: center; font-size: var(--text-lg); }
+    .ep-info { flex: 1; min-width: 0; font-size: var(--text-xs); color: var(--text-muted); }
+    .ep-show { font-size: var(--text-sm); font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ep-meta { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .ep-links { margin-top: 4px; display: flex; gap: 8px; align-items: center; }
+    .ep-links a { color: var(--accent); }
     .card-score {
       font-size: var(--text-xs);
       font-weight: 700;
@@ -706,6 +727,7 @@
     .watchlist-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+      align-items: start;
       gap: 14px;
     }
     .watchlist-toolbar {
@@ -783,11 +805,13 @@
     .modal-meta { font-size: var(--text-sm); color: var(--text-muted); display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
     .modal-genres { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
     .genre-tag {
+      display: inline-block;
       background: var(--tag-bg);
       border: 1px solid var(--border);
       padding: 3px 10px;
       border-radius: var(--radius-md);
       font-size: var(--text-sm);
+      line-height: 1.5;
     }
     .genre-tag.clickable { cursor: pointer; transition: background .15s var(--ease-out), border-color .15s var(--ease-out), color .15s var(--ease-out); }
     .genre-tag.clickable:hover { border-color: var(--accent); color: var(--accent); }
@@ -5064,14 +5088,15 @@ function ratingColor(val) {
 
 function recomputeAffinity() {
   const sums = {}, counts = {};
-  Object.entries(state.ratings).forEach(([key, r]) => {
-    if (!r) return;
+  const addWeight = (key, weight) => {
     const gids = state.mediaDetails[key]?.genre_ids || [];
     gids.forEach(g => {
-      sums[g]   = (sums[g]   || 0) + (r - 5);
+      sums[g]   = (sums[g]   || 0) + weight;
       counts[g] = (counts[g] || 0) + 1;
     });
-  });
+  };
+  Object.entries(state.ratings).forEach(([key, r]) => { if (r) addWeight(key, r - 5); });
+  Object.entries(state.watchlist).forEach(([key, s]) => { if (s && !state.ratings[key]) addWeight(key, 2); });
   const aff = {};
   Object.keys(sums).forEach(g => { aff[g] = sums[g] / counts[g]; });
   LS.set('genre_affinity', aff);
@@ -6653,6 +6678,96 @@ async function personBrowse(personId, name) {
 /* ── CALENDAR ─────────────────────────────────────────────────────── */
 let calEvents = [];
 
+/* ── TVMAZE: keyless weekly TV schedule ───────────────────────────────
+   api.tvmaze.com needs no key or account and is CORS-open, so the browser
+   calls it directly — nothing to put in the deploy workflow. Rate limit
+   is ~20 calls / 10s per IP, so 7 daily calls go out 2 at a time and
+   cache for 6 hours. Data is CC BY-SA: the section links back to TVmaze. */
+const TVMAZE_BASE = 'https://api.tvmaze.com';
+const _tvmazeSched = new Map();
+const TVMAZE_COUNTRIES = new Set(['US','GB','CA','AU','DE','FR','ES','IT','BR','MX','IN','JP','NL','SE']);
+async function tvmazeSchedule(country, date) {
+  const c = TVMAZE_COUNTRIES.has(country) ? country : 'US';
+  const key = c + '|' + date;
+  const hit = _tvmazeSched.get(key);
+  if (hit && Date.now() < hit.expires) return hit.items;
+  const res = await fetchWithTimeout(`${TVMAZE_BASE}/schedule?country=${c}&date=${date}`, {}, 15000);
+  if (res.status === 429) throw new Error('TVMaze is rate-limiting us right now');
+  if (!res.ok) throw new Error(`TVMaze ${res.status}`);
+  const items = await res.json();
+  if (_tvmazeSched.size > 60) _tvmazeSched.clear();
+  _tvmazeSched.set(key, { expires: Date.now() + 6 * 3600 * 1000, items });
+  return items;
+}
+function tvmazeLookup(title) {
+  const input = document.getElementById('search-input');
+  if (!input || !title) return;
+  input.value = title;
+  doSearch();
+}
+function epDayLabel(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+}
+async function renderAiringWeek(main, token) {
+  const sec = document.createElement('div');
+  sec.className = 'section';
+  sec.id = 'airing-week';
+  sec.innerHTML = `
+    <div class="section-header"><span class="section-title">📺 Airing This Week</span></div>
+    <div class="card-row"><div class="skel-card skeleton"></div><div class="skel-card skeleton"></div><div class="skel-card skeleton"></div></div>`;
+  main.appendChild(sec);
+  try {
+    const days = [0, 1, 2, 3, 4, 5, 6].map(n => shiftDaysISO(new Date(), n));
+    const lists = await promiseAllChunked(days, d => tvmazeSchedule(state.region, d).catch(() => []), 2);
+    if (token !== renderToken) return;
+    const groups = days.map((day, idx) => {
+      const eps = [...(lists[idx] || [])]
+        .sort((a, b) => ((b.show && b.show.rating && b.show.rating.average || 0) - (a.show && a.show.rating && a.show.rating.average || 0)) || String(a.airtime || '').localeCompare(String(b.airtime || '')))
+        .slice(0, 14);
+      return { day, eps };
+    }).filter(g => g.eps.length);
+    if (!groups.length) {
+      sec.innerHTML = `
+        <div class="section-header"><span class="section-title">📺 Airing This Week</span></div>
+        <p style="font-size: var(--text-sm);color:var(--text-muted)">No scheduled episodes found for this week in ${esc(state.region)}.</p>
+        <p style="font-size: var(--text-xs);color:var(--text-muted)">Schedule: <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a> (CC BY-SA)</p>`;
+      return;
+    }
+    sec.innerHTML = `
+      <div class="section-header"><span class="section-title">📺 Airing This Week</span></div>
+      ${groups.map(g => `
+        <div class="ep-day">${esc(epDayLabel(g.day))}</div>
+        <div class="card-row">${g.eps.map(ep => {
+          const s = ep.show || {};
+          const img = s.image && (s.image.medium || s.image.original);
+          const net = (s.network && s.network.name) || (s.webChannel && s.webChannel.name) || '';
+          const code = `S${pad2(ep.season || 0)}E${pad2(ep.number || 0)}`;
+          return `<div class="ep-card">
+            ${img ? `<img class="ep-poster" src="${esc(img)}" alt="" loading="lazy" decoding="async" />` : `<div class="ep-poster ep-poster-empty">📺</div>`}
+            <div class="ep-info">
+              <div class="ep-show">${esc(s.name || 'Unknown show')}</div>
+              <div class="ep-meta">${esc(code)}${ep.name ? ` · ${esc(ep.name)}` : ''}</div>
+              <div class="ep-meta">${ep.airtime ? `${esc(ep.airtime)} ` : ''}${net ? `· ${esc(net)}` : ''}</div>
+              <div class="ep-links"><button class="link-btn" data-tv-title="${esc(s.name || '')}" onclick="tvmazeLookup(this.dataset.tvTitle)">Find here 🔍</button>${s.url ? ` <a href="${esc(s.url)}" target="_blank" rel="noopener">TVmaze ↗</a>` : ''}</div>
+            </div>
+          </div>`;
+        }).join('')}</div>`).join('')}
+      <p style="font-size: var(--text-xs);color:var(--text-muted)">Schedule: <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a> (CC BY-SA) · Times are ${esc(state.region)} schedule times · Unfiltered by AI rules.</p>`;
+  } catch (e) {
+    if (token !== renderToken) return;
+    console.warn('Airing week error:', e);
+    sec.innerHTML = `
+      <div class="section-header"><span class="section-title">📺 Airing This Week</span></div>
+      <p style="font-size: var(--text-sm);color:var(--text-muted)">Could not load the weekly schedule: ${esc(e.message || e)}. <button class="link-btn" onclick="retryAiringWeek()">Try again</button></p>`;
+  }
+}
+async function retryAiringWeek() {
+  if (state.view !== 'calendar') return;
+  document.getElementById('airing-week')?.remove();
+  const main = document.getElementById('main-content');
+  if (main) renderAiringWeek(main, renderToken);
+}
 async function renderCalendar(main, token) {
   main.innerHTML = `
     <div class="section">
@@ -6689,6 +6804,8 @@ async function renderCalendar(main, token) {
   const calGridEl = document.getElementById('cal-grid');
   if (calGridEl) calGridEl.addEventListener('click', onCalGridClick);
   await populateCalendar();
+  /* Weekly airings load alongside, never block the month grid. */
+  if (token === renderToken) renderAiringWeek(main, token);
 }
 
 function calPrev() {
@@ -7542,7 +7659,7 @@ async function renderRecommended(main, token) {
   addSkeletonRow(main, 'Recommended For You ✨');
   addSkeletonRow(main, 'More Like Your Favorites');
 
-  const needGenres = Object.keys(state.ratings)
+  const needGenres = [...new Set([...Object.keys(state.ratings), ...Object.keys(state.watchlist)])]
     .filter(k => !(state.mediaDetails[k]?.genre_ids || []).length)
     .slice(0, 40);
 
@@ -8159,10 +8276,11 @@ function relaxDiscoverFilters() {
   state.underseenOnly = false;
   state.deepCutsOnly = false;
   state.obscurityMode = false;
+  state.seenKeys = [];
   savePrefs();
   syncFilterControls();
   renderView();
-  toast('Filters relaxed — showing the widest Discover pool');
+  toast('Filters relaxed and seen titles restored');
 }
 async function renderDiscoveries(main, token) {
   const hasRatings = Object.keys(state.ratings).length > 0;
@@ -8175,7 +8293,7 @@ async function renderDiscoveries(main, token) {
     <div class="section-header"><span class="section-title">🕵️ Discoveries — Things You Havent Heard Of</span></div>
     <p style="font-size: var(--text-sm);color:var(--text-muted);max-width:640px">
       Movies, TV shows and documentaries with strong ratings but low visibility, filtered through your AI Director rules, mood, and obscurity settings.
-      ${hasRatings ? 'Titles you have already rated or watchlisted are excluded.' : 'Rate some titles to sharpen the obscurity engine.'}
+      ${hasRatings ? 'Titles you have already rated, watchlisted, or opened are excluded. Your ratings and My List steer the order.' : 'Rate a few titles — or add loved ones to My List — and this list starts matching your taste.'}
       “Hide titles” only covers names and scores until you reveal them — use it to judge by the poster, not the hype.
     </p>
   `;
@@ -8197,17 +8315,26 @@ async function renderDiscoveries(main, token) {
     const yearTV = filterVisible('year') ? yearParams('tv')    : {};
     const langP  = langParams();
 
-    /* Pull from multiple discover endpoints, then sort by obscurity. The
-       documentary sweep only widens the mix, so it is skipped once a genre
-       is picked — its own with_genres would be overridden anyway. */
-    const [movies, tvShows, docs] = await Promise.all([
-      discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 2000, ...gp, ...yearP, ...langP }),
-      discoverSafe('/discover/tv',    { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 5,  'vote_count.lte': 1000, ...gp, ...yearTV, ...langP }),
-      gp.with_genres
-        ? Promise.resolve({ items: [] })
-        : discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_average.gte': 6.5, 'vote_count.gte': 10, 'vote_count.lte': 1500, with_genres: '99', ...yearP, ...langP }),
+    /* Pull several pages per endpoint, then rank obscurity blended with
+       your taste. The documentary sweep only widens the mix, so it is
+       skipped once a genre is picked. */
+    const movieBase = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 10, 'vote_count.lte': 3000, ...gp, ...yearP, ...langP };
+    const tvBase    = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 5,  'vote_count.lte': 2000, ...gp, ...yearTV, ...langP };
+    const docBase   = { sort_by: 'vote_average.desc', 'vote_average.gte': 6, 'vote_count.gte': 10, 'vote_count.lte': 2000, with_genres: '99', ...yearP, ...langP };
+    const pages = await Promise.all([
+      discoverSafe('/discover/movie', { ...movieBase, page: 1 }),
+      discoverSafe('/discover/movie', { ...movieBase, page: 2 }),
+      discoverSafe('/discover/movie', { ...movieBase, page: 3 }),
+      discoverSafe('/discover/tv',    { ...tvBase, page: 1 }),
+      discoverSafe('/discover/tv',    { ...tvBase, page: 2 }),
+      discoverSafe('/discover/tv',    { ...tvBase, page: 3 }),
+      gp.with_genres ? { items: [] } : discoverSafe('/discover/movie', { ...docBase, page: 1 }),
+      gp.with_genres ? { items: [] } : discoverSafe('/discover/movie', { ...docBase, page: 2 }),
     ]);
     if (token !== renderToken) return;
+    const movies  = { items: [...(pages[0].items || []), ...(pages[1].items || []), ...(pages[2].items || [])] };
+    const tvShows = { items: [...(pages[3].items || []), ...(pages[4].items || []), ...(pages[5].items || [])] };
+    const docs    = { items: [...(pages[6].items || []), ...(pages[7].items || [])] };
 
     const pool = [
       /* discoverSafe resolves to { items, providerApplied, fellBack }. */
@@ -8236,7 +8363,18 @@ async function renderDiscoveries(main, token) {
       return true;
     });
 
-    unseen.sort((a, b) => obscurityScore(b) - obscurityScore(a));
+    /* Obscurity first, but titles matching your taste (ratings + My List)
+       float up and say why — pure obscurity buried things you would love. */
+    recomputeAffinity();
+    const affinityMap = LS.get('genre_affinity') || {};
+    const affBonus = item => {
+      const gids = item.genre_ids || [];
+      if (!gids.length) return 0;
+      const avg = gids.reduce((s, g) => s + Math.max(0, Number(affinityMap[g]) || 0), 0) / gids.length;
+      return Math.min(3, avg) * 8;
+    };
+    unseen.forEach(i => { if (affBonus(i) > 0) i._why = whyFor(i, affinityMap); });
+    unseen.sort((a, b) => (obscurityScore(b) + affBonus(b)) - (obscurityScore(a) + affBonus(a)));
 
     if (!unseen.length) {
       const active = [];
@@ -8250,7 +8388,7 @@ async function renderDiscoveries(main, token) {
       if (state.obscurityMode) active.push('hide titles');
       const activeNote = active.length ? `Active filters — ${active.join(' · ')}.` : 'No narrowing filters are on.';
       main.insertAdjacentHTML('beforeend', emptyStateHTML('🕵️', 'No discoveries found',
-        `${activeNote} Every shown title is marked seen, so this list shrinks as you browse. Relax the filters or bring back seen titles.`,
+        `${activeNote} Rated, watchlisted, and opened titles are excluded — if a favourite is missing, it is already in your data. Relax the filters or bring back opened titles.`,
         `<div class="empty-actions"><button class="modal-btn primary" onclick="relaxDiscoverFilters()">Relax filters</button> <button class="modal-btn" onclick="resetSeen();renderView()">Show seen again</button> <button class="modal-btn" data-action="trending">Browse Trending</button></div>`));
       return;
     }
@@ -8258,16 +8396,12 @@ async function renderDiscoveries(main, token) {
     const shown = unseen.slice(0, 40);
     const grid = document.createElement('div');
     grid.className = 'watchlist-grid';
-    shown.forEach(item => {
-      markSeen(item.media_type, item.id, true);
-      grid.appendChild(buildCard(item));
-    });
-    savePrefs();
+    shown.forEach(item => grid.appendChild(buildCard(item, true)));
     main.appendChild(grid);
 
     const meta = document.createElement('p');
     meta.style.cssText = 'font-size: var(--text-sm);color:var(--text-muted);margin-top:12px';
-    meta.textContent = `Showing ${shown.length} of ${unseen.length} undiscovered titles (sorted by obscurity). Titles are marked "seen" once they appear here.`;
+    meta.textContent = `Showing ${shown.length} of ${unseen.length} undiscovered titles (obscure first, your taste floated up). Tap 🚫 on cards you are not into — they will not come back.`;
     main.appendChild(meta);
   } catch (e) {
     if (token !== renderToken) return;
@@ -9596,8 +9730,14 @@ function runSelfTest(verbose = true) {
   eq('overlong notes are dropped at load', cleanStore({ movie_1: 'ok', tv_2: 'x'.repeat(2001) }, v => typeof v === 'string' && v.length <= 2000).dropped, 1);
   setNote('movie', 999999, 'selftest note');
   eq('a saved note reads back', getNote('movie', 999999), 'selftest note');
-  setNote('movie', 999999, '');
-  eq('clearing a note removes it', getNote('movie', 999999), '');
+      setNote('movie', 999999, '');
+    eq('clearing a note removes it', getNote('movie', 999999), '');
+    const _sR = state.ratings, _sW = state.watchlist, _sM = state.mediaDetails;
+    state.ratings = {}; state.watchlist = { movie_555001: 'plantowatch' };
+    state.mediaDetails = { movie_555001: { genre_ids: [28] } };
+    recomputeAffinity();
+    eq('watchlist seeds genre affinity', (LS.get('genre_affinity') || {})['28'] > 0, true);
+    state.ratings = _sR; state.watchlist = _sW; state.mediaDetails = _sM; recomputeAffinity();
 
   const passed = results.filter(r => r.ok).length;
   const failed = results.length - passed;
