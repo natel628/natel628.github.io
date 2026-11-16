@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>TV & Movie Calendar</title>
+  <title>Watchlist &amp; Schedule</title>
+  <meta name="description" content="A watchlist with a schedule: rate what you have seen, keep what you want to watch, and see when new episodes and releases arrive." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d0d0f'/%3E%3Crect x='14' y='20' width='36' height='24' rx='4' fill='none' stroke='%23f5a623' stroke-width='4'/%3E%3Cpath d='M26 50h12' stroke='%23f5a623' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
   <style>
     /* ─── Reset & Base ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -2202,19 +2204,19 @@
 </svg>
 
 <nav class="topnav" aria-label="App">
-  <h1>📺 Media Calendar</h1>
+  <h1>📺 Watchlist &amp; Schedule</h1>
   <div class="nav-tabs" aria-label="Views">
     <button type="button" class="nav-tab active" data-view="home" data-section="home" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</button>
     <button type="button" class="nav-tab" data-view="discoveries" data-section="discover"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg>Discover</button>
     <button type="button" class="nav-tab" data-view="calendar" data-section="calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</button>
     <button type="button" class="nav-tab" data-view="watchlist" data-section="list"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>My List</button>
     <button type="button" class="nav-tab" data-view="stats" data-section="stats"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Stats</button>
-    <button type="button" class="nav-tab" data-view="settings" data-section="settings"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg>Settings</button>
   </div>
   <div class="nav-right">
     <button type="button" id="ai-btn" onclick="toggleAiPanel()" title="AI Director — tell it what to show or hide (a)" aria-haspopup="dialog" aria-controls="ai-panel"><svg class="icon" aria-hidden="true"><use href="#i-ai"/></svg><span class="ai-label">AI Director</span></button>
     <button type="button" class="nav-icon-btn" onclick="openHelpModal()" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts"><svg class="icon" aria-hidden="true"><use href="#i-help"/></svg></button>
     <button type="button" class="nav-icon-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme"><svg class="icon i-moon" aria-hidden="true"><use href="#i-moon"/></svg><svg class="icon i-sun" aria-hidden="true"><use href="#i-sun"/></svg></button>
+    <button type="button" class="nav-icon-btn nav-settings-btn" data-view="settings" data-section="settings" onclick="navigateTo('settings')" title="Settings and connections" aria-label="Settings"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg></button>
 
     <span id="simkl-user"></span>
     <button type="button" class="nav-extra" id="simkl-btn" onclick="simklAuth()">
@@ -6527,6 +6529,15 @@ async function renderView() {
   const main = document.getElementById('main-content');
 
   const section = sectionOf(state.view);
+  const viewTitles = {
+    home:       'Watchlist & Schedule',
+    discover:   'Watchlist & Schedule — Discover',
+    calendar:   'Watchlist & Schedule — Calendar',
+    list:       'Watchlist & Schedule — My List',
+    stats:      'Watchlist & Schedule — Stats',
+    settings:   'Watchlist & Schedule — Settings',
+  };
+  document.title = viewTitles[section] || 'Watchlist & Schedule';
   const welcomeBanner = document.getElementById('welcome-banner');
   if (welcomeBanner) welcomeBanner.classList.toggle('off-section', section !== 'home');
   const hideSearch = section === 'settings' || section === 'stats';
@@ -6534,6 +6545,11 @@ async function renderView() {
     el.classList.toggle('off-section', hideSearch));
   document.querySelectorAll('.nav-tab, .bn-item, .more-item').forEach(t => {
     const active = !!t.dataset.section && t.dataset.section === section;
+    if (t.dataset.view === 'settings' && t.classList.contains('nav-settings-btn')) {
+      t.classList.toggle('active', active);
+      if (active) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
+      return;
+    }
     t.classList.toggle('active', active);
     if (active) t.setAttribute('aria-current', 'page');
     else t.removeAttribute('aria-current');
