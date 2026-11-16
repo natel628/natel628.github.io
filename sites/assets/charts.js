@@ -60,6 +60,55 @@ export function nightChart(samples, bestWindow, label, opts = {}) {
     </svg>`;
 }
 
+// Sky compass: the rim is the horizon, the centre is straight overhead, and
+// the marker is the radiant. Distance from the centre shows altitude, so a
+// dot near the middle means "look up", a dot on the rim means "look low".
+export function skyDial(opts = {}) {
+  const size = 180;
+  const cx = size / 2;
+  const cy = size / 2;
+  const outer = 66;
+  const azimuth = (((opts.azimuth ?? 0) % 360) + 360) % 360;
+  const altitude = Math.max(-30, Math.min(90, opts.altitude ?? 0));
+  const above = altitude >= 0;
+  const distance = (1 - Math.max(0, altitude) / 90) * outer;
+
+  const point = (deg, radius) => [
+    round(cx + Math.sin((deg * Math.PI) / 180) * radius),
+    round(cy - Math.cos((deg * Math.PI) / 180) * radius)
+  ];
+
+  const [mx, my] = point(azimuth, above ? distance : outer);
+  const [w1x, w1y] = point(azimuth - 45, outer);
+  const [w2x, w2y] = point(azimuth + 45, outer);
+
+  const ticks = [30, 60, 120, 150, 210, 240, 300, 330].map((deg) => {
+    const [x1, y1] = point(deg, outer - 5);
+    const [x2, y2] = point(deg, outer);
+    return `<line class="tick" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+  }).join('');
+
+  const labels = [['N', 0], ['E', 90], ['S', 180], ['W', 270]].map(([text, deg]) => {
+    const [x, y] = point(deg, outer + 11);
+    return `<text class="cardinal" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${text}</text>`;
+  }).join('');
+
+  const rings = [1 / 3, 2 / 3]
+    .map((fraction) => `<circle class="ring" cx="${cx}" cy="${cy}" r="${round(outer * fraction)}"/>`)
+    .join('');
+
+  return `<svg class="chart chart-dial" viewBox="0 0 ${size} ${size}" role="img" aria-label="${opts.label || 'Sky direction'}">
+      <circle class="horizon" cx="${cx}" cy="${cy}" r="${outer}"/>
+      ${rings}
+      <path class="wedge" d="M${cx},${cy} L${w1x},${w1y} A${outer},${outer} 0 0 1 ${w2x},${w2y} Z"/>
+      ${ticks}
+      ${labels}
+      <line class="sight" x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}"/>
+      <circle class="radiant${above ? '' : ' below'}" cx="${mx}" cy="${my}" r="5"/>
+      <circle class="centre" cx="${cx}" cy="${cy}" r="1.6"/>
+    </svg>`;
+}
+
 // One bar per night of the season, height = how active the shower is.
 export function seasonChart(days, opts = {}) {
   const width = 340;

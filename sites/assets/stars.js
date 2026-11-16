@@ -12,7 +12,7 @@ import {
   seasonDays as seasonNights,
   seasonWindow
 } from './astro.js';
-import { nightChart, seasonChart } from './charts.js';
+import { nightChart, seasonChart, skyDial } from './charts.js';
 import { clearAt, cloudCover } from './weather.js';
 
 const STORE_KEY = 'meteor-tracker:location';
@@ -30,6 +30,10 @@ let state = loadLocation();
 let filter = 'soon';
 let lastRows = [];
 let weather = { points: null, key: '', failedAt: 0, pending: false };
+let rowMap = new Map();
+// Remembers the hour each tile was scrubbed to, so the 10-minute refresh
+// doesn't reset the dial under the reader.
+const lookIndexByShower = new Map();
 
 const $ = (id) => document.getElementById(id);
 const compass = (deg) => COMPASS[Math.round(norm360(deg) / 22.5) % 16];
@@ -197,6 +201,61 @@ function renderHero(rows, now) {
     <p class="hero-foot">${darkLine} · Moon ${Math.round(peakMoon.illumination * 100)}% lit (${peakMoon.name})${cloudPct === null ? '' : ` · sky ${cloudPct}% cloud`}</p>`;
 }
 
+function lookIndex(row) {
+  const samples = row.night.samples;
+  const remembered = lookIndexByShower.get(row.shower.id);
+  if (Number.isInteger(remembered) && remembered < samples.length) return remembered;
+
+  const target = (row.night.bestWindow ? row.night.bestWindow.peak.time : new Date()).getTime();
+  let index = 0;
+  samples.forEach((sample, i) => {
+    if (Math.abs(sample.time - target) < Math.abs(samples[index].time - target)) index = i;
+  });
+  return index;
+}
+
+function aimText(shower, sample) {
+  if (sample.radiantAlt < 0) {
+    return 'The radiant is below the horizon at this hour, so nothing from this shower is visible yet.';
+  }
+  const bearing = compass(azimuth(shower.ra, shower.dec, sample.time, state.lat, state.lon));
+  return `Face <b>${bearing}</b> and look about <b>${Math.round(sample.radiantAlt)}°</b> up`;
+}
+
+function dialLabel(shower, sample) {
+  const bearing = compass(azimuth(shower.ra, shower.dec, sample.time, state.lat, state.lon));
+  return `${shower.name} radiant at ${bearing}, ${Math.round(sample.radiantAlt)} degrees above the horizon`;
+}
+
+function lookBlock(row) {
+  const s = row.shower;
+  const samples = row.night.samples;
+  const index = lookIndex(row);
+  const sample = samples[index];
+  const first = fmtTime(samples[0].time);
+  const last = fmtTime(samples[samples.length - 1].time);
+
+  return `
+        <div class="look">
+          <h4>Where to look</h4>
+          <div class="look-grid">
+            <div class="look-dial" data-look-dial>${skyDial({
+              azimuth: azimuth(s.ra, s.dec, sample.time, state.lat, state.lon),
+              altitude: sample.radiantAlt,
+              label: dialLabel(s, sample)
+            })}</div>
+            <div class="look-side">
+              <p class="look-time"><b data-look-time>${fmtTime(sample.time)}</b> · <span data-look-rate>${rateLabel(sample.rate)}/hr</span></p>
+              <p class="look-aim" data-look-aim>${aimText(s, sample)}</p>
+              <input class="look-slider" type="range" min="0" max="${samples.length - 1}" step="1" value="${index}"
+                data-look-slider aria-label="Time to plan for" aria-valuetext="${fmtTime(sample.time)}">
+              <p class="look-scale"><span>${first}</span><span>${last}</span></p>
+            </div>
+          </div>
+          <p class="chart-caption">Centre of the circle is straight overhead, the rim is the horizon. The dot is where the meteors appear to come from — they fan out around it, so keep that part of the sky in view.</p>
+        </div>`;
+}
+
 function chipFor(row) {
   if (row.daysToPeak === 0) return '<span class="chip chip-hot">Peaks tonight</span>';
   if (row.active && row.daysToPeak <= 2) return '<span class="chip chip-warm">Near peak</span>';
@@ -216,6 +275,7 @@ function cardHTML(row, now) {
   const range = fmtRange(row.season.start, row.season.end);
   const nights = Math.round((row.season.end - row.season.start) / 86400000) + 1;
   const windowCloud = cloudPercent(window_ ? window_.peak.time : now);
+  const look = lookBlock(row);
 
   const stats = showWindow
     ? `<div><dt>Best window</dt><dd>${fmtTime(window_.start)} – ${fmtTime(window_.end)}</dd></div>
@@ -259,6 +319,7 @@ function cardHTML(row, now) {
         <p class="card-toggle">Charts &amp; details <span class="chev" aria-hidden="true">▾</span></p>
       </summary>
       <div class="card-detail">
+        ${look}
         <div class="chart-block">
           <h4>Next 24 hours</h4>
           ${hourly}
@@ -292,6 +353,8 @@ function renderGrid(rows, now) {
     ? visible.map((row) => cardHTML(row, now)).join('')
     : `<p class="empty">No shower is active or peaks within ${UPCOMING_DAYS} days.
         <button type="button" class="btn btn-ghost btn-sm" data-show-all>Show all showers</button></p>`;
+
+  rowMap = new Map(visible.map((row) => [row.shower.id, row]));
 
   document.querySelectorAll('#grid .card').forEach((el) => {
     if (openIds.includes(el.dataset.id)) el.open = true;
@@ -431,6 +494,33 @@ document.querySelector('.filters').addEventListener('click', (event) => {
 
 $('grid').addEventListener('click', (event) => {
   if (event.target.closest('[data-show-all]')) setFilter('all');
+});
+
+// Scrubbing the hour updates the dial in place, so the tile never closes.
+$('grid').addEventListener('input', (event) => {
+  const slider = event.target.closest('[data-look-slider]');
+  if (!slider) return;
+
+  const card = slider.closest('.card');
+  const row = rowMap.get(card?.dataset.id);
+  if (!row) return;
+
+  const index = Number(slider.value);
+  const sample = row.night.samples[index];
+  if (!sample) return;
+
+  lookIndexByShower.set(row.shower.id, index);
+  const aim = aimText(row.shower, sample);
+
+  card.querySelector('[data-look-dial]').innerHTML = skyDial({
+    azimuth: azimuth(row.shower.ra, row.shower.dec, sample.time, state.lat, state.lon),
+    altitude: sample.radiantAlt,
+    label: dialLabel(row.shower, sample)
+  });
+  card.querySelector('[data-look-time]').textContent = fmtTime(sample.time);
+  card.querySelector('[data-look-rate]').textContent = `${rateLabel(sample.rate)}/hr`;
+  card.querySelector('[data-look-aim]').innerHTML = aim;
+  slider.setAttribute('aria-valuetext', `${fmtTime(sample.time)}: ${aim.replace(/<[^>]*>/g, '')}`);
 });
 
 $('sky').addEventListener('change', () => {

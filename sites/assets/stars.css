@@ -536,6 +536,84 @@ h1 {
 }
 .card-range strong { font-weight: 600; color: var(--cream); }
 
+/* ── Where to look ──────────────────────────────────────────── */
+.look {
+  display: grid;
+  gap: 10px;
+}
+
+.look-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.look-dial {
+  flex: 0 0 auto;
+  width: 164px;
+}
+
+.chart-dial .horizon {
+  fill: rgba(255, 255, 255, 0.035);
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.chart-dial .ring {
+  fill: none;
+  stroke: var(--line);
+  stroke-dasharray: 2 3;
+}
+
+.chart-dial .tick { stroke: var(--line-strong); stroke-width: 1; }
+
+.chart-dial .cardinal {
+  fill: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.chart-dial .wedge { fill: rgba(240, 193, 97, 0.1); }
+.chart-dial .sight { stroke: rgba(240, 193, 97, 0.5); stroke-width: 1.2; }
+.chart-dial .radiant { fill: var(--gold); }
+.chart-dial .radiant.below { fill: #6c7891; }
+.chart-dial .centre { fill: var(--muted); }
+
+.look-side {
+  flex: 1 1 150px;
+  display: grid;
+  gap: 7px;
+}
+
+.look-time {
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.look-aim {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.look-aim b { color: var(--cream); font-weight: 600; }
+
+.look-slider {
+  width: 100%;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+.look-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.66rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Charts ─────────────────────────────────────────────────── */
 .chart-block h4 {
   font-size: 0.68rem;
