@@ -612,6 +612,66 @@
     .ep-meta { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
     .ep-links { margin-top: 4px; display: flex; gap: 8px; align-items: center; }
     .ep-links a { color: var(--accent); }
+    /* ─── New Episodes (catch up) ───────────────────────────────────── */
+    .catchup-list { display: flex; flex-direction: column; gap: 10px; }
+    .catchup-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+    }
+    .catchup-poster {
+      width: 54px;
+      height: 80px;
+      object-fit: cover;
+      flex: 0 0 auto;
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+    }
+    .catchup-poster-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-lg);
+      color: var(--text-muted);
+    }
+    .catchup-info { flex: 1 1 auto; min-width: 0; }
+    .catchup-show {
+      font-size: var(--text-md);
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .catchup-ep {
+      font-size: var(--text-sm);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .catchup-ep .ep-code { color: var(--accent-2); font-weight: 700; }
+    .catchup-meta { font-size: var(--text-xs); color: var(--text-muted); margin-top: 3px; }
+    .catchup-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex: 0 0 auto; }
+    .catchup-actions .modal-btn { padding: 7px 12px; }
+    .catchup-done {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      margin-top: 14px;
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+    }
+    .catchup-done strong { color: var(--text); font-weight: 600; }
+    .catchup-done .cu-name { white-space: nowrap; }
+    @media (max-width: 700px) {
+      .catchup-row { flex-wrap: wrap; }
+      .catchup-actions { width: 100%; }
+      .catchup-actions .modal-btn.primary { flex: 1 1 auto; }
+    }
     .card-score {
       font-size: var(--text-xs);
       font-weight: 700;
@@ -2380,6 +2440,7 @@
     <button type="button" class="nav-tab active" data-view="home" data-section="home" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</button>
     <button type="button" class="nav-tab" data-view="discoveries" data-section="discover"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg>Discover</button>
     <button type="button" class="nav-tab" data-view="calendar" data-section="calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</button>
+    <button type="button" class="nav-tab" data-view="catchup" data-section="catchup"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>New Episodes</button>
     <button type="button" class="nav-tab" data-view="watchlist" data-section="list"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>My List</button>
     <button type="button" class="nav-tab" data-view="lists" data-section="lists"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Lists</button>
     <button type="button" class="nav-tab" data-view="settings" data-section="settings"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg>Settings</button>
@@ -2668,6 +2729,7 @@
   <h2>More</h2>
   <div class="more-grid">
     <button type="button" class="more-item" data-view="calendar" data-section="calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</button>
+    <button type="button" class="more-item" data-view="catchup" data-section="catchup"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>New Episodes</button>
     <button type="button" class="more-item" data-view="stats" data-section="stats"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Stats</button>
     <button type="button" class="more-item" data-view="settings" data-section="settings"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg>Settings</button>
   </div>
@@ -2971,8 +3033,13 @@ const _savedWlAdded   = cleanStore(LS.get('wl_added'), v => isFiniteNumber(v) &&
 const _savedDetails   = cleanMediaDetails(LS.get('media_details_cache'));
 const _savedLlm   = cleanLlm(LS.get('llm_config'));
 const _savedNotes = cleanStore(LS.get('my_notes'), v => typeof v === 'string' && v.length <= 2000);
+/* Episode progress: a "watched through" marker per followed show, so a long
+   show only needs the episode actually ticked off to be remembered. */
+const _savedEpProgress = cleanStore(LS.get('ep_progress'), v =>
+  isPlainObject(v) && Number.isInteger(v.s) && Number.isInteger(v.e) && v.s >= 1 && v.e >= 0);
 const _droppedOnLoad  = _savedRatings.dropped + _savedWatchlist.dropped +
-                        _savedWlAdded.dropped + _savedDetails.dropped + _savedNotes.dropped;
+                        _savedWlAdded.dropped + _savedDetails.dropped + _savedNotes.dropped +
+                        _savedEpProgress.dropped;
 
 let state = {
   view: 'trending',
@@ -2995,6 +3062,7 @@ let state = {
   wlAdded: _savedWlAdded.value,
   mediaDetails: _savedDetails.value,
   notes: _savedNotes.value,
+  epProgress: _savedEpProgress.value,
   /* Custom Lists: named collections, separate from My List's status buckets.
      Kept as their own key so a schema change here can never touch ratings. */
   lists: (Array.isArray(LS.get('custom_lists')) ? LS.get('custom_lists') : [])
@@ -3031,6 +3099,7 @@ let state = {
 
 function saveRatings()      { LS.set('my_ratings',          state.ratings); }
 function saveNotes()        { LS.set('my_notes',            state.notes); }
+function saveEpProgress()   { LS.set('ep_progress',         state.epProgress); }
 function saveWatchlist()    { LS.set('my_watchlist',        state.watchlist); LS.set('wl_added', state.wlAdded); }
 function saveSimkl()        { LS.set('simkl_token',         state.simklToken); LS.set('simkl_user', state.simklUser); }
 function saveRules()        { LS.set('ai_rules',            state.rules); }
@@ -7262,7 +7331,7 @@ const VIEW_SECTION = {
   wheretowatch: 'discover',
   list: 'list', watchlist: 'list', quickrate: 'list', stats: 'list',
   lists: 'lists',
-  calendar: 'calendar', settings: 'settings',
+  calendar: 'calendar', settings: 'settings', catchup: 'catchup',
 };
 /* Icon reference for labels that are injected as markup. */
 const ICON = id => `<svg class="icon" aria-hidden="true"><use href="#${id}"/></svg>`;
@@ -7272,7 +7341,7 @@ const SECTION_VIEWS = {
   discover: [['discoveries', ICON('i-search') + 'Discoveries'], ['moodboard', ICON('i-palette') + 'Mood Board'], ['upcoming', ICON('i-film') + 'Upcoming']],
   list:     [['watchlist', ICON('i-star') + 'My List'], ['quickrate', ICON('i-bolt') + 'Quick Rate'], ['stats', ICON('i-chart') + 'Stats']],
 };
-const PRIMARY_SECTIONS = new Set(['home', 'discover', 'calendar', 'list', 'lists', 'settings']);
+const PRIMARY_SECTIONS = new Set(['home', 'discover', 'calendar', 'list', 'lists', 'settings', 'catchup']);
 
 function sectionOf(view) { return VIEW_SECTION[view] || 'home'; }
 
@@ -7304,11 +7373,11 @@ function renderSectionActions(section) {
   el.querySelector('[data-act="tonight"]')?.addEventListener('click', whatsOnTonight);
 }
 
-const SECTION_LABEL = { home: 'Home', discover: 'Discover', calendar: 'Calendar', list: 'My List', lists: 'Lists', settings: 'Settings' };
+const SECTION_LABEL = { home: 'Home', discover: 'Discover', calendar: 'Calendar', list: 'My List', lists: 'Lists', settings: 'Settings', catchup: 'New Episodes' };
 const VIEW_LABEL = {
   trending: 'Trending', recommended: 'For You', discoveries: 'Discoveries', moodboard: 'Mood Board',
   upcoming: 'Upcoming', watchlist: 'My List', quickrate: 'Quick Rate', stats: 'Stats',
-  calendar: 'Calendar', settings: 'Settings', lists: 'Lists', search: 'Search',
+  calendar: 'Calendar', settings: 'Settings', lists: 'Lists', search: 'Search', catchup: 'New Episodes',
 };
 
 function renderBreadcrumb(section) {
@@ -7354,6 +7423,7 @@ async function renderView() {
     home:       'Watchlist & Schedule',
     discover:   'Watchlist & Schedule — Discover',
     calendar:   'Watchlist & Schedule — Calendar',
+    catchup:    'Watchlist & Schedule — New Episodes',
     list:       'Watchlist & Schedule — My List',
     stats:      'Watchlist & Schedule — Stats',
     settings:   'Watchlist & Schedule — Settings',
@@ -7396,6 +7466,7 @@ async function renderView() {
       case 'trending':    await renderTrending(main, token);   break;
       case 'calendar':    await renderCalendar(main, token);   break;
       case 'upcoming':    await renderUpcoming(main, token);   break;
+      case 'catchup':     await renderCatchUp(main, token);    break;
       case 'watchlist':   await renderWatchlist(main, token);  break;
       case 'recommended': await renderRecommended(main, token);break;
       case 'search':      await renderSearch(main, token);     break;
@@ -8667,6 +8738,239 @@ async function renderWatchlist(main, token) {
 /* Leaving the view (or re-rendering it) drops the patcher so a stale closure
    can never touch detached DOM. */
 function clearWatchlistSync() { watchlistSync = null; }
+
+/* ── NEW EPISODES: catch up on the shows you follow ───────────────────
+   Every TV show on My List marked "Plan to Watch" or "Watching" gets one
+   row: the next episode that has already aired and that has not been
+   marked watched. Progress is a "watched through" marker per show
+   ({ s: season, e: episode }), so only the episode ticked off is stored —
+   everything before it counts as watched. Season lists are cached for the
+   session and marking is local, so this works with or without Simkl.
+   ───────────────────────────────────────────────────────────────────── */
+const _seasonEps = new Map();   // `${showId}:${season}` → aired episodes
+let catchUpRows = [];           // this view's rows, kept for in-place patching
+let catchUpRun = 0;             // guards a paint from a stale render
+
+async function seasonAiredEpisodes(showId, seasonNumber) {
+  const key = `${showId}:${seasonNumber}`;
+  if (_seasonEps.has(key)) return _seasonEps.get(key);
+  const today = todayISO();
+  let episodes = [];
+  try {
+    const data = await tmdb(`/tv/${showId}/season/${seasonNumber}`);
+    episodes = (data.episodes || [])
+      .filter(ep => ep && ep.season_number > 0 && Number.isInteger(ep.episode_number) &&
+                    ep.air_date && ep.air_date <= today)
+      .map(ep => ({ s: ep.season_number, e: ep.episode_number, name: ep.name || '', airDate: ep.air_date }))
+      .sort((a, b) => a.e - b.e);
+  } catch (e) {
+    console.warn(`Season ${seasonNumber} of show ${showId} failed:`, e);
+  }
+  _seasonEps.set(key, episodes);
+  return episodes;
+}
+
+/* Seasons that have started airing, specials (season 0) left out. */
+function airedSeasonNumbers(detail) {
+  const today = todayISO();
+  return (detail.seasons || [])
+    .filter(s => s && s.season_number > 0 && s.air_date && s.air_date <= today)
+    .map(s => s.season_number)
+    .sort((a, b) => a - b);
+}
+
+const episodeAfterMarker = (ep, marker) =>
+  !marker || ep.s > marker.s || (ep.s === marker.s && ep.e > marker.e);
+
+/* The first aired episode after the show's marker, or null when caught up.
+   Seasons are read in order and the scan stops at the first hit, so a show
+   that is up to date costs one detail call plus one season call. */
+async function nextAiredEpisode(showId, detail) {
+  const marker = state.epProgress[`tv_${showId}`] || null;
+  const seasons = airedSeasonNumbers(detail).filter(n => !marker || n >= marker.s);
+  for (const n of seasons) {
+    const hit = (await seasonAiredEpisodes(showId, n)).find(ep => episodeAfterMarker(ep, marker));
+    if (hit) return hit;
+  }
+  return null;
+}
+
+function lastAiredEpisode(detail) {
+  const last = detail && detail.last_episode_to_air;
+  if (!last || !last.air_date || last.air_date > todayISO()) return null;
+  if (!(last.season_number > 0) || !Number.isInteger(last.episode_number)) return null;
+  return { s: last.season_number, e: last.episode_number, name: last.name || '', airDate: last.air_date };
+}
+
+function epCode(ep) { return `S${pad2(ep.s)}E${pad2(ep.e)}`; }
+
+function epAiredLabel(iso) {
+  const days = daysSince(iso);
+  if (days === 0) return 'aired today';
+  if (days === 1) return 'aired yesterday';
+  if (Number.isFinite(days)) return `aired ${days} days ago`;
+  return `aired ${formatDate(iso)}`;
+}
+
+function catchUpRowHTML(row) {
+  const detail = row.detail || {};
+  const name = detail.name || (state.mediaDetails[row.key] || {}).title || 'Untitled show';
+  const poster = detail.poster_path ? posterUrl(detail.poster_path) : '';
+  const ep = row.next;
+  const last = lastAiredEpisode(detail);
+  const more = last && (last.s > ep.s || (last.s === ep.s && last.e > ep.e))
+    ? (last.s === ep.s
+        ? `${last.e - ep.e} more episode${last.e - ep.e === 1 ? '' : 's'} already aired`
+        : 'later episodes already aired')
+    : '';
+  return `<div class="catchup-row" data-show="${row.showId}">
+    ${poster
+      ? `<img class="catchup-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" />`
+      : `<div class="catchup-poster catchup-poster-empty" aria-hidden="true">📺</div>`}
+    <div class="catchup-info">
+      <div class="catchup-show">${esc(name)}</div>
+      <div class="catchup-ep"><span class="ep-code">${epCode(ep)}</span>${ep.name ? ` · ${esc(ep.name)}` : ''}</div>
+      <div class="catchup-meta">${esc(epAiredLabel(ep.airDate))}${more ? ` · ${esc(more)}` : ''}</div>
+    </div>
+    <div class="catchup-actions">
+      <button type="button" class="modal-btn primary" data-catchup="watch" data-show="${row.showId}">✓ Watched</button>
+      ${more ? `<button type="button" class="modal-btn" data-catchup="all" data-show="${row.showId}">Mark all aired</button>` : ''}
+      <button type="button" class="modal-btn" data-catchup="open" data-show="${row.showId}">Details</button>
+    </div>
+  </div>`;
+}
+
+function paintCatchUp() {
+  const list = document.getElementById('catchup-list');
+  const doneEl = document.getElementById('catchup-done');
+  const status = document.getElementById('catchup-status');
+  const count = document.getElementById('catchup-count');
+  if (!list || !doneEl) return;
+
+  const waiting = catchUpRows
+    .filter(r => r.next)
+    .sort((a, b) => String(b.next.airDate).localeCompare(String(a.next.airDate)));
+  const done = catchUpRows.filter(r => !r.next && r.detail);
+  const failed = catchUpRows.filter(r => !r.detail);
+
+  list.innerHTML = waiting.map(catchUpRowHTML).join('');
+  list.hidden = waiting.length === 0;
+  if (count) {
+    count.hidden = waiting.length === 0;
+    count.textContent = String(waiting.length);
+  }
+  if (status) {
+    status.textContent = waiting.length
+      ? `${waiting.length} show${waiting.length === 1 ? '' : 's'} with something waiting`
+      : 'Nothing waiting: everything that has aired is marked watched.';
+  }
+  doneEl.innerHTML =
+    (done.length
+      ? `<div class="catchup-done"><strong>✓ Up to date (${done.length}):</strong>${done
+          .map(r => `<span class="cu-name">${esc((r.detail && r.detail.name) || 'Untitled show')}</span>`)
+          .join('')}</div>`
+      : '') +
+    (failed.length
+      ? `<p style="font-size: var(--text-xs);color:var(--text-muted);margin-top:12px">
+           Could not load episode data for ${failed.length} show${failed.length === 1 ? '' : 's'}.
+         </p>`
+      : '');
+}
+
+async function markCatchUpEpisode(showId, allAired) {
+  const row = catchUpRows.find(r => r.showId === showId);
+  if (!row || !row.detail) return;
+  const target = allAired ? lastAiredEpisode(row.detail) : row.next;
+  if (!target) return;
+  const before = state.epProgress[row.key] || null;
+
+  state.epProgress[row.key] = { s: target.s, e: target.e };
+  saveEpProgress();
+
+  row.next = await nextAiredEpisode(showId, row.detail);
+  paintCatchUp();
+
+  const name = row.detail.name || 'Show';
+  toast(`✅ ${name} ${epCode(target)} marked watched`, {
+    duration: 6000,
+    actionLabel: 'Undo',
+    onAction: async () => {
+      if (before) state.epProgress[row.key] = before;
+      else delete state.epProgress[row.key];
+      saveEpProgress();
+      row.next = await nextAiredEpisode(showId, row.detail);
+      paintCatchUp();
+    },
+  });
+}
+
+async function renderCatchUp(main, token) {
+  main.innerHTML = '';
+  const run = ++catchUpRun;
+
+  if (catalogMissing()) {
+    main.innerHTML = emptyStateHTML('📺', 'Episode tracking needs the catalog',
+      'This copy has no catalog key, so episode data cannot load. Your list, ratings and Stats still work on this device.');
+    return;
+  }
+
+  const followed = Object.entries(state.watchlist)
+    .filter(([k, s]) => k.startsWith('tv_') && (s === 'watching' || s === 'plantowatch'))
+    .sort((a, b) => (state.wlAdded[b[0]] || 0) - (state.wlAdded[a[0]] || 0))
+    .slice(0, 20);
+
+  if (!followed.length) {
+    main.innerHTML = emptyStateHTML('🆕', 'No shows to follow yet',
+      'Put a TV show on My List as “Plan to Watch” or “Watching” and every episode that airs will wait for you here.',
+      `<div class="empty-actions"><button class="modal-btn primary" data-action="trending">Browse Trending</button></div>`);
+    return;
+  }
+
+  const wrap = document.createElement('div');
+  wrap.className = 'section';
+  wrap.innerHTML = `
+    <div class="section-header">
+      <span class="section-title">🆕 New Episodes</span>
+      <span class="nav-count" id="catchup-count" hidden></span>
+    </div>
+    <p style="font-size: var(--text-sm);color:var(--text-muted);margin:-4px 0 14px">
+      Episodes that have already aired, from the shows on your list. Tick one off and the next one moves up.
+    </p>
+    <div class="catchup-list" id="catchup-list">
+      ${followed.map(() => '<div class="catchup-row skeleton" style="height:100px"></div>').join('')}
+    </div>
+    <div id="catchup-done"></div>
+    <div id="catchup-status" aria-live="polite" style="font-size: var(--text-xs);color:var(--text-muted);margin-top:12px"></div>`;
+  main.appendChild(wrap);
+
+  wrap.addEventListener('click', e => {
+    const btn = e.target.closest('[data-catchup]');
+    if (!btn) return;
+    const showId = Number(btn.dataset.show);
+    const row = catchUpRows.find(r => r.showId === showId);
+    if (btn.dataset.catchup === 'open') {
+      if (row) openModal('tv', showId, row.detail || state.mediaDetails[row.key] || {});
+      return;
+    }
+    markCatchUpEpisode(showId, btn.dataset.catchup === 'all');
+  });
+
+  catchUpRows = [];
+  const rows = await promiseAllChunked(followed, async ([key]) => {
+    const showId = Number(key.slice(3));
+    try {
+      const detail = await tmdb(`/tv/${showId}`);
+      return { key, showId, detail, next: await nextAiredEpisode(showId, detail) };
+    } catch (e) {
+      console.warn(`Catch-up: show ${showId} failed:`, e);
+      return { key, showId, detail: state.mediaDetails[key] || null, next: null };
+    }
+  }, 4);
+
+  if (token !== renderToken || run !== catchUpRun) return;
+  catchUpRows = rows;
+  paintCatchUp();
+}
 
 /* ── FOR YOU ──────────────────────────────────────────────────────── */
 async function renderRecommended(main, token) {
@@ -12317,7 +12621,7 @@ async function checkNewEpisodes() {
     LS.set('new_ep_seen_day', today);
     const one = items.length === 1 ? ` — ${items[0].title} S${items[0].season} E${items[0].episode}` : '';
     setTimeout(() => toast(`🆕 ${items.length} new episode${items.length === 1 ? '' : 's'} from your list this week${one}`,
-      { duration: 8000, actionLabel: 'Calendar', onAction: () => navigateTo('calendar') }), 2500);
+      { duration: 8000, actionLabel: 'New episodes', onAction: () => navigateTo('catchup') }), 2500);
   } catch (e) { console.warn('New-episode check error:', e); }
 }
 window.__selftest = () => runSelfTest(true);
