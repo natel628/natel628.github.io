@@ -5758,14 +5758,6 @@ function buildCard(item, dismiss = false) {
   card.dataset.id = id;
   card.dataset.type = type;
   card.dataset.obscurity = osc;
-  /* The card's own "Add to list" button builds its snapshot from these, so a
-     list can be filled straight from a grid, without opening the detail view
-     first (the button had a data-action but no handler). */
-  card.dataset.title = title;
-  card.dataset.posterPath = item.poster_path || '';
-  card.dataset.date = item.release_date || item.first_air_date || '';
-  card.dataset.vote = item.vote_average || 0;
-  card.dataset.votes = item.vote_count || 0;
   if (item.genre_ids) card.dataset.genres = item.genre_ids.join(',');
 
   const cardEl = card;
@@ -5791,7 +5783,7 @@ function buildCard(item, dismiss = false) {
   const dismissBtn = dismiss ? `<button class="card-dismiss" data-action="dismiss-card"
       data-dismiss-key="${type}_${id}" data-dismiss-title="${esc(title)}"
       title="Not interested" aria-label="Not interested">🚫</button>` : '';
-  const addListBtn = `<button class="card-add" type="button" data-action="add-to-list"
+  const addListBtn = `<button class="card-add" type="button"
       title="Add to list" aria-label="Add ${esc(title)} to a list">＋</button>`;
   const watchBtn = `<button class="card-watch" type="button" aria-haspopup="menu" aria-controls="watch-menu" aria-expanded="false"
       aria-label="Watch ${esc(title)}" title="Watch free">▶</button>`;
@@ -6095,23 +6087,6 @@ function handleAction(action, el) {
         duration: 8000,
         actionLabel: 'Undo',
         onAction: () => { setRuleEnabled(id, true); afterRuleChange(); toast('Rule active again'); },
-      });
-      break;
-    }
-    case 'add-to-list': {
-      const card = el && el.closest('.card');
-      if (!card) break;
-      openListPicker({
-        media_type: card.dataset.type,
-        id: Number(card.dataset.id),
-        title: card.dataset.title || '',
-        name: card.dataset.title || '',
-        poster_path: card.dataset.posterPath || '',
-        release_date: card.dataset.date || '',
-        first_air_date: card.dataset.date || '',
-        vote_average: Number(card.dataset.vote) || 0,
-        vote_count: Number(card.dataset.votes) || 0,
-        genre_ids: (card.dataset.genres || '').split(',').filter(Boolean).map(Number),
       });
       break;
     }
