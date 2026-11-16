@@ -27,6 +27,13 @@
       <div class="loc-row">
         <button class="btn" type="button" id="geoBtn">Use my location</button>
         <button class="btn btn-ghost" type="button" id="manualBtn" aria-expanded="false" aria-controls="manual">Enter coordinates</button>
+        <label class="sky-pick">Sky
+          <select id="sky">
+            <option value="dark">Dark rural</option>
+            <option value="suburban">Suburban</option>
+            <option value="city">City</option>
+          </select>
+        </label>
       </div>
       <form class="manual" id="manual" hidden>
         <label>Lat <input id="lat" name="lat" type="text" inputmode="decimal" placeholder="41.82" required></label>
@@ -58,8 +65,8 @@
   </section>
 
   <footer class="note">
-    <p><strong>How the numbers work.</strong> ZHR is the ideal rate at peak with the radiant overhead under a dark sky — real counts are lower, and city lights cut them further. The radiant is the patch of sky the meteors appear to stream from; the higher it sits, the more of them clear the horizon. A shower's best window here is the stretch where the Sun is at least 12° below the horizon and the radiant is above 15°.</p>
-    <p>Peak dates drift a day or two year to year, radiant positions are approximate, and moon illumination comes from the synodic month, so treat this as planning guidance rather than an ephemeris.</p>
+    <p><strong>How the numbers work.</strong> ZHR is the ideal rate at peak with the radiant directly overhead under a perfectly dark sky — real counts are lower. The radiant is the patch of sky the meteors appear to stream from; the higher it sits, the more of them clear the horizon. A shower's best window is the stretch where the Sun is at least 12° below the horizon and the radiant is above 15°, and every estimate here also accounts for moonlight, your sky setting and any forecast cloud.</p>
+    <p>Peak dates drift a day or two year to year, radiant positions are approximate, and moon illumination comes from the synodic month, so treat this as planning guidance rather than an ephemeris. Cloud cover comes from the free <a href="https://open-meteo.com/">Open-Meteo</a> forecast, requested straight from your browser.</p>
   </footer>
 </main>
 

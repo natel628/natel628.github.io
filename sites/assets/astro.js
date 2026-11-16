@@ -120,9 +120,11 @@ export function moonGlow(illumination, moonAltDeg) {
   return 1 - 0.9 * illumination * up;
 }
 
-export function expectedRate(zhr, activity, radiantAltDeg, glow, darkness) {
+// skyFactor is the 2.5^(limiting magnitude - 6.5) correction for light
+// pollution: a suburban sky shows roughly 40% of the dark-sky rate.
+export function expectedRate(zhr, activity, radiantAltDeg, glow, darkness, skyFactor = 1) {
   if (radiantAltDeg <= 0 || activity <= 0 || darkness <= 0) return 0;
-  return zhr * activity * Math.sin(clamp(radiantAltDeg, 0, 90) * DEG) * glow * darkness;
+  return zhr * activity * Math.sin(clamp(radiantAltDeg, 0, 90) * DEG) * glow * darkness * skyFactor;
 }
 
 // ── Shower activity ───────────────────────────────────────────────────────
@@ -236,7 +238,8 @@ export function seasonDays(shower, window_) {
 }
 
 // Score every 10-minute step of the next `hours` for one shower.
-export function evaluateNight(shower, latDeg, lonDeg, now = new Date(), hours = 24, stepMinutes = 10) {
+export function evaluateNight(shower, latDeg, lonDeg, now = new Date(), options = {}) {
+  const { hours = 24, stepMinutes = 10, skyFactor = 1, clearSky = null } = options;
   const stepMs = stepMinutes * 60000;
   const steps = Math.round((hours * 60) / stepMinutes);
   const moon = moonPhase(now);
@@ -251,10 +254,13 @@ export function evaluateNight(shower, latDeg, lonDeg, now = new Date(), hours = 
     const glow = moonGlow(moon.illumination, moonAltitude(time, latDeg, lonDeg));
     const radiantAlt = altitude(shower.ra, shower.dec, time, latDeg, lonDeg);
     const { activity } = activityFor(shower, time);
-    const rate = expectedRate(shower.zhr, activity, radiantAlt, glow, darkness);
+    // clearSky is 1 when the forecast is unknown, so the page degrades to
+    // astronomy-only numbers rather than hiding everything.
+    const clear = clearSky ? clamp(clearSky(time), 0, 1) : 1;
+    const rate = expectedRate(shower.zhr, activity, radiantAlt, glow, darkness, skyFactor) * clear;
     const usable = darkness > 0 && radiantAlt >= 15;
 
-    const sample = { time, rate, radiantAlt, darkness, glow };
+    const sample = { time, rate, radiantAlt, darkness, glow, clear };
     samples.push(sample);
     if (!best || rate > best.rate) best = sample;
 

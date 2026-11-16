@@ -13,9 +13,14 @@ import {
   seasonWindow
 } from './astro.js';
 import { nightChart, seasonChart } from './charts.js';
+import { clearAt, cloudCover } from './weather.js';
 
 const STORE_KEY = 'meteor-tracker:location';
-const DEFAULT_LOCATION = { lat: 41.82, lon: -71.4, label: 'Rhode Island (default)' };
+const DEFAULT_LOCATION = { lat: 41.82, lon: -71.4, label: 'Rhode Island (default)', sky: 'suburban' };
+
+// Limiting magnitudes of roughly 6.5 (dark rural), 5.5 (suburban) and 4.5
+// (city), applied as the standard 2.5^(lm - 6.5) correction to ZHR.
+const SKY = { dark: 1, suburban: 2.5 ** -1, city: 2.5 ** -2 };
 const COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
   'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
 
@@ -24,6 +29,7 @@ const UPCOMING_DAYS = 30;
 let state = loadLocation();
 let filter = 'soon';
 let lastRows = [];
+let weather = { points: null, key: '', failedAt: 0, pending: false };
 
 const $ = (id) => document.getElementById(id);
 const compass = (deg) => COMPASS[Math.round(norm360(deg) / 22.5) % 16];
@@ -53,7 +59,12 @@ function loadLocation() {
     if (raw) {
       const saved = JSON.parse(raw);
       if (Number.isFinite(saved.lat) && Number.isFinite(saved.lon)) {
-        return { lat: saved.lat, lon: saved.lon, label: saved.label || 'saved location' };
+        return {
+          lat: saved.lat,
+          lon: saved.lon,
+          label: saved.label || 'saved location',
+          sky: SKY[saved.sky] ? saved.sky : DEFAULT_LOCATION.sky
+        };
       }
     }
   } catch {
@@ -93,12 +104,30 @@ function countdown(ms) {
   return `${Math.max(1, rest)}m`;
 }
 
+// Clear-sky fraction from the forecast, or null when there isn't one.
+function clearFor(time) {
+  if (!weather.points) return null;
+  return clearAt(weather.points, time);
+}
+
+function cloudPercent(time) {
+  const clear = clearFor(time);
+  return clear === null ? null : Math.round((1 - clear) * 100);
+}
+
 function buildRows(now) {
   const startOfToday = new Date(now);
   startOfToday.setHours(0, 0, 0, 0);
+  const skyFactor = SKY[state.sky] ?? 1;
+  const clearSky = weather.points
+    ? (time) => {
+      const value = clearAt(weather.points, time);
+      return value === null ? 1 : value;
+    }
+    : null;
 
   return SHOWERS.map((shower) => {
-    const night = evaluateNight(shower, state.lat, state.lon, now);
+    const night = evaluateNight(shower, state.lat, state.lon, now, { skyFactor, clearSky });
     // The season containing today (or the next one) is what the card talks
     // about, so the peak shown always belongs to the range beside it.
     const season = seasonWindow(shower, now);
@@ -130,6 +159,9 @@ function renderHero(rows, now) {
     ? `Astronomical dark <b>${fmtTime(dark.start)}</b> → <b>${fmtTime(dark.end)}</b>${darkNow ? ' · dark right now' : ''}`
     : 'No full astronomical darkness at this latitude in the next day';
 
+  const quietCloudPct = cloudPercent(now);
+  const quietCloud = quietCloudPct === null ? '' : ` · sky ${quietCloudPct}% cloud`;
+
   const top = rows.find((row) => row.night.bestWindow && row.night.bestWindow.peak.rate >= 1);
 
   if (!top) {
@@ -139,7 +171,7 @@ function renderHero(rows, now) {
       <h2 class="hero-title">Quiet skies tonight</h2>
       <p class="hero-sub">Nothing is above the useful threshold while it is properly dark. The next peak is the
         <b>${soonest.shower.name}</b> on <b>${fmtDay(soonest.peak)}</b>, ${countdown(soonest.peak - now)} from now.</p>
-      <p class="hero-foot">${darkLine} · Moon ${Math.round(moon.illumination * 100)}% lit (${moon.name})</p>`;
+      <p class="hero-foot">${darkLine} · Moon ${Math.round(moon.illumination * 100)}% lit (${moon.name})${quietCloud}</p>`;
     return;
   }
 
@@ -147,21 +179,22 @@ function renderHero(rows, now) {
   const sample = window_.peak;
   const peakMoon = moonPhase(sample.time);
   const bearing = compass(azimuth(top.shower.ra, top.shower.dec, sample.time, state.lat, state.lon));
+  const cloudPct = cloudPercent(sample.time);
 
   el.innerHTML = `
     <p class="eyebrow">Tonight where you are</p>
     <div class="hero-top">
       <div>
         <h2 class="hero-title">${top.shower.name}</h2>
-        <p class="hero-sub">Best between <b>${fmtTime(window_.start)}</b> and <b>${fmtTime(window_.end)}</b>,
-          with the radiant <b>${Math.round(sample.radiantAlt)}°</b> up in the <b>${bearing}</b>.</p>
+        <p class="hero-sub">Best between <b>${fmtTime(window_.start)}</b> and <b>${fmtTime(window_.end)}</b>.
+          Meteors will appear to come from the <b>${bearing}</b>, <b>${Math.round(sample.radiantAlt)}°</b> above the horizon.</p>
       </div>
       <p class="hero-rate">
         <span class="hero-num">${rateNum(sample.rate)}</span>
         <span class="hero-unit">meteors/hr<br>estimated</span>
       </p>
     </div>
-    <p class="hero-foot">${darkLine} · Moon ${Math.round(peakMoon.illumination * 100)}% lit (${peakMoon.name})</p>`;
+    <p class="hero-foot">${darkLine} · Moon ${Math.round(peakMoon.illumination * 100)}% lit (${peakMoon.name})${cloudPct === null ? '' : ` · sky ${cloudPct}% cloud`}</p>`;
 }
 
 function chipFor(row) {
@@ -182,10 +215,11 @@ function cardHTML(row, now) {
   const highest = samples.reduce((a, b) => (b.radiantAlt > a.radiantAlt ? b : a), samples[0]);
   const range = fmtRange(row.season.start, row.season.end);
   const nights = Math.round((row.season.end - row.season.start) / 86400000) + 1;
+  const windowCloud = cloudPercent(window_ ? window_.peak.time : now);
 
   const stats = showWindow
     ? `<div><dt>Best window</dt><dd>${fmtTime(window_.start)} – ${fmtTime(window_.end)}</dd></div>
-       <div><dt>Radiant</dt><dd>${Math.round(window_.peak.radiantAlt)}° ${compass(azimuth(s.ra, s.dec, sampleTime, state.lat, state.lon))}</dd></div>
+       <div><dt>Coming from</dt><dd>${Math.round(window_.peak.radiantAlt)}° ${compass(azimuth(s.ra, s.dec, sampleTime, state.lat, state.lon))}</dd></div>
        <div><dt>Est. rate</dt><dd>${rateLabel(window_.peak.rate)}/hr</dd></div>
        <div><dt>Moon</dt><dd>${Math.round(moon.illumination * 100)}% lit</dd></div>`
     : `<div><dt>Next peak</dt><dd>${fmtPeak(row.peak, now)}</dd></div>
@@ -198,10 +232,13 @@ function cardHTML(row, now) {
   const ticks = [0, 1, 2, 3, 4]
     .map((i) => fmtTime(new Date(first + ((last - first) * i) / 4)));
 
+  const hasForecast = Boolean(weather.points);
   const hourly = nightChart(
     samples,
     window_,
     `Estimated meteors per hour over the next 24 hours, ${ticks[0]} to ${ticks[4]}`
+      + (hasForecast ? ', with forecast cloud cover' : ''),
+    { cloud: hasForecast }
   );
   const season = seasonChart(row.seasonDays, {
     today: now,
@@ -226,14 +263,14 @@ function cardHTML(row, now) {
           <h4>Next 24 hours</h4>
           ${hourly}
           <p class="chart-axis">${ticks.map((tick) => `<span>${tick}</span>`).join('')}</p>
-          <p class="chart-caption">Gold band is the usable window, grey bands are the dark hours.</p>
+          <p class="chart-caption">Gold band is the usable window, grey bands are the dark hours${hasForecast ? ', and the dashed line is forecast cloud cover (100% at the top)' : ''}.</p>
         </div>
         <div class="chart-block">
           <h4>Every night of the season</h4>
           ${season}
           <p class="chart-caption">${range} · peak ${fmtDay(row.season.peak)}${row.active ? ' · today is the teal bar' : ''}</p>
         </div>
-        <p class="card-facts">Radiant highest at <b>${fmtTime(highest.time)}</b>, ${Math.round(highest.radiantAlt)}° up · debris from ${s.parent}.</p>
+        <p class="card-facts">The radiant — the patch of sky these meteors appear to come from — is highest at <b>${fmtTime(highest.time)}</b>, <b>${Math.round(highest.radiantAlt)}°</b> above the horizon.${windowCloud === null ? '' : ` Forecast: <b>${windowCloud}%</b> cloud around the window.`} Debris from ${s.parent}.</p>
         <p class="card-note">${s.note}</p>
       </div>
     </details>`;
@@ -294,7 +331,7 @@ function renderStrip(now) {
     <div class="strip-months">${months.map((m) => `<span>${m}</span>`).join('')}</div>`;
 }
 
-function render() {
+function paint() {
   const now = new Date();
   $('locName').textContent = `${state.label} · ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`;
   lastRows = buildRows(now);
@@ -303,8 +340,35 @@ function render() {
   renderGrid(lastRows, now);
 }
 
+// The forecast is the only network call the page makes: fetch it once per
+// location, repaint when it lands, and only retry after a cooling-off period
+// so an offline reader never sees a request loop.
+function ensureWeather() {
+  const key = `${state.lat},${state.lon}`;
+  if (weather.pending) return;
+  const settled = weather.key === key
+    && (weather.points || Date.now() - weather.failedAt < 10 * 60 * 1000);
+  if (settled) return;
+
+  weather.pending = true;
+  cloudCover(state.lat, state.lon)
+    .then((points) => {
+      weather = { points, key, failedAt: 0, pending: false };
+      paint();
+    })
+    .catch(() => {
+      weather = { points: null, key, failedAt: Date.now(), pending: false };
+      paint();
+    });
+}
+
+function render() {
+  paint();
+  ensureWeather();
+}
+
 function setLocation(next, message) {
-  state = next;
+  state = { ...state, ...next };
   saveLocation();
   render();
   $('locMsg').textContent = message || '';
@@ -369,5 +433,12 @@ $('grid').addEventListener('click', (event) => {
   if (event.target.closest('[data-show-all]')) setFilter('all');
 });
 
+$('sky').addEventListener('change', () => {
+  state = { ...state, sky: $('sky').value };
+  saveLocation();
+  render();
+});
+
+$('sky').value = state.sky;
 render();
 setInterval(render, 10 * 60 * 1000);

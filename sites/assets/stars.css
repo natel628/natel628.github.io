@@ -144,6 +144,30 @@ h1 {
 
 .btn-sm { padding: 7px 12px; font-size: 0.8rem; }
 
+.sky-pick {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sky-pick select {
+  font: inherit;
+  font-size: 0.82rem;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 7px 9px;
+  color: var(--cream);
+  background: #0a1020;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.sky-pick select:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
 .manual {
   display: flex;
   flex-wrap: wrap;
@@ -534,6 +558,13 @@ h1 {
 .chart .area { fill: rgba(240, 193, 97, 0.16); }
 .chart .line { fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-linejoin: round; }
 .chart .base { stroke: var(--line); stroke-width: 1; }
+.chart .cloud {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 1.1;
+  stroke-dasharray: 3 3;
+  opacity: 0.75;
+}
 
 .chart-season .bar { fill: rgba(163, 183, 222, 0.34); }
 .chart-season .bar.peak { fill: var(--gold); }
@@ -575,6 +606,7 @@ h1 {
   max-width: 78ch;
 }
 .note strong { color: var(--cream); }
+.note a { color: var(--gold); text-underline-offset: 2px; }
 
 @media (max-width: 620px) {
   .wrap { padding: 28px 16px 56px; }

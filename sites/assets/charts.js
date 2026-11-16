@@ -8,7 +8,7 @@ const dayKey = (date) =>
 
 // Hourly rate across the next 24 hours: shaded bands are the dark hours,
 // the gold band is the window the page recommends.
-export function nightChart(samples, bestWindow, label) {
+export function nightChart(samples, bestWindow, label, opts = {}) {
   const width = 340;
   const height = 84;
   const padTop = 6;
@@ -46,9 +46,15 @@ export function nightChart(samples, bestWindow, label) {
     .join(' ');
   const area = `M0,${height} L${points.split(' ').join(' L')} L${width},${height} Z`;
 
+  // Forecast cloud cover, 100% along the top edge of the plot.
+  const cloudLine = opts.cloud && samples.every((sample) => typeof sample.clear === 'number')
+    ? `<polyline class="cloud" points="${samples.map((sample) => `${round(toX(sample.time.getTime()))},${round(height - padBottom - (1 - sample.clear) * (height - padTop - padBottom))}`).join(' ')}"/>`
+    : '';
+
   return `<svg class="chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${label}">
       ${darkBands}${windowBand}
       <path class="area" d="${area}"/>
+      ${cloudLine}
       <polyline class="line" points="${points}"/>
       <line class="base" x1="0" y1="${height - 0.5}" x2="${width}" y2="${height - 0.5}"/>
     </svg>`;
