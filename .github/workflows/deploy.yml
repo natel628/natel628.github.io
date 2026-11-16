@@ -113,6 +113,26 @@ jobs:
 
           echo "OK: Fanart.tv key injected into showsnew.html."
 
+      # ── Inject OMDb key (optional) ─────────────────────────────────
+      - name: Inject OMDb key
+        env:
+          OMDB_KEY: ${{ secrets.OMDB_KEY }}
+        run: |
+          if [ -z "$OMDB_KEY" ]; then
+            echo "::warning::OMDB_KEY secret is not set — IMDb scores will stay hidden."
+            exit 0
+          fi
+          if ! grep -q '__OMDB_KEY__' showsnew.html; then
+            echo "::error::Placeholder __OMDB_KEY__ not found in showsnew.html."
+            exit 1
+          fi
+          sed -i "s|__OMDB_KEY__|${OMDB_KEY}|g" showsnew.html
+          if grep -q '__OMDB_KEY__' showsnew.html; then
+            echo "::error::Placeholder still present in showsnew.html after sed."
+            exit 1
+          fi
+          echo "OK: OMDb key injected into showsnew.html."
+
       # ── Encrypt showsnew.html ──────────────────────────────────────
       - name: Encrypt showsnew.html
         env:

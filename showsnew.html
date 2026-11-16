@@ -2517,6 +2517,7 @@
    ───────────────────────────────────────────────────────────────────── */
 const TMDB_TOKEN = '__TMDB_TOKEN__';
 const FANART_KEY = '__FANART_KEY__';   /* optional: injected at deploy; artwork hides itself when unset */
+const OMDB_KEY = '__OMDB_KEY__';       /* optional: injected at deploy; IMDb box hides itself when unset */
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
 const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
@@ -4543,8 +4544,16 @@ function simklDisconnect() {
 
 async function handleSimklCallback() {
   const params   = new URLSearchParams(window.location.search);
+  const oauthErr = params.get('error');
   const code     = params.get('code');
   const verifier = LS.get('pkce_verifier');
+  if (oauthErr && !code) {
+    window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+    LS.set('pkce_verifier', null);
+    LS.set('simkl_oauth_state', null);
+    toast('Simkl connection cancelled.');
+    return;
+  }
   if (!code || !verifier) return;
   const expectedState = LS.get('simkl_oauth_state');
   window.history.replaceState({}, '', window.location.pathname + window.location.hash);
@@ -4573,6 +4582,7 @@ async function handleSimklCallback() {
     saveSimkl();
     await loadSimklUser();
     const synced = await syncSimklLibrary();
+    if (synced && !LS.get('simkl_last_sync')) LS.set('simkl_last_sync', new Date().toISOString());
     toast(synced ? '✅ Connected to Simkl!' : 'Connected to Simkl, but library sync failed.');
     renderView();
   } catch (e) {
@@ -5894,6 +5904,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
           <div class="score-box"><div class="score-val">${sc}</div><div class="score-lbl">TMDB Score</div></div>
           ${d.vote_count ? `<div class="score-box"><div class="score-val">${d.vote_count.toLocaleString()}</div><div class="score-lbl">Votes</div></div>` : ''}
           ${myR ? `<div class="score-box"><div class="score-val" style="color:var(--star-on)">${myR}/10</div><div class="score-lbl">My Rating</div></div>` : ''}
+          <div class="score-box" id="modal-imdb" style="display:none"></div>
         </div>
       </div>
     </div>
@@ -6031,6 +6042,7 @@ function renderModal(type, d, credits, providers, contentRating, videos) {
   const stBtn = document.getElementById('soundtrack-btn');
   if (stBtn) stBtn.addEventListener('click', () => loadModalSoundtrack(type, id, title, year));
   loadModalFanart(type, id);
+  loadModalImdb(type, id);
 
   loadSimilar(type, id);
 }
@@ -6157,6 +6169,36 @@ async function loadModalFanart(type, id) {
     console.warn('Fanart error:', e);
     if (wrap) wrap.innerHTML = '';
   }
+}
+/* ── OMDB: IMDb score in the modal (optional, key injected at deploy) ─
+   Looked up once per title via TMDB external ids, then cached on the
+   local media record so the 1k/day free allowance is spent once. */
+const omdbOn = () => typeof OMDB_KEY === 'string' && !OMDB_KEY.startsWith('__OMDB');
+async function loadModalImdb(type, id) {
+  const slot = document.getElementById('modal-imdb');
+  if (!slot) return;
+  const key = mediaKey(type, id);
+  const paint = (r, v) => {
+    slot.style.display = '';
+    slot.innerHTML = `<div class="score-val" style="color:var(--star-on)">${esc(r)}</div><div class="score-lbl">IMDb${v ? ` · ${esc(v)}` : ''}</div>`;
+  };
+  const cached = state.mediaDetails[key]?.imdb;
+  if (cached && cached.r) { paint(cached.r, cached.v); return; }
+  if (!omdbOn()) return;
+  const token = modalToken;
+  try {
+    const ex = await tmdb(`/${type}/${id}/external_ids`).catch(() => null);
+    const imdb = ex && ex.imdb_id;
+    if (!imdb) return;
+    const res = await fetchWithTimeout(`https://www.omdbapi.com/?i=${imdb}&apikey=${OMDB_KEY}`, {}, 15000);
+    if (!res.ok || token !== modalToken) return;
+    const d = await res.json();
+    if (!d || d.Response !== 'True' || !d.imdbRating || d.imdbRating === 'N/A') return;
+    const votes = d.imdbVotes && d.imdbVotes !== 'N/A' ? d.imdbVotes : '';
+    state.mediaDetails[key] = { ...(state.mediaDetails[key] || {}), imdb: { r: d.imdbRating, v: votes } };
+    saveMediaDetails();
+    if (token === modalToken && slot.isConnected) paint(d.imdbRating, votes);
+  } catch (e) { console.warn('OMDb error:', e); }
 }
 async function loadSimilar(type, id) {
   const token = modalToken;
@@ -6306,6 +6348,13 @@ function removeFromWatchlist(type, id) {
   saveWatchlist();
   updateCardStatus(type, id);
   closeModal();
+  /* Removing clears the entry on Simkl too (history/remove untracks the
+     title entirely); it also wipes the remote rating, which is why Undo
+     re-pushes both the status and any local rating. */
+  if (state.simklToken) {
+    const body = type === 'movie' ? { movies: [{ ids: { tmdb: id } }] } : { shows: [{ ids: { tmdb: id } }] };
+    simklPost('/sync/history/remove', body).catch(e => { console.warn('Simkl remove error:', e); toast('Removed locally, but Simkl still lists it.'); });
+  }
   if (state.view === 'watchlist') refreshWatchlistEntry(key);
 
   toast('Removed from list', {
@@ -6315,6 +6364,10 @@ function removeFromWatchlist(type, id) {
       state.watchlist[key] = prevStatus;
       state.wlAdded[key]   = prevAdded;
       saveWatchlist();
+      if (state.simklToken) {
+        pushWatchlistToSimkl(type, id, prevStatus);
+        if (state.ratings[key]) pushRatingToSimkl(type, id, state.ratings[key]);
+      }
       updateCardStatus(type, id);
       if (state.view === 'watchlist') refreshWatchlistEntry(key);
       toast('Restored to list');
@@ -9971,6 +10024,7 @@ function renderOnboarding() {
   }
 
   updateSimklUI();
+  if (state.simklToken && !state.simklUser) loadSimklUser();
   if (!isLocalHost()) {
     await handleSimklCallback();
     await refreshSimklIfNeeded();
