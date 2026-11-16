@@ -112,7 +112,7 @@
       display: inline-flex; align-items: center; justify-content: center;
     }
     .filter-chip, .ai-chip, .recent-chip, .mood-chip, .history-chip,
-    .genre-tag.clickable, .roulette-card .rc-spin, .blind-reveal {
+    .genre-tag.clickable, .roulette-card .rc-spin {
       min-height: 40px;
     }
     .card-watch { width: 44px; height: 44px; }
@@ -1250,7 +1250,6 @@
       .card.rated:hover { transform: none; box-shadow: none; }
       .card-watch:hover { transform: none; }
       .mood-board-card:hover { transform: none; }
-      .blind-card:hover { transform: none; }
       .card-rate-bar::-webkit-slider-thumb:hover { transform: none; }
     }
     /* ─── Time Travel ──────────────────────────────────────────────── */
@@ -1339,22 +1338,6 @@
     @starting-style {
       .obscurity-meter-fill { transform: scaleX(0); }
     }
-    .blind-card { opacity: 0.55; filter: grayscale(0.6) blur(1px); }
-    .blind-card:hover { opacity: 1; filter: none; transform: translateY(-4px); }
-    .blind-secret[hidden] { display: none !important; }
-    .blind-reveal {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: var(--radius-sm);
-      padding: 4px 10px;
-      font-size: var(--text-sm);
-      cursor: pointer;
-      margin-top: 6px;
-      display: inline-block;
-      transition: background .15s var(--ease-out), border-color .15s var(--ease-out), color .15s var(--ease-out), transform 160ms var(--ease-out);
-    }
-    .blind-reveal:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
     .mood-chip {
       background: var(--tag-bg);
       border: 1px solid var(--border);
@@ -2152,7 +2135,6 @@
       .card:hover, .card.rated:hover,
       .card-watch:hover,
       .mood-board-card:hover,
-      .blind-card:hover,
       button:active, .nav-tab:active, .filter-chip:active, .filter-toggle:active,
       .modal-btn:active, .bn-item:active, .ai-tab:active, .ai-chip:active,
       .more-item:active, .more-action:active, .recent-chip:active,
@@ -2363,10 +2345,6 @@
   <label class="filter-toggle" id="hide-rated-label" title="Hide items you've already rated">
     <input type="checkbox" id="hide-rated-toggle" />
     <span>Hide rated</span>
-  </label>
-  <label class="filter-toggle" id="obscurity-label" title="Hide titles: posters stay visible but names and scores are hidden until you reveal them. Use it to judge by the poster, not the hype.">
-    <input type="checkbox" id="obscurity-toggle" />
-    <span>🕵️ Hide titles</span>
   </label>
   <label class="filter-toggle" id="underseen-label" title="Only show titles with few votes (anti-popularity)">
     <input type="checkbox" id="underseen-toggle" />
@@ -2837,13 +2815,11 @@ let state = {
   aiTab: 'chat',
   aiDraft: '',
   /* Obscurity & discovery engine */
-  obscurityMode: !!LS.get('obscurity_mode'),      // hide titles/ratings until clicked
   underseenOnly: !!LS.get('underseen_only'),      // anti-popularity ceiling
   underseenCeiling: Number(LS.get('underseen_ceiling') || 500), // max vote_count
   moodFilter: LS.get('mood_filter') || '',        // vibe keyword filter
   eraFilter: LS.get('era_filter') || '',           // decade range filter
   deepCutsOnly: !!LS.get('deep_cuts_only'),       // only obscure stuff
-  blindDateMode: !!LS.get('blind_date_mode'),     // extreme blind: poster + year only
   seenKeys: (Array.isArray(LS.get('seen_keys')) ? LS.get('seen_keys') : [])
     .filter(k => typeof k === 'string'),           // titles user has explicitly opened
 };
@@ -2864,13 +2840,11 @@ function savePrefs() {
   LS.set('f_rating',         state.contentRating);
   LS.set('f_year',           state.year);
   LS.set('f_lang',           state.language);
-  LS.set('obscurity_mode',   state.obscurityMode);
   LS.set('underseen_only',   state.underseenOnly);
   LS.set('underseen_ceiling',state.underseenCeiling);
   LS.set('mood_filter',      state.moodFilter);
   LS.set('era_filter',       state.eraFilter);
   LS.set('deep_cuts_only',   state.deepCutsOnly);
-  LS.set('blind_date_mode',  state.blindDateMode);
   LS.set('seen_keys',        state.seenKeys.slice(-200));
 }
 function saveMediaDetails() {
@@ -2970,10 +2944,8 @@ function activeFilterCount() {
   if (state.sort !== 'popularity.desc') n++;
   if (state.eraFilter) n++;
   if (state.moodFilter) n++;
-  if (state.obscurityMode) n++;
   if (state.underseenOnly) n++;
   if (state.deepCutsOnly) n++;
-  /* blindDateMode is legacy with no UI; never counted so the badge matches visible controls. */
   if (state.underseenOnly && state.underseenCeiling !== 500) n++;
   return n;
 }
@@ -2986,13 +2958,11 @@ function resetFilters() {
   state.year           = '';
   state.language       = '';
   state.hideRated      = false;
-  state.obscurityMode  = false;
   state.underseenOnly  = false;
   state.underseenCeiling = 500;
   state.moodFilter     = '';
   state.eraFilter      = '';
   state.deepCutsOnly   = false;
-  state.blindDateMode  = false;
   savePrefs();
   saveHideRated();
   syncFilterControls();
@@ -3045,9 +3015,6 @@ function syncFilterControls() {
   if (hideEl) hideEl.checked = state.hideRated;
   document.getElementById('hide-rated-label')?.classList.toggle('active', state.hideRated);
 
-  const obsEl = document.getElementById('obscurity-toggle');
-  if (obsEl) obsEl.checked = state.obscurityMode;
-  document.getElementById('obscurity-label')?.classList.toggle('active', state.obscurityMode);
 
   const unEl = document.getElementById('underseen-toggle');
   if (unEl) unEl.checked = state.underseenOnly;
@@ -5232,49 +5199,46 @@ function buildCard(item, dismiss = false) {
   const card = document.createElement('div');
   const osc  = obscurityScore(item);
   const obsLabel = osc >= 30 ? obscurityLabel(osc) : '';
-  card.className = 'card' + (myRating > 0 ? ' rated' : '') + (state.obscurityMode || state.blindDateMode ? ' blind-card' : '');
+  card.className = 'card' + (myRating > 0 ? ' rated' : '');
   card.dataset.id = id;
   card.dataset.type = type;
   card.dataset.obscurity = osc;
   if (item.genre_ids) card.dataset.genres = item.genre_ids.join(',');
-  const blind = state.obscurityMode || state.blindDateMode;
-  card.setAttribute('data-open-label', blind ? 'View details for a hidden title' : `View details for ${title}`);
 
   const cardEl = card;
-  const titleHTML = `<div class="card-title${blind ? ' blind-secret' : ''}"${blind ? ' hidden' : ''}>${esc(title)}</div>`;
+  const titleHTML = `<div class="card-title">${esc(title)}</div>`;
   const metaHTML = `
-    <div class="card-meta${blind ? ' blind-secret' : ''}"${blind ? ' hidden' : ''}>
+    <div class="card-meta">
       ${year ? `<span>${esc(year)}</span>` : ''}
       ${sc ? `<span class="card-score">⭐ ${sc}</span>` : ''}
       ${cr ? ratingBadgeHTML(cr) : ''}
       ${osc >= 30 ? `<span class="obscurity-badge ${osc >= 50 ? 'hidden' : ''}" title="Obscurity score ${osc}">💎 ${osc}</span>` : ''}
     </div>
-    <div class="${blind ? 'blind-secret' : ''}"${blind ? ' hidden' : ''} style="margin-top:3px">${microGenreHTML(item)}</div>
+    <div style="margin-top:3px">${microGenreHTML(item)}</div>
   `;
-  const revealBtn = blind ? `<button class="blind-reveal" onclick="event.stopPropagation(); markSeen('${type}', ${id}); const c=this.closest('.card'); c.classList.remove('blind-card'); c.querySelectorAll('.blind-secret').forEach(el=>el.hidden=false); const img=c.querySelector('.card-poster'); if(img) img.style.filter=''; this.remove();">Reveal</button>` : '';
-  const meterHTML = !blind && osc >= 30 ? `
+  const meterHTML = osc >= 30 ? `
     <div class="obscurity-meter">
       <div class="obscurity-meter-fill" style="--obsc-scale:${osc / 100}"></div>
     </div>
   ` : '';
   /* Not Interested without opening anything — only rendered on the views
      that asked for it, so the control never appears where it would do
-     nothing. The tooltip stays generic so Blind mode keeps its secret. */
-  const dismissBtn = dismiss && !blind ? `<button class="card-dismiss" data-action="dismiss-card"
+     nothing. */
+  const dismissBtn = dismiss ? `<button class="card-dismiss" data-action="dismiss-card"
       data-dismiss-key="${type}_${id}" data-dismiss-title="${esc(title)}"
       title="Not interested" aria-label="Not interested">🚫</button>` : '';
-  const watchBtn = !blind ? `<button class="card-watch" type="button" aria-haspopup="menu" aria-controls="watch-menu" aria-expanded="false"
-      aria-label="Watch ${esc(title)}" title="Watch free">▶</button>` : '';
-  const openLabel = blind ? 'View details for a hidden title' : `View details for ${esc(title)}`;
-  const whyHTML = !blind && item._why ? `<div class="why-chip">${esc(item._why)}</div>` : '';
+  const watchBtn = `<button class="card-watch" type="button" aria-haspopup="menu" aria-controls="watch-menu" aria-expanded="false"
+      aria-label="Watch ${esc(title)}" title="Watch free">▶</button>`;
+  const openLabel = `View details for ${esc(title)}`;
+  const whyHTML = item._why ? `<div class="why-chip">${esc(item._why)}</div>` : '';
   cardEl.innerHTML = `
     ${dismissBtn}
     <span class="card-badge ${type}">${type === 'movie' ? '🎬' : '📺'}</span>
     <div class="card-poster-wrap">
       <button type="button" class="card-open" aria-label="${openLabel}">
       ${poster
-        ? `<img class="card-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" style="${blind ? 'filter:blur(6px) brightness(0.6)' : ''}" />`
-        : `<div class="card-poster-placeholder">${blind ? '❓' : '🎬'}</div>`}
+        ? `<img class="card-poster" src="${esc(poster)}" alt="" loading="lazy" decoding="async" />`
+        : `<div class="card-poster-placeholder">🎬</div>`}
       </button>
       ${watchBtn}
     </div>
@@ -5287,12 +5251,11 @@ function buildCard(item, dismiss = false) {
         <div class="card-rate-row">
           <span class="card-rate-emoji">${myRating > 0 ? ratingEmoji(myRating) : '·'}</span>
           <input type="range" class="card-rate-bar" min="0" max="10" step="1"
-            value="${myRating}" aria-label="${blind ? 'Rate this hidden title' : `Rate ${esc(title)}`} from 0 to 10" style="${blind ? 'opacity:0.3' : ''}" />
+            value="${myRating}" aria-label="Rate ${esc(title)} from 0 to 10" />
           <span class="card-rate-label">${myRating > 0 ? myRating : '—'}</span>
         </div>
       </div>
       ${wlStatus ? `<div class="wl-status ${wlStatus}" title="${wlStatus}">${wlStatusLabel(wlStatus)}</div>` : ''}
-      ${revealBtn}
     </div>
   `;
 
@@ -5759,7 +5722,6 @@ function openHelpModal() {
       <tr><td><strong>w</strong></td><td>My List</td></tr>
       <tr><td><strong>q</strong></td><td>My List · Quick Rate</td></tr>
       <tr><td><strong>x</strong></td><td>Stats</td></tr>
-      <tr><td><strong>b</strong></td><td>Toggle Blind Mode</td></tr>
       <tr><td><strong>n</strong></td><td>What's On Tonight?</td></tr>
       <tr><td><strong>p</strong></td><td>Discover (provider filter)</td></tr>
       <tr><td><strong>a</strong></td><td>AI Director (tell it what to show or hide)</td></tr>
@@ -6404,7 +6366,6 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'x') go('stats');
   else if (e.key === 'd') { e.preventDefault(); toggleTheme(); }
   else if (e.key === 'v') { e.preventDefault(); navigateTo('discoveries'); }
-  else if (e.key === 'b') { e.preventDefault(); document.getElementById('obscurity-toggle')?.click(); }
   else if (e.key === 'n') { e.preventDefault(); whatsOnTonight(); }
   else if (e.key === 'p') { e.preventDefault(); navigateTo('discoveries'); }
   else if (e.key === 'm') { e.preventDefault(); navigateTo('moodboard'); }
@@ -8477,7 +8438,6 @@ function relaxDiscoverFilters() {
   state.eraFilter = '';
   state.underseenOnly = false;
   state.deepCutsOnly = false;
-  state.obscurityMode = false;
   state.seenKeys = [];
   savePrefs();
   syncFilterControls();
@@ -8587,7 +8547,6 @@ async function renderDiscoveries(main, token) {
       if (state.moodFilter) active.push(`vibe: ${esc(state.moodFilter)}`);
       if (state.underseenOnly) active.push(`under ${state.underseenCeiling} votes`);
       if (state.deepCutsOnly) active.push('deep cuts');
-      if (state.obscurityMode) active.push('hide titles');
       const activeNote = active.length ? `Active filters — ${active.join(' · ')}.` : 'No narrowing filters are on.';
       main.insertAdjacentHTML('beforeend', emptyStateHTML('🕵️', 'No discoveries found',
         `${activeNote} Rated, watchlisted, and opened titles are excluded — if a favourite is missing, it is already in your data. Relax the filters or bring back opened titles.`,
@@ -9210,7 +9169,6 @@ function exportData() {
       year: state.year,
       language: state.language,
       hideRated: state.hideRated,
-      obscurityMode: state.obscurityMode,
       underseenOnly: state.underseenOnly,
       underseenCeiling: state.underseenCeiling,
       moodFilter: state.moodFilter,
@@ -9316,7 +9274,7 @@ function importData(input) {
         str('filterType', ['all', 'movie', 'tv']);
         str('genre'); str('sort'); str('provider'); str('region');
         str('contentRating'); str('year'); str('language'); str('moodFilter'); str('eraFilter'); str('wlSort');
-        bool('hideRated'); bool('obscurityMode'); bool('underseenOnly');
+        bool('hideRated'); bool('underseenOnly');
         bool('deepCutsOnly'); bool('calMyOnly');
         if (Number.isFinite(p.underseenCeiling) && p.underseenCeiling >= 0 && p.underseenCeiling <= 100000) {
           state.underseenCeiling = p.underseenCeiling;
@@ -9586,12 +9544,6 @@ document.getElementById('rating-filter').addEventListener('change', e => {
 document.getElementById('hide-rated-toggle').addEventListener('change', e => {
   state.hideRated = e.target.checked;
   saveHideRated();
-  syncFilterControls();
-  renderView();
-});
-document.getElementById('obscurity-toggle').addEventListener('change', e => {
-  state.obscurityMode = e.target.checked;
-  savePrefs();
   syncFilterControls();
   renderView();
 });
