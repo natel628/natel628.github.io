@@ -4583,6 +4583,15 @@ async function handleSimklCallback() {
     await loadSimklUser();
     const synced = await syncSimklLibrary();
     if (synced && !LS.get('simkl_last_sync')) LS.set('simkl_last_sync', new Date().toISOString());
+    if (synced) {
+      const remoteCount = new Set((state.simklLibrary || []).filter(i => i.user_rating).map(i => `${i.media_type}_${Number((i.movie || i.show)?.ids?.tmdb)}`)).size;
+      const unpushed = Object.keys(state.ratings).filter(k => state.ratings[k] > 0).length - remoteCount;
+      if (unpushed > 0) {
+        toast(`${unpushed} of your ratings are not on Simkl yet.`, { duration: 10000, actionLabel: 'Push them', onAction: () => pushAllRatingsToSimkl() });
+        renderView();
+        return;
+      }
+    }
     toast(synced ? '✅ Connected to Simkl!' : 'Connected to Simkl, but library sync failed.');
     renderView();
   } catch (e) {
@@ -4740,6 +4749,40 @@ async function pushRatingToSimkl(mediaType, tmdbId, rating) {
   } catch (e) { console.warn('Simkl push rating error:', e); toast('Rating saved locally, but Simkl sync failed.'); }
 }
 
+/* Bulk backfill: ratings made before connecting never reached Simkl —
+   every rating path only pushes live while connected, and the connect
+   flow only pulls remote → local. This pushes everything missing, in
+   chunks, skipping titles Simkl already rates the same. */
+async function pushAllRatingsToSimkl() {
+  if (!state.simklToken) { toast('Connect Simkl first, then push.'); return; }
+  const remote = {};
+  (state.simklLibrary || []).forEach(item => {
+    const src = item.movie || item.show;
+    const tid = Number(src?.ids?.tmdb);
+    if (tid && item.user_rating) remote[`${item.media_type}_${tid}`] = item.user_rating;
+  });
+  const missing = Object.entries(state.ratings).filter(([k, r]) => r > 0 && remote[k] !== r);
+  if (!missing.length) { toast('Everything is already on Simkl.'); return; }
+  toast(`Pushing ${missing.length} ratings to Simkl…`);
+  let pushed = 0, failed = 0;
+  for (let i = 0; i < missing.length; i += 50) {
+    const chunk = missing.slice(i, i + 50);
+    const movies = [], shows = [];
+    chunk.forEach(([k, r]) => {
+      const [t, id] = k.split('_');
+      (t === 'movie' ? movies : shows).push({ ids: { tmdb: Number(id) }, rating: r });
+    });
+    try {
+      const body = {};
+      if (movies.length) body.movies = movies;
+      if (shows.length) body.shows = shows;
+      await simklPost('/sync/ratings', body);
+      pushed += chunk.length;
+    } catch (e) { console.warn('Simkl bulk push error:', e); failed += chunk.length; }
+  }
+  await syncSimklLibrary().catch(() => {});
+  toast(failed ? `Pushed ${pushed}, ${failed} failed — try again.` : `Pushed ${pushed} ratings to Simkl ✅`);
+}
 async function pushWatchlistToSimkl(mediaType, tmdbId, status) {
   if (!state.simklToken || !tmdbId) return;
   const simklStatus = { watching: 'watching', plantowatch: 'plantowatch', completed: 'completed', dropped: 'dropped', hold: 'hold' }[status] || 'plantowatch';
@@ -9076,6 +9119,7 @@ function renderStats(main) {
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <button class="modal-btn" onclick="exportData()">📥 Export Data</button>
           <button class="modal-btn" onclick="document.getElementById('import-file').click()">📤 Import Data</button>
+          <button class="modal-btn" onclick="pushAllRatingsToSimkl()">⬆ Push ratings to Simkl</button>
           <button class="modal-btn" onclick="clearCache()">🧹 Clear Cache</button>
           <button class="modal-btn" onclick="resetSeen()">🕵️ Reset Seen List</button>
           <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)" />
