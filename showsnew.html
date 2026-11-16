@@ -659,24 +659,68 @@
     transition: opacity .15s, background .15s, border-color .15s;
   }
   .card-dismiss:hover, .card-dismiss:focus-visible { opacity: 1; background: var(--accent); border-color: var(--accent); }
+  /* Sits beside the dismiss control: together they are the card's menu. */
+  .card-add {
+    position: absolute;
+    top: 8px;
+    right: 40px;
+    z-index: 2;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(13, 13, 15, .82);
+    color: #fff;
+    font-size: var(--text-sm);
+    line-height: 1;
+    opacity: .65;
+    transition: opacity .15s, background .15s, border-color .15s;
+  }
+  .card-add:hover, .card-add:focus-visible { opacity: 1; background: var(--accent); border-color: var(--accent); }
+  /* Offscreen rows skip layout and paint until they come near the viewport. */
+  .watchlist-grid > .card { content-visibility: auto; contain-intrinsic-size: 240px 380px; }
     
     .card-rate-wrap { margin-top: auto; padding-top: 6px; display: flex; flex-direction: column; gap: 3px; width: 100%; }
     .card-rate-row  { display: flex; align-items: center; gap: 6px; width: 100%; padding-right: 4px; }
     .card-rate-label{ font-size: var(--text-xs); color: var(--text-muted); min-width: 24px; text-align: right; font-weight: 600; }
+    /* The native track is replaced so the fill is driven by --pct, which the
+       card keeps in sync with its value: 0 is an empty track and 1 is a tenth
+       filled, instead of both reading as "somewhere near the left edge". */
     .card-rate-bar  {
       flex: 1;
       min-width: 0;
       -webkit-appearance: none;
       appearance: none;
-      height: 6px;
-      border-radius: var(--radius-sm);
-      background: var(--border);
+      height: 16px;
+      margin: 0;
+      padding: 0;
+      background: transparent;
       outline: none;
       cursor: pointer;
       opacity: 1;
     }
+    .card-rate-bar::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(to right, var(--accent2) var(--pct, 0%), var(--border) var(--pct, 0%));
+    }
+    .card-rate-bar::-moz-range-track {
+      height: 6px;
+      border-radius: var(--radius-sm);
+      background: var(--border);
+    }
+    .card-rate-bar::-moz-range-progress {
+      height: 6px;
+      border-radius: var(--radius-sm);
+      background: var(--accent2);
+    }
     .card-rate-bar::-webkit-slider-thumb {
       -webkit-appearance: none;
+      margin-top: -5px;                /* centre a 16px thumb on a 6px track */
       width: 16px; height: 16px;
       border-radius: 50%;
       background: var(--accent2);
@@ -1078,6 +1122,9 @@
     .list-item-ctl { display: flex; gap: 4px; margin-top: 4px; }
     .list-item-ctl button { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); border-radius: var(--radius-sm); font-size: var(--text-xs); padding: 3px 0; cursor: pointer; }
     .list-item-ctl button:hover { color: var(--text); border-color: var(--accent); }
+    .list-item[draggable="true"] { cursor: grab; }
+    .list-item.dragging { opacity: .4; }
+    .list-item.drag-over { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: var(--radius-md); }
     .nav-count {
       font-size: var(--text-xs);
       font-weight: 600;
@@ -5715,12 +5762,15 @@ function buildCard(item, dismiss = false) {
   const dismissBtn = dismiss ? `<button class="card-dismiss" data-action="dismiss-card"
       data-dismiss-key="${type}_${id}" data-dismiss-title="${esc(title)}"
       title="Not interested" aria-label="Not interested">🚫</button>` : '';
+  const addListBtn = `<button class="card-add" type="button" data-action="add-to-list"
+      title="Add to list" aria-label="Add ${esc(title)} to a list">＋</button>`;
   const watchBtn = `<button class="card-watch" type="button" aria-haspopup="menu" aria-controls="watch-menu" aria-expanded="false"
       aria-label="Watch ${esc(title)}" title="Watch free">▶</button>`;
   const openLabel = `View details for ${esc(title)}`;
   const whyHTML = item._why ? `<div class="why-chip">${esc(item._why)}</div>` : '';
   cardEl.innerHTML = `
     ${dismissBtn}
+    ${addListBtn}
     <span class="card-badge ${type}">${type === 'movie' ? '🎬' : '📺'}</span>
     <div class="card-poster-wrap">
       <button type="button" class="card-open" aria-label="${openLabel}">
@@ -5746,6 +5796,19 @@ function buildCard(item, dismiss = false) {
       </div>
     </div>
   `;
+
+  const rateBarEl = cardEl.querySelector('.card-rate-bar');
+  if (rateBarEl) {
+    const syncFill = () => rateBarEl.style.setProperty('--pct', (Number(rateBarEl.value) / 10 * 100) + '%');
+    syncFill();
+    rateBarEl.addEventListener('input', syncFill);
+  }
+
+  cardEl.querySelector('.card-add')?.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    openListPicker({ ...item, media_type: type, id, title, name: title });
+  });
 
   const watchBtnEl = cardEl.querySelector('.card-watch');
   if (watchBtnEl) {
@@ -5946,7 +6009,7 @@ function setRating(type, id, val, genreIds, item) {
   recomputeAffinity();
   applyRatingToDom(type, id, val);
   updateNavCounts();
-  traktQueueChange({ kind: 'rating', type, id, rating: val });
+  traktQueueChange({ kind: val > 0 ? 'rating' : 'unrate', type, id, rating: val });
 
   if (val === prevVal) return;
 
@@ -6722,6 +6785,19 @@ async function loadModalFanart(type, id) {
     };
     const logos = first(['hdmovieclearart', 'hdtvlogo', 'movieclearart', 'tvlogo']);
     const bgs   = first(['moviebackground', 'showbackground']);
+    const posters = first(['movieposter', 'tvposter']);
+    /* A title TMDB has no poster for still gets one, rather than the emoji
+       placeholder holding the detail view all visit. */
+    const slot = document.querySelector('#modal-inner .modal-poster');
+    if (posters.length && slot && slot.tagName !== 'IMG') {
+      const img = document.createElement('img');
+      img.className = 'modal-poster';
+      img.src = posters[0].url;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      slot.replaceWith(img);
+    }
     if (!logos.length && !bgs.length) { wrap.innerHTML = ''; return; }
     wrap.innerHTML = `
       <div style="font-size: var(--text-sm);font-weight:700;margin:0 0 8px;color:var(--text-muted)">🎨 Artwork</div>
@@ -7052,6 +7128,9 @@ function removeFromWatchlist(type, id) {
   delete state.watchlist[key];
   delete state.wlAdded[key];
   saveWatchlist();
+  /* Trakt mirrors the removal: dropping a "want" clears the watchlist,
+     dropping a "finished" clears it from history. */
+  traktQueueChange({ kind: prevStatus === 'completed' ? 'unwatch' : 'unwant', type, id });
   updateCardStatus(type, id);
   closeModal();
   /* Removing clears the entry on Simkl too (history/remove untracks the
@@ -7926,6 +8005,16 @@ async function populateCalendar() {
 
   const add = (date, label, cls, tip, onClick, opts = {}) => {
     if (stale()) return;
+    /* TMDB sometimes carries an air date decades off a show's run. An episode
+       cannot air before its show started, and nothing is scheduled years out. */
+    const y = Number(String(date || '').slice(0, 4));
+    const nowY = new Date().getFullYear();
+    if (y && (y < 1950 || y > nowY + 3)) return;
+    if (opts.showId && y) {
+      const rec = state.mediaDetails[mediaKey('tv', opts.showId)];
+      const startY = Number(String((rec && rec.first_air_date) || '').slice(0, 4));
+      if (startY && y < startY) return;
+    }
     const pk = `${date}|${opts.pk || label}`;
     if (placed.has(pk)) return;
     placed.add(pk);
@@ -10148,7 +10237,32 @@ function renderListDetail(main, list) {
   list.items.forEach((entry, index) => {
     const holder = document.createElement('div');
     holder.className = 'list-item';
+    holder.draggable = true;
+    holder.dataset.idx = String(index);
     holder.appendChild(buildCard(entry, false));
+    /* Drag and drop, with the arrow buttons as the keyboard path. */
+    holder.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', String(index));
+      e.dataTransfer.effectAllowed = 'move';
+      holder.classList.add('dragging');
+    });
+    holder.addEventListener('dragend', () => holder.classList.remove('dragging'));
+    holder.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      holder.classList.add('drag-over');
+    });
+    holder.addEventListener('dragleave', () => holder.classList.remove('drag-over'));
+    holder.addEventListener('drop', e => {
+      e.preventDefault();
+      holder.classList.remove('drag-over');
+      const from = Number(e.dataTransfer.getData('text/plain'));
+      if (!isFinite(from) || from === index || from < 0 || from >= list.items.length) return;
+      const [row] = list.items.splice(from, 1);
+      list.items.splice(index, 0, row);
+      saveLists();
+      renderView();
+    });
     const ctl = document.createElement('div');
     ctl.className = 'list-item-ctl';
     const up = document.createElement('button');
@@ -10713,7 +10827,7 @@ async function traktFlush() {
   if (!traktAccount()) return;
   const q = traktQueueRead();
   if (!q.length) return;
-  const byKind = { rating: {}, want: {}, unwant: {}, watched: {} };
+  const byKind = { rating: {}, unrate: {}, want: {}, unwant: {}, watched: {}, unwatch: {} };
   q.forEach(x => { (byKind[x.kind] || (byKind[x.kind] = {}))[x.type] = (byKind[x.kind][x.type] || []); byKind[x.kind][x.type].push(x); });
 
   const send = async (path, body) => {
@@ -10733,6 +10847,14 @@ async function traktFlush() {
       if ((byKind.want[type] || []).length) {
         const body = type === 'movie' ? { movies: arr('want') } : { shows: arr('want') };
         await send('/sync/watchlist', body);
+      }
+      if ((byKind.unrate[type] || []).length) {
+        const body = type === 'movie' ? { movies: arr('unrate') } : { shows: arr('unrate') };
+        await send('/sync/ratings/remove', body);
+      }
+      if ((byKind.unwatch[type] || []).length) {
+        const body = type === 'movie' ? { movies: arr('unwatch') } : { shows: arr('unwatch') };
+        await send('/sync/history/remove', body);
       }
       if ((byKind.watched[type] || []).length) {
         const body = type === 'movie' ? { movies: arr('watched') } : { shows: arr('watched') };
