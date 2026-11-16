@@ -173,6 +173,26 @@ jobs:
           fi
           echo "OK: Trakt client id injected into showsnew.html."
 
+      # ── Inject Trakt client secret (optional) ──────────────────────
+      - name: Inject Trakt client secret
+        env:
+          TRAKT_SECRET: ${{ secrets.TRAKT_SECRET }}
+        run: |
+          if [ -z "$TRAKT_SECRET" ]; then
+            echo "::warning::TRAKT_SECRET secret is not set — the Trakt account sync stays off unless the secret is typed in Settings."
+            exit 0
+          fi
+          if ! grep -q '__TRAKT_SECRET__' showsnew.html; then
+            echo "::error::Placeholder __TRAKT_SECRET__ not found in showsnew.html."
+            exit 1
+          fi
+          sed -i "s|__TRAKT_SECRET__|${TRAKT_SECRET}|g" showsnew.html
+          if grep -q '__TRAKT_SECRET__' showsnew.html; then
+            echo "::error::Placeholder still present in showsnew.html after sed."
+            exit 1
+          fi
+          echo "OK: Trakt client secret injected into showsnew.html."
+
       # ── Encrypt showsnew.html ──────────────────────────────────────
       - name: Encrypt showsnew.html
         env:

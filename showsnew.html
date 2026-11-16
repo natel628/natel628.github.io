@@ -2676,6 +2676,10 @@ const FANART_KEY = '__FANART_KEY__';   /* optional: injected at deploy; artwork 
 const OMDB_KEY = '__OMDB_KEY__';       /* optional: injected at deploy; IMDb box hides itself when unset */
 const MDBLIST_KEY = '__MDBLIST_KEY__'; /* optional: injected at deploy; overrides the key typed in Settings */
 const TRAKT_KEY   = '__TRAKT_KEY__';   /* optional: Trakt API app client id, injected at deploy */
+/* The device-flow token exchange needs the client secret in the request body,
+   and this page has no server to keep it on. So it lives here, exactly like
+   the other keys: readable by anyone the page password lets in. */
+const TRAKT_SECRET = '__TRAKT_SECRET__';
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
 const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 const IMG_ORIG   = 'https://image.tmdb.org/t/p/w780';
@@ -9816,10 +9820,10 @@ function renderSettings(main) {
 
         <h4 style="margin:16px 0 6px">Trakt account</h4>
         <p class="settings-note">Two-way sync of ratings, Want to Watch and Finished. Connect with the device code below — no redirect page to configure beyond the app itself. Ratings, list and history stay on this device too; syncing only copies changes both ways.</p>
-        <div class="settings-row" style="flex-wrap:wrap">
+        ${traktSecretInjected() ? '' : `<div class="settings-row" style="flex-wrap:wrap">
           <input class="conn-key" id="settings-trakt-secret" type="password" autocomplete="off" spellcheck="false"
             placeholder="Trakt client secret (needed for the account sync)" aria-label="Trakt client secret" />
-        </div>
+        </div>`}
         <div class="settings-row" style="flex-wrap:wrap">
           <button type="button" class="modal-btn primary" id="settings-trakt-connect">Connect account</button>
           <button type="button" class="modal-btn" id="settings-trakt-sync">Sync now</button>
@@ -9989,10 +9993,10 @@ function renderSettings(main) {
     renderSettings(main);
   });
   const tSecret = main.querySelector('#settings-trakt-secret');
-  if (tSecret) tSecret.value = String(LS.get('trakt_secret') || '');
+  if (tSecret) tSecret.value = traktSecret();
   tSecret?.addEventListener('change', () => { LS.set('trakt_secret', String(tSecret.value || '').trim()); paintTraktStatus(); });
   main.querySelector('#settings-trakt-connect')?.addEventListener('click', () => {
-    LS.set('trakt_secret', String((tSecret && tSecret.value) || '').trim());
+    if (tSecret) LS.set('trakt_secret', String(tSecret.value || '').trim());
     traktConnect();
   });
   main.querySelector('#settings-trakt-sync')?.addEventListener('click', async () => {
@@ -10660,6 +10664,11 @@ const TRAKT_QUEUE_LS = 'trakt_queue';     // [{ kind, type, id, rating, at }]
 const TRAKT_META_LS = 'trakt_meta';       // { lastSync, lastError }
 const TRAKT_API = 'https://api.trakt.tv';
 
+const traktSecretInjected = () => typeof TRAKT_SECRET === 'string' && !TRAKT_SECRET.startsWith('__TRAKT');
+const traktSecret = () => traktSecretInjected()
+  ? String(TRAKT_SECRET).trim()
+  : String(LS.get('trakt_secret') || '').trim();
+
 const traktAccount = () => {
   const a = LS.get(TRAKT_AUTH_LS);
   return a && a.access ? a : null;
@@ -10683,7 +10692,7 @@ function paintTraktStatus() {
   const when = meta.lastSync ? new Date(meta.lastSync).toLocaleString() : 'never';
   el.innerHTML = acct
     ? `Connected${acct.username ? ' as <strong>' + esc(acct.username) + '</strong>' : ''} · last synced ${esc(when)} · ${pending} change${pending === 1 ? '' : 's'} pending${meta.lastError ? ' · <span style="color:var(--danger,#e5484d)">' + esc(meta.lastError) + '</span>' : ''}`
-    : 'Not connected. Ratings and your list work as before; connecting adds two-way sync.';
+    : `Not connected. Ratings and your list work as before; connecting adds two-way sync.${traktSecretInjected() && traktInjected() ? ' The app credentials are built in — just press Connect account.' : ''}`;
 }
 
 async function traktFetch(path, opts = {}) {
@@ -10709,7 +10718,7 @@ async function traktFetch(path, opts = {}) {
 async function traktRefresh() {
   const acct = traktAccount();
   if (!acct || !acct.refresh) return false;
-  const secret = String(LS.get('trakt_secret') || '');
+  const secret = traktSecret();
   if (!secret) { traktSetMeta({ lastError: 'client secret missing, cannot refresh' }); return false; }
   try {
     const res = await fetch(`${TRAKT_API}/oauth/token`, {
@@ -10727,7 +10736,7 @@ async function traktRefresh() {
 /* Device flow: ask for a code, show it, poll until approved. */
 async function traktConnect() {
   const clientId = traktKey();
-  const secret = String(LS.get('trakt_secret') || '');
+  const secret = traktSecret();
   if (clientId.length < 8) { toast('Add your Trakt client id first.'); return; }
   if (!secret) { toast('Add your Trakt client secret — the device flow needs both.'); return; }
   let code;
@@ -10799,7 +10808,7 @@ async function traktConnect() {
 async function traktUnlink() {
   const acct = traktAccount();
   if (!acct) { toast('No Trakt account is connected.'); return; }
-  const secret = String(LS.get('trakt_secret') || '');
+  const secret = traktSecret();
   try {
     await fetch(`${TRAKT_API}/oauth/revoke`, {
       method: 'POST',
