@@ -52,12 +52,13 @@
   function paint(scrollTop) {
     main.innerHTML = renderFor(S.view);
     markNav();
+    if (scrollTop) window.scrollTo({ top: 0, behavior: 'auto' });
     if (document.getElementById('map')) initMap();
     updateNotifDot();
   }
 
   function route(force) {
-    var name = (location.hash || '#/discover').replace(/^#\/?/, '') || 'discover';
+    var name = (location.hash || '#/discover').replace(/^#\\/?/, '') || 'discover';
     var known = document.querySelector('.navitem[href="#/' + name + '"]');
     if (!known && name !== 'browse') name = 'discover';
     var changed = name !== S.view || force;
@@ -91,7 +92,6 @@
     setTimeout(function () { el.classList.add('is-out'); }, 2200);
     setTimeout(function () { el.remove(); }, 2700);
   }
-
   function download(name, text, mime) {
     var blob = new Blob([text], { type: mime || 'text/calendar;charset=utf-8' });
     var url = URL.createObjectURL(blob);
@@ -162,7 +162,6 @@
     try { mapInstance.remove(); } catch (e) { /* already detached */ }
     mapInstance = null;
   }
-
   function initMap() {
     var el = document.getElementById('map');
     destroyMap();
@@ -400,23 +399,132 @@
     });
   }
 
-  function boot() {
-    main = document.getElementById('main');
-    modal = document.getElementById('modal');
-    toasts = document.getElementById('toasts');
-    Array.prototype.forEach.call(document.querySelectorAll('[data-icon]'), function (el) {
-      el.innerHTML = W.icon(el.getAttribute('data-icon'));
-    });
-    fillTopbar();
-    bind();
-    route(true);
-    if (!S.onboarded) openModal(V2.onboarding());
-    loadLiveFile(function () {
-      paint(false);
-      if (S.keys.ticketmaster || S.keys.youtube) {
-        loadTicketmaster(function () { loadYouTube(function () { paint(false); }); });
+  /* ---------------- events ---------------- */
+  function bind() {
+    document.addEventListener('click', function (e) {
+      if (!e.target || !e.target.closest) return;
+      var t = e.target.closest('[data-action]');
+      if (!t) return;
+      var a = t.getAttribute('data-action');
+      var id = t.getAttribute('data-id');
+      var val = t.getAttribute('data-val');
+      switch (a) {
+        case 'open': {
+          var ev = W.byId(id);
+          if (!ev) return;
+          S.viewed[id] = (S.viewed[id] || 0) + 1;
+          W.store.set('viewed', S.viewed);
+          openModal(V2.eventModal(ev));
+          break;
+        }
+        case 'person': openModal(V2.personModal(id)); break;
+        case 'save': e.stopPropagation(); toggleSave(id); break;
+        case 'follow': toggleFollow(t.getAttribute('data-key')); break;
+        case 'close-modal': closeModal(); break;
+        case 'notifications': openModal(V2.notifications()); break;
+        case 'filter': {
+          var g = t.getAttribute('data-group');
+          if (g === 'cats') {
+            var i = S.filters.cats.indexOf(val);
+            if (i >= 0) S.filters.cats.splice(i, 1); else S.filters.cats.push(val);
+          } else { S.filters[g] = val; }
+          paint(false);
+          break;
+        }
+        case 'resetfilters': S.filters = routeDefaults(S.view); paint(false); break;
+        case 'radius': S.radius = +val; W.store.set('radius', S.radius); paint(false); break;
+        case 'maptoggle': S.mapMode = val === 'map'; paint(false); break;
+        case 'cal-prev': case 'cal-next': {
+          var step = a === 'cal-next' ? 1 : -1;
+          var d = new Date(S.calCursor);
+          if (S.calMode === 'month') d.setMonth(d.getMonth() + step);
+          else if (S.calMode === 'week') d = W.addDays(d, 7 * step);
+          else d = W.addDays(d, step);
+          S.calCursor = d; paint(false); break;
+        }
+        case 'cal-today': S.calCursor = W.startOfDay(new Date()); paint(false); break;
+        case 'cal-mode': S.calMode = val; paint(false); break;
+        case 'cal-day': S.calCursor = W.parseLocal(val + 'T00:00'); S.calMode = 'day'; paint(false); break;
+        case 'ics-one': {
+          var ev2 = W.byId(id);
+          if (ev2) { download('event-' + ev2.id + '.ics', W.icsFor([ev2])); toast('Calendar file downloaded'); }
+          break;
+        }
+        case 'ics-saved': {
+          var saved = W.upcoming(S.saved.map(W.byId).filter(Boolean), 400);
+          if (saved.length) { download('whats-happening-watchlist.ics', W.icsFor(saved)); toast(saved.length + ' events exported'); }
+          break;
+        }
+        case 'enable-push': requestPush(t); break;
+        case 'geolocate': geolocate(); break;
+        case 'save-keys': saveKeys(); break;
+        case 'clear-keys':
+          S.keys = { ticketmaster: '', youtube: '' };
+          W.store.set('keys', S.keys);
+          S.live = [];
+          S.liveStatus = { tm: 'off', yt: 'off' };
+          toast('Keys removed');
+          paint(false);
+          break;
+        case 'clear-data':
+          S.saved = []; S.follows = []; S.viewed = {};
+          W.store.set('saved', []); W.store.set('follows', []); W.store.set('viewed', {});
+          toast('Saved events and follows cleared');
+          paint(false);
+          break;
+        case 'onboarding': openModal(V2.onboarding()); break;
+        case 'ob-finish': finishOnboarding(); break;
+        case 'ob-skip': S.onboarded = true; W.store.set('onboarded', true); closeModal(); break;
+        case 'open-nav': document.body.classList.add('nav-open'); break;
+        case 'close-nav': document.body.classList.remove('nav-open'); break;
       }
     });
+
+    document.addEventListener('change', function (e) {
+      var t = e.target;
+      var action = t.getAttribute('data-action');
+      if (t.id === 'sort') { S.sort = t.value; paint(false); }
+      else if (t.id === 'set-city') { S.city = t.value; W.store.set('city', S.city); fillTopbar(); paint(false); }
+      else if (t.id === 'set-radius') { S.radius = +t.value; W.store.set('radius', S.radius); paint(false); }
+      else if (t.id === 'f-from') { S.filters.from = t.value; paint(false); }
+      else if (t.id === 'f-to') { S.filters.to = t.value; paint(false); }
+      else if (action === 'interest') {
+        var i = S.interests.indexOf(t.value);
+        if (t.checked && i < 0) S.interests.push(t.value);
+        if (!t.checked && i >= 0) S.interests.splice(i, 1);
+        W.store.set('interests', S.interests);
+      } else if (action === 'notif') {
+        S.notifPrefs[t.value] = t.checked;
+        W.store.set('notifPrefs', S.notifPrefs);
+      } else if (action === 'online-interest') {
+        S.onlineInterest = t.checked;
+        W.store.set('online', S.onlineInterest);
+      }
+    });
+
+    var q = document.getElementById('q');
+    var timer;
+    q.addEventListener('input', function () {
+      clearTimeout(timer);
+      var v = q.value.trim();
+      timer = setTimeout(function () {
+        S.q = v;
+        if (COLLECTION.indexOf(S.view) >= 0) paint(false);
+      }, 220);
+    });
+
+    document.getElementById('search-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      S.q = q.value.trim();
+      S.browseTitle = S.q ? 'Results for ' + S.q : 'All events';
+      if (location.hash === '#/browse') paint(true);
+      else location.hash = '#/browse';
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+    window.addEventListener('hashchange', function () { route(false); });
   }
 
   function finishOnboarding() {
@@ -484,6 +592,25 @@
     if (el) el.textContent = W.DAYS_LONG[now.getDay()] + ', ' + W.MONTHS[now.getMonth()] + ' ' + now.getDate();
     var c = document.getElementById('tb-city');
     if (c) c.textContent = W.city().label;
+  }
+
+  function boot() {
+    main = document.getElementById('main');
+    modal = document.getElementById('modal');
+    toasts = document.getElementById('toasts');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-icon]'), function (el) {
+      el.innerHTML = W.icon(el.getAttribute('data-icon'));
+    });
+    fillTopbar();
+    bind();
+    route(true);
+    if (!S.onboarded) openModal(V2.onboarding());
+    loadLiveFile(function () {
+      paint(false);
+      if (S.keys.ticketmaster || S.keys.youtube) {
+        loadTicketmaster(function () { loadYouTube(function () { paint(false); }); });
+      }
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
