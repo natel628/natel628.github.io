@@ -1,23 +1,19 @@
 /* What's Happening? - hidden diagnostics panel.
 
-   Open any of:
-     ?diag=1        (query string)
-     #diag          (hash - survives renderers that drop query strings)
-     Ctrl+Alt+D     (keyboard)
-   or call window.WHDIAG.run() from the console.
-
-   It loads a second copy of the site in a hidden iframe and drives it with
-   real clicks (filters, watchlist, calendar, map, modal), then lists what
-   failed so the result can be pasted back. Running inside an iframe keeps the
-   real page untouched: no filters changed, no watchlist edits, map not toggled
-   on the page you are looking at. */
+   Open with ?diag=1, #diag, or Ctrl+Alt+D, or call window.WHDIAG.run().
+   It loads a copy of this page in a hidden iframe and drives it with real
+   clicks (filters, watchlist, calendar, map, sheet), then lists what failed.
+   Running in an iframe means the page you are looking at is never touched. */
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-2';
+  var LIB = 'diag-3';
   var running = false, report = '', panel = null;
+  var root = null;   // stable wrapper so the panel cannot be lost
 
-  /* ---------------- small helpers ---------------- */
+  function mark(k, v) {
+    try { document.documentElement.setAttribute('data-diag-' + k, String(v)); } catch (e) {}
+  }
   function q(d, sel) { return d.querySelector(sel); }
   function qa(d, sel) { return Array.prototype.slice.call(d.querySelectorAll(sel)); }
   function assert(cond, msg) { if (!cond) throw new Error(msg); }
@@ -30,9 +26,8 @@ window.WHDIAG = (function () {
     try { return new TextEncoder().encode(s).length; } catch (e) { return unescape(encodeURIComponent(s)).length; }
   }
   function nowStamp() { return new Date().toISOString(); }
-  function ms(t0) { return Math.round((Date.now() - t0)) + 'ms'; }
+  function ms(t0) { return Math.round(Date.now() - t0) + 'ms'; }
 
-  /* Poll until fn returns something truthy. Errors inside fn reject the wait. */
   function wait(fn, limit, label) {
     var t0 = Date.now();
     return new Promise(function (res, rej) {
@@ -49,21 +44,15 @@ window.WHDIAG = (function () {
     try { return new URLSearchParams(location.search); } catch (e) { return null; }
   }
   function isFrame() { var p = params(); return !!p && p.get('frame') === '1'; }
-
-  /* Query string first, then the hash: some renderers and link previews strip
-     the query string, and the hash is what carries the app's own routing. */
   function wanted() {
     var p = params();
     if (p && p.get('diag') === '1') return true;
     return (location.hash || '').toLowerCase().indexOf('diag') >= 0;
   }
 
-  /* Verification hook: an attribute that can be read without running script. */
-  try {
-    document.documentElement.setAttribute('data-diag', LIB + (isFrame() ? ' frame' : wanted() ? ' wanted' : ' idle'));
-  } catch (e) { /* never fatal */ }
+  mark('lib', LIB + (isFrame() ? ' frame' : wanted() ? ' wanted' : ' idle'));
 
-  /* ---------------- iframe context ---------------- */
+  /* ---------------- harness context ---------------- */
   function refresh(c) {
     c.w = c.frame.contentWindow;
     c.d = c.frame.contentDocument || c.w.document;
@@ -74,8 +63,7 @@ window.WHDIAG = (function () {
 
   function reloadFrame(c) {
     return new Promise(function (res) {
-      var f = c.frame;
-      var done = false;
+      var f = c.frame, done = false;
       function go() { if (done) return; done = true; res(); }
       f.addEventListener('load', function () { setTimeout(go, 60); });
       setTimeout(go, 12000);
@@ -100,9 +88,8 @@ window.WHDIAG = (function () {
       var err = c.d.getElementById('boot-error');
       assert(!err, 'page error overlay: ' + (err.textContent || '').replace(/\s+/g, ' ').slice(0, 160));
       var main = c.d.getElementById('main');
-      var cards = main.querySelectorAll('.card').length;
       assert(main.textContent.trim().length > 40, 'main area is empty');
-      return 'rendered, ' + cards + ' cards on the landing view';
+      return 'rendered, ' + main.querySelectorAll('.card').length + ' cards on the landing view';
     });
   }
 
@@ -111,7 +98,6 @@ window.WHDIAG = (function () {
     c.w.location.hash = '#/browse';
     return wait(function () { return q(d, '.filters') && q(d, '.card[data-id]'); }, 6000, 'browse view').then(function () {
       var before = qa(d, '.card[data-id]').length;
-
       click(d, '[data-action="filter"][data-group="cats"][data-val="music"]');
       return wait(function () {
         var ids = qa(d, '.card[data-id]').map(function (n) { return n.getAttribute('data-id'); });
@@ -120,9 +106,7 @@ window.WHDIAG = (function () {
         throw new Error('selecting the music chip did not restrict the list');
       }).then(function () {
         assert(S.filters.cats.indexOf('music') >= 0, 'filter state did not record the chip');
-        var after = qa(d, '.card[data-id]').length;
-        assert(after <= before, 'filtering produced more cards than before');
-
+        assert(qa(d, '.card[data-id]').length <= before, 'filtering produced more cards than before');
         click(d, '[data-action="filter"][data-group="cats"][data-val="music"]');
         return wait(function () { return S.filters.cats.indexOf('music') < 0; }, 4000, 'chip off').catch(function () {
           throw new Error('clicking the chip again did not switch it off');
@@ -136,7 +120,6 @@ window.WHDIAG = (function () {
           return e && !W.sameDay(W.parseLocal(e.startLocal), new Date());
         });
         assert(!outside.length, outside.length + ' cards shown that are not today');
-
         click(d, '[data-action="resetfilters"]');
         return wait(function () { return S.filters.date === 'any' && S.filters.cats.length === 0; }, 4000, 'reset').catch(function () {
           throw new Error('Reset did not clear the filters');
@@ -152,33 +135,26 @@ window.WHDIAG = (function () {
     var card = q(d, '.card[data-id]');
     assert(card, 'no card available to save');
     var id = card.getAttribute('data-id');
-
     click(d, '.card[data-id="' + id + '"] .save');
     assert(c.S.saved.indexOf(id) >= 0, 'save button did not add the event to the watchlist');
-
     var raw = c.w.localStorage.getItem('wh.v1.saved');
     assert(raw && raw.indexOf(id) >= 0, 'the watchlist was not written to localStorage (wh.v1.saved)');
-
     return reloadFrame(c).then(function () {
       assert(c.S.saved.indexOf(id) >= 0, 'the saved event did not come back after a full reload');
       var btn = q(c.d, '.card[data-id="' + id + '"] .save');
       var showsSaved = btn ? btn.classList.contains('is-on') : null;
-
       c.S.saved = c.S.saved.filter(function (x) { return x !== id; });
       c.W.store.set('saved', c.S.saved);
-
-      return 'save survived a full page reload' + (showsSaved === true ? ', card showed the saved state' : '');
+      return 'save survived a full page reload' + (showsSaved === true ? ', card showed saved state' : '');
     });
   }
 
   function openSheet(c) {
-    var d = c.d;
-    click(d, '.card[data-id]');
-    return wait(function () { return q(d, '.sheet'); }, 5000, 'event sheet');
+    click(c.d, '.card[data-id]');
+    return wait(function () { return q(c.d, '.sheet'); }, 5000, 'event sheet');
   }
   function closeSheet(c) {
-    var d = c.d;
-    d.dispatchEvent(new c.w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    c.d.dispatchEvent(new c.w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     return wait(function () { return c.d.getElementById('modal').hidden; }, 4000, 'sheet close').catch(function () {
       throw new Error('Escape did not close the event sheet');
     });
@@ -189,7 +165,6 @@ window.WHDIAG = (function () {
     assert(W && W.icsFor, 'icsFor is not available');
     var ev = W.allEvents().filter(function (e) { return e.source === 'demo'; })[0];
     assert(ev, 'no event available to export');
-
     var text = W.icsFor([ev]);
     assert(/^BEGIN:VCALENDAR\r\n/.test(text), 'ICS does not start with BEGIN:VCALENDAR');
     assert(text.indexOf('\r\nEND:VCALENDAR') > 0, 'ICS does not end with END:VCALENDAR');
@@ -198,13 +173,11 @@ window.WHDIAG = (function () {
     });
     assert(!/(^|[^\r])\n/.test(text), 'ICS uses bare newlines instead of CRLF');
     var over = text.split('\r\n').filter(function (l) { return bytes(l) > 75; });
-    assert(!over.length, 'ICS has a line over 75 octets (some clients reject this): ' + String(over[0] || '').slice(0, 40));
-
+    assert(!over.length, 'ICS line over 75 octets (some clients reject this): ' + String(over[0] || '').slice(0, 40));
     var blob = new Blob([text], { type: 'text/calendar;charset=utf-8' });
     var url = URL.createObjectURL(blob);
     assert(url && url.indexOf('blob:') === 0, 'could not create a download URL for the calendar file');
     URL.revokeObjectURL(url);
-
     return openSheet(c).then(function () {
       assert(q(d, '[data-action="ics-one"]'), 'the event sheet has no calendar button');
       return closeSheet(c);
@@ -225,7 +198,7 @@ window.WHDIAG = (function () {
         if (m && m.classList.contains('leaflet-container')) return m;
         var hint = q(d, '.maphint');
         if (hint && /could not load/i.test(hint.textContent) && !m.classList.contains('leaflet-container')) {
-          throw new Error('Leaflet never loaded - the map CDN may be blocked by an extension or network');
+          throw new Error('Leaflet never loaded - map CDN may be blocked');
         }
         return null;
       }, 20000, 'leaflet init');
@@ -253,6 +226,12 @@ window.WHDIAG = (function () {
   /* ---------------- panel ---------------- */
   function ensurePanel() {
     if (panel && document.body.contains(panel)) return panel;
+    if (!root || !document.body.contains(root)) {
+      root = document.createElement('div');
+      root.id = 'diag-root';
+      document.body.appendChild(root);
+      mark('root', 'appended');
+    }
     panel = document.createElement('div');
     panel.className = 'diag';
     panel.setAttribute('role', 'dialog');
@@ -274,7 +253,8 @@ window.WHDIAG = (function () {
       else if (a === 'copy') copyReport(t);
       else if (a === 'close') closePanel();
     });
-    document.body.appendChild(panel);
+    root.appendChild(panel);
+    mark('panel', document.body.contains(panel) ? 'attached' : 'missing');
     return panel;
   }
 
@@ -296,7 +276,7 @@ window.WHDIAG = (function () {
     var row = document.querySelector('.diag__row[data-check="' + id + '"]');
     if (!row) return;
     row.className = 'diag__row is-' + status;
-    row.querySelector('.diag__st').textContent = status === 'pass' ? 'PASS' : status === 'fail' ? 'FAIL' : status === 'skip' ? 'SKIP' : '\u00b7';
+    row.querySelector('.diag__st').textContent = status === 'pass' ? 'PASS' : status === 'fail' ? 'FAIL' : '\u00b7';
     row.querySelector('.diag__d').textContent = (detail || '') + (time ? ' (' + time + ')' : '');
   }
 
@@ -307,38 +287,29 @@ window.WHDIAG = (function () {
     el.className = 'diag__sum' + (cls ? ' is-' + cls : '');
   }
 
+  function pad(s) { var x = s + '          '; return x.slice(0, 11); }
   function buildReport(results) {
     var passed = results.filter(function (r) { return r.status === 'pass'; }).length;
     var failed = results.filter(function (r) { return r.status === 'fail'; }).length;
-    var head = [
-      'whats-happening diagnostics  ' + nowStamp(),
-      'url   ' + location.href,
-      'ua    ' + navigator.userAgent,
-      'lib   ' + LIB,
-      '----------------------------------------'
-    ];
+    var head = ['whats-happening diagnostics  ' + nowStamp(), 'url   ' + location.href,
+      'ua    ' + navigator.userAgent, 'lib   ' + LIB, '----------------------------------------'];
     var lines = results.map(function (r) {
       return (r.status === 'pass' ? 'PASS  ' : 'FAIL  ') + pad(r.id) + (r.detail || '') + ' (' + r.time + 'ms)';
     });
-    var tail = ['----------------------------------------', passed + ' passed, ' + failed + ' failed'];
-    return head.concat(lines, tail).join('\n');
+    return head.concat(lines, ['----------------------------------------', passed + ' passed, ' + failed + ' failed']).join('\n');
   }
-  function pad(s) { var x = s + '          '; return x.slice(0, 11); }
 
   function copyReport(btn) {
     var text = report || 'Run the checks first.';
     function done(ok) {
       if (!btn) return;
       var old = btn.textContent;
-      btn.textContent = ok ? 'Copied' : 'Select below';
+      btn.textContent = ok ? 'Copied' : 'Select the text below';
       setTimeout(function () { btn.textContent = old; }, 1600);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
-    } else {
-      done(false);
-      window.prompt('Copy the report:', text);
-    }
+    } else { done(false); window.prompt('Copy the report:', text); }
   }
 
   /* ---------------- run ---------------- */
@@ -349,6 +320,7 @@ window.WHDIAG = (function () {
     renderRows();
     setSummary('running\u2026');
     report = '';
+    mark('run', 'started');
 
     var results = [];
     var frame = document.createElement('iframe');
@@ -356,7 +328,7 @@ window.WHDIAG = (function () {
     frame.title = 'diagnostics harness';
     frame.setAttribute('aria-hidden', 'true');
     frame.src = location.pathname + '?frame=1&d=' + Date.now();
-    document.body.appendChild(frame);
+    (root || document.body).appendChild(frame);
 
     var ctx = { frame: frame };
 
@@ -373,37 +345,36 @@ window.WHDIAG = (function () {
         return chain.then(function () {
           setRow(c.id, 'run', '');
           var t0 = Date.now();
-          return Promise.resolve()
-            .then(function () { return c.fn(ctx); })
-            .then(function (detail) {
-              results.push({ id: c.id, status: 'pass', detail: detail || '', time: Date.now() - t0 });
-              setRow(c.id, 'pass', detail, ms(t0));
-            })
-            .catch(function (e) {
-              var msg = (e && e.message) || String(e);
-              results.push({ id: c.id, status: 'fail', detail: msg, time: Date.now() - t0 });
-              setRow(c.id, 'fail', msg, ms(t0));
-            });
+          return Promise.resolve().then(function () { return c.fn(ctx); }).then(function (detail) {
+            results.push({ id: c.id, status: 'pass', detail: detail || '', time: Date.now() - t0 });
+            setRow(c.id, 'pass', detail, ms(t0));
+          }).catch(function (e) {
+            var msg = (e && e.message) || String(e);
+            results.push({ id: c.id, status: 'fail', detail: msg, time: Date.now() - t0 });
+            setRow(c.id, 'fail', msg, ms(t0));
+          });
         });
       }, Promise.resolve());
     }).then(function () {
       report = buildReport(results);
       var failed = results.filter(function (r) { return r.status === 'fail'; }).length;
       setSummary(failed ? failed + ' failed' : 'all passed', failed ? 'fail' : 'pass');
+      mark('report', report.slice(0, 1800));
       if (failed) { try { console.error('[diagnostics]\n' + report); } catch (e) {} }
-      else { try { console.log('[diagnostics] all checks passed'); } catch (e) {} }
     }).catch(function (e) {
       var msg = 'harness failed: ' + ((e && e.message) || e);
       report = 'whats-happening diagnostics  ' + nowStamp() + '\n' + msg;
       setSummary('could not run', 'fail');
+      mark('report', report);
       results.push({ id: 'harness', status: 'fail', detail: msg, time: 0 });
     }).then(function () {
       frame.remove();
+      ensurePanel();          // if anything detached the panel, put it back
+      mark('state', (panel && document.body.contains(panel) ? 'panel-attached' : 'panel-lost') + ' results=' + results.length);
       running = false;
     });
   }
 
-  /* ---------------- wiring ---------------- */
   function toggle() {
     if (panel && document.body.contains(panel)) { closePanel(); return; }
     ensurePanel();
@@ -421,9 +392,5 @@ window.WHDIAG = (function () {
     function boot() { if (wanted()) start(); }
   }
 
-  return {
-    run: start,
-    toggle: toggle,
-    lastReport: function () { return report; }
-  };
+  return { run: start, toggle: toggle, lastReport: function () { return report; } };
 })();
