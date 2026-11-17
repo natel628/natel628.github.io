@@ -8,7 +8,7 @@
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-4';
+  var LIB = 'diag-5';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
@@ -163,6 +163,21 @@ window.WHDIAG = (function () {
     });
   }
 
+  function checkOnline(c) {
+    var d = c.d, W = c.W;
+    c.w.location.hash = '#/online';
+    return wait(function () { return q(d, '.filters') && q(d, '.card[data-id]'); }, 6000, 'online view').then(function () {
+      var ids = qa(d, '.card[data-id]').map(function (n) { return n.getAttribute('data-id'); });
+      assert(ids.length > 0, 'no cards on the online page to check');
+      var bad = ids.filter(function (id) {
+        var e = W.byId(id);
+        return !e || !(e.presence === 'online' || e.streamUrl || e.channel);
+      });
+      assert(!bad.length, bad.length + ' event(s) listed with no stream or channel to open');
+      return ids.length + ' listed, every one has a stream or channel';
+    });
+  }
+
   function checkWatchlist(c) {
     var d = c.d;
     var card = q(d, '.card[data-id]');
@@ -238,7 +253,6 @@ window.WHDIAG = (function () {
     }).then(function (m) {
       var pins = m.querySelectorAll('.leaflet-interactive, .cluster').length;
       assert(c.w.L, 'Leaflet global is missing after load');
-      click(d, '[data-action="maptoggle"][data-val="map"]');
       click(d, '[data-action="maptoggle"][data-val="list"]');
       return wait(function () { return !q(d, '#map'); }, 4000, 'map teardown').catch(function () {
         throw new Error('switching back to list left the map in the page');
@@ -253,6 +267,7 @@ window.WHDIAG = (function () {
     { id: 'boot', label: 'Page boots without error overlay', fn: checkBoot },
     { id: 'filters', label: 'Filters: category, date, reset', fn: checkFilters },
     { id: 'reset', label: 'Reset restores section defaults', fn: checkReset },
+    { id: 'online', label: 'Online page only lists streams', fn: checkOnline },
     { id: 'watchlist', label: 'Watchlist survives a reload', fn: checkWatchlist },
     { id: 'calendar', label: 'Calendar export + event sheet', fn: checkCalendar },
     { id: 'map', label: 'Map loads and tears down', fn: checkMap }
