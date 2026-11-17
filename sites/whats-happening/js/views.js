@@ -46,6 +46,13 @@ window.WHV = (function () {
     return bits.map(function (b) { return '<span>' + W.esc(b) + '</span>'; }).join('<span class="sep">\u00b7</span>');
   }
 
+  /* An event is only watchable online when there is actually something to
+     open: presence online, or a real stream link / channel. In-person events
+     that merely allow a future broadcast do not count. */
+  function watchable(ev) {
+    return ev.presence === 'online' || !!ev.streamUrl || !!ev.channel;
+  }
+
   /* Live snow readout mount point. weather.js fills this in after render and
      replaces it with a single quiet line if Open-Meteo cannot be reached. */
   function weatherBlock(ev) {
@@ -114,7 +121,7 @@ window.WHV = (function () {
       .map(function (d) { return chip('price', d[0], d[1], f.price === d[0]); }).join('');
     var presence = [['any', 'Any format'], ['in-person', 'In person'], ['online', 'Online'], ['both', 'Both']]
       .map(function (d) { return chip('presence', d[0], d[1], f.presence === d[0]); }).join('');
-    var times = [['any', 'Any time'], ['morning', 'Morning'], ['afternoon', 'Afternoon'], ['evening', 'Evening'], ['late', 'Late night']]
+    var times = [['any', 'Any time'], ['morning', 'Afternoon'], ['afternoon', 'Afternoon'], ['evening', 'Evening'], ['late', 'Late night']]
       .map(function (d) { return chip('time', d[0], d[1], f.time === d[0]); }).join('');
     var wheres = [['near', 'Near me'], ['anywhere', 'Anywhere'], ['online', 'Online only']]
       .map(function (d) { return chip('where', d[0], d[1], f.where === d[0]); }).join('');
@@ -158,8 +165,7 @@ window.WHV = (function () {
       week.push({ day: day, items: items });
     }
     var onlineTonight = W.sortList(evs.filter(function (e) {
-      var watchable = e.presence === 'online' || !!e.streamUrl || !!e.channel;
-      return watchable && W.sameDay(W.parseLocal(e.startLocal), today);
+      return watchable(e) && W.sameDay(W.parseLocal(e.startLocal), today);
     }), 'soonest');
     var recs = ranked.filter(function (e) { return W.score(e).reasons.length; }).slice(1, 7);
     var trending = W.sortList(evs, 'popular').slice(0, 5);
@@ -194,8 +200,10 @@ window.WHV = (function () {
       '<div class="grid">' + month.map(function (e) { return card(e); }).join('') + '</div>';
   }
 
-  function collectionView(title, sub) {
+  function collectionView(title, sub, opts) {
+    opts = opts || {};
     var list = W.query(S.filters, S.q);
+    if (opts.watchable) list = list.filter(watchable);
     var hidden = S.hiddenNoPrice;
     var note = '';
     if (S.filters.price !== 'any' && hidden > 0) {
@@ -217,7 +225,7 @@ window.WHV = (function () {
     return collectionView(c.label, 'Live and upcoming ' + c.short.toLowerCase() + ' built from every source available to you.');
   }
   function viewOnline() {
-    return collectionView('Online & livestreams', 'Scheduled streams and premieres. A stream is only marked live when its start time and duration say it is running now.');
+    return collectionView('Online & livestreams', 'Scheduled streams and premieres that you can actually open. Everything here has a watch link or a channel.', { watchable: true });
   }
   function viewBrowse() {
     return collectionView(S.browseTitle || 'All events', 'Search everything, then narrow it down.');
@@ -225,7 +233,7 @@ window.WHV = (function () {
 
   return {
     badge: badge, art: art, card: card, hero: hero, sectionHead: sectionHead, row: row, filterBar: filterBar,
-    notice: notice, results: results, viewDiscover: viewDiscover, collectionView: collectionView,
+    notice: notice, results: results, viewDiscover: viewDiscover, collectionView: collectionView, watchable: watchable,
     viewNear: viewNear, viewCategory: viewCategory, viewOnline: viewOnline, viewBrowse: viewBrowse
   };
 })();
