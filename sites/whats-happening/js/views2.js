@@ -3,6 +3,12 @@ window.WHV2 = (function () {
   'use strict';
   var W = window.WH, V = window.WHV, S = W.state;
 
+  function channelName(ev) {
+    if (!ev) return 'Online';
+    var c = ev.channel ? W.channelById(ev.channel) : null;
+    return (c && c.name) || ev.channelName || ev.venue || 'Online';
+  }
+
   function groupByDay(list) {
     var map = {};
     list.forEach(function (e) {
@@ -16,8 +22,9 @@ window.WHV2 = (function () {
 
   function calHead() {
     var cur = S.calCursor;
-    var label = S.calMode === 'month' ? W.MONTHS[cur.getMonth()] + ' ' + cur.getFullYear() :
-      (S.calMode === 'week' ? 'Week of ' + W.fmtDay(W.addDays(cur, -cur.getDay())) : W.fmtDayLong(cur));
+    var label = S.calMode === 'month' ? W.MONTHS[cur.getMonth()] + ' ' + cur.getFullYear()
+      : S.calMode === 'week' ? 'Week of ' + W.fmtDay(W.addDays(cur, -cur.getDay()))
+      : W.fmtDayLong(cur);
     return '<div class="calhead"><div class="calnav"><button class="iconbtn" data-action="cal-prev" aria-label="Previous">' + W.icon('left') + '</button>' +
       '<h2>' + W.esc(label) + '</h2>' +
       '<button class="iconbtn" data-action="cal-next" aria-label="Next">' + W.icon('right') + '</button>' +
@@ -38,12 +45,11 @@ window.WHV2 = (function () {
       var key = W.ymd(day);
       var items = map[key] || [];
       var other = day.getMonth() !== cur.getMonth();
-      var isToday = W.sameDay(day, new Date());
-      cells += '<div class="calcell' + (other ? ' is-out' : '') + (isToday ? ' is-today' : '') + '">' +
+      cells += '<div class="calcell' + (other ? ' is-out' : '') + (W.sameDay(day, new Date()) ? ' is-today' : '') + '">' +
         '<span class="calcell__n">' + day.getDate() + '</span>' +
         items.slice(0, 3).map(function (e) {
           var c = W.catOf(e.category);
-          return '<button class="calitem" data-action="open" data-id="' + e.id + '" style="--h:' + c.hue + '"><span class="calitem__d"></span>' + W.esc(W.fmtTime(W.parseLocal(e.startLocal)).replace(':00', '')) + ' ' + W.esc(e.title) + '</button>';
+          return '<button class="calitem" data-action="open" data-id="' + e.id + '" style="--h:' + c.hue + '"><span class="calitem__d"></span>' + W.esc(e.title) + '</button>';
         }).join('') +
         (items.length > 3 ? '<button class="calmore" data-action="cal-day" data-val="' + key + '">+' + (items.length - 3) + ' more</button>' : '') +
         '</div>';
@@ -59,15 +65,17 @@ window.WHV2 = (function () {
       var day = W.addDays(start, i);
       var items = map[W.ymd(day)] || [];
       cols += '<div class="weekcol' + (W.sameDay(day, new Date()) ? ' is-today' : '') + '"><p class="weekcol__h">' + W.DAYS[day.getDay()] + ' <span>' + day.getDate() + '</span></p>' +
-        (items.length ? items.map(function (e) { var c = W.catOf(e.category); return '<button class="calitem" data-action="open" data-id="' + e.id + '" style="--h:' + c.hue + '"><span class="calitem__d"></span>' + W.esc(W.fmtTime(W.parseLocal(e.startLocal))) + ' ' + W.esc(e.title) + '</button>'; }).join('') : '<p class="weekcol__empty">-</p>') +
+        (items.length ? items.map(function (e) {
+          var c = W.catOf(e.category);
+          return '<button class="calitem" data-action="open" data-id="' + e.id + '" style="--h:' + c.hue + '"><span class="calitem__d"></span>' + W.esc(W.fmtTime(W.parseLocal(e.startLocal))) + ' ' + W.esc(e.title) + '</button>';
+        }).join('') : '<p class="weekcol__empty">-</p>') +
         '</div>';
     }
     return '<div class="weekgrid">' + cols + '</div>';
   }
 
   function dayView(evs) {
-    var map = groupByDay(evs);
-    var items = map[W.ymd(S.calCursor)] || [];
+    var items = groupByDay(evs)[W.ymd(S.calCursor)] || [];
     if (!items.length) return '<div class="empty"><h3>Nothing on this day</h3><p>Pick another day, or add events from Discover.</p></div>';
     return '<div class="daylist">' + items.map(function (e) { return V.card(e); }).join('') + '</div>';
   }
@@ -82,37 +90,46 @@ window.WHV2 = (function () {
       '<div class="legend">' + W.CATS.map(function (c) { return '<span class="legend__i"><span class="dotcat" style="--h:' + c.hue + '"></span>' + c.short + '</span>'; }).join('') + '</div>';
   }
 
+  function followKey(key) {
+    var parts = key.split(':'), type = parts[0], id = parts.slice(1).join(':');
+    var name = id, sub = type;
+    if (type === 'performer') { var p = W.personById(id); if (p) { name = p.name; sub = p.kind; } }
+    else if (type === 'channel') { var c = W.channelById(id); if (c) name = c.name; }
+    var related = W.upcoming(W.allEvents().filter(function (e) {
+      if (type === 'performer') return e.performers.indexOf(id) >= 0;
+      if (type === 'channel') return e.channel === id;
+      if (type === 'venue') return e.venue === id;
+      return false;
+    }), 400);
+    return { key: key, name: name, sub: sub, related: W.sortList(related, 'soonest') };
+  }
+
   function viewWatchlist() {
     var savedEvs = S.saved.map(W.byId).filter(Boolean);
-    var upcoming = W.sortList(savedEvs.filter(function (e) { return W.endsAt(e) >= new Date(); }), 'soonest');
-    var past = W.sortList(savedEvs.filter(function (e) { return W.endsAt(e) < new Date(); }), 'soonest');
-    var follows = S.follows.map(function (key) {
-      var parts = key.split(':'), type = parts[0], id = parts.slice(1).join(':');
-      var name = id, sub = type, related = [];
-      if (type === 'performer') { var p = W.personById(id); if (p) { name = p.name; sub = p.kind; } }
-      else if (type === 'channel') { var c = W.channelById(id); if (c) { name = c.name; sub = 'channel'; } }
-      else if (type === 'venue') { sub = 'venue'; }
-      related = W.upcoming(W.allEvents().filter(function (e) {
-        if (type === 'performer') return e.performers.indexOf(id) >= 0;
-        if (type === 'channel') return e.channel === id;
-        if (type === 'venue') return e.venue === id;
-        return false;
-      }), 400);
-      return { key: key, type: type, id: id, name: name, sub: sub, related: W.sortList(related, 'soonest') };
-    });
+    var now = new Date();
+    var upcoming = W.sortList(savedEvs.filter(function (e) { return W.endsAt(e) >= now; }), 'soonest');
+    var past = W.sortList(savedEvs.filter(function (e) { return W.endsAt(e) < now; }), 'soonest');
+    var follows = S.follows.map(followKey);
+
     var followBlock = follows.length ? '<div class="follows">' + follows.map(function (f) {
       return '<div class="fcard"><div class="fcard__h"><div><p class="fcard__type">' + W.esc(f.sub) + '</p><h3>' + W.esc(f.name) + '</h3></div>' +
         '<button class="iconbtn" data-action="follow" data-key="' + W.esc(f.key) + '" aria-label="Unfollow" title="Unfollow">' + W.icon('close') + '</button></div>' +
-        (f.related.length ? '<p class="fcard__next">' + f.related.length + ' upcoming \u00b7 next ' + W.esc(W.relDay(W.parseLocal(f.related[0].startLocal))) + '</p><button class="linkbtn" data-action="open" data-id="' + f.related[0].id + '">' + W.esc(f.related[0].title) + '</button>' : '<p class="fcard__next">No upcoming dates found</p>') +
+        (f.related.length
+          ? '<p class="fcard__next">' + f.related.length + ' upcoming \u00b7 next ' + W.esc(W.relDay(W.parseLocal(f.related[0].startLocal))) + '</p><button class="linkbtn" data-action="open" data-id="' + f.related[0].id + '">' + W.esc(f.related[0].title) + '</button>'
+          : '<p class="fcard__next">No upcoming dates found</p>') +
         '</div>';
     }).join('') + '</div>' : '<div class="empty"><h3>No follows yet</h3><p>Open any event and follow the performer, team or channel to build a personal feed.</p></div>';
 
     return '<div class="pagehead"><div><h1>My watchlist</h1><p>Saved events and the people, teams and channels you follow.</p></div>' +
       (upcoming.length ? '<button class="btn btn--ghost" data-action="ics-saved">' + W.icon('download') + 'Export calendar</button>' : '') + '</div>' +
       V.sectionHead('Saved events', upcoming.length + ' upcoming' + (past.length ? ' \u00b7 ' + past.length + ' past' : '')) +
-      (upcoming.length ? '<div class="grid">' + upcoming.map(function (e) { return V.card(e); }).join('') + '</div>' : '<div class="empty"><h3>Your watchlist is empty</h3><p>Tap the bookmark on any event to keep it here.</p><a class="btn btn--ghost" href="#/discover">Discover events</a></div>') +
+      (upcoming.length
+        ? '<div class="grid">' + upcoming.map(function (e) { return V.card(e); }).join('') + '</div>'
+        : '<div class="empty"><h3>Your watchlist is empty</h3><p>Tap the bookmark on any event to keep it here.</p><a class="btn btn--ghost" href="#/discover">Discover events</a></div>') +
       V.sectionHead('Following', 'New dates from these appear across your feed') + followBlock +
-      (past.length ? V.sectionHead('Past', 'Saved events that have finished') + '<div class="pastlist">' + past.map(function (e) { return '<button data-action="open" data-id="' + e.id + '" class="pastitem">' + W.esc(e.title) + ' <span>' + W.esc(W.relDay(W.parseLocal(e.startLocal))) + '</span></button>'; }).join('') + '</div>' : '');
+      (past.length ? V.sectionHead('Past', 'Saved events that have finished') + '<div class="pastlist">' + past.map(function (e) {
+        return '<button data-action="open" data-id="' + e.id + '" class="pastitem">' + W.esc(e.title) + ' <span>' + W.esc(W.relDay(W.parseLocal(e.startLocal))) + '</span></button>';
+      }).join('') + '</div>' : '');
   }
 
   function viewSettings() {
@@ -154,12 +171,19 @@ window.WHV2 = (function () {
     var saved = S.saved.indexOf(ev.id) >= 0;
     var dist = W.distanceMi(ev);
     var city = W.eventCity(ev);
+    var online = ev.presence === 'online';
+
     var actions = '';
     if (ev.ticketUrl) actions += '<a class="btn btn--primary" href="' + W.esc(ev.ticketUrl) + '" target="_blank" rel="noopener">' + W.icon('ticket') + 'Get tickets</a>';
     if (ev.streamUrl) actions += '<a class="btn btn--primary" href="' + W.esc(ev.streamUrl) + '" target="_blank" rel="noopener">' + W.icon('play') + 'Watch live</a>';
     if (ev.officialUrl) actions += '<a class="btn btn--ghost" href="' + W.esc(ev.officialUrl) + '" target="_blank" rel="noopener">' + W.icon('ext') + 'Official event page</a>';
     if (!actions) actions = '<p class="noactions">' + (ev.source === 'demo' ? 'This is a demonstration event, so there is no ticket or stream link to open.' : 'This listing did not publish a ticket or stream link.') + '</p>';
-    var perf = W.peopleNames(ev);
+
+    var performers = ev.performers.map(function (pid) {
+      var p = W.personById(pid);
+      return p ? { id: pid, name: p.name } : null;
+    }).filter(Boolean);
+
     return '<div class="sheet" role="dialog" aria-modal="true" aria-label="' + W.esc(ev.title) + '">' +
       '<button class="sheet__x iconbtn" data-action="close-modal" aria-label="Close">' + W.icon('close') + '</button>' +
       '<div class="sheet__art art" style="--h:' + c.hue + '"><span class="art__glyph">' + W.icon(c.icon) + '</span><div class="art__tags">' + (ev.source === 'demo' ? '<span class="badge badge--demo">Demo</span>' : '') + V.badge(ev) + '</div></div>' +
@@ -168,22 +192,21 @@ window.WHV2 = (function () {
       '<h2>' + W.esc(ev.title) + '</h2>' +
       '<div class="detailgrid">' +
       '<div><span>When</span><strong>' + W.esc(W.fmtDayLong(d)) + '<br>' + W.esc(W.fmtTime(d)) + ' - ' + W.esc(W.fmtTime(W.endsAt(ev))) + '</strong>' + (ev.source !== 'demo' ? '<em>venue local time</em>' : '') + '</div>' +
-      '<div><span>Where</span><strong>' + W.esc(ev.presence === 'online' ? (ev.channel ? (W.channelById(ev.channel) || {}).name : 'Online') : ev.venue) + '</strong>' + (city ? '<em>' + W.esc(city.label) + (dist != null ? ' \u00b7 ' + dist + ' mi away' : '') + '</em>' : '') + '</div>' +
+      '<div><span>Where</span><strong>' + W.esc(online ? channelName(ev) : ev.venue) + '</strong>' + (city ? '<em>' + W.esc(city.label) + (dist != null ? ' \u00b7 ' + dist + ' mi away' : '') + '</em>' : '') + '</div>' +
       '<div><span>Price</span><strong>' + W.esc(W.priceLabel(ev)) + '</strong>' + (ev.price && !ev.price.verified && ev.source === 'demo' ? '<em>demonstration figure</em>' : '') + '</div>' +
       (ev.broadcast ? '<div><span>Broadcast</span><strong>' + W.esc(ev.broadcast) + '</strong></div>' : '') +
       (ev.resort ? '<div><span>Resort</span><strong>' + W.esc(ev.resort.name) + '</strong>' + (ev.resort.status ? '<em>' + W.esc(ev.resort.status) + '</em>' : '') + '</div>' : '') +
       '</div>' +
       '<p class="sheet__desc">' + W.esc(ev.description) + '</p>' +
-      (perf.length ? '<div class="perfrow"><span>Featuring</span>' + perf.map(function (n, i) {
-        var pid = ev.performers[i];
-        return '<button class="chip" data-action="person" data-id="' + W.esc(pid) + '">' + W.esc(n) + '</button>';
+      (performers.length ? '<div class="perfrow"><span>Featuring</span>' + performers.map(function (p) {
+        return '<button class="chip" data-action="person" data-id="' + W.esc(p.id) + '">' + W.esc(p.name) + '</button>';
       }).join('') + '</div>' : '') +
-      (ev.channel ? '<div class="perfrow"><span>Channel</span><button class="chip" data-action="follow" data-key="channel:' + W.esc(ev.channel) + '">' + (S.follows.indexOf('channel:' + ev.channel) >= 0 ? 'Following' : 'Follow') + ' ' + W.esc((W.channelById(ev.channel) || {}).name || ev.channel) + '</button></div>' : '') +
+      (ev.channel ? '<div class="perfrow"><span>Channel</span><button class="chip" data-action="follow" data-key="channel:' + W.esc(ev.channel) + '">' + (S.follows.indexOf('channel:' + ev.channel) >= 0 ? 'Following' : 'Follow') + ' ' + W.esc(channelName(ev)) + '</button></div>' : '') +
       '<div class="btnrow">' + actions + '</div>' +
       '<div class="btnrow">' +
       '<button class="btn btn--ghost' + (saved ? ' is-on' : '') + '" data-action="save" data-id="' + ev.id + '">' + W.icon('bookmark') + (saved ? 'In watchlist' : 'Save to watchlist') + '</button>' +
       '<button class="btn btn--ghost" data-action="ics-one" data-id="' + ev.id + '">' + W.icon('download') + 'Add to calendar</button>' +
-      '<button class="btn btn--ghost" data-action="follow" data-key="venue:' + W.esc(ev.venue) + '">' + (S.follows.indexOf('venue:' + ev.venue) >= 0 ? 'Following venue' : 'Follow venue') + '</button>' +
+      (online ? '' : '<button class="btn btn--ghost" data-action="follow" data-key="venue:' + W.esc(ev.venue) + '">' + (S.follows.indexOf('venue:' + ev.venue) >= 0 ? 'Following venue' : 'Follow venue') + '</button>') +
       '</div></div></div>';
   }
 
@@ -194,9 +217,12 @@ window.WHV2 = (function () {
     var name = p ? p.name : ch.name;
     var blurb = p ? p.blurb : ch.blurb;
     var type = p ? p.kind : 'channel';
-    var key = (p && p.kind === 'team') ? 'performer:' + id : 'performer:' + id;
+    var key = 'performer:' + id;
     var dates = W.sortList(W.upcoming(W.allEvents().filter(function (e) { return e.performers.indexOf(id) >= 0; })), 'soonest');
-    var related = p ? (p.related || []).map(function (rid) { var r = W.personById(rid); return r ? '<button class="chip" data-action="person" data-id="' + r.id + '">' + W.esc(r.name) + '</button>' : ''; }).join('') : '';
+    var related = p ? (p.related || []).map(function (rid) {
+      var r = W.personById(rid);
+      return r ? '<button class="chip" data-action="person" data-id="' + r.id + '">' + W.esc(r.name) + '</button>' : '';
+    }).join('') : '';
     var venues = {};
     dates.forEach(function (e) { if (e.presence !== 'online') venues[e.venue] = true; });
     return '<div class="sheet"><button class="sheet__x iconbtn" data-action="close-modal" aria-label="Close">' + W.icon('close') + '</button>' +
