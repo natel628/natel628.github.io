@@ -1,16 +1,20 @@
 /* What's Happening? - hidden diagnostics panel.
 
-   Open with ?diag=1 or Ctrl+Alt+D. It loads a second copy of the site in a
-   hidden iframe and drives it with real clicks (filters, watchlist, calendar,
-   map, modal), then lists what failed so the result can be pasted back.
+   Open any of:
+     ?diag=1        (query string)
+     #diag          (hash - survives renderers that drop query strings)
+     Ctrl+Alt+D     (keyboard)
+   or call window.WHDIAG.run() from the console.
 
-   Running inside an iframe keeps the real page untouched: no filters are
-   changed, nothing is saved to your watchlist, and the map is never toggled
+   It loads a second copy of the site in a hidden iframe and drives it with
+   real clicks (filters, watchlist, calendar, map, modal), then lists what
+   failed so the result can be pasted back. Running inside an iframe keeps the
+   real page untouched: no filters changed, no watchlist edits, map not toggled
    on the page you are looking at. */
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-1';
+  var LIB = 'diag-2';
   var running = false, report = '', panel = null;
 
   /* ---------------- small helpers ---------------- */
@@ -45,7 +49,19 @@ window.WHDIAG = (function () {
     try { return new URLSearchParams(location.search); } catch (e) { return null; }
   }
   function isFrame() { var p = params(); return !!p && p.get('frame') === '1'; }
-  function wanted() { var p = params(); return !!p && p.get('diag') === '1' && !isFrame(); }
+
+  /* Query string first, then the hash: some renderers and link previews strip
+     the query string, and the hash is what carries the app's own routing. */
+  function wanted() {
+    var p = params();
+    if (p && p.get('diag') === '1') return true;
+    return (location.hash || '').toLowerCase().indexOf('diag') >= 0;
+  }
+
+  /* Verification hook: an attribute that can be read without running script. */
+  try {
+    document.documentElement.setAttribute('data-diag', LIB + (isFrame() ? ' frame' : wanted() ? ' wanted' : ' idle'));
+  } catch (e) { /* never fatal */ }
 
   /* ---------------- iframe context ---------------- */
   function refresh(c) {
@@ -62,7 +78,7 @@ window.WHDIAG = (function () {
       var done = false;
       function go() { if (done) return; done = true; res(); }
       f.addEventListener('load', function () { setTimeout(go, 60); });
-      setTimeout(go, 12000);   // never hang
+      setTimeout(go, 12000);
       f.contentWindow.location.reload();
     }).then(function () {
       return wait(function () { var w = f.contentWindow; return w && w.WH && w.WH.state; }, 15000, 'frame reboot');
@@ -148,7 +164,6 @@ window.WHDIAG = (function () {
       var btn = q(c.d, '.card[data-id="' + id + '"] .save');
       var showsSaved = btn ? btn.classList.contains('is-on') : null;
 
-      // leave the frame's storage the way it was found
       c.S.saved = c.S.saved.filter(function (x) { return x !== id; });
       c.W.store.set('saved', c.S.saved);
 
@@ -401,9 +416,9 @@ window.WHDIAG = (function () {
   });
 
   if (!isFrame()) {
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', maybe);
-    else maybe();
-    function maybe() { if (wanted()) start(); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else boot();
+    function boot() { if (wanted()) start(); }
   }
 
   return {
