@@ -58,7 +58,10 @@
   }
 
   function route(force) {
-    var name = (location.hash || '#/discover').replace(/^#\\/?/, '') || 'discover';
+    var h = location.hash || '#/discover';
+    if (h.charAt(0) === '#') h = h.slice(1);
+    if (h.charAt(0) === '/') h = h.slice(1);
+    var name = h || 'discover';
     var known = document.querySelector('.navitem[href="#/' + name + '"]');
     if (!known && name !== 'browse') name = 'discover';
     var changed = name !== S.view || force;
