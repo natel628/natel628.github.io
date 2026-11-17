@@ -14,7 +14,7 @@
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-7';
+  var LIB = 'diag-8';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
@@ -93,7 +93,7 @@ window.WHDIAG = (function () {
   function checkBoot(c) {
     return wait(function () { return c.W && c.d.getElementById('main'); }, 8000, 'boot').then(function () {
       var err = c.d.getElementById('boot-error');
-      assert(!err, 'page error overlay: ' + (err.textContent || '').replace(/\s+/g, ' ').slice(0, 160));
+      assert(!err, 'page error overlay: ' + ((err && err.textContent) || '').replace(/\s+/g, ' ').slice(0, 160));
       var main = c.d.getElementById('main');
       assert(main.textContent.trim().length > 40, 'main area is empty');
       return 'rendered, ' + main.querySelectorAll('.card').length + ' cards on the landing view';
