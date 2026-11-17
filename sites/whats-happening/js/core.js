@@ -165,7 +165,7 @@ window.WH = (function () {
     if (dist != null) {
       var near = Math.max(0, 22 - dist / 6);
       s += near;
-      if (dist <= 25) reasons.push(dist + ' mi away');
+      if (dist <= 25) reasons.push(dist < 1 ? 'under 1 mi away' : dist + ' mi away');
     }
     var d = parseLocal(ev.startLocal);
     var hours = (d - new Date()) / 3600000;
@@ -187,17 +187,25 @@ window.WH = (function () {
     return hay.indexOf(q.toLowerCase()) >= 0;
   }
 
+  /* Returns the Friday of the weekend currently in progress (or the coming one). */
+  function weekendStart(now) {
+    var day = now.getDay(), base = startOfDay(now);
+    if (day === 0) return addDays(base, -2);
+    if (day === 5 || day === 6) return addDays(base, -(day - 5));
+    return addDays(base, 5 - day);
+  }
+
   function dateOk(ev, f) {
     var d = parseLocal(ev.startLocal), now = new Date();
     var today = startOfDay(now);
-    var dow = now.getDay();
-    var untilFri = (5 - dow + 7) % 7;
-    var fri = addDays(today, untilFri);
     switch (f.date) {
       case 'today': return sameDay(d, now);
       case 'tonight': return sameDay(d, now) && d.getHours() >= 17;
       case 'tomorrow': return sameDay(d, addDays(now, 1));
-      case 'weekend': return startOfDay(d) >= fri && startOfDay(d) <= addDays(fri, 2);
+      case 'weekend': {
+        var fri = weekendStart(now);
+        return startOfDay(d) >= fri && startOfDay(d) <= addDays(fri, 2);
+      }
       case '7': return startOfDay(d) >= today && startOfDay(d) < addDays(today, 7);
       case '30': return startOfDay(d) >= today && startOfDay(d) < addDays(today, 30);
       case 'custom': {
@@ -261,6 +269,12 @@ window.WH = (function () {
   }
 
   function sortList(list, mode) {
+    if (mode === 'recommended') {
+      return list
+        .map(function (ev) { return { ev: ev, s: score(ev).score }; })
+        .sort(function (a, b) { return b.s - a.s; })
+        .map(function (x) { return x.ev; });
+    }
     var copy = list.slice();
     copy.sort(function (a, b) {
       if (mode === 'soonest') return parseLocal(a.startLocal) - parseLocal(b.startLocal);
@@ -270,7 +284,7 @@ window.WH = (function () {
         var pa = a.price ? a.price.min : 1e9, pb = b.price ? b.price.min : 1e9;
         return pa - pb;
       }
-      return score(b).score - score(a).score;
+      return 0;
     });
     return copy;
   }
@@ -296,31 +310,36 @@ window.WH = (function () {
   }
 
   function icsFor(events) {
-    function f(d) { return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; }
-    function t(s) { return String(s || '').replace(/[\\;,]/g, function (m) { return '\\' + m; }).replace(/\n/g, '\\n'); }
+    function dt(d) { return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; }
+    function txt(s) { return String(s || '').replace(/[\\;,]/g, function (m) { return '\\' + m; }).replace(/\n/g, '\\n'); }
+    function fold(line) {
+      if (line.length <= 74) return line;
+      var out = line.slice(0, 74), rest = line.slice(74);
+      while (rest.length > 73) { out += '\r\n ' + rest.slice(0, 73); rest = rest.slice(73); }
+      return out + '\r\n ' + rest;
+    }
     var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Whats Happening//EN', 'CALSCALE:GREGORIAN'];
     events.forEach(function (ev) {
-      var s = parseLocal(ev.startLocal), e = endsAt(ev);
       lines.push('BEGIN:VEVENT');
       lines.push('UID:' + ev.id + '@whats-happening');
-      lines.push('DTSTAMP:' + f(new Date()));
-      lines.push('DTSTART:' + f(s));
-      lines.push('DTEND:' + f(e));
-      lines.push('SUMMARY:' + t(ev.title));
-      lines.push('LOCATION:' + t(ev.presence === 'online' ? (ev.channel ? 'Online - ' + ev.channel : 'Online') : ev.venue));
-      lines.push('DESCRIPTION:' + t(ev.description));
+      lines.push('DTSTAMP:' + dt(new Date()));
+      lines.push('DTSTART:' + dt(parseLocal(ev.startLocal)));
+      lines.push('DTEND:' + dt(endsAt(ev)));
+      lines.push('SUMMARY:' + txt(ev.title));
+      lines.push('LOCATION:' + txt(ev.presence === 'online' ? (ev.channelName || ev.venue || 'Online') : ev.venue));
+      lines.push('DESCRIPTION:' + txt(ev.description));
       if (ev.officialUrl) lines.push('URL:' + ev.officialUrl);
       lines.push('END:VEVENT');
     });
     lines.push('END:VCALENDAR');
-    return lines.join('\r\n');
+    return lines.map(fold).join('\r\n');
   }
 
   return {
     D: D, CITIES: CITIES, CATS: CATS, PEOPLE: PEOPLE, CHANNELS: CHANNELS,
     icon: icon, esc: esc, pad: pad, ymd: ymd, parseLocal: parseLocal, addDays: addDays,
     startOfDay: startOfDay, sameDay: sameDay, fmtTime: fmtTime, fmtDay: fmtDay, fmtDayLong: fmtDayLong, relDay: relDay,
-    MONTHS: MONTHS, DAYS: DAYS, DAYS_LONG: DAYS_LONG,
+    MONTHS: MONTHS, DAYS: DAYS, DAYS_LONG: DAYS_LONG, weekendStart: weekendStart,
     store: store, state: state, city: city, catOf: catOf, personById: personById, channelById: channelById,
     allEvents: allEvents, byId: byId, distanceMi: distanceMi, eventCity: eventCity, endsAt: endsAt, liveState: liveState,
     score: score, peopleNames: peopleNames, query: query, sortList: sortList, upcoming: upcoming,
