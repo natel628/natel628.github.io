@@ -4,11 +4,17 @@
    It loads a copy of this page in a hidden iframe and drives it with real
    clicks (filters, reset, watchlist, calendar, map, sheet), then lists what
    failed. Running in an iframe means the page you are looking at is never
-   touched. */
+   touched.
+
+   Budgets: every wait resolves on its condition (usually <0.5s) and only
+   spends its full limit when something is actually broken, so a healthy run
+   takes a few seconds. Filter checks compare the rendered cards against the
+   model set, so an empty-but-wrong list fails instead of passing quietly.
+*/
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-5';
+  var LIB = 'diag-6';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
@@ -29,14 +35,17 @@ window.WHDIAG = (function () {
   function nowStamp() { return new Date().toISOString(); }
   function ms(t0) { return Math.round(Date.now() - t0) + 'ms'; }
 
+  /* A predicate that throws fails the wait at once (no silent hang); a
+     falsy return keeps polling until the limit, then rejects. */
   function wait(fn, limit, label) {
     var t0 = Date.now();
     return new Promise(function (res, rej) {
       (function tick() {
-        var v = fn();
+        var v;
+        try { v = fn(); } catch (e) { rej(e); return; }
         if (v) return res(v);
         if (Date.now() - t0 > limit) return rej(new Error('timeout after ' + limit + 'ms' + (label ? ': ' + label : '')));
-        setTimeout(tick, 120);
+        setTimeout(tick, 60);
       })();
     });
   }
@@ -50,7 +59,6 @@ window.WHDIAG = (function () {
     if (p && p.get('diag') === '1') return true;
     return (location.hash || '').toLowerCase().indexOf('diag') >= 0;
   }
-
   mark('lib', LIB + (isFrame() ? ' frame' : wanted() ? ' wanted' : ' idle'));
 
   /* ---------------- harness context ---------------- */
@@ -67,10 +75,10 @@ window.WHDIAG = (function () {
       var f = c.frame, done = false;
       function go() { if (done) return; done = true; res(); }
       f.addEventListener('load', function () { setTimeout(go, 60); });
-      setTimeout(go, 12000);
+      setTimeout(go, 8000);
       f.contentWindow.location.reload();
     }).then(function () {
-      return wait(function () { var w = f.contentWindow; return w && w.WH && w.WH.state; }, 15000, 'frame reboot');
+      return wait(function () { var w = f.contentWindow; return w && w.WH && w.WH.state; }, 8000, 'frame reboot');
     }).then(function () { return refresh(c); });
   }
 
@@ -85,7 +93,7 @@ window.WHDIAG = (function () {
   }
 
   function checkBoot(c) {
-    return wait(function () { return c.W && c.d.getElementById('main'); }, 15000, 'boot').then(function () {
+    return wait(function () { return c.W && c.d.getElementById('main'); }, 8000, 'boot').then(function () {
       var err = c.d.getElementById('boot-error');
       assert(!err, 'page error overlay: ' + (err.textContent || '').replace(/\s+/g, ' ').slice(0, 160));
       var main = c.d.getElementById('main');
@@ -94,39 +102,69 @@ window.WHDIAG = (function () {
     });
   }
 
+  function cardIds(d) {
+    return qa(d, '.card[data-id]').map(function (n) { return n.getAttribute('data-id'); });
+  }
+  function modelIds(W, S) {
+    return W.query(S.filters, S.q).map(function (e) { return e.id; });
+  }
+  function diffIds(shown, expected) {
+    var missing = expected.filter(function (id) { return shown.indexOf(id) < 0; });
+    var extra = shown.filter(function (id) { return expected.indexOf(id) < 0; });
+    return { missing: missing, extra: extra };
+  }
+
   function checkFilters(c) {
     var d = c.d, S = c.S, W = c.W;
     c.w.location.hash = '#/browse';
-    return wait(function () { return q(d, '.filters') && q(d, '.card[data-id]'); }, 6000, 'browse view').then(function () {
-      var before = qa(d, '.card[data-id]').length;
+    return wait(function () { return q(d, '.filters') && q(d, '.card[data-id]'); }, 4000, 'browse view').then(function () {
+      var before = cardIds(d).length;
+      assert(before > 0, 'browse view rendered no cards to filter');
       click(d, '[data-action="filter"][data-group="cats"][data-val="music"]');
       return wait(function () {
-        var ids = qa(d, '.card[data-id]').map(function (n) { return n.getAttribute('data-id'); });
+        var ids = cardIds(d);
         return ids.length && ids.every(function (id) { var e = W.byId(id); return e && e.category === 'music'; });
-      }, 4000, 'music filter').catch(function () {
+      }, 3000, 'music filter').catch(function () {
         throw new Error('selecting the music chip did not restrict the list');
       }).then(function () {
         assert(S.filters.cats.indexOf('music') >= 0, 'filter state did not record the chip');
-        assert(qa(d, '.card[data-id]').length <= before, 'filtering produced more cards than before');
+        assert(cardIds(d).length <= before, 'filtering produced more cards than before');
         click(d, '[data-action="filter"][data-group="cats"][data-val="music"]');
-        return wait(function () { return S.filters.cats.indexOf('music') < 0; }, 4000, 'chip off').catch(function () {
+        return wait(function () { return S.filters.cats.indexOf('music') < 0; }, 3000, 'chip off').catch(function () {
           throw new Error('clicking the chip again did not switch it off');
         });
       }).then(function () {
         click(d, '[data-action="filter"][data-group="date"][data-val="today"]');
-        return wait(function () { return S.filters.date === 'today'; }, 4000, 'date filter');
-      }).then(function () {
-        var outside = qa(d, '.card[data-id]').filter(function (n) {
-          var e = W.byId(n.getAttribute('data-id'));
-          return e && !W.sameDay(W.parseLocal(e.startLocal), new Date());
+        return wait(function () {
+          if (S.filters.date !== 'today') return null;
+          var shown = cardIds(d);
+          var expected = modelIds(W, S);
+          if (shown.length !== expected.length) return null;
+          for (var i = 0; i < shown.length; i++) {
+            var e = W.byId(shown[i]);
+            if (!e || expected.indexOf(shown[i]) < 0 || !W.sameDay(W.parseLocal(e.startLocal), new Date())) return null;
+          }
+          return shown.length + ' shown, ' + expected.length + ' expected';
+        }, 3000, 'today filter').catch(function () {
+          var shown = cardIds(d);
+          var expected = modelIds(W, S);
+          var diff = diffIds(shown, expected);
+          var offDay = shown.filter(function (id) {
+            var e = W.byId(id);
+            return e && !W.sameDay(W.parseLocal(e.startLocal), new Date());
+          });
+          throw new Error('Today filter mismatch: showing ' + shown.length + ' of ' + expected.length + ' expected' +
+            (diff.missing.length ? ' (missing ' + diff.missing.slice(0, 3).join(',') + ')' : '') +
+            (diff.extra.length ? ' (unexpected ' + diff.extra.slice(0, 3).join(',') + ')' : '') +
+            (offDay.length ? ' (' + offDay.length + ' not today)' : ''));
         });
-        assert(!outside.length, outside.length + ' cards shown that are not today');
+      }).then(function () {
         click(d, '[data-action="resetfilters"]');
-        return wait(function () { return S.filters.date === 'any' && S.filters.cats.length === 0; }, 4000, 'reset').catch(function () {
+        return wait(function () { return S.filters.date === 'any' && S.filters.cats.length === 0; }, 3000, 'reset').catch(function () {
           throw new Error('Reset did not clear the filters');
         });
       }).then(function () {
-        return 'category chip, date filter and reset all worked (' + before + ' cards, ' + qa(d, '.card[data-id]').length + ' after reset)';
+        return 'category chip, date filter and reset all worked (' + before + ' cards, ' + cardIds(d).length + ' after reset)';
       });
     });
   }
@@ -134,28 +172,28 @@ window.WHDIAG = (function () {
   function checkReset(c) {
     var d = c.d, S = c.S, W = c.W;
     c.w.location.hash = '#/comedy';
-    return wait(function () { return S.view === 'comedy' && q(d, '.filters'); }, 6000, 'comedy view').then(function () {
+    return wait(function () { return S.view === 'comedy' && q(d, '.filters'); }, 4000, 'comedy view').then(function () {
       assert(S.filters.cats.indexOf('comedy') >= 0, 'comedy view did not start on its own category');
       click(d, '[data-action="filter"][data-group="cats"][data-val="comedy"]');
-      return wait(function () { return S.filters.cats.length === 0; }, 4000, 'chip off');
+      return wait(function () { return S.filters.cats.length === 0; }, 3000, 'chip off');
     }).then(function () {
       click(d, '[data-action="resetfilters"]');
-      return wait(function () { return S.filters.cats.length === 1 && S.filters.cats[0] === 'comedy'; }, 4000, 'reset comedy').catch(function () {
+      return wait(function () { return S.filters.cats.length === 1 && S.filters.cats[0] === 'comedy'; }, 3000, 'reset comedy').catch(function () {
         throw new Error('Reset did not restore the Comedy category (got: [' + S.filters.cats.join(',') + '])');
       });
     }).then(function () {
       assert(S.filters.where === 'anywhere', 'comedy page lost its anywhere scope after reset (got: ' + S.filters.where + ')');
-      var ids = qa(d, '.card[data-id]').map(function (n) { return n.getAttribute('data-id'); });
+      var ids = cardIds(d);
       assert(ids.length > 0, 'no cards after reset');
       var bad = ids.filter(function (id) { var e = W.byId(id); return !e || e.category !== 'comedy'; });
       assert(!bad.length, bad.length + ' non-comedy cards shown on the Comedy page after reset');
       c.w.location.hash = '#/online';
-      return wait(function () { return S.view === 'online' && q(d, '.filters'); }, 6000, 'online view');
+      return wait(function () { return S.view === 'online' && q(d, '.filters'); }, 4000, 'online view');
     }).then(function () {
       assert(S.filters.where === 'online', 'online view did not start on online-only');
       S.filters.where = 'near';
       click(d, '[data-action="resetfilters"]');
-      return wait(function () { return S.filters.where === 'online'; }, 4000, 'reset online').catch(function () {
+      return wait(function () { return S.filters.where === 'online'; }, 3000, 'reset online').catch(function () {
         throw new Error('Reset did not restore the online-only scope (got: ' + S.filters.where + ')');
       });
     }).then(function () {
@@ -166,8 +204,8 @@ window.WHDIAG = (function () {
   function checkOnline(c) {
     var d = c.d, W = c.W;
     c.w.location.hash = '#/online';
-    return wait(function () { return q(d, '.filters') && q(d, '.card[data-id]'); }, 6000, 'online view').then(function () {
-      var ids = qa(d, '.card[data-id]').map(function (n) { return n.getAttribute('data-id'); });
+    return wait(function () { return q(d, '.filters') && q(d, '.card[data-id]'); }, 4000, 'online view').then(function () {
+      var ids = cardIds(d);
       assert(ids.length > 0, 'no cards on the online page to check');
       var bad = ids.filter(function (id) {
         var e = W.byId(id);
@@ -199,11 +237,11 @@ window.WHDIAG = (function () {
 
   function openSheet(c) {
     click(c.d, '.card[data-id]');
-    return wait(function () { return q(c.d, '.sheet'); }, 5000, 'event sheet');
+    return wait(function () { return q(c.d, '.sheet'); }, 3000, 'event sheet');
   }
   function closeSheet(c) {
     c.d.dispatchEvent(new c.w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-    return wait(function () { return c.d.getElementById('modal').hidden; }, 4000, 'sheet close').catch(function () {
+    return wait(function () { return c.d.getElementById('modal').hidden; }, 2000, 'sheet close').catch(function () {
       throw new Error('Escape did not close the event sheet');
     });
   }
@@ -237,24 +275,24 @@ window.WHDIAG = (function () {
   function checkMap(c) {
     var d = c.d;
     c.w.location.hash = '#/near';
-    return wait(function () { return q(d, '[data-action="maptoggle"][data-val="map"]'); }, 6000, 'near view').then(function () {
+    return wait(function () { return q(d, '[data-action="maptoggle"][data-val="map"]'); }, 4000, 'near view').then(function () {
       click(d, '[data-action="maptoggle"][data-val="map"]');
-      return wait(function () { return q(d, '#map'); }, 5000, 'map container');
+      return wait(function () { return q(d, '#map'); }, 3000, 'map container');
     }).then(function () {
       return wait(function () {
         var m = q(d, '#map');
         if (m && m.classList.contains('leaflet-container')) return m;
         var hint = q(d, '.maphint');
-        if (hint && /could not load/i.test(hint.textContent) && !m.classList.contains('leaflet-container')) {
+        if (hint && /could not load/i.test(hint.textContent)) {
           throw new Error('Leaflet never loaded - map CDN may be blocked');
         }
         return null;
-      }, 20000, 'leaflet init');
+      }, 6000, 'leaflet init');
     }).then(function (m) {
       var pins = m.querySelectorAll('.leaflet-interactive, .cluster').length;
       assert(c.w.L, 'Leaflet global is missing after load');
       click(d, '[data-action="maptoggle"][data-val="list"]');
-      return wait(function () { return !q(d, '#map'); }, 4000, 'map teardown').catch(function () {
+      return wait(function () { return !q(d, '#map'); }, 3000, 'map teardown').catch(function () {
         throw new Error('switching back to list left the map in the page');
       }).then(function () {
         return 'Leaflet mounted and drew ' + pins + ' pin(s), then unmounted cleanly';
@@ -286,12 +324,11 @@ window.WHDIAG = (function () {
     panel.className = 'diag';
     panel.setAttribute('role', 'dialog');
     panel.setAttribute('aria-label', 'Diagnostics');
-    panel.innerHTML =
-      '<div class="diag__head">' +
-        '<b>Diagnostics</b><span class="diag__sum" id="diag-sum">ready</span>' +
-        '<span class="diag__btns"><button type="button" data-diag="run">Run</button>' +
-        '<button type="button" data-diag="copy">Copy</button>' +
-        '<button type="button" data-diag="close" aria-label="Close">\u00d7</button></span>' +
+    panel.innerHTML = '<div class="diag__head">' +
+      '<b>Diagnostics</b><span class="diag__sum" id="diag-sum">ready</span>' +
+      '<span class="diag__btns"><button type="button" data-diag="run">Run</button>' +
+      '<button type="button" data-diag="copy">Copy</button>' +
+      '<button type="button" data-diag="close" aria-label="Close">\u00d7</button></span>' +
       '</div>' +
       '<ol class="diag__list" id="diag-list"></ol>' +
       '<p class="diag__hint">Runs in a hidden copy of this page, so your own filters and watchlist are untouched.</p>';
@@ -386,9 +423,9 @@ window.WHDIAG = (function () {
       var done = false;
       function go() { if (done) return; done = true; res(); }
       frame.addEventListener('load', function () { setTimeout(go, 50); });
-      setTimeout(go, 15000);
+      setTimeout(go, 8000);
     }).then(function () {
-      return wait(function () { var w = frame.contentWindow; return w && w.WH && w.WH.state; }, 15000, 'harness boot');
+      return wait(function () { var w = frame.contentWindow; return w && w.WH && w.WH.state; }, 8000, 'harness boot');
     }).then(function () {
       refresh(ctx);
       return CHECKS.reduce(function (chain, c) {
