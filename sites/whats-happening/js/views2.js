@@ -9,6 +9,28 @@ window.WHV2 = (function () {
     return (c && c.name) || ev.channelName || ev.venue || 'Online';
   }
 
+  /* ---------------- location picker ---------------- */
+  function citySelect(id, sel) {
+    var opts = W.CITIES.map(function (x) {
+      return '<option value="' + W.esc(x.id) + '"' + (x.id === sel ? ' selected' : '') + '>' + W.esc(x.label) + '</option>';
+    }).join('');
+    return '<select id="' + id + '" data-city="1">' + opts +
+      '<option value="__other"' + (sel === '__other' ? ' selected' : '') + '>Somewhere else&hellip;</option></select>';
+  }
+  function cityHint() {
+    var c = W.city();
+    var custom = c && typeof c.id === 'string' && c.id.indexOf('loc-') === 0;
+    return custom ? 'Using ' + W.esc(c.label) + '.' : '';
+  }
+  function cityField(label, id, sel) {
+    return '<div class="field" data-citybox><label for="' + id + '">' + W.esc(label) + '</label>' +
+      citySelect(id, sel) +
+      '<div class="cityfinder" hidden>' +
+      '<input id="' + id + '-q" type="search" autocomplete="off" placeholder="Town or city" aria-label="Your town or city">' +
+      '<button type="button" class="btn btn--ghost" data-action="save-city">Look up</button></div>' +
+      '<p class="hint city-hint">' + cityHint() + '</p></div>';
+  }
+
   function groupByDay(list) {
     var map = {};
     list.forEach(function (e) {
@@ -134,7 +156,6 @@ window.WHV2 = (function () {
 
   function viewSettings() {
     var c = W.city();
-    var cities = W.CITIES.map(function (x) { return '<option value="' + x.id + '"' + (x.id === c.id ? ' selected' : '') + '>' + W.esc(x.label) + '</option>'; }).join('');
     var interests = W.CATS.map(function (k) {
       return '<label class="check"><input type="checkbox" data-action="interest" value="' + k.id + '"' + (S.interests.indexOf(k.id) >= 0 ? ' checked' : '') + '><span class="dotcat" style="--h:' + k.hue + '"></span>' + W.esc(k.short) + '</label>';
     }).join('');
@@ -143,8 +164,8 @@ window.WHV2 = (function () {
     }).join('');
     return '<div class="pagehead"><div><h1>Settings</h1><p>Everything here is stored only in this browser. Nothing is sent anywhere.</p></div></div>' +
       '<div class="settings">' +
-      '<section class="panel"><h2>Location</h2><p class="panel__sub">Used for distance, the map and the featured event.</p>' +
-      '<div class="field"><label for="set-city">City</label><select id="set-city">' + cities + '</select></div>' +
+      '<section class="panel"><h2>Location</h2><p class="panel__sub">Used for distance, the map and the featured event. Pick a city, or look up any town.</p>' +
+      cityField('City', 'set-city', c.id) +
       '<div class="field"><label for="set-radius">Search radius</label><select id="set-radius">' + [10, 25, 50, 100, 250].map(function (r) { return '<option value="' + r + '"' + (S.radius === r ? ' selected' : '') + '>Within ' + r + ' miles</option>'; }).join('') + '</select></div>' +
       '<button class="btn btn--ghost" data-action="geolocate">' + W.icon('pin') + 'Use my current location</button>' +
       '<p class="hint">Location is only read when you press the button above.</p></section>' +
@@ -161,7 +182,7 @@ window.WHV2 = (function () {
       '<p class="hint">Status: Ticketmaster ' + W.esc(S.liveStatus.tm) + ' \u00b7 YouTube ' + W.esc(S.liveStatus.yt) + (S.liveError ? ' \u00b7 ' + W.esc(S.liveError) : '') + '</p></section>' +
       '<section class="panel"><h2>Your data</h2><p class="panel__sub">' + S.saved.length + ' saved events \u00b7 ' + S.follows.length + ' follows</p>' +
       '<div class="btnrow"><button class="btn btn--ghost" data-action="clear-data">Clear saved events and follows</button><button class="btn btn--ghost" data-action="onboarding">Re-run setup</button></div>' +
-      '<p class="hint">Demonstration events are invented and labelled Demo. Nothing here claims a ticket link, a broadcast or a price that was not published by a source.</p></section>' +
+      '<p class="hint">Demonstration events are invented and labelled Demo. Nothing here claims a ticket link, a broadcast or a price that was not published by a source. Distances and snow data are real: calculated from your chosen location and Open-Meteo.</p></section>' +
       '</div>';
   }
 
@@ -255,7 +276,7 @@ window.WHV2 = (function () {
   function onboarding() {
     return '<div class="sheet sheet--onboard"><div class="sheet__body"><p class="sheet__kicker">Welcome</p><h2>What do you actually want to see?</h2>' +
       '<p class="sheet__desc">Two questions, then you are in. You can change all of it later in Settings.</p>' +
-      '<div class="field"><label for="ob-city">Where are you based?</label><select id="ob-city">' + W.CITIES.map(function (x) { return '<option value="' + x.id + '"' + (x.id === S.city ? ' selected' : '') + '>' + W.esc(x.label) + '</option>'; }).join('') + '</select></div>' +
+      cityField('Where are you based?', 'ob-city', S.city) +
       '<div class="field"><label for="ob-radius">How far will you travel?</label><select id="ob-radius">' + [10, 25, 50, 100, 250].map(function (r) { return '<option value="' + r + '"' + (S.radius === r ? ' selected' : '') + '>Within ' + r + ' miles</option>'; }).join('') + '</select></div>' +
       '<fieldset class="obcats"><legend>Pick a few interests</legend>' + W.CATS.map(function (c) {
         return '<label class="check"><input type="checkbox" class="ob-cat" value="' + c.id + '"' + (S.interests.indexOf(c.id) >= 0 ? ' checked' : '') + '><span class="dotcat" style="--h:' + c.hue + '"></span>' + W.esc(c.short) + '</label>';
