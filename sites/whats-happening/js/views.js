@@ -36,8 +36,7 @@ window.WHV = (function () {
     var d = W.parseLocal(ev.startLocal);
     var bits = [W.fmtDay(d) + ' at ' + W.fmtTime(d)];
     if (ev.presence === 'online') {
-      if (ev.channel) { var ch = W.channelById(ev.channel); bits.push(ch ? ch.name : ev.venue); }
-      else bits.push('Online');
+      bits.push(ev.channelName || (W.channelById(ev.channel) || {}).name || ev.venue || 'Online');
     } else {
       var city = W.eventCity(ev);
       var dist = W.distanceMi(ev);
@@ -66,7 +65,9 @@ window.WHV = (function () {
     var d = W.parseLocal(ev.startLocal);
     var dist = W.distanceMi(ev);
     var saved = S.saved.indexOf(ev.id) >= 0;
-    var where = ev.presence === 'online' ? (ev.channel ? 'Streaming on ' + ((W.channelById(ev.channel) || {}).name || 'YouTube') : 'Online') : ev.venue + (dist != null ? ' \u00b7 ' + distLabel(dist) : '');
+    var where = ev.presence === 'online'
+      ? 'Streaming on ' + (ev.channelName || (W.channelById(ev.channel) || {}).name || 'YouTube')
+      : ev.venue + (dist != null ? ' \u00b7 ' + distLabel(dist) : '');
     return '<section class="hero" style="--h:' + c.hue + '">' +
       '<div class="hero__art" aria-hidden="true"><span class="art__glyph">' + W.icon(c.icon) + '</span></div>' +
       '<div class="hero__body">' +
@@ -90,8 +91,8 @@ window.WHV = (function () {
     return '<div class="row">' + events.map(function (ev) { return card(ev, opts); }).join('') + '</div>';
   }
 
-  function chip(group, val, label, active, extra) {
-    return '<button class="chip' + (active ? ' is-on' : '') + '" data-action="filter" data-group="' + group + '" data-val="' + val + '"' + (extra || '') + '>' + W.esc(label) + '</button>';
+  function chip(group, val, label, active) {
+    return '<button class="chip' + (active ? ' is-on' : '') + '" data-action="filter" data-group="' + group + '" data-val="' + val + '">' + W.esc(label) + '</button>';
   }
 
   function filterBar(opts) {
@@ -129,15 +130,9 @@ window.WHV = (function () {
     return '<div class="notice"><span class="notice__icon">' + W.icon('spark') + '</span><div><strong>Showing demonstration data.</strong> Events marked <span class="tag-mini">Demo</span> are invented so the app is fully explorable with no keys. Add a free Ticketmaster or YouTube key in <a href="#/settings">Settings</a> to pull real listings.</div></div>';
   }
 
-  function results(events, opts) {
-    opts = opts || {};
-    var hidden = S.hiddenNoPrice;
-    var note = '';
-    if (S.filters.price !== 'any' && hidden > 0) {
-      note = '<p class="fnote">' + hidden + ' event' + (hidden === 1 ? '' : 's') + ' hidden because the price is not published. We do not guess prices.</p>';
-    }
-    if (!events.length) return '<div class="empty"><h3>No events match these filters</h3><p>Try a wider radius, another date, or clearing a category.</p><button class="btn btn--ghost" data-action="resetfilters">Clear filters</button></div>' + note;
-    return note + '<div class="grid">' + events.map(function (ev) { return card(ev); }).join('') + '</div>';
+  function results(events) {
+    if (!events.length) return '<div class="empty"><h3>No events match these filters</h3><p>Try a wider radius, another date, or clearing a category.</p><button class="btn btn--ghost" data-action="resetfilters">Clear filters</button></div>';
+    return '<div class="grid">' + events.map(function (ev) { return card(ev); }).join('') + '</div>';
   }
 
   /* ---------------- views ---------------- */
@@ -145,8 +140,7 @@ window.WHV = (function () {
     var evs = W.upcoming(W.allEvents());
     var ranked = W.sortList(evs, 'recommended');
     var featured = ranked[0];
-    var near = evs.filter(function (e) { var d = W.distanceMi(e); return d != null && d <= S.radius; });
-    near = W.sortList(near, 'soonest').slice(0, 6);
+    var near = W.sortList(evs.filter(function (e) { var d = W.distanceMi(e); return d != null && d <= S.radius; }), 'soonest').slice(0, 6);
     var today = new Date();
     var week = [];
     for (var i = 0; i < 7; i++) {
@@ -155,12 +149,13 @@ window.WHV = (function () {
       week.push({ day: day, items: items });
     }
     var onlineTonight = W.sortList(evs.filter(function (e) {
-      var d = W.parseLocal(e.startLocal);
-      return (e.presence === 'online' || e.presence === 'both') && W.sameDay(d, today);
+      var watchable = e.presence === 'online' || !!e.streamUrl || !!e.channel;
+      return watchable && W.sameDay(W.parseLocal(e.startLocal), today);
     }), 'soonest');
     var recs = ranked.filter(function (e) { return W.score(e).reasons.length; }).slice(1, 7);
     var trending = W.sortList(evs, 'popular').slice(0, 5);
-    var month = W.sortList(evs, 'soonest').slice(0, 8);
+    var monthEnd = W.addDays(today, 30);
+    var month = W.sortList(evs.filter(function (e) { return W.parseLocal(e.startLocal) < monthEnd; }), 'soonest').slice(0, 8);
 
     return notice() +
       (featured ? hero(featured) : '') +
@@ -190,27 +185,34 @@ window.WHV = (function () {
       '<div class="grid">' + month.map(function (e) { return card(e); }).join('') + '</div>';
   }
 
-  function collectionView(title, sub, opts) {
-    opts = opts || {};
+  function collectionView(title, sub) {
     var list = W.query(S.filters, S.q);
-    var head = '<div class="pagehead"><div><h1>' + W.esc(title) + '</h1><p>' + W.esc(sub) + '</p></div>' +
-      '<p class="pagehead__count">' + list.length + ' event' + (list.length === 1 ? '' : 's') + '</p></div>';
-    return notice() + head + filterBar({ map: true }) +
+    var hidden = S.hiddenNoPrice;
+    var note = '';
+    if (S.filters.price !== 'any' && hidden > 0) {
+      note = '<p class="fnote">' + hidden + ' event' + (hidden === 1 ? '' : 's') + ' hidden because the price is not published. We do not guess prices.</p>';
+    }
+    return notice() +
+      '<div class="pagehead"><div><h1>' + W.esc(title) + '</h1><p>' + W.esc(sub) + '</p></div>' +
+      '<p class="pagehead__count">' + list.length + ' event' + (list.length === 1 ? '' : 's') + '</p></div>' +
+      filterBar({ map: true }) +
       (S.mapMode ? '<div class="mapwrap"><div id="map" class="map"></div><p class="maphint">Markers are grouped when they sit close together. Selecting one highlights it below.</p></div>' : '') +
-      results(list, opts);
+      note + results(list);
   }
 
-  function viewNear() { return collectionView('Near me', 'Everything within ' + S.radius + ' miles of ' + W.city().label + '. Adjust the radius in Settings or with the chips below.', {}); }
+  function viewNear() {
+    return collectionView('Near me', 'Everything within ' + S.radius + ' miles of ' + W.city().label + '. Adjust the radius in Settings or with the chips below.');
+  }
   function viewCategory(id) {
     var c = W.catOf(id);
-    if (!S.filters.cats.length || S.filters.cats.indexOf(id) < 0) { S.filters.cats = [id]; }
-    return collectionView(c.label, 'Live and upcoming ' + c.short.toLowerCase() + ' built from every source available to you.', {});
+    return collectionView(c.label, 'Live and upcoming ' + c.short.toLowerCase() + ' built from every source available to you.');
   }
   function viewOnline() {
-    S.filters.where = 'online';
-    return collectionView('Online & livestreams', 'Scheduled streams and premieres. A stream is only marked live when its start time and duration say it is running now.', {});
+    return collectionView('Online & livestreams', 'Scheduled streams and premieres. A stream is only marked live when its start time and duration say it is running now.');
   }
-  function viewBrowse() { return collectionView(S.browseTitle || 'All events', 'Search everything, then narrow it down.', {}); }
+  function viewBrowse() {
+    return collectionView(S.browseTitle || 'All events', 'Search everything, then narrow it down.');
+  }
 
   return {
     badge: badge, art: art, card: card, hero: hero, sectionHead: sectionHead, row: row, filterBar: filterBar,
