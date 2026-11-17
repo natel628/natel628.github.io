@@ -20,6 +20,8 @@ window.WH = (function () {
     close: '<path d="M6 6l12 12M18 6L6 18"/>',
     left: '<path d="M15 18l-6-6 6-6"/>',
     right: '<path d="M9 6l6 6-6 6"/>',
+    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
     map: '<path d="M9 3L3 5v16l6-2 6 2 6-2V3l-6 2-6-2z"/><path d="M9 3v16M15 5v16"/>',
     list: '<path d="M4 6h16M4 12h16M4 18h16"/>',
     ext: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
@@ -140,6 +142,7 @@ window.WH = (function () {
   function endsAt(ev) { return new Date(parseLocal(ev.startLocal).getTime() + (ev.duration || 120) * 60000); }
   function liveState(ev) {
     if (ev.presence === 'in-person') return 'none';
+    if (ev.liveNow === true) return 'live';
     var now = new Date(), s = parseLocal(ev.startLocal), e = endsAt(ev);
     if (now >= s && now <= e) return 'live';
     if (now < s && (s - now) < 3 * 3600000) return 'soon';
