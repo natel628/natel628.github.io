@@ -33,14 +33,20 @@
     return p;
   }
 
-  function placeFrom(r) {
+  /* "Leeds, England" reads better than "Leeds, England, United Kingdom" and
+     fits the topbar; the country is only used when there is no region. */
+  function labelFor(r) {
     var bits = [r.name];
     if (r.admin1 && r.admin1 !== r.name) bits.push(r.admin1);
-    if (r.country) bits.push(r.country);
+    else if (r.country) bits.push(r.country);
+    return bits.join(', ');
+  }
+
+  function placeFrom(r) {
     var lat = +r.latitude, lng = +r.longitude;
     return {
       id: 'loc-' + lat.toFixed(2) + ',' + lng.toFixed(2),
-      label: bits.join(', '),
+      label: labelFor(r),
       lat: lat,
       lng: lng,
       tz: r.timezone || ''
@@ -167,7 +173,6 @@
 
   function boot() {
     restore();
-    /* Refresh the hint on the settings field after any repaint. */
     var hint = document.querySelector('.city-hint');
     if (hint) {
       var c = W().city();
