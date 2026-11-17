@@ -1,0 +1,213 @@
+/* What's Happening? - view rendering */
+window.WHV = (function () {
+  'use strict';
+  var W = window.WH, S = W.state;
+
+  function badge(ev) {
+    var ls = W.liveState(ev);
+    if (ls === 'live') return '<span class="badge badge--live"><span class="pulse" aria-hidden="true"></span>Live now</span>';
+    if (ls === 'premiere') return '<span class="badge badge--prem">Premiere</span>';
+    if (ls === 'soon') return '<span class="badge badge--soon">Starts soon</span>';
+    if (ls === 'scheduled') return '<span class="badge">Scheduled stream</span>';
+    if (ev.presence === 'both') return '<span class="badge">In person + online</span>';
+    return '';
+  }
+
+  function art(ev, cls) {
+    var c = W.catOf(ev.category);
+    var saved = S.saved.indexOf(ev.id) >= 0;
+    var demo = ev.source === 'demo' ? '<span class="badge badge--demo">Demo</span>' : '';
+    return '<div class="art ' + (cls || '') + '" style="--h:' + c.hue + '">' +
+      '<span class="art__glyph" aria-hidden="true">' + W.icon(c.icon) + '</span>' +
+      '<div class="art__tags">' + demo + badge(ev) + '</div>' +
+      '<button class="save' + (saved ? ' is-on' : '') + '" data-action="save" data-id="' + ev.id + '" aria-pressed="' + saved + '" aria-label="' + (saved ? 'Remove from watchlist' : 'Save to watchlist') + '">' + W.icon('bookmark') + '</button>' +
+      '</div>';
+  }
+
+  function metaLine(ev) {
+    var d = W.parseLocal(ev.startLocal);
+    var bits = [W.fmtDay(d) + ' at ' + W.fmtTime(d)];
+    if (ev.presence === 'online') {
+      if (ev.channel) { var ch = W.channelById(ev.channel); bits.push(ch ? ch.name : ev.venue); }
+      else bits.push('Online');
+    } else {
+      var city = W.eventCity(ev);
+      var dist = W.distanceMi(ev);
+      bits.push(ev.venue + (city && city.id !== S.city ? ' \u00b7 ' + city.label : ''));
+      if (dist != null) bits.push(dist + ' mi');
+    }
+    return bits.map(function (b) { return '<span>' + W.esc(b) + '</span>'; }).join('<span class="sep">\u00b7</span>');
+  }
+
+  function card(ev, opts) {
+    opts = opts || {};
+    var why = opts.why || '';
+    var c = W.catOf(ev.category);
+    return '<article class="card' + (S.highlight === ev.id ? ' is-hl' : '') + '" data-id="' + ev.id + '" data-action="open">' +
+      art(ev) +
+      '<div class="card__body">' +
+      '<p class="card__kicker"><span class="dotcat" style="--h:' + c.hue + '"></span>' + W.esc(c.short) + '</p>' +
+      '<h3 class="card__title">' + W.esc(ev.title) + '</h3>' +
+      '<p class="card__meta">' + metaLine(ev) + '</p>' +
+      '<p class="card__foot"><span class="price">' + W.esc(W.priceLabel(ev)) + '</span>' + (why ? '<span class="why" title="Why this is here">' + W.esc(why) + '</span>' : '') + '</p>' +
+      '</div></article>';
+  }
+
+  function hero(ev) {
+    var c = W.catOf(ev.category);
+    var d = W.parseLocal(ev.startLocal);
+    var dist = W.distanceMi(ev);
+    var saved = S.saved.indexOf(ev.id) >= 0;
+    var where = ev.presence === 'online' ? (ev.channel ? 'Streaming on ' + (W.channelById(ev.channel) || {}).name : 'Online') : ev.venue + (dist != null ? ' \u00b7 ' + dist + ' mi' : '');
+    return '<section class="hero" style="--h:' + c.hue + '">' +
+      '<div class="hero__art" aria-hidden="true"><span class="art__glyph">' + W.icon(c.icon) + '</span></div>' +
+      '<div class="hero__body">' +
+      '<p class="hero__kicker"><span class="dotcat" style="--h:' + c.hue + '"></span>Featured \u00b7 ' + W.esc(c.label) + (ev.source === 'demo' ? ' <span class="tag-mini">Demo</span>' : '') + '</p>' +
+      '<h2 class="hero__title">' + W.esc(ev.title) + '</h2>' +
+      '<p class="hero__when">' + W.icon('clock') + W.esc(W.relDay(d) + ' \u00b7 ' + W.fmtTime(d)) + ' <span class="sep">\u00b7</span> ' + W.icon('pin') + W.esc(where) + '</p>' +
+      '<p class="hero__desc">' + W.esc(ev.description) + '</p>' +
+      '<div class="hero__actions">' +
+      '<button class="btn btn--primary" data-action="open" data-id="' + ev.id + '">View event' + W.icon('arrow') + '</button>' +
+      '<button class="btn btn--ghost' + (saved ? ' is-on' : '') + '" data-action="save" data-id="' + ev.id + '" aria-pressed="' + saved + '">' + W.icon('bookmark') + (saved ? 'Saved' : 'Save event') + '</button>' +
+      '</div></div></section>';
+  }
+
+  function sectionHead(title, sub, more) {
+    return '<div class="shead"><div><h2>' + W.esc(title) + '</h2>' + (sub ? '<p>' + W.esc(sub) + '</p>' : '') + '</div>' +
+      (more ? '<a class="shead__link" href="' + more.href + '">' + W.esc(more.label) + W.icon('right') + '</a>' : '') + '</div>';
+  }
+
+  function row(events, opts) {
+    if (!events.length) return '<div class="empty"><p>Nothing matches yet. Try widening the radius or clearing a filter.</p></div>';
+    return '<div class="row">' + events.map(function (ev) { return card(ev, opts); }).join('') + '</div>';
+  }
+
+  function chip(group, val, label, active, extra) {
+    return '<button class="chip' + (active ? ' is-on' : '') + '" data-action="filter" data-group="' + group + '" data-val="' + val + '"' + (extra || '') + '>' + W.esc(label) + '</button>';
+  }
+
+  function filterBar(opts) {
+    opts = opts || {};
+    var f = S.filters;
+    var cats = W.CATS.map(function (c) { return chip('cats', c.id, c.short, f.cats.indexOf(c.id) >= 0); }).join('');
+    var dates = [['any', 'Any date'], ['today', 'Today'], ['tonight', 'Tonight'], ['tomorrow', 'Tomorrow'], ['weekend', 'This weekend'], ['7', 'Next 7 days'], ['30', 'Next 30 days'], ['custom', 'Custom range']]
+      .map(function (d) { return chip('date', d[0], d[1], f.date === d[0]); }).join('');
+    var prices = [['any', 'Any price'], ['free', 'Free'], ['u25', 'Under $25'], ['25-50', '$25-$50'], ['50-100', '$50-$100'], ['100plus', '$100+']]
+      .map(function (d) { return chip('price', d[0], d[1], f.price === d[0]); }).join('');
+    var presence = [['any', 'Any format'], ['in-person', 'In person'], ['online', 'Online'], ['both', 'Both']]
+      .map(function (d) { return chip('presence', d[0], d[1], f.presence === d[0]); }).join('');
+    var times = [['any', 'Any time'], ['morning', 'Morning'], ['afternoon', 'Afternoon'], ['evening', 'Evening'], ['late', 'Late night']]
+      .map(function (d) { return chip('time', d[0], d[1], f.time === d[0]); }).join('');
+    var wheres = [['near', 'Near me'], ['anywhere', 'Anywhere'], ['online', 'Online only']]
+      .map(function (d) { return chip('where', d[0], d[1], f.where === d[0]); }).join('');
+    var sorts = [['recommended', 'Recommended'], ['soonest', 'Soonest'], ['closest', 'Closest'], ['popular', 'Most popular'], ['price', 'Lowest price']];
+    return '<div class="filters" id="filters">' +
+      '<div class="fgroup"><span class="flabel">Category</span>' + cats + '</div>' +
+      '<div class="fgroup"><span class="flabel">Date</span>' + dates + '</div>' +
+      (f.date === 'custom' ? '<div class="fgroup fgroup--range"><label>From <input type="date" id="f-from" value="' + (f.from || '') + '"></label><label>To <input type="date" id="f-to" value="' + (f.to || '') + '"></label></div>' : '') +
+      '<div class="fgroup"><span class="flabel">Price</span>' + prices + '</div>' +
+      '<div class="fgroup"><span class="flabel">Event type</span>' + presence + '</div>' +
+      '<div class="fgroup"><span class="flabel">Time</span>' + times + '</div>' +
+      '<div class="fgroup"><span class="flabel">Location</span>' + wheres + '</div>' +
+      '<div class="fgroup fgroup--sort"><label for="sort">Sort</label><select id="sort">' + sorts.map(function (s) {
+        return '<option value="' + s[0] + '"' + (S.sort === s[0] ? ' selected' : '') + '>' + s[1] + '</option>';
+      }).join('') + '</select>' +
+      (opts.map ? '<div class="seg"><button data-action="maptoggle" data-val="list" class="' + (!S.mapMode ? 'is-on' : '') + '">' + W.icon('list') + 'List</button><button data-action="maptoggle" data-val="map" class="' + (S.mapMode ? 'is-on' : '') + '">' + W.icon('map') + 'Map</button></div>' : '') +
+      '<button class="linkbtn" data-action="resetfilters">Reset</button></div></div>';
+  }
+
+  function notice() {
+    if (S.live.length) return '';
+    return '<div class="notice"><span class="notice__icon">' + W.icon('spark') + '</span><div><strong>Showing demonstration data.</strong> Events marked <span class="tag-mini">Demo</span> are invented so the app is fully explorable with no keys. Add a free Ticketmaster or YouTube key in <a href="#/settings">Settings</a> to pull real listings.</div></div>';
+  }
+
+  function results(events, opts) {
+    opts = opts || {};
+    var hidden = S.hiddenNoPrice;
+    var note = '';
+    if (S.filters.price !== 'any' && hidden > 0) {
+      note = '<p class="fnote">' + hidden + ' event' + (hidden === 1 ? '' : 's') + ' hidden because the price is not published. We do not guess prices.</p>';
+    }
+    if (!events.length) return '<div class="empty"><h3>No events match these filters</h3><p>Try a wider radius, another date, or clearing a category.</p><button class="btn btn--ghost" data-action="resetfilters">Clear filters</button></div>' + note;
+    if (opts.listOnly) return note + '<div class="grid">' + events.map(function (ev) { return card(ev); }).join('') + '</div>';
+    return note + '<div class="grid">' + events.map(function (ev) { return card(ev); }).join('') + '</div>';
+  }
+
+  /* ---------------- views ---------------- */
+  function viewDiscover() {
+    var evs = W.upcoming(W.allEvents());
+    var ranked = W.sortList(evs, 'recommended');
+    var featured = ranked[0];
+    var near = evs.filter(function (e) { var d = W.distanceMi(e); return d != null && d <= S.radius; });
+    near = W.sortList(near, 'soonest').slice(0, 6);
+    var today = new Date();
+    var week = [];
+    for (var i = 0; i < 7; i++) {
+      var day = W.addDays(today, i);
+      var items = W.sortList(evs.filter(function (e) { return W.sameDay(W.parseLocal(e.startLocal), day); }), 'popular').slice(0, 3);
+      week.push({ day: day, items: items });
+    }
+    var onlineTonight = W.sortList(evs.filter(function (e) {
+      var d = W.parseLocal(e.startLocal);
+      return (e.presence === 'online' || e.presence === 'both') && W.sameDay(d, today);
+    }), 'soonest');
+    var recs = ranked.filter(function (e) { return W.score(e).reasons.length; }).slice(1, 7);
+    var trending = W.sortList(evs, 'popular').slice(0, 5);
+    var month = W.sortList(evs, 'soonest').slice(0, 8);
+
+    return notice() +
+      (featured ? hero(featured) : '') +
+      sectionHead('What\u2019s happening near you', 'Within ' + S.radius + ' miles of ' + W.city().label, { href: '#/near', label: 'Open map' }) +
+      '<div class="radiusrow">' + [10, 25, 50, 100, 250].map(function (r) {
+        return '<button class="chip' + (S.radius === r ? ' is-on' : '') + '" data-action="radius" data-val="' + r + '">' + r + ' mi</button>';
+      }).join('') + '</div>' +
+      row(near) +
+      sectionHead('This week', 'Seven days, most-watched first', { href: '#/browse', label: 'See all' }) +
+      '<div class="timeline">' + week.map(function (d) {
+        return '<div class="tday"><p class="tday__label">' + W.esc(W.relDay(d.day)) + '<span>' + W.esc(W.MONTHS[d.day.getMonth()].slice(0, 3) + ' ' + d.day.getDate()) + '</span></p>' +
+          (d.items.length ? d.items.map(function (e) {
+            var c = W.catOf(e.category);
+            return '<button class="titem" data-action="open" data-id="' + e.id + '" style="--h:' + c.hue + '"><span class="titem__dot"></span><span class="titem__t">' + W.esc(e.title) + '</span><span class="titem__h">' + W.esc(W.fmtTime(W.parseLocal(e.startLocal))) + '</span></button>';
+          }).join('') : '<p class="tday__empty">Nothing scheduled</p>') + '</div>';
+      }).join('') + '</div>' +
+      sectionHead('Online tonight', 'Streams and premieres you can watch from here', { href: '#/online', label: 'All streams' }) +
+      row(onlineTonight) +
+      sectionHead('Recommended for you', 'Based on your interests and follows', { href: '#/settings', label: 'Edit interests' }) +
+      row(recs, { why: true }) +
+      sectionHead('Trending', 'What people are looking at right now') +
+      '<ol class="trend">' + trending.map(function (e, i) {
+        var c = W.catOf(e.category);
+        return '<li><button data-action="open" data-id="' + e.id + '"><span class="trend__n">' + W.pad(i + 1) + '</span><span class="trend__body"><span class="trend__t">' + W.esc(e.title) + '</span><span class="trend__m">' + W.esc(c.short + ' \u00b7 ' + W.relDay(W.parseLocal(e.startLocal))) + '</span></span><span class="trend__bar"><span style="width:' + (e.popularity || 0) + '%"></span></span></button></li>';
+      }).join('') + '</ol>' +
+      sectionHead('Coming up', 'The next 30 days', { href: '#/calendar', label: 'Open calendar' }) +
+      '<div class="grid">' + month.map(function (e) { return card(e); }).join('') + '</div>';
+  }
+
+  function collectionView(title, sub, opts) {
+    opts = opts || {};
+    var list = W.query(S.filters, S.q);
+    var head = '<div class="pagehead"><div><h1>' + W.esc(title) + '</h1><p>' + W.esc(sub) + '</p></div>' +
+      '<p class="pagehead__count">' + list.length + ' event' + (list.length === 1 ? '' : 's') + '</p></div>';
+    return notice() + head + filterBar({ map: true }) +
+      (S.mapMode ? '<div class="mapwrap"><div id="map" class="map"></div><p class="maphint">Markers are grouped when they sit close together. Selecting one highlights it below.</p></div>' : '') +
+      results(list, opts);
+  }
+
+  function viewNear() { return collectionView('Near me', 'Everything within ' + S.radius + ' miles of ' + W.city().label + '. Adjust the radius in Settings or with the chips below.', {}); }
+  function viewCategory(id) {
+    var c = W.catOf(id);
+    if (!S.filters.cats.length || S.filters.cats.indexOf(id) < 0) { S.filters.cats = [id]; }
+    return collectionView(c.label, 'Live and upcoming ' + c.short.toLowerCase() + ' built from every source available to you.', {});
+  }
+  function viewOnline() {
+    S.filters.where = 'online';
+    return collectionView('Online & livestreams', 'Scheduled streams and premieres. A stream is only marked live when its start time and duration say it is running now.', {});
+  }
+  function viewBrowse() { return collectionView(S.browseTitle || 'All events', 'Search everything, then narrow it down.', {}); }
+
+  return {
+    badge: badge, art: art, card: card, hero: hero, sectionHead: sectionHead, row: row, filterBar: filterBar,
+    notice: notice, results: results, viewDiscover: viewDiscover, collectionView: collectionView,
+    viewNear: viewNear, viewCategory: viewCategory, viewOnline: viewOnline, viewBrowse: viewBrowse
+  };
+})();
