@@ -169,6 +169,7 @@
     destroyMap();
     if (!el) return;
     var list = W.query(S.filters, S.q).filter(function (e) { return e.lat != null && e.lng != null; });
+    if (S.view === 'online' && V.watchable) list = list.filter(V.watchable);
     loadLeaflet().then(function () {
       if (!document.body.contains(el)) return;
       var city = W.city();
