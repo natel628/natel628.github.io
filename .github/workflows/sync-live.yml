@@ -2,11 +2,15 @@ name: Sync live events
 
 # Pulls real Ticketmaster + YouTube listings once a day and commits them as
 # sites/whats-happening/data/live.json, so every visitor sees real events
-# without pasting their own API keys. Needs two repo secrets:
+# without pasting their own API keys. Then regenerates the subscribable
+# calendar feeds in sites/whats-happening/feeds/ from that same file, so
+# Google/Apple Calendar subscriptions stay current with no extra keys.
+# Needs two repo secrets:
 #   TICKETMASTER_API_KEY  (free key from developer.ticketmaster.com)
 #   YOUTUBE_API_KEY       (free key from console.cloud.google.com, YouTube Data API v3)
-# Until both exist the job exits quietly and the site keeps its demo data.
-# Manually trigger any time from the Actions tab (workflow_dispatch).
+# Until both exist the fetch job exits quietly, the site keeps its demo data,
+# and the feeds stay valid-but-empty. Manually trigger any time from the
+# Actions tab (workflow_dispatch).
 
 on:
   schedule:
@@ -38,11 +42,14 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: node scripts/sync-live.mjs
 
-      - name: Commit live.json
+      - name: Build calendar feeds
+        run: node scripts/build-feeds.mjs
+
+      - name: Commit live.json and feeds
         run: |
           git config user.name 'whats-happening-sync'
           git config user.email 'whats-happening-sync@users.noreply.github.com'
-          git add sites/whats-happening/data/live.json
-          git diff --cached --quiet && echo 'live.json unchanged' && exit 0
-          git commit -m 'data(whats-happening): refresh live events'
+          git add sites/whats-happening/data/live.json sites/whats-happening/feeds
+          git diff --cached --quiet && echo 'live data unchanged' && exit 0
+          git commit -m 'data(whats-happening): refresh live events and calendar feeds'
           git push
