@@ -2,12 +2,13 @@
 
    Open with ?diag=1, #diag, or Ctrl+Alt+D, or call window.WHDIAG.run().
    It loads a copy of this page in a hidden iframe and drives it with real
-   clicks (filters, watchlist, calendar, map, sheet), then lists what failed.
-   Running in an iframe means the page you are looking at is never touched. */
+   clicks (filters, reset, watchlist, calendar, map, sheet), then lists what
+   failed. Running in an iframe means the page you are looking at is never
+   touched. */
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-3';
+  var LIB = 'diag-4';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
@@ -130,6 +131,38 @@ window.WHDIAG = (function () {
     });
   }
 
+  function checkReset(c) {
+    var d = c.d, S = c.S, W = c.W;
+    c.w.location.hash = '#/comedy';
+    return wait(function () { return S.view === 'comedy' && q(d, '.filters'); }, 6000, 'comedy view').then(function () {
+      assert(S.filters.cats.indexOf('comedy') >= 0, 'comedy view did not start on its own category');
+      click(d, '[data-action="filter"][data-group="cats"][data-val="comedy"]');
+      return wait(function () { return S.filters.cats.length === 0; }, 4000, 'chip off');
+    }).then(function () {
+      click(d, '[data-action="resetfilters"]');
+      return wait(function () { return S.filters.cats.length === 1 && S.filters.cats[0] === 'comedy'; }, 4000, 'reset comedy').catch(function () {
+        throw new Error('Reset did not restore the Comedy category (got: [' + S.filters.cats.join(',') + '])');
+      });
+    }).then(function () {
+      assert(S.filters.where === 'anywhere', 'comedy page lost its anywhere scope after reset (got: ' + S.filters.where + ')');
+      var ids = qa(d, '.card[data-id]').map(function (n) { return n.getAttribute('data-id'); });
+      assert(ids.length > 0, 'no cards after reset');
+      var bad = ids.filter(function (id) { var e = W.byId(id); return !e || e.category !== 'comedy'; });
+      assert(!bad.length, bad.length + ' non-comedy cards shown on the Comedy page after reset');
+      c.w.location.hash = '#/online';
+      return wait(function () { return S.view === 'online' && q(d, '.filters'); }, 6000, 'online view');
+    }).then(function () {
+      assert(S.filters.where === 'online', 'online view did not start on online-only');
+      S.filters.where = 'near';
+      click(d, '[data-action="resetfilters"]');
+      return wait(function () { return S.filters.where === 'online'; }, 4000, 'reset online').catch(function () {
+        throw new Error('Reset did not restore the online-only scope (got: ' + S.filters.where + ')');
+      });
+    }).then(function () {
+      return 'reset restored Comedy + anywhere, and online-only on the Online page';
+    });
+  }
+
   function checkWatchlist(c) {
     var d = c.d;
     var card = q(d, '.card[data-id]');
@@ -205,6 +238,7 @@ window.WHDIAG = (function () {
     }).then(function (m) {
       var pins = m.querySelectorAll('.leaflet-interactive, .cluster').length;
       assert(c.w.L, 'Leaflet global is missing after load');
+      click(d, '[data-action="maptoggle"][data-val="map"]');
       click(d, '[data-action="maptoggle"][data-val="list"]');
       return wait(function () { return !q(d, '#map'); }, 4000, 'map teardown').catch(function () {
         throw new Error('switching back to list left the map in the page');
@@ -218,6 +252,7 @@ window.WHDIAG = (function () {
     { id: 'storage', label: 'localStorage read/write', fn: checkStorage },
     { id: 'boot', label: 'Page boots without error overlay', fn: checkBoot },
     { id: 'filters', label: 'Filters: category, date, reset', fn: checkFilters },
+    { id: 'reset', label: 'Reset restores section defaults', fn: checkReset },
     { id: 'watchlist', label: 'Watchlist survives a reload', fn: checkWatchlist },
     { id: 'calendar', label: 'Calendar export + event sheet', fn: checkCalendar },
     { id: 'map', label: 'Map loads and tears down', fn: checkMap }
@@ -348,10 +383,14 @@ window.WHDIAG = (function () {
           return Promise.resolve().then(function () { return c.fn(ctx); }).then(function (detail) {
             results.push({ id: c.id, status: 'pass', detail: detail || '', time: Date.now() - t0 });
             setRow(c.id, 'pass', detail, ms(t0));
+            mark('done', c.id + ':pass');
+            mark('count', String(results.length));
           }).catch(function (e) {
             var msg = (e && e.message) || String(e);
             results.push({ id: c.id, status: 'fail', detail: msg, time: Date.now() - t0 });
             setRow(c.id, 'fail', msg, ms(t0));
+            mark('done', c.id + ':fail');
+            mark('count', String(results.length));
           });
         });
       }, Promise.resolve());
@@ -369,7 +408,7 @@ window.WHDIAG = (function () {
       results.push({ id: 'harness', status: 'fail', detail: msg, time: 0 });
     }).then(function () {
       frame.remove();
-      ensurePanel();          // if anything detached the panel, put it back
+      ensurePanel();
       mark('state', (panel && document.body.contains(panel) ? 'panel-attached' : 'panel-lost') + ' results=' + results.length);
       running = false;
     });
