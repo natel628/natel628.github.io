@@ -39,7 +39,6 @@
   #stops li.leg { display:flex; gap:6px; background:transparent; border:none; padding:0 0 0 36px; color:var(--muted); font-size:.8rem; }
   .num { background:var(--accent); color:#111; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-weight:800; flex-shrink:0; }
   a { color:var(--accent); }
-  #itinerary { display:grid; gap:10px; margin-top:12px; }
   .day { background:#0f172a; border:1px solid #334155; border-left:4px solid var(--accent); border-radius:10px; padding:12px 14px; }
   .day.open { border-left-color:#334155; }
   .day h3 { margin:0 0 6px; font-size:1rem; }
@@ -146,10 +145,16 @@
   #sideList a:hover { background:#1e293b; }
   .side-foot { margin-top:auto; padding:14px 16px; border-top:1px solid #334155; color:var(--muted); text-decoration:none; font-size:.9rem; }
   #setOpen { position:fixed; right:12px; bottom:12px; z-index:1500; width:48px; height:48px; border-radius:50%; background:#0f172a; border:1px solid #475569; color:var(--text); font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.5); }
-  #settingsBackdrop, #tourBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
-  #settingsBackdrop.open, #tourBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
-  #settingsModal, #tourModal { position:fixed; z-index:1710; left:50%; top:50%; width:min(500px,93vw); max-height:86vh; display:flex; flex-direction:column; background:#0f172a; border:1px solid #334155; border-radius:14px; box-shadow:0 18px 50px rgba(0,0,0,.6); opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%,-46%); transition:opacity .18s, transform .18s; }
-  #settingsModal.open, #tourModal.open { opacity:1; visibility:visible; pointer-events:auto; transform:translate(-50%,-50%); }
+
+  .wx-now { display:flex; align-items:center; gap:14px; padding:2px 0 10px; }
+  .wx-temp { font-size:2.4rem; font-weight:700; line-height:1; }
+  .wx-days { display:grid; gap:0; }
+  .wx-day { display:grid; grid-template-columns:1.1fr 1.3fr auto auto; gap:8px; align-items:center; padding:7px 0; border-top:1px solid #1e293b; font-size:.9rem; }
+  .wx-day span { font-size:.85rem; }
+  #settingsBackdrop, #tourBackdrop, #wxBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
+  #settingsBackdrop.open, #tourBackdrop.open, #wxBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
+  #settingsModal, #tourModal, #wxModal { position:fixed; z-index:1710; left:50%; top:50%; width:min(500px,93vw); max-height:86vh; display:flex; flex-direction:column; background:#0f172a; border:1px solid #334155; border-radius:14px; box-shadow:0 18px 50px rgba(0,0,0,.6); opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%,-46%); transition:opacity .18s, transform .18s; }
+  #settingsModal.open, #tourModal.open, #wxModal.open { opacity:1; visibility:visible; pointer-events:auto; transform:translate(-50%,-50%); }
   .set-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #334155; }
   .set-body { overflow-y:auto; padding:6px 16px 16px; }
   .set-foot { display:flex; gap:8px; justify-content:flex-end; padding:12px 16px; border-top:1px solid #334155; }
@@ -243,7 +248,6 @@
     <a href="#sec-glance" aria-label="Overview">📊 <span>Overview</span></a>
     <a href="#sec-notes" aria-label="Notes">📝 <span>Notes</span></a>
     <a href="#sec-route" aria-label="Route map">🗺️ <span>Map</span></a>
-    <a href="#sec-itinerary" aria-label="Itinerary">📅 <span>Itinerary</span></a>
     <a href="#sec-budget" aria-label="Budget">💵 <span>Budget</span></a>
     <a href="#sec-rv" aria-label="RV profile">🚐 <span>RV</span></a>
     <a href="#sec-practical" aria-label="Practical estimates">🧰 <span>Estimates</span></a>
@@ -273,6 +277,18 @@
     <p class="muted">Nashville to Rhode Island, mixing hotel nights and campground nights. Everything on this page is shared — anyone who opens it sees the same plan and can change it.</p>
     <div id="glanceGrid" class="glance"></div>
     <p id="glanceMsg" class="muted" role="status" aria-live="polite"></p>
+  </section>
+
+
+  <section class="card" id="sec-weather">
+    <h2>🌤 Weather</h2>
+    <p class="muted">Temperature, rain chance and sky for anywhere on the trip — a town on the way, a stop, or wherever you are standing right now.</p>
+    <div class="row">
+      <input id="wxPlace" placeholder="City, park or address — e.g. Nashville, TN" aria-label="Place to check the weather" autocomplete="off" />
+      <button type="button" id="wxGo">Show weather</button>
+      <button type="button" id="wxHere" class="ghost">📍 Use my location</button>
+    </div>
+    <p id="wxMsg" class="muted" role="status" aria-live="polite"></p>
   </section>
 
   <section class="card" id="sec-notes">
@@ -346,20 +362,6 @@
       <div id="hotelList"></div>
     </div>
     <div class="row" style="margin-top:12px"><button type="button" class="small ghost" data-collapse-jump="sec-route">▲ Hide this section</button></div>
-  </section>
-
-  <section class="card" id="sec-itinerary">
-    <h2>📅 Day-by-day itinerary</h2>
-    <p class="muted">Stops split across your days in route order — reorder stops on the map to reshape the plan. Arrival times are your departure time plus the real drive time for each leg.</p>
-    <div class="row" style="margin-bottom:4px">
-      <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
-      <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
-      <label class="muted" for="planDepart" style="align-self:center">default leave</label>
-      <input id="planDepart" type="time" value="08:00" style="max-width:130px;flex:none" aria-label="Default time you leave each morning" />
-      <span class="muted" style="align-self:center">start date, trip days, daily departure</span>
-    </div>
-    <div id="itinerary"></div>
-    <div class="row" style="margin-top:12px"><button type="button" class="small ghost" data-collapse-jump="sec-itinerary">▲ Hide this section</button></div>
   </section>
 
   <section class="card" id="sec-photos">
@@ -439,6 +441,14 @@
       <label class="muted" for="fuelPrice" style="align-self:center">$ per gallon</label>
       <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
     </div>
+
+    <div class="row" style="margin-top:10px">
+      <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
+      <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
+      <label class="muted" for="planDepart" style="align-self:center">default leave</label>
+      <input id="planDepart" type="time" value="08:00" style="max-width:130px;flex:none" aria-label="Default time you leave each morning" />
+    </div>
+    <p class="muted" style="margin:6px 0 0;font-size:.8rem">Trip start, trip days and the default leave time feed these estimates and how the nights split.</p>
     <div id="practical"></div>
   </section>
 
@@ -631,6 +641,13 @@
     <p>Top bar or sidebar, hide sections you don't care about, bigger text, 24-hour time, remember-your-name, low-data mode for dead zones — plus backups and the Drive owner setup under Backup &amp; owner.</p>
   </div>
   <div class="set-foot"><button type="button" id="tourGo">Let's fuckin' go</button></div>
+</div>
+
+<div id="wxBackdrop"></div>
+<div id="wxModal" role="dialog" aria-modal="true" aria-label="Weather forecast" aria-hidden="true">
+  <div class="set-head"><b>🌤 Weather</b><button type="button" id="wxClose" class="small ghost" aria-label="Close the weather">✕</button></div>
+  <div class="set-body" id="wxBody"><p class="muted">Pick a place above to see the forecast.</p></div>
+  <div class="set-foot"><button type="button" id="wxClose2" class="ghost">Close</button></div>
 </div>
 </main>
 
@@ -1295,52 +1312,121 @@ const WMO = { 0: '☀️ clear', 1: '🌤 mostly clear', 2: '⛅️ partly cloud
   80: '🌦 showers', 81: '🌧 showers', 82: '⛈ heavy showers', 85: '🌨 snow showers', 86: '❄️ snow showers',
   95: '⛈ storm', 96: '⛈ storm', 99: '⛈ storm' };
 
-// Forecasts are free and keyless, and only exist about two weeks ahead, so a
-// date outside that window simply shows nothing.
-async function loadDayWeather(spans, d0){
-  if (!d0) return;
-  const wanted = [];
-  spans.forEach((span, c) => {
-    const stop = state.stops[span.to];
-    if (!stop || span.to <= span.from) return;
-    wanted.push({ c, date: isoDate(new Date(d0.getTime() + c * 864e5)), lat: stop.lat, lng: stop.lng });
-  });
-  if (!wanted.length) return;
-  const dates = wanted.map(w => w.date).sort();
-  // Open-Meteo forecasts about two weeks ahead; a trip further out has no data yet.
-  const lead = Math.round((new Date(dates[0] + 'T12:00:00').getTime() - Date.now()) / 864e5);
-  if (lead > 14 || lead < -1) {
-    const note = lead > 14 ? 'forecast 2 weeks out' : '';
-    document.querySelectorAll('.day-weather').forEach(cell => { cell.textContent = note; });
-    return;
-  }
-  const params = new URLSearchParams({
-    latitude: wanted.map(w => w.lat.toFixed(4)).join(','),
-    longitude: wanted.map(w => w.lng.toFixed(4)).join(','),
-    daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
-    temperature_unit: 'fahrenheit',
-    timezone: 'auto',
-    start_date: dates[0],
-    end_date: dates[dates.length - 1]
-  });
-  let data = null;
-  try {
-    const res = await fetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
-    if (!res.ok) return;
-    data = await res.json();
-  } catch (e) { return; }
-  const list = Array.isArray(data) ? data : (data && data.daily ? [data] : []);
-  list.forEach((loc, i) => {
-    const want = wanted[i], daily = (loc && loc.daily) || {};
-    const at = (daily.time || []).indexOf(want.date);
-    const cell = document.querySelector('.day-weather[data-day="' + want.c + '"]');
-    if (!cell || at < 0) return;
-    const hi = Math.round(daily.temperature_2m_max[at]), lo = Math.round(daily.temperature_2m_min[at]);
-    const pop = daily.precipitation_probability_max ? daily.precipitation_probability_max[at] : null;
-    cell.textContent = (WMO[daily.weather_code[at]] || '') + ' ' + hi + '°/' + lo + '°'
-      + (pop === null || pop === undefined ? '' : ' · ' + pop + '% rain');
-  });
+
+/* ---------- weather modal: any place, or wherever you are ---------- */
+// Open-Meteo again, but for a place you pick rather than the day cards: current
+// conditions plus a week of highs, lows and rain chance. Keyless, so there is
+// nothing to configure — and low-data mode does not block it, you asked for it.
+const WX_LAST = 'rt-wx-last';
+function wxOpen(){
+  const b = $('wxBackdrop'), m = $('wxModal');
+  if (b) b.classList.add('open');
+  if (m) { m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); }
 }
+function wxClose(){
+  const b = $('wxBackdrop'), m = $('wxModal');
+  if (b) b.classList.remove('open');
+  if (m) { m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); }
+}
+function wxMsg(t){ const m = $('wxMsg'); if (m) m.textContent = t; }
+function wxBody(html){ const b = $('wxBody'); if (b) b.innerHTML = html; return b; }
+function wxDayLabel(day){
+  const d = new Date(day + 'T12:00:00');
+  return isNaN(d.getTime()) ? String(day) : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+}
+function wxRender(place, data){
+  const cur = (data && data.current) || {}, daily = (data && data.daily) || {};
+  const temp = cur.temperature_2m, feels = cur.apparent_temperature;
+  const sky = WMO[cur.weather_code] || '—';
+  const wet = cur.precipitation, cloud = cur.cloud_cover;
+  let html = '<div class="wx-now"><div class="wx-temp">' + (temp == null ? '—' : Math.round(temp) + '°') + '</div>'
+    + '<div><b>' + esc(place) + '</b>'
+    + '<div class="muted" style="font-size:.85rem">' + esc(sky)
+    + (feels == null ? '' : ' · feels like ' + Math.round(feels) + '°')
+    + (wet == null ? '' : ' · ' + (wet > 0 ? wet + ' mm falling now' : 'no rain right now'))
+    + (cloud == null ? '' : ' · ' + Math.round(cloud) + '% cloud cover') + '</div></div></div>';
+  const times = daily.time || [];
+  if (times.length) {
+    html += '<div class="wx-days">' + times.map((day, i) => {
+      const hi = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[i]) : null;
+      const lo = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[i]) : null;
+      const pop = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : null;
+      const sum = daily.precipitation_sum ? daily.precipitation_sum[i] : null;
+      return '<div class="wx-day"><span>' + esc(wxDayLabel(day)) + '</span>'
+        + '<span>' + esc(WMO[(daily.weather_code || [])[i]] || '—') + '</span>'
+        + '<b>' + (hi == null || lo == null ? '—' : hi + '° / ' + lo + '°') + '</b>'
+        + '<span class="muted">' + (pop == null ? '' : pop + '% rain') + (sum ? ' · ' + (+sum).toFixed(1) + ' mm' : '') + '</span></div>';
+    }).join('') + '</div>';
+  }
+  wxBody(html);
+}
+async function wxLoad(lat, lng, place, btn){
+  wxBody('<p class="muted">Loading the forecast…</p>');
+  wxOpen();
+  wxMsg('');
+  if (btn) btn.disabled = true;
+  try {
+    const params = new URLSearchParams({
+      latitude: (+lat).toFixed(4), longitude: (+lng).toFixed(4),
+      current: 'temperature_2m,apparent_temperature,precipitation,weather_code,cloud_cover',
+      daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum',
+      temperature_unit: 'fahrenheit', timezone: 'auto', forecast_days: '7'
+    });
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
+    if (!res.ok) throw new Error('The forecast service refused (' + res.status + ')');
+    wxRender(place, await res.json());
+    try { localStorage.setItem(WX_LAST, JSON.stringify({ place: place, lat: +lat, lng: +lng })); } catch (e) {}
+  } catch (err) {
+    wxBody('<p class="muted">' + esc(err && err.message ? err.message : 'Could not load the forecast.') + '</p>');
+  } finally {
+    if (btn && btn.isConnected) btn.disabled = false;
+  }
+}
+$('wxGo').onclick = async () => {
+  const name = ($('wxPlace').value || '').trim();
+  if (!name) { wxMsg('Type a place first, or tap “Use my location”.'); $('wxPlace').focus(); return; }
+  const btn = $('wxGo');
+  btn.disabled = true;
+  wxMsg('Looking up “' + name + '”…');
+  try {
+    const place = await geocode(name);
+    await wxLoad(place.lat, place.lng, place.name, btn);
+  } catch (err) {
+    wxMsg('Could not find that place — try a town, park or full address.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('wxHere').onclick = () => {
+  if (!navigator.geolocation) { wxMsg('This browser will not share a location — type a place instead.'); return; }
+  const btn = $('wxHere');
+  btn.disabled = true;
+  wxMsg('Finding you…');
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const lat = pos.coords.latitude, lng = pos.coords.longitude;
+    let label = 'Where you are';
+    try {
+      const r = await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&lat=' + lat.toFixed(4) + '&lon=' + lng.toFixed(4));
+      if (r.ok) {
+        const p = await r.json(), a = (p && p.address) || {};
+        label = a.city || a.town || a.village || a.hamlet || a.county || label;
+      }
+    } catch (e) {}
+    btn.disabled = false;
+    wxLoad(lat, lng, label, btn);
+  }, err => {
+    btn.disabled = false;
+    wxMsg(err && err.code === 1 ? 'Location permission was refused — type a place instead.' : 'Could not get your location — type a place instead.');
+  }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+};
+$('wxBackdrop').onclick = wxClose;
+$('wxClose').onclick = wxClose;
+$('wxClose2').onclick = wxClose;
+// The last place you checked is worth having pre-filled when you are back on the road.
+try {
+  const last = JSON.parse(localStorage.getItem(WX_LAST) || 'null');
+  if (last && last.place) $('wxPlace').value = last.place;
+} catch (e) {}
 
 // Maps stay hidden until they have something to show, which keeps the page short.
 function revealMap(mapObj, id){
@@ -1404,118 +1490,10 @@ function saveFuel(){
 $('fuelMpg').addEventListener('change', () => { saveFuel(); renderPlan(); });
 $('fuelPrice').addEventListener('change', () => { saveFuel(); renderPlan(); });
 
-$('itinerary').addEventListener('click', e => {
-  const beds = e.target.closest('[data-beds]');
-  if (beds) {
-    const stop = state.stops.find(s => s.id === beds.dataset.beds);
-    if (stop) findHotelsForStop(stop);
-    return;
-  }
-  const split = e.target.closest('[data-split]');
-  if (split) {
-    const [firstId, secondId] = split.dataset.split.split('|');
-    addOvernightBetween(firstId, secondId, split);
-  }
-});
-
-// A single 19-hour leg cannot be spread across days, so offer a real town at the
-// halfway point and slot it into the route between the two stops.
-function longDayHelp(span, legHours){
-  let worst = span.from;
-  for (let i = span.from; i < span.to; i++) if (legHours[i] > legHours[worst]) worst = i;
-  const a = state.stops[worst], b = state.stops[worst + 1];
-  if (!a || !b) return '';
-  return '<div class="warn-text">Long day — book a bed partway, or split the drive. '
-    + '<button type="button" class="small ghost" data-split="' + esc(a.id) + '|' + esc(b.id)
-    + '" aria-label="Find a town between ' + esc(a.name) + ' and ' + esc(b.name) + ' to split the drive">Suggest an overnight</button></div>';
-}
-
-async function addOvernightBetween(firstId, secondId, btn){
-  const a = state.stops.find(s => s.id === firstId);
-  const b = state.stops.find(s => s.id === secondId);
-  if (!a || !b) return;
-  const label = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Looking for a town…';
-  try {
-    const lat = (a.lat + b.lat) / 2, lng = (a.lng + b.lng) / 2;
-    const res = await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=11&lat=' + lat.toFixed(4) + '&lon=' + lng.toFixed(4));
-    if (!res.ok) throw new Error('lookup failed');
-    const place = await res.json();
-    const addr = place.address || {};
-    const town = addr.city || addr.town || addr.village || addr.hamlet || addr.county;
-    if (!town || !place.lat || !place.lon) throw new Error('no town');
-
-    const before = new Set(state.stops.map(s => s.id));
-    await write('POST', '/api/stops', { name: town, lat: +place.lat, lng: +place.lon });
-    const added = state.stops.find(s => !before.has(s.id));
-    if (added) {
-      const order = state.stops.map(s => s.id).filter(id => id !== added.id);
-      order.splice(order.indexOf(a.id) + 1, 0, added.id);
-      await write('PUT', '/api/stops', { order });
-    }
-    hint('Added ' + town + ' between ' + a.name + ' and ' + b.name + ' — the drive is split.');
-  } catch (e) {
-    hint('Could not find a town midway — add a stop by hand and the plan will rebalance.');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = label;
-  }
-}
-
 /* ---------- 2 & 3. itinerary + practical estimates ---------- */
 function renderPlan(){
-  const it = $('itinerary'), pr = $('practical');
+  const pr = $('practical');
   const days = Math.min(60, Math.max(1, +state.plan.days || 1));
-
-  if (state.stops.length < 2) {
-    it.innerHTML = '<p class="muted">Add at least a start and an end on the map above — your day-by-day plan appears here.</p>';
-  } else {
-    const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
-
-    // Split by driving time rather than stop count, so a day does not end up
-    // carrying nineteen hours behind the wheel. planSpans() is shared with the
-    // nights ledger so both agree on where each day ends.
-    const ps = planSpans(days);
-    const chunks = ps.chunks, spans = ps.spans, legHours = ps.legHours;
-
-    let html = '';
-    spans.forEach((span, c) => {
-      if (span.to <= span.from) return;
-      const depart = departMinutes(c);
-      const seg = state.stops.slice(span.from, span.to + 1);
-      const part = segMiles(span.from, span.to);
-      const date = d0 ? fmtDate(new Date(d0.getTime() + c * 864e5)) : 'Day ' + (c + 1);
-      const last = seg[seg.length - 1];
-      const long = span.hours >= 8;
-      // Walk the legs in order so each arrival is the departure time plus every
-      // leg so far that day.
-      let cum = 0, dayMins = 0;
-      for (let i = span.from; i < span.to; i++) dayMins += legMins(i);
-      const stopItems = seg.map((s, k) => {
-        if (k > 0) cum += legMins(span.from + k - 1);
-        return '<li>' + esc(s.name) + '<span class="eta">' + (part.real ? '' : '~') + clock(depart + cum) + '</span></li>';
-      }).join('');
-      html += '<div class="day' + (long ? ' long' : '') + '"><h3>' + date + ' <span class="muted">· '
-        + (part.real ? '' : '~') + Math.round(part.mi).toLocaleString() + ' mi driving'
-        + (part.real ? ' · ' + minsText(part.mins) : '') + '</span>'
-        + '<span class="day-weather" data-day="' + c + '"></span></h3>'
-        + '<div class="muted" style="font-size:.8rem;margin:0 0 4px">🚐 Leave <input type="time" value="' + esc(dayDepartVal(c)) + '" data-day-depart="' + c + '" aria-label="Leave time, ' + esc(date) + '" style="max-width:108px;padding:2px 6px;font-size:.8rem" />'
-        + ' · arrive ' + (part.real ? '' : '~') + clock(depart + dayMins) + '</div>'
-        + '<ol>' + stopItems + '</ol>'
-        + '<div class="muted">🌙 Overnight: ' + esc(last.name)
-        + ' <button type="button" class="small ghost" data-beds="' + esc(last.id) + '" aria-label="Find a bed near ' + esc(last.name) + '">🛏 Find a bed</button></div>'
-        + (long ? longDayHelp(span, legHours) : '')
-        + '</div>';
-    });
-    for (let k = chunks; k < days; k++) {
-      const date = d0 ? fmtDate(new Date(d0.getTime() + k * 864e5)) : 'Day ' + (k + 1);
-      html += '<div class="day open"><h3>' + date + '</h3><p class="muted">Open day in '
-        + esc(state.stops[state.stops.length-1].name) + ' — explore, rest, or detour.</p></div>';
-    }
-    it.innerHTML = html;
-    if (!devicePrefs().lowData) loadDayWeather(spans, d0);
-  }
 
   if (state.stops.length > 1) {
     const total = segMiles(0, state.stops.length - 1);
@@ -3528,22 +3506,6 @@ $('rvMpg').addEventListener('input', () => syncMpgInputs($('rvMpg').value));
   queueExtraSave();
   renderPlan();
 }));
-// Each driving day carries its own leave time; clearing it falls back to the
-// default above. Delegated, because the day tiles are rebuilt on every plan.
-$('itinerary').addEventListener('change', e => {
-  const t = e.target && e.target.closest ? e.target.closest('[data-day-depart]') : null;
-  if (!t) return;
-  const v = (t.value || '').trim();
-  extra.dayDepart = extra.dayDepart || {};
-  if (!v) delete extra.dayDepart[t.dataset.dayDepart];
-  else {
-    if (!/^\d{1,2}:\d{2}$/.test(v)) return;
-    extra.dayDepart[t.dataset.dayDepart] = v;
-  }
-  queueExtraSave();
-  renderPlan();
-});
-
 /* ---------- display settings: nav style + hidden sections (this device) ---------- */
 const NAV_LINKS = [...document.querySelectorAll('.secnav-inner a[href^="#sec-"]')]
   .filter(a => a.getAttribute('href') !== '#sec-settings');
@@ -3635,6 +3597,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && $('settingsModal') && $('settingsModal').classList.contains('open')) closeSettings();
+  if (e.key === 'Escape' && $('wxModal') && $('wxModal').classList.contains('open')) wxClose();
   if (e.key === 'Escape' && $('tourModal') && $('tourModal').classList.contains('open')) closeTour();
 });
 function openTour(){
