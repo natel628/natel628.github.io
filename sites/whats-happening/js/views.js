@@ -5,10 +5,13 @@ window.WHV = (function () {
 
   function badge(ev) {
     var ls = W.liveState(ev);
-    if (ls === 'live') return '<span class="badge badge--live"><span class="pulse" aria-hidden="true"></span>Live now</span>';
-    if (ls === 'premiere') return '<span class="badge badge--prem">Premiere</span>';
-    if (ls === 'soon') return '<span class="badge badge--soon">Starts soon</span>';
-    if (ls === 'scheduled') return '<span class="badge">Scheduled stream</span>';
+    var streamable = !!ev.streamUrl || !!ev.channel;
+    if (streamable) {
+      if (ls === 'live') return '<span class="badge badge--live"><span class="pulse" aria-hidden="true"></span>Live now</span>';
+      if (ls === 'premiere') return '<span class="badge badge--prem">Premiere</span>';
+      if (ls === 'soon') return '<span class="badge badge--soon">Starts soon</span>';
+      if (ls === 'scheduled') return '<span class="badge">Scheduled stream</span>';
+    }
     if (ev.presence === 'both') return '<span class="badge">In person + online</span>';
     return '';
   }
@@ -24,6 +27,11 @@ window.WHV = (function () {
       '</div>';
   }
 
+  function distLabel(dist) {
+    if (dist == null) return '';
+    return dist < 1 ? 'under 1 mi' : dist + ' mi';
+  }
+
   function metaLine(ev) {
     var d = W.parseLocal(ev.startLocal);
     var bits = [W.fmtDay(d) + ' at ' + W.fmtTime(d)];
@@ -34,14 +42,14 @@ window.WHV = (function () {
       var city = W.eventCity(ev);
       var dist = W.distanceMi(ev);
       bits.push(ev.venue + (city && city.id !== S.city ? ' \u00b7 ' + city.label : ''));
-      if (dist != null) bits.push(dist + ' mi');
+      if (dist != null) bits.push(distLabel(dist));
     }
     return bits.map(function (b) { return '<span>' + W.esc(b) + '</span>'; }).join('<span class="sep">\u00b7</span>');
   }
 
   function card(ev, opts) {
     opts = opts || {};
-    var why = opts.why || '';
+    var why = opts.why === true ? (W.score(ev).reasons[0] || '') : (opts.why || '');
     var c = W.catOf(ev.category);
     return '<article class="card' + (S.highlight === ev.id ? ' is-hl' : '') + '" data-id="' + ev.id + '" data-action="open">' +
       art(ev) +
@@ -58,7 +66,7 @@ window.WHV = (function () {
     var d = W.parseLocal(ev.startLocal);
     var dist = W.distanceMi(ev);
     var saved = S.saved.indexOf(ev.id) >= 0;
-    var where = ev.presence === 'online' ? (ev.channel ? 'Streaming on ' + (W.channelById(ev.channel) || {}).name : 'Online') : ev.venue + (dist != null ? ' \u00b7 ' + dist + ' mi' : '');
+    var where = ev.presence === 'online' ? (ev.channel ? 'Streaming on ' + ((W.channelById(ev.channel) || {}).name || 'YouTube') : 'Online') : ev.venue + (dist != null ? ' \u00b7 ' + distLabel(dist) : '');
     return '<section class="hero" style="--h:' + c.hue + '">' +
       '<div class="hero__art" aria-hidden="true"><span class="art__glyph">' + W.icon(c.icon) + '</span></div>' +
       '<div class="hero__body">' +
@@ -129,7 +137,6 @@ window.WHV = (function () {
       note = '<p class="fnote">' + hidden + ' event' + (hidden === 1 ? '' : 's') + ' hidden because the price is not published. We do not guess prices.</p>';
     }
     if (!events.length) return '<div class="empty"><h3>No events match these filters</h3><p>Try a wider radius, another date, or clearing a category.</p><button class="btn btn--ghost" data-action="resetfilters">Clear filters</button></div>' + note;
-    if (opts.listOnly) return note + '<div class="grid">' + events.map(function (ev) { return card(ev); }).join('') + '</div>';
     return note + '<div class="grid">' + events.map(function (ev) { return card(ev); }).join('') + '</div>';
   }
 
