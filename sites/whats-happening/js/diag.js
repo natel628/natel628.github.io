@@ -14,13 +14,10 @@
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-6';
+  var LIB = 'diag-7';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
-  function mark(k, v) {
-    try { document.documentElement.setAttribute('data-diag-' + k, String(v)); } catch (e) {}
-  }
   function q(d, sel) { return d.querySelector(sel); }
   function qa(d, sel) { return Array.prototype.slice.call(d.querySelectorAll(sel)); }
   function assert(cond, msg) { if (!cond) throw new Error(msg); }
@@ -59,7 +56,8 @@ window.WHDIAG = (function () {
     if (p && p.get('diag') === '1') return true;
     return (location.hash || '').toLowerCase().indexOf('diag') >= 0;
   }
-  mark('lib', LIB + (isFrame() ? ' frame' : wanted() ? ' wanted' : ' idle'));
+  /* Version hook: readable without running anything. */
+  try { document.documentElement.setAttribute('data-diag-lib', LIB + (isFrame() ? ' frame' : wanted() ? ' wanted' : ' idle')); } catch (e) {}
 
   /* ---------------- harness context ---------------- */
   function refresh(c) {
@@ -318,7 +316,6 @@ window.WHDIAG = (function () {
       root = document.createElement('div');
       root.id = 'diag-root';
       document.body.appendChild(root);
-      mark('root', 'appended');
     }
     panel = document.createElement('div');
     panel.className = 'diag';
@@ -341,7 +338,6 @@ window.WHDIAG = (function () {
       else if (a === 'close') closePanel();
     });
     root.appendChild(panel);
-    mark('panel', document.body.contains(panel) ? 'attached' : 'missing');
     return panel;
   }
 
@@ -407,7 +403,6 @@ window.WHDIAG = (function () {
     renderRows();
     setSummary('running\u2026');
     report = '';
-    mark('run', 'started');
 
     var results = [];
     var frame = document.createElement('iframe');
@@ -435,14 +430,10 @@ window.WHDIAG = (function () {
           return Promise.resolve().then(function () { return c.fn(ctx); }).then(function (detail) {
             results.push({ id: c.id, status: 'pass', detail: detail || '', time: Date.now() - t0 });
             setRow(c.id, 'pass', detail, ms(t0));
-            mark('done', c.id + ':pass');
-            mark('count', String(results.length));
           }).catch(function (e) {
             var msg = (e && e.message) || String(e);
             results.push({ id: c.id, status: 'fail', detail: msg, time: Date.now() - t0 });
             setRow(c.id, 'fail', msg, ms(t0));
-            mark('done', c.id + ':fail');
-            mark('count', String(results.length));
           });
         });
       }, Promise.resolve());
@@ -450,18 +441,15 @@ window.WHDIAG = (function () {
       report = buildReport(results);
       var failed = results.filter(function (r) { return r.status === 'fail'; }).length;
       setSummary(failed ? failed + ' failed' : 'all passed', failed ? 'fail' : 'pass');
-      mark('report', report.slice(0, 1800));
       if (failed) { try { console.error('[diagnostics]\n' + report); } catch (e) {} }
     }).catch(function (e) {
       var msg = 'harness failed: ' + ((e && e.message) || e);
       report = 'whats-happening diagnostics  ' + nowStamp() + '\n' + msg;
       setSummary('could not run', 'fail');
-      mark('report', report);
       results.push({ id: 'harness', status: 'fail', detail: msg, time: 0 });
     }).then(function () {
       frame.remove();
       ensurePanel();
-      mark('state', (panel && document.body.contains(panel) ? 'panel-attached' : 'panel-lost') + ' results=' + results.length);
       running = false;
     });
   }
@@ -483,5 +471,5 @@ window.WHDIAG = (function () {
     function boot() { if (wanted()) start(); }
   }
 
-  return { run: start, toggle: toggle, lastReport: function () { return report; } };
+  return { run: start };
 })();
