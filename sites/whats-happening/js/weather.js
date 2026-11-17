@@ -1,7 +1,8 @@
 /* What's Happening? - live snow depth and forecast for outdoor and resort cards.
 
    Source: Open-Meteo (https://open-meteo.com), free, no API key, CC BY 4.0.
-   One batched request covers every visible resort, results are cached in
+   One batched request covers every visible resort (yesterday for recent
+   snowfall, plus today and the 3-day outlook). Results are cached in
    localStorage for 20 minutes, and every failure path is silent: a card that
    cannot get weather keeps a one-line note instead of an error or a gap.
 
@@ -9,7 +10,6 @@
    data-wx="lat,lng" attribute. It never blocks rendering and never throws. */
 window.WHWX = (function () {
   'use strict';
-
   var TTL = 20 * 60 * 1000;   // Open-Meteo refreshes hourly; 20 minutes is plenty
   var STALE = 6 * 60 * 60 * 1000;  // older than this and we show cached data but refetch
   var TIMEOUT = 9000;
@@ -29,7 +29,6 @@ window.WHWX = (function () {
   function save() {
     try { window.localStorage.setItem(KEY, JSON.stringify(cache)); } catch (e) { /* private mode, no quota */ }
   }
-
   function keyFor(lat, lng) { return lat.toFixed(2) + ',' + lng.toFixed(2); }
 
   function readNode(node) {
@@ -58,6 +57,8 @@ window.WHWX = (function () {
     return map ? map(+v) : +v;
   }
 
+  /* With past_days=1 the daily arrays start at yesterday: index 0 is the last
+     24h, index 1 is today, the rest is the outlook. */
   function normalize(res) {
     var cur = (res && res.current) || {};
     var daily = (res && res.daily) || {};
@@ -65,13 +66,15 @@ window.WHWX = (function () {
     var codes = Array.isArray(daily.weather_code) ? daily.weather_code : [];
     var forecastCm = 0;
     for (var i = 1; i < Math.min(fall.length, 4); i++) forecastCm += +fall[i] || 0;
+    var recentCm = fall.length > 0 ? +fall[0] : NaN;
     return {
       at: Date.now(),
       depthIn: num(cur.snow_depth, function (m) { return m * 39.3701; }),
       tempF: num(cur.temperature_2m, function (c) { return c * 9 / 5 + 32; }),
       code: cur.weather_code == null ? null : +cur.weather_code,
+      recentIn: isFinite(recentCm) ? recentCm / 2.54 : null,
       forecastIn: fall.length > 1 ? (forecastCm > 0 ? forecastCm / 2.54 : 0) : null,
-      nextCode: codes.length > 1 && codes[1] != null ? +codes[1] : null
+      nextCode: codes.length > 2 && codes[2] != null ? +codes[2] : (codes.length > 1 && codes[1] != null ? +codes[1] : null)
     };
   }
 
@@ -101,6 +104,7 @@ window.WHWX = (function () {
     var now = [tempText(rec.tempF), codeText(rec.code)].filter(Boolean).join(' \u00b7 ');
     var cold = rec.tempF != null && rec.tempF <= 32;
     return item('Snow depth', depthText(rec.depthIn), 'snow') +
+      item('Last 24h', forecastText(rec.recentIn), rec.recentIn > 0.04 ? 'snow' : '') +
       item('Next 3 days', forecastText(rec.forecastIn), rec.forecastIn > 0.04 ? 'snow' : '') +
       item('Now', now, cold ? 'snow' : 'warm');
   }
@@ -157,7 +161,7 @@ window.WHWX = (function () {
     var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng +
       '&current=temperature_2m,snow_depth,weather_code' +
       '&daily=snowfall_sum,weather_code' +
-      '&forecast_days=4&timezone=auto';
+      '&forecast_days=4&past_days=1&timezone=auto';
 
     var ctl = typeof AbortController === 'function' ? new AbortController() : null;
     var timer = ctl ? setTimeout(function () { ctl.abort(); }, TIMEOUT) : null;
@@ -210,7 +214,6 @@ window.WHWX = (function () {
     });
     mo.observe(document.body, { childList: true, subtree: true });
   }
-
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
 
