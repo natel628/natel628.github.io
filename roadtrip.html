@@ -146,11 +146,18 @@
   .side-foot { margin-top:auto; padding:14px 16px; border-top:1px solid #334155; color:var(--muted); text-decoration:none; font-size:.9rem; }
   #setOpen { position:fixed; right:12px; bottom:12px; z-index:1500; width:48px; height:48px; border-radius:50%; background:#0f172a; border:1px solid #475569; color:var(--text); font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.5); }
 
-  .wx-now { display:flex; align-items:center; gap:14px; padding:2px 0 10px; }
-  .wx-temp { font-size:2.4rem; font-weight:700; line-height:1; }
-  .wx-days { display:grid; gap:0; }
-  .wx-day { display:grid; grid-template-columns:1.1fr 1.3fr auto auto; gap:8px; align-items:center; padding:7px 0; border-top:1px solid #1e293b; font-size:.9rem; }
-  .wx-day span { font-size:.85rem; }
+  .wx-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; margin:0 0 8px; }
+  .wx-head b { font-size:.98rem; }
+  .wx-head span { font-size:.82rem; }
+  .wx-days { display:flex; gap:8px; overflow-x:auto; padding:2px 2px 6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+  .wx-tile { flex:0 0 84px; scroll-snap-align:start; display:flex; flex-direction:column; align-items:center; gap:1px; background:#0f172a; border:1px solid #334155; border-radius:10px; padding:8px 5px; text-align:center; font-size:.78rem; }
+  .wx-tile b { font-size:.88rem; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .wx-tile .wx-lab { color:var(--muted); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase; }
+  .wx-tile .wx-ico { font-size:1.3rem; line-height:1.15; }
+  .wx-tile .wx-rain { color:#93c5fd; font-size:.72rem; }
+  .wx-tile-now { border-color:#7c5a13; }
+  .wx-tile-now b { color:var(--accent); font-size:1rem; }
+  @media (max-width:430px){ .wx-tile { flex-basis:76px; } }
   #settingsBackdrop, #tourBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
   #settingsBackdrop.open, #tourBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
   #settingsModal, #tourModal { position:fixed; z-index:1710; left:50%; top:50%; width:min(500px,93vw); max-height:86vh; display:flex; flex-direction:column; background:#0f172a; border:1px solid #334155; border-radius:14px; box-shadow:0 18px 50px rgba(0,0,0,.6); opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%,-46%); transition:opacity .18s, transform .18s; }
@@ -1336,34 +1343,41 @@ const WMO = { 0: '☀️ clear', 1: '🌤 mostly clear', 2: '⛅️ partly cloud
 const WX_LAST = 'rt-wx-last';
 function wxMsg(t){ const m = $('wxMsg'); if (m) m.textContent = t; }
 function wxBody(html){ const b = $('wxNow'); if (b) b.innerHTML = html; return b; }
-function wxDayLabel(day){
+// Small tiles read better than a row per day: the eye scans the strip left to
+// right instead of reading a table.
+function wxDayShort(day){
   const d = new Date(day + 'T12:00:00');
-  return isNaN(d.getTime()) ? String(day) : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  return isNaN(d.getTime()) ? String(day) : d.toLocaleDateString([], { weekday: 'short' });
+}
+function wxIcon(code){
+  const label = WMO[code];
+  return label ? label.split(' ')[0] : '·';
 }
 function wxRender(place, data){
   const cur = (data && data.current) || {}, daily = (data && data.daily) || {};
   const temp = cur.temperature_2m, feels = cur.apparent_temperature;
   const sky = WMO[cur.weather_code] || '—';
   const wet = cur.precipitation, cloud = cur.cloud_cover;
-  let html = '<div class="wx-now"><div class="wx-temp">' + (temp == null ? '—' : Math.round(temp) + '°') + '</div>'
-    + '<div><b>' + esc(place) + '</b>'
-    + '<div class="muted" style="font-size:.85rem">' + esc(sky)
+  const pops = daily.precipitation_probability_max || [];
+  let html = '<div class="wx-head"><b>' + esc(place) + '</b><span class="muted">' + esc(sky)
     + (feels == null ? '' : ' · feels like ' + Math.round(feels) + '°')
-    + (wet == null ? '' : ' · ' + (wet > 0 ? wet + ' mm falling now' : 'no rain right now'))
-    + (cloud == null ? '' : ' · ' + Math.round(cloud) + '% cloud cover') + '</div></div></div>';
-  const times = daily.time || [];
-  if (times.length) {
-    html += '<div class="wx-days">' + times.map((day, i) => {
-      const hi = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[i]) : null;
-      const lo = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[i]) : null;
-      const pop = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : null;
-      const sum = daily.precipitation_sum ? daily.precipitation_sum[i] : null;
-      return '<div class="wx-day"><span>' + esc(wxDayLabel(day)) + '</span>'
-        + '<span>' + esc(WMO[(daily.weather_code || [])[i]] || '—') + '</span>'
-        + '<b>' + (hi == null || lo == null ? '—' : hi + '° / ' + lo + '°') + '</b>'
-        + '<span class="muted">' + (pop == null ? '' : pop + '% rain') + (sum ? ' · ' + (+sum).toFixed(1) + ' mm' : '') + '</span></div>';
-    }).join('') + '</div>';
-  }
+    + (wet == null ? '' : ' · ' + (wet > 0 ? wet + ' mm falling now' : 'no rain now'))
+    + (cloud == null ? '' : ' · ' + Math.round(cloud) + '% cloud') + '</span></div>';
+  html += '<div class="wx-days">'
+    + '<div class="wx-tile wx-tile-now"><span class="wx-lab">Now</span>'
+    + '<span class="wx-ico" aria-hidden="true">' + esc(wxIcon(cur.weather_code)) + '</span>'
+    + '<b>' + (temp == null ? '—' : Math.round(temp) + '°') + '</b>'
+    + '<span class="wx-rain">' + (pops[0] == null ? '—' : pops[0] + '%') + '</span></div>';
+  (daily.time || []).forEach((day, i) => {
+    const hi = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[i]) : null;
+    const lo = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[i]) : null;
+    const pop = pops[i];
+    html += '<div class="wx-tile"><span class="wx-lab">' + esc(wxDayShort(day)) + '</span>'
+      + '<span class="wx-ico" aria-hidden="true">' + esc(wxIcon((daily.weather_code || [])[i])) + '</span>'
+      + '<b>' + (hi == null || lo == null ? '—' : hi + '°/' + lo + '°') + '</b>'
+      + '<span class="wx-rain">' + (pop == null ? '—' : pop + '%') + '</span></div>';
+  });
+  html += '</div>';
   wxBody(html);
 }
 async function wxLoad(lat, lng, place, btn){
