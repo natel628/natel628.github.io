@@ -121,7 +121,7 @@ window.WHV = (function () {
       .map(function (d) { return chip('price', d[0], d[1], f.price === d[0]); }).join('');
     var presence = [['any', 'Any format'], ['in-person', 'In person'], ['online', 'Online'], ['both', 'Both']]
       .map(function (d) { return chip('presence', d[0], d[1], f.presence === d[0]); }).join('');
-    var times = [['any', 'Any time'], ['morning', 'Afternoon'], ['afternoon', 'Afternoon'], ['evening', 'Evening'], ['late', 'Late night']]
+    var times = [['any', 'Any time'], ['morning', 'Morning'], ['afternoon', 'Afternoon'], ['evening', 'Evening'], ['late', 'Late night']]
       .map(function (d) { return chip('time', d[0], d[1], f.time === d[0]); }).join('');
     var wheres = [['near', 'Near me'], ['anywhere', 'Anywhere'], ['online', 'Online only']]
       .map(function (d) { return chip('where', d[0], d[1], f.where === d[0]); }).join('');
