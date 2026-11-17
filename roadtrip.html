@@ -790,7 +790,7 @@ async function write(method, path, payload){
   syncing = true;
   setSync('saving', 'Saving…');
   try {
-    applyState(await api(method, path, payload));
+    applyState(await send(method, path, payload));
     setSync('ok', 'Shared · synced');
     return true;
   } catch (err) {
@@ -798,6 +798,18 @@ async function write(method, path, payload){
     return false;
   } finally {
     syncing = false;
+  }
+}
+// A 503 on the CORS preflight reaches the page as a bare network failure, and in
+// that case the POST never left the browser — so one more try cannot duplicate a
+// note or a stop. A real HTTP error is never retried: that write may already
+// have landed.
+async function send(method, path, payload){
+  try { return await api(method, path, payload); }
+  catch (err) {
+    if (!(err instanceof TypeError)) throw err;
+    await new Promise(r => setTimeout(r, 800));
+    return api(method, path, payload);
   }
 }
 
