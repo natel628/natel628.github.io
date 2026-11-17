@@ -11,6 +11,16 @@
     return { cats: cats || [], date: 'any', from: '', to: '', price: 'any', presence: 'any', time: 'any', where: 'near' };
   }
 
+  /* Defaults per section. Category pages browse the whole category (Ski & Outdoor
+     events are mountain towns, so a 50-mile radius would empty the page); the
+     Near me page stays radius-bound; Online starts on online-only. */
+  function routeDefaults(name) {
+    var f = freshFilters(CATROUTE[name] ? [CATROUTE[name]] : []);
+    if (name === 'online') f.where = 'online';
+    else if (CATROUTE[name]) f.where = 'anywhere';
+    return f;
+  }
+
   function renderFor(name) {
     switch (name) {
       case 'discover': return V.viewDiscover();
@@ -54,9 +64,7 @@
     var changed = name !== S.view || force;
     S.view = name;
     var entering = lastRoute !== name;
-    if (CATROUTE[name] && entering) { S.filters = freshFilters([CATROUTE[name]]); S.mapMode = false; }
-    if (name === 'near' && entering) { S.filters = freshFilters([]); S.mapMode = false; }
-    if (name === 'online' && entering) { S.filters = freshFilters([]); S.filters.where = 'online'; S.mapMode = false; }
+    if (entering) { S.filters = routeDefaults(name); S.mapMode = false; }
     lastRoute = name;
     paint(true);
     if (changed) main.focus({ preventScroll: true });
@@ -395,7 +403,7 @@
           paint(false);
           break;
         }
-        case 'resetfilters': S.filters = freshFilters([]); paint(false); break;
+        case 'resetfilters': S.filters = routeDefaults(S.view); paint(false); break;
         case 'radius': S.radius = +val; W.store.set('radius', S.radius); paint(false); break;
         case 'maptoggle': S.mapMode = val === 'map'; paint(false); break;
         case 'cal-prev': case 'cal-next': {
