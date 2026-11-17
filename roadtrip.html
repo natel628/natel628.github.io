@@ -4258,16 +4258,24 @@ loadFuel();
   applyState(state);
   loadState().then(() => { finishOwnerReturn(); wxDefault(); });
 
+// One request per tick, straight to the plan. /api/rev only saved bytes, and it
+// was a second thing that could fail on its own: a browser whose /api/rev kept
+// 503ing sat on "storage unavailable" while /api/state was answering fine.
+let pollMisses = 0;
 setInterval(async () => {
   if (document.hidden || syncing) return;
   try {
-    const r = await getJSON('/api/rev');
-    if (r && r.rev !== state.rev) applyState(await getJSON('/api/state'));
+    const fresh = await getJSON('/api/state');
+    if (fresh && fresh.rev !== state.rev) applyState(fresh);
+    pollMisses = 0;
     // A good poll means the plan is live again, so clear a stale notice instead
     // of leaving it up until the next successful save.
     setSync('ok', 'Shared · synced');
   } catch (err) {
-    setSync('error', syncWhy(err, 'live updates paused, retrying'));
+    pollMisses++;
+    // One missed poll is a blip, not a reason to shout at the crew.
+    if (pollMisses < 2) setSync('saving', 'Reconnecting…');
+    else setSync('error', syncWhy(err, 'live updates paused, retrying'));
   }
 }, 8000);
 
