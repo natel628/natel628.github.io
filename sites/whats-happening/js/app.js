@@ -5,6 +5,7 @@
   var main, modal, toasts, lastRoute = null;
 
   var CATROUTE = { comedy: 'comedy', concerts: 'music', sports: 'sports', outdoor: 'outdoor' };
+  var COLLECTION = ['browse', 'near', 'online', 'comedy', 'concerts', 'sports', 'outdoor'];
 
   function freshFilters(cats) {
     return { cats: cats || [], date: 'any', from: '', to: '', price: 'any', presence: 'any', time: 'any', where: 'near' };
@@ -41,25 +42,24 @@
   function paint(scrollTop) {
     main.innerHTML = renderFor(S.view);
     markNav();
-    if (scrollTop) window.scrollTo({ top: 0, behavior: 'instant' in document.body.style ? 'instant' : 'auto' });
+    if (scrollTop) window.scrollTo({ top: 0, behavior: 'auto' });
     if (document.getElementById('map')) initMap();
     updateNotifDot();
   }
 
   function route(force) {
     var name = (location.hash || '#/discover').replace(/^#\/?/, '') || 'discover';
-    if (!document.querySelector('.navitem[href="#/' + name + '"]') && name !== 'browse') name = 'discover';
+    var known = document.querySelector('.navitem[href="#/' + name + '"]');
+    if (!known && name !== 'browse') name = 'discover';
     var changed = name !== S.view || force;
     S.view = name;
-    if (CATROUTE[name]) {
-      if (lastRoute !== name) S.filters = freshFilters([CATROUTE[name]]);
-      S.mapMode = false;
-    }
-    if (name === 'online' && lastRoute !== name) S.filters = freshFilters([]);
-    if (name === 'near' && lastRoute !== name) S.filters = freshFilters([]);
+    var entering = lastRoute !== name;
+    if (CATROUTE[name] && entering) { S.filters = freshFilters([CATROUTE[name]]); S.mapMode = false; }
+    if (name === 'near' && entering) { S.filters = freshFilters([]); S.mapMode = false; }
+    if (name === 'online' && entering) { S.filters = freshFilters([]); S.filters.where = 'online'; S.mapMode = false; }
     lastRoute = name;
     paint(true);
-    if (changed) document.getElementById('main').focus({ preventScroll: true });
+    if (changed) main.focus({ preventScroll: true });
   }
 
   /* ---------------- modal ---------------- */
@@ -109,8 +109,8 @@
     if (i >= 0) { S.follows.splice(i, 1); toast('Unfollowed'); }
     else { S.follows.push(key); toast('Following'); }
     W.store.set('follows', S.follows);
-    paint(false);
     if (!modal.hidden) closeModal();
+    paint(false);
   }
 
   function refreshOpenEvent(id) {
@@ -133,7 +133,7 @@
   }
 
   /* ---------------- map ---------------- */
-  var leafletP = null;
+  var leafletP = null, mapInstance = null;
   function loadLeaflet() {
     if (window.L) return Promise.resolve();
     if (leafletP) return leafletP;
@@ -150,14 +150,22 @@
     return leafletP;
   }
 
+  function destroyMap() {
+    if (!mapInstance) return;
+    try { mapInstance.remove(); } catch (e) { /* already detached */ }
+    mapInstance = null;
+  }
+
   function initMap() {
     var el = document.getElementById('map');
+    destroyMap();
     if (!el) return;
     var list = W.query(S.filters, S.q).filter(function (e) { return e.lat != null && e.lng != null; });
     loadLeaflet().then(function () {
       if (!document.body.contains(el)) return;
       var city = W.city();
       var map = L.map(el, { scrollWheelZoom: false }).setView([city.lat, city.lng], 9);
+      mapInstance = map;
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -210,8 +218,8 @@
       var loc = v.location || {};
       var start = item.dates && item.dates.start ? item.dates.start : {};
       if (!start.localDate) return null;
-      var seg = ((item.classifications && item.classifications[0]) || {}).segment || {};
-      var genre = ((item.classifications && item.classifications[0]) || {}).genre || {};
+      var cls = (item.classifications && item.classifications[0]) || {};
+      var seg = cls.segment || {}, genre = cls.genre || {};
       var cat = 'music';
       var segName = (seg.name || '').toLowerCase();
       if (segName.indexOf('sport') >= 0) cat = 'sports';
@@ -225,7 +233,7 @@
         id: 'tm-' + item.id,
         source: 'ticketmaster',
         title: item.name,
-        description: (item.info && item.info.note) || (item.pleaseNote ? item.pleaseNote.replace(/<[^>]*>/g, '') : 'Listed by Ticketmaster with no additional description.') ,
+        description: (item.info && item.info.note) || (item.pleaseNote ? item.pleaseNote.replace(/<[^>]*>/g, '') : 'Listed by Ticketmaster with no additional description.'),
         category: cat,
         presence: 'in-person',
         startLocal: start.localDate + 'T' + (start.localTime ? start.localTime.slice(0, 5) : '19:00'),
@@ -253,12 +261,13 @@
   }
 
   function loadTicketmaster(cb) {
-    if (!S.keys.ticketmaster) { S.liveStatus.tm = 'no key'; return cb && cb(); }
+    if (!S.keys.ticketmaster) { S.liveStatus.tm = 'no key'; if (cb) cb(); return; }
     var cached = W.store.get('tmCache', null);
     if (cached && Date.now() - cached.at < 600000) {
       mergeLive('ticketmaster', cached.events);
       S.liveStatus.tm = 'cached - ' + cached.events.length + ' events';
-      return cb && cb();
+      if (cb) cb();
+      return;
     }
     S.liveStatus.tm = 'loading';
     var c = W.city();
@@ -285,8 +294,7 @@
   function normalizeYT(v) {
     var sn = v.snippet || {}, ld = v.liveStreamingDetails || {};
     if (!ld.scheduledStartTime && !ld.actualStartTime) return null;
-    var when = ld.actualStartTime || ld.scheduledStartTime;
-    var d = new Date(when);
+    var d = new Date(ld.actualStartTime || ld.scheduledStartTime);
     var live = sn.liveBroadcastContent === 'live';
     return {
       id: 'yt-' + v.id,
@@ -296,9 +304,10 @@
       category: /comedy|stand-?up|podcast/i.test(sn.title) ? 'comedy' : 'online',
       presence: 'online',
       startLocal: stampLocal(d),
-      duration: live ? 120 : 90,
+      duration: live ? 180 : 90,
       liveNow: live,
       venue: sn.channelTitle,
+      channelName: sn.channelTitle,
       cityId: '', lat: null, lng: null,
       popularity: 60,
       performers: [],
@@ -311,41 +320,43 @@
       channel: 'yt:' + sn.channelId,
       resort: null,
       premiere: false,
-      channelName: sn.channelTitle,
       lastUpdated: new Date().toISOString()
     };
   }
 
   function loadYouTube(cb) {
-    if (!S.keys.youtube) { S.liveStatus.yt = 'no key'; return cb && cb(); }
+    if (!S.keys.youtube) { S.liveStatus.yt = 'no key'; if (cb) cb(); return; }
     var cached = W.store.get('ytCache', null);
     if (cached && Date.now() - cached.at < 1800000) {
       mergeLive('youtube', cached.events);
       S.liveStatus.yt = 'cached - ' + cached.events.length + ' streams';
-      return cb && cb();
+      if (cb) cb();
+      return;
     }
     S.liveStatus.yt = 'loading';
     var key = encodeURIComponent(S.keys.youtube);
     var search = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&eventType=upcoming&maxResults=10&order=date&q=live%20comedy%20podcast&key=' + key;
-    fetch(search).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
-      .then(function (j) {
-        var ids = (j.items || []).map(function (i) { return i.id && i.id.videoId; }).filter(Boolean).slice(0, 10);
-        if (!ids.length) { S.liveStatus.yt = 'no upcoming streams'; if (cb) cb(); return; }
-        return fetch('https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&id=' + ids.join(',') + '&key=' + key)
-          .then(function (r) { return r.json(); })
-          .then(function (v) {
-            var events = (v.items || []).map(normalizeYT).filter(Boolean);
-            mergeLive('youtube', events);
-            W.store.set('ytCache', { at: Date.now(), events: events });
-            S.liveStatus.yt = events.length + ' streams';
-            S.liveError = '';
-            if (cb) cb();
-          });
-      }).catch(function (e) {
-        S.liveStatus.yt = 'error';
-        S.liveError = 'YouTube: ' + (e.message === 'http 403' ? 'quota or key rejected' : 'request failed');
-        if (cb) cb();
-      });
+    fetch(search).then(function (r) {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.json();
+    }).then(function (j) {
+      var ids = (j.items || []).map(function (i) { return i.id && i.id.videoId; }).filter(Boolean).slice(0, 10);
+      if (!ids.length) { S.liveStatus.yt = 'no upcoming streams'; if (cb) cb(); return; }
+      return fetch('https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&id=' + ids.join(',') + '&key=' + key)
+        .then(function (r) { return r.json(); })
+        .then(function (v) {
+          var events = (v.items || []).map(normalizeYT).filter(Boolean);
+          mergeLive('youtube', events);
+          W.store.set('ytCache', { at: Date.now(), events: events });
+          S.liveStatus.yt = events.length + ' streams';
+          S.liveError = '';
+          if (cb) cb();
+        });
+    }).catch(function (e) {
+      S.liveStatus.yt = 'error';
+      S.liveError = 'YouTube: ' + (e.message === 'http 403' ? 'quota or key rejected' : 'request failed');
+      if (cb) cb();
+    });
   }
 
   function mergeLive(source, events) {
@@ -355,6 +366,7 @@
   /* ---------------- events ---------------- */
   function bind() {
     document.addEventListener('click', function (e) {
+      if (!e.target || !e.target.closest) return;
       var t = e.target.closest('[data-action]');
       if (!t) return;
       var a = t.getAttribute('data-action');
@@ -383,7 +395,7 @@
           paint(false);
           break;
         }
-        case 'resetfilters': S.filters = freshFilters(CATROUTE[S.view] ? [CATROUTE[S.view]] : []); paint(false); break;
+        case 'resetfilters': S.filters = freshFilters([]); paint(false); break;
         case 'radius': S.radius = +val; W.store.set('radius', S.radius); paint(false); break;
         case 'maptoggle': S.mapMode = val === 'map'; paint(false); break;
         case 'cal-prev': case 'cal-next': {
@@ -410,8 +422,20 @@
         case 'enable-push': requestPush(t); break;
         case 'geolocate': geolocate(); break;
         case 'save-keys': saveKeys(); break;
-        case 'clear-keys': S.keys = { ticketmaster: '', youtube: '' }; W.store.set('keys', S.keys); S.live = []; S.liveStatus = { tm: 'off', yt: 'off' }; toast('Keys removed'); paint(false); break;
-        case 'clear-data': S.saved = []; S.follows = []; W.store.set('saved', []); W.store.set('follows', []); toast('Saved events and follows cleared'); paint(false); break;
+        case 'clear-keys':
+          S.keys = { ticketmaster: '', youtube: '' };
+          W.store.set('keys', S.keys);
+          S.live = [];
+          S.liveStatus = { tm: 'off', yt: 'off' };
+          toast('Keys removed');
+          paint(false);
+          break;
+        case 'clear-data':
+          S.saved = []; S.follows = []; S.viewed = {};
+          W.store.set('saved', []); W.store.set('follows', []); W.store.set('viewed', {});
+          toast('Saved events and follows cleared');
+          paint(false);
+          break;
         case 'onboarding': openModal(V2.onboarding()); break;
         case 'ob-finish': finishOnboarding(); break;
         case 'ob-skip': S.onboarded = true; W.store.set('onboarded', true); closeModal(); break;
@@ -422,20 +446,23 @@
 
     document.addEventListener('change', function (e) {
       var t = e.target;
+      var action = t.getAttribute('data-action');
       if (t.id === 'sort') { S.sort = t.value; paint(false); }
       else if (t.id === 'set-city') { S.city = t.value; W.store.set('city', S.city); fillTopbar(); paint(false); }
       else if (t.id === 'set-radius') { S.radius = +t.value; W.store.set('radius', S.radius); paint(false); }
       else if (t.id === 'f-from') { S.filters.from = t.value; paint(false); }
       else if (t.id === 'f-to') { S.filters.to = t.value; paint(false); }
-      else if (t.getAttribute('data-action') === 'interest') {
-        var v = t.value, i = S.interests.indexOf(v);
-        if (t.checked && i < 0) S.interests.push(v);
+      else if (action === 'interest') {
+        var i = S.interests.indexOf(t.value);
+        if (t.checked && i < 0) S.interests.push(t.value);
         if (!t.checked && i >= 0) S.interests.splice(i, 1);
         W.store.set('interests', S.interests);
-      } else if (t.getAttribute('data-action') === 'notif') {
-        S.notifPrefs[t.value] = t.checked; W.store.set('notifPrefs', S.notifPrefs);
-      } else if (t.getAttribute('data-action') === 'online-interest') {
-        S.onlineInterest = t.checked; W.store.set('online', S.onlineInterest);
+      } else if (action === 'notif') {
+        S.notifPrefs[t.value] = t.checked;
+        W.store.set('notifPrefs', S.notifPrefs);
+      } else if (action === 'online-interest') {
+        S.onlineInterest = t.checked;
+        W.store.set('online', S.onlineInterest);
       }
     });
 
@@ -446,19 +473,18 @@
       var v = q.value.trim();
       timer = setTimeout(function () {
         S.q = v;
-        if (['browse', 'near', 'online', 'comedy', 'concerts', 'sports', 'outdoor'].indexOf(S.view) >= 0) {
-          if (S.view !== 'browse' && v) { S.browseTitle = 'Results for ' + v; location.hash = '#/browse'; }
-          else paint(false);
-        }
+        if (COLLECTION.indexOf(S.view) >= 0) paint(false);
       }, 220);
     });
+
     document.getElementById('search-form').addEventListener('submit', function (e) {
       e.preventDefault();
       S.q = q.value.trim();
       S.browseTitle = S.q ? 'Results for ' + S.q : 'All events';
-      location.hash = '#/browse';
-      paint(true);
+      if (location.hash === '#/browse') paint(true);
+      else location.hash = '#/browse';
     });
+
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !modal.hidden) closeModal();
     });
@@ -490,8 +516,8 @@
     W.store.set('ytCache', null);
     S.live = [];
     toast('Keys saved in this browser');
-    loadTicketmaster(function () { loadYouTube(function () { paint(false); }); });
     paint(false);
+    loadTicketmaster(function () { loadYouTube(function () { paint(false); }); });
   }
 
   function requestPush(btn) {
@@ -530,8 +556,6 @@
     if (el) el.textContent = W.DAYS_LONG[now.getDay()] + ', ' + W.MONTHS[now.getMonth()] + ' ' + now.getDate();
     var c = document.getElementById('tb-city');
     if (c) c.textContent = W.city().label;
-    var dot = document.getElementById('notif-dot');
-    if (dot) dot.hidden = false;
   }
 
   function boot() {
@@ -544,7 +568,6 @@
     fillTopbar();
     bind();
     route(true);
-    updateNotifDot();
     if (!S.onboarded) openModal(V2.onboarding());
     if (S.keys.ticketmaster || S.keys.youtube) {
       loadTicketmaster(function () { loadYouTube(function () { paint(false); }); });
