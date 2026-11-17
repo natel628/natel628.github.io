@@ -8,6 +8,7 @@
 <meta name='color-scheme' content='dark'>
 <meta name='theme-color' content='#0a0b0e'>
 <link rel='stylesheet' href='css/app.css'>
+<link rel='stylesheet' href='css/weather.css'>
 <link rel='icon' href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23ff6b3d'/><path d='M12 4l2 6 6 2-6 2-2 6-2-6-6-2 6-2z' fill='%23fff'/></svg>">
 <style>
 .sb__close{display:none}
@@ -16,26 +17,30 @@
 #boot-error b{color:#fff}
 </style>
 <script>
-window.addEventListener('error', function (e) {
-  var box = document.getElementById('boot-error');
-  if (!box) {
-    box = document.createElement('div');
-    box.id = 'boot-error';
-    document.body.appendChild(box);
-  }
-  box.innerHTML = '<b>Script error - the page could not start.</b>\n' + (e.message || 'unknown error') + '\n' + (e.filename || '').split('/').pop() + ':' + (e.lineno || '?');
-});
-window.addEventListener('DOMContentLoaded', function () {
-  setTimeout(function () {
-    var m = document.getElementById('main');
-    if (m && !m.textContent.trim() && !document.getElementById('boot-error')) {
-      var box = document.createElement('div');
+(function () {
+  function show(html) {
+    var box = document.getElementById('boot-error');
+    if (!box) {
+      box = document.createElement('div');
       box.id = 'boot-error';
-      box.innerHTML = '<b>Nothing rendered.</b>\nThe page loaded but the discovery view produced no content. Open the browser console for details.';
       document.body.appendChild(box);
     }
-  }, 2500);
-});
+    box.innerHTML = html;
+  }
+  window.addEventListener('error', function (e) {
+    show('<b>Script error - the page could not start.</b>\n' +
+      (e.message || 'unknown error') + '\n' +
+      String(e.filename || '').split('/').pop() + ':' + (e.lineno || '?'));
+  });
+  window.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      var m = document.getElementById('main');
+      if (m && !m.textContent.trim() && !document.getElementById('boot-error')) {
+        show('<b>Nothing rendered.</b>\nThe page loaded but the discovery view produced no content. Open the browser console for details.');
+      }
+    }, 2500);
+  });
+})();
 </script>
 </head>
 <body>
@@ -98,7 +103,6 @@ window.addEventListener('DOMContentLoaded', function () {
   <a class='tab' href='#/calendar'><span data-icon='calendar'></span>Calendar</a>
   <a class='tab' href='#/watchlist'><span data-icon='bookmark'></span>Saved</a>
 </nav>
-
 <div id='modal' class='modal' hidden></div>
 <div id='toasts' class='toasts' aria-live='polite'></div>
 
@@ -111,5 +115,6 @@ window.addEventListener('DOMContentLoaded', function () {
 <script src='js/views.js'></script>
 <script src='js/views2.js'></script>
 <script src='js/app.js'></script>
+<script src='js/weather.js'></script>
 </body>
 </html>

@@ -46,6 +46,14 @@ window.WHV = (function () {
     return bits.map(function (b) { return '<span>' + W.esc(b) + '</span>'; }).join('<span class="sep">\u00b7</span>');
   }
 
+  /* Live snow readout mount point. weather.js fills this in after render and
+     replaces it with a single quiet line if Open-Meteo cannot be reached. */
+  function weatherBlock(ev) {
+    if (ev.presence === 'online' || ev.lat == null || ev.lng == null) return '';
+    if (ev.category !== 'outdoor' && !ev.resort) return '';
+    return '<div class="wx" data-wx="' + ev.lat + ',' + ev.lng + '"><p class="wx__msg">Checking snow conditions\u2026</p></div>';
+  }
+
   function card(ev, opts) {
     opts = opts || {};
     var why = opts.why === true ? (W.score(ev).reasons[0] || '') : (opts.why || '');
@@ -56,6 +64,7 @@ window.WHV = (function () {
       '<p class="card__kicker"><span class="dotcat" style="--h:' + c.hue + '"></span>' + W.esc(c.short) + '</p>' +
       '<h3 class="card__title">' + W.esc(ev.title) + '</h3>' +
       '<p class="card__meta">' + metaLine(ev) + '</p>' +
+      weatherBlock(ev) +
       '<p class="card__foot"><span class="price">' + W.esc(W.priceLabel(ev)) + '</span>' + (why ? '<span class="why" title="Why this is here">' + W.esc(why) + '</span>' : '') + '</p>' +
       '</div></article>';
   }
