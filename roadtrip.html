@@ -151,10 +151,10 @@
   .wx-days { display:grid; gap:0; }
   .wx-day { display:grid; grid-template-columns:1.1fr 1.3fr auto auto; gap:8px; align-items:center; padding:7px 0; border-top:1px solid #1e293b; font-size:.9rem; }
   .wx-day span { font-size:.85rem; }
-  #settingsBackdrop, #tourBackdrop, #wxBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
-  #settingsBackdrop.open, #tourBackdrop.open, #wxBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
-  #settingsModal, #tourModal, #wxModal { position:fixed; z-index:1710; left:50%; top:50%; width:min(500px,93vw); max-height:86vh; display:flex; flex-direction:column; background:#0f172a; border:1px solid #334155; border-radius:14px; box-shadow:0 18px 50px rgba(0,0,0,.6); opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%,-46%); transition:opacity .18s, transform .18s; }
-  #settingsModal.open, #tourModal.open, #wxModal.open { opacity:1; visibility:visible; pointer-events:auto; transform:translate(-50%,-50%); }
+  #settingsBackdrop, #tourBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
+  #settingsBackdrop.open, #tourBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
+  #settingsModal, #tourModal { position:fixed; z-index:1710; left:50%; top:50%; width:min(500px,93vw); max-height:86vh; display:flex; flex-direction:column; background:#0f172a; border:1px solid #334155; border-radius:14px; box-shadow:0 18px 50px rgba(0,0,0,.6); opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%,-46%); transition:opacity .18s, transform .18s; }
+  #settingsModal.open, #tourModal.open { opacity:1; visibility:visible; pointer-events:auto; transform:translate(-50%,-50%); }
   .set-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #334155; }
   .set-body { overflow-y:auto; padding:6px 16px 16px; }
   .set-foot { display:flex; gap:8px; justify-content:flex-end; padding:12px 16px; border-top:1px solid #334155; }
@@ -282,13 +282,14 @@
 
   <section class="card" id="sec-weather">
     <h2>🌤 Weather</h2>
-    <p class="muted">Temperature, rain chance and sky for anywhere on the trip — a town on the way, a stop, or wherever you are standing right now.</p>
+    <p class="muted">The forecast loads with the page — current conditions plus the next seven days. Type a place below and it replaces what is showing.</p>
     <div class="row">
       <input id="wxPlace" placeholder="City, park or address — e.g. Nashville, TN" aria-label="Place to check the weather" autocomplete="off" />
-      <button type="button" id="wxGo">Show weather</button>
+      <button type="button" id="wxGo">Update</button>
       <button type="button" id="wxHere" class="ghost">📍 Use my location</button>
     </div>
     <p id="wxMsg" class="muted" role="status" aria-live="polite"></p>
+    <div id="wxNow"></div>
   </section>
 
   <section class="card" id="sec-notes">
@@ -643,12 +644,6 @@
   <div class="set-foot"><button type="button" id="tourGo">Let's fuckin' go</button></div>
 </div>
 
-<div id="wxBackdrop"></div>
-<div id="wxModal" role="dialog" aria-modal="true" aria-label="Weather forecast" aria-hidden="true">
-  <div class="set-head"><b>🌤 Weather</b><button type="button" id="wxClose" class="small ghost" aria-label="Close the weather">✕</button></div>
-  <div class="set-body" id="wxBody"><p class="muted">Pick a place above to see the forecast.</p></div>
-  <div class="set-foot"><button type="button" id="wxClose2" class="ghost">Close</button></div>
-</div>
 </main>
 
 <div id="gallery" hidden>
@@ -679,7 +674,18 @@ let syncing = false;
 function setSync(kind, text){
   const el = $('syncState');
   el.className = 'sync ' + kind;
-  el.textContent = text;
+  // Only touch the text when it actually changed, so the live region does not
+  // re-announce the same status every time the page polls.
+  if (el.textContent !== text) el.textContent = text;
+}
+// "Offline" is only honest when the browser really is offline. A 503 from the
+// shared backend is a server problem, so say what it said instead of pretending
+// the connection dropped.
+function syncWhy(err, tail){
+  const base = navigator.onLine
+    ? String((err && err.message) || 'The shared plan did not load').replace(/\.$/, '')
+    : 'Offline';
+  return base + ' — ' + tail;
 }
 async function api(method, path, payload){
   const res = await fetch(API_BASE + path, {
@@ -693,6 +699,16 @@ async function api(method, path, payload){
   if (!res.ok) throw new Error((data && data.error) || ('Request failed (' + res.status + ')'));
   return data;
 }
+// Reads get one quiet retry, because the shared database intermittently answers
+// 503 and the very next request usually works. Writes are never retried, so a
+// retry can never double-add a stop.
+async function getJSON(path){
+  try { return await api('GET', path); }
+  catch (err) {
+    await new Promise(r => setTimeout(r, 700));
+    return api('GET', path);
+  }
+}
 function applyState(next){
   state = next;
   renderStops();
@@ -705,7 +721,7 @@ function applyState(next){
 }
 async function loadState(){
   try {
-    const next = await api('GET', '/api/state');
+    const next = await getJSON('/api/state');
     applyState(next);
     // Keep a copy on the device so the plan is still readable with no signal.
     try { localStorage.setItem('rt_snapshot', JSON.stringify(next)); } catch (e) {}
@@ -715,9 +731,9 @@ async function loadState(){
     try { snap = JSON.parse(localStorage.getItem('rt_snapshot') || 'null'); } catch (e) { snap = null; }
     if (snap) {
       applyState(snap);
-      setSync('error', 'Offline — showing the last copy saved on this device');
+      setSync('error', syncWhy(err, 'showing the last copy saved on this device'));
     } else {
-      setSync('error', 'Offline — changes are not being saved');
+      setSync('error', syncWhy(err, 'changes are not being saved'));
     }
   }
 }
@@ -1313,23 +1329,13 @@ const WMO = { 0: '☀️ clear', 1: '🌤 mostly clear', 2: '⛅️ partly cloud
   95: '⛈ storm', 96: '⛈ storm', 99: '⛈ storm' };
 
 
-/* ---------- weather modal: any place, or wherever you are ---------- */
-// Open-Meteo again, but for a place you pick rather than the day cards: current
-// conditions plus a week of highs, lows and rain chance. Keyless, so there is
-// nothing to configure — and low-data mode does not block it, you asked for it.
+/* ---------- weather card: any place, or wherever you are ---------- */
+// Open-Meteo, keyless. The card fills itself in as soon as the page opens —
+// current conditions plus a week of highs, lows and rain chance — and typing a
+// place simply replaces whatever is shown. Low-data mode does not block it.
 const WX_LAST = 'rt-wx-last';
-function wxOpen(){
-  const b = $('wxBackdrop'), m = $('wxModal');
-  if (b) b.classList.add('open');
-  if (m) { m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); }
-}
-function wxClose(){
-  const b = $('wxBackdrop'), m = $('wxModal');
-  if (b) b.classList.remove('open');
-  if (m) { m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); }
-}
 function wxMsg(t){ const m = $('wxMsg'); if (m) m.textContent = t; }
-function wxBody(html){ const b = $('wxBody'); if (b) b.innerHTML = html; return b; }
+function wxBody(html){ const b = $('wxNow'); if (b) b.innerHTML = html; return b; }
 function wxDayLabel(day){
   const d = new Date(day + 'T12:00:00');
   return isNaN(d.getTime()) ? String(day) : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
@@ -1361,8 +1367,7 @@ function wxRender(place, data){
   wxBody(html);
 }
 async function wxLoad(lat, lng, place, btn){
-  wxBody('<p class="muted">Loading the forecast…</p>');
-  wxOpen();
+  wxBody('<p class="muted">Loading the forecast for ' + esc(place) + '…</p>');
   wxMsg('');
   if (btn) btn.disabled = true;
   try {
@@ -1397,7 +1402,7 @@ $('wxGo').onclick = async () => {
     btn.disabled = false;
   }
 };
-$('wxHere').onclick = () => {
+function wxFromHere(){
   if (!navigator.geolocation) { wxMsg('This browser will not share a location — type a place instead.'); return; }
   const btn = $('wxHere');
   btn.disabled = true;
@@ -1418,10 +1423,32 @@ $('wxHere').onclick = () => {
     btn.disabled = false;
     wxMsg(err && err.code === 1 ? 'Location permission was refused — type a place instead.' : 'Could not get your location — type a place instead.');
   }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
-};
-$('wxBackdrop').onclick = wxClose;
-$('wxClose').onclick = wxClose;
-$('wxClose2').onclick = wxClose;
+}
+$('wxHere').onclick = wxFromHere;
+$('wxPlace').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); $('wxGo').click(); }
+});
+
+// The card never sits empty: the last place checked on this device, else the
+// first stop on the route, else where you are if the browser already agreed to
+// share it. Typing a place still overwrites whatever is showing.
+async function wxDefault(){
+  let last = null;
+  try { last = JSON.parse(localStorage.getItem(WX_LAST) || 'null'); } catch (e) { last = null; }
+  if (last && Number.isFinite(+last.lat) && Number.isFinite(+last.lng)) {
+    wxLoad(+last.lat, +last.lng, last.place || 'Last place checked', null);
+    return;
+  }
+  const first = (state.stops || []).find(s => Number.isFinite(+s.lat) && Number.isFinite(+s.lng));
+  if (first) { wxLoad(+first.lat, +first.lng, first.name || 'First stop', null); return; }
+  if (navigator.permissions && navigator.permissions.query) {
+    try {
+      const p = await navigator.permissions.query({ name: 'geolocation' });
+      if (p.state === 'granted') { wxFromHere(); return; }
+    } catch (e) {}
+  }
+  wxBody('<p class="muted">Type a town above, or tap 📍 Use my location, to pull the forecast.</p>');
+}
 // The last place you checked is worth having pre-filled when you are back on the road.
 try {
   const last = JSON.parse(localStorage.getItem(WX_LAST) || 'null');
@@ -3597,7 +3624,6 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && $('settingsModal') && $('settingsModal').classList.contains('open')) closeSettings();
-  if (e.key === 'Escape' && $('wxModal') && $('wxModal').classList.contains('open')) wxClose();
   if (e.key === 'Escape' && $('tourModal') && $('tourModal').classList.contains('open')) closeTour();
 });
 function openTour(){
@@ -4174,15 +4200,18 @@ applyStartCollapsed();
 loadRadii();
 loadFuel();
   applyState(state);
-  loadState().then(() => finishOwnerReturn());
+  loadState().then(() => { finishOwnerReturn(); wxDefault(); });
 
 setInterval(async () => {
   if (document.hidden || syncing) return;
   try {
-    const r = await api('GET', '/api/rev');
-    if (r && r.rev !== state.rev) applyState(await api('GET', '/api/state'));
+    const r = await getJSON('/api/rev');
+    if (r && r.rev !== state.rev) applyState(await getJSON('/api/state'));
+    // A good poll means the plan is live again, so clear a stale notice instead
+    // of leaving it up until the next successful save.
+    setSync('ok', 'Shared · synced');
   } catch (err) {
-    setSync('error', 'Offline — changes are not being saved');
+    setSync('error', syncWhy(err, 'live updates paused, retrying'));
   }
 }, 8000);
 
