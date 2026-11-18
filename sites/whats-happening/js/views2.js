@@ -3,19 +3,30 @@ window.WHV2 = (function () {
   'use strict';
   var W = window.WH, V = window.WHV, S = W.state;
 
+  /* Every interest starts on. A fresh visitor should get the whole calendar
+     rather than a two-category slice, and the onboarding checkboxes should
+     come up already ticked. A stored choice always wins. */
+  if (!W.store.get('interests', null)) {
+    S.interests = W.CATS.map(function (c) { return c.id; });
+    W.store.set('interests', S.interests);
+  }
+
   function channelName(ev) {
     if (!ev) return 'Online';
     var c = ev.channel ? W.channelById(ev.channel) : null;
     return (c && c.name) || ev.channelName || ev.venue || 'Online';
   }
 
-  /* ---------------- location picker ---------------- */
-  function citySelect(id, sel) {
-    var opts = W.CITIES.map(function (x) {
+  /* ---------------- location picker ----------------
+     No list of suggested cities any more: the field is a plain text input for
+     "City, ST", a bare city, or a ZIP/postcode, which is what people actually
+     have in their head. The <select> is still rendered, hidden, because app.js
+     and location.js read the chosen place from it; it carries only the current
+     place until a lookup registers a new one. */
+  function cityOptions(sel) {
+    return W.CITIES.map(function (x) {
       return '<option value="' + W.esc(x.id) + '"' + (x.id === sel ? ' selected' : '') + '>' + W.esc(x.label) + '</option>';
     }).join('');
-    return '<select id="' + id + '" data-city="1">' + opts +
-      '<option value="__other"' + (sel === '__other' ? ' selected' : '') + '>Somewhere else&hellip;</option></select>';
   }
   function cityHint() {
     var c = W.city();
@@ -23,11 +34,12 @@ window.WHV2 = (function () {
     return custom ? 'Using ' + W.esc(c.label) + '.' : '';
   }
   function cityField(label, id, sel) {
-    return '<div class="field" data-citybox><label for="' + id + '">' + W.esc(label) + '</label>' +
-      citySelect(id, sel) +
-      '<div class="cityfinder" hidden>' +
-      '<input id="' + id + '-q" type="search" autocomplete="off" placeholder="Town or city" aria-label="Your town or city">' +
-      '<button type="button" class="btn btn--ghost" data-action="save-city">Look up</button></div>' +
+    var c = W.city();
+    return '<div class="field" data-citybox><label for="' + id + '-q">' + W.esc(label) + '</label>' +
+      '<div class="cityfinder">' +
+      '<input id="' + id + '-q" class="cityq" type="text" autocomplete="off" spellcheck="false" value="' + W.esc(c ? c.label : '') + '" placeholder="City, state, or ZIP - e.g. Greenville, SC or 29601" aria-label="' + W.esc(label) + '">' +
+      '<button type="button" class="btn btn--ghost" data-action="save-city">Use this place</button></div>' +
+      '<select id="' + id + '" data-city="1" hidden aria-hidden="true" tabindex="-1">' + cityOptions(sel) + '</select>' +
       '<p class="hint city-hint">' + cityHint() + '</p></div>';
   }
 
@@ -164,7 +176,7 @@ window.WHV2 = (function () {
     }).join('');
     return '<div class="pagehead"><div><h1>Settings</h1><p>Everything here is stored only in this browser. Nothing is sent anywhere.</p></div></div>' +
       '<div class="settings">' +
-      '<section class="panel"><h2>Location</h2><p class="panel__sub">Used for distance, the map and the featured event. Pick a city, or look up any town.</p>' +
+      '<section class="panel"><h2>Location</h2><p class="panel__sub">Used for distance, the map and the featured event. Type a city, state or ZIP code.</p>' +
       cityField('City', 'set-city', c.id) +
       '<div class="field"><label for="set-radius">Search radius</label><select id="set-radius">' + [10, 25, 50, 100, 250].map(function (r) { return '<option value="' + r + '"' + (S.radius === r ? ' selected' : '') + '>Within ' + r + ' miles</option>'; }).join('') + '</select></div>' +
       '<button class="btn btn--ghost" data-action="geolocate">' + W.icon('pin') + 'Use my current location</button>' +
