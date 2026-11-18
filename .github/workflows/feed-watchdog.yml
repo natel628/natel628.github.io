@@ -1,0 +1,51 @@
+name: Feed watchdog
+
+# The daily sync only signals CI when it commits something. A disabled
+# workflow, a revoked or over-quota API key, or a schedule that stopped firing
+# leaves the repo untouched for weeks: no commit, no push, no deploy, no red
+# build, while the site quietly serves older and older listings.
+#
+# This job reads the feed the deployed site actually serves and validates it
+# with the same guard the deploy uses (scripts/check-live.mjs): it must parse,
+# hold events, and have a generatedAt no older than 48h. Anything else fails
+# the run loudly instead of waiting for a visitor to notice.
+
+on:
+  schedule:
+    - cron: '47 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: feed-watchdog
+  cancel-in-progress: false
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Cache-busted so a CDN edge cannot answer with a stale copy.
+      - name: Fetch the deployed live feed
+        env:
+          FEED_URL: https://natel628.github.io/sites/whats-happening/data/live.json
+        run: |
+          url="$FEED_URL?watchdog=$(date +%s)"
+          echo "fetching $url"
+          if ! curl -fsS --retry 3 --retry-delay 5 --retry-all-errors -H 'Cache-Control: no-cache' -o /tmp/live.json "$url"; then
+            echo "::error::could not fetch $FEED_URL - the deployed feed path is failing"
+            exit 1
+          fi
+          echo "fetched $(wc -c < /tmp/live.json) bytes"
+
+      - name: Validate the deployed feed
+        run: node scripts/check-live.mjs /tmp/live.json
