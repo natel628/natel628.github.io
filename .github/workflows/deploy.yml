@@ -38,6 +38,20 @@ jobs:
             node --check "$f"
           done
 
+      - name: Syntax-check smoke script
+        run: node --check scripts/smoke-whats-happening.mjs
+
+      - name: Smoke test whats-happening
+        run: |
+          npm init -y >/dev/null 2>&1 || true
+          npm i -D playwright
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8099 &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID" EXIT
+          sleep 2
+          node scripts/smoke-whats-happening.mjs http://127.0.0.1:8099/sites/whats-happening/
+
       # ── Preflight: confirm source file and secrets ─────────────────
       - name: Preflight checks
         run: |
