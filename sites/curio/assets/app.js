@@ -126,7 +126,7 @@ async function capture(input) {
         id: 'g_' + now.toString(36) + Math.random().toString(36).slice(2, 7),
         title: r.title, input, inputType: r.inputType, category: r.category, status: 'exploring',
         overview: r.overview, keyFacts: r.keyFacts, wikiUrl: r.wiki?.url || null, wikiTitle: r.wiki?.title || null,
-        sources: r.sources, related: r.related, notes: '', aiPowered: r.aiPowered, archived: false,
+        sources: r.sources, related: r.related, simple: r.simple || null, notes: '', aiPowered: r.aiPowered, archived: false,
         createdAt: now, updatedAt: now,
       };
       state.guest.unshift(topic); saveGuest();
@@ -363,6 +363,7 @@ function topicHTML(t) {
     <div class="panel"><h3>Overview</h3><p>${esc(t.overview || 'No overview yet.')}</p>
       ${t.disputed ? `<p style="margin-top:12px;font-size:13.5px;color:var(--muted)"><em>Established vs debated:</em> ${esc(t.disputed)}</p>` : ''}</div>
     ${facts ? `<div class="panel"><h3>Key facts</h3><ul class="facts">${facts}</ul></div>` : ''}
+    ${t.simple?.overview ? `<div class="panel"><h3>Quick summary <span class="hint" style="font-family:var(--sans)">· Simple English Wikipedia</span></h3><p>${esc(t.simple.overview)}</p>${t.simple.url ? `<p style="margin-top:10px"><a href="${esc(t.simple.url)}" target="_blank" rel="noopener" style="color:var(--accent);font-size:13.5px">Read on Simple Wikipedia ↗</a></p>` : ''}</div>` : ''}
     <div class="panel"><h3>Sources & further reading</h3>${srcs || '<p class="hint">No sources found yet.</p>'}</div>
     ${(t.related || []).length ? `<div class="panel"><h3>Rabbit holes</h3><div class="rel-grid">${t.related.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>` : ''}
     <div class="panel"><h3>Personal notes <span class="hint" style="font-family:var(--sans)">· autosaves</span></h3>
