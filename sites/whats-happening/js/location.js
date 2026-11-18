@@ -1,23 +1,26 @@
-/* What's Happening? - "somewhere else" location.
+/* What's Happening? - location: custom city + browser geolocation.
 
-   The built-in list is only ten cities, which is useless if you live
-   anywhere else. This looks a typed town up with the Open-Meteo geocoding API
-   (free, no key, no attribution requirement) and registers the result as a
-   normal entry in W.CITIES, so distance, the map centre, the radius chips and
-   every filter keep working exactly as before.
-
-   The choice is stored in localStorage and re-registered on the next load, so
-   the site reopens in the same place. If the lookup fails, nothing changes and
-   the message says so - the ten built-in cities still work. */
+   Priority: saved city (localStorage) first, then browser geolocation
+   on first visit, then explicit Greenville, SC fallback.
+   Custom typed towns use Open-Meteo geocoding (free, no key).
+   Browser coords reverse-label via BigDataCloud client API (free, no key).
+*/
 (function () {
-  'use strict';
+'use strict';
 
-  var GEO = 'https://geocoding-api.open-meteo.com/v1/search';
-  var lastCity = null;   // guards the placeholder <option> from breaking state
+  var GEO = 'https://geocoding-api.open-meteo.net/v1/search';
+  var GEO_REV = 'https://api.bigdatacloud.net/data/reverse-geocode-client';
+  var lastCity = null;
 
   function W() { return window.WH; }
 
   function isCustom(id) { return typeof id === 'string' && id.indexOf('loc-') === 0; }
+
+  function hasSaved() {
+    var c = W().store.get('city', null);
+    var cc = W().store.get('customCity', null);
+    return !!(c || (cc && cc.id));
+  }
 
   function addPlace(p) {
     var list = W().CITIES;
@@ -33,8 +36,6 @@
     return p;
   }
 
-  /* "Leeds, England" reads better than "Leeds, England, United Kingdom" and
-     fits the topbar; the country is only used when there is no region. */
   function labelFor(r) {
     var bits = [r.name];
     if (r.admin1 && r.admin1 !== r.name) bits.push(r.admin1);
@@ -50,6 +51,16 @@
       lat: lat,
       lng: lng,
       tz: r.timezone || ''
+    };
+  }
+
+  function placeFromCoords(lat, lng, label) {
+    return {
+      id: 'loc-' + lat.toFixed(2) + ',' + lng.toFixed(2),
+      label: label || ('Near you (' + lat.toFixed(2) + ', ' + lng.toFixed(2) + ')'),
+      lat: lat,
+      lng: lng,
+      tz: ''
     };
   }
 
@@ -71,7 +82,6 @@
     lastCity = p.id;
   }
 
-  /* Ask app.js to repaint without resetting filters or the current view. */
   function repaint() {
     var ev;
     try { ev = new Event('hashchange'); }
@@ -80,6 +90,10 @@
   }
 
   function setHint(el, msg) { if (el) el.textContent = msg || ''; }
+
+  function fallbackMsg() {
+    return 'Location blocked \u2013 showing Greenville, SC as fallback. Pick a city or enable location to see events near you.';
+  }
 
   function syncSelects(id, label) {
     var list = document.querySelectorAll('select[data-city]');
@@ -92,10 +106,55 @@
         var o = document.createElement('option');
         o.value = id;
         o.textContent = label;
-        s.insertBefore(o, s.lastElementChild);   // keep "Somewhere else" last
+        s.insertBefore(o, s.lastElementChild);
       }
       s.value = id;
     });
+  }
+
+  function reverseLabel(lat, lng, cb) {
+    if (typeof fetch !== 'function') { cb(null); return; }
+    var url = GEO_REV + '?latitude=' + encodeURIComponent(lat) + '&longitude=' + encodeURIComponent(lng) + '&localityLanguage=en';
+    fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.json();
+    }).then(function (j) {
+      var city = j && (j.city || j.locality || '');
+      var region = j && (j.principalSubdivision || '');
+      if (city && region && city !== region) cb(city + ', ' + region);
+      else if (city) cb(city);
+      else if (region) cb(region);
+      else cb(null);
+    }).catch(function () { cb(null); });
+  }
+
+  function useBrowserLocation(manual) {
+    var hint = document.querySelector('.city-hint');
+    if (!navigator.geolocation) {
+      setHint(hint, manual ? 'This browser cannot share location. Type a town below.' : fallbackMsg());
+      return;
+    }
+    if (!manual) setHint(hint, 'Finding your location\u2026');
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var lat = +pos.coords.latitude, lng = +pos.coords.longitude;
+      if (!isFinite(lat) || !isFinite(lng)) {
+        setHint(hint, fallbackMsg());
+        return;
+      }
+      reverseLabel(lat, lng, function (label) {
+        var p = placeFromCoords(lat, lng, label || undefined);
+        apply(p);
+        syncSelects(p.id, p.label);
+        var tb = document.getElementById('tb-city');
+        if (tb) tb.textContent = p.label;
+        repaint();
+        setHint(document.querySelector('.city-hint'), 'Using ' + p.label + ' (from your browser location).');
+      });
+    }, function (err) {
+      var msg = fallbackMsg();
+      if (err && err.code === err.TIMEOUT) msg = 'Location timed out \u2013 showing Greenville, SC as fallback. Pick a city to change it.';
+      setHint(hint, msg);
+    }, { timeout: 8000, maximumAge: 600000 });
   }
 
   function lookup(q, cb) {
@@ -141,6 +200,8 @@
 
   document.addEventListener('click', function (e) {
     if (!e.target || !e.target.closest) return;
+    var geo = e.target.closest('[data-action="use-geo"]');
+    if (geo) { useBrowserLocation(true); return; }
     var btn = e.target.closest('[data-action="save-city"]');
     if (!btn) return;
     var box = btn.closest('[data-citybox]');
@@ -158,8 +219,6 @@
       var input = box.querySelector('input');
       if (input) setTimeout(function () { input.focus(); }, 0);
       setHint(box.querySelector('.city-hint'), '');
-      /* app.js stores the raw select value on #set-city; put the previous
-         place back so filters keep working while the user types. */
       var prev = lastCity;
       setTimeout(function () {
         if (prev && W().state.city === '__other') {
@@ -174,10 +233,14 @@
   function boot() {
     restore();
     var hint = document.querySelector('.city-hint');
-    if (hint) {
-      var c = W().city();
-      hint.textContent = isCustom(c.id) ? 'Using ' + c.label + '.' : '';
+    if (hasSaved()) {
+      if (hint) {
+        var c = W().city();
+        hint.textContent = isCustom(c.id) ? 'Using ' + c.label + '.' : '';
+      }
+      return;
     }
+    useBrowserLocation(false);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
@@ -185,6 +248,7 @@
 
   window.WHLOC = {
     lookup: function (q, cb) { lookup(q, cb); },
-    current: function () { return W().city(); }
+    current: function () { return W().city(); },
+    locate: function () { useBrowserLocation(true); }
   };
 })();
