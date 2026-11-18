@@ -7,6 +7,9 @@
    3. Status re-evaluates every 60 seconds with no reload: a timer refreshes
       visible badges in place, so time-window badges flip on their own.
    4. A small checked-x-ago note proves the badges were just re-evaluated.
+   5. Staleness guard: when data/live.json has a generatedAt older than two
+      days, the same note says so and shows the date, so a silently failing
+      daily sync cannot leave old listings up forever with no signal.
 */
 (function () {
   'use strict';
@@ -27,6 +30,12 @@
     if (m < 1) return 'just now';
     if (m === 1) return '1 min ago';
     return m + ' min ago';
+  }
+  function liveAgeDays() {
+    if (!S.liveGeneratedAt) return null;
+    var t = new Date(S.liveGeneratedAt).getTime();
+    if (isNaN(t)) return null;
+    return (Date.now() - t) / 86400000;
   }
   function paintNote() {
     var note = document.querySelector('[data-livecheck-note]');
@@ -49,8 +58,12 @@
       note.setAttribute('data-livecheck-note', '1');
       main.insertBefore(note, main.firstChild);
     }
+    var age = liveAgeDays();
+    var isStale = age !== null && age > 2;
+    var dateBit = S.liveGeneratedAt ? ' Listings updated ' + W.esc(String(S.liveGeneratedAt).slice(0, 10)) + '.' : '';
+    var warnBit = isStale ? ' These listings may be out of date - the daily sync may have failed.' : '';
     note.innerHTML = '<span class="notice__icon" aria-hidden="true"></span>' +
-      '<div>Live status checked <span data-livechecked>just now</span>. Badges re-check automatically every minute.</div>';
+      '<div>Live status checked <span data-livechecked>just now</span>. Badges re-check automatically every minute.' + dateBit + warnBit + '</div>';
     paintNote();
   }
   function sweepBadges() {

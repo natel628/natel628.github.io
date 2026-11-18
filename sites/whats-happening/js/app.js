@@ -6,6 +6,7 @@
 
   var CATROUTE = { comedy: 'comedy', concerts: 'music', sports: 'sports', outdoor: 'outdoor' };
   var COLLECTION = ['browse', 'near', 'online', 'comedy', 'concerts', 'sports', 'outdoor'];
+  var ROUTES = ['discover', 'near', 'comedy', 'concerts', 'sports', 'outdoor', 'online', 'browse', 'calendar', 'watchlist', 'settings'];
 
   function freshFilters(cats) {
     return { cats: cats || [], date: 'any', from: '', to: '', price: 'any', presence: 'any', time: 'any', where: 'near' };
@@ -58,12 +59,10 @@
   }
 
   function route(force) {
-    var h = location.hash || '#/discover';
-    if (h.charAt(0) === '#') h = h.slice(1);
+    var h = location.hash.slice(1);
     if (h.charAt(0) === '/') h = h.slice(1);
     var name = h || 'discover';
-    var known = document.querySelector('.navitem[href="#/' + name + '"]');
-    if (!known && name !== 'browse') name = 'discover';
+    if (ROUTES.indexOf(name) < 0) name = 'discover';
     var changed = name !== S.view || force;
     S.view = name;
     var entering = lastRoute !== name;
@@ -274,7 +273,7 @@
     if (!S.keys.ticketmaster) { S.liveStatus.tm = 'no key'; if (cb) cb(); return; }
     var cached = W.store.get('tmCache', null);
     if (cached && Date.now() - cached.at < 600000) {
-      mergeLive('ticketmaster', cached.events);
+      mergeLive(cached.events);
       S.liveStatus.tm = 'cached - ' + cached.events.length + ' events';
       if (cb) cb();
       return;
@@ -289,7 +288,7 @@
     }).then(function (j) {
       var items = (j._embedded && j._embedded.events) || [];
       var events = items.map(normalizeTM).filter(Boolean);
-      mergeLive('ticketmaster', events);
+      mergeLive(events);
       W.store.set('tmCache', { at: Date.now(), events: events });
       S.liveStatus.tm = events.length + ' live events';
       S.liveError = '';
@@ -338,7 +337,7 @@
     if (!S.keys.youtube) { S.liveStatus.yt = 'no key'; if (cb) cb(); return; }
     var cached = W.store.get('ytCache', null);
     if (cached && Date.now() - cached.at < 1800000) {
-      mergeLive('youtube', cached.events);
+      mergeLive(cached.events);
       S.liveStatus.yt = 'cached - ' + cached.events.length + ' streams';
       if (cb) cb();
       return;
@@ -356,7 +355,7 @@
         .then(function (r) { return r.json(); })
         .then(function (v) {
           var events = (v.items || []).map(normalizeYT).filter(Boolean);
-          mergeLive('youtube', events);
+          mergeLive(events);
           W.store.set('ytCache', { at: Date.now(), events: events });
           S.liveStatus.yt = events.length + ' streams';
           S.liveError = '';
@@ -373,7 +372,7 @@
      keyed by id with the incoming batch winning, so the daily published
      file, the key-based providers and the caches all stack instead of
      wiping each other out. */
-  function mergeLive(source, events) {
+  function mergeLive(events) {
     var incoming = {};
     (events || []).forEach(function (e) { if (e && e.id) incoming[e.id] = 1; });
     S.live = S.live.filter(function (e) { return !incoming[e.id]; }).concat(events || []);
@@ -391,7 +390,7 @@
         if (ev && ev.startUtc) ev.startLocal = stampLocal(new Date(ev.startUtc));
       });
       if (j && j.generatedAt) S.liveGeneratedAt = j.generatedAt;
-      mergeLive('livefile', list);
+      mergeLive(list);
       if (j && j.sources) {
         if (j.sources.ticketmaster && j.sources.ticketmaster.events > 0) S.liveStatus.tm = j.sources.ticketmaster.events + ' live events';
         if (j.sources.youtube && j.sources.youtube.events > 0) S.liveStatus.yt = j.sources.youtube.events + ' streams';
