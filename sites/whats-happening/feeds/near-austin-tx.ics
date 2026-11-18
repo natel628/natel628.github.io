@@ -6,36 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Austin\, TX
 X-WR-CALDESC:Upcoming events within 100 miles of Austin\, TX.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7Aat@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T110000
-DTEND:20261118T133000
-SUMMARY:Texas A&M Aggies Womens Basketball vs. East Texas A&M Lions Womens
-  Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7Aat\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Reed Arena\, College Station
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Aat
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAea8-@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T110000
-DTEND:20261118T133000
-SUMMARY:Baylor Bears Mens Basketball vs. Jackson State Tigers Mens Basketb
- all
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAea8-\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Foster Pavilion\, Waco
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAea8-
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-G5dIZ_1YdMUBy@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T170000
 DTEND:20261118T193000
 SUMMARY:Holywatr: Deo Gratias Tour
@@ -49,7 +21,7 @@ URL:https://www.ticketmaster.com/holywatr-deo-gratias-tour-austin-texas-11
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_G1yj1s_@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Evan Honer - It's An Even Longer Road Tour
@@ -65,7 +37,7 @@ URL:https://www.ticketmaster.com/evan-honer-its-an-even-longer-austin-texa
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A703FI@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Randy Feltface
@@ -78,7 +50,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A703FI
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZ4bk@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:The Wrecks
@@ -91,7 +63,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ4bk
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Af-UuN@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Making Peace with What I Can't Control Tour with Lysa TerKeurst an
@@ -110,7 +82,7 @@ URL:https://www.ticketweb.com/event/making-peace-with-what-i-citychurch-ti
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv0C6@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Moral w/ Decaine
@@ -123,7 +95,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv0C6
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_52ruv_o@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Stop Light Observations w/ Runner and Bobby
@@ -141,7 +113,7 @@ URL:https://www.ticketmaster.com/stop-light-observations-w-runner-and-aust
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAve7I@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:The Music of Hey Arnold
@@ -154,7 +126,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAve7I
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_2dzBz64@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Derek Hough - Dance For The Holidays
@@ -171,7 +143,7 @@ URL:https://www.ticketmaster.com/derek-hough-dance-for-the-holidays-cedar-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_29IVefH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T170000
 DTEND:20261119T193000
 SUMMARY:KUTX's Horizontes Pres:Aterciopelados: La Pipa De Laz Paz 30 Anos 
@@ -187,7 +159,7 @@ URL:https://www.ticketmaster.com/kutxs-horizontes-presaterciopelados-la-pi
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_1rQanOl@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:An Evening With Band Of Horses
@@ -205,7 +177,7 @@ URL:https://www.ticketmaster.com/an-evening-with-band-of-horses-austin-tex
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZUAE@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Texas Longhorns Mens Basketball vs. Southern Utah Thunderbirds Men
@@ -219,7 +191,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZUAE
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_G5wT2dj@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Dexter and The Moonrocks
@@ -233,7 +205,7 @@ URL:https://www.ticketmaster.com/dexter-and-the-moonrocks-austin-texas-11-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_8rHvWad@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:San Antonio Spurs vs. LA Clippers
@@ -248,7 +220,7 @@ URL:https://www.ticketmaster.com/san-antonio-spurs-vs-la-clippers-san-anto
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_53xq1SU@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Alter Bridge - What Lies Within Tour
@@ -265,7 +237,7 @@ URL:https://www.ticketmaster.com/alter-bridge-what-lies-within-tour-san-an
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7PNZb@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:Actors From The London Stage: Much Ado About Nothing
@@ -278,7 +250,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PNZb
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7PtaM@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:Actors From The London Stage
@@ -291,7 +263,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PtaM
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAAd3_@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:Annie Lederman

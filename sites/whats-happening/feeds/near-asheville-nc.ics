@@ -6,21 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Asheville\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Asheville\, NC.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70UbN@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T103000
-DTEND:20261118T130000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70UbN\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbN
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-G5eVZ_KS76uU-@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Clemson University Tigers Women's Basketball vs. USC Upstate Spart
@@ -36,7 +23,7 @@ URL:https://www.ticketmaster.com/clemson-university-tigers-womens-basketba
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8PlrK3l@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Miss May I
@@ -54,7 +41,7 @@ URL:https://www.ticketmaster.com/miss-may-i-charlotte-north-carolina-11-18
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZbSEmDaLV@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Doja Cat - Tour Ma Vie World Tour
@@ -69,7 +56,7 @@ URL:https://www.ticketmaster.com/doja-cat-tour-ma-vie-world-charlotte-nort
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_akBs6x1@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Palace - USA & Canada Tour 2026
@@ -87,7 +74,7 @@ URL:https://www.ticketmaster.com/palace-usa-canada-tour-2026-charlotte-nor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_1UpatD1@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T103000
 DTEND:20261119T130000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -105,7 +92,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-kn
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ub0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T140000
 DTEND:20261119T163000
 SUMMARY:Elf the Musical
@@ -118,7 +105,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ub0
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KLA0xpN@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T170000
 DTEND:20261119T193000
 SUMMARY:Southern Conference Volleyball Championship: First Round
@@ -133,7 +120,7 @@ URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2p_iazT@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T180000
 DTEND:20261119T203000
 SUMMARY:DJ Raphi: HYPE TOUR USA 2.0
@@ -151,7 +138,7 @@ URL:https://www.ticketmaster.com/dj-raphi-hype-tour-usa-20-charlotte-north
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_CD5XHa3@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:for KING & COUNTRY's 'A Drummer Boy Christmas'
@@ -166,7 +153,7 @@ URL:https://www.ticketmaster.com/for-king-countrys-a-drummer-boy-greenvill
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ki9E2OR@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Disney Descendants\, ZOMBIES & Camp Rock: Worlds Collide Concert T
@@ -182,7 +169,7 @@ URL:https://www.ticketmaster.com/disney-descendants-zombies-camp-rock-worl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8So8Kf1@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Rhythm & Roots: Soul Amplified
@@ -200,7 +187,7 @@ URL:https://www.ticketmaster.com/rhythm-roots-soul-amplified-charlotte-nor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_1Upu_DE@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -218,7 +205,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-kn
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_o2jx48R@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Tennessee Lady Volunteers Women's Basketball vs. Radford Universit
@@ -237,7 +224,7 @@ URL:https://www.ticketmaster.com/tennessee-lady-volunteers-womens-basketba
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_GwRmLva@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:Jay Leno
@@ -255,7 +242,7 @@ URL:https://www.ticketmaster.com/jay-leno-knoxville-tennessee-11-19-2026/e
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_5KZiXQL@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:A Christmas Carol (CBT)
@@ -273,7 +260,7 @@ URL:https://www.ticketmaster.com/a-christmas-carol-cbt-knoxville-tennessee
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_7mi3DgH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -287,7 +274,7 @@ URL:https://www.etix.com/ticket/p/58776099/hiss-golden-messenger-asheville
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-7Ag@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -300,7 +287,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-7Ag
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_3SXQvSe@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:An Evening With Tamar Braxton
@@ -317,7 +304,7 @@ URL:https://www.ticketmaster.com/an-evening-with-tamar-braxton-charlotte-n
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4vZbS@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:lespecial\, Natalie Brooke 
@@ -333,7 +320,7 @@ URL:https://www.ticketweb.com/event/lespecial-natalie-brooke-the-808-ticke
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70sfs@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Anthony Gomes
@@ -346,7 +333,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70sfs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KLAPepE@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T110000
 DTEND:20261120T133000
 SUMMARY:Southern Conference Volleyball Championship: Quarterfinals
@@ -362,7 +349,7 @@ URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KS7FqUV@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T170000
 DTEND:20261120T193000
 SUMMARY:Clemson University Tigers Women's Basketball vs. UNC Asheville Bul
@@ -378,7 +365,7 @@ URL:https://www.ticketmaster.com/clemson-university-tigers-womens-basketba
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7Kaz@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T183000
 DTEND:20261120T210000
 SUMMARY:Appalachian State Mountaineers Mens Basketball vs. North Texas Mea
@@ -392,7 +379,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Kaz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A704kF@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Gabby Bryan
@@ -405,7 +392,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A704kF
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P414@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -415,5 +402,18 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:The Scorpio\, Charlotte
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P414
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70UbP@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Elf the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70UbP\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barter Theatre\, Abingdon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbP
 END:VEVENT
 END:VCALENDAR
