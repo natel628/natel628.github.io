@@ -1,15 +1,22 @@
-/* What's Happening? - tile art: the event's own photo first, then a stable
-   stand-in, gradient behind.
-   No new API key. Wraps WHV.art / hero / sheet art. When a fetch of the real
-   photo fails (hotlink blocked, expired asset, offline) the tile swaps to a
-   seeded stand-in instead of dropping to a bare gradient, so a card is never
-   empty and never silently pretends to be a different event.
+/* What's Happening? - tile art.
+
+   Every card, hero and event sheet gets the event's own photo, with a stable
+   stand-in when the provider published none or the image fails to load.
+
+   The first version wrapped WHV.art / WHV.hero, which never worked: views.js
+   cards call their own local art() closure, so the exported function is not on
+   the render path and not one card ever showed a photo. This version works on
+   the DOM instead - after each paint it finds the art boxes and adds the image
+   itself, so it does not matter which function built the markup.
 */
 (function () {
   'use strict';
+
+  function W() { return window.WH; }
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
   function standIn(ev) {
@@ -24,64 +31,72 @@
     }
     return standIn(ev);
   }
-  /* referrerpolicy keeps Ticketmaster's CDN from rejecting the request in
-     browsers that send a cross-site referer; onerror falls back once, then
-     stops trying. */
+  /* referrerpolicy keeps Ticketmaster's CDN from rejecting a request that
+     carries a cross-site referer; onerror swaps to the stand-in once. */
   function imgTag(src, ev) {
     var fb = esc(standIn(ev));
-    return '<img class="art__img" src="' + esc(src) + '" alt="" loading="lazy" referrerpolicy="no-referrer"' +
+    return '<img class="art__img" alt="" loading="lazy" referrerpolicy="no-referrer" src="' + esc(src) + '"' +
       ' onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src=\'' + fb + '\';}else{this.remove();}" />';
   }
-  function injectAfterOpen(html, img) {
-    var i = html.indexOf('>');
-    if (i < 0) return html;
-    return html.slice(0, i + 1) + img + html.slice(i + 1);
-  }
+
   function injectCSS() {
     if (document.querySelector('style[data-tile-art]')) return;
-    var css = '.art__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}' +
-      '.art__glyph{z-index:1}.art__tags,.save{z-index:2}' +
-      '.hero__art{position:relative;overflow:hidden}.hero__art .art__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}' +
-      '.sheet__art{position:relative;overflow:hidden}.sheet__art .art__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}';
+    var css = '.art,.hero__art,.sheet__art{position:relative;overflow:hidden}' +
+      '.art__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}' +
+      '.art__glyph{z-index:1}.art__tags,.save{z-index:2}';
     var s = document.createElement('style');
     s.setAttribute('data-tile-art', '1');
     s.textContent = css;
     document.head.appendChild(s);
   }
-  function patch() {
-    if (!window.WH || !window.WHV) return false;
-    var V = window.WHV;
-    if (!V.__tileArtPatched2) {
-      var origArt = V.art;
-      V.art = function (ev, cls) {
-        var html = origArt(ev, cls);
-        return injectAfterOpen(html, imgTag(imgFor(ev), ev));
-      };
-      var origHero = V.hero;
-      if (typeof origHero === 'function') {
-        V.hero = function (ev) {
-          var html = origHero(ev);
-          return html.replace(/(<div class="hero__art"[^>]*>)/, '$1' + imgTag(imgFor(ev), ev));
-        };
-      }
-      V.__tileArtPatched2 = true;
-      V.__tileArtPatched = true;
+
+  /* Which event does this art box belong to? A card carries its id on the
+     article; inside the modal, the open sheet's buttons carry it. */
+  function eventId(el) {
+    var host = el.closest ? el.closest('[data-id]') : null;
+    if (host) return host.getAttribute('data-id');
+    var modal = document.getElementById('modal');
+    if (modal && !modal.hidden) {
+      var b = modal.querySelector('[data-id]');
+      if (b) return b.getAttribute('data-id');
     }
-    var V2 = window.WHV2;
-    if (V2 && !V2.__tileArtPatched2 && typeof V2.eventModal === 'function') {
-      var origModal = V2.eventModal;
-      V2.eventModal = function (ev) {
-        var html = origModal(ev);
-        return html.replace(/(<div class="sheet__art[^"]*"[^>]*>)/, '$1' + imgTag(imgFor(ev), ev));
-      };
-      V2.__tileArtPatched2 = true;
-      V2.__tileArtPatched = true;
-    }
-    return true;
+    return null;
   }
+
+  function decorate(root) {
+    if (!root || !root.querySelectorAll || !W()) return;
+    var boxes = root.querySelectorAll('.art, .hero__art, .sheet__art');
+    for (var i = 0; i < boxes.length; i++) {
+      var box = boxes[i];
+      if (box.querySelector('.art__img')) continue;
+      var id = eventId(box);
+      var ev = id ? W().byId(id) : null;
+      if (!ev) continue;
+      box.insertAdjacentHTML('afterbegin', imgTag(imgFor(ev), ev));
+    }
+  }
+
+  function decorateAll() {
+    decorate(document.getElementById('main'));
+    decorate(document.getElementById('modal'));
+  }
+
+  var pending = null;
+  function schedule() {
+    if (pending) return;
+    pending = setTimeout(function () { pending = null; decorateAll(); }, 40);
+  }
+
+  function watch(el) {
+    if (!el || !window.MutationObserver) return;
+    new MutationObserver(schedule).observe(el, { childList: true, subtree: true });
+  }
+
   injectCSS();
-  if (!patch()) {
-    var t = setInterval(function () { if (patch()) clearInterval(t); }, 50);
-    setTimeout(function () { clearInterval(t); }, 3000);
-  }
+  watch(document.getElementById('main'));
+  watch(document.getElementById('modal'));
+  window.addEventListener('hashchange', schedule);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', decorateAll);
+  else decorateAll();
+  setTimeout(decorateAll, 400);
 })();
