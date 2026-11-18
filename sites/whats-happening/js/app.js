@@ -216,170 +216,13 @@
     });
   }
 
-  /* ---------------- live providers ---------------- */
+  /* ---------------- published live feed (data/live.json) ---------------- */
   function stampLocal(d) {
     return d.getFullYear() + '-' + W.pad(d.getMonth() + 1) + '-' + W.pad(d.getDate()) + 'T' + W.pad(d.getHours()) + ':' + W.pad(d.getMinutes());
   }
 
-  function normalizeTM(item) {
-    try {
-      var v = (item._embedded && item._embedded.venues && item._embedded.venues[0]) || {};
-      var loc = v.location || {};
-      var start = item.dates && item.dates.start ? item.dates.start : {};
-      if (!start.localDate) return null;
-      var cls = (item.classifications && item.classifications[0]) || {};
-      var seg = cls.segment || {}, genre = cls.genre || {};
-      var cat = 'music';
-      var segName = (seg.name || '').toLowerCase();
-      if (segName.indexOf('sport') >= 0) cat = 'sports';
-      else if (segName.indexOf('arts') >= 0 || (genre.name || '').toLowerCase().indexOf('comedy') >= 0) cat = 'comedy';
-      else if (segName.indexOf('misc') >= 0) cat = 'festival';
-      var price = null;
-      if (item.priceRanges && item.priceRanges[0]) {
-        price = { min: Math.round(item.priceRanges[0].min), max: Math.round(item.priceRanges[0].max), currency: item.priceRanges[0].currency || 'USD', verified: true };
-      }
-      return {
-        id: 'tm-' + item.id,
-        source: 'ticketmaster',
-        title: item.name,
-        description: (item.info && item.info.note) || (item.pleaseNote ? item.pleaseNote.replace(/<[^>]*>/g, '') : 'Listed by Ticketmaster with no additional description.'),
-        category: cat,
-        presence: 'in-person',
-        startLocal: start.localDate + 'T' + (start.localTime ? start.localTime.slice(0, 5) : '19:00'),
-        duration: 150,
-        venue: v.name || 'Venue not listed',
-        cityId: '',
-        lat: loc.latitude ? +loc.latitude : null,
-        lng: loc.longitude ? +loc.longitude : null,
-        popularity: 70,
-        performers: [],
-        tags: [(genre.name || '').toLowerCase()].filter(Boolean),
-        price: price,
-        ticketUrl: item.url || null,
-        streamUrl: null,
-        officialUrl: item.url || null,
-        broadcast: null,
-        channel: null,
-        resort: null,
-        premiere: false,
-        timezone: (item.dates && item.dates.timezone) || '',
-        venueCity: (v.city && v.city.name) || '',
-        lastUpdated: new Date().toISOString()
-      };
-    } catch (e) { return null; }
-  }
-
-  function loadTicketmaster(cb) {
-    if (!S.keys.ticketmaster) { S.liveStatus.tm = 'no key'; if (cb) cb(); return; }
-    var cached = W.store.get('tmCache', null);
-    if (cached && Date.now() - cached.at < 600000) {
-      mergeLive(cached.events);
-      S.liveStatus.tm = 'cached - ' + cached.events.length + ' events';
-      if (cb) cb();
-      return;
-    }
-    S.liveStatus.tm = 'loading';
-    var c = W.city();
-    var url = 'https://app.ticketmaster.com/discovery/v2/events.json?apikey=' + encodeURIComponent(S.keys.ticketmaster) +
-      '&latlong=' + c.lat + ',' + c.lng + '&radius=' + S.radius + '&unit=miles&size=40&sort=date,asc';
-    fetch(url).then(function (r) {
-      if (!r.ok) throw new Error('http ' + r.status);
-      return r.json();
-    }).then(function (j) {
-      var items = (j._embedded && j._embedded.events) || [];
-      var events = items.map(normalizeTM).filter(Boolean);
-      mergeLive(events);
-      W.store.set('tmCache', { at: Date.now(), events: events });
-      S.liveStatus.tm = events.length + ' live events';
-      S.liveError = '';
-      if (cb) cb();
-    }).catch(function (e) {
-      S.liveStatus.tm = 'error';
-      S.liveError = 'Ticketmaster: ' + (e.message === 'http 401' ? 'key rejected' : 'request failed');
-      if (cb) cb();
-    });
-  }
-
-  function normalizeYT(v) {
-    var sn = v.snippet || {}, ld = v.liveStreamingDetails || {};
-    if (!ld.scheduledStartTime && !ld.actualStartTime) return null;
-    var d = new Date(ld.actualStartTime || ld.scheduledStartTime);
-    var live = sn.liveBroadcastContent === 'live';
-    return {
-      id: 'yt-' + v.id,
-      source: 'youtube',
-      title: sn.title,
-      description: sn.description ? sn.description.slice(0, 220) : 'Scheduled on YouTube by ' + sn.channelTitle + '.',
-      category: /comedy|stand-?up|podcast/i.test(sn.title) ? 'comedy' : 'online',
-      presence: 'online',
-      startLocal: stampLocal(d),
-      duration: live ? 180 : 90,
-      liveNow: live,
-      venue: sn.channelTitle,
-      channelName: sn.channelTitle,
-      cityId: '', lat: null, lng: null,
-      popularity: 60,
-      performers: [],
-      tags: ['youtube', 'livestream'],
-      price: { min: 0, max: 0, currency: 'USD', verified: true },
-      ticketUrl: null,
-      streamUrl: 'https://www.youtube.com/watch?v=' + v.id,
-      officialUrl: 'https://www.youtube.com/watch?v=' + v.id,
-      broadcast: null,
-      channel: 'yt:' + sn.channelId,
-      resort: null,
-      premiere: false,
-      lastUpdated: new Date().toISOString()
-    };
-  }
-
-  function loadYouTube(cb) {
-    if (!S.keys.youtube) { S.liveStatus.yt = 'no key'; if (cb) cb(); return; }
-    var cached = W.store.get('ytCache', null);
-    if (cached && Date.now() - cached.at < 1800000) {
-      mergeLive(cached.events);
-      S.liveStatus.yt = 'cached - ' + cached.events.length + ' streams';
-      if (cb) cb();
-      return;
-    }
-    S.liveStatus.yt = 'loading';
-    var key = encodeURIComponent(S.keys.youtube);
-    var search = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&eventType=upcoming&maxResults=10&order=date&q=live%20comedy%20podcast&key=' + key;
-    fetch(search).then(function (r) {
-      if (!r.ok) throw new Error('http ' + r.status);
-      return r.json();
-    }).then(function (j) {
-      var ids = (j.items || []).map(function (i) { return i.id && i.id.videoId; }).filter(Boolean).slice(0, 10);
-      if (!ids.length) { S.liveStatus.yt = 'no upcoming streams'; if (cb) cb(); return; }
-      return fetch('https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&id=' + ids.join(',') + '&key=' + key)
-        .then(function (r) { return r.json(); })
-        .then(function (v) {
-          var events = (v.items || []).map(normalizeYT).filter(Boolean);
-          mergeLive(events);
-          W.store.set('ytCache', { at: Date.now(), events: events });
-          S.liveStatus.yt = events.length + ' streams';
-          S.liveError = '';
-          if (cb) cb();
-        });
-    }).catch(function (e) {
-      S.liveStatus.yt = 'error';
-      S.liveError = 'YouTube: ' + (e.message === 'http 403' ? 'quota or key rejected' : 'request failed');
-      if (cb) cb();
-    });
-  }
-
-  /* Add live events without disturbing what is already there. Entries are
-     keyed by id with the incoming batch winning, so the daily published
-     file, the key-based providers and the caches all stack instead of
-     wiping each other out. */
-  function mergeLive(events) {
-    var incoming = {};
-    (events || []).forEach(function (e) { if (e && e.id) incoming[e.id] = 1; });
-    S.live = S.live.filter(function (e) { return !incoming[e.id]; }).concat(events || []);
-  }
-
   /* The scheduled Action publishes data/live.json once a day. Everyone gets
-     the real listings; pasted API keys only ever add fresher local data. */
+     the real listings. */
   function loadLiveFile(cb) {
     fetch('data/live.json', { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error('http ' + r.status);
@@ -390,11 +233,7 @@
         if (ev && ev.startUtc) ev.startLocal = stampLocal(new Date(ev.startUtc));
       });
       if (j && j.generatedAt) S.liveGeneratedAt = j.generatedAt;
-      mergeLive(list);
-      if (j && j.sources) {
-        if (j.sources.ticketmaster && j.sources.ticketmaster.events > 0) S.liveStatus.tm = j.sources.ticketmaster.events + ' live events';
-        if (j.sources.youtube && j.sources.youtube.events > 0) S.liveStatus.yt = j.sources.youtube.events + ' streams';
-      }
+      S.live = list;
       if (cb) cb();
     }).catch(function () {
       if (cb) cb();   // no published file yet (or offline): demo data stays
@@ -459,15 +298,6 @@
         }
         case 'enable-push': requestPush(t); break;
         case 'geolocate': geolocate(); break;
-        case 'save-keys': saveKeys(); break;
-        case 'clear-keys':
-          S.keys = { ticketmaster: '', youtube: '' };
-          W.store.set('keys', S.keys);
-          S.live = [];
-          S.liveStatus = { tm: 'off', yt: 'off' };
-          toast('Keys removed');
-          paint(false);
-          break;
         case 'clear-data':
           S.saved = []; S.follows = []; S.viewed = {};
           W.store.set('saved', []); W.store.set('follows', []); W.store.set('viewed', {});
@@ -546,18 +376,6 @@
     paint(true);
   }
 
-  function saveKeys() {
-    var tm = document.getElementById('key-tm'), yt = document.getElementById('key-yt');
-    S.keys = { ticketmaster: tm ? tm.value.trim() : '', youtube: yt ? yt.value.trim() : '' };
-    W.store.set('keys', S.keys);
-    W.store.set('tmCache', null);
-    W.store.set('ytCache', null);
-    S.live = [];
-    toast('Keys saved in this browser');
-    paint(false);
-    loadTicketmaster(function () { loadYouTube(function () { paint(false); }); });
-  }
-
   function requestPush(btn) {
     var hint = document.getElementById('push-hint');
     if (!('Notification' in window)) { if (hint) hint.textContent = 'This browser does not support notifications.'; return; }
@@ -607,12 +425,7 @@
     bind();
     route(true);
     if (!S.onboarded) openModal(V2.onboarding());
-    loadLiveFile(function () {
-      paint(false);
-      if (S.keys.ticketmaster || S.keys.youtube) {
-        loadTicketmaster(function () { loadYouTube(function () { paint(false); }); });
-      }
-    });
+    loadLiveFile(function () { paint(false); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
