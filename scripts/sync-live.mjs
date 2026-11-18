@@ -16,9 +16,12 @@
      treats as viewer-local (documented caveat). YouTube gives UTC, stored in
      `startUtc` so the site can render it in each viewer's own timezone.
    - Artwork: each event carries the provider's own photo in `image` /
-     `thumbnail` (Ticketmaster's 16:9 shot, YouTube's thumbnail) so tiles show
-     the real event, not a stand-in. Missing photos are left null and the site
-     falls back to its own art.
+     `thumbnail` (Ticketmaster's 16:9 shot, YouTube's thumbnail).
+   - Coverage: the ten home metros are queried first, then a nationwide pass
+     fills the rest, so a visitor in a city nobody listed (Boston, say) still
+     sees real events near them instead of an empty Near me page.
+   - Past events are dropped and the query asks Ticketmaster for listings from
+     today onward, so the store is not wasted on things that already happened.
 */
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -30,7 +33,7 @@ const OUT = join(ROOT, 'sites', 'whats-happening', 'data', 'live.json');
 const TM_KEY = process.env.TICKETMASTER_API_KEY || '';
 const YT_KEY = process.env.YOUTUBE_API_KEY || '';
 
-/* Same ten places the site knows about; 100-mile radius for coverage. */
+/* Home metros: small per-city pull so the original areas keep dense coverage. */
 const CITIES = [
   { id: 'greenville-sc', lat: 34.8526, lng: -82.3940 },
   { id: 'charlotte-nc', lat: 35.2271, lng: -80.8431 },
@@ -43,6 +46,11 @@ const CITIES = [
   { id: 'seattle-wa', lat: 47.6062, lng: -122.3321 },
   { id: 'new-york-ny', lat: 40.7128, lng: -74.0060 }
 ];
+
+const RING_SIZE = 20;      // per home metro
+const NAT_SIZE = 200;      // per nationwide page
+const NAT_PAGES = 3;       // 600 fetched, capped below
+const MAX_EVENTS = 500;    // keeps live.json near 500KB
 
 const YT_QUERIES = [
   { q: 'live comedy show', category: 'comedy' },
@@ -73,7 +81,6 @@ function tmImage(images) {
     if (!im || typeof im.url !== 'string' || !im.url) continue;
     if (im.ratio === '16_9' && (im.width || 0) >= 640) return im.url;
     if (!first) first = im.url;
-    if (!first && im.ratio === '16_9') first = im.url;
   }
   return first;
 }
@@ -101,6 +108,7 @@ function normalizeTM(item) {
   const start = (item.dates && item.dates.start) || {};
   if (!start.localDate) return null;
   const pr = (item.priceRanges && item.priceRanges[0]) || null;
+  const img = tmImage(item.images);
   return {
     id: 'tm-' + item.id,
     source: 'ticketmaster',
@@ -127,8 +135,9 @@ function normalizeTM(item) {
     premiere: false,
     timezone: (item.dates && item.dates.timezone) || '',
     venueCity: (v.city && v.city.name) || '',
-    image: tmImage(item.images),
-    thumbnail: tmImage(item.images),
+    stateCode: (v.state && v.state.stateCode) || '',
+    image: img,
+    thumbnail: img,
     lastUpdated: new Date().toISOString()
   };
 }
@@ -147,6 +156,7 @@ function normalizeYT(v, fallbackCat) {
   const iso = ld.actualStartTime || ld.scheduledStartTime;
   if (!iso) return null;
   const live = sn.liveBroadcastContent === 'live';
+  const img = ytImage(sn);
   return {
     id: 'yt-' + v.id,
     source: 'youtube',
@@ -154,7 +164,7 @@ function normalizeYT(v, fallbackCat) {
     description: (sn.description ? sn.description.slice(0, 220) : 'Scheduled on YouTube by ' + sn.channelTitle + '.'),
     category: ytCategory(sn.title, fallbackCat),
     presence: 'online',
-    startLocal: iso.slice(0, 16).replace('T', 'T'),
+    startLocal: iso.slice(0, 16),
     startUtc: iso,
     duration: live ? 180 : 90,
     venue: sn.channelTitle,
@@ -173,33 +183,63 @@ function normalizeYT(v, fallbackCat) {
     channel: 'yt:' + sn.channelId,
     resort: null,
     premiere: sn.liveBroadcastContent === 'upcoming' && /premiere/i.test(sn.title || ''),
-    image: ytImage(sn),
-    thumbnail: ytImage(sn),
+    image: img,
+    thumbnail: img,
     lastUpdated: new Date().toISOString()
   };
 }
 
+const TM_API = 'https://app.ticketmaster.com/discovery/v2/events.json';
+
 async function fetchTicketmaster() {
   if (!TM_KEY) return { status: 'skipped', error: 'TICKETMASTER_API_KEY secret not set', events: [] };
   const events = [];
-  let pages = 0;
-  try {
-    for (const c of CITIES) {
-      const url = 'https://app.ticketmaster.com/discovery/v2/events.json?apikey=' + encodeURIComponent(TM_KEY) +
-        '&latlong=' + c.lat + ',' + c.lng + '&radius=100&unit=miles&size=50&sort=date,asc';
+  const errors = [];
+  const startDateTime = new Date().toISOString().slice(0, 19) + 'Z';
+
+  /* Home metros first, so the towns this site started with stay dense. */
+  for (const c of CITIES) {
+    const url = TM_API + '?apikey=' + encodeURIComponent(TM_KEY) +
+      '&latlong=' + c.lat + ',' + c.lng + '&radius=100&unit=miles' +
+      '&size=' + RING_SIZE + '&sort=date,asc&startDateTime=' + encodeURIComponent(startDateTime);
+    try {
       const j = await getJSON(url, 20000);
-      pages += 1;
+      for (const item of (j._embedded && j._embedded.events) || []) {
+        const e = normalizeTM(item);
+        if (e) events.push(e);
+      }
+    } catch (e) {
+      errors.push(c.id + ': ' + String((e && e.message) || e));
+    }
+    await sleep(300); // stay far under the 5 req/sec limit
+  }
+
+  /* Then the whole country, so any town has something to show. */
+  for (let page = 0; page < NAT_PAGES; page++) {
+    const url = TM_API + '?apikey=' + encodeURIComponent(TM_KEY) +
+      '&countryCode=US&size=' + NAT_SIZE + '&page=' + page +
+      '&sort=date,asc&startDateTime=' + encodeURIComponent(startDateTime);
+    try {
+      const j = await getJSON(url, 25000);
       const items = (j._embedded && j._embedded.events) || [];
       for (const item of items) {
         const e = normalizeTM(item);
         if (e) events.push(e);
       }
-      await sleep(300); // stay far under the 5 req/sec limit
+      if (items.length < NAT_SIZE) break;   // last page
+    } catch (e) {
+      errors.push('nationwide page ' + page + ': ' + String((e && e.message) || e));
+      break;
     }
-    return { status: 'ok', error: null, events };
-  } catch (e) {
-    return { status: 'error', error: String((e && e.message) || e), events };
+    await sleep(300);
   }
+
+  /* A ring or page can fail without taking the run down: only report an error
+     when nothing at all came back. */
+  if (!events.length && errors.length) {
+    return { status: 'error', error: errors[0], events };
+  }
+  return { status: 'ok', error: errors.length ? errors.length + ' page(s) skipped' : null, events };
 }
 
 async function fetchYouTube() {
@@ -228,15 +268,17 @@ async function fetchYouTube() {
 
 async function main() {
   const generatedAt = new Date().toISOString();
+  const today = generatedAt.slice(0, 10);
   const [tm, yt] = [await fetchTicketmaster(), await fetchYouTube()];
 
   const seen = new Set();
   const events = [];
   for (const e of tm.events.concat(yt.events)) {
     if (!e || !e.id || seen.has(e.id)) continue;
+    if (e.source === 'ticketmaster' && String(e.startLocal).slice(0, 10) < today) continue; // already happened
     seen.add(e.id);
     events.push(e);
-    if (events.length >= 400) break;
+    if (events.length >= MAX_EVENTS) break;
   }
 
   console.log('ticketmaster: ' + tm.status + ' (' + tm.events.length + ' events)' + (tm.error ? ' - ' + tm.error : ''));
