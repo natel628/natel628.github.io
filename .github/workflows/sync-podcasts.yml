@@ -1,0 +1,65 @@
+name: Sync podcast chart
+
+# The Podcasts → Browse view in showsnew.html draws the Apple Podcasts chart
+# from one line of baked JSON (`window.PODCAST_CATALOG = {...};`). Apple's
+# charts move every week; this job refreshes that line with Apple's keyless
+# iTunes chart feeds and commits it. No secrets are needed — the endpoints are
+# public — and the commit is data-only, so the existing pagecrypt deploy still
+# runs unchanged (it triggers on the push and encrypts whatever is in main).
+# Manually trigger any time from the Actions tab (workflow_dispatch).
+
+on:
+  schedule:
+    - cron: '41 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-podcasts
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh the baked chart
+        run: node scripts/sync-podcasts.mjs
+
+      # The script only ever rewrites its own line, but a broken catalog would
+      # still be encrypted and deployed happily, so check it before committing.
+      - name: Check the rewrite is sane
+        run: |
+          node -e '
+            const fs = require("fs");
+            const html = fs.readFileSync("showsnew.html", "utf8");
+            const mark = "window.PODCAST_CATALOG = ";
+            const at = html.indexOf(mark);
+            if (at < 0 || html.indexOf(mark, at + mark.length) >= 0) {
+              throw new Error("catalog line missing or duplicated");
+            }
+            const end = html.indexOf(";\n", at);
+            if (end < 0) throw new Error("catalog line has no end");
+            const data = JSON.parse(html.slice(at + mark.length, end));
+            console.log("catalog: " + data.at + " · " + data.top.length + " top · " + data.genres.length + " genres");
+            if (data.top.length < 10) throw new Error("chart too small to publish");
+            if (html.length < 400000) throw new Error("showsnew.html is unexpectedly small");
+          '
+
+      - name: Commit the refreshed chart
+        run: |
+          git config user.name 'podcast-chart-sync'
+          git config user.email 'podcast-chart-sync@users.noreply.github.com'
+          git add showsnew.html
+          git diff --cached --quiet && echo 'chart unchanged' && exit 0
+          git commit -m 'data(podcasts): refresh Apple Podcasts chart'
+          git push
