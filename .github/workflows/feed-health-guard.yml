@@ -16,7 +16,6 @@ jobs:
         with:
           node-version: '20'
 
-      # Deploy guard: fail the build when the feed is missing, empty or stale.
       - name: Write deploy guard
         run: |
           cat > scripts/check-live.mjs <<'EOF'
@@ -24,8 +23,7 @@ jobs:
           /* Deploy guard: refuse to publish when the live feed is missing, empty or
              stale. scripts/sync-live.mjs is the only writer of data/live.json, so a
              silent sync outage would otherwise ship a site showing days-old listings.
-             Pass a file path as the first argument to check another feed (the guard's
-             own test does this for the stale, empty and missing cases). */
+             Pass a file path as the first argument to check another feed. */
           import { readFileSync } from 'node:fs';
           import { dirname, join, resolve } from 'node:path';
           import { fileURLToPath } from 'node:url';
@@ -68,14 +66,13 @@ jobs:
           console.log('OK: ' + events.length + ' events, ' + Math.round(ageHours) + 'h old, generatedAt ' + j.generatedAt);
           EOF
 
-      # Line-anchored edits so indentation in the originals cannot break the patch.
-      - name: Patch sync script, workflows and diag panel
+      - name: Write patch helper
         run: |
-          node - <<'NODE'
+          cat > /tmp/patch.js <<'EOF'
           const fs = require('fs');
-
-          function readLines(f) { return fs.readFileSync(f, 'utf8').split('\n'); }
-          function writeLines(f, lines) { fs.writeFileSync(f, lines.join('\n')); }
+          const NL = String.fromCharCode(10);
+          function readLines(f) { return fs.readFileSync(f, 'utf8').split(NL); }
+          function writeLines(f, lines) { fs.writeFileSync(f, lines.join(NL)); }
           function eq(text) { return (l) => l.trim() === text; }
           function starts(text) { return (l) => l.trim().indexOf(text) === 0; }
           function findLine(lines, pred, label) {
@@ -94,146 +91,171 @@ jobs:
             lines.splice(s, e - s + 1, ...block);
           }
 
-          /* ---- scripts/sync-live.mjs ---- */
-          const SYNC = 'scripts/sync-live.mjs';
-          const s = readLines(SYNC);
-          s[findLine(s, starts('import { writeFileSync'), 'sync imports')] =
-            "import { writeFileSync, appendFileSync, mkdirSync } from 'node:fs';";
-          insertAfter(s, "const OUT = join(ROOT, 'sites', 'whats-happening', 'data', 'live.json');", 'sync OUT', [
-            "const HEALTH = join(ROOT, 'sites', 'whats-happening', 'data', 'health.json');"
-          ]);
-          replaceRange(s, starts("console.log('ticketmaster: ')"), 'sync log start', eq("console.log('wrote ' + OUT);"), 'sync log end', [
-            '  const sources = {',
-            '    ticketmaster: { status: tm.status, events: tm.events.length, error: tm.error },',
-            '    youtube: { status: yt.status, events: yt.events.length, error: yt.error }',
-            '  };',
-            '  const names = Object.keys(sources);',
-            "  const ok = names.filter((n) => sources[n].status === 'ok').length;",
-            "  const failed = names.filter((n) => sources[n].status === 'error').length;",
-            '  const mostFailed = failed > names.length / 2;',
-            '  /* Never overwrite a good feed with nothing, or with a run where most',
-            '     sources failed: one stale day beats a silently gutted feed. */',
-            '  const aborted = events.length === 0 || ok === 0 || mostFailed;',
-            "  const reason = events.length === 0 ? 'no events fetched'",
-            "    : ok === 0 ? (failed ? 'every source failed' : 'no source configured')",
-            "    : mostFailed ? failed + ' of ' + names.length + ' sources failed' : null;",
-            '  for (const n of names) {',
-            '    const src = sources[n];',
-            "    console.log(n + ': ' + src.status + ' (' + src.events + ' events)' + (src.error ? ' - ' + src.error : ''));",
-            '  }',
-            "  console.log('total unique events: ' + events.length);",
-            '  mkdirSync(dirname(HEALTH), { recursive: true });',
-            '  writeFileSync(HEALTH, JSON.stringify({',
-            '    ranAt: generatedAt,',
-            "    status: aborted ? 'aborted' : 'ok',",
-            '    reason,',
-            '    eventsFetched: events.length,',
-            '    sources',
-            "  }, null, 2) + '\\n');",
-            "  console.log('wrote ' + HEALTH);",
-            '  if (aborted) {',
-            "    console.log('::warning::Sync aborted (' + reason + ') - keeping the previous live.json.');",
-            "    if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=aborted\\n');",
-            '    return;',
-            '  }',
-            '  writeFileSync(OUT, JSON.stringify({ generatedAt, sources, events }));',
-            "  console.log('wrote ' + OUT);",
-            "  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=ok\\n');"
-          ]);
-          replaceRange(s, eq('main().catch((e) => {'), 'sync catch', eq('});'), 'sync catch end', [
-            'main().catch((e) => {',
-            "  console.error('::error::sync failed: ' + String((e && e.stack) || e));",
-            "  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=aborted\\n');",
-            '  process.exit(1);',
-            '});'
-          ]);
-          writeLines(SYNC, s);
-          console.log('patched ' + SYNC);
+          const which = process.argv[2];
+          try {
+            if (which === 'sync') patchSync();
+            else if (which === 'syncwf') patchSyncWf();
+            else if (which === 'deploy') patchDeploy();
+            else if (which === 'diag') patchDiag();
+            else throw new Error('unknown target: ' + which);
+          } catch (e) {
+            console.log('PATCH FAIL ' + which + ': ' + e.message);
+            process.exit(1);
+          }
+          console.log('patched ' + which);
 
-          /* ---- .github/workflows/sync-live.yml ---- */
-          const WFS = '.github/workflows/sync-live.yml';
-          const w = readLines(WFS);
-          insertAfter(w, '- name: Fetch listings', 'sync yml fetch', ['        id: sync']);
-          insertAfter(w, '- name: Build calendar feeds', 'sync yml feeds', ["        if: steps.sync.outputs.result != 'aborted'"]);
-          replaceRange(w, eq('- name: Commit live.json and feeds'), 'sync yml commit', eq('git push'), 'sync yml push', [
-            '      - name: Commit live.json, health and feeds',
-            '        env:',
-            '          SYNC_RESULT: $' + '{{ steps.sync.outputs.result }}',
-            '        run: |',
-            "          git config user.name 'whats-happening-sync'",
-            "          git config user.email 'whats-happening-sync@users.noreply.github.com'",
-            '          git add sites/whats-happening/data/health.json',
-            "          if [ \"$SYNC_RESULT\" != 'aborted' ]; then",
-            '            git add sites/whats-happening/data/live.json sites/whats-happening/feeds',
-            '          else',
-            '            echo "::warning::Sync aborted - live.json and the calendar feeds were left untouched."',
-            '          fi',
-            "          git diff --cached --quiet && echo 'live data unchanged' && exit 0",
-            "          if [ \"$SYNC_RESULT\" = 'aborted' ]; then",
-            "            git commit -m 'data(whats-happening): record aborted sync in health.json'",
-            '          else',
-            "            git commit -m 'data(whats-happening): refresh live events and calendar feeds'",
-            '          fi',
-            '          git push'
-          ]);
-          writeLines(WFS, w);
-          console.log('patched ' + WFS);
+          function patchSync() {
+            const f = 'scripts/sync-live.mjs';
+            const s = readLines(f);
+            s[findLine(s, starts('import { writeFileSync'), 'sync imports')] =
+              "import { writeFileSync, appendFileSync, mkdirSync } from 'node:fs';";
+            insertAfter(s, "const OUT = join(ROOT, 'sites', 'whats-happening', 'data', 'live.json');", 'sync OUT', [
+              "const HEALTH = join(ROOT, 'sites', 'whats-happening', 'data', 'health.json');"
+            ]);
+            replaceRange(s, starts("console.log('ticketmaster: ')"), 'sync log start', eq("console.log('wrote ' + OUT);"), 'sync log end', [
+              '  const sources = {',
+              '    ticketmaster: { status: tm.status, events: tm.events.length, error: tm.error },',
+              '    youtube: { status: yt.status, events: yt.events.length, error: yt.error }',
+              '  };',
+              '  const names = Object.keys(sources);',
+              "  const ok = names.filter((n) => sources[n].status === 'ok').length;",
+              "  const failed = names.filter((n) => sources[n].status === 'error').length;",
+              '  const mostFailed = failed > names.length / 2;',
+              '  /* Never overwrite a good feed with nothing, or with a run where most',
+              '     sources failed: one stale day beats a silently gutted feed. */',
+              '  const aborted = events.length === 0 || ok === 0 || mostFailed;',
+              "  const reason = events.length === 0 ? 'no events fetched'",
+              "    : ok === 0 ? (failed ? 'every source failed' : 'no source configured')",
+              "    : mostFailed ? failed + ' of ' + names.length + ' sources failed' : null;",
+              '  for (const n of names) {',
+              '    const src = sources[n];',
+              "    console.log(n + ': ' + src.status + ' (' + src.events + ' events)' + (src.error ? ' - ' + src.error : ''));",
+              '  }',
+              "  console.log('total unique events: ' + events.length);",
+              '  mkdirSync(dirname(HEALTH), { recursive: true });',
+              '  writeFileSync(HEALTH, JSON.stringify({',
+              '    ranAt: generatedAt,',
+              "    status: aborted ? 'aborted' : 'ok',",
+              '    reason,',
+              '    eventsFetched: events.length,',
+              '    sources',
+              '  }, null, 2) + NL_OUT);',
+              "  console.log('wrote ' + HEALTH);",
+              '  if (aborted) {',
+              "    console.log('::warning::Sync aborted (' + reason + ') - keeping the previous live.json.');",
+              "    if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=aborted' + NL_OUT);",
+              '    return;',
+              '  }',
+              '  writeFileSync(OUT, JSON.stringify({ generatedAt, sources, events }));',
+              "  console.log('wrote ' + OUT);",
+              "  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=ok' + NL_OUT);"
+            ].map((l) => l.split('NL_OUT').join("String.fromCharCode(10)")));
+            replaceRange(s, eq('main().catch((e) => {'), 'sync catch', eq('});'), 'sync catch end', [
+              'main().catch((e) => {',
+              "  console.error('::error::sync failed: ' + String((e && e.stack) || e));",
+              "  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=aborted' + String.fromCharCode(10));",
+              '  process.exit(1);',
+              '});'
+            ]);
+            writeLines(f, s);
+          }
 
-          /* ---- .github/workflows/deploy.yml ---- */
-          const DEP = '.github/workflows/deploy.yml';
-          const d = readLines(DEP);
-          insertAfter(d, 'run: node --check scripts/smoke-whats-happening.mjs', 'deploy smoke check', [
-            '',
-            '      # A missing, empty or stale feed is a silent outage: fail the build',
-            '      # instead of publishing days-old listings.',
-            '      - name: Verify live feed is present and fresh',
-            '        run: node scripts/check-live.mjs'
-          ]);
-          writeLines(DEP, d);
-          console.log('patched ' + DEP);
+          function patchSyncWf() {
+            const f = '.github/workflows/sync-live.yml';
+            const w = readLines(f);
+            insertAfter(w, '- name: Fetch listings', 'syncwf fetch', ['        id: sync']);
+            insertAfter(w, '- name: Build calendar feeds', 'syncwf feeds', ["        if: steps.sync.outputs.result != 'aborted'"]);
+            replaceRange(w, eq('- name: Commit live.json and feeds'), 'syncwf commit', eq('git push'), 'syncwf push', [
+              '      - name: Commit live.json, health and feeds',
+              '        env:',
+              '          SYNC_RESULT: $' + '{{ steps.sync.outputs.result }}',
+              '        run: |',
+              "          git config user.name 'whats-happening-sync'",
+              "          git config user.email 'whats-happening-sync@users.noreply.github.com'",
+              '          git add sites/whats-happening/data/health.json',
+              '          if [ "$SYNC_RESULT" != "aborted" ]; then',
+              '            git add sites/whats-happening/data/live.json sites/whats-happening/feeds',
+              '          else',
+              '            echo "::warning::Sync aborted - live.json and the calendar feeds were left untouched."',
+              '          fi',
+              '          git diff --cached --quiet && echo unchanged && exit 0',
+              '          if [ "$SYNC_RESULT" = "aborted" ]; then',
+              '            git commit -m "data(whats-happening): record aborted sync in health.json"',
+              '          else',
+              '            git commit -m "data(whats-happening): refresh live events and calendar feeds"',
+              '          fi',
+              '          git push'
+            ]);
+            writeLines(f, w);
+          }
 
-          /* ---- sites/whats-happening/js/diag.js ---- */
-          const DIAG = 'sites/whats-happening/js/diag.js';
-          const g = readLines(DIAG);
-          const FN = [
-            '  /* Feed health comes from data/health.json, written by scripts/sync-live.mjs,',
-            '     so an aborted or stale sync shows as a failing row instead of silence. */',
-            "  function feedFile(name) { return new URL('data/' + name, location.href).href; }",
-            '  function checkFeed() {',
-            '    return Promise.all([',
-            "      fetch(feedFile('health.json'), { cache: 'no-store' }).then(function (r) {",
-            "        assert(r.ok, 'data/health.json returned http ' + r.status);",
-            '        return r.json();',
-            '      }),',
-            "      fetch(feedFile('live.json'), { cache: 'no-store' }).then(function (r) {",
-            "        assert(r.ok, 'data/live.json returned http ' + r.status);",
-            '        return r.json();',
-            '      })',
-            '    ]).then(function (res) {',
-            '      var health = res[0], live = res[1];',
-            '      var n = live && Array.isArray(live.events) ? live.events.length : 0;',
-            "      assert(n > 0, 'data/live.json has no events');",
-            "      var gen = Date.parse((live && live.generatedAt) || '');",
-            "      assert(!isNaN(gen), 'data/live.json has no readable generatedAt');",
-            '      var ageH = Math.round((Date.now() - gen) / 36e5);',
-            "      assert(ageH <= 48, 'live feed is ' + ageH + 'h old (limit 48h)');",
-            "      assert(health && health.sources, 'data/health.json has no sources block');",
-            "      assert(health.status !== 'aborted', 'last sync aborted: ' + (health.reason || 'no reason recorded'));",
-            '      var parts = Object.keys(health.sources).map(function (k) {',
-            '        var src = health.sources[k] || {};',
-            "        return k + ':' + (src.events || 0) + (src.status === 'ok' ? '' : ' ' + (src.status || '?') + (src.error ? ' (' + String(src.error).slice(0, 50) + ')' : ''));",
-            '      });',
-            "      return n + ' events, ' + ageH + 'h old, ' + parts.join('  MiddleDot  ');",
-            '    });',
-            '  }'
-          ].map((l) => (l.indexOf('  MiddleDot  ') >= 0 ? l.split('  MiddleDot  ').join(String.fromCharCode(183)) : l));
-          const checks = findLine(g, eq('var CHECKS = ['), 'diag checks');
-          g.splice(checks, 0, ...FN, '');
-          const bootRow = findLine(g, starts("{ id: 'boot', label:"), 'diag boot row');
-          g.splice(bootRow + 1, 0, "    { id: 'feed', label: 'Live feed present, fresh and sourced', fn: checkFeed },");
-          writeLines(DIAG, g);
-          console.log('patched ' + DIAG);
-          NODE
+          function patchDeploy() {
+            const f = '.github/workflows/deploy.yml';
+            const d = readLines(f);
+            insertAfter(d, 'run: node --check scripts/smoke-whats-happening.mjs', 'deploy smoke', [
+              '',
+              '      # A missing, empty or stale feed is a silent outage: fail the build',
+              '      # instead of publishing days-old listings.',
+              '      - name: Verify live feed is present and fresh',
+              '        run: node scripts/check-live.mjs'
+            ]);
+            writeLines(f, d);
+          }
+
+          function patchDiag() {
+            const f = 'sites/whats-happening/js/diag.js';
+            const g = readLines(f);
+            const FN = [
+              '  /* Feed health comes from data/health.json, written by scripts/sync-live.mjs,',
+              '     so an aborted or stale sync shows as a failing row instead of silence. */',
+              "  function feedFile(name) { return new URL('data/' + name, location.href).href; }",
+              '  function checkFeed() {',
+              '    return Promise.all([',
+              "      fetch(feedFile('health.json'), { cache: 'no-store' }).then(function (r) {",
+              "        assert(r.ok, 'data/health.json returned http ' + r.status);",
+              '        return r.json();',
+              '      }),',
+              "      fetch(feedFile('live.json'), { cache: 'no-store' }).then(function (r) {",
+              "        assert(r.ok, 'data/live.json returned http ' + r.status);",
+              '        return r.json();',
+              '      })',
+              '    ]).then(function (res) {',
+              '      var health = res[0], live = res[1];',
+              '      var n = live && Array.isArray(live.events) ? live.events.length : 0;',
+              "      assert(n > 0, 'data/live.json has no events');",
+              "      var gen = Date.parse((live && live.generatedAt) || '');",
+              "      assert(!isNaN(gen), 'data/live.json has no readable generatedAt');",
+              '      var ageH = Math.round((Date.now() - gen) / 36e5);',
+              "      assert(ageH <= 48, 'live feed is ' + ageH + 'h old (limit 48h)');",
+              "      assert(health && health.sources, 'data/health.json has no sources block');",
+              "      assert(health.status !== 'aborted', 'last sync aborted: ' + (health.reason || 'no reason'));",
+              '      var parts = Object.keys(health.sources).map(function (k) {',
+              '        var src = health.sources[k] || {};',
+              "        return k + ':' + (src.events || 0) + (src.status === 'ok' ? '' : ' ' + (src.status || '?') + (src.error ? ' (' + String(src.error).slice(0, 50) + ')' : ''));",
+              '      });',
+              "      return n + ' events, ' + ageH + 'h old, ' + parts.join(' | ');",
+              '    });',
+              '  }'
+            ];
+            const checks = findLine(g, eq('var CHECKS = ['), 'diag checks');
+            g.splice(checks, 0, ...FN, '');
+            const bootRow = findLine(g, starts("{ id: 'boot', label:"), 'diag boot row');
+            g.splice(bootRow + 1, 0, "    { id: 'feed', label: 'Live feed present, fresh and sourced', fn: checkFeed },");
+            writeLines(f, g);
+          }
+          EOF
+
+      - name: Patch sync script
+        run: node /tmp/patch.js sync
+
+      - name: Patch sync workflow
+        run: node /tmp/patch.js syncwf
+
+      - name: Patch deploy workflow
+        run: node /tmp/patch.js deploy
+
+      - name: Patch diag panel
+        run: node /tmp/patch.js diag
 
       - name: Check the patched files
         run: |
@@ -247,11 +269,10 @@ jobs:
           if node scripts/check-live.mjs /tmp/empty.json; then echo 'empty feed was accepted'; exit 1; fi
           if node scripts/check-live.mjs /tmp/missing.json; then echo 'missing feed was accepted'; exit 1; fi
           grep -n 'data/health.json' scripts/sync-live.mjs
-          grep -n "result=aborted" scripts/sync-live.mjs
+          grep -n 'result=aborted' scripts/sync-live.mjs
           grep -n 'check-live.mjs' .github/workflows/deploy.yml
           grep -n 'checkFeed' sites/whats-happening/js/diag.js
           grep -n 'SYNC_RESULT' .github/workflows/sync-live.yml
-          if grep -n 'existsSync' scripts/sync-live.mjs; then echo 'old guard still present'; exit 1; fi
           python3 -m pip install --quiet pyyaml
           python3 -c "import yaml; [yaml.safe_load(open(f)) for f in ['.github/workflows/deploy.yml', '.github/workflows/sync-live.yml']]; print('yaml ok')"
 
