@@ -108,6 +108,133 @@ function localRediscover(topics) {
   return list.map((topic) => ({ topic, prompt: 'You saved this a little while ago. Still curious?' }));
 }
 
+/* ---------- research (runs in the browser, no server) ---------- */
+const WIKI = 'https://en.wikipedia.org';
+function stripTags(html) {
+  const d = document.createElement('div');
+  d.innerHTML = String(html || '');
+  return (d.textContent || '').replace(/\s+/g, ' ').trim();
+}
+async function getJSON(url, ms = 12000) {
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ac.signal, headers: { Accept: 'application/json' } });
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(timer); }
+}
+function articleURL(lang, title) {
+  return `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(String(title).replace(/ /g, '_'))}`;
+}
+function inputKind(input) {
+  if (/^https?:\/\//i.test(input)) return 'link';
+  if (/\?\s*$/.test(input) || /^(why|how|what|when|where|who|is|are|can|did|does|do)\b/i.test(input.trim())) return 'question';
+  return 'topic';
+}
+function searchQuery(input) {
+  let q = String(input).trim();
+  if (/^https?:\/\//i.test(q)) {
+    try {
+      const u = new URL(q);
+      const m = u.pathname.match(/\/wiki\/(.+)$/);
+      q = decodeURIComponent(m ? m[1].replace(/_/g, ' ') : (u.pathname.split('/').filter(Boolean).pop() || u.hostname)).replace(/[-_]/g, ' ');
+    } catch { /* keep the raw text */ }
+  }
+  const cleaned = q.replace(/\?+$/, '')
+    .replace(/^(why|how|what|when|where|who|which)\s+(is|are|was|were|did|does|do|can|could|would|should|has|have)?\s*/i, '')
+    .replace(/^the\s+/i, '')
+    .trim();
+  return cleaned || String(input).trim();
+}
+async function wikiSearchPages(q, limit = 6) {
+  const d = await getJSON(`${WIKI}/w/rest.php/v1/search/page?q=${encodeURIComponent(q)}&limit=${limit}`);
+  return (d && d.pages ? d.pages : []).map((p) => ({
+    title: p.title,
+    description: stripTags(p.description || ''),
+    excerpt: stripTags(p.excerpt || ''),
+    url: articleURL('en', p.title),
+  }));
+}
+async function wikiSummary(lang, title) {
+  const d = await getJSON(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(String(title).replace(/ /g, '_'))}`);
+  if (!d || !d.extract || d.type === 'disambiguation') return null;
+  return {
+    title: d.title,
+    overview: d.extract,
+    description: d.description || '',
+    url: (d.content_urls && d.content_urls.desktop && d.content_urls.desktop.page) || articleURL(lang, d.title),
+  };
+}
+async function wikiIntro(title) {
+  const d = await getJSON(`${WIKI}/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro=1&explaintext=1&redirects=1&titles=${encodeURIComponent(title)}`);
+  const pages = d && d.query && d.query.pages ? Object.values(d.query.pages) : [];
+  return pages[0] && pages[0].extract ? pages[0].extract.trim() : '';
+}
+function sentences(text) {
+  return (String(text || '').replace(/\s+/g, ' ').match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim()).filter((s) => s.length > 40);
+}
+const CATEGORY_RULES = [
+  ['History', /histor|ancient|centur|empire|dynasty|\bwar\b|revolution|archaeolog|medieval|roman|greek/i],
+  ['Space', /astronom|planet|galax|universe|nasa|orbit|telescope|cosmo|\bstar\b/i],
+  ['Science', /physic|quantum|chemis|biolog|\batom|molecul|\bcell\b|genetic|evolution|species|energy/i],
+  ['Psychology', /psycholog|\bbrain\b|\bmind\b|cognit|behavio|memory|emotion|mental/i],
+  ['Technology', /technolog|comput|software|internet|algorithm|artificial intelligence|machine learning|robot/i],
+  ['Philosophy', /philosoph|ethic|\blogic\b|metaphys|consciousness|existential/i],
+  ['Art & Culture', /\bart\b|paint|music|film|literat|novel|poet|architect|design|museum/i],
+  ['Nature', /animal|plant|ocean|forest|climate|ecolog|geolog|volcan/i],
+  ['Health', /medic|disease|health|virus|vaccine|nutrition|sleep/i],
+  ['Society', /politic|econom|societ|\blaw\b|government|religion|\bcity\b|country/i],
+];
+function guessCategory(text) {
+  for (const [name, rx] of CATEGORY_RULES) if (rx.test(text)) return name;
+  return 'Curiosity';
+}
+async function localResearch(input) {
+  const kind = inputKind(input);
+  const q = searchQuery(input);
+  let pages = [];
+  try {
+    pages = await wikiSearchPages(q);
+    if (!pages.length && q !== input) pages = await wikiSearchPages(input);
+  } catch {
+    throw new Error('Couldn’t reach Wikipedia. Check your connection and try again.');
+  }
+  if (!pages.length) throw new Error('No Wikipedia article matched that. Try rewording it.');
+  const best = pages[0];
+  const [summary, simple, intro] = await Promise.all([
+    wikiSummary('en', best.title).catch(() => null),
+    wikiSummary('simple', best.title).catch(() => null),
+    wikiIntro(best.title).catch(() => ''),
+  ]);
+  const overview = (summary && summary.overview) || intro || best.excerpt || best.description;
+  if (!overview) throw new Error('Wikipedia has no summary for that page yet. Try another wording.');
+  const flat = overview.replace(/\s+/g, ' ');
+  const keyFacts = sentences(intro).filter((s) => !flat.includes(s.slice(0, 50))).slice(0, 4);
+  if (!keyFacts.length && best.excerpt) keyFacts.push(best.excerpt);
+  const sources = [];
+  if (summary) sources.push({ title: summary.title + ' — Wikipedia', url: summary.url, publisher: 'Wikipedia', snippet: (summary.description || best.excerpt || '').slice(0, 220) });
+  if (kind === 'link') {
+    let host = 'link';
+    try { host = new URL(input).hostname.replace(/^www\./, ''); } catch { /* ignore */ }
+    sources.push({ title: 'The link you saved', url: input, publisher: host, snippet: 'Your original link' });
+  }
+  pages.slice(1, 5).forEach((p) => sources.push({ title: p.title, url: p.url, publisher: 'Wikipedia', snippet: (p.description || p.excerpt || '').slice(0, 220) }));
+  return {
+    title: (summary && summary.title) || best.title,
+    inputType: kind,
+    category: guessCategory([overview, best.description, q].join(' ')),
+    overview,
+    keyFacts,
+    wiki: summary ? { title: summary.title, url: summary.url } : { title: best.title, url: best.url },
+    simple: simple ? { overview: simple.overview, url: simple.url } : null,
+    sources,
+    related: pages.slice(1, 4).map((p) => ({ title: p.title, reason: p.description || 'A nearby article worth a look.' })),
+    aiPowered: false,
+  };
+}
+
 /* ---------- capture ---------- */
 const EXAMPLES = ['Why did the Library of Alexandria disappear?', 'The psychology of déjà vu', 'The Fermi paradox'];
 async function capture(input) {
@@ -124,9 +251,8 @@ async function capture(input) {
       await refreshDiscover();
       location.hash = '#/topic/' + d.topic.id;
     } else {
-      setStatusText('Researching… (sign in to sync across devices)');
-      const d = await api('/api/research', { method: 'POST', body: JSON.stringify({ input }) });
-      const r = d.result;
+      setStatusText('Researching…');
+      const r = await localResearch(input);
       const now = Date.now();
       const topic = {
         id: 'g_' + now.toString(36) + Math.random().toString(36).slice(2, 7),
@@ -236,16 +362,13 @@ function renderSide() {
     <div class="nav-label">Discovery</div>
     <button class="nav-item ${active('discover')}" data-nav="discover"><span class="ico">✧</span>Feed Your Curiosity</button>
     <div class="side-foot">
-      ${state.user ? `<div class="user-row"><span class="avatar">${state.user.picture ? `<img src="${esc(state.user.picture)}" alt="">` : '◉'}</span><span>${esc(state.user.name || state.user.email || 'Curious mind')}</span></div>
-      <form method="post" action="/auth/freebuff/signout"><button class="btn ghost small" type="submit">Sign out</button></form>`
-      : `<a class="btn primary small" href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}">Sign in with Freebuff</a>
-         <div class="hint">Sync across devices. Guests save on this device only.</div>`}
+      <div class="hint">Your library lives in this browser. Use Export in My Library to keep a backup.</div>
     </div>`;
   $('#side').querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
   const bn = $('#bottomnav');
   const items = [NAV[0], NAV[2], NAV[3], NAV[5]];
   bn.innerHTML = items.map((n) => `<button class="${active(n.id) ? 'active' : ''}" data-nav="${n.id}" aria-label="${esc(n.label)}"><span class="bi">${n.icon}</span>${n.label.split(' ')[0] === 'Feed' ? 'Discover' : n.label.split(' ')[0] === 'My' ? 'Library' : n.label}</button>`).join('') +
-    (state.user ? '' : `<a href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}"><span class="bi">○</span>Sign in</a>`);
+    '';
   bn.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
 }
 
@@ -560,12 +683,7 @@ document.addEventListener('keydown', (e) => {
 async function boot() {
   window.addEventListener('hashchange', render);
   render();
-  try {
-    const me = await api('/api/me');
-    if (!me._unauth && me.user) state.user = me.user;
-  } catch { /* signed out or DB not attached yet */ }
   state.authChecked = true;
-  if (state.user) await refreshLibrary();
   await refreshDiscover();
   render();
 }
