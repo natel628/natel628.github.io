@@ -35,7 +35,10 @@ try {
      leave the demonstration banner up over invented events. */
   const feedOk = await page.waitForFunction(() => {
     const s = window.WH && window.WH.state;
-    return !!(s && s.live && s.live.length) && !document.querySelector('#main .notice');
+    /* The live-status bar is also a .notice, so the demonstration banner has
+       to be named: any other notice is not a missing-feed signal. */
+    return !!(s && s.live && s.live.length) &&
+      !document.querySelector('#main .notice:not(.notice--live)');
   }, null, { timeout: 15000 }).then(() => true).catch(() => false);
   if (!feedOk) {
     const loaded = await page.evaluate(() => {
