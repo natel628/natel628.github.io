@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: '20'
 
-      # ── Fail the build on a JS syntax error instead of shipping it ──
+      # Fail the build on a JS syntax error instead of shipping it
       - name: Syntax-check whats-happening JS
         run: |
           for f in sites/whats-happening/js/*.js; do
@@ -52,24 +52,20 @@ jobs:
           sleep 2
           node scripts/smoke-whats-happening.mjs http://127.0.0.1:8099/sites/whats-happening/
 
-      # ── Preflight: confirm source file and secrets ─────────────────
+      # Preflight: confirm source file and secrets
       - name: Preflight checks
         run: |
           echo "=== Working directory ==="
           pwd
-
           echo "=== Files present ==="
           ls -lh
-
           if [ ! -f showsnew.html ]; then
             echo "::error::showsnew.html not found in repo root."
             exit 1
           fi
           echo "OK: showsnew.html present ($(wc -c < showsnew.html) bytes)"
-
           echo "=== First 3 lines ==="
           head -3 showsnew.html
-
           if [ -z "$PAGE_PASSWORD" ]; then
             echo "::error::PAGE_PASSWORD secret is not set."
             exit 1
@@ -78,13 +74,11 @@ jobs:
         env:
           PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
 
-      # ── Install pagecrypt ──────────────────────────────────────────
       - name: Install pagecrypt
         run: |
           npm install -g pagecrypt
           pagecrypt --version
 
-      # ── Inject TMDB token ──────────────────────────────────────────
       - name: Inject TMDB token
         env:
           TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
@@ -93,173 +87,165 @@ jobs:
             echo "::error::TMDB_TOKEN secret is not set."
             exit 1
           fi
-
           if ! grep -q '__TMDB_TOKEN__' showsnew.html; then
             echo "::error::Placeholder __TMDB_TOKEN__ not found in showsnew.html."
             exit 1
           fi
-
           sed -i "s|__TMDB_TOKEN__|${TMDB_TOKEN}|g" showsnew.html
-
           if grep -q '__TMDB_TOKEN__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
-
           if ! grep -q "TMDB_TOKEN = 'eyJ" showsnew.html; then
             echo "::error::Substituted value does not look like a TMDB JWT."
             exit 1
           fi
-
           echo "OK: token injected into showsnew.html."
 
-      # ── Inject Fanart.tv key (optional) ────────────────────────────
       - name: Inject Fanart.tv key
         env:
           FANART_KEY: ${{ secrets.FANART_KEY }}
         run: |
           if [ -z "$FANART_KEY" ]; then
-            echo "::warning::FANART_KEY secret is not set — artwork section will stay hidden."
+            echo "::warning::FANART_KEY secret is not set - artwork section will stay hidden."
             exit 0
           fi
-
           if ! grep -q '__FANART_KEY__' showsnew.html; then
             echo "::error::Placeholder __FANART_KEY__ not found in showsnew.html."
             exit 1
           fi
-
           sed -i "s|__FANART_KEY__|${FANART_KEY}|g" showsnew.html
-
           if grep -q '__FANART_KEY__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
-
           echo "OK: Fanart.tv key injected into showsnew.html."
 
-      # ── Inject OMDb key (optional) ─────────────────────────────────
       - name: Inject OMDb key
         env:
           OMDB_KEY: ${{ secrets.OMDB_KEY }}
         run: |
           if [ -z "$OMDB_KEY" ]; then
-            echo "::warning::OMDB_KEY secret is not set — IMDb scores will stay hidden."
+            echo "::warning::OMDB_KEY secret is not set - IMDb scores will stay hidden."
             exit 0
           fi
-
           if ! grep -q '__OMDB_KEY__' showsnew.html; then
             echo "::error::Placeholder __OMDB_KEY__ not found in showsnew.html."
             exit 1
           fi
-
           sed -i "s|__OMDB_KEY__|${OMDB_KEY}|g" showsnew.html
-
           if grep -q '__OMDB_KEY__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
-
           echo "OK: OMDb key injected into showsnew.html."
 
-      # ── Inject MDBList key (optional) ──────────────────────────────
       - name: Inject MDBList key
         env:
           MDBLIST_KEY: ${{ secrets.MDBLIST_KEY }}
         run: |
           if [ -z "$MDBLIST_KEY" ]; then
-            echo "::warning::MDBLIST_KEY secret is not set — multi-source scores stay off unless a key is added in Settings."
+            echo "::warning::MDBLIST_KEY secret is not set - multi-source scores stay off unless a key is added in Settings."
             exit 0
           fi
-
           if ! grep -q '__MDBLIST_KEY__' showsnew.html; then
             echo "::error::Placeholder __MDBLIST_KEY__ not found in showsnew.html."
             exit 1
           fi
-
           sed -i "s|__MDBLIST_KEY__|${MDBLIST_KEY}|g" showsnew.html
-
           if grep -q '__MDBLIST_KEY__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
-
           echo "OK: MDBList key injected into showsnew.html."
 
-      # ── Inject Trakt client id (optional) ──────────────────────────
       - name: Inject Trakt client id
         env:
           TRAKT_KEY: ${{ secrets.TRAKT_KEY }}
         run: |
           if [ -z "$TRAKT_KEY" ]; then
-            echo "::warning::TRAKT_KEY secret is not set — Trakt community ratings stay off unless a key is added in Settings."
+            echo "::warning::TRAKT_KEY secret is not set - Trakt community ratings stay off unless a key is added in Settings."
             exit 0
           fi
-
           if ! grep -q '__TRAKT_KEY__' showsnew.html; then
             echo "::error::Placeholder __TRAKT_KEY__ not found in showsnew.html."
             exit 1
           fi
-
           sed -i "s|__TRAKT_KEY__|${TRAKT_KEY}|g" showsnew.html
-
           if grep -q '__TRAKT_KEY__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
-
           echo "OK: Trakt client id injected into showsnew.html."
 
-      # ── Inject Trakt client secret (optional) ──────────────────────
       - name: Inject Trakt client secret
         env:
           TRAKT_SECRET: ${{ secrets.TRAKT_SECRET }}
         run: |
           if [ -z "$TRAKT_SECRET" ]; then
-            echo "::notice::TRAKT_SECRET is not set. That is normal: Trakt now issues PKCE apps with no client secret, and the account sync signs in with PKCE."
+            echo "::notice::TRAKT_SECRET is not set. That is normal: Trakt now issues PKCE apps with no client secret."
             exit 0
           fi
-
           if ! grep -q '__TRAKT_SECRET__' showsnew.html; then
             echo "::error::Placeholder __TRAKT_SECRET__ not found in showsnew.html."
             exit 1
           fi
-
           sed -i "s|__TRAKT_SECRET__|${TRAKT_SECRET}|g" showsnew.html
-
           if grep -q '__TRAKT_SECRET__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
-
           echo "OK: Trakt client secret injected into showsnew.html."
 
-      # ── Encrypt showsnew.html ──────────────────────────────────────
       - name: Encrypt showsnew.html
         env:
           PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
         run: |
           echo "Input size: $(wc -c < showsnew.html) bytes"
           pagecrypt showsnew.html showsnew.html.enc "$PAGE_PASSWORD"
-
           if [ ! -f showsnew.html.enc ]; then
             echo "::error::pagecrypt produced no output."
             exit 1
           fi
-
           echo "Encrypted size: $(wc -c < showsnew.html.enc) bytes"
           mv showsnew.html.enc showsnew.html
           echo "Final size: $(wc -c < showsnew.html) bytes"
 
-      # ── Verify encryption ──────────────────────────────────────────
       - name: Verify encryption
         run: |
           if grep -q "const TMDB_TOKEN" showsnew.html; then
-            echo "::error::showsnew.html still contains plaintext JS — encryption failed."
+            echo "::error::showsnew.html still contains plaintext JS - encryption failed."
             exit 1
           fi
           echo "OK: showsnew.html is encrypted ($(wc -c < showsnew.html) bytes)."
 
-      # ── Upload & deploy ────────────────────────────────────────────
+      # Encrypt whats-happening with its own password (secret WH_PAGE_PASSWORD = EVENTS)
+      - name: Encrypt whats-happening
+        env:
+          WH_PAGE_PASSWORD: ${{ secrets.WH_PAGE_PASSWORD }}
+        run: |
+          echo "Input size: $(wc -c < sites/whats-happening/index.html) bytes"
+          if [ -z "$WH_PAGE_PASSWORD" ]; then
+            echo "::error::WH_PAGE_PASSWORD secret is not set. Create it with value EVENTS."
+            exit 1
+          fi
+          pagecrypt sites/whats-happening/index.html sites/whats-happening/index.html.enc "$WH_PAGE_PASSWORD"
+          if [ ! -f sites/whats-happening/index.html.enc ]; then
+            echo "::error::pagecrypt produced no output for whats-happening."
+            exit 1
+          fi
+          echo "Encrypted size: $(wc -c < sites/whats-happening/index.html.enc) bytes"
+          mv sites/whats-happening/index.html.enc sites/whats-happening/index.html
+          echo "Final size: $(wc -c < sites/whats-happening/index.html) bytes"
+
+      - name: Verify whats-happening encryption
+        run: |
+          if grep -q "id='main'" sites/whats-happening/index.html; then
+            echo "::error::whats-happening index.html still contains plaintext - encryption failed."
+            exit 1
+          fi
+          echo "OK: whats-happening is encrypted ($(wc -c < sites/whats-happening/index.html) bytes)."
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
