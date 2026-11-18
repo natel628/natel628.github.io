@@ -31,14 +31,14 @@ function show(html) {
   }
   window.addEventListener('error', function (e) {
     show('<b>Script error - the page could not start.</b>\n' +
-      (e.message || 'unknown error') + '\n' +
+(e.message || 'unknown error') + '\n' +
       String(e.filename || '').split('/').pop() + ':' + (e.lineno || '?'));
   });
   window.addEventListener('DOMContentLoaded', function () {
     setTimeout(function () {
       var m = document.getElementById('main');
       if (m && !m.textContent.trim() && !document.getElementById('boot-error')) {
-        show('<b>Nothing rendered.</b>\nThe page loaded but the discovery view produced no content. Open the browser console for details.');
+show('<b>Nothing rendered.</b>\nThe page loaded but the discovery view produced no content. Open the browser console for details.');
       }
     }, 2500);
   });
@@ -50,25 +50,25 @@ function show(html) {
 <div class='app'>
 <aside class='sb' id='sidebar' aria-label='Sections'>
     <div class='sb__top'>
-      <a class='brand' href='#/discover'>
+<a class='brand' href='#/discover'>
         <span class='brand__mark' data-icon='spark'></span>
         <span class='brand__name'>What&rsquo;s Happening?<span>One calendar</span></span>
       </a>
 <button class='iconbtn sb__close' data-action='close-nav' aria-label='Close navigation' data-icon='close'></button>
     </div>
-    <nav class='sb__nav'>
+<nav class='sb__nav'>
       <p class='sb__label'>Browse</p>
       <a class='navitem' href='#/discover'><span data-icon='compass'></span>Discover</a>
 <a class='navitem' href='#/near'><span data-icon='pin'></span>Near me</a>
       <a class='navitem' href='#/comedy'><span data-icon='mic'></span>Comedy</a>
-      <a class='navitem' href='#/concerts'><span data-icon='music'></span>Concerts</a>
+<a class='navitem' href='#/concerts'><span data-icon='music'></span>Concerts</a>
       <a class='navitem' href='#/sports'><span data-icon='trophy'></span>Sports</a>
 <a class='navitem' href='#/outdoor'><span data-icon='mountain'></span>Ski &amp; Outdoor</a>
-      <a class='navitem' href='#/online'><span data-icon='play'></span>Online &amp; Livestreams</a>
+<a class='navitem' href='#/online'><span data-icon='play'></span>Online &amp; Livestreams</a>
       <p class='sb__label'>Your calendar</p>
       <a class='navitem' href='#/calendar'><span data-icon='calendar'></span>Calendar</a>
 <a class='navitem' href='#/watchlist'><span data-icon='bookmark'></span>My Watchlist</a>
-      <a class='navitem' href='#/settings'><span data-icon='settings'></span>Settings</a>
+<a class='navitem' href='#/settings'><span data-icon='settings'></span>Settings</a>
     </nav>
     <div class='sb__foot'>
       <a class='citycard' href='#/settings'>
@@ -79,15 +79,15 @@ function show(html) {
   </aside>
   <div class='shell'>
     <header class='tb'>
-      <button class='iconbtn tb__menu' data-action='open-nav' aria-label='Open navigation' data-icon='menu'></button>
+<button class='iconbtn tb__menu' data-action='open-nav' aria-label='Open navigation' data-icon='menu'></button>
 <div class='tb__date'><strong id='tb-date'>Today</strong><span id='tb-city'>Greenville, SC</span></div>
       <form class='search' id='search-form' role='search'>
         <span data-icon='search'></span>
-        <input id='q' type='search' placeholder='Search events, comedians, teams, venues' aria-label='Search events' autocomplete='off'>
+<input id='q' type='search' placeholder='Search events, comedians, teams, venues' aria-label='Search events' autocomplete='off'>
 </form>
       <div class='tb__actions'>
         <button class='iconbtn' data-action='notifications' aria-label='Notifications' title='Notifications'>
-          <span data-icon='bell'></span><span class='dot' id='notif-dot' hidden></span>
+<span data-icon='bell'></span><span class='dot' id='notif-dot' hidden></span>
         </button>
 <a class='iconbtn' href='#/settings' aria-label='Settings' title='Settings' data-icon='settings'></a>
       </div>
@@ -99,18 +99,19 @@ function show(html) {
   <a class='tab' href='#/discover'><span data-icon='compass'></span>Discover</a>
 <a class='tab' href='#/near'><span data-icon='pin'></span>Near</a>
   <a class='tab' href='#/online'><span data-icon='play'></span>Online</a>
-  <a class='tab' href='#/calendar'><span data-icon='calendar'></span>Calendar</a>
+<a class='tab' href='#/calendar'><span data-icon='calendar'></span>Calendar</a>
   <a class='tab' href='#/watchlist'><span data-icon='bookmark'></span>Saved</a>
 </nav>
 <div id='modal' class='modal' hidden></div>
 <div id='toasts' class='toasts' aria-live='polite'></div>
 <noscript>
-  <p style='padding:24px;font-family:system-ui,sans-serif;color:#e9ebf0'>This dashboard needs JavaScript to show events, filters and your calendar.</p>
+<p style='padding:24px;font-family:system-ui,sans-serif;color:#e9ebf0'>This dashboard needs JavaScript to show events, filters and your calendar.</p>
 </noscript>
 <script src='data.js'></script>
 <script src='js/core.js'></script>
 <script src='js/views.js'></script>
 <script src='js/views2.js'></script>
+<script src='js/tile-art.js'></script>
 <script src='js/location.js'></script>
 <script src='js/app.js'></script>
 <script src='js/live-status.js'></script>
