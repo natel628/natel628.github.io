@@ -143,7 +143,7 @@ window.WHV = (function () {
 
   function notice() {
     if (S.live.length) return '';
-    return '<div class="notice"><span class="notice__icon">' + W.icon('spark') + '</span><div><strong>Showing demonstration data.</strong> Events marked <span class="tag-mini">Demo</span> are invented so the app is fully explorable with no keys. Add a free Ticketmaster or YouTube key in <a href="#/settings">Settings</a> to pull real listings.</div></div>';
+    return '<div class="notice"><span class="notice__icon">' + W.icon('spark') + '</span><div><strong>Showing demonstration data.</strong> Events marked <span class="tag-mini">Demo</span> are invented so the app is fully explorable with no keys. Real listings load automatically from the daily sync; none have arrived for this visit yet.</div></div>';
   }
 
   function results(events) {
