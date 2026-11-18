@@ -14,11 +14,15 @@
    diag-9: FAIL details now carry the first stack frame (file:line:col) and
    the report prints up to five frames underneath, so a failure names its
    source instead of just its message.
+
+   diag-10: the first row is feed health - per-source counts and errors from
+   data/health.json plus how old data/live.json is, which is what the deploy
+   guard enforces.
 */
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-9';
+  var LIB = 'diag-10';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
@@ -104,6 +108,40 @@ window.WHDIAG = (function () {
   }
 
   /* ---------------- checks ---------------- */
+
+  /* Feed health: what the last scheduled sync managed to fetch, per source,
+     and how fresh the published file is. Same limits the deploy guard uses,
+     so a panel that passes means a deploy that can pass. */
+  function checkFeed() {
+    var t0 = Date.now();
+    return fetch('data/health.json?d=' + t0, { cache: 'no-store' }).then(function (r) {
+      assert(r.ok, 'data/health.json is missing (HTTP ' + r.status + ') - run the "Sync live events" workflow');
+      return r.json();
+    }).then(function (h) {
+      var src = h.sources || {};
+      var keys = Object.keys(src);
+      assert(keys.length, 'health.json lists no sources');
+      var parts = keys.map(function (k) {
+        var s = src[k] || {};
+        return k + ' ' + (s.status || '?') + ' ' + (s.events || 0) + (s.error ? ' (' + s.error + ')' : '');
+      });
+      var detail = 'sync ' + (h.ranAt || '?') + ': ' + parts.join(', ');
+      assert(h.status === 'ok', 'last sync aborted - ' + (h.reason || 'no reason given') + ' - ' + detail);
+      var bad = keys.filter(function (k) { return (src[k] || {}).status === 'error'; });
+      assert(!bad.length, bad.join(', ') + ' failed - ' + detail);
+      return fetch('data/live.json?d=' + t0, { cache: 'no-store' }).then(function (r) {
+        assert(r.ok, 'data/live.json is missing (HTTP ' + r.status + ')');
+        return r.json();
+      }).then(function (live) {
+        var n = (live.events || []).length;
+        var age = Math.round((Date.now() - Date.parse(live.generatedAt || '')) / 36e5);
+        assert(n > 0, 'live.json holds no events');
+        assert(age <= 48, 'live.json is ' + age + 'h old (limit 48h) - the daily sync looks stopped');
+        return detail + ' - live.json ' + n + ' events, ' + age + 'h old';
+      });
+    });
+  }
+
   function checkStorage(c) {
     var ls = c.w.localStorage, k = 'wh.diag.probe', v = 'v' + Date.now();
     ls.setItem(k, v);
@@ -322,6 +360,7 @@ window.WHDIAG = (function () {
   }
 
   var CHECKS = [
+    { id: 'feed', label: 'Live feed present, fresh and sourced', fn: checkFeed },
     { id: 'storage', label: 'localStorage read/write', fn: checkStorage },
     { id: 'boot', label: 'Page boots without error overlay', fn: checkBoot },
     { id: 'filters', label: 'Filters: category, date, reset', fn: checkFilters },
@@ -500,9 +539,9 @@ window.WHDIAG = (function () {
   });
 
   if (!isFrame()) {
+    function boot() { if (wanted()) start(); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
     else boot();
-    function boot() { if (wanted()) start(); }
   }
 
   return { run: start };
