@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 /* What's Happening? - scheduled listing sync.
    Runs in GitHub Actions with TICKETMASTER_API_KEY and YOUTUBE_API_KEY.
-   Pulls upcoming events, normalises to site shape, writes live.json.
-   Images: uses provider thumbnails (no new key). Tiles fall back to CSS gradient.
-*/
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+   Pulls upcoming events, normalises to site shape, writes live.json and a
+   health.json that records what each source returned. Images: uses provider
+   thumbnails (no new key). Tiles fall back to CSS gradient.
+
+   A run where nothing came back, or where most sources failed, does not
+   overwrite live.json: the previous good feed plus health.json's "aborted"
+   status is better than a silently gutted one. */
+import { writeFileSync, appendFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'sites', 'whats-happening', 'data', 'live.json');
+const HEALTH = join(ROOT, 'sites', 'whats-happening', 'data', 'health.json');
 
 const TM_KEY = process.env.TICKETMASTER_API_KEY || '';
 const YT_KEY = process.env.YOUTUBE_API_KEY || '';
@@ -217,25 +222,46 @@ async function main() {
     events.push(e);
     if (events.length >= 400) break;
   }
-  console.log('ticketmaster: ' + tm.status + ' (' + tm.events.length + ' events)' + (tm.error ? ' - ' + tm.error : ''));
-  console.log('youtube: ' + yt.status + ' (' + yt.events.length + ' events)' + (yt.error ? ' - ' + yt.error : ''));
+  const sources = {
+    ticketmaster: { status: tm.status, events: tm.events.length, error: tm.error },
+    youtube: { status: yt.status, events: yt.events.length, error: yt.error }
+  };
+  const names = Object.keys(sources);
+  const ok = names.filter((n) => sources[n].status === 'ok').length;
+  const failed = names.filter((n) => sources[n].status === 'error').length;
+  const mostFailed = failed > names.length / 2;
+  /* Never overwrite a good feed with nothing, or with a run where most sources
+     failed: one stale day beats a silently gutted feed. */
+  const aborted = events.length === 0 || ok === 0 || mostFailed;
+  const reason = events.length === 0 ? 'no events fetched'
+    : ok === 0 ? (failed ? 'every source failed' : 'no source configured')
+    : mostFailed ? failed + ' of ' + names.length + ' sources failed' : null;
+  for (const n of names) {
+    const src = sources[n];
+    console.log(n + ': ' + src.status + ' (' + src.events + ' events)' + (src.error ? ' - ' + src.error : ''));
+  }
   console.log('total unique events: ' + events.length);
-  if (!events.length && existsSync(OUT)) {
-    console.log('::warning::No events fetched and a previous live.json exists - keeping the old file.');
+  mkdirSync(dirname(HEALTH), { recursive: true });
+  writeFileSync(HEALTH, JSON.stringify({
+    ranAt: generatedAt,
+    status: aborted ? 'aborted' : 'ok',
+    reason,
+    eventsFetched: events.length,
+    sources
+  }, null, 2) + '\n');
+  console.log('wrote ' + HEALTH);
+  if (aborted) {
+    console.log('::warning::Sync aborted (' + reason + ') - keeping the previous live.json.');
+    if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=aborted\n');
     return;
   }
-  mkdirSync(dirname(OUT), { recursive: true });
-  writeFileSync(OUT, JSON.stringify({
-    generatedAt,
-    sources: {
-      ticketmaster: { status: tm.status, events: tm.events.length, error: tm.error },
-      youtube: { status: yt.status, events: yt.events.length, error: yt.error }
-    },
-    events
-  }));
+  writeFileSync(OUT, JSON.stringify({ generatedAt, sources, events }));
   console.log('wrote ' + OUT);
+  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=ok\n');
 }
 
 main().catch((e) => {
-  console.log('::warning::sync failed: ' + String((e && e.stack) || e));
+  console.error('::error::sync failed: ' + String((e && e.stack) || e));
+  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=aborted\n');
+  process.exit(1);
 });
