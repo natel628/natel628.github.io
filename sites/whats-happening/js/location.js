@@ -1,26 +1,27 @@
-/* What's Happening? - location: custom city + browser geolocation.
+/* What's Happening? - location lookup.
 
-   Priority: saved city (localStorage) first, then browser geolocation
-   on first visit, then explicit Greenville, SC fallback.
-   Custom typed towns use Open-Meteo geocoding (free, no key).
-   Browser coords reverse-label via BigDataCloud client API (free, no key).
-*/
+   The visitor types where they are - "Greenville, SC", "Asheville", a ZIP or
+   postcode, or coordinates - and this resolves it to a lat/lng that behaves
+   exactly like the built-in cities: distance, the map centre, the radius chips
+   and every filter keep working.
+
+   Two keyless geocoders, in order, so one outage or block is not the end:
+     1. Open-Meteo geocoding (fast, good with "Town, Region" and "Town, Country")
+     2. OpenStreetMap Nominatim (better with bare ZIP/postcodes and addresses)
+   Coordinates typed directly are used as-is and never hit the network.
+
+   The choice is stored in localStorage and re-registered on the next load, so
+   the site reopens in the same place. If both lookups are unreachable the
+   current place is left alone and the hint says what happened. */
 (function () {
-'use strict';
+  'use strict';
 
-  var GEO = 'https://geocoding-api.open-meteo.net/v1/search';
-  var GEO_REV = 'https://api.bigdatacloud.net/data/reverse-geocode-client';
+  var GEO = 'https://geocoding-api.open-meteo.com/v1/search';
+  var NOMINATIM = 'https://nominatim.openstreetmap.org/search';
   var lastCity = null;
 
   function W() { return window.WH; }
-
   function isCustom(id) { return typeof id === 'string' && id.indexOf('loc-') === 0; }
-
-  function hasSaved() {
-    var c = W().store.get('city', null);
-    var cc = W().store.get('customCity', null);
-    return !!(c || (cc && cc.id));
-  }
 
   function addPlace(p) {
     var list = W().CITIES;
@@ -54,10 +55,35 @@
     };
   }
 
-  function placeFromCoords(lat, lng, label) {
+  /* Nominatim returns display_name and an address breakdown; prefer the same
+     "Town, State" shape the rest of the UI uses. */
+  function placeFromNominatim(r) {
+    var lat = +r.lat, lng = +r.lon;
+    var a = r.address || {};
+    var town = a.city || a.town || a.village || a.hamlet || a.municipality || a.county || '';
+    var region = a.state || a.region || a.country || '';
+    var label = [town, region].filter(Boolean).join(', ');
+    if (!label) {
+      label = String(r.display_name || '').split(',').slice(0, 2).join(',').trim();
+    }
     return {
       id: 'loc-' + lat.toFixed(2) + ',' + lng.toFixed(2),
-      label: label || ('Near you (' + lat.toFixed(2) + ', ' + lng.toFixed(2) + ')'),
+      label: label || 'Your place',
+      lat: lat,
+      lng: lng,
+      tz: ''
+    };
+  }
+
+  /* "34.85,-82.39" - no lookup needed, and handy when geocoders are blocked. */
+  function fromCoords(q) {
+    var m = /^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/.exec(q);
+    if (!m) return null;
+    var lat = +m[1], lng = +m[2];
+    if (!isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+    return {
+      id: 'loc-' + lat.toFixed(2) + ',' + lng.toFixed(2),
+      label: lat.toFixed(2) + ', ' + lng.toFixed(2),
       lat: lat,
       lng: lng,
       tz: ''
@@ -91,10 +117,6 @@
 
   function setHint(el, msg) { if (el) el.textContent = msg || ''; }
 
-  function fallbackMsg() {
-    return 'Location blocked \u2013 showing Greenville, SC as fallback. Pick a city or enable location to see events near you.';
-  }
-
   function syncSelects(id, label) {
     var list = document.querySelectorAll('select[data-city]');
     Array.prototype.forEach.call(list, function (s) {
@@ -106,141 +128,121 @@
         var o = document.createElement('option');
         o.value = id;
         o.textContent = label;
-        s.insertBefore(o, s.lastElementChild);
+        s.appendChild(o);
       }
       s.value = id;
     });
   }
 
-  function reverseLabel(lat, lng, cb) {
-    if (typeof fetch !== 'function') { cb(null); return; }
-    var url = GEO_REV + '?latitude=' + encodeURIComponent(lat) + '&longitude=' + encodeURIComponent(lng) + '&localityLanguage=en';
-    fetch(url).then(function (r) {
+  function getJSON(url, ms) {
+    if (typeof fetch !== 'function') return Promise.reject(new Error('no fetch'));
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, ms) : null;
+    return fetch(url, ctl ? { signal: ctl.signal } : undefined).then(function (r) {
+      if (timer) clearTimeout(timer);
       if (!r.ok) throw new Error('http ' + r.status);
       return r.json();
-    }).then(function (j) {
-      var city = j && (j.city || j.locality || '');
-      var region = j && (j.principalSubdivision || '');
-      if (city && region && city !== region) cb(city + ', ' + region);
-      else if (city) cb(city);
-      else if (region) cb(region);
-      else cb(null);
-    }).catch(function () { cb(null); });
+    }, function (e) {
+      if (timer) clearTimeout(timer);
+      throw e;
+    });
   }
 
-  function useBrowserLocation(manual) {
-    var hint = document.querySelector('.city-hint');
-    if (!navigator.geolocation) {
-      setHint(hint, manual ? 'This browser cannot share location. Type a town below.' : fallbackMsg());
-      return;
+  function geocodeOpenMeteo(q) {
+    return getJSON(GEO + '?name=' + encodeURIComponent(q) + '&count=1&language=en&format=json', 7000).then(function (j) {
+      var r = j && j.results && j.results[0];
+      if (!r) throw new Error('no match');
+      return placeFrom(r);
+    });
+  }
+
+  function geocodeNominatim(q) {
+    var url = NOMINATIM + '?format=jsonv2&limit=1&addressdetails=1&q=' + encodeURIComponent(q);
+    return getJSON(url, 9000).then(function (j) {
+      var r = j && j[0];
+      if (!r) throw new Error('no match');
+      var lat = +r.lat, lng = +r.lon;
+      if (!isFinite(lat) || !isFinite(lng)) throw new Error('no match');
+      return placeFromNominatim(r);
+    });
+  }
+
+  /* cb(err, place). err.network is set when no service answered at all, so the
+     caller can distinguish "nothing matched that" from "the lookup is down". */
+  function lookup(q, cb) {
+    var direct = fromCoords(q);
+    if (direct) { cb(null, direct); return; }
+    var reached = false;
+    function attempt(fn) {
+      return fn(q).then(function (p) {
+        reached = true;
+        return p;
+      });
     }
-    if (!manual) setHint(hint, 'Finding your location\u2026');
-    navigator.geolocation.getCurrentPosition(function (pos) {
-      var lat = +pos.coords.latitude, lng = +pos.coords.longitude;
-      if (!isFinite(lat) || !isFinite(lng)) {
-        setHint(hint, fallbackMsg());
+    attempt(geocodeOpenMeteo).catch(function () {
+      reached = true;   // it answered, it just had no match or was blocked mid-flight
+      return attempt(geocodeNominatim);
+    }).catch(function (e) {
+      if (!reached) {
+        var err = new Error('Place lookup is unavailable right now. Check your connection and try again, or type coordinates like 34.85,-82.39.');
+        err.network = true;
+        cb(err);
         return;
       }
-      reverseLabel(lat, lng, function (label) {
-        var p = placeFromCoords(lat, lng, label || undefined);
-        apply(p);
-        syncSelects(p.id, p.label);
-        var tb = document.getElementById('tb-city');
-        if (tb) tb.textContent = p.label;
-        repaint();
-        setHint(document.querySelector('.city-hint'), 'Using ' + p.label + ' (from your browser location).');
-      });
-    }, function (err) {
-      var msg = fallbackMsg();
-      if (err && err.code === err.TIMEOUT) msg = 'Location timed out \u2013 showing Greenville, SC as fallback. Pick a city to change it.';
-      setHint(hint, msg);
-    }, { timeout: 8000, maximumAge: 600000 });
-  }
-
-  function lookup(q, cb) {
-    if (typeof fetch !== 'function') { cb(new Error('This browser cannot look places up.')); return; }
-    var url = GEO + '?name=' + encodeURIComponent(q) + '&count=1&language=en&format=json';
-    var ctl = typeof AbortController === 'function' ? new AbortController() : null;
-    var timer = ctl ? setTimeout(function () { ctl.abort(); }, 8000) : null;
-    fetch(url, ctl ? { signal: ctl.signal } : undefined).then(function (r) {
-      if (!r.ok) throw new Error('http ' + r.status);
-      return r.json();
-    }).then(function (j) {
-      if (timer) clearTimeout(timer);
-      var r = j && j.results && j.results[0];
-      if (!r) { cb(new Error('Nothing matched that. Try a nearby larger town, or add the country.')); return; }
-      cb(null, placeFrom(r));
-    }).catch(function () {
-      if (timer) clearTimeout(timer);
-      cb(new Error('Place lookup is unavailable right now. You can still pick a city from the list.'));
+      cb(new Error('Nothing matched that. Try "City, ST", a ZIP code, or a nearby larger town.'));
+    }).then(function (p) {
+      if (p) cb(null, p);
     });
   }
 
   function submit(box, btn) {
-    var input = box.querySelector('input');
+    var input = box.querySelector('.cityq') || box.querySelector('input');
     var hint = box.querySelector('.city-hint');
     var q = (input && input.value || '').trim();
     if (!q) {
-      setHint(hint, 'Type a town or city first.');
+      setHint(hint, 'Type a city, state or ZIP code first.');
       if (input) input.focus();
       return;
     }
     if (btn) { btn.disabled = true; btn.textContent = 'Looking up\u2026'; }
+    setHint(hint, '');
     lookup(q, function (err, p) {
-      if (btn) { btn.disabled = false; btn.textContent = 'Look up'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Use this place'; }
       if (err) { setHint(hint, err.message); return; }
       apply(p);
+      if (input) input.value = p.label;
       syncSelects(p.id, p.label);
       var tb = document.getElementById('tb-city');
       if (tb) tb.textContent = p.label;
       repaint();
-      setHint(document.querySelector('.city-hint'), 'Using ' + p.label + '.');
+      setHint(hint, 'Using ' + p.label + '.');
     });
   }
 
+  /* Enter in the city field submits it, like the button. */
+  document.addEventListener('keydown', function (e) {
+    if (!e.target || !e.target.classList || !e.target.classList.contains('cityq')) return;
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    var box = e.target.closest ? e.target.closest('[data-citybox]') : null;
+    if (box) submit(box, box.querySelector('[data-action="save-city"]'));
+  });
+
   document.addEventListener('click', function (e) {
     if (!e.target || !e.target.closest) return;
-    var geo = e.target.closest('[data-action="use-geo"]');
-    if (geo) { useBrowserLocation(true); return; }
     var btn = e.target.closest('[data-action="save-city"]');
     if (!btn) return;
     var box = btn.closest('[data-citybox]');
     if (box) submit(box, btn);
   });
 
-  document.addEventListener('change', function (e) {
-    var s = e.target;
-    if (!s || !s.getAttribute || s.getAttribute('data-city') !== '1') return;
-    var box = s.closest('[data-citybox]');
-    if (!box) return;
-    var finder = box.querySelector('.cityfinder');
-    if (finder) finder.hidden = s.value !== '__other';
-    if (s.value === '__other') {
-      var input = box.querySelector('input');
-      if (input) setTimeout(function () { input.focus(); }, 0);
-      setHint(box.querySelector('.city-hint'), '');
-      var prev = lastCity;
-      setTimeout(function () {
-        if (prev && W().state.city === '__other') {
-          W().state.city = prev;
-          W().store.set('city', prev);
-          repaint();
-        }
-      }, 0);
-    }
-  });
-
   function boot() {
     restore();
     var hint = document.querySelector('.city-hint');
-    if (hasSaved()) {
-      if (hint) {
-        var c = W().city();
-        hint.textContent = isCustom(c.id) ? 'Using ' + c.label + '.' : '';
-      }
-      return;
+    if (hint) {
+      var c = W().city();
+      hint.textContent = isCustom(c.id) ? 'Using ' + c.label + '.' : '';
     }
-    useBrowserLocation(false);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
@@ -248,7 +250,6 @@
 
   window.WHLOC = {
     lookup: function (q, cb) { lookup(q, cb); },
-    current: function () { return W().city(); },
-    locate: function () { useBrowserLocation(true); }
+    current: function () { return W().city(); }
   };
 })();
