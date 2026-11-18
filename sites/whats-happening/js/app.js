@@ -216,7 +216,7 @@
     });
   }
 
-  /* ---------------- live providers ---------------- */
+  /* ---------------- published live feed (data/live.json) ---------------- */
   function stampLocal(d) {
     return d.getFullYear() + '-' + W.pad(d.getMonth() + 1) + '-' + W.pad(d.getDate()) + 'T' + W.pad(d.getHours()) + ':' + W.pad(d.getMinutes());
   }
