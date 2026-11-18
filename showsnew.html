@@ -2552,6 +2552,31 @@
     /* Script board: a tick plus three one-line fields per segment. */
     .pod-script-row { border-top: 1px solid var(--border); padding: 4px 0 8px; }
     .pod-script-row:first-child { border-top: 0; }
+    /* Baked candidate stories: a click fills the headline and source. */
+    .pod-ideas { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 0 0 28px; }
+    .pod-ideas-head { font-size: var(--text-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+    .pod-idea {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1px;
+      max-width: min(46ch, 100%);
+      min-height: 40px;
+      padding: 5px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font: inherit;
+      font-size: var(--text-xs);
+      line-height: 1.35;
+      text-align: left;
+      cursor: pointer;
+    }
+    .pod-idea:hover { border-color: var(--accent-2); }
+    .pod-idea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+    .pod-idea-h { font-weight: 600; }
+    .pod-idea-s { color: var(--text-muted); }
     .pod-script-fields {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -3067,7 +3092,7 @@ const FILTER_VIEWS = {
   contentRating: ['trending', 'upcoming'],
   year:          ['trending', 'upcoming', 'discoveries'],
   language:      ['trending', 'upcoming', 'recommended', 'discoveries'],
-  hideRated:     ['trending', 'upcoming', 'recommended'],
+  hideRated:     ['upcoming'],
   /* Era and mood are client-side only, so they belong exactly on the views
      whose pipeline runs them — nowhere else. */
   era:           ['trending', 'upcoming', 'recommended'],
@@ -6385,6 +6410,17 @@ function applyRatingToDom(type, id, val) {
     if (emoji) emoji.textContent = val > 0 ? ratingEmoji(val) : '·';
     if (label) label.textContent = val > 0 ? val : '—';
   });
+
+  /* Rating from the home screen removes the card then and there: leaving a
+     just-seen title sitting in the recommendations looks like the rating did
+     not take. A row that empties out goes with it. */
+  if (val > 0 && (state.view === 'trending' || state.view === 'recommended')) {
+    document.querySelectorAll(`.card[data-type="${type}"][data-id="${id}"]`).forEach(card => {
+      const row = card.parentElement;
+      card.remove();
+      if (row && row.classList.contains('card-row') && !row.querySelector('.card')) row.closest('.section')?.remove();
+    });
+  }
 
   const inner = document.getElementById('modal-inner');
   if (inner && inner.dataset.key === mediaKey(type, id)) {
@@ -12262,11 +12298,15 @@ async function filterResults(items, opts = {}) {
   /* AI Director rules run first: they are global and view-independent, and
      they are also what the user expects to persist between reloads. */
   const afterRules = applyRules(rawList);
+  /* Home never shows a title you have rated: rating it means you have seen it,
+     so it is not a recommendation any more. The hide-rated control stays on
+     the views where hiding is still a choice. */
+  const homeView = state.view === 'trending' || state.view === 'recommended';
   let out = afterRules.filter(i => {
     if (filterVisible('type') && state.filterType !== 'all' && i.media_type !== state.filterType) return false;
     if (filterVisible('genre') && state.genre && !(i.genre_ids || []).includes(parseInt(state.genre, 10))) return false;
     if (filterVisible('language') && state.language && (i.original_language || '') !== state.language) return false;
-    if (filterVisible('hideRated') && state.hideRated && state.ratings[mediaKey(i.media_type, i.id)]) return false;
+    if ((homeView || (filterVisible('hideRated') && state.hideRated)) && state.ratings[mediaKey(i.media_type, i.id)]) return false;
     // Only re-check the year when the request itself could not express it,
     // otherwise the two checks disagree for re-releases and drop valid items.
     if (filterVisible('year') && state.year && !yearServerSide) {
@@ -12758,6 +12798,10 @@ window.PODCAST_CATALOG = {"at":"2026-11-18T00:25:18.137Z","top":[{"id":"12003617
 
 const PODCAST_CATALOG = window.PODCAST_CATALOG || { at: '', top: [], genres: [] };
 
+/* Candidate stories for today's Daily Catch-Up, baked daily by
+   scripts/sync-catchup.mjs. Empty until that job has run once. */
+window.PODCAST_CANDIDATES = {"at":"2026-11-18T00:44:18.975Z","segments":{"headlines":[{"h":"Iran launches a third round of strikes on Bahrain, host of U.S. Navy's 5th Fleet","u":"https://www.npr.org/2026/11/17/nx-s1-6044255/us-iran-war-latest-bahrain","s":"NPR"},{"h":"Nvidia board says it does not intend to reinstate Jensen Huang as CEO","u":"https://www.npr.org/2026/11/17/nx-s1-6044213/jensen-huang-nvidia-congress","s":"NPR"},{"h":"Trump is in Asia ahead of Xi, Putin summit. And, tech leaders want Huang back at Nvidia","u":"https://www.npr.org/2026/11/17/g-s1-153950/up-first-newsletter-faa-ground-stop-trump-asia-trip-nvidia-lindsay-clancy","s":"NPR"},{"h":"Sen. Jack Reed says FAA needs a real plan, not just more money","u":"https://www.npr.org/2026/11/17/nx-s1-6042514/jack-reed-faa-oversight-ground-stop-funding","s":"NPR"}],"tech":[{"h":"Java4Shell: RCE in OpenJDK when processing Base64","u":"https://calif.io/java4shell/","s":"Hacker News"},{"h":"GPT‑6.2 Astra and Sol","u":"https://openai.com/index/introducing-gpt-6-2-astra-sol/","s":"Hacker News"},{"h":"Quad9's withdrawal from France: A canary in the coal mine","u":"https://blog.cloudflare.com/quad9-withdrawal-from-france/","s":"Hacker News"},{"h":"Archive Team is archiving the Apple Support Community (closes November 20, 2026)","u":"https://wiki.archiveteam.org/index.php/Apple_Discussions","s":"Hacker News"}],"money":[{"h":"Japan exports in October surge 20.5%, beating estimates on robust chip shipments","u":"https://www.cnbc.com/2026/11/18/japan-exports-october-imports-chips.html","s":"CNBC Markets"},{"h":"St. Louis Fed's Musalem says four more rate hikes may be needed in coming months","u":"https://www.cnbc.com/2026/11/17/alberto-musalem-fed-interest-rates.html","s":"CNBC Markets"},{"h":"Analysis: The Fed's chairman sees an AI revolution coming. Now he has to figure out what it means","u":"https://www.cnbc.com/2026/11/16/kevin-warsh-fed-ai-jobs-productivity-interest-rateshtml.html","s":"CNBC Markets"},{"h":"Japan's economy unexpectedly contracts in third-quarter as elevated energy costs bite","u":"https://www.cnbc.com/2026/11/16/japan-q3-gdp-energy-oil-prices.html","s":"CNBC Markets"}],"sports":[{"h":"LSU adds Luis to roster after SEC allows move without penalty","u":"https://www.espn.com/mens-college-basketball/story/_/id/50514250/lsu-adds-rj-luis-jr-roster-sec-oks-addition","s":"ESPN"},{"h":"No doubts from Dabo: 'Coach Swinney's gonna win another national championship'","u":"https://www.espn.com/college-football/story/_/id/50512833/defiant-dabo-swinney-says-clemson-gonna-win-bunch-more","s":"ESPN"},{"h":"Yankees' Bednar, Twins' Jeffers accept $23.15M qualifying offer to return","u":"https://www.espn.com/mlb/story/_/id/50513467/sources-yankees-bednar-twins-jeffers-accept-2315m-offer","s":"ESPN"},{"h":"Campbell says Hutchinson injury won't prompt celly ban: 'We're not talking to 8-year-olds'","u":"https://www.espn.com/nfl/story/_/id/50510660/dan-campbell-hutchinson-injury-prompt-celebration-ban","s":"ESPN"}],"culture":[{"h":"Don Toliver Announces Sixth Album ‘Nitrous,’ Due Next Month","u":"https://variety.com/2026/music/news/don-toliver-announces-sixth-album-nitrous-release-date-1236951108/","s":"Variety"},{"h":"Longtime Exec Howard Lee Departs as Skydance Confirms New Cable Structure and Division Name Under Channing Dungey","u":"https://variety.com/2026/tv/news/howard-lee-exits-skydance-global-cable-media-1236951079/","s":"Variety"},{"h":"Thom Velde, Former AMC Theatres Executive, Dies at 83","u":"https://variety.com/2026/film/people-news/thom-velde-dead-amc-theatres-1236951046/","s":"Variety"},{"h":"Netflix Eyes Return to Cannes After 10 Years as Festival Lobbies for Joel Coen’s ‘Jack of Spades,’ Starring Josh O’Co…","u":"https://variety.com/2026/film/global/netflix-return-to-cannes-joel-coen-jack-of-spades-1236948245/","s":"Variety"}],"newengland":[{"h":"New Bedford fire sends young girl to hospital","u":"https://www.wpri.com/news/local-news/se-mass/crews-battling-fire-at-new-bedford-building/","s":"WPRI"},{"h":"Providence police chief to retire in January","u":"https://www.wpri.com/news/local-news/providence/providence-police-chief-to-resign-in-january/","s":"WPRI"},{"h":"Woonsocket police searching for missing teen","u":"https://www.wpri.com/news/local-news/blackstone-valley/woonsocket-police-searching-for-missing-teen/","s":"WPRI"},{"h":"Judge rejects bid to detain former RI dance teacher despite alleged bail violations, child safety concerns","u":"https://www.wpri.com/news/local-news/blackstone-valley/judge-rejects-bid-to-detain-former-ri-dance-teacher-despite-alleged-bail-violations-child-safety-concerns/","s":"WPRI"}],"rabbit":[{"h":"2020 — The Utah monolith, built sometime in 2016 is discovered by state biologists of the Utah Division of Wildlife R…","u":"https://en.wikipedia.org/wiki/Utah_monolith","s":"Wikipedia, on this day"},{"h":"2013 — NASA launches the MAVEN probe to Mars.","u":"https://en.wikipedia.org/wiki/NASA","s":"Wikipedia, on this day"},{"h":"2012 — Pope Tawadros II of Alexandria becomes the 118th Pope of the Coptic Orthodox Church of Alexandria.","u":"https://en.wikipedia.org/wiki/Pope_Tawadros_II_of_Alexandria","s":"Wikipedia, on this day"},{"h":"2003 — The Massachusetts Supreme Judicial Court rules 4–3 in Goodridge v. Department of Public Health that the state'…","u":"https://en.wikipedia.org/wiki/Massachusetts_Supreme_Judicial_Court","s":"Wikipedia, on this day"}]}};
+
 const DAILY_SHOW = {
   title: 'The Daily Catch-Up',
   tagline: 'THE STORIES. THE TRENDS. THE THINGS YOU MISSED.',
@@ -12886,6 +12930,34 @@ function podSyncSource(input) {
   else link.removeAttribute('href');
 }
 
+/* Candidate stories baked daily by scripts/sync-catchup.mjs. One click fills
+   the headline and source; "why it matters" stays the producer's line. */
+const POD_IDEAS_STALE_DAYS = 2;
+
+function podIdeas(segId) {
+  const list = (window.PODCAST_CANDIDATES?.segments || {})[segId];
+  return Array.isArray(list) ? list.filter(c => c && c.h) : [];
+}
+
+function podIdeasHTML(seg) {
+  const ideas = podIdeas(seg.id);
+  if (!ideas.length) return '';
+  const at = Date.parse(window.PODCAST_CANDIDATES.at || '');
+  const age = Number.isFinite(at) ? Math.floor((Date.now() - at) / 86400000) : null;
+  const stale = age === null || age > POD_IDEAS_STALE_DAYS;
+  return '<div class="pod-ideas">' +
+    '<span class="pod-ideas-head"' + (stale ? ' title="The daily bake has not run recently"' : '') + '>' +
+      'Ideas' + (stale ? ' · stale' : '') +
+    '</span>' +
+    ideas.map((c, i) =>
+      '<button type="button" class="pod-idea" data-pod-idea="' + esc(seg.id) + '" data-idea="' + i + '"' +
+      ' title="' + esc((c.s || '') + ' — ' + (c.u || '')) + '">' +
+        '<span class="pod-idea-h">' + esc(c.h) + '</span>' +
+        '<span class="pod-idea-s">' + esc(c.s || '') + '</span>' +
+      '</button>').join('') +
+  '</div>';
+}
+
 function podScriptFields(seg, note) {
   const field = (key, type, placeholder, wide) =>
     '<input class="pod-scr-input' + (wide ? ' pod-scr-wide' : '') + '" type="' + type + '"' +
@@ -12965,6 +13037,7 @@ function renderDailyCatchUp(main) {
                 '<span class="pc-min">' + s.min + ' min · ' + podClock(s.at) + '</span>' +
               '</label>' +
               podScriptFields(s, note) +
+              podIdeasHTML(s) +
             '</div>';
           }).join('') +
         '</div>' +
@@ -12978,6 +13051,22 @@ function renderDailyCatchUp(main) {
       cb.closest('.pod-check')?.classList.toggle('done', cb.checked);
       podWriteBoard();
       podPaintRundown();
+    });
+  });
+
+  main.querySelectorAll('[data-pod-idea]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const segId = btn.dataset.podIdea;
+      const idea = podIdeas(segId)[Number(btn.dataset.idea)];
+      if (!idea) return;
+      const headline = main.querySelector('[data-pod-for="' + segId + '"][data-pod-field="h"]');
+      const source = main.querySelector('[data-pod-for="' + segId + '"][data-pod-field="u"]');
+      if (headline) headline.value = idea.h;
+      if (source) {
+        source.value = idea.u;
+        podSyncSource(source);
+      }
+      podWriteBoard();
     });
   });
 
@@ -13025,12 +13114,37 @@ function podChart(genreId) {
   return genre ? genre.shows : PODCAST_CATALOG.top;
 }
 
+/* The scheduled action refreshes the chart weekly. If it stops, the baked
+   snapshot must not go on looking current: two weeks is a missed run plus a
+   week of slack. */
+const POD_CHART_STALE_DAYS = 14;
+
+function podChartAge() {
+  const at = Date.parse(PODCAST_CATALOG.at || '');
+  return Number.isFinite(at) ? Math.floor((Date.now() - at) / 86400000) : null;
+}
+
+function podStaleNotice(age) {
+  return '<div class="notice" role="status" style="margin:12px 0 0">' +
+    '<span class="notice-icon" aria-hidden="true">⚠️</span>' +
+    '<div class="notice-body">' +
+      (age === null
+        ? 'This chart snapshot has no usable date, so it cannot be presented as current.'
+        : 'This chart snapshot is <strong>' + age + ' days old</strong>.') +
+      ' Apple’s chart is refreshed weekly by <code>sync-podcasts.yml</code>, so a date this old usually means that job has stopped. ' +
+      'The list still works offline, but treat it as a starting point rather than this week’s chart.' +
+    '</div>' +
+  '</div>';
+}
+
 function renderPodcasts(main) {
   const genreId = LS.get('pod_genre') || '';
   const shows = podChart(genreId);
   const chartWhen = PODCAST_CATALOG.at
     ? new Date(PODCAST_CATALOG.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
     : '';
+  const chartAge = podChartAge();
+  const chartStale = chartAge === null || chartAge > POD_CHART_STALE_DAYS;
 
   main.innerHTML =
     '<div class="pod-wrap">' +
@@ -13046,7 +13160,9 @@ function renderPodcasts(main) {
 
       '<section class="pod-section">' +
         '<h3>Apple Podcasts chart</h3>' +
-        '<p class="pod-note">US top ' + PODCAST_CATALOG.top.length + (chartWhen ? ' · chart from ' + esc(chartWhen) : '') + ' · baked into the page, so this list works offline.</p>' +
+        '<p class="pod-note">US top ' + PODCAST_CATALOG.top.length + (chartWhen ? ' · chart from ' + esc(chartWhen) : '') +
+          (chartStale ? ' · stale' : '') + ' · baked into the page, so this list works offline.</p>' +
+        (chartStale ? podStaleNotice(chartAge) : '') +
         '<div class="pod-chips" style="margin:0 0 14px">' +
           '<button type="button" class="filter-chip' + (genreId ? '' : ' active') + '" data-pod-genre="">All</button>' +
           PODCAST_CATALOG.genres.map(g =>
