@@ -26,7 +26,7 @@
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-11';
+  var LIB = 'diag-12';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
@@ -184,9 +184,14 @@ window.WHDIAG = (function () {
       var before = cardIds(d).length;
       assert(before > 0, 'browse view rendered no cards to filter');
       click(d, '[data-action="filter"][data-group="cats"][data-val="music"]');
+      /* Compare against the model rather than "non-empty and all music": with
+         a sparse feed a legitimately empty filtered list must pass, not fail
+         with a misleading message. */
       return wait(function () {
-        var ids = cardIds(d);
-        return ids.length && ids.every(function (id) { var e = W.byId(id); return e && e.category === 'music'; });
+        var shown = cardIds(d), exp = modelIds(W, S);
+        if (shown.length !== exp.length) return null;
+        for (var i = 0; i < shown.length; i++) if (shown[i] !== exp[i]) return null;
+        return shown.length + ' cards';
       }, 3000, 'music filter').catch(function () {
         throw new Error('selecting the music chip did not restrict the list');
       }).then(function () {
@@ -313,6 +318,12 @@ window.WHDIAG = (function () {
      come from allEvents(), which now returns only the live feed whenever the
      feed has events, so this check has to reach past it. */
   function icsFixture(W) {
+    /* Prefer a real listing with a long title, so the 75-octet folding rule is
+       exercised against the case that actually breaks strict clients. */
+    var live = (W.allEvents() || []).filter(function (e) {
+      return e && e.source !== 'demo' && String(e.title || '').length > 70;
+    });
+    if (live.length) return live[0];
     var demo = (typeof W.demoEvents === 'function' ? W.demoEvents() : []).filter(function (e) {
       return e && e.source === 'demo';
     });

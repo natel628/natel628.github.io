@@ -133,9 +133,10 @@
       if (input) input.focus();
       return;
     }
-    if (btn) { btn.disabled = true; btn.textContent = 'Looking up\u2026'; }
+    var label = btn ? (btn.getAttribute('data-label') || btn.textContent) : '';
+    if (btn) { btn.setAttribute('data-label', label); btn.disabled = true; btn.textContent = 'Looking up\u2026'; }
     lookup(q, function (err, p) {
-      if (btn) { btn.disabled = false; btn.textContent = 'Look up'; }
+      if (btn) { btn.disabled = false; btn.textContent = label; }
       if (err) { setHint(hint, err.message); return; }
       apply(p);
       syncSelects(p.id, p.label);
@@ -160,8 +161,11 @@
     var sel = document.getElementById('ob-city');
     return sel && sel.closest ? sel.closest('[data-citybox]') : null;
   }
+  /* cityField() renders a plain text input (.cityq). Looking only for
+     input[type="search"] made this always return '', so the onboarding
+     interception below never ran and a typed place was still dropped. */
   function typedText(box) {
-    var input = box && box.querySelector('input[type="search"]');
+    var input = box && box.querySelector('input.cityq, input[type="search"], input[type="text"]');
     return input ? input.value.trim() : '';
   }
   /* Already resolved, or the text is simply the place already selected? */

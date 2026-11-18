@@ -65,7 +65,7 @@ window.WHV = (function () {
     opts = opts || {};
     var why = opts.why === true ? (W.score(ev).reasons[0] || '') : (opts.why || '');
     var c = W.catOf(ev.category);
-    return '<article class="card' + (S.highlight === ev.id ? ' is-hl' : '') + '" data-id="' + ev.id + '" data-action="open">' +
+    return '<article class="card' + (S.highlight === ev.id ? ' is-hl' : '') + '" data-id="' + ev.id + '" data-action="open" role="button" tabindex="0">' +
       art(ev) +
       '<div class="card__body">' +
       '<p class="card__kicker"><span class="dotcat" style="--h:' + c.hue + '"></span>' + W.esc(c.short) + '</p>' +
@@ -102,8 +102,17 @@ window.WHV = (function () {
       (more ? '<a class="shead__link" href="' + more.href + '">' + W.esc(more.label) + W.icon('right') + '</a>' : '') + '</div>';
   }
 
+  /* Empty copy belongs to js/empty-state.js, which builds its coverage line
+     from the live feed. The inline fallback only covers a missing file. */
+  function emptyFor(kind) {
+    var E = window.WHEMPTY;
+    if (E) return kind === 'near' ? E.near() : E.generic();
+    return '<div class="empty"><h3>No events match these filters</h3><p>Try widening the radius or clearing a category.</p><button class="btn btn--ghost" data-action="resetfilters">Clear filters</button></div>';
+  }
+  function nearScope() { return S.filters.where === 'near' || S.view === 'near'; }
+
   function row(events, opts) {
-    if (!events.length) return '<div class="empty"><p>Nothing matches yet. Try widening the radius or clearing a filter.</p></div>';
+    if (!events.length) return emptyFor(nearScope() ? 'near' : 'generic');
     return '<div class="row">' + events.map(function (ev) { return card(ev, opts); }).join('') + '</div>';
   }
 
@@ -147,7 +156,7 @@ window.WHV = (function () {
   }
 
   function results(events) {
-    if (!events.length) return '<div class="empty"><h3>No events match these filters</h3><p>Try a wider radius, another date, or clearing a category.</p><button class="btn btn--ghost" data-action="resetfilters">Clear filters</button></div>';
+    if (!events.length) return emptyFor(nearScope() ? 'near' : 'generic');
     return '<div class="grid">' + events.map(function (ev) { return card(ev); }).join('') + '</div>';
   }
 
@@ -187,8 +196,10 @@ window.WHV = (function () {
             return '<button class="titem" data-action="open" data-id="' + e.id + '" style="--h:' + c.hue + '"><span class="titem__dot"></span><span class="titem__t">' + W.esc(e.title) + '</span><span class="titem__h">' + W.esc(W.fmtTime(W.parseLocal(e.startLocal))) + '</span></button>';
           }).join('') : '<p class="tday__empty">Nothing scheduled</p>') + '</div>';
       }).join('') + '</div>' +
-      sectionHead('Online tonight', 'Streams and premieres you can watch from here', { href: '#/online', label: 'All streams' }) +
-      row(onlineTonight) +
+      (onlineTonight.length
+        ? sectionHead('Online tonight', 'Streams and premieres you can watch from here', { href: '#/online', label: 'All streams' }) + row(onlineTonight)
+        : '') +
+
       sectionHead('Recommended for you', 'Based on your interests and follows', { href: '#/settings', label: 'Edit interests' }) +
       row(recs, { why: true }) +
       sectionHead('Trending', 'What people are looking at right now') +

@@ -1,15 +1,22 @@
-/* What's Happening? - helpful empty states for Near me.
-   Coverage is derived from loaded live data (venueCity), never hardcoded,
-   so it can't drift from scripts/sync-live.mjs CITIES.
+/* What's Happening? - helpful empty states for the listing views.
+
+   Coverage is derived from loaded live data (venueCity), never hardcoded, so
+   it cannot drift from the sync script's city list.
+
+   The first version wrapped the exported WHV.row / WHV.results. views.js calls
+   its own local row() and results() closures, so the exports are not on the
+   render path and none of this copy ever appeared. views.js now asks
+   window.WHEMPTY for the block itself.
 */
-(function () {
-'use strict';
+window.WHEMPTY = (function () {
+  'use strict';
+
   function W() { return window.WH; }
-  function V() { return window.WHV; }
   function cityLabel() {
     try { return W().city().label; } catch (e) { return 'your area'; }
   }
   function radius() { return W().state.radius; }
+
   function coverageText() {
     var live = (W() && W().state && W().state.live) || [];
     var counts = {};
@@ -28,12 +35,14 @@
     if (more > 0) s += ' + ' + more + ' more';
     return s + ' (' + live.length + ' live events)';
   }
+
   function coverageLine() {
     var cov = coverageText();
     if (cov) return 'Live coverage right now: ' + cov + '.';
-    return 'Live data has not loaded yet — try Anywhere or Online.';
+    return 'Live data has not loaded yet - try Anywhere or Online.';
   }
-  function nearEmpty() {
+
+  function near() {
     var city = cityLabel(), r = radius();
     return '<div class="empty">' +
       '<h3>No events within ' + r + ' miles of ' + W().esc(city) + '</h3>' +
@@ -44,7 +53,8 @@
       '<button class="btn btn--ghost" data-action="resetfilters">Clear filters</button>' +
       '</div></div>';
   }
-  function genericEmpty() {
+
+  function generic() {
     return '<div class="empty">' +
       '<h3>No events match these filters</h3>' +
       '<p>' + W().esc(coverageLine()) + '</p>' +
@@ -54,29 +64,6 @@
       '<button class="btn btn--ghost" data-action="resetfilters">Clear filters</button>' +
       '</div></div>';
   }
-  function patch() {
-    var v = V();
-    if (!v || !W()) return false;
-    if (!v.__emptyPatched2) {
-      var origRow = v.row;
-      v.row = function (events, opts) {
-        if (events && events.length) return origRow(events, opts);
-        if (W().state.filters.where === 'near' || W().state.view === 'near' || W().state.view === 'discover') return nearEmpty();
-        return genericEmpty();
-      };
-      var origResults = v.results;
-      v.results = function (events, opts) {
-        if (events && events.length) return origResults(events, opts);
-        if (W().state.filters.where === 'near') return nearEmpty();
-        return genericEmpty();
-      };
-      v.__emptyPatched2 = true;
-      v.__emptyPatched = true;
-    }
-    return true;
-  }
-  if (!patch()) {
-    var t = setInterval(function () { if (patch()) clearInterval(t); }, 50);
-    setTimeout(function () { clearInterval(t); }, 3000);
-  }
+
+  return { near: near, generic: generic, coverage: coverageLine };
 })();

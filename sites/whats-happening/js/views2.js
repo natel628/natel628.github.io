@@ -118,7 +118,7 @@ window.WHV2 = (function () {
     var evs = W.upcoming(W.allEvents(), 400);
     var body = S.calMode === 'month' ? monthView(evs) : S.calMode === 'week' ? weekView(evs) : dayView(evs);
     var saved = W.upcoming(S.saved.map(W.byId).filter(Boolean), 400);
-    return '<div class="pagehead"><div><h1>Calendar</h1><p>Times are shown in your local time. Export any event, or everything you have saved, as a calendar file.</p></div>' +
+    return '<div class="pagehead"><div><h1>Calendar</h1><p>Times are each event&rsquo;s local time at its venue - the same clock the event sheet shows. Export any event, or everything you have saved, as a calendar file; exports carry the correct instant for your own calendar app.</p></div>' +
       (saved.length ? '<button class="btn btn--ghost" data-action="ics-saved">' + W.icon('download') + 'Export ' + saved.length + ' saved</button>' : '') + '</div>' +
       calHead() + body +
       '<div class="legend">' + W.CATS.map(function (c) { return '<span class="legend__i"><span class="dotcat" style="--h:' + c.hue + '"></span>' + c.short + '</span>'; }).join('') + '</div>';
@@ -174,7 +174,7 @@ window.WHV2 = (function () {
     var notifs = [['today', 'Events happening today'], ['soon', 'Events starting soon'], ['watched', 'Saved events approaching'], ['interests', 'New events matching my interests']].map(function (n) {
       return '<label class="check"><input type="checkbox" data-action="notif" value="' + n[0] + '"' + (S.notifPrefs[n[0]] ? ' checked' : '') + '>' + W.esc(n[1]) + '</label>';
     }).join('');
-    return '<div class="pagehead"><div><h1>Settings</h1><p>Everything here is stored only in this browser. Nothing is sent anywhere.</p></div></div>' +
+    return '<div class="pagehead"><div><h1>Settings</h1><p>Your saved events, follows and settings live only in this browser. Place lookups go to Open-Meteo; snow conditions, map tiles and event photos come from Open-Meteo, OpenStreetMap and the listing sources when a page asks for them.</p></div></div>' +
       '<div class="settings">' +
       '<section class="panel"><h2>Location</h2><p class="panel__sub">Used for distance, the map and the featured event. Type a city, state or ZIP code.</p>' +
       cityField('City', 'set-city', c.id) +

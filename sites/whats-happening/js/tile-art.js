@@ -55,9 +55,18 @@
   function eventId(el) {
     var host = el.closest ? el.closest('[data-id]') : null;
     if (host) return host.getAttribute('data-id');
+    /* The hero section has no data-id of its own, so the old ancestor walk
+       returned null and the hero never received a photo. Its own CTA knows. */
+    var hero = el.closest ? el.closest('.hero') : null;
+    if (hero) {
+      var cta = hero.querySelector('[data-action="open"][data-id]');
+      if (cta) return cta.getAttribute('data-id');
+    }
     var modal = document.getElementById('modal');
     if (modal && !modal.hidden) {
-      var b = modal.querySelector('[data-id]');
+      /* The sheet's first [data-id] can be a performer chip, which is a person
+         id, not the event id. Prefer the sheet's own event controls. */
+      var b = modal.querySelector('[data-action="save"][data-id], [data-action="ics-one"][data-id]');
       if (b) return b.getAttribute('data-id');
     }
     return null;

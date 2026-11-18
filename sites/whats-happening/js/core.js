@@ -25,6 +25,7 @@ window.WH = (function () {
     ext: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
     check: '<path d="M20 6L9 17l-5-5"/>',
     spark: '<path d="M12 2l2.2 6.4L21 11l-6.8 2.6L12 20l-2.2-6.4L3 11l6.8-2.6z"/>',
+    arrow: '<path d="M4 12h15M13 6l6 6-6 6"/>',
     download: '<path d="M12 3v12M7 11l5 5 5-5M4 21h16"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
@@ -85,7 +86,6 @@ window.WH = (function () {
     saved: store.get('saved', []),
     follows: store.get('follows', []),
     viewed: store.get('viewed', {}),
-    keys: store.get('keys', { ticketmaster: '', youtube: '' }),
     notifPrefs: store.get('notifPrefs', { today: true, soon: true, watched: true, interests: true }),
     onboarded: store.get('onboarded', false),
     live: [],
@@ -125,9 +125,13 @@ window.WH = (function () {
   function allEvents() { return state.live.length ? state.live : DEMO; }
   function demoEvents() { return DEMO || []; }
 
+  /* Live first, then the invented set. Without the second pass, anything the
+     visitor saved before the feed arrived disappears from the watchlist and
+     the calendar the moment the first sync lands. */
   function byId(id) {
     var list = allEvents();
     for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    for (var j = 0; j < DEMO.length; j++) if (DEMO[j].id === id) return DEMO[j];
     return null;
   }
 
@@ -194,8 +198,9 @@ window.WH = (function () {
     var d = parseLocal(ev.startLocal), now = new Date();
     var today = startOfDay(now);
     var dow = now.getDay();
-    var untilFri = (5 - dow + 7) % 7;
-    var fri = addDays(today, untilFri);
+    /* "This weekend" means the Friday-Sunday that contains today. The old
+       "next Friday" math jumped a full week ahead on Saturday and Sunday. */
+    var fri = addDays(today, dow === 6 ? -1 : dow === 0 ? -2 : 5 - dow);
     switch (f.date) {
       case 'today': return sameDay(d, now);
       case 'tonight': return sameDay(d, now) && d.getHours() >= 17;
@@ -265,15 +270,19 @@ window.WH = (function () {
 
   function sortList(list, mode) {
     var copy = list.slice();
+    /* Recommended used to call score() twice per comparison - distance trig and
+       date parsing inside the sort loop. Score once per event instead. */
+    if (mode === 'recommended') {
+      var ranked = copy.map(function (ev) { return { ev: ev, s: score(ev).score }; });
+      ranked.sort(function (a, b) { return b.s - a.s; });
+      return ranked.map(function (x) { return x.ev; });
+    }
     copy.sort(function (a, b) {
       if (mode === 'soonest') return parseLocal(a.startLocal) - parseLocal(b.startLocal);
       if (mode === 'closest') return (distanceMi(a) == null ? 1e9 : distanceMi(a)) - (distanceMi(b) == null ? 1e9 : distanceMi(b));
       if (mode === 'popular') return (b.popularity || 0) - (a.popularity || 0);
-      if (mode === 'price') {
-        var pa = a.price ? a.price.min : 1e9, pb = b.price ? b.price.min : 1e9;
-        return pa - pb;
-      }
-      return score(b).score - score(a).score;
+      var pa = a.price ? a.price.min : 1e9, pb = b.price ? b.price.min : 1e9;
+      return pa - pb;
     });
     return copy;
   }
@@ -298,12 +307,61 @@ window.WH = (function () {
     return 'In person';
   }
 
+  /* -------- calendar files --------
+     startLocal is wall-clock time at the venue. Exporting it as if it were the
+     viewer's own clock put every out-of-town event at the wrong instant, so
+     the event's IANA zone is applied here and the file is written in UTC. */
+  function byteLen(s) {
+    try { return new TextEncoder().encode(s).length; } catch (e) { return unescape(encodeURIComponent(s)).length; }
+  }
+  function hasZone(tz) {
+    if (!tz || typeof Intl === 'undefined' || !Intl.DateTimeFormat) return false;
+    try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); return true; } catch (e) { return false; }
+  }
+  function zoneOffsetMs(utcMs, tz) {
+    var dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    var p = {};
+    dtf.formatToParts(new Date(utcMs)).forEach(function (x) { p[x.type] = x.value; });
+    var asUtc = Date.UTC(+p.year, +p.month - 1, +p.day, (+p.hour) % 24, +p.minute, +p.second);
+    return asUtc - utcMs;
+  }
+  /* The real instant of an event, given its venue wall-clock time and zone. */
+  function eventStartInstant(ev) {
+    var wall = parseLocal(ev.startLocal);
+    if (!hasZone(ev.timezone)) return wall;   // demo events carry no zone
+    var guess = Date.UTC(wall.getFullYear(), wall.getMonth(), wall.getDate(), wall.getHours(), wall.getMinutes(), 0, 0);
+    var off = zoneOffsetMs(guess, ev.timezone);
+    var t = guess - off;
+    var off2 = zoneOffsetMs(t, ev.timezone);
+    if (off2 !== off) t = guess - off2;      // DST boundary
+    return new Date(t);
+  }
+  /* RFC 5545 folds at 75 octets; continuation lines start with one space.
+     Ticketmaster titles run past that often, and strict clients reject the
+     file rather than unfold it. */
+  function foldLine(line) {
+    var chars = typeof Array.from === 'function' ? Array.from(line) : line.split('');
+    var parts = [], cur = '';
+    for (var i = 0; i < chars.length; i++) {
+      var test = cur + chars[i];
+      var budget = parts.length ? 74 : 75;
+      if (cur && byteLen(test) > budget) { parts.push(cur); cur = chars[i]; }
+      else cur = test;
+    }
+    parts.push(cur);
+    return parts.map(function (p, ix) { return (ix ? ' ' : '') + p; }).join('\r\n');
+  }
+
   function icsFor(events) {
     function f(d) { return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; }
     function t(s) { return String(s || '').replace(/[\\;,]/g, function (m) { return '\\' + m; }).replace(/\n/g, '\\n'); }
     var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Whats Happening//EN', 'CALSCALE:GREGORIAN'];
     events.forEach(function (ev) {
-      var s = parseLocal(ev.startLocal), e = endsAt(ev);
+      var s = eventStartInstant(ev);
+      var e = new Date(s.getTime() + (ev.duration || 120) * 60000);
       lines.push('BEGIN:VEVENT');
       lines.push('UID:' + ev.id + '@whats-happening');
       lines.push('DTSTAMP:' + f(new Date()));
@@ -316,7 +374,7 @@ window.WH = (function () {
       lines.push('END:VEVENT');
     });
     lines.push('END:VCALENDAR');
-    return lines.join('\r\n');
+    return lines.map(foldLine).join('\r\n');
   }
 
   return {
@@ -324,7 +382,7 @@ window.WH = (function () {
     icon: icon, esc: esc, pad: pad, ymd: ymd, parseLocal: parseLocal, addDays: addDays,
     startOfDay: startOfDay, sameDay: sameDay, fmtTime: fmtTime, fmtDay: fmtDay, fmtDayLong: fmtDayLong, relDay: relDay,
     MONTHS: MONTHS, DAYS: DAYS, DAYS_LONG: DAYS_LONG,
-    store: store, state: state, city: city, catOf: catOf, personById: personById, channelById: channelById,
+    store: store, state: state, city: city, catOf: catOf, personById: personById, channelById: channelById, eventStartInstant: eventStartInstant,
     allEvents: allEvents, demoEvents: demoEvents, byId: byId, distanceMi: distanceMi, eventCity: eventCity, endsAt: endsAt, liveState: liveState,
     score: score, peopleNames: peopleNames, query: query, sortList: sortList, upcoming: upcoming,
     priceLabel: priceLabel, presenceLabel: presenceLabel, icsFor: icsFor
