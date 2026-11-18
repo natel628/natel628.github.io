@@ -73,9 +73,26 @@
   }
 
   /* ---------------- modal ---------------- */
-  var returnFocus = null;
-  function openModal(html, keepSelector) {
-    if (modal.hidden) returnFocus = document.activeElement;
+  var returnFocus = null, returnKey = null;
+  /* Saving re-renders the feed, which replaces the very card that opened the
+     sheet. Remember enough of the control to find its replacement, otherwise
+     closing the sheet drops keyboard focus onto the body. */
+  function focusKeyOf(el) {
+    if (!el || !el.getAttribute) return null;
+    var id = el.getAttribute('data-id'), act = el.getAttribute('data-action');
+    return (id && act) ? { id: id, act: act } : null;
+  }
+  function findEquivalent(key) {
+    if (!key) return null;
+    var nodes = document.querySelectorAll('[data-action="' + key.act + '"]');
+    for (var i = 0; i < nodes.length; i++) if (nodes[i].getAttribute('data-id') === key.id) return nodes[i];
+    return null;
+  }
+  function openModal(html, keepSelector, opener) {
+    if (modal.hidden) {
+      returnFocus = opener || document.activeElement;
+      returnKey = focusKeyOf(returnFocus);
+    }
     modal.innerHTML = '<div class="modal__backdrop" data-action="close-modal"></div>' + html;
     modal.hidden = false;
     document.body.classList.add('is-locked');
@@ -88,8 +105,10 @@
     modal.hidden = true;
     modal.innerHTML = '';
     document.body.classList.remove('is-locked');
-    if (returnFocus && returnFocus.focus && document.contains(returnFocus)) returnFocus.focus({ preventScroll: true });
+    var target = (returnFocus && document.contains(returnFocus)) ? returnFocus : findEquivalent(returnKey);
+    if (target && target.focus) target.focus({ preventScroll: true });
     returnFocus = null;
+    returnKey = null;
   }
   function trapFocus(e) {
     if (e.key !== 'Tab') return;
@@ -272,14 +291,14 @@
           if (!ev) return;
           S.viewed[id] = (S.viewed[id] || 0) + 1;
           W.store.set('viewed', S.viewed);
-          openModal(V2.eventModal(ev));
+          openModal(V2.eventModal(ev), null, t);
           break;
         }
-        case 'person': openModal(V2.personModal(id)); break;
+        case 'person': openModal(V2.personModal(id), null, t); break;
         case 'save': e.stopPropagation(); toggleSave(id); break;
         case 'follow': toggleFollow(t.getAttribute('data-key')); break;
         case 'close-modal': closeModal(); break;
-        case 'notifications': openModal(V2.notifications()); break;
+        case 'notifications': openModal(V2.notifications(), null, t); break;
         case 'filter': {
           var g = t.getAttribute('data-group');
           if (g === 'cats') {
@@ -321,7 +340,7 @@
           toast('Saved events and follows cleared');
           paint(false);
           break;
-        case 'onboarding': openModal(V2.onboarding()); break;
+        case 'onboarding': openModal(V2.onboarding(), null, t); break;
         case 'ob-finish': finishOnboarding(); break;
         case 'ob-skip': S.onboarded = true; W.store.set('onboarded', true); closeModal(); break;
         case 'open-nav': document.body.classList.add('nav-open'); break;
