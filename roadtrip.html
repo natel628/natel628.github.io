@@ -3872,13 +3872,13 @@ function closeTour(){
   const m = $('tourModal'), b = $('tourBackdrop');
   if (m) { m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); }
   if (b) b.classList.remove('open');
-  try { localStorage.setItem('rt-tour-v1', 'seen'); } catch (e) {}
 }
 $('tourGo').onclick = closeTour;
 $('tourClose').onclick = closeTour;
 $('tourBackdrop').onclick = closeTour;
 $('showTour').onclick = openTour;
-try { if (!localStorage.getItem('rt-tour-v1')) openTour(); } catch (e) {}
+// The tour no longer opens itself on a first visit — it was a dialog over the
+// plan people came for. Settings still offers “Replay the welcome tour”.
 $('hideAll').onclick = () => {
   const p = devicePrefs();
   p.hidden = NAV_LINKS.map(a => a.getAttribute('href').slice(1));
