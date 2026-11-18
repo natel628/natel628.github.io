@@ -100,13 +100,14 @@
     .nav-right .nav-icon-btn, #ai-btn, #search-btn, #ai-send, .modal-btn,
     .nav-tab, .subnav-tab, .ai-tab, .thumbs-btn, .time-travel-btn,
     .more-item, .more-action, .bn-item, label.filter-toggle,
-    .row-scroll-btn, .card-dismiss, #filters-toggle, .ai-icon-btn {
+    .row-scroll-btn, .card-dismiss, #filters-toggle, .ai-icon-btn,
+    .pod-check {
       min-height: 44px;
     }
     /* Text fields and selects take the same 44px; the 16px mobile type
        that stops iOS zoom stays as-is. */
     #search-input, #wtw-search, .filter-select, #ai-input, #settings-region,
-    .ai-field select {
+    .ai-field select, .pod-search input, .pod-scr-input {
       min-height: 44px;
     }
     .skip-link { min-height: 44px; display: inline-flex; align-items: center; }
@@ -2452,6 +2453,213 @@
          the page. The duration override snaps it open instead. */
       #modal-box, #more-sheet { animation: none !important; }
     }
+    /* ─── Podcasts ─────────────────────────────────────────────────── */
+    .pod-wrap { display: flex; flex-direction: column; gap: 18px; }
+    .pod-hero {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+    }
+    .pod-kicker {
+      font-size: var(--text-xs);
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+    }
+    .pod-hero h2 { font-size: var(--text-2xl); line-height: 1.15; margin: 6px 0 4px; }
+    .pod-tagline {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .pod-lede { font-size: var(--text-sm); color: var(--text-muted); line-height: 1.6; max-width: 66ch; }
+    .pod-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .pod-chip {
+      font-size: var(--text-xs);
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 4px 10px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    /* The clock bar: one span per segment, flex-grow set to its minutes, so
+       the widths are the running order at a glance. */
+    .pod-clock { display: flex; height: 14px; border-radius: var(--radius-pill); overflow: hidden; margin: 16px 0 8px; gap: 2px; }
+    .pod-clock span { height: 100%; }
+    .pod-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+    }
+    .pod-section h3 { font-size: var(--text-md); margin-bottom: 4px; }
+    .pod-note { font-size: var(--text-xs); color: var(--text-muted); margin-bottom: 12px; line-height: 1.55; }
+    .pod-run-row {
+      display: grid;
+      grid-template-columns: 1fr 66px 108px;
+      gap: 10px;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: var(--text-sm);
+      line-height: 1.4;
+    }
+    .pod-run-row:last-child { border-bottom: 0; }
+    .pod-run-head {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .pod-min { text-align: right; font-weight: 700; color: var(--accent-2); font-variant-numeric: tabular-nums; }
+    .pod-run-head .pod-min { color: var(--text-muted); }
+    .pod-time { text-align: right; font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .pod-swatch { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 8px; vertical-align: baseline; }
+    .pod-style { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
+    .pod-style li { font-size: var(--text-sm); color: var(--text-muted); line-height: 1.55; padding-left: 20px; position: relative; }
+    .pod-style li strong { color: var(--text); }
+    .pod-style li::before { content: '▸'; position: absolute; left: 2px; color: var(--accent-2); }
+    .pod-progress { height: 8px; background: var(--surface2); border-radius: var(--radius-pill); overflow: hidden; margin-bottom: 10px; }
+    .pod-progress span {
+      display: block;
+      height: 100%;
+      background: var(--accent-2);
+      border-radius: var(--radius-pill);
+      transform-origin: left center;
+      transform: scaleX(var(--p, 0));
+      transition: transform 320ms var(--ease-out);
+    }
+    .pod-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 4px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: var(--text-sm);
+    }
+    .pod-check:hover { background: var(--surface2); }
+    .pod-check input { width: 18px; height: 18px; flex: 0 0 auto; accent-color: var(--accent-2); cursor: pointer; }
+    .pod-check .pc-name { flex: 1 1 auto; min-width: 0; }
+    .pod-check .pc-min { font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .pod-check.done .pc-name { text-decoration: line-through; color: var(--text-muted); }
+    /* Script board: a tick plus three one-line fields per segment. */
+    .pod-script-row { border-top: 1px solid var(--border); padding: 4px 0 8px; }
+    .pod-script-row:first-child { border-top: 0; }
+    .pod-script-fields {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
+      padding-left: 28px;
+    }
+    .pod-scr-wide { grid-column: 1 / -1; }
+    .pod-scr-input {
+      width: 100%;
+      min-width: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      color: var(--text);
+      font: inherit;
+      font-size: var(--text-sm);
+    }
+    .pod-scr-input::placeholder { color: var(--text-muted); opacity: .9; }
+    .pod-scr-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+    .pod-scr-src { display: flex; gap: 6px; min-width: 0; }
+    .pod-scr-open {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      color: var(--accent-2);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .pod-scr-open:hover { border-color: var(--accent-2); }
+    .pod-search { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .pod-search input {
+      flex: 1 1 240px;
+      min-width: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 9px 12px;
+      color: var(--text);
+      font: inherit;
+      font-size: var(--text-sm);
+    }
+    .pod-search input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+    .pod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+    .pod-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: border-color .15s var(--ease-out);
+    }
+    .pod-card:hover { border-color: var(--accent); }
+    .pod-art { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--surface2); display: block; }
+    .pod-body { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+    .pod-name {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .pod-artist, .pod-genre { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pod-genre { opacity: .85; }
+    /* The card is the link, so the only affordance is this line. */
+    .pod-cta {
+      margin-top: auto;
+      padding-top: 8px;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--accent-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pod-rank {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: rgba(13,13,15,.82);
+      color: #fff;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+    }
+    .pod-empty { font-size: var(--text-sm); color: var(--text-muted); }
+    @media (max-width: 700px) {
+      .pod-hero { padding: 14px; }
+      .pod-hero h2 { font-size: var(--text-xl); }
+      .pod-run-row { grid-template-columns: 1fr 56px; }
+      .pod-run-row .pod-time { display: none; }
+      .pod-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+      .pod-script-fields { grid-template-columns: 1fr; padding-left: 0; }
+      .pod-check .pc-min { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -2487,6 +2695,7 @@
     <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M4 4.5l16 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9.9 5.2A10 10 0 0 1 12 5c5 0 8.5 4.2 10 7-.5 1-1.4 2.3-2.7 3.5M6.6 6.9C4.3 8.3 2.7 10.3 2 12c1.5 2.8 5 7 10 7 1.4 0 2.7-.3 3.9-.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="9" r="1.2"/><circle cx="9" cy="15" r="1.2"/><circle cx="15" cy="15" r="1.2"/></symbol>
     <symbol id="i-tv" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 20.5h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-podcast" viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   </defs>
 </svg>
 
@@ -2497,6 +2706,7 @@
     <button type="button" class="nav-tab" data-view="discoveries" data-section="discover"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg>Discover</button>
     <button type="button" class="nav-tab" data-view="calendar" data-section="calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</button>
     <button type="button" class="nav-tab" data-view="catchup" data-section="catchup"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>New Episodes</button>
+    <button type="button" class="nav-tab" data-view="podcasts" data-section="podcasts"><svg class="icon" aria-hidden="true"><use href="#i-podcast"/></svg>Podcasts</button>
     <button type="button" class="nav-tab" data-view="watchlist" data-section="list"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>My List</button>
     <button type="button" class="nav-tab" data-view="lists" data-section="lists"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Lists</button>
     <button type="button" class="nav-tab" data-view="settings" data-section="settings"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg>Settings</button>
@@ -2786,6 +2996,7 @@
   <div class="more-grid">
     <button type="button" class="more-item" data-view="calendar" data-section="calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</button>
     <button type="button" class="more-item" data-view="catchup" data-section="catchup"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>New Episodes</button>
+    <button type="button" class="more-item" data-view="podcasts" data-section="podcasts"><svg class="icon" aria-hidden="true"><use href="#i-podcast"/></svg>Podcasts</button>
     <button type="button" class="more-item" data-view="stats" data-section="stats"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Stats</button>
     <button type="button" class="more-item" data-view="settings" data-section="settings"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg>Settings</button>
   </div>
@@ -7393,6 +7604,7 @@ const VIEW_SECTION = {
   list: 'list', watchlist: 'list', quickrate: 'list', stats: 'list',
   lists: 'lists',
   calendar: 'calendar', settings: 'settings', catchup: 'catchup',
+  podcasts: 'podcasts', dailycatchup: 'podcasts',
 };
 /* Icon reference for labels that are injected as markup. */
 const ICON = id => `<svg class="icon" aria-hidden="true"><use href="#${id}"/></svg>`;
@@ -7401,8 +7613,9 @@ const SECTION_VIEWS = {
   home:     [['recommended', ICON('i-sparkles') + 'For You'], ['trending', ICON('i-flame') + 'Trending']],
   discover: [['discoveries', ICON('i-search') + 'Discoveries'], ['moodboard', ICON('i-palette') + 'Mood Board'], ['upcoming', ICON('i-film') + 'Upcoming']],
   list:     [['watchlist', ICON('i-star') + 'My List'], ['quickrate', ICON('i-bolt') + 'Quick Rate'], ['stats', ICON('i-chart') + 'Stats']],
+  podcasts: [['dailycatchup', ICON('i-podcast') + 'Daily Catch-Up'], ['podcasts', ICON('i-search') + 'Browse']],
 };
-const PRIMARY_SECTIONS = new Set(['home', 'discover', 'calendar', 'list', 'lists', 'settings', 'catchup']);
+const PRIMARY_SECTIONS = new Set(['home', 'discover', 'calendar', 'list', 'lists', 'settings', 'catchup', 'podcasts']);
 
 function sectionOf(view) { return VIEW_SECTION[view] || 'home'; }
 
@@ -7434,11 +7647,12 @@ function renderSectionActions(section) {
   el.querySelector('[data-act="tonight"]')?.addEventListener('click', whatsOnTonight);
 }
 
-const SECTION_LABEL = { home: 'Home', discover: 'Discover', calendar: 'Calendar', list: 'My List', lists: 'Lists', settings: 'Settings', catchup: 'New Episodes' };
+const SECTION_LABEL = { home: 'Home', discover: 'Discover', calendar: 'Calendar', list: 'My List', lists: 'Lists', settings: 'Settings', catchup: 'New Episodes', podcasts: 'Podcasts' };
 const VIEW_LABEL = {
   trending: 'Trending', recommended: 'For You', discoveries: 'Discoveries', moodboard: 'Mood Board',
   upcoming: 'Upcoming', watchlist: 'My List', quickrate: 'Quick Rate', stats: 'Stats',
   calendar: 'Calendar', settings: 'Settings', lists: 'Lists', search: 'Search', catchup: 'New Episodes',
+  podcasts: 'Browse podcasts', dailycatchup: 'Daily Catch-Up',
 };
 
 function renderBreadcrumb(section) {
@@ -7488,11 +7702,12 @@ async function renderView() {
     list:       'Watchlist & Schedule — My List',
     stats:      'Watchlist & Schedule — Stats',
     settings:   'Watchlist & Schedule — Settings',
+    podcasts:   'Watchlist & Schedule — Podcasts',
   };
   document.title = viewTitles[section] || 'Watchlist & Schedule';
   const welcomeBanner = document.getElementById('welcome-banner');
   if (welcomeBanner) welcomeBanner.classList.toggle('off-section', section !== 'home');
-  const hideSearch = section === 'settings' || section === 'stats';
+  const hideSearch = section === 'settings' || section === 'stats' || section === 'podcasts';
   document.querySelectorAll('.search-wrap, #recent-searches').forEach(el =>
     el.classList.toggle('off-section', hideSearch));
   document.querySelectorAll('.nav-tab, .bn-item, .more-item').forEach(t => {
@@ -7535,6 +7750,8 @@ async function renderView() {
       case 'stats':       renderStats(main);                   break;
       case 'lists':       renderLists(main);                   break;
       case 'settings':    renderSettings(main);                break;
+      case 'podcasts':    renderPodcasts(main, token);          break;
+      case 'dailycatchup': renderDailyCatchUp(main, token);     break;
       case 'discoveries': await renderDiscoveries(main, token);break;
       case 'moodboard':   await renderMoodBoard(main, token);   break;
       case 'wheretowatch': await renderWhereToWatch(main, token); break;
@@ -12524,6 +12741,378 @@ function toggleMoreSheet() {
   const sheet = document.getElementById('more-sheet');
   if (sheet?.classList.contains('open')) closeMoreSheet();
   else openMoreSheet();
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   PODCASTS
+   Two views, one section. "Daily Catch-Up" is the show being made: the
+   clock, the house style and a checklist for today's episode. "Browse" is
+   the podcast browser from podcast.html: the Apple Podcasts US charts
+   baked into this file (no key, no network, still there offline) plus live
+   search through Apple's keyless iTunes API.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Apple Podcasts US snapshot, taken from podcast.html's baked data.
+   Same source, trimmed to what the cards draw. */
+window.PODCAST_CATALOG = {"at":"2026-11-18T00:25:18.137Z","top":[{"id":"1200361736","n":"The Daily","a":"The New York Times","g":"Daily News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/ab/64/66/ab6466a9-9a7d-e20e-7a3d-bc5be37d29ce/mza_15084852813176276273.jpg/300x300bb.png"},{"id":"1322200189","n":"Crime Junkie","a":"Audiochuck","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/8c/35/04/8c350430-2fbf-98d0-0a25-00b76550ffeb/mza_13445204151221888086.jpg/300x300bb.png"},{"id":"360084272","n":"The Joe Rogan Experience","a":"Joe Rogan","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/d8/97/bf/d897bfdd-73ea-6a4e-5c3e-02ab30707f2b/mza_8607972238001778397.jpg/300x300bb.png"},{"id":"1089022756","n":"Pardon My Take","a":"Barstool Sports","g":"Football","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/35/74/6a/35746a0c-7687-7dde-ff04-338d93e78303/mza_10377078556009223546.jpg/300x300bb.png"},{"id":"1464919521","n":"Dateline NBC","a":"NBC News","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts115/v4/8c/00/7a/8c007a42-e550-0214-d4cb-b59cd7edf194/mza_5305664083935674472.jpeg/300x300bb.png"},{"id":"1222114325","n":"Up First from NPR","a":"NPR","g":"Daily News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/0e/35/25/0e352569-e694-81d9-ea55-5f935981c15a/mza_1788275989855583986.png/300x300bb.png"},{"id":"201671138","n":"This American Life","a":"This American Life","g":"Society & Culture","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/fa/16/7d/fa167dfc-d04d-5676-fc83-ea4c2bc00e23/mza_16461113657293104053.png/300x300bb.png"},{"id":"1043699613","n":"The Bill Simmons Podcast","a":"The Ringer","g":"Sports","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/cc/80/7a/cc807ada-eefc-d962-fb19-514a729249ce/mza_4622982796810028676.jpg/300x300bb.png"},{"id":"1192761536","n":"Pod Save America","a":"Pod Save America","g":"Politics","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/44/dc/61/44dc6141-25e9-5bb3-e19e-a2337233d19e/mza_5506771870755587769.jpg/300x300bb.png"},{"id":"1379959217","n":"Morbid","a":"Ash Kelley & Alaina Urquhart","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/78/e9/0e/78e90ee0-567d-1ad8-17a0-17d7c988c4bd/mza_8425901783365617933.jpg/300x300bb.png"},{"id":"965818306","n":"48 Hours","a":"48 Hours","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/c8/4f/8f/c84f8fa2-074d-6023-7f31-9c781b80dedc/mza_7616553513239265555.jpeg/300x300bb.png"},{"id":"1521578868","n":"SmartLess","a":"Jason Bateman, Sean Hayes, Will Arnett","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/b1/93/5f/b1935f9f-35be-9144-e813-626bd8dabfb4/mza_4132654708551836825.jpg/300x300bb.png"},{"id":"1368081567","n":"The Toast","a":"Dear Media","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/4e/3d/5e/4e3d5eb1-5b47-8723-f3c0-8ecf7e25d198/mza_14233415616171199300.jpeg/300x300bb.png"},{"id":"987967575","n":"20/20","a":"ABC News","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/81/6c/5d/816c5d57-7c3f-3df9-1557-08e17469dfe4/mza_1433648970787567135.jpg/300x300bb.png"},{"id":"1532976305","n":"The Megyn Kelly Show","a":"SiriusXM","g":"News Commentary","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/3e/9f/c1/3e9fc13c-8030-b57e-f29e-0f14dc8db10d/mza_602213930944272333.jpg/300x300bb.png"},{"id":"1074507850","n":"My Favorite Murder with Karen Kilgariff and Georgia Hardstark","a":"Exactly Right and iHeartPodcasts","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/1b/80/b1/1b80b146-8608-f76f-97e7-7a2317549c35/mza_14115126871478479568.jpg/300x300bb.png"},{"id":"1537788786","n":"The Rest Is History","a":"Goalhanger","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/12/e4/4e/12e44e6e-f250-0621-75c4-668fda6c48a3/mza_9347628783012573828.jpg/300x300bb.png"},{"id":"1447684472","n":"The Bulwark Daily","a":"The Bulwark","g":"Politics","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/93/4f/85/934f8542-7a14-cf77-7d0e-63604579de3c/mza_4576536635025194283.jpg/300x300bb.png"},{"id":"1492492083","n":"The Shawn Ryan Show","a":"Shawn Ryan","g":"Philosophy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts112/v4/d0/b3/2d/d0b32d7f-ab2d-5791-83b0-854f698a9184/mza_13561258173056659752.jpg/300x300bb.png"},{"id":"1345682353","n":"Armchair Expert with Dax Shepard","a":"Armchair Umbrella","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/f0/13/8f/f0138f4b-8bc3-0a64-2c11-ef566840f60f/mza_3062409012210474882.jpeg/300x300bb.png"},{"id":"121493675","n":"NPR News Now","a":"NPR","g":"Daily News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/27/a0/ab/27a0abb7-817f-d80c-4fed-6fd04d424333/mza_16804553558295235422.jpg/300x300bb.png"},{"id":"1608813794","n":"MrBallen Podcast: Strange, Dark & Mysterious Stories","a":"Ballen Studios","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/a5/9c/8a/a59c8a0a-0cb2-9862-e0d6-7b5ee4e9e157/mza_12554888833857337425.jpg/300x300bb.png"},{"id":"1510240831","n":"The MeidasTouch Podcast","a":"MeidasTouch Network","g":"News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts122/v4/73/32/80/733280d2-330a-2f24-c600-bc1088f9f899/mza_17833502176263457882.jpeg/300x300bb.png"},{"id":"1438054347","n":"Conan O’Brien Needs A Friend","a":"Team Coco & Earwolf","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/c6/02/8a/c6028ab7-bffd-db83-53e4-34a4ea9bef21/mza_16944101310108746053.jpg/300x300bb.png"},{"id":"1646101002","n":"The Mel Robbins Podcast","a":"Mel Robbins","g":"Self-Improvement","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/ab/66/a5/ab66a5f5-b52b-c70a-227b-0721bd9dc660/mza_13546984924981879479.jpg/300x300bb.png"},{"id":"278981407","n":"Stuff You Should Know","a":"iHeartPodcasts","g":"Society & Culture","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/aa/82/91/aa82912f-23ee-6f6a-583c-a4e993164d0e/mza_12111158076643383507.jpg/300x300bb.png"},{"id":"1539568321","n":"The Bible in a Year (with Fr. Mike Schmitz)","a":"Ascension","g":"Christianity","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/ca/87/e0/ca87e07d-9d97-a433-1dc9-55dcfbd54f17/mza_9875864189557480350.jpg/300x300bb.png"},{"id":"934820588","n":"The Dan Le Batard Show","a":"Dan Le Batard","g":"Sports","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/57/d7/d9/57d7d9e0-cf27-7928-0650-578623e80c29/mza_14930160221470262963.jpg/300x300bb.png"},{"id":"77001367","n":"The Ramsey Show","a":"Ramsey Network","g":"Investing","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/52/5a/58/525a5881-56d7-af3a-b134-5917b08d6d0f/mza_1355546972903263890.jpg/300x300bb.png"},{"id":"1761444284","n":"IHIP News","a":"Jennifer Welch & Angie Sullivan","g":"News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/d2/03/97/d20397e5-d81c-5c77-af62-d28b4788d5d8/mza_17145417274727436068.jpeg/300x300bb.png"},{"id":"1615637724","n":"Betrayal Season 6","a":"iHeartPodcasts | Glass Podcasts","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/45/c0/ce/45c0cec7-f08f-a48c-505f-0796c7f75401/mza_6343213902657514244.jpg/300x300bb.png"},{"id":"1719657632","n":"The Tucker Carlson Show","a":"Tucker Carlson Network","g":"News Commentary","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/1a/1f/9c/1a1f9c6d-67fd-0e33-cdf3-4b62617ea9a6/mza_9226157347267917930.jpg/300x300bb.png"},{"id":"1548604447","n":"The Ezra Klein Show","a":"New York Times Opinion","g":"Society & Culture","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/9d/ca/35/9dca35d8-e7d2-7e4f-63b5-c2ff4973a3f5/mza_16891544429738729361.jpg/300x300bb.png"},{"id":"790487079","n":"Sword and Scale","a":"Sword and Scale","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/74/c8/f5/74c8f527-4c7a-5d27-f35e-046689927206/mza_7811618468750544222.jpg/300x300bb.png"},{"id":"1047335260","n":"The Ben Shapiro Show","a":"The Daily Wire","g":"News Commentary","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/b6/2c/2c/b62c2c46-3fd6-5733-2c82-b95b781a4b40/mza_17718419788103424619.jpg/300x300bb.png"},{"id":"1145089790","n":"Snapped: Women Who Murder","a":"Oxygen","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts125/v4/d4/ef/ff/d4efff91-8a69-ba8a-b5a8-634c029af6ff/mza_14265882527940743554.jpeg/300x300bb.png"},{"id":"1291423644","n":"The Diary Of A CEO with Steven Bartlett","a":"DOAC","g":"Business","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/69/af/0d/69af0ddd-1e0f-7ae3-c84b-88f18e31ad0c/mza_14445920128472365296.png/300x300bb.png"},{"id":"1795483480","n":"Good Hang with Amy Poehler","a":"The Ringer","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/2b/94/bb/2b94bb6e-44f1-9d57-7748-b7456072806d/mza_1064202164981856225.jpg/300x300bb.png"},{"id":"294055449","n":"The Rachel Maddow Show","a":"Rachel Maddow, MS NOW","g":"News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/b6/f9/25/b6f92595-26d3-7991-646f-e99345579850/mza_15700909801633924951.jpg/300x300bb.png"},{"id":"1028908750","n":"Hidden Brain","a":"Hidden Brain, Shankar Vedantam","g":"Social Sciences","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/e2/18/b8/e218b838-b790-3a33-441f-c3772d9abbbf/mza_6896085647855199484.jpg/300x300bb.png"}],"genres":[{"id":"1301","name":"Arts","shows":[{"id":"214089682","n":"Fresh Air","a":"NPR","g":"Books","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/68/35/32/683532c0-dd91-676a-eeef-3ace951cd6e9/mza_6896198885971355473.jpg/300x300bb.png"},{"id":"275699983","n":"The Moth","a":"The Moth","g":"Performing Arts","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/16/39/63/1639632d-7ad2-d87b-d4f7-d0ec95eff386/mza_8915289722686017414.jpg/300x300bb.png"},{"id":"394775318","n":"99% Invisible","a":"Roman Mars","g":"Design","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/79/d0/35/79d035ea-9043-b43e-7380-33cd47bd968b/mza_2606971010425550919.jpg/300x300bb.png"},{"id":"1279361017","n":"Spooked","a":"KQED and Snap Studios","g":"Performing Arts","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/f6/a6/7a/f6a67a2e-3ec4-ab14-1ae6-61e48160ef60/mza_13003431668439549740.jpg/300x300bb.png"},{"id":"1095138637","n":"The Magnus Archives","a":"Rusty Quill","g":"Performing Arts","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts115/v4/01/2b/f6/012bf6cf-da73-11a8-4666-d65ad58dcea5/mza_1748774726906212092.jpg/300x300bb.png"},{"id":"1876049295","n":"The Book Club","a":"Goalhanger","g":"Books","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/13/f3/08/13f30879-5501-0137-b51a-bc75c052a890/mza_17225192423393937631.jpg/300x300bb.png"},{"id":"1445900544","n":"Daily Rosary Meditations | Catholic Prayers","a":"Dr. Mike Scherschligt","g":"Arts","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/37/c0/55/37c05538-e588-662f-c622-9976d6a4870e/mza_1302769640044452325.jpg/300x300bb.png"},{"id":"1877705944","n":"Stories of Art","a":"HENI Talks","g":"Visual Arts","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/93/d1/9c/93d19ce1-9e66-052b-f6dd-85b04c33ce31/mza_9317689713513636454.jpg/300x300bb.png"}]},{"id":"1303","name":"Comedy","shows":[{"id":"360084272","n":"The Joe Rogan Experience","a":"Joe Rogan","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/d8/97/bf/d897bfdd-73ea-6a4e-5c3e-02ab30707f2b/mza_8607972238001778397.jpg/300x300bb.png"},{"id":"1521578868","n":"SmartLess","a":"Jason Bateman, Sean Hayes, Will Arnett","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/b1/93/5f/b1935f9f-35be-9144-e813-626bd8dabfb4/mza_4132654708551836825.jpg/300x300bb.png"},{"id":"1368081567","n":"The Toast","a":"Dear Media","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/4e/3d/5e/4e3d5eb1-5b47-8723-f3c0-8ecf7e25d198/mza_14233415616171199300.jpeg/300x300bb.png"},{"id":"1345682353","n":"Armchair Expert with Dax Shepard","a":"Armchair Umbrella","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/f0/13/8f/f0138f4b-8bc3-0a64-2c11-ef566840f60f/mza_3062409012210474882.jpeg/300x300bb.png"},{"id":"1438054347","n":"Conan O’Brien Needs A Friend","a":"Team Coco & Earwolf","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/c6/02/8a/c6028ab7-bffd-db83-53e4-34a4ea9bef21/mza_16944101310108746053.jpg/300x300bb.png"},{"id":"1795483480","n":"Good Hang with Amy Poehler","a":"The Ringer","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/2b/94/bb/2b94bb6e-44f1-9d57-7748-b7456072806d/mza_1064202164981856225.jpg/300x300bb.png"},{"id":"1536352412","n":"Giggly Squad","a":"Hannah Berner & Paige DeSorbo","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/e8/09/a6/e809a65d-03c3-82ce-383b-5586f49acc5b/mza_10887220202918113929.jpg/300x300bb.png"},{"id":"121493804","n":"Wait Wait... Don't Tell Me!","a":"NPR","g":"Comedy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/e9/94/fe/e994fed6-50a1-6519-9b84-b0beaa205242/mza_2290751556169099993.jpg/300x300bb.png"}]},{"id":"1304","name":"Education","shows":[{"id":"1646101002","n":"The Mel Robbins Podcast","a":"Mel Robbins","g":"Self-Improvement","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/ab/66/a5/ab66a5f5-b52b-c70a-227b-0721bd9dc660/mza_13546984924981879479.jpg/300x300bb.png"},{"id":"1532956108","n":"IMO with Michelle Obama and Craig Robinson","a":"Higher Ground","g":"Self-Improvement","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/8c/ce/36/8cce3648-2e76-735c-f6d8-8e72febc8ed7/mza_13220543383965859061.jpeg/300x300bb.png"},{"id":"1184022695","n":"The Jordan B. Peterson Podcast","a":"Dr. Jordan B. Peterson","g":"Education","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/58/16/42/581642ef-7f31-d538-7c69-0a42ec25c604/mza_5721699391369703653.jpeg/300x300bb.png"},{"id":"1461493560","n":"Life Kit","a":"NPR","g":"Self-Improvement","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/d5/80/28/d5802807-0091-e50c-6395-09944a6124ea/mza_4206547085430839338.jpg/300x300bb.png"},{"id":"1093028505","n":"The Bossticks","a":"Lauryn Bosstick and Michael Bosstick / Dear Media","g":"Education","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/74/3f/e8/743fe8fd-31d0-2204-936f-fc5c06b4054e/mza_1022273159166077539.jpg/300x300bb.png"},{"id":"1111796513","n":"The Lazy Genius Podcast","a":"Kendra, The Lazy Genius","g":"Self-Improvement","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/ab/b9/27/abb927f6-4308-e63c-909c-a29f283deba0/mza_4117542941176484493.jpg/300x300bb.png"},{"id":"582272991","n":"The Rich Roll Podcast","a":"Rich Roll","g":"Self-Improvement","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/24/79/73/247973ca-0868-9852-e66b-61e28e0ee71a/mza_7587627905992125546.jpeg/300x300bb.png"},{"id":"1430315931","n":"The Daily Stoic","a":"Daily Stoic | Backyard Ventures","g":"Education","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/00/4b/cd/004bcd1b-3036-86ae-2394-e3ac6798cace/mza_2488584016134530967.jpeg/300x300bb.png"}]},{"id":"1305","name":"Kids & Family","shows":[{"id":"1483233279","n":"Greeking Out from National Geographic Kids","a":"National Geographic Kids | Realm","g":"Stories for Kids","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/ed/59/8d/ed598d66-4ed7-172f-6bd5-3143f01bdeda/mza_2990023010383729301.jpg/300x300bb.png"},{"id":"1246443751","n":"Circle Round","a":"WBUR","g":"Kids & Family","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/54/38/74/543874b1-821b-9e11-6f5d-965d2f0c5245/mza_218851255204087494.jpg/300x300bb.png"},{"id":"1233834541","n":"Wow in the World","a":"Tinkercast","g":"Education for Kids","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/4c/b0/4a/4cb04a06-4e0a-d534-2a28-3f2fb37fa14e/mza_14610475686329584932.jpeg/300x300bb.png"},{"id":"1512016028","n":"Deep Sleep Sounds","a":"Slumber Studios","g":"Kids & Family","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/b8/af/85/b8af856e-eaa2-25d9-8b95-63f20e58a4a2/mza_9761806453745940078.jpg/300x300bb.png"},{"id":"1436651521","n":"Grimm, Grimmer, Grimmest","a":"Pinna","g":"Stories for Kids","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/42/de/b6/42deb6f0-61a9-9907-cee2-01bbdc0abadc/mza_15992966716241603545.jpg/300x300bb.png"},{"id":"1648149849","n":"The Arthur Podcast","a":"GBH & PBS Kids","g":"Stories for Kids","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts122/v4/09/11/bb/0911bb64-d63d-a609-e82d-2c1ed8757550/mza_3943707684382264981.jpg/300x300bb.png"},{"id":"719585944","n":"Story Pirates","a":"Story Pirates","g":"Kids & Family","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/06/40/0d/06400df3-052b-e503-1cd7-783cfe435d32/mza_2584487554373114557.jpg/300x300bb.png"},{"id":"1440863621","n":"Sleep Tight Stories - Bedtime Stories for Kids","a":"Sleep Tight Media | Calming Bedtime Stories for Kids & Starglow Media","g":"Stories for Kids","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/bd/07/88/bd07885c-ad6a-7b99-57e3-edc7107c1e28/mza_15339251106429086887.jpg/300x300bb.png"}]},{"id":"1309","name":"TV & Film","shows":[{"id":"498130432","n":"Watch What Crappens","a":"Ben Mandelker & Ronnie Karam","g":"TV & Film","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/77/e8/e6/77e8e61d-0db3-725c-4d9e-99d321451d2a/mza_6556989693380571267.jpeg/300x300bb.png"},{"id":"1439252196","n":"The Big Picture","a":"The Ringer","g":"TV & Film","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/1d/81/33/1d813395-fa0e-b76a-4bb9-e04730707f3f/mza_12669351877858891723.jpeg/300x300bb.png"},{"id":"1268527882","n":"The Rewatchables","a":"The Ringer","g":"TV & Film","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/99/63/f5/9963f58d-1bc5-9bed-b1bb-254711ab4d6b/mza_11356609841155522187.jpg/300x300bb.png"},{"id":"1477524410","n":"Two Ts In A Pod with Teddi Mellencamp and Tamra Judge","a":"iHeartPodcasts","g":"TV & Film","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/cc/0b/4f/cc0b4fe2-2ae5-6351-435d-116bc64d1313/mza_2345922108152654935.jpg/300x300bb.png"},{"id":"1111739567","n":"The Watch","a":"The Ringer","g":"TV & Film","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/83/61/b4/8361b4c7-4b9c-0555-2228-70c8ec5d3870/mza_11815292969908497439.jpg/300x300bb.png"},{"id":"1512847066","n":"WHAT WENT WRONG","a":"Sad Boom Media","g":"Film History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/3e/a7/b1/3ea7b148-ad9e-44a6-ed37-038d0a38561a/mza_6002495171349453305.jpeg/300x300bb.png"},{"id":"981330533","n":"Blank Check with Griffin & David","a":"Blank Check Productions","g":"Film Reviews","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/9e/dc/a2/9edca279-2375-e939-1f16-7ef6cce8a2c1/mza_8895145708975523992.jpeg/300x300bb.png"},{"id":"1605253822","n":"The Official Gilded Age Podcast","a":"HBO","g":"After Shows","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/d5/e6/b9/d5e6b924-ae6b-8c0a-f205-c11c9f1666b4/mza_14198575629132233623.jpg/300x300bb.png"}]},{"id":"1310","name":"Music","shows":[{"id":"1535809341","n":"The Joe Budden Podcast","a":"The Joe Budden Network","g":"Music","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts113/v4/f2/21/fa/f221fabd-017f-5125-633b-f1fe4f39802a/mza_182995249085044287.jpg/300x300bb.png"},{"id":"1572182022","n":"New Rory & MAL","a":"iHeartPodcasts and The Volume","g":"Music","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/10/a1/37/10a1376f-ec38-93c6-bac0-1fe2667fba54/mza_17497927755659124151.jpg/300x300bb.png"},{"id":"120315823","n":"Popcast","a":"The New York Times","g":"Music Commentary","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/ed/61/f3/ed61f32a-d457-8cda-3444-d4c6bece6e33/mza_11706990639249263276.jpg/300x300bb.png"},{"id":"1275172907","n":"DISGRACELAND","a":"Exactly Right and iHeartPodcasts","g":"Music","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/0d/dc/61/0ddc6188-5abd-0b0e-afff-15579f31ee05/mza_13310814426403836496.jpg/300x300bb.png"},{"id":"1437402802","n":"A History of Rock Music in 500 Songs","a":"Andrew Hickey","g":"Music History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts124/v4/88/18/59/881859a5-f344-c249-f4b9-3d9b62add05a/mza_16428964146354887078.png/300x300bb.png"},{"id":"708337036","n":"93X Half-Assed Morning Show","a":"93X | Cumulus Media Minneapolis | KXXR-FM","g":"Music","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/d6/74/f3/d674f307-a6d7-5959-e578-f80ecaeef098/mza_15023634130690903357.jpg/300x300bb.png"},{"id":"1861635232","n":"The Ebro, Laura, Rosenberg Show","a":"Ebro, Laura, Rosenberg","g":"Music Commentary","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/09/c0/34/09c0340f-c0c0-d9f8-0903-384fcb992e68/mza_818068673999857945.jpeg/300x300bb.png"},{"id":"1812462068","n":"Joe and Jada","a":"iHeartPodcasts and The Volume","g":"Music Interviews","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/9f/20/d3/9f20d371-060d-c3ee-fe91-982c013dc91a/mza_1355775778802325846.jpg/300x300bb.png"}]},{"id":"1314","name":"Religion & Spirituality","shows":[{"id":"1539568321","n":"The Bible in a Year (with Fr. Mike Schmitz)","a":"Ascension","g":"Christianity","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/ca/87/e0/ca87e07d-9d97-a433-1dc9-55dcfbd54f17/mza_9875864189557480350.jpg/300x300bb.png"},{"id":"1669321198","n":"Live Free with Josh Howerton","a":"Lakepointe Church","g":"Christianity","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/03/c8/84/03c8844c-bbd6-2c29-5045-25eac434eaef/mza_16269028133219747046.jpg/300x300bb.png"},{"id":"1440833267","n":"The Bible Recap","a":"Tara-Leigh Cobble","g":"Christianity","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/a9/39/6e/a9396eee-5799-ca86-3338-c425ac92d5f8/mza_4094078393490984677.png/300x300bb.png"},{"id":"1545433056","n":"followHIM","a":"Hank Smith & John Bytheway","g":"Christianity","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/23/99/00/239900da-3b3b-f793-e1c0-ab6f591731d1/mza_72973430176591357.jpg/300x300bb.png"},{"id":"352660924","n":"Timothy Keller Sermons Podcast by Gospel in Life","a":"Tim Keller","g":"Christianity","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/9b/89/18/9b8918d2-5a02-e3f4-18dc-787a747122e4/mza_6961486960125567640.jpg/300x300bb.png"},{"id":"390278738","n":"The Briefing with Albert Mohler","a":"R. Albert Mohler, Jr.","g":"Christianity","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/9f/09/f3/9f09f3b9-f706-8860-4a44-522c2e6d4d3d/mza_7469384477692994300.png/300x300bb.png"},{"id":"137254859","n":"Joel Osteen Podcast","a":"iHeartPodcasts","g":"Religion & Spirituality","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/68/f8/5a/68f85a00-06d4-fd90-7626-5161abbe0790/mza_11350406751783730444.jpg/300x300bb.png"},{"id":"1460147025","n":"Unashamed with the Robertson Family","a":"The Robertson Family","g":"Christianity","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/94/80/d5/9480d517-9717-0cec-8143-b989f1e09b98/mza_16048748082593014166.jpg/300x300bb.png"}]},{"id":"1318","name":"Technology","shows":[{"id":"1502871393","n":"All-In with Chamath, Jason, Sacks & Friedberg","a":"All-In Podcast, LLC","g":"Technology","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts124/v4/c7/d2/92/c7d292ea-44b3-47ff-2f5e-74fa5b23db6c/mza_7005270671777648882.png/300x300bb.png"},{"id":"1516093381","n":"Dwarkesh Podcast","a":"Dwarkesh Patel","g":"Technology","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/af/6f/48/af6f4828-86a2-d4c3-b998-de2af1fdc8c0/mza_949624848217027907.jpg/300x300bb.png"},{"id":"1050462261","n":"Acquired","a":"Ben Gilbert and David Rosenthal","g":"Technology","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/a8/e1/de/a8e1deff-9f88-4e55-a541-b0dc793c0cdc/mza_11539673419613154037.jpg/300x300bb.png"},{"id":"1680633614","n":"The AI Daily Brief: Artificial Intelligence News and Analysis","a":"Nathaniel Whittemore","g":"Technology","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/9c/78/d8/9c78d82d-a2d1-a026-6ca2-f92ea61be9ae/mza_18421328158594577747.jpg/300x300bb.png"},{"id":"523121474","n":"TED Radio Hour","a":"NPR","g":"Technology","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/94/ea/88/94ea8879-e7f2-378c-231c-c041c7b295b5/mza_9110350352446077100.jpg/300x300bb.png"},{"id":"6812430636","n":"Machine Gods","a":"NPR","g":"Technology","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/8d/6c/90/8d6c90b3-3b4e-3235-0746-c7326bc2e12e/mza_18068913614183282606.jpg/300x300bb.png"},{"id":"1614253637","n":"Search Engine","a":"PJ Vogt","g":"Technology","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/90/5b/62/905b6220-b426-6e2d-b97c-9f0a16ed31c4/mza_1372109499010593679.jpeg/300x300bb.png"},{"id":"1771917740","n":"American Alchemy with Jesse Michels","a":"Jesse Michels","g":"Technology","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/dc/82/af/dc82af71-3bb1-8aae-a0d1-5510646d2f4a/mza_8358567098597130017.jpeg/300x300bb.png"}]},{"id":"1321","name":"Business","shows":[{"id":"77001367","n":"The Ramsey Show","a":"Ramsey Network","g":"Investing","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/52/5a/58/525a5881-56d7-af3a-b134-5917b08d6d0f/mza_1355546972903263890.jpg/300x300bb.png"},{"id":"1291423644","n":"The Diary Of A CEO with Steven Bartlett","a":"DOAC","g":"Business","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/69/af/0d/69af0ddd-1e0f-7ae3-c84b-88f18e31ad0c/mza_14445920128472365296.png/300x300bb.png"},{"id":"1744631325","n":"Prof G Markets","a":"Vox Media Podcast Network","g":"Investing","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/7a/23/3b/7a233bad-e655-5d9a-e9a4-532b2ad03f2f/mza_14391801209796191046.jpg/300x300bb.png"},{"id":"201853034","n":"Marketplace","a":"Marketplace","g":"Business","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/90/34/b4/9034b43b-0a18-3ed4-1f69-c18dc001c891/mza_2187886854309824642.jpg/300x300bb.png"},{"id":"1526697745","n":"PBD Podcast","a":"PBD Podcast","g":"Business","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/ad/7e/74/ad7e7422-47fe-fe86-e2d1-eaba6323650a/mza_10077304312086458683.jpg/300x300bb.png"},{"id":"290783428","n":"Planet Money","a":"NPR","g":"Business","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/85/df/53/85df5334-0fae-28a9-2bc4-b97b81061d0e/mza_10839245066228881011.jpg/300x300bb.png"},{"id":"1691595080","n":"Financial Audit","a":"Caleb Hammer","g":"Investing","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/b9/e8/c1/b9e8c18d-6db9-e2db-5fbb-02c9b88bcfed/mza_11588913954898061535.jpg/300x300bb.png"},{"id":"1498802610","n":"The Prof G Pod with Scott Galloway","a":"Vox Media Podcast Network","g":"Entrepreneurship","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/c9/06/46/c906468e-11b3-4864-38ae-302c042c3b9b/mza_4417741141265378429.jpeg/300x300bb.png"}]},{"id":"1324","name":"Society & Culture","shows":[{"id":"201671138","n":"This American Life","a":"This American Life","g":"Society & Culture","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/fa/16/7d/fa167dfc-d04d-5676-fc83-ea4c2bc00e23/mza_16461113657293104053.png/300x300bb.png"},{"id":"1492492083","n":"The Shawn Ryan Show","a":"Shawn Ryan","g":"Philosophy","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts112/v4/d0/b3/2d/d0b32d7f-ab2d-5791-83b0-854f698a9184/mza_13561258173056659752.jpg/300x300bb.png"},{"id":"278981407","n":"Stuff You Should Know","a":"iHeartPodcasts","g":"Society & Culture","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/aa/82/91/aa82912f-23ee-6f6a-583c-a4e993164d0e/mza_12111158076643383507.jpg/300x300bb.png"},{"id":"1548604447","n":"The Ezra Klein Show","a":"New York Times Opinion","g":"Society & Culture","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/9d/ca/35/9dca35d8-e7d2-7e4f-63b5-c2ff4973a3f5/mza_16891544429738729361.jpg/300x300bb.png"},{"id":"1578324041","n":"The Binge: Free Shelley Jensen","a":"Sony Music Entertainment","g":"Documentary","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/7c/e4/f5/7ce4f5ec-5a52-3d6e-d357-6a168c150c62/mza_16354447142909432777.jpeg/300x300bb.png"},{"id":"1527609854","n":"The Dr. John Delony Show","a":"Ramsey Network","g":"Relationships","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts112/v4/34/0f/4c/340f4c53-dc9b-9971-a94f-54c25a5d339a/mza_3848511723335763740.jpg/300x300bb.png"},{"id":"1448210981","n":"The Viall Files","a":"Nick Viall","g":"Relationships","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/22/a9/46/22a94635-5607-cd66-5e5f-6f2d741b1801/mza_12538356473562979013.jpg/300x300bb.png"},{"id":"354668519","n":"Freakonomics Radio","a":"Freakonomics Radio + Stitcher","g":"Documentary","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts115/v4/f7/0c/c5/f70cc540-ce36-d96f-b111-c970aad5505c/mza_17703422762227531425.jpg/300x300bb.png"}]},{"id":"1483","name":"Fiction","shows":[{"id":"1573623902","n":"The Sleepy Bookshelf","a":"Slumber Studios","g":"Drama","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/14/9c/09/149c0952-fb65-5508-a991-44222118ffdc/mza_9385381836876857943.jpg/300x300bb.png"},{"id":"947899573","n":"The Adventure Zone","a":"The McElroys","g":"Comedy Fiction","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/47/07/9b/47079b2b-6a9f-a47f-4ba2-d69a085a6893/mza_10748390385756673545.jpg/300x300bb.png"},{"id":"6821125433","n":"Midnight Radio","a":"iHeartPodcasts","g":"Drama","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/6f/dd/f3/6fddf354-332d-ce62-8d9b-f8c2e848ab39/mza_12964220275557830237.jpg/300x300bb.png"},{"id":"444083093","n":"The NoSleep Podcast","a":"Creative Reason Media","g":"Science Fiction","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/cd/bb/90/cdbb90fb-0110-74ab-39ec-0e564dbbba30/mza_16674526559908986622.jpg/300x300bb.png"},{"id":"1784284807","n":"Sherlock Holmes Short Stories","a":"NOISER","g":"Drama","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/b3/75/d5/b375d53e-bc60-b527-86e4-a7d7b1bf0d03/mza_4918920429805582688.jpeg/300x300bb.png"},{"id":"1348470106","n":"Six Minutes","a":"GZM Shows","g":"Drama","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/dc/86/87/dc86876b-75a5-3dcc-dfc7-93c00d5d73df/mza_11649606284826288390.jpeg/300x300bb.png"},{"id":"1501406448","n":"Scary Horror Stories by Dr. NoSleep","a":"Dr. NoSleep Studios","g":"Fiction","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/f2/4c/fb/f24cfb24-c283-b202-81bf-52812b5e951f/mza_1545762400164021087.jpeg/300x300bb.png"},{"id":"1483252435","n":"Full Body Chills","a":"Audiochuck","g":"Fiction","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/8a/ac/97/8aac97fa-64d0-59c3-309d-13dfa86691c6/mza_7243056048626100546.jpg/300x300bb.png"}]},{"id":"1487","name":"History","shows":[{"id":"1537788786","n":"The Rest Is History","a":"Goalhanger","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/12/e4/4e/12e44e6e-f250-0621-75c4-668fda6c48a3/mza_9347628783012573828.jpg/300x300bb.png"},{"id":"978052928","n":"Lore","a":"Aaron Mahnke","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/9b/e0/c0/9be0c09c-b803-4774-77d3-85167bc87a31/mza_16743750170316675841.jpg/300x300bb.png"},{"id":"1779133177","n":"Sleepy History","a":"Slumber Studios","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/09/40/e9/0940e9b3-42ff-bdc2-807b-cdd888503f75/mza_10975884687951750557.jpg/300x300bb.png"},{"id":"1520403988","n":"The Ancients","a":"History Hit","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/6c/94/31/6c943113-5484-a41d-5cb7-bf606ff289ef/mza_6401313720037127611.jpeg/300x300bb.png"},{"id":"1291579828","n":"History That Doesn't Suck","a":"Prof. Greg Jackson","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/73/50/1f/73501fd7-de66-cdfe-d316-334eae92b855/mza_17847109988024788034.jpg/300x300bb.png"},{"id":"1435516849","n":"American Scandal","a":"Audible Original","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/f7/91/9a/f7919a02-8948-7812-3c35-4c78ceea4815/mza_17740823854183495101.jpeg/300x300bb.png"},{"id":"1313596069","n":"American History Tellers","a":"Audible Original","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/93/37/d8/9337d89a-95d3-8df3-c08a-15408017e408/mza_18105168834619059515.jpeg/300x300bb.png"},{"id":"1579040306","n":"Short History Of...","a":"NOISER","g":"History","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts112/v4/57/9e/e8/579ee81e-be15-4b29-1d13-26abd9296e88/mza_9274260941010613844.jpeg/300x300bb.png"}]},{"id":"1488","name":"True Crime","shows":[{"id":"1322200189","n":"Crime Junkie","a":"Audiochuck","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/8c/35/04/8c350430-2fbf-98d0-0a25-00b76550ffeb/mza_13445204151221888086.jpg/300x300bb.png"},{"id":"1464919521","n":"Dateline NBC","a":"NBC News","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts115/v4/8c/00/7a/8c007a42-e550-0214-d4cb-b59cd7edf194/mza_5305664083935674472.jpeg/300x300bb.png"},{"id":"1379959217","n":"Morbid","a":"Ash Kelley & Alaina Urquhart","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/78/e9/0e/78e90ee0-567d-1ad8-17a0-17d7c988c4bd/mza_8425901783365617933.jpg/300x300bb.png"},{"id":"965818306","n":"48 Hours","a":"48 Hours","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/c8/4f/8f/c84f8fa2-074d-6023-7f31-9c781b80dedc/mza_7616553513239265555.jpeg/300x300bb.png"},{"id":"987967575","n":"20/20","a":"ABC News","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/81/6c/5d/816c5d57-7c3f-3df9-1557-08e17469dfe4/mza_1433648970787567135.jpg/300x300bb.png"},{"id":"1074507850","n":"My Favorite Murder with Karen Kilgariff and Georgia Hardstark","a":"Exactly Right and iHeartPodcasts","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/1b/80/b1/1b80b146-8608-f76f-97e7-7a2317549c35/mza_14115126871478479568.jpg/300x300bb.png"},{"id":"1608813794","n":"MrBallen Podcast: Strange, Dark & Mysterious Stories","a":"Ballen Studios","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/a5/9c/8a/a59c8a0a-0cb2-9862-e0d6-7b5ee4e9e157/mza_12554888833857337425.jpg/300x300bb.png"},{"id":"1615637724","n":"Betrayal Season 6","a":"iHeartPodcasts | Glass Podcasts","g":"True Crime","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/45/c0/ce/45c0cec7-f08f-a48c-505f-0796c7f75401/mza_6343213902657514244.jpg/300x300bb.png"}]},{"id":"1489","name":"News","shows":[{"id":"1200361736","n":"The Daily","a":"The New York Times","g":"Daily News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/ab/64/66/ab6466a9-9a7d-e20e-7a3d-bc5be37d29ce/mza_15084852813176276273.jpg/300x300bb.png"},{"id":"1222114325","n":"Up First from NPR","a":"NPR","g":"Daily News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/0e/35/25/0e352569-e694-81d9-ea55-5f935981c15a/mza_1788275989855583986.png/300x300bb.png"},{"id":"1192761536","n":"Pod Save America","a":"Pod Save America","g":"Politics","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/44/dc/61/44dc6141-25e9-5bb3-e19e-a2337233d19e/mza_5506771870755587769.jpg/300x300bb.png"},{"id":"1532976305","n":"The Megyn Kelly Show","a":"SiriusXM","g":"News Commentary","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/3e/9f/c1/3e9fc13c-8030-b57e-f29e-0f14dc8db10d/mza_602213930944272333.jpg/300x300bb.png"},{"id":"1447684472","n":"The Bulwark Daily","a":"The Bulwark","g":"Politics","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/93/4f/85/934f8542-7a14-cf77-7d0e-63604579de3c/mza_4576536635025194283.jpg/300x300bb.png"},{"id":"121493675","n":"NPR News Now","a":"NPR","g":"Daily News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/27/a0/ab/27a0abb7-817f-d80c-4fed-6fd04d424333/mza_16804553558295235422.jpg/300x300bb.png"},{"id":"1510240831","n":"The MeidasTouch Podcast","a":"MeidasTouch Network","g":"News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts122/v4/73/32/80/733280d2-330a-2f24-c600-bc1088f9f899/mza_17833502176263457882.jpeg/300x300bb.png"},{"id":"1761444284","n":"IHIP News","a":"Jennifer Welch & Angie Sullivan","g":"News","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/d2/03/97/d20397e5-d81c-5c77-af62-d28b4788d5d8/mza_17145417274727436068.jpeg/300x300bb.png"}]},{"id":"1502","name":"Leisure","shows":[{"id":"1453805439","n":"Critical Role","a":"Critical Role","g":"Games","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts122/v4/63/22/5c/63225caa-8e4e-a0b9-afc3-d44ac0ab6756/mza_10197961325643784134.jpeg/300x300bb.png"},{"id":"1466286684","n":"Get Played","a":"Headgum","g":"Video Games","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/4b/6d/ff/4b6dff78-28f3-8a50-a6aa-47c69e0bf797/mza_6072961650790924101.jpeg/300x300bb.png"},{"id":"1541274724","n":"Duck Call Room","a":"Si Robertson & Justin Martin","g":"Leisure","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/a6/be/b2/a6beb258-7d6f-45a1-0334-f7656fdbf58e/mza_5083149254594121387.jpg/300x300bb.png"},{"id":"1601527148","n":"Mojo In The Morning","a":"iHeartRadio and Channel 955 (WKQI-FM)","g":"Leisure","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/e1/1a/a4/e11aa469-b520-dc02-cbc2-b840f49e7f29/mza_15531546469349356633.jpg/300x300bb.png"},{"id":"1247343210","n":"Kinda Funny Games Daily: Video Games News Podcast","a":"Kinda Funny","g":"Video Games","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts122/v4/6d/99/43/6d99438d-3f7c-4449-f77e-cf70123b0ce8/mza_9547249688201563314.jpg/300x300bb.png"},{"id":"273773140","n":"TBTL: Too Beautiful To Live","a":"TBTL","g":"Leisure","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/ca/28/be/ca28befd-6c2a-47ce-6f31-6077539834f4/mza_772705946562440963.jpg/300x300bb.png"},{"id":"276268226","n":"Game Scoop!","a":"IGN & Geek Media","g":"Video Games","art":"https://is1-ssl.mzstatic.com/image/thumb/Features2/v4/d4/f6/47/d4f64716-423e-8403-851d-a8e107bbe769/mza_4624406836823011967.jpg/300x300bb.png"},{"id":"1563814788","n":"Tales from the Stinky Dragon","a":"Stinky Dragon","g":"Games","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/41/36/15/4136151f-317e-fe9a-1826-201c3f059bc2/mza_3169735500866754711.jpg/300x300bb.png"}]},{"id":"1511","name":"Government","shows":[{"id":"1469168641","n":"Strict Scrutiny","a":"Strict Scrutiny","g":"Government","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/68/3f/62/683f6228-b15b-e0de-8c2c-e8c20860ca98/mza_763663699315012405.png/300x300bb.png"},{"id":"1245002955","n":"The DSR Network","a":"The DSR Network","g":"Government","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/5e/5a/60/5e5a60eb-ff3d-16fd-b289-d7d2fcbcf8aa/mza_6618658443895976046.jpeg/300x300bb.png"},{"id":"785026885","n":"The Chris Plante Show","a":"WMAL | Cumulus Podcast Network | Cumulus Media Washington","g":"Government","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/fa/7f/85/fa7f8539-79fe-7a18-38df-162a832d8e04/mza_9129647032299769867.png/300x300bb.png"},{"id":"498897343","n":"The Lawfare Podcast","a":"The Lawfare Institute","g":"Government","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/fb/ff/d7/fbffd791-aa59-3dfe-56da-b5d5be4e0df9/mza_3314617112618523122.jpeg/300x300bb.png"},{"id":"284675702","n":"Red Eye Radio","a":"Cumulus Podcast Network","g":"Government","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/64/b9/36/64b93689-a27c-fc6b-ebd0-d8052bd4683a/mza_3110521675706361306.jpg/300x300bb.png"},{"id":"1497785843","n":"5-4","a":"Prologue Projects","g":"Government","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts114/v4/ca/d5/c1/cad5c11c-26c6-7e25-afc7-9a496c7f6e03/mza_5631414486129804049.jpeg/300x300bb.png"},{"id":"1802625282","n":"Optimist Economy","a":"Kathryn Anne Edwards and Robin Rauzi","g":"Government","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/51/fd/a5/51fda517-b295-8224-fdb4-f6a49ce2f56f/mza_17810033521087287533.png/300x300bb.png"},{"id":"824357555","n":"The John Phillips Show","a":"790 KABC Radio | Cumulus Los Angeles","g":"Government","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/8a/04/a1/8a04a154-b934-299e-7982-3fdc7be68e25/mza_389384552536883000.jpg/300x300bb.png"}]},{"id":"1512","name":"Health & Fitness","shows":[{"id":"1378040733","n":"Nothing much happens: bedtime stories to help you sleep","a":"Wellness Loud","g":"Health & Fitness","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/87/f2/26/87f226c9-77ac-d4fe-6b98-4da2345de5c0/mza_5833691041544808336.jpg/300x300bb.png"},{"id":"1545953110","n":"Huberman Lab","a":"Scicomm Media","g":"Health & Fitness","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/9a/d3/19/9ad31912-0b5a-a16e-2d7c-9fd074698b9c/mza_8994222203629500925.jpg/300x300bb.png"},{"id":"1487513861","n":"Get Sleepy: stories for sleep","a":"Slumber Studios","g":"Alternative Health","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/32/09/db/3209db97-279d-e296-9046-6c5a59a02993/mza_3744341201616159111.jpeg/300x300bb.png"},{"id":"1450994021","n":"On Purpose with Jay Shetty","a":"Perfect Strangers","g":"Mental Health","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/d9/ca/b7/d9cab712-aabb-a545-6778-c0c9df35ed21/mza_246538913899468793.jpg/300x300bb.png"},{"id":"1535408667","n":"Maintenance Phase","a":"Aubrey Gordon & Michael Hobbes","g":"Health & Fitness","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/d3/23/3c/d3233ce4-e1e6-710c-141a-dad45b263c7d/mza_17331100152243008221.jpg/300x300bb.png"},{"id":"1087147821","n":"10% Happier with Dan Harris","a":"10% Happier","g":"Mental Health","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/79/04/87/79048703-d88c-acc2-c319-a8f2534b9ae5/mza_15018160844227259170.jpg/300x300bb.png"},{"id":"1382804627","n":"The Dr. Hyman Show","a":"Dr. Mark Hyman","g":"Medicine","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/d2/b9/3c/d2b93c2e-15bb-1e58-2a0c-ad0675f8e60f/mza_6711012579128791407.jpg/300x300bb.png"},{"id":"954100822","n":"Mind Pump: Raw Fitness Truth","a":"Sal Di Stefano, Adam Schafer, Justin Andrews, Doug Egge","g":"Fitness","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/04/81/34/0481349a-879b-989f-f726-3e8fb7373e85/mza_5911014176578145133.png/300x300bb.png"}]},{"id":"1533","name":"Science","shows":[{"id":"1028908750","n":"Hidden Brain","a":"Hidden Brain, Shankar Vedantam","g":"Social Sciences","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/e2/18/b8/e218b838-b790-3a33-441f-c3772d9abbbf/mza_6896085647855199484.jpg/300x300bb.png"},{"id":"152249110","n":"Radiolab","a":"WNYC Studios","g":"Natural Sciences","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/2b/b2/4d/2bb24d28-f3bb-916f-6bf3-9e125ba5219b/mza_4476298389845914795.jpg/300x300bb.png"},{"id":"1820703126","n":"Boring History for Sleep","a":"Velvet","g":"Social Sciences","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/62/a6/37/62a63720-ae50-b8c6-6282-b62a41e54588/mza_4071962011418281551.jpg/300x300bb.png"},{"id":"325404506","n":"StarTalk with Neil deGrasse Tyson","a":"Neil deGrasse Tyson","g":"Science","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/d7/88/9b/d7889bab-dca5-77ba-3d0c-7fae8f16ab11/mza_8810454848871508.jpg/300x300bb.png"},{"id":"1278815517","n":"Ologies with Alie Ward","a":"Alie Ward","g":"Science","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts125/v4/44/4e/42/444e42f6-1ce8-1e7b-2d50-4ed506c27004/mza_18370866018545460916.jpg/300x300bb.png"},{"id":"604656349","n":"Sasquatch Chronicles","a":"Sasquatch Chronicles - Bigfoot Encounters","g":"Natural Sciences","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts115/v4/bf/4c/04/bf4c0485-bed0-3206-ce8b-3332433433c0/mza_849656122803846986.png/300x300bb.png"},{"id":"73329284","n":"Science Friday","a":"Science Friday and WNYC Studios","g":"Life Sciences","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/0a/a3/e2/0aa3e2a9-dda9-a7ea-8711-490d7f6c5c55/mza_1538698271404318803.jpg/300x300bb.png"},{"id":"1554578197","n":"Unexplainable","a":"Vox","g":"Life Sciences","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/eb/87/4d/eb874d60-4424-62df-a136-d5b5f32c451b/mza_11680166435885601347.jpg/300x300bb.png"}]},{"id":"1545","name":"Sports","shows":[{"id":"1089022756","n":"Pardon My Take","a":"Barstool Sports","g":"Football","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/35/74/6a/35746a0c-7687-7dde-ff04-338d93e78303/mza_10377078556009223546.jpg/300x300bb.png"},{"id":"1043699613","n":"The Bill Simmons Podcast","a":"The Ringer","g":"Sports","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/cc/80/7a/cc807ada-eefc-d962-fb19-514a729249ce/mza_4622982796810028676.jpg/300x300bb.png"},{"id":"934820588","n":"The Dan Le Batard Show","a":"Dan Le Batard","g":"Sports","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/57/d7/d9/57d7d9e0-cf27-7928-0650-578623e80c29/mza_14930160221470262963.jpg/300x300bb.png"},{"id":"917453719","n":"Fantasy Footballers - Fantasy Football Podcast","a":"Fantasy Football","g":"Fantasy Sports","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/e0/f6/ed/e0f6edb8-b352-1dd1-1836-c77fdf5c6f17/mza_1578365354745278550.jpeg/300x300bb.png"},{"id":"1112425552","n":"Spittin Chiclets","a":"Barstool Sports","g":"Hockey","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/bf/ee/de/bfeedeee-11a2-6eda-c42b-e2d2abf631fd/mza_18403270500742374126.jpg/300x300bb.png"},{"id":"1805478723","n":"The Zach Lowe Show","a":"The Ringer","g":"Basketball","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/ad/51/bb/ad51bb95-3671-3cad-39c1-01253aed7025/mza_6538243094298368173.jpg/300x300bb.png"},{"id":"1845980031","n":"The Ryen Russillo Show","a":"Barstool Sports","g":"Football","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/ac/6e/46/ac6e4654-d8dc-ae6e-e4c6-7636bcf4898f/mza_17415378073775063938.jpg/300x300bb.png"},{"id":"960902903","n":"The MeatEater Podcast","a":"MeatEater","g":"Wilderness","art":"https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/ad/27/62/ad2762c4-858d-c42b-0b81-cee586ab597d/mza_12778609106669149114.jpg/300x300bb.png"}]}]};
+
+const PODCAST_CATALOG = window.PODCAST_CATALOG || { at: '', top: [], genres: [] };
+
+const DAILY_SHOW = {
+  title: 'The Daily Catch-Up',
+  tagline: 'THE STORIES. THE TRENDS. THE THINGS YOU MISSED.',
+  runtime: 'A 15–20 minute daily briefing',
+  lede: 'One sitting, the whole day: the headlines that moved, what shipped in tech and AI, where the money went, the scores and the next games, what was funny, what happened around Rhode Island and New England, and one story you would otherwise never have found. Every segment says why it matters and gives the context behind it, and the hosts argue it out when they disagree.',
+  topics: [
+    'National & world news',
+    'Technology & AI',
+    'Stocks, markets & crypto',
+    'Sports highlights & upcoming games',
+    'Entertainment, comedy & pop culture',
+    'Rhode Island & New England',
+    'Stories you would not find yourself',
+    'Upcoming events worth checking out',
+  ],
+  /* The running order is the show: fixed segments, fixed minutes, fixed
+     colours so the clock bar and the table read as one thing. */
+  segments: [
+    { id: 'headlines',  name: 'The big headlines',           min: 3, color: '#e50914', note: 'National and world news, in the order it matters' },
+    { id: 'tech',       name: 'Tech & AI',                   min: 3, color: '#2ec4b6', note: 'Technology and AI developments, and what they change' },
+    { id: 'money',      name: 'Money & markets',             min: 2, color: '#f5a623', note: 'Stocks, markets and cryptocurrency' },
+    { id: 'sports',     name: 'Sports',                      min: 3, color: '#7c5cff', note: 'Highlights, plus the games coming up' },
+    { id: 'culture',    name: 'Entertainment & pop culture', min: 3, color: '#ff7a59', note: 'Entertainment, comedy and pop culture' },
+    { id: 'newengland', name: 'Around New England',          min: 2, color: '#3ba55d', note: 'Rhode Island, New England, and the events worth leaving the house for' },
+    { id: 'rabbit',     name: 'The rabbit hole',             min: 3, color: '#5b8def', note: 'The interesting story you would not have found yourself' },
+  ],
+  style: [
+    ['Why it matters', 'every story earns its slot with a reason to care, not just a headline read aloud.'],
+    ['Context first', 'the two sentences of background that make the headline make sense to someone who missed it.'],
+    ['Disagree out loud', 'the hosts push back on each other and say so; listeners hear both sides instead of one voice.'],
+    ['A little humor', 'a joke is welcome; a bit is never the whole segment.'],
+  ],
+};
+
+/* The authored minutes are the house cut. A target keeps the seven segments
+   and their order but re-splits the minutes to add up to it exactly. */
+const POD_TARGETS = [0, 15, 18, 20];
+const POD_BASE_TOTAL = DAILY_SHOW.segments.reduce((n, s) => n + s.min, 0);
+let podTarget = POD_TARGETS.includes(LS.get('pod_target')) ? LS.get('pod_target') : 0;
+
+/* Largest-remainder split: same proportions, whole minutes, exact total. */
+function podMinutesFor(target) {
+  const base = DAILY_SHOW.segments.map(s => s.min);
+  if (!target) return base;
+  const raw = base.map(min => (min * target) / POD_BASE_TOTAL);
+  const mins = raw.map(Math.floor);
+  const order = raw
+    .map((value, i) => ({ i, part: value - Math.floor(value) }))
+    .sort((a, b) => b.part - a.part || a.i - b.i);
+  let left = target - mins.reduce((n, m) => n + m, 0);
+  for (let k = 0; k < left; k++) mins[order[k].i] += 1;
+  return mins;
+}
+
+/* Segments with their minutes, start and end for the current target. */
+function podSegments() {
+  const mins = podMinutesFor(podTarget);
+  let at = 0;
+  return DAILY_SHOW.segments.map((seg, i) => {
+    const row = { ...seg, min: mins[i], at, end: at + mins[i] };
+    at = row.end;
+    return row;
+  });
+}
+
+function podClock(min) {
+  return Math.floor(min / 60) + ':' + String(min % 60).padStart(2, '0');
+}
+
+/* The board is today's episode: which segments are cut, and the headline,
+   the one-line "why it matters" and the source each one is built from.
+   Keying the saved copy to the date means a new day starts clean without a
+   date picker or a reset button. */
+function podToday() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+
+function podBoard() {
+  const saved = LS.get('pod_rundown');
+  if (!saved || saved.day !== podToday()) return { ids: [], notes: {} };
+  const known = id => DAILY_SHOW.segments.some(s => s.id === id);
+  return {
+    ids: (Array.isArray(saved.ids) ? saved.ids : []).filter(known),
+    notes: saved.notes && typeof saved.notes === 'object' ? saved.notes : {},
+  };
+}
+
+/* Ticks and text are read and written together, so the two can never
+   disagree about what today's board holds. */
+function podWriteBoard() {
+  const box = document.getElementById('pod-checks');
+  if (!box) return;
+  const ids = [...box.querySelectorAll('[data-pod-seg]')].filter(el => el.checked).map(el => el.dataset.podSeg);
+  const notes = {};
+  box.querySelectorAll('[data-pod-field]').forEach(input => {
+    const value = input.value.trim();
+    if (!value) return;
+    const id = input.dataset.podFor;
+    notes[id] = notes[id] || {};
+    notes[id][input.dataset.podField] = value;
+  });
+  LS.set('pod_rundown', { day: podToday(), ids, notes });
+}
+
+/* Typing lands on a short delay; a tick saves at once. */
+let podSaveTimer = 0;
+function podSaveSoon() {
+  clearTimeout(podSaveTimer);
+  podSaveTimer = setTimeout(podWriteBoard, 300);
+}
+
+function podPaintRundown() {
+  const total = DAILY_SHOW.segments.length;
+  const done = podBoard().ids.length;
+  const count = document.getElementById('pod-count');
+  const bar = document.getElementById('pod-bar');
+  if (count) count.textContent = done + ' of ' + total + ' segments ready';
+  if (bar) bar.style.setProperty('--p', String(done / total));
+}
+
+/* The source link only exists once the field holds an http(s) URL. */
+function podSyncSource(input) {
+  const link = input.closest('.pod-scr-src')?.querySelector('.pod-scr-open');
+  if (!link) return;
+  const url = /^https?:\/\//i.test(input.value.trim()) ? input.value.trim() : '';
+  link.hidden = !url;
+  if (url) link.href = url;
+  else link.removeAttribute('href');
+}
+
+function podScriptFields(seg, note) {
+  const field = (key, type, mark, placeholder, label) =>
+    '<input class="pod-scr-input' + (mark ? ' pod-scr-wide' : '') + '" type="' + type + '"' +
+    ' data-pod-field="' + key + '" data-pod-for="' + seg.id + '"' +
+    ' value="' + esc(note[key] || '') + '" placeholder="' + placeholder + '"' +
+    ' aria-label="' + esc(seg.name) + ' — ' + label + '">';
+  return '<div class="pod-script-fields">' +
+    field('h', 'text', true, 'Headline', 'headline') +
+    field('w', 'text', false, 'Why it matters', 'why it matters') +
+    '<span class="pod-scr-src">' +
+      field('u', 'url', false, 'Source link', 'source link') +
+      '<a class="pod-scr-open" href="' + esc(note.u || '') + '" target="_blank" rel="noopener noreferrer"' +
+      ' aria-label="Open the source for ' + esc(seg.name) + '"' + (note.u ? '' : ' hidden') + '>↗</a>' +
+    '</span>' +
+  '</div>';
+}
+
+function renderDailyCatchUp(main) {
+  const board = podBoard();
+  const segs = podSegments();
+  const total = segs.reduce((n, s) => n + s.min, 0);
+
+  main.innerHTML =
+    '<div class="pod-wrap">' +
+      '<section class="pod-hero">' +
+        '<div class="pod-kicker">New show · daily</div>' +
+        '<h2>' + esc(DAILY_SHOW.title) + '</h2>' +
+        '<div class="pod-tagline">' + esc(DAILY_SHOW.tagline) + '</div>' +
+        '<p class="pod-lede">' + esc(DAILY_SHOW.lede) + '</p>' +
+        '<div class="pod-chips">' + DAILY_SHOW.topics.map(t => '<span class="pod-chip">' + esc(t) + '</span>').join('') + '</div>' +
+        '<div class="pod-clock" aria-hidden="true">' +
+          segs.map(s => '<span style="flex:' + s.min + ';background:' + s.color + '"></span>').join('') +
+        '</div>' +
+        '<p class="pod-note" style="margin:0">' + esc(DAILY_SHOW.runtime) + ' · ' + total + ' minutes of segment time, plus a short cold open.</p>' +
+      '</section>' +
+
+      '<section class="pod-section">' +
+        '<h3>How each episode runs</h3>' +
+        '<div class="pod-chips" style="margin:0 0 10px">' +
+          POD_TARGETS.map(t => '<button type="button" class="filter-chip' + (t === podTarget ? ' active' : '') + '" data-pod-target="' + t + '">' +
+            (t ? t + ' min' : 'House · ' + POD_BASE_TOTAL + ' min') + '</button>').join('') +
+        '</div>' +
+        '<p class="pod-note">Seven segments, fixed order, fixed clock: a listener knows when Sports starts. Pick a target and the same seven are re-split to add up exactly.</p>' +
+        '<div class="pod-run">' +
+          '<div class="pod-run-row pod-run-head"><span>Segment</span><span class="pod-min">Length</span><span class="pod-time">Clock</span></div>' +
+          segs.map(s =>
+            '<div class="pod-run-row">' +
+              '<span><span class="pod-swatch" style="background:' + s.color + '"></span><strong>' + esc(s.name) + '</strong><br>' +
+              '<span class="pod-genre">' + esc(s.note) + '</span></span>' +
+              '<span class="pod-min">' + s.min + ' min</span>' +
+              '<span class="pod-time">' + podClock(s.at) + '–' + podClock(s.end) + '</span>' +
+            '</div>').join('') +
+        '</div>' +
+      '</section>' +
+
+      '<section class="pod-section">' +
+        '<h3>House style</h3>' +
+        '<p class="pod-note">The four rules every segment is cut against.</p>' +
+        '<ul class="pod-style">' +
+          DAILY_SHOW.style.map(([head, body]) => '<li><strong>' + esc(head) + '</strong> — ' + esc(body) + '</li>').join('') +
+        '</ul>' +
+      '</section>' +
+
+      '<section class="pod-section">' +
+        '<h3>Today’s rundown</h3>' +
+        '<p class="pod-note">The headline, why it matters and where it came from, one line each. ' +
+          '<strong id="pod-count"></strong> · resets each day, kept on this device.</p>' +
+        '<div class="pod-progress"><span id="pod-bar"></span></div>' +
+        '<div id="pod-checks">' +
+          segs.map(s => {
+            const note = board.notes[s.id] || {};
+            const done = board.ids.includes(s.id);
+            return '<div class="pod-script-row">' +
+              '<label class="pod-check' + (done ? ' done' : '') + '" for="pod-seg-' + s.id + '">' +
+                '<input id="pod-seg-' + s.id + '" type="checkbox" data-pod-seg="' + s.id + '"' + (done ? ' checked' : '') + '>' +
+                '<span class="pc-name"><span class="pod-swatch" style="background:' + s.color + '"></span>' + esc(s.name) + '</span>' +
+                '<span class="pc-min">' + s.min + ' min · ' + podClock(s.at) + '</span>' +
+              '</label>' +
+              podScriptFields(s, note) +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</section>' +
+    '</div>';
+
+  podPaintRundown();
+
+  main.querySelectorAll('[data-pod-seg]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('.pod-check')?.classList.toggle('done', cb.checked);
+      podWriteBoard();
+      podPaintRundown();
+    });
+  });
+
+  main.querySelectorAll('[data-pod-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = Number(btn.dataset.podTarget);
+      if (next === podTarget) return;
+      podWriteBoard(); // flush a pending keystroke before the re-render
+      podTarget = next;
+      LS.set('pod_target', next);
+      renderDailyCatchUp(main);
+    });
+  });
+
+  main.querySelectorAll('[data-pod-field]').forEach(input => {
+    input.addEventListener('input', () => {
+      podSyncSource(input);
+      podSaveSoon();
+    });
+    /* Blurring writes at once, so leaving the field or the view mid-delay
+       cannot drop the last keystrokes. */
+    input.addEventListener('change', podWriteBoard);
+  });
+}
+
+/* ── browse ─────────────────────────────────────────────────────── */
+
+/* The whole card is the link: one target, no action row to mis-tap. */
+function podCardHTML(show, rank) {
+  if (!show || !show.id) return '';
+  const art = show.art
+    ? '<img class="pod-art" src="' + esc(show.art) + '" alt="" width="300" height="300" loading="lazy" decoding="async">'
+    : '<div class="pod-art" style="display:flex;align-items:center;justify-content:center;font-size:var(--text-2xl)" aria-hidden="true">🎙️</div>';
+  return '<a class="pod-card" href="' + esc(show.u || 'https://podcasts.apple.com/us/podcast/id' + show.id) + '" target="_blank" rel="noopener noreferrer">' +
+    (rank ? '<span class="pod-rank">#' + rank + '</span>' : '') +
+    art +
+    '<div class="pod-body">' +
+      '<div class="pod-name">' + esc(show.n || 'Untitled') + '</div>' +
+      '<div class="pod-artist">' + esc(show.a || '') + '</div>' +
+      '<div class="pod-cta">' + esc(show.g || 'Podcast') + ' · Listen ↗</div>' +
+    '</div>' +
+  '</a>';
+}
+
+function podChart(genreId) {
+  const genre = PODCAST_CATALOG.genres.find(g => g.id === genreId);
+  return genre ? genre.shows : PODCAST_CATALOG.top;
+}
+
+function renderPodcasts(main) {
+  const genreId = LS.get('pod_genre') || '';
+  const shows = podChart(genreId);
+  const chartWhen = PODCAST_CATALOG.at
+    ? new Date(PODCAST_CATALOG.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+    : '';
+
+  main.innerHTML =
+    '<div class="pod-wrap">' +
+      '<section class="pod-section">' +
+        '<h3>Find a podcast</h3>' +
+        '<p class="pod-note">Search runs against Apple’s keyless iTunes API from this browser.</p>' +
+        '<form class="pod-search" id="pod-search-form" role="search">' +
+          '<input id="pod-q" type="search" placeholder="Search podcasts, hosts, topics…" autocomplete="off" spellcheck="false" aria-label="Search podcasts">' +
+          '<button type="submit" class="modal-btn primary">Search</button>' +
+        '</form>' +
+        '<div id="pod-results" style="margin-top:14px"></div>' +
+      '</section>' +
+
+      '<section class="pod-section">' +
+        '<h3>Apple Podcasts chart</h3>' +
+        '<p class="pod-note">US top ' + PODCAST_CATALOG.top.length + (chartWhen ? ' · chart from ' + esc(chartWhen) : '') + ' · baked into the page, so this list works offline.</p>' +
+        '<div class="pod-chips" style="margin:0 0 14px">' +
+          '<button type="button" class="filter-chip' + (genreId ? '' : ' active') + '" data-pod-genre="">All</button>' +
+          PODCAST_CATALOG.genres.map(g =>
+            '<button type="button" class="filter-chip' + (g.id === genreId ? ' active' : '') + '" data-pod-genre="' + esc(g.id) + '">' + esc(g.name) + '</button>'
+          ).join('') +
+        '</div>' +
+        '<div class="pod-grid">' + shows.map((s, i) => podCardHTML(s, i + 1)).join('') + '</div>' +
+      '</section>' +
+    '</div>';
+
+  main.querySelector('#pod-search-form')?.addEventListener('submit', ev => {
+    ev.preventDefault();
+    podSearchApple();
+  });
+
+  main.querySelectorAll('[data-pod-genre]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      LS.set('pod_genre', btn.dataset.podGenre);
+      renderView();
+    });
+  });
+}
+
+async function podSearchApple() {
+  const input = document.getElementById('pod-q');
+  const box = document.getElementById('pod-results');
+  if (!input || !box) return;
+  const q = input.value.trim();
+  if (q.length < 2) {
+    box.innerHTML = '<p class="pod-empty">Type at least two letters.</p>';
+    return;
+  }
+  box.innerHTML = '<p class="pod-empty">Searching Apple Podcasts…</p>';
+
+  let shows;
+  try {
+    const url = 'https://itunes.apple.com/search?media=podcast&entity=podcast&limit=24&country=us&term=' + encodeURIComponent(q);
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    shows = (json.results || []).map(r => ({
+      id: String(r.collectionId || ''),
+      n: r.collectionName || '',
+      a: r.artistName || '',
+      g: r.primaryGenreName || '',
+      art: String(r.artworkUrl600 || r.artworkUrl100 || '').replace(/\/100x100bb\.jpg$/, '/300x300bb.jpg'),
+      u: r.collectionViewUrl || '',
+    })).filter(p => p.id && p.n);
+  } catch (err) {
+    if (!box.isConnected) return;
+    console.warn('Podcast search failed:', err);
+    box.innerHTML = '<p class="pod-empty">Apple didn’t answer that search. The chart below still works offline.</p>';
+    return;
+  }
+  if (!box.isConnected) return;
+
+  box.innerHTML = shows.length
+    ? '<h4 style="font-size:var(--text-sm);margin-bottom:10px">' + shows.length + ' result' + (shows.length === 1 ? '' : 's') + ' for “' + esc(q) + '”</h4>' +
+      '<div class="pod-grid">' + shows.map(s => podCardHTML(s, 0)).join('') + '</div>'
+    : '<p class="pod-empty">No podcasts found for “' + esc(q) + '”.</p>';
 }
 
 document.getElementById('bn-more')?.addEventListener('click', e => {
