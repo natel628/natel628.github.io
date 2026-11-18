@@ -1,4 +1,4 @@
-/* Curio — personal curiosity library SPA */
+/* Curio — personal curiosity library SPA (UX pass 2: decluttered, progressive disclosure) */
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const timeAgo = (ts) => {
@@ -14,21 +14,25 @@ const timeAgo = (ts) => {
   return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 };
 const fmtDate = (ts) => new Date(ts).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+const readMins = (t) => {
+  const w = String(t?.overview || '' + ' ' + (t?.keyFacts || []).join(' ')).split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(w / 200));
+};
 
-/* GitHub Pages mirror: static frontend. Research calls the live Curio API;
-   the library stays in this browser (localStorage). For accounts + synced
-   library use the full app: https://curio-oqu69z.freebuff.site */
-const API_BASE = location.hostname.endsWith('github.io') ? 'https://curio-oqu69z.freebuff.site' : '';
-const STATIC_MODE = location.hostname.endsWith('github.io');
-const FULL_APP = 'https://curio-oqu69z.freebuff.site';
+const PREFS_KEY = 'curio_prefs_v1';
+function loadPrefs() {
+  try { return JSON.parse(localStorage.getItem(PREFS_KEY) || '{}'); } catch { return {}; }
+}
+const prefs = Object.assign({ view: 'grid', sort: 'newest', summaryMode: 'full' }, loadPrefs());
+function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify({ view: prefs.view, sort: prefs.sort, summaryMode: prefs.summaryMode })); } catch {} }
 
 const state = {
   user: null, authChecked: false,
   route: 'home', topicId: null,
   topics: [], categories: [],
   guest: loadGuest(),
-  filter: { q: '', status: 'all', category: 'All', sort: 'newest', view: 'grid' },
-  discover: null, rediscover: [],
+  filter: { q: '', status: 'all', category: 'All', sort: prefs.sort, view: prefs.view, showArchived: false },
+  discover: null, discoverEmpty: false, rediscover: [],
   capturing: false,
 };
 function loadGuest() {
@@ -37,7 +41,7 @@ function loadGuest() {
 function saveGuest() { localStorage.setItem('curio_guest_v1', JSON.stringify(state.guest)); }
 
 async function api(path, opts = {}) {
-  const r = await fetch(API_BASE + path, { ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) } });
+  const r = await fetch(path, { ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) } });
   if (r.status === 401) { state.user = null; return { _unauth: true }; }
   const ct = r.headers.get('content-type') || '';
   const data = ct.includes('json') ? await r.json().catch(() => ({})) : {};
@@ -72,12 +76,13 @@ async function refreshDiscover() {
   if (state.user) {
     try {
       const d = await api('/api/discover');
-      if (!d._unauth) { state.discover = d.discover; }
+      if (!d._unauth) { state.discover = d.discover; state.discoverEmpty = Boolean(d.empty); }
       const r = await api('/api/rediscover');
       if (!r._unauth) state.rediscover = r.items || [];
     } catch { /* offline */ }
   } else {
     state.discover = localDiscover(state.guest);
+    state.discoverEmpty = state.guest.length === 0;
     state.rediscover = localRediscover(state.guest);
   }
 }
@@ -104,21 +109,22 @@ function localRediscover(topics) {
 }
 
 /* ---------- capture ---------- */
-const EXAMPLES = ['Why did the Library of Alexandria disappear?', 'The psychology of déjà vu', 'The Fermi paradox', 'Something I heard on a podcast about ancient civilizations'];
+const EXAMPLES = ['Why did the Library of Alexandria disappear?', 'The psychology of déjà vu', 'The Fermi paradox'];
 async function capture(input) {
   input = (input || '').trim();
   if (!input || state.capturing) return;
   state.capturing = true;
-  setStatus('Saving and researching…');
+  updateCaptureUI(true);
+  setStatusText(input.length > 140 ? 'Saving your thought and researching…' : 'Saving and researching…');
   try {
     if (state.user) {
       const d = await api('/api/topics', { method: 'POST', body: JSON.stringify({ input }) });
       if (d._unauth) { state.user = null; render(); return; }
       state.topics.unshift(d.topic);
-      setStatus('Saved. Research ready.', true);
+      await refreshDiscover();
       location.hash = '#/topic/' + d.topic.id;
     } else {
-      setStatus('Researching… (sign in to save across devices)');
+      setStatusText('Researching… (sign in to sync across devices)');
       const d = await api('/api/research', { method: 'POST', body: JSON.stringify({ input }) });
       const r = d.result;
       const now = Date.now();
@@ -130,23 +136,34 @@ async function capture(input) {
         createdAt: now, updatedAt: now,
       };
       state.guest.unshift(topic); saveGuest();
-      setStatus('Saved to this device. <span class="ai">Sign in to keep it everywhere.</span>', true);
+      await refreshDiscover();
       location.hash = '#/topic/' + topic.id;
     }
   } catch (e) {
-    setStatus(esc(e.message));
+    setStatusText(e.message);
     toast(e.message);
-  } finally { state.capturing = false; }
+  } finally {
+    state.capturing = false;
+    updateCaptureUI(false);
+  }
 }
-function setStatus(html, done) {
+function setStatusText(msg) {
   const el = $('#cap-status');
-  if (el) el.innerHTML = done ? html : esc(html).replace(/&lt;[^&]*&gt;/g, '') || html;
-  if (el && !done) el.textContent = html.replace(/<[^>]*>/g, '');
-  if (el && done) el.innerHTML = html;
+  if (el) el.textContent = msg;
+}
+function setStatusHTML(html) {
+  const el = $('#cap-status');
+  if (el) el.innerHTML = html;
+}
+function updateCaptureUI(busy) {
+  const btn = $('#cap-btn');
+  if (btn) { btn.disabled = busy; btn.innerHTML = busy ? '<span class="spin"></span> Researching…' : 'Explore ✦'; }
+  const input = $('#cap-input');
+  if (input) input.disabled = busy;
 }
 
 /* ---------- mutations ---------- */
-async function patchTopic(id, patch) {
+async function patchTopic(id, patch, opts = {}) {
   const t = findTopic(id);
   if (!t) return;
   if (state.user && !String(id).startsWith('g_')) {
@@ -159,18 +176,22 @@ async function patchTopic(id, patch) {
     Object.assign(t, patch, { updatedAt: Date.now() });
     saveGuest();
   }
-  render();
+  if (!opts.silent) render();
+  return t;
 }
 async function deleteTopic(id) {
-  if (!confirm('Delete this topic? This cannot be undone.')) return;
+  const t = findTopic(id);
+  if (!t) return;
+  if (!confirm(`Delete “${t.title}”? This cannot be undone.`)) return;
   if (state.user && !String(id).startsWith('g_')) {
     const d = await api('/api/topics/' + id, { method: 'DELETE' }).catch(() => null);
     if (d && d._unauth) { state.user = null; render(); return; }
-    state.topics = state.topics.filter((t) => t.id !== id);
+    state.topics = state.topics.filter((x) => x.id !== id);
   } else {
-    state.guest = state.guest.filter((t) => t.id !== id);
+    state.guest = state.guest.filter((x) => x.id !== id);
     saveGuest();
   }
+  await refreshDiscover();
   location.hash = '#/library';
   toast('Deleted.');
 }
@@ -206,51 +227,53 @@ function go(id) { location.hash = '#/' + (id === 'home' ? '' : id); }
 function renderSide() {
   const c = counts();
   const badge = (n) => (n ? `<span class="count">${n}</span>` : '');
+  const active = (id) => (state.route === id || (state.route === 'topic' && id === 'library') ? 'active' : '');
   $('#side').innerHTML = `
     <div class="brand"><div class="brand-mark">C</div><div><div class="brand-name">Curio</div><div class="brand-tag">Never lose a thought</div></div></div>
-    <div class="nav-label">Capture</div>
-    ${NAV.slice(0, 1).map((n) => `<button class="nav-item ${state.route === n.id ? 'active' : ''}" data-nav="${n.id}"><span class="ico">${n.icon}</span>${n.label}</button>`).join('')}
+    <button class="nav-item ${state.route === 'home' ? 'active' : ''}" data-nav="home" ${state.route === 'home' ? 'aria-current="page"' : ''}><span class="ico">✦</span>Capture</button>
     <div class="nav-label">Library</div>
-    ${NAV.slice(1, 5).map((n) => `<button class="nav-item ${state.route === n.id || (state.route === 'topic' && n.id === 'library') ? 'active' : ''}" data-nav="${n.id}"><span class="ico">${n.icon}</span>${n.label}${badge(c[n.id])}</button>`).join('')}
+    ${NAV.slice(1, 5).map((n) => `<button class="nav-item ${active(n.id)}" data-nav="${n.id}"><span class="ico">${n.icon}</span>${n.label}${badge(c[n.id])}</button>`).join('')}
     <div class="nav-label">Discovery</div>
-    ${NAV.slice(5).map((n) => `<button class="nav-item ${state.route === n.id ? 'active' : ''}" data-nav="${n.id}"><span class="ico">${n.icon}</span>${n.label}</button>`).join('')}
+    <button class="nav-item ${active('discover')}" data-nav="discover"><span class="ico">✧</span>Feed Your Curiosity</button>
     <div class="side-foot">
       ${state.user ? `<div class="user-row"><span class="avatar">${state.user.picture ? `<img src="${esc(state.user.picture)}" alt="">` : '◉'}</span><span>${esc(state.user.name || state.user.email || 'Curious mind')}</span></div>
       <form method="post" action="/auth/freebuff/signout"><button class="btn ghost small" type="submit">Sign out</button></form>`
-      : STATIC_MODE
-        ? `<a class="btn primary small" href="${FULL_APP}" target="_blank" rel="noopener">Open the full app ↗</a>
-         <div class="hint">GitHub mirror: library stays in this browser. Accounts + sync live in the full app.</div>`
-        : `<a class="btn primary small" href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}">Sign in with Freebuff</a>
-         <div class="hint">Sign in to sync your library. Or keep exploring on this device.</div>`}
+      : `<a class="btn primary small" href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}">Sign in with Freebuff</a>
+         <div class="hint">Sync across devices. Guests save on this device only.</div>`}
     </div>`;
   $('#side').querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
   const bn = $('#bottomnav');
   const items = [NAV[0], NAV[2], NAV[3], NAV[5]];
-  bn.innerHTML = items.map((n) => `<button class="${(state.route === n.id || (state.route === 'topic' && n.id === 'library')) ? 'active' : ''}" data-nav="${n.id}"><span class="bi">${n.icon}</span>${n.label.split(' ')[0] === 'Feed' ? 'Discover' : n.label.split(' ')[0] === 'My' ? 'Library' : n.label}</button>`).join('') +
-    (state.user ? '' : STATIC_MODE ? `<a href="${FULL_APP}" target="_blank" rel="noopener"><span class="bi">○</span>Full app</a>` : `<a href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}"><span class="bi">○</span>Sign in</a>`);
+  bn.innerHTML = items.map((n) => `<button class="${active(n.id) ? 'active' : ''}" data-nav="${n.id}" aria-label="${esc(n.label)}"><span class="bi">${n.icon}</span>${n.label.split(' ')[0] === 'Feed' ? 'Discover' : n.label.split(' ')[0] === 'My' ? 'Library' : n.label}</button>`).join('') +
+    (state.user ? '' : `<a href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}"><span class="bi">○</span>Sign in</a>`);
   bn.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
 }
 
-/* ---------- views ---------- */
+/* ---------- cards & lists ---------- */
 function cardHTML(t) {
+  const mins = readMins(t);
+  const srcs = (t.sources || []).length;
   return `<article class="card" data-open="${esc(t.id)}" tabindex="0" role="link" aria-label="${esc(t.title)}">
     <div class="card-actions">
+      ${t.status !== 'completed' ? `<button class="icon-btn" data-done="${esc(t.id)}" title="Mark completed">✓</button>` : ''}
       <button class="icon-btn" data-archive="${esc(t.id)}" title="${t.archived ? 'Unarchive' : 'Archive'}">▢</button>
       <button class="icon-btn" data-del="${esc(t.id)}" title="Delete">×</button>
     </div>
-    <div class="cat">${esc(t.category)}</div>
+    <div class="cat">${esc(t.category)} · ${mins} min</div>
     <h3>${esc(t.title)}</h3>
     <p class="desc">${esc(t.overview || '')}</p>
-    <div class="card-meta"><span class="pill ${esc(t.status)}">${esc(t.status)}</span><span>${timeAgo(t.createdAt)}</span></div>
+    <div class="card-meta"><span class="pill ${esc(t.status)}">${esc(t.status)}</span><span>${timeAgo(t.createdAt)}</span>${srcs ? `<span>· ${srcs} sources</span>` : ''}</div>
   </article>`;
 }
 function filteredTopics(base) {
   const f = state.filter;
-  let list = base.filter((t) => !t.archived);
+  let list = f.showArchived ? [...base] : base.filter((t) => !t.archived);
   if (state.route === 'inbox') list = list.filter((t) => t.status === 'unread');
   if (state.route === 'exploring') list = list.filter((t) => t.status === 'exploring');
   if (state.route === 'completed') list = list.filter((t) => t.status === 'completed');
-  if (f.q) { const q = f.q.toLowerCase(); list = list.filter((t) => (t.title + ' ' + t.overview + ' ' + t.category).toLowerCase().includes(q)); }
+  if (!f.showArchived) list = list.filter((t) => !t.archived);
+  if (state.route === 'library' && f.status !== 'all') list = list.filter((t) => t.status === f.status);
+  if (f.q) { const q = f.q.toLowerCase(); list = list.filter((t) => (t.title + ' ' + t.overview + ' ' + t.category + ' ' + (t.input || '')).toLowerCase().includes(q)); }
   if (f.category !== 'All') list = list.filter((t) => t.category === f.category);
   if (f.sort === 'title') list = [...list].sort((a, b) => a.title.localeCompare(b.title));
   else if (f.sort === 'oldest') list = [...list].sort((a, b) => a.createdAt - b.createdAt);
@@ -258,20 +281,23 @@ function filteredTopics(base) {
   return list;
 }
 function toolbarHTML(showStatus) {
-  const cats = ['All', ...new Set(allTopics().filter((t) => !t.archived).map((t) => t.category))];
+  const cats = ['All', ...new Set(allTopics().map((t) => t.category).filter(Boolean))];
+  const total = filteredTopics(allTopics()).length;
   return `<div class="toolbar">
-    <label class="search"><span>⌕</span><input id="f-q" placeholder="Search saved topics…" value="${esc(state.filter.q)}"></label>
-    ${showStatus ? `<div class="seg" id="f-status">
+    <label class="search"><span>⌕</span><input id="f-q" placeholder="Search library…  ( / )" value="${esc(state.filter.q)}" aria-label="Search library"></label>
+    ${showStatus ? `<div class="seg" id="f-status" role="tablist" aria-label="Status filter">
       ${['all', 'unread', 'exploring', 'completed'].map((s) => `<button data-s="${s}" class="${state.filter.status === s ? 'active' : ''}">${s[0].toUpperCase() + s.slice(1)}</button>`).join('')}
     </div>` : ''}
-    <select id="f-cat">${cats.map((c) => `<option ${state.filter.category === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>
-    <select id="f-sort">
+    <select id="f-cat" aria-label="Category">${cats.map((c) => `<option ${state.filter.category === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>
+    <select id="f-sort" aria-label="Sort">
       <option value="newest" ${state.filter.sort === 'newest' ? 'selected' : ''}>Newest</option>
       <option value="oldest" ${state.filter.sort === 'oldest' ? 'selected' : ''}>Oldest</option>
       <option value="title" ${state.filter.sort === 'title' ? 'selected' : ''}>Title A–Z</option>
     </select>
-    <div class="seg" id="f-view"><button data-v="grid" class="${state.filter.view === 'grid' ? 'active' : ''}">Grid</button><button data-v="list" class="${state.filter.view === 'list' ? 'active' : ''}">List</button></div>
-  </div>`;
+    <div class="seg" id="f-view" aria-label="View"><button data-v="grid" class="${state.filter.view === 'grid' ? 'active' : ''}">Grid</button><button data-v="list" class="${state.filter.view === 'list' ? 'active' : ''}">List</button></div>
+    <button class="chip ${state.filter.showArchived ? 'on' : ''}" id="f-arch" title="Show archived">${state.filter.showArchived ? 'Archived ✓' : 'Archived'}</button>
+  </div>
+  <div class="result-count">${total} ${total === 1 ? 'topic' : 'topics'}${state.filter.showArchived ? ' · including archived' : ''}</div>`;
 }
 function bindToolbar() {
   const q = $('#f-q');
@@ -281,94 +307,148 @@ function bindToolbar() {
   const cat = $('#f-cat');
   if (cat) cat.onchange = (e) => { state.filter.category = e.target.value; renderList(); };
   const sort = $('#f-sort');
-  if (sort) sort.onchange = (e) => { state.filter.sort = e.target.value; renderList(); };
+  if (sort) sort.onchange = (e) => { state.filter.sort = e.target.value; prefs.sort = e.target.value; savePrefs(); renderList(); };
   const vw = $('#f-view');
-  if (vw) vw.querySelectorAll('button').forEach((b) => (b.onclick = () => { state.filter.view = b.dataset.v; render(); }));
+  if (vw) vw.querySelectorAll('button').forEach((b) => (b.onclick = () => { state.filter.view = b.dataset.v; prefs.view = b.dataset.v; savePrefs(); render(); }));
+  const arch = $('#f-arch');
+  if (arch) arch.onclick = () => { state.filter.showArchived = !state.filter.showArchived; render(); };
 }
 function bindCards(root) {
   root.querySelectorAll('[data-open]').forEach((el) => {
     el.onclick = (e) => {
-      if (e.target.closest('[data-del]') || e.target.closest('[data-archive]') || e.target.closest('[data-edit]')) return;
+      if (e.target.closest('[data-del]') || e.target.closest('[data-archive]') || e.target.closest('[data-done]')) return;
       location.hash = '#/topic/' + encodeURIComponent(el.dataset.open);
     };
     el.onkeydown = (e) => { if (e.key === 'Enter') location.hash = '#/topic/' + encodeURIComponent(el.dataset.open); };
   });
   root.querySelectorAll('[data-del]').forEach((b) => (b.onclick = (e) => { e.stopPropagation(); deleteTopic(b.dataset.del); }));
-  root.querySelectorAll('[data-archive]').forEach((b) => (b.onclick = (e) => { e.stopPropagation(); patchTopic(b.dataset.archive, { archived: true }); toast('Archived.'); }));
+  root.querySelectorAll('[data-archive]').forEach((b) => (b.onclick = async (e) => {
+    e.stopPropagation();
+    const t = findTopic(b.dataset.archive);
+    await patchTopic(b.dataset.archive, { archived: !t?.archived }, { silent: true });
+    toast(t?.archived ? 'Unarchived.' : 'Archived.');
+    render();
+  }));
+  root.querySelectorAll('[data-done]').forEach((b) => (b.onclick = async (e) => {
+    e.stopPropagation();
+    await patchTopic(b.dataset.done, { status: 'completed' }, { silent: true });
+    toast('Marked completed.');
+    render();
+  }));
 }
-function renderList() {
+function emptyHTML(msg, cta) {
+  return `<div class="empty"><div class="big">○</div><p>${esc(msg)}</p>${cta || ''}</div>`;
+}
+function renderList(limit) {
   const host = $('#list-host');
   if (!host) return;
   let list = filteredTopics(allTopics());
   if (state.route === 'library' && state.filter.status !== 'all') list = list.filter((t) => t.status === state.filter.status);
+  if (typeof limit === 'number') list = list.slice(0, limit);
   host.className = 'grid' + (state.filter.view === 'list' ? ' list' : '');
-  host.innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="empty"><div class="big">○</div><p>Nothing here yet. Capture your first curiosity above.</p></div>`;
+  host.innerHTML = list.length ? list.map(cardHTML).join('') : emptyHTML(
+    state.filter.q ? 'No matches. Try a different search.' : 'Nothing here yet.',
+    state.route === 'home' ? '' : `<br><button class="btn small" onclick="location.hash='#/'">Capture your first curiosity</button>`
+  );
   bindCards(host);
 }
 
+/* ---------- views ---------- */
 function homeHTML() {
   const red = state.rediscover;
-  return `<section class="hero">
+  const total = allTopics().filter((t) => !t.archived).length;
+  return `<section class="hero compact">
     <h1>What's on <em>your mind?</em></h1>
-    <p>Capture something you're curious about. We'll help you explore it.</p>
+    <p>Capture it — research builds itself. <span class="kbd-hint">press <kbd>/</kbd></span></p>
   </section>
   <div class="capture">
     <textarea id="cap-input" rows="2" placeholder="A topic, a question, a half-formed thought, a link…"></textarea>
-    <div class="capture-row"><span class="hint" id="cap-mode">${state.user ? 'Auto-saves to your library' : 'Browsing as guest — sign in to sync'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Explore ✦</button></div>
+    <div class="capture-row"><span class="hint" id="cap-mode">${state.user ? 'Auto-saves to your library' : 'Guest mode — saves on this device'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Explore ✦</button></div>
   </div>
   <div class="examples">${EXAMPLES.map((e) => `<button class="chip" data-ex="${esc(e)}">${esc(e)}</button>`).join('')}</div>
-  <div class="status-line" id="cap-status"></div>
-  ${red.length ? `<section class="section"><div class="section-head"><h2>Gently resurfacing</h2><p>no pressure — just wonder</p></div>
-    <div class="grid">${red.map(({ topic, prompt }) => `<article class="card" data-open="${esc(topic.id)}"><div class="cat">${esc(prompt)}</div><h3>${esc(topic.title)}</h3><p class="desc">${esc(topic.overview || '')}</p><div class="card-meta"><span class="pill ${esc(topic.status)}">${esc(topic.status)}</span><span>${timeAgo(topic.createdAt)}</span></div></article>`).join('')}</div></section>` : ''}
-  <section class="section"><div class="section-head"><h2>Recent curiosities</h2><p>${allTopics().filter((t) => !t.archived).length} saved</p></div>
+  <div class="status-line" id="cap-status" role="status"></div>
+  ${red.length ? `<section class="section tight"><div class="section-head"><h2>Gently resurfacing</h2><p>no pressure — just wonder</p></div>
+    <div class="strip">${red.map(({ topic, prompt }) => `<article class="strip-card" data-open="${esc(topic.id)}" tabindex="0"><div class="cat">${esc(prompt)}</div><h3>${esc(topic.title)}</h3><div class="card-meta"><span class="pill ${esc(topic.status)}">${esc(topic.status)}</span><span>${timeAgo(topic.createdAt)}</span></div></article>`).join('')}</div></section>` : ''}
+  <section class="section tight"><div class="section-head"><h2>Recent curiosities</h2><p>${total} saved</p><span class="spacer"></span><button class="link" data-nav="library">View all →</button></div>
     <div class="grid" id="list-host"></div></section>`;
 }
 
 function libraryHTML(title, sub, showStatus) {
-  return `<section class="section" style="margin-top:8px"><div class="section-head"><h2>${esc(title)}</h2><p>${esc(sub)}</p></div>
+  const archivedCount = allTopics().filter((t) => t.archived).length;
+  return `<section class="page-head"><div class="section-head"><h2>${esc(title)}</h2><p>${esc(sub)}${archivedCount && !state.filter.showArchived ? ` · ${archivedCount} archived` : ''}</p><span class="spacer"></span>
+    <button class="btn small ghost" id="export-btn" title="Download your library as JSON">Export</button></div>
   ${toolbarHTML(showStatus)}<div class="grid" id="list-host"></div></section>
-  <section class="section"><div class="section-head"><h2>Capture another</h2></div>
-  <div class="capture"><textarea id="cap-input" rows="2" placeholder="What are you curious about now?"></textarea>
-  <div class="capture-row"><span class="hint">Auto-saves to your library</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Explore ✦</button></div></div>
-  <div class="status-line" id="cap-status"></div></section>`;
+  <section class="section tight"><div class="section-head"><h2>Capture another</h2></div>
+  <div class="capture slim"><textarea id="cap-input" rows="2" placeholder="What are you curious about now?"></textarea>
+  <div class="capture-row"><span class="hint">Auto-saves${state.user ? '' : ' on this device'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Explore ✦</button></div></div>
+  <div class="status-line" id="cap-status" role="status"></div></section>`;
 }
 
 function discoverHTML() {
   const d = state.discover;
   if (!d) return `<section class="section"><div class="section-head"><h2>Feed Your Curiosity</h2></div><div class="skel"></div><div class="skel"></div></section>`;
   const col = (title, items) => `<div class="disc-col"><h4>${esc(title)}</h4>${items.map((r) => `<button class="rec" data-query="${esc(r.query || r.title)}"><h5>${esc(r.title)}</h5><p class="why">${esc(r.reason || '')}</p></button>`).join('') || '<p class="hint">Save a few topics to unlock this.</p>'}</div>`;
-  return `<section class="section" style="margin-top:8px"><div class="section-head"><h2>Feed Your Curiosity</h2><p>based on your library · no key needed</p></div>
-  <div class="disc-grid">${col('Related discoveries', d.related)}${col('Unexpected connections', d.unexpected)}${col('New curiosities', d.newCuriosities)}</div></section>`;
+  const all = [...(d.related || []), ...(d.unexpected || []), ...(d.newCuriosities || [])];
+  const surprise = all.length ? all[Math.floor(Math.random() * all.length)] : null;
+  return `<section class="page-head"><div class="section-head"><h2>Feed Your Curiosity</h2><p>${state.discoverEmpty ? 'starter picks — save topics to personalize' : 'based on your library · no key needed'}</p><span class="spacer"></span>
+    ${surprise ? `<button class="btn small primary" id="surprise-btn" data-query="${esc(surprise.query || surprise.title)}">Surprise me ✦</button>` : ''}</div>
+  <div class="disc-grid">${col('Go deeper', d.related)}${col('Unexpected connections', d.unexpected)}${col('Try something new', d.newCuriosities)}</div></section>`;
+}
+
+function stepsHTML(t) {
+  const order = ['unread', 'exploring', 'completed'];
+  const idx = order.indexOf(t.status);
+  return `<div class="steps" role="group" aria-label="Progress">${order.map((s, i) => `<button class="step ${i <= idx ? 'done' : ''} ${t.status === s ? 'now' : ''}" data-status="${s}"><span class="dot">${i < idx ? '✓' : (i + 1)}</span>${s}</button>${i < 2 ? '<span class="bar"></span>' : ''}`).join('')}</div>`;
 }
 
 function topicHTML(t) {
   const facts = (t.keyFacts || []).map((f) => `<li>${esc(f)}</li>`).join('');
-  const srcs = (t.sources || []).map((s) => `<a class="src" href="${esc(s.url)}" target="_blank" rel="noopener"><span class="src-p">${esc(s.publisher || 'source')}</span><span class="src-t">${esc(s.title)}</span>${s.snippet ? `<span class="src-s">${esc(s.snippet)}</span>` : ''}</a>`).join('');
-  return `<button class="back" id="back-btn">← Back to library</button>
+  const srcs = (t.sources || []).map((s, i) => {
+    let host = 'source';
+    try { host = new URL(s.url).hostname.replace(/^www\./, ''); } catch {}
+    return `<a class="src" href="${esc(s.url)}" target="_blank" rel="noopener"><span class="src-n">${i + 1}</span><span class="src-body"><span class="src-p">${esc(s.publisher || host)}</span><span class="src-t">${esc(s.title)}</span>${s.snippet ? `<span class="src-s">${esc(s.snippet)}</span>` : ''}</span><span class="src-go">↗</span></a>`;
+  }).join('');
+  const hasSimple = Boolean(t.simple?.overview);
+  const mode = hasSimple ? (prefs.summaryMode === 'simple' ? 'simple' : 'full') : 'full';
+  const overviewText = mode === 'simple' && hasSimple ? t.simple.overview : (t.overview || 'No overview yet.');
+  const words = (t.notes || '').trim() ? (t.notes || '').trim().split(/\s+/).length : 0;
+  return `<button class="back" id="back-btn">← Back</button>
   <div class="topic-hero">
-    <div class="cat">${esc(t.category)} · ${esc(t.inputType || 'topic')}</div>
+    <div class="topic-top"><div class="cat">${esc(t.category)} · ${esc(t.inputType || 'topic')} · ${readMins(t)} min read</div>
+    ${t.archived ? '<span class="pill">archived</span>' : ''}</div>
     <h1>${esc(t.title)}</h1>
-    <div class="date">Saved ${fmtDate(t.createdAt)} · ${esc(t.status)}</div>
-    <div><span class="badge plain">○ Curio research · Wikipedia + web</span>
-    ${t.wikiUrl ? `<a class="badge plain" style="text-decoration:none" href="${esc(t.wikiUrl)}" target="_blank" rel="noopener">Wikipedia ↗</a>` : ''}</div>
+    <div class="date">Saved ${fmtDate(t.createdAt)} · updated ${timeAgo(t.updatedAt || t.createdAt)}</div>
+    <div class="topic-links"><span class="badge plain">○ Curio research · Wikipedia + web</span>
+    ${t.wikiUrl ? `<a class="badge plain link" href="${esc(t.wikiUrl)}" target="_blank" rel="noopener">Wikipedia ↗</a>` : ''}
+    ${hasSimple && t.simple.url ? `<a class="badge plain link" href="${esc(t.simple.url)}" target="_blank" rel="noopener">Simple Wikipedia ↗</a>` : ''}</div>
+    ${stepsHTML(t)}
     <div class="status-row" id="status-row">
-      ${['unread', 'exploring', 'completed'].map((s) => `<button class="btn small ${t.status === s ? 'primary' : 'ghost'}" data-status="${s}">${s[0].toUpperCase() + s.slice(1)}</button>`).join('')}
-      <span style="flex:1"></span>
+      <button class="btn small ghost" id="copy-btn">Copy summary</button>
       <button class="btn small ghost" id="edit-btn">Rename</button>
       <button class="btn small ghost" id="arch-btn">${t.archived ? 'Unarchive' : 'Archive'}</button>
-      <button class="btn small ghost" id="del-btn">Delete</button>
+      <button class="btn small ghost danger" id="del-btn">Delete</button>
     </div>
   </div>
-  <div class="prose">
-    <div class="panel"><h3>Overview</h3><p>${esc(t.overview || 'No overview yet.')}</p>
-      ${t.disputed ? `<p style="margin-top:12px;font-size:13.5px;color:var(--muted)"><em>Established vs debated:</em> ${esc(t.disputed)}</p>` : ''}</div>
-    ${facts ? `<div class="panel"><h3>Key facts</h3><ul class="facts">${facts}</ul></div>` : ''}
-    ${t.simple?.overview ? `<div class="panel"><h3>Quick summary <span class="hint" style="font-family:var(--sans)">· Simple English Wikipedia</span></h3><p>${esc(t.simple.overview)}</p>${t.simple.url ? `<p style="margin-top:10px"><a href="${esc(t.simple.url)}" target="_blank" rel="noopener" style="color:var(--accent);font-size:13.5px">Read on Simple Wikipedia ↗</a></p>` : ''}</div>` : ''}
-    <div class="panel"><h3>Sources & further reading</h3>${srcs || '<p class="hint">No sources found yet.</p>'}</div>
-    ${(t.related || []).length ? `<div class="panel"><h3>Rabbit holes</h3><div class="rel-grid">${t.related.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>` : ''}
-    <div class="panel"><h3>Personal notes <span class="hint" style="font-family:var(--sans)">· autosaves</span></h3>
-      <textarea class="notes-area" id="notes" placeholder="What struck you? What do you want to remember or follow up on?">${esc(t.notes || '')}</textarea>
-      <div class="save-note" id="notes-state">Notes stay on this ${state.user ? 'account' : 'device'}.</div></div>
+  <div class="topic-layout">
+    <div class="prose">
+      <div class="panel"><div class="panel-head"><h3>Overview</h3>
+        ${hasSimple ? `<div class="seg sm" id="sum-toggle" role="tablist" aria-label="Summary style"><button data-m="full" class="${mode === 'full' ? 'active' : ''}">Full</button><button data-m="simple" class="${mode === 'simple' ? 'active' : ''}">Plain English</button></div>` : ''}
+      </div><p>${esc(overviewText)}</p>
+        ${hasSimple && mode === 'simple' ? `<p class="hint" style="margin-top:10px">Plain-language version from Simple English Wikipedia. <a href="${esc(t.simple.url || '#')}" target="_blank" rel="noopener">Read there ↗</a></p>` : ''}
+        ${t.disputed ? `<details class="note"><summary>Established vs debated</summary><p>${esc(t.disputed)}</p></details>` : ''}</div>
+      ${facts ? `<div class="panel"><h3>Key facts</h3><ul class="facts">${facts}</ul></div>` : ''}
+      <div class="panel"><div class="panel-head"><h3>Sources & further reading</h3><span class="hint">${(t.sources || []).length} links</span></div>${srcs || '<p class="hint">No sources found yet.</p>'}</div>
+      ${(t.related || []).length ? `<div class="panel"><h3>Rabbit holes</h3><p class="hint" style="margin-bottom:12px">Each one opens fresh research — your current notes stay put.</p><div class="rel-grid">${t.related.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>` : ''}
+    </div>
+    <aside class="topic-side">
+      <div class="panel side-card"><h3>Your take</h3>
+        <textarea class="notes-area" id="notes" placeholder="What struck you? What do you want to remember or follow up on?">${esc(t.notes || '')}</textarea>
+        <div class="notes-foot"><span class="save-note" id="notes-state">Autosaves · ${words} words</span><button class="btn small ghost" id="notes-copy">Copy notes</button></div>
+      </div>
+      <div class="panel side-card"><h3>Details</h3>
+        <dl class="meta"><dt>Status</dt><dd>${esc(t.status)}</dd><dt>Category</dt><dd>${esc(t.category)}</dd><dt>Added</dt><dd>${esc(fmtDate(t.createdAt))}</dd>${t.wikiTitle ? `<dt>Wikipedia</dt><dd>${esc(t.wikiTitle)}</dd>` : ''}</dl>
+      </div>
+    </aside>
   </div>`;
 }
 
@@ -379,47 +459,67 @@ function render() {
   const main = $('#main');
   if (state.route === 'home') {
     main.innerHTML = homeHTML();
-    bindCapture(); renderList();
+    bindCapture(); renderList(6);
     bindCards(main);
-    main.querySelectorAll('[data-ex]').forEach((b) => (b.onclick = () => { $('#cap-input').value = b.dataset.ex; capture(b.dataset.ex); }));
+    main.querySelectorAll('[data-ex]').forEach((b) => (b.onclick = () => capture(b.dataset.ex)));
+    main.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
   } else if (state.route === 'topic') {
     const t = findTopic(state.topicId);
     if (!t) { main.innerHTML = `<div class="empty"><div class="big">?</div><p>That topic isn't here. It may have been deleted.</p><br><button class="btn" onclick="location.hash='#/library'">Back to library</button></div>`; return; }
     main.innerHTML = topicHTML(t);
     $('#back-btn').onclick = () => history.length > 1 ? history.back() : (location.hash = '#/library');
-    $('#status-row').querySelectorAll('[data-status]').forEach((b) => (b.onclick = () => patchTopic(t.id, { status: b.dataset.status })));
+    $('#status-row').querySelectorAll('.step').forEach((b) => (b.onclick = () => patchTopic(t.id, { status: b.dataset.status })));
+    const tog = $('#sum-toggle');
+    if (tog) tog.querySelectorAll('button').forEach((b) => (b.onclick = () => { prefs.summaryMode = b.dataset.m; savePrefs(); render(); }));
     $('#del-btn').onclick = () => deleteTopic(t.id);
-    $('#arch-btn').onclick = () => { patchTopic(t.id, { archived: !t.archived }); toast(t.archived ? 'Unarchived.' : 'Archived.'); };
+    $('#arch-btn').onclick = async () => { await patchTopic(t.id, { archived: !t.archived }, { silent: true }); toast(t.archived ? 'Unarchived.' : 'Archived.'); render(); };
     $('#edit-btn').onclick = () => openRename(t);
+    $('#copy-btn').onclick = async () => {
+      const text = `${t.title}\n\n${t.overview || ''}\n\nSources:\n${(t.sources || []).map((s) => '- ' + s.title + ' ' + s.url).join('\n')}`;
+      try { await navigator.clipboard.writeText(text); toast('Summary copied.'); } catch { toast('Copy blocked by browser.'); }
+    };
     const notes = $('#notes');
     let h;
     notes.oninput = () => {
-      $('#notes-state').textContent = 'Saving…';
+      const w = notes.value.trim() ? notes.value.trim().split(/\s+/).length : 0;
+      $('#notes-state').textContent = 'Saving… · ' + w + ' words';
       clearTimeout(h);
       h = setTimeout(async () => {
-        await patchTopicSilent(t.id, { notes: notes.value });
-        $('#notes-state').textContent = 'Saved ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        await patchTopic(t.id, { notes: notes.value }, { silent: true });
+        const ns = $('#notes-state');
+        if (ns) ns.textContent = 'Saved ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · ' + w + ' words';
       }, 700);
     };
-    main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => { location.hash = '#/'; setTimeout(() => capture(b.dataset.query), 150); }));
+    const nc = $('#notes-copy');
+    if (nc) nc.onclick = async () => { try { await navigator.clipboard.writeText(notes.value || ''); toast('Notes copied.'); } catch { toast('Copy blocked by browser.'); } };
+    main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
   } else if (state.route === 'discover') {
     main.innerHTML = discoverHTML();
-    main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => { location.hash = '#/'; setTimeout(() => capture(b.dataset.query), 150); }));
+    main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
+    const s = $('#surprise-btn');
+    if (s) s.onclick = () => capture(s.dataset.query);
   } else {
-    const meta = { inbox: ['Inbox', 'Newly saved — not yet explored'], library: ['My Library', 'Everything you have saved'], exploring: ['Exploring', 'Currently being researched'], completed: ['Completed', 'Finished exploring'] }[state.route];
-    main.innerHTML = libraryHTML(meta[0], meta[1], state.route === 'library');
+    const meta = { inbox: ['Inbox', 'New arrivals — triage into exploring or completed'], library: ['My Library', 'Everything you have saved'], exploring: ['Exploring', 'Actively being researched'], completed: ['Completed', 'Finished — revisit anytime'] }[state.route];
+    const showStatus = state.route === 'library';
+    if (!showStatus) state.filter.status = 'all';
+    main.innerHTML = libraryHTML(meta[0], meta[1], showStatus);
     bindToolbar(); bindCapture(); renderList();
+    const ex = $('#export-btn');
+    if (ex) ex.onclick = exportLibrary;
   }
 }
 async function patchTopicSilent(id, patch) {
-  const t = findTopic(id);
-  if (!t) return;
-  if (state.user && !String(id).startsWith('g_')) {
-    try {
-      const d = await api('/api/topics/' + id, { method: 'PATCH', body: JSON.stringify(patch) });
-      if (!d._unauth) Object.assign(t, d.topic);
-    } catch { /* keep local */ }
-  } else { Object.assign(t, patch, { updatedAt: Date.now() }); saveGuest(); }
+  return patchTopic(id, patch, { silent: true });
+}
+function exportLibrary() {
+  const data = JSON.stringify(allTopics().map((t) => ({ title: t.title, category: t.category, status: t.status, overview: t.overview, sources: t.sources, notes: t.notes, createdAt: new Date(t.createdAt).toISOString() })), null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'curio-library.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toast('Library exported.');
 }
 function bindCapture() {
   const btn = $('#cap-btn'), input = $('#cap-input');
@@ -427,28 +527,45 @@ function bindCapture() {
   const goCap = () => capture(input.value);
   btn.onclick = goCap;
   input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); goCap(); } };
-  input.focus();
+  if (window.matchMedia('(pointer:fine)').matches) input.focus();
 }
 function openRename(t) {
   const root = $('#modal-root');
-  root.innerHTML = `<div class="modal-wrap"><div class="modal"><h3>Rename topic</h3><p>Give it a name you'll recognize later.</p>
-    <input id="rename-input" value="${esc(t.title)}"><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn ghost small" id="m-cancel">Cancel</button><button class="btn primary small" id="m-save">Save</button></div></div></div>`;
+  root.innerHTML = `<div class="modal-wrap"><div class="modal" role="dialog" aria-label="Rename topic"><h3>Rename topic</h3><p>Give it a name you'll recognize later.</p>
+    <input id="rename-input" value="${esc(t.title)}" maxlength="200"><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn ghost small" id="m-cancel">Cancel</button><button class="btn primary small" id="m-save">Save</button></div></div></div>`;
+  const inp = $('#rename-input');
+  inp.focus(); inp.select();
   $('#m-cancel').onclick = () => (root.innerHTML = '');
-  $('#m-save').onclick = async () => { const v = $('#rename-input').value.trim(); if (v) await patchTopic(t.id, { title: v }); root.innerHTML = ''; };
+  const save = async () => { const v = inp.value.trim(); root.innerHTML = ''; if (v && v !== t.title) await patchTopic(t.id, { title: v }); };
+  $('#m-save').onclick = save;
+  inp.onkeydown = (e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') root.innerHTML = ''; };
 }
+
+/* ---------- global keys ---------- */
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement?.tagName || '')) {
+    e.preventDefault();
+    const i = $('#cap-input');
+    if (i) { i.focus(); i.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    else { location.hash = '#/'; setTimeout(() => $('#cap-input')?.focus(), 200); }
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    if (!['library', 'inbox', 'exploring', 'completed'].includes(state.route)) location.hash = '#/library';
+    setTimeout(() => $('#f-q')?.focus(), 200);
+  }
+});
 
 /* ---------- boot ---------- */
 async function boot() {
   window.addEventListener('hashchange', render);
   render();
-  if (!STATIC_MODE) {
-    try {
-      const me = await api('/api/me');
-      if (!me._unauth && me.user) state.user = me.user;
-    } catch { /* signed out or DB not attached yet */ }
-    if (state.user) await refreshLibrary();
-  }
+  try {
+    const me = await api('/api/me');
+    if (!me._unauth && me.user) state.user = me.user;
+  } catch { /* signed out or DB not attached yet */ }
   state.authChecked = true;
+  if (state.user) await refreshLibrary();
   await refreshDiscover();
   render();
 }
