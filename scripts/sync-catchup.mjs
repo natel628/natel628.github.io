@@ -3,8 +3,8 @@
 
    The "{date} → Daily Catch-Up" view in showsnew.html keeps a rundown board
    for today's episode, but it starts empty every morning, so the first job of
-   the day is finding seven stories. This script bakes a handful of candidates
-   per segment from keyless public sources into one line of the page:
+   the day is finding seven stories. This script bakes candidates per segment
+   from keyless public sources into one line of the page:
 
        window.PODCAST_CANDIDATES = {"at":"...","segments":{...}};
 
@@ -12,6 +12,11 @@
    a short summary in the publisher's own words. The page drafts the day's
    episode from these; d is what the why-it-matters line is built on when no
    model is connected.
+
+   PER_SEGMENT is deliberately larger than one episode needs: the page rotates
+   its starting story by the date, so a pool of 21 per segment is three weeks
+   of different episodes before anything has to come round again, and there are
+   enough alternates to replace a story you do not want.
 
    It runs daily in GitHub Actions (.github/workflows/sync-catchup.yml) or by
    hand:
@@ -32,19 +37,37 @@ import { fileURLToPath } from 'node:url';
 
 const PAGE = join(dirname(fileURLToPath(import.meta.url)), '..', 'showsnew.html');
 const MARK = 'window.PODCAST_CANDIDATES = ';
-const PER_SEGMENT = 4;
+const PER_SEGMENT = 21; // three weeks of distinct stories per segment
 const MIN_TOTAL = 8; // below this the run did not really find the day's news
 const TIMEOUT_MS = 20000;
 const UA = 'daily-catch-up-sync (+https://github.com/natel628/natel628.github.io)';
 
 /* One feed can cover several segments; each segment takes the first few
-   items from its own list, so the same story never lands twice in a segment. */
+   items from its own list, so the same story never lands twice in a segment.
+   Two feeds per segment is what makes a pool this size possible: any single
+   one of them publishes a handful of stories a day, and a dead feed only
+   costs that feed's share. */
 const FEEDS = {
-  headlines: [['https://feeds.npr.org/1001/rss.xml', 'NPR']],
-  money: [['https://www.cnbc.com/id/20910258/device/rss/rss.html', 'CNBC Markets']],
-  sports: [['https://www.espn.com/espn/rss/news', 'ESPN']],
-  culture: [['https://variety.com/feed/', 'Variety']],
-  newengland: [['https://www.wpri.com/feed/', 'WPRI']],
+  headlines: [
+    ['https://feeds.npr.org/1001/rss.xml', 'NPR'],
+    ['https://feeds.bbci.co.uk/news/world/rss.xml', 'BBC World'],
+  ],
+  money: [
+    ['https://www.cnbc.com/id/20910258/device/rss/rss.html', 'CNBC Markets'],
+    ['https://feeds.a.dj.com/rss/RSSMarketsMain.xml', 'WSJ Markets'],
+  ],
+  sports: [
+    ['https://www.espn.com/espn/rss/news', 'ESPN'],
+    ['https://www.cbssports.com/rss/headlines/', 'CBS Sports'],
+  ],
+  culture: [
+    ['https://variety.com/feed/', 'Variety'],
+    ['https://deadline.com/feed/', 'Deadline'],
+  ],
+  newengland: [
+    ['https://www.wpri.com/feed/', 'WPRI'],
+    ['https://www.bostonglobe.com/arc/outboundfeeds/rss/?outputType=xml', 'Boston Globe'],
+  ],
 };
 
 const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
@@ -120,23 +143,28 @@ async function fromFeeds(feeds) {
   return out;
 }
 
+/* One request per story, so they go out in small batches: twenty-one of them
+   one after another is slow enough for the job to look hung. */
 async function hackerNews() {
   const ids = await get('https://hacker-news.firebaseio.com/v0/topstories.json', 'json');
+  const wanted = (Array.isArray(ids) ? ids : []).slice(0, PER_SEGMENT * 2);
   const out = [];
-  for (const id of (Array.isArray(ids) ? ids : []).slice(0, PER_SEGMENT * 2)) {
-    if (out.length >= PER_SEGMENT) break;
-    try {
-      const item = await get('https://hacker-news.firebaseio.com/v0/item/' + id + '.json', 'json');
-      if (item && item.title) {
-        out.push({
-          h: short(item.title),
-          u: item.url || 'https://news.ycombinator.com/item?id=' + id,
-          s: 'Hacker News',
-          d: clean(item.text || '').slice(0, 240),
-        });
-      }
-    } catch (err) {
-      warn('Hacker News item ' + id + ' failed: ' + err.message);
+  for (let i = 0; i < wanted.length && out.length < PER_SEGMENT; i += 10) {
+    const batch = await Promise.all(wanted.slice(i, i + 10).map(id =>
+      get('https://hacker-news.firebaseio.com/v0/item/' + id + '.json', 'json')
+        .catch(err => {
+          warn('Hacker News item ' + id + ' failed: ' + err.message);
+          return null;
+        })));
+    for (const item of batch) {
+      if (!item || !item.title) continue;
+      out.push({
+        h: short(item.title),
+        u: item.url || 'https://news.ycombinator.com/item?id=' + item.id,
+        s: 'Hacker News',
+        d: clean(item.text || '').slice(0, 240),
+      });
+      if (out.length >= PER_SEGMENT) break;
     }
   }
   return out;
@@ -195,11 +223,6 @@ if (end < 0) {
   process.exit(1);
 }
 
-if (total < MIN_TOTAL) {
-  warn('only ' + total + ' candidates from ' + counts.length + ' segments; keeping the ones already in the page');
-  process.exit(0);
-}
-
 const previous = (() => {
   try {
     return JSON.parse(html.slice(at + MARK.length, end));
@@ -207,6 +230,19 @@ const previous = (() => {
     return {};
   }
 })();
+
+/* The page rotates through its pool by date, so half a pool is worse than a
+   day old: a run that came back thin keeps the wider list that is already
+   there instead of shrinking it. */
+const previousTotal = Object.values(previous.segments || {})
+  .reduce((n, list) => n + (Array.isArray(list) ? list.length : 0), 0);
+const floor = Math.max(MIN_TOTAL, Math.floor(previousTotal / 2));
+
+if (total < floor) {
+  warn('only ' + total + ' candidates (the page holds ' + previousTotal + ') from ' + counts.length +
+    ' segments; keeping the ones already in the page');
+  process.exit(0);
+}
 
 if (JSON.stringify(previous.segments || {}) === JSON.stringify(segments)) {
   console.log('candidates unchanged since ' + (previous.at || 'the last run') + ' (' + counts.join(' · ') + ')');
