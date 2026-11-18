@@ -8,9 +8,10 @@
 
        window.PODCAST_CANDIDATES = {"at":"...","segments":{...}};
 
-   Each candidate is {h, u, s}: a headline, the link, and where it came from.
-   The page shows them under each segment; picking one fills the headline and
-   source fields, and the "why it matters" line stays the producer's job.
+   Each candidate is {h, u, s, d}: a headline, the link, where it came from and
+   a short summary in the publisher's own words. The page drafts the day's
+   episode from these; d is what the why-it-matters line is built on when no
+   model is connected.
 
    It runs daily in GitHub Actions (.github/workflows/sync-catchup.yml) or by
    hand:
@@ -84,9 +85,11 @@ function items(xml, limit) {
   for (const block of xml.match(/<(item|entry)[\s>][\s\S]*?<\/\1>/gi) || []) {
     const title = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(block);
     const link = /<link[^>]*>([\s\S]*?)<\/link>/i.exec(block) || /<link[^>]*href="([^"]+)"/i.exec(block);
+    const desc = /<(?:description|summary|content)[^>]*>([\s\S]*?)<\/(?:description|summary|content)>/i.exec(block);
     const h = clean(title && title[1]);
     const u = clean(link && link[1]);
-    if (h && /^https?:\/\//.test(u)) out.push({ h, u });
+    const d = clean(desc && desc[1]).slice(0, 240);
+    if (h && /^https?:\/\//.test(u)) out.push({ h, u, d });
     if (out.length >= limit) break;
   }
   return out;
@@ -110,7 +113,7 @@ async function fromFeeds(feeds) {
     for (const it of found) {
       if (seen.has(it.u)) continue;
       seen.add(it.u);
-      out.push({ h: short(it.h), u: it.u, s: source });
+      out.push({ h: short(it.h), u: it.u, s: source, d: it.d || '' });
       if (out.length >= PER_SEGMENT) return out;
     }
   }
@@ -125,7 +128,12 @@ async function hackerNews() {
     try {
       const item = await get('https://hacker-news.firebaseio.com/v0/item/' + id + '.json', 'json');
       if (item && item.title) {
-        out.push({ h: short(item.title), u: item.url || 'https://news.ycombinator.com/item?id=' + id, s: 'Hacker News' });
+        out.push({
+          h: short(item.title),
+          u: item.url || 'https://news.ycombinator.com/item?id=' + id,
+          s: 'Hacker News',
+          d: clean(item.text || '').slice(0, 240),
+        });
       }
     } catch (err) {
       warn('Hacker News item ' + id + ' failed: ' + err.message);
@@ -146,6 +154,7 @@ async function onThisDay() {
       h: short(ev.year + ' — ' + ev.text),
       u: (page && page.page) || 'https://en.wikipedia.org/wiki/Wikipedia:On_this_day',
       s: 'Wikipedia, on this day',
+      d: '',
     };
   });
 }
