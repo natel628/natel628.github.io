@@ -1,0 +1,20 @@
+name: Fix views2 one-off
+on:
+  workflow_dispatch: {}
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch views2 settings panel
+        run: |
+          node -e "const fs=require('fs');const p='sites/whats-happening/js/views2.js';let s=fs.readFileSync(p,'utf8');if(!s.includes('Live data sources')){console.log('already fixed');process.exit(0)};const re=new RegExp('<section class=\"panel\"><h2>Live data sources[\\s\\S]*?</section>');s=s.replace(re,'<section class=\"panel\"><h2>Live data</h2><p class=\"panel__sub\">Live listings refresh automatically every day from the site feed. No keys needed in this browser.</p></section>');fs.writeFileSync(p,s);console.log('patched');"
+          node --check sites/whats-happening/js/views2.js
+      - name: Commit
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add sites/whats-happening/js/views2.js
+          git diff --cached --quiet || (git commit -m "Source-remove browser key panel from Settings, keep auto-sync note" && git push)
