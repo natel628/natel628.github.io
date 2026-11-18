@@ -2734,6 +2734,52 @@
     }
     .pod-step:hover { border-color: var(--accent); color: var(--accent-2); }
     .pod-step:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+    /* The player: it says what will be read before it reads it, and shows the
+       sentence being spoken while it runs. */
+    .pod-player {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface2);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .pod-player-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .pod-player-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: var(--text-xs);
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .pod-player-state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+    .pod-player.live .pod-player-state { color: var(--accent-2); }
+    .pod-player.live .pod-player-state::before { background: var(--accent-2); animation: pod-beat 1.6s var(--ease-out) infinite; }
+    @keyframes pod-beat { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .3; transform: scale(.7); } }
+    .pod-player-meta { font-size: var(--text-xs); color: var(--text-muted); text-align: right; font-variant-numeric: tabular-nums; }
+    .pod-player-line { margin: 0 0 10px; font-size: var(--text-sm); line-height: 1.6; color: var(--text); min-height: 3.2em; }
+    .pod-player-bar { height: 6px; border-radius: var(--radius-pill); background: var(--surface); overflow: hidden; margin-bottom: 12px; }
+    .pod-player-bar span { display: block; height: 100%; width: 0; background: var(--accent-2); border-radius: var(--radius-pill); transition: width .25s var(--ease-out); }
+    .pod-player-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .pod-voice { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); color: var(--text-muted); }
+    .pod-voice select {
+      height: 40px;
+      max-width: 200px;
+      padding: 0 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: var(--text-xs);
+    }
+    .pod-player-est { margin: 8px 0 0; font-size: var(--text-xs); color: var(--text-muted); }
+    @media (prefers-reduced-motion: reduce) {
+      .pod-player.live .pod-player-state::before { animation: none; }
+      .pod-player-bar span { transition: none; }
+    }
     /* A curated pick explains itself, so its card needs room for the reason. */
     .pod-grid-picks { grid-template-columns: repeat(auto-fill, minmax(238px, 1fr)); }
     .pod-why {
@@ -7879,7 +7925,7 @@ async function renderView() {
   updateWelcome();
   window.scrollTo({ top: 0, behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' });
 
-  if (podSpeech) podSpeechReset(null);
+  if (podPlayer) podPlayerStop(null);
   main.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading…</p></div>';
 
   try {
@@ -13082,7 +13128,22 @@ const POD_IDEAS_STALE_DAYS = 2;
 
 function podIdeas(segId) {
   const list = (window.PODCAST_CANDIDATES?.segments || {})[segId];
-  return Array.isArray(list) ? list.filter(c => c && c.h) : [];
+  if (!Array.isArray(list)) return [];
+  /* Feeds carry promos and near-duplicates. Neither is a story you can read
+     out, and a repeat is the thing the pool exists to avoid. */
+  const seen = new Set();
+  const out = [];
+  for (const candidate of list) {
+    if (!candidate || !candidate.h) continue;
+    const headline = podReadable(candidate.h);
+    if (headline.length < 20) continue;
+    if (/^(subscribe|sign up|listen|download the|follow|watch:)/i.test(headline)) continue;
+    const key = headline.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().slice(0, 64);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ ...candidate, h: headline, d: podReadable(candidate.d || '') });
+  }
+  return out;
 }
 
 function podIdeasHTML(seg) {
@@ -13138,8 +13199,9 @@ const POD_WHY_MAX = 300;
    from the headline itself, so no row ever opens blank. */
 function storySummary(pick) {
   if (!pick) return '';
-  if (pick.d) return pick.d;
-  const h = String(pick.h || '').replace(/\s+/g, ' ').trim();
+  const summary = podReadable(pick.d || '');
+  if (summary.length > 40) return summary;
+  const h = podReadable(pick.h || '');
   if (!h) return '';
   const dated = /^(\d{3,4})\s+—\s+([\s\S]+)$/.exec(h);
   if (dated) {
@@ -13209,101 +13271,324 @@ function podSetDraftNote(main, text) {
   if (el) el.textContent = text;
 }
 
-/* ── Play the briefing ────────────────────────────────────────────────
-   The rundown is already written, so the browser can read it back:
-   speechSynthesis is built in, needs no key and no network. One utterance per
-   segment keeps the highlight in step with the voice. Nothing autoplays, and
-   leaving the view or rebuilding the rundown stops it. */
-var podSpeech = null;
+/* ── The player ───────────────────────────────────────────────────────
+   A briefing has to sound like a show, not like seven form fields read out.
+   So the words are built first: a dated intro, a cue for each segment, the
+   headline as a sentence, two sentences of why, and a sign-off. Each line is
+   its own utterance, which is what lets the card show the exact sentence
+   being spoken and makes the progress bar mean something real. The voice is
+   the device's own via speechSynthesis: no key, no network, no download.
+   Nothing ever plays until it is asked to. */
+const POD_WPM = 165;
+var podPlayer = null;
 
 function podSpeechSupported() {
   return typeof window.speechSynthesis !== 'undefined' && typeof window.SpeechSynthesisUtterance === 'function';
 }
 
-function podSpeechRows(main) {
-  return podSegments().map(seg => {
-    const h = main.querySelector('[data-pod-for="' + seg.id + '"][data-pod-field="h"]');
-    const w = main.querySelector('[data-pod-for="' + seg.id + '"][data-pod-field="w"]');
-    const headline = (h && h.value.trim()) || '';
-    if (!headline) return null;
-    const why = (w && w.value.trim()) || '';
-    return {
-      text: seg.name + '. ' + headline + (why ? '. ' + why : ''),
-      row: main.querySelector('#pod-seg-' + seg.id)?.closest('.pod-script-row') || null,
-    };
-  }).filter(Boolean);
+const POD_ENTITIES = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+  rsquo: '’', lsquo: '‘', rdquo: '”', ldquo: '“', mdash: '—', ndash: '–', hellip: '…',
+};
+
+/* Feed summaries arrive as publisher HTML — <em> tags, entities, "Subscribe
+   to…" housekeeping. None of that belongs in a voice, so everything spoken or
+   shown is passed through here first. */
+function podReadable(raw) {
+  let text = String(raw || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&(#x?[0-9a-f]+|\w+);/gi, (m, name) => {
+      if (name[0] === '#') {
+        const hex = name[1] === 'x' || name[1] === 'X';
+        const code = parseInt(hex ? name.slice(2) : name.slice(1), hex ? 16 : 10);
+        return Number.isFinite(code) ? String.fromCodePoint(code) : m;
+      }
+      return POD_ENTITIES[name.toLowerCase()] ?? m;
+    })
+    .replace(/\s+/g, ' ')
+    .trim();
+  text = text.replace(/^(video|watch|live|update|listen|opinion|analysis|exclusive)\s*[:—–-]\s*/i, '');
+  const sentences = text.match(/[^.!?]+[.!?]*/g) || [];
+  const kept = sentences.filter(sentence =>
+    !/^\s*(subscribe|sign up|follow us|listen (to|on)|support us|want more|read more|get more|check out|download|learn more|advertise|share this|watch (the|our)|for more)\b/i.test(sentence));
+  return kept.join(' ').replace(/\s+/g, ' ').trim();
 }
 
-function podSpeechReset(main) {
-  try { window.speechSynthesis.cancel(); } catch (_) { /* no speech support */ }
-  podSpeech = null;
-  document.querySelectorAll('.pod-script-row.pod-playing').forEach(row => row.classList.remove('pod-playing'));
-  const play = main && main.querySelector('#pod-play');
-  if (play) { play.textContent = '▶ Play briefing'; play.setAttribute('aria-pressed', 'false'); }
-  const stop = main && main.querySelector('#pod-stop');
-  if (stop) stop.hidden = true;
-}
-
-function podSpeechSay(main, index) {
-  const items = podSpeechRows(main);
-  if (index >= items.length) { podSpeechReset(main); return; }
-  const item = items[index];
-  podSpeech = { row: item.row, index };
-  document.querySelectorAll('.pod-script-row.pod-playing').forEach(row => row.classList.remove('pod-playing'));
-  if (item.row) item.row.classList.add('pod-playing');
-  const utter = new SpeechSynthesisUtterance(item.text);
-  utter.rate = 1;
-  utter.pitch = 1;
-  utter.onend = () => { if (podSpeech && podSpeech.index === index) podSpeechSay(main, index + 1); };
-  utter.onerror = () => podSpeechReset(main);
-  window.speechSynthesis.speak(utter);
-}
-
-function podSpeechToggle(main) {
-  if (!podSpeechSupported()) { toast('This browser cannot read the briefing aloud.'); return; }
-  const synth = window.speechSynthesis;
-  const play = main.querySelector('#pod-play');
-  const stop = main.querySelector('#pod-stop');
-  if (!podSpeech) {
-    if (!podSpeechRows(main).length) { toast('Nothing drafted yet — Rebuild the rundown first.'); return; }
-    if (stop) stop.hidden = false;
-    if (play) { play.textContent = '❚❚ Pause'; play.setAttribute('aria-pressed', 'true'); }
-    podSpeechSay(main, 0);
-    return;
+function podSentences(text, limit) {
+  if (!text) return [];
+  const parts = String(text).match(/[^.!?]+[.!?]*/g) || [];
+  const out = [];
+  for (const part of parts) {
+    const sentence = part.trim().replace(/\s+/g, ' ');
+    if (sentence.length < 12) continue;
+    out.push(sentence.length > 260 ? sentence.slice(0, 257).replace(/[\s,;:]+$/, '') + '…' : sentence);
+    if (out.length >= limit) break;
   }
-  if (synth.paused) {
-    synth.resume();
-    if (play) play.textContent = '❚❚ Pause';
-  } else {
-    synth.pause();
-    if (play) play.textContent = '▶ Resume';
-  }
+  return out;
 }
 
-/* Show notes: the rundown as text, for a doc, a message or a teleprompter. */
-function podShowNotes(main) {
-  const lines = [DAILY_SHOW.title + ' — ' + new Date().toDateString(), ''];
-  podSegments().forEach(seg => {
-    const get = field => {
-      const el = main.querySelector('[data-pod-for="' + seg.id + '"][data-pod-field="' + field + '"]');
-      return el ? el.value.trim() : '';
-    };
-    const headline = get('h');
+/* The script is the single source for the player, the transcript and the
+   show notes, so all three always say the same thing. */
+function podScript(main) {
+  const segs = podSegments();
+  const now = new Date();
+  const day = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  const total = segs.reduce((n, s) => n + s.min, 0);
+  const lines = [{
+    kind: 'intro', seg: null,
+    text: DAILY_SHOW.title + '. ' + day + '. Seven stories, about ' + total + ' minutes.',
+  }];
+  const read = (seg, field) => {
+    const el = main.querySelector('[data-pod-for="' + seg.id + '"][data-pod-field="' + field + '"]');
+    return podReadable(el ? el.value : '');
+  };
+  segs.forEach((seg, i) => {
+    const headline = read(seg, 'h');
     if (!headline) return;
-    lines.push(seg.name + ' · ' + seg.min + ' min');
-    lines.push(headline);
-    if (get('w')) lines.push(get('w'));
-    if (get('u')) lines.push(get('u'));
-    lines.push('');
+    const cue = i === 0 ? 'First' : i === segs.length - 1 ? 'Last' : 'Next';
+    lines.push({ kind: 'cue', seg: seg.id, text: cue + ', ' + seg.name.toLowerCase() + '.' });
+    lines.push({ kind: 'head', seg: seg.id, text: /[.!?…]$/.test(headline) ? headline : headline + '.' });
+    podSentences(read(seg, 'w'), 2).forEach(sentence =>
+      lines.push({ kind: 'why', seg: seg.id, text: sentence }));
   });
-  return lines.join('\n').trim() + '\n';
+  if (lines.length > 1) {
+    lines.push({
+      kind: 'outro', seg: null,
+      text: 'That’s the Catch-Up for ' + now.toLocaleDateString(undefined, { weekday: 'long' }) + '. Back tomorrow with seven more.',
+    });
+  }
+  return lines;
+}
+
+function podScriptSeconds(lines) {
+  const words = lines.reduce((n, line) => n + line.text.split(/\s+/).length, 0);
+  return Math.round((words / POD_WPM) * 60);
+}
+
+function podClockSeconds(seconds) {
+  const safe = Math.max(0, Math.round(seconds));
+  return Math.floor(safe / 60) + ':' + String(safe % 60).padStart(2, '0');
+}
+
+/* Device voices vary wildly. These name families are the ones that sound like
+   a person rather than a 1998 screen reader, in the order worth preferring. */
+const POD_VOICE_WANT = [
+  /natural/i, /neural/i, /premium/i, /enhanced/i, /siri/i,
+  /\b(aria|jenny|sonia|ryan|ava|allison|samantha|serena|daniel|karen|moira|tessa|fiona|alex|guy)\b/i,
+  /google/i,
+];
+
+function podVoices() {
+  try {
+    return (window.speechSynthesis.getVoices() || [])
+      .filter(voice => /^en([-_]|$)/i.test(voice.lang || ''))
+      .sort((a, b) => Number(b.localService === false) - Number(a.localService === false));
+  } catch (_) {
+    return [];
+  }
+}
+
+function podBestVoice() {
+  const list = podVoices();
+  for (const want of POD_VOICE_WANT) {
+    const hit = list.find(voice => want.test(voice.name) || want.test(voice.voiceURI || ''));
+    if (hit) return hit;
+  }
+  return list[0] || null;
+}
+
+function podVoice() {
+  const saved = LS.get('pod_voice');
+  return podVoices().find(voice => voice.name === saved) || podBestVoice();
+}
+
+function podFillVoices(main) {
+  const select = main && main.querySelector('#pod-voice');
+  if (!select) return;
+  const list = podVoices();
+  const chosen = podVoice();
+  select.innerHTML = list.length
+    ? list.map(voice => '<option value="' + esc(voice.name) + '"' + (chosen && voice.name === chosen.name ? ' selected' : '') + '>' +
+        esc(voice.name.replace(/\s*\(.*?\)\s*/g, ' ').trim() || voice.name) + '</option>').join('')
+    : '<option value="">Device default</option>';
+  select.disabled = !list.length;
+}
+
+function podPlayerRow(main, segId) {
+  main.querySelectorAll('.pod-script-row.pod-playing').forEach(row => row.classList.remove('pod-playing'));
+  if (!segId) return;
+  const row = main.querySelector('#pod-seg-' + segId)?.closest('.pod-script-row');
+  if (!row) return;
+  row.classList.add('pod-playing');
+  try { row.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) { /* jsdom, old browsers */ }
+}
+
+function podPlayerPaint(main) {
+  if (!main || !main.querySelector) return;
+  const card = main.querySelector('#pod-player');
+  if (!card) return;
+  const lines = podPlayer ? podPlayer.lines : podScript(main);
+  const playing = !!podPlayer;
+  const line = playing ? lines[podPlayer.index] : null;
+  const segs = podSegments();
+  const seg = line && line.seg ? segs.find(s => s.id === line.seg) : null;
+
+  const state = card.querySelector('#pod-player-state');
+  const meta = card.querySelector('#pod-player-meta');
+  const text = card.querySelector('#pod-player-line');
+  const fill = card.querySelector('#pod-player-fill');
+  const play = card.querySelector('#pod-play');
+  const stop = card.querySelector('#pod-stop');
+  const est = card.querySelector('#pod-player-est');
+
+  card.classList.toggle('live', playing && !podPlayer.paused);
+  if (state) state.textContent = playing ? (podPlayer.paused ? 'Paused' : 'Playing') : 'Ready';
+  if (meta) {
+    meta.textContent = playing && seg
+      ? seg.name + ' · ' + (segs.findIndex(s => s.id === seg.id) + 1) + ' of ' + segs.length +
+        ' · line ' + (podPlayer.index + 1) + ' of ' + lines.length
+      : lines.length ? lines.length + ' lines' : '';
+  }
+  if (text) {
+    text.textContent = line ? line.text : (lines.length
+      ? 'Press play and this is the first line you will hear: “' + lines[0].text + '”'
+      : 'Nothing drafted yet — rebuild the rundown to make today’s script.');
+  }
+  if (fill) fill.style.width = lines.length ? Math.round(((playing ? podPlayer.index + 1 : 0) / lines.length) * 100) + '%' : '0%';
+  if (play) {
+    play.textContent = playing ? (podPlayer.paused ? '▶ Resume' : '❚❚ Pause') : '▶ Play briefing';
+    play.setAttribute('aria-pressed', String(playing && !podPlayer.paused));
+  }
+  if (stop) stop.hidden = !playing;
+  if (est) {
+    est.textContent = lines.length
+      ? (playing ? 'About ' + podClockSeconds(podScriptSeconds(lines)) + ' in total'
+        : 'Reads ' + segs.length + ' segments · about ' + podClockSeconds(podScriptSeconds(lines)))
+      : '';
+  }
+}
+
+function podPlayerSpeak(main, index) {
+  if (!podPlayer) return;
+  const line = podPlayer.lines[index];
+  if (!line) { podPlayerStop(main); return; }
+  podPlayer.index = index;
+  podPlayer.paused = false;
+  if (podPlayer.seg !== line.seg) {
+    podPlayer.seg = line.seg;
+    podPlayerRow(main, line.seg);
+  }
+  podPlayerPaint(main);
+
+  const utterance = new SpeechSynthesisUtterance(line.text);
+  const voice = podVoice();
+  if (voice) { utterance.voice = voice; utterance.lang = voice.lang; }
+  utterance.rate = 0.98;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+  utterance.onend = () => {
+    if (podPlayer && podPlayer.index === index && !podPlayer.paused) podPlayerSpeak(main, index + 1);
+  };
+  utterance.onerror = ev => {
+    if (ev && (ev.error === 'interrupted' || ev.error === 'canceled')) return;
+    if (podPlayer) { podPlayerStop(main); toast('The voice stopped — try another voice.'); }
+  };
+  podPlayer.utterance = utterance;
+  window.speechSynthesis.speak(utterance);
+}
+
+function podPlayerStart(main, from) {
+  if (!podSpeechSupported()) { toast('This browser has no voice engine.'); return; }
+  const lines = podScript(main);
+  if (!lines.length) { toast('Nothing drafted yet — rebuild the rundown first.'); return; }
+  try { window.speechSynthesis.cancel(); } catch (_) { /* nothing was speaking */ }
+  podPlayer = { lines, index: Math.min(from || 0, lines.length - 1), seg: null, paused: false };
+  podPlayerPaint(main);
+  /* Chrome drops a speak() issued in the same tick as cancel(), which is how
+     a stale line from a previous run used to turn up first. */
+  const start = podPlayer.index;
+  setTimeout(() => { if (podPlayer && !podPlayer.paused) podPlayerSpeak(main, start); }, 90);
+}
+
+function podPlayerToggle(main) {
+  if (!podSpeechSupported()) { toast('This browser has no voice engine.'); return; }
+  const synth = window.speechSynthesis;
+  if (!podPlayer) { podPlayerStart(main, 0); return; }
+  if (podPlayer.paused) {
+    podPlayer.paused = false;
+    synth.resume();
+    if (!synth.speaking) podPlayerSpeak(main, podPlayer.index);
+  } else {
+    podPlayer.paused = true;
+    synth.pause();
+  }
+  podPlayerPaint(main);
+}
+
+function podPlayerStop(main) {
+  try { window.speechSynthesis.cancel(); } catch (_) { /* nothing was speaking */ }
+  podPlayer = null;
+  if (main) {
+    main.querySelectorAll('.pod-script-row.pod-playing').forEach(row => row.classList.remove('pod-playing'));
+    podPlayerPaint(main);
+  }
+}
+
+/* Restart the current line so a new voice is heard immediately. */
+function podPlayerVoiceChanged(main) {
+  if (!podPlayer) return;
+  try { window.speechSynthesis.cancel(); } catch (_) { /* nothing was speaking */ }
+  const resume = podPlayer.index;
+  podPlayer.paused = false;
+  setTimeout(() => { if (podPlayer) podPlayerSpeak(main, resume); }, 90);
+}
+
+/* Chrome hands over its voice list asynchronously, so the picker has to fill
+   itself in when they finally arrive. */
+if (podSpeechSupported() && typeof window.speechSynthesis.addEventListener === 'function') {
+  window.speechSynthesis.addEventListener('voiceschanged', () => {
+    podFillVoices(document.getElementById('main-content'));
+    if (podPlayer) podPlayerPaint(document.getElementById('main-content'));
+  });
+}
+
+/* Losing the tab pauses the briefing rather than killing it: the line stays
+   on the card, so coming back and pressing Resume is never a mystery. */
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden || !podPlayer || podPlayer.paused) return;
+  try { window.speechSynthesis.pause(); } catch (_) { /* nothing was speaking */ }
+  podPlayer.paused = true;
+  podPlayerPaint(document.getElementById('main-content'));
+});
+
+/* Show notes: the spoken script, in order, with the source kept next to each
+   segment so the copy is both readable and checkable. */
+function podShowNotes(main) {
+  const script = podScript(main);
+  if (script.length <= 1) return '';
+  const segs = podSegments();
+  const when = new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const out = [DAILY_SHOW.title + ' — ' + when, '', script[0].text, ''];
+  script.slice(1).forEach(line => {
+    if (line.kind === 'cue') {
+      const seg = segs.find(s => s.id === line.seg) || {};
+      const source = main.querySelector('[data-pod-for="' + line.seg + '"][data-pod-field="u"]');
+      out.push('[' + (seg.name || 'Segment') + ' · ' + (seg.min || 0) + ' min]');
+      out.push(line.text);
+      const url = source ? source.value.trim() : '';
+      if (url) out.push('Source: ' + url);
+      return;
+    }
+    out.push(line.text);
+  });
+  return out.join('\n').trim() + '\n';
 }
 
 function podCopyNotes(main) {
   const text = podShowNotes(main);
   const fail = () => toast('Copy failed — select the rundown text instead.');
   try {
-    navigator.clipboard.writeText(text).then(() => toast('Show notes copied.'), fail);
+    navigator.clipboard.writeText(text).then(() => toast('Transcript copied.'), fail);
   } catch (_) { fail(); }
 }
 
@@ -13388,11 +13673,12 @@ async function podAutoEpisode(main, force) {
     podSetDraftNote(main, 'Drafted from the stories themselves — the model could not be reached.');
   } finally {
     podDrafting = false;
+    podPlayerPaint(main);
   }
 }
 
 function renderDailyCatchUp(main) {
-  if (podSpeech) podSpeechReset(main);
+  if (podPlayer) podPlayerStop(main);
   const board = podBoard();
   const segs = podSegments();
   const total = segs.reduce((n, s) => n + s.min, 0);
@@ -13449,10 +13735,24 @@ function renderDailyCatchUp(main) {
         '<p class="pod-note">The headline, why it matters and where it came from, one line each. ' +
           '<strong id="pod-count"></strong> · resets each day, kept on this device. ' +
           '<span id="pod-draft"></span></p>' +
+        '<div class="pod-player" id="pod-player">' +
+          '<div class="pod-player-top">' +
+            '<span class="pod-player-state" id="pod-player-state">Ready</span>' +
+            '<span class="pod-player-meta" id="pod-player-meta"></span>' +
+          '</div>' +
+          '<p class="pod-player-line" id="pod-player-line" aria-live="polite"></p>' +
+          '<div class="pod-player-bar" aria-hidden="true"><span id="pod-player-fill"></span></div>' +
+          '<div class="pod-player-controls">' +
+            '<button type="button" class="modal-btn primary" id="pod-play" aria-pressed="false"' + (podSpeechSupported() ? '' : ' hidden') + '>▶ Play briefing</button>' +
+            '<button type="button" class="modal-btn" id="pod-stop" hidden>Stop</button>' +
+            '<label class="pod-voice"><span>Voice</span>' +
+              '<select id="pod-voice" aria-label="Voice for the briefing"></select>' +
+            '</label>' +
+          '</div>' +
+          '<p class="pod-player-est" id="pod-player-est"></p>' +
+        '</div>' +
         '<div class="pod-actions">' +
-          '<button type="button" class="modal-btn primary" id="pod-play" aria-pressed="false"' + (podSpeechSupported() ? '' : ' hidden') + '>▶ Play briefing</button>' +
-          '<button type="button" class="modal-btn" id="pod-stop" hidden>Stop</button>' +
-          '<button type="button" class="modal-btn" id="pod-copy">Copy show notes</button>' +
+          '<button type="button" class="modal-btn" id="pod-copy">Copy transcript</button>' +
           '<button type="button" class="link-btn" id="pod-rebuild">Rebuild</button>' +
         '</div>' +
         '<div class="pod-progress"><span id="pod-bar"></span></div>' +
@@ -13475,6 +13775,8 @@ function renderDailyCatchUp(main) {
     '</div>';
 
   podPaintRundown();
+  podFillVoices(main);
+  podPlayerPaint(main);
 
   main.querySelectorAll('[data-pod-seg]').forEach(cb => {
     cb.addEventListener('change', () => {
@@ -13515,7 +13817,7 @@ function renderDailyCatchUp(main) {
 
   main.querySelectorAll('[data-pod-nudge]').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (podSpeech) podSpeechReset(main);
+      if (podPlayer) podPlayerStop(main);
       podNudgeMin(btn.dataset.podNudge, Number(btn.dataset.step));
       renderDailyCatchUp(main);
     });
@@ -13528,15 +13830,21 @@ function renderDailyCatchUp(main) {
       podSyncSource(input);
       podWriteBoard();
     });
+    /* The idle card promises the first line, so it has to follow the edits. */
+    input.addEventListener('change', () => { if (!podPlayer) podPlayerPaint(main); });
   });
 
   main.querySelector('#pod-rebuild')?.addEventListener('click', () => {
-    podSpeechReset(main);
+    podPlayerStop(main);
     podAutoEpisode(main, true);
   });
-  main.querySelector('#pod-play')?.addEventListener('click', () => podSpeechToggle(main));
-  main.querySelector('#pod-stop')?.addEventListener('click', () => podSpeechReset(main));
+  main.querySelector('#pod-play')?.addEventListener('click', () => podPlayerToggle(main));
+  main.querySelector('#pod-stop')?.addEventListener('click', () => podPlayerStop(main));
   main.querySelector('#pod-copy')?.addEventListener('click', () => podCopyNotes(main));
+  main.querySelector('#pod-voice')?.addEventListener('change', ev => {
+    LS.set('pod_voice', ev.target.value);
+    podPlayerVoiceChanged(main);
+  });
   podAutoEpisode(main, false);
 }
 
