@@ -5,6 +5,9 @@ name: Sync live events
 # without pasting their own API keys. Then regenerates the subscribable
 # calendar feeds in sites/whats-happening/feeds/ from that same file, so
 # Google/Apple Calendar subscriptions stay current with no extra keys.
+# Also writes data/health.json (per-source counts and errors) for ?diag=1, and
+# leaves live.json alone when most sources fail so one bad run cannot wipe a
+# good feed.
 # Needs two repo secrets:
 #   TICKETMASTER_API_KEY  (free key from developer.ticketmaster.com)
 #   YOUTUBE_API_KEY       (free key from console.cloud.google.com, YouTube Data API v3)
@@ -37,19 +40,32 @@ jobs:
           node-version: '20'
 
       - name: Fetch listings
+        id: sync
         env:
           TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: node scripts/sync-live.mjs
 
       - name: Build calendar feeds
+        if: steps.sync.outputs.result != 'aborted'
         run: node scripts/build-feeds.mjs
 
       - name: Commit live.json and feeds
+        env:
+          SYNC_RESULT: ${{ steps.sync.outputs.result }}
         run: |
           git config user.name 'whats-happening-sync'
           git config user.email 'whats-happening-sync@users.noreply.github.com'
-          git add sites/whats-happening/data/live.json sites/whats-happening/feeds
+          git add sites/whats-happening/data/health.json
+          if [ "$SYNC_RESULT" = 'aborted' ]; then
+            echo '::warning::Sync aborted - live.json and the calendar feeds were left untouched.'
+          else
+            git add sites/whats-happening/data/live.json sites/whats-happening/feeds
+          fi
           git diff --cached --quiet && echo 'live data unchanged' && exit 0
-          git commit -m 'data(whats-happening): refresh live events and calendar feeds'
+          if [ "$SYNC_RESULT" = 'aborted' ]; then
+            git commit -m 'data(whats-happening): record aborted sync in health.json'
+          else
+            git commit -m 'data(whats-happening): refresh live events and calendar feeds'
+          fi
           git push
