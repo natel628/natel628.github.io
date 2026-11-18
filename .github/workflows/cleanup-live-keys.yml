@@ -1,0 +1,32 @@
+name: Cleanup live key path
+on:
+  workflow_dispatch: {}
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply cleanup
+        run: node scripts/cleanup-live-keys.mjs
+      - name: Syntax check
+        run: |
+          node --check sites/whats-happening/js/app.js
+          node --check sites/whats-happening/js/core.js
+          node --check sites/whats-happening/js/views.js
+      - name: Assert no leftovers
+        run: |
+          for t in save-keys clear-keys S.keys liveStatus liveError loadTicketmaster loadYouTube normalizeTM normalizeYT tmCache ytCache mergeLive key-tm key-yt; do
+            if grep -nF "$t" sites/whats-happening/js/app.js; then echo "leftover: $t"; exit 1; fi
+          done
+          if grep -nF "keys:" sites/whats-happening/js/core.js; then echo "leftover keys state"; exit 1; fi
+          grep -nF "liveGeneratedAt: null" sites/whats-happening/js/core.js
+      - name: Commit
+        run: |
+          git diff --stat
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add sites/whats-happening/js/app.js sites/whats-happening/js/core.js sites/whats-happening/js/views.js
+          git commit -m "Remove dead browser-key live path, fix demo notice copy"
+          git push
