@@ -1,74 +1,37 @@
-/* What's Happening? - tile art.
-
-   Order of preference for a tile picture:
-     1. the picture the listing itself published (Ticketmaster image, YouTube
-        thumbnail) - always right, because it is the event's own artwork;
-     2. a keyword photo for the category / venue, so a listing that published
-        no picture still gets something that looks like what it is (and so do
-        the demonstration events, which are invented and have no artwork);
-     3. picsum, unchanged, only if the keyword service cannot answer.
-   The gradient stays behind all of it, so a blocked image never leaves a hole.
+/* What's Happening? - tile art: the event's own photo first, then a stable
+   stand-in, gradient behind.
+   No new API key. Wraps WHV.art / hero / sheet art. When a fetch of the real
+   photo fails (hotlink blocked, expired asset, offline) the tile swaps to a
+   seeded stand-in instead of dropping to a bare gradient, so a card is never
+   empty and never silently pretends to be a different event.
 */
 (function () {
-'use strict';
+  'use strict';
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
     });
   }
-
-  /* Two or three words that describe the listing, in the order that matters:
-     the category first, then the venue/title so two comedy nights do not get
-     the identical picture. */
-  var TAGS = {
-    comedy: 'comedy,stage',
-    music: 'concert,stage',
-    sports: 'stadium,sport',
-    festival: 'festival,crowd',
-    outdoor: 'mountain,outdoors',
-    theatre: 'theatre,stage',
-    film: 'cinema,screen',
-    food: 'food,market',
-    art: 'gallery,art',
-    community: 'community,event',
-    online: 'livestream,studio',
-    ski: 'ski,snow'
-  };
-  function word(s) {
-    return String(s || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(' ').filter(function (w) {
-      return w && w.length > 2;
-    })[0] || '';
+  function standIn(ev) {
+    var seed = (ev && (ev.id || ev.title)) || 'event';
+    return 'https://picsum.photos/seed/' + encodeURIComponent(String(seed)) + '/800/500';
   }
-  function tagsFor(ev) {
-    if (!ev) return 'event';
-    var base = TAGS[ev.category] || ev.category || 'event';
-    var extra = ev.presence === 'online' || ev.source === 'youtube' ? 'studio' : word(ev.venue) || word(ev.title);
-    return extra ? base + ',' + extra : base;
-  }
-  function keywordSrc(ev) {
-    return 'https://loremflickr.com/800/500/' + encodeURIComponent(tagsFor(ev)).replace(/%2C/g, ',');
-  }
-  function seedFor(ev) { return encodeURIComponent(String((ev && (ev.id || ev.title)) || 'event')); }
-
-  function published(ev) {
-    var u = ev && (ev.image || ev.thumbnail) || '';
-    if (typeof u !== 'string') return '';
-    u = u.trim();
-    return /^https:\/\//.test(u) ? u : '';
-  }
-
   function imgFor(ev) {
-    return published(ev) || keywordSrc(ev);
+    var u = (ev && (ev.image || ev.thumbnail)) || '';
+    if (typeof u === 'string') {
+      u = u.trim();
+      if (/^https:\/\//.test(u)) return u;
+    }
+    return standIn(ev);
   }
-
-  /* One retry, then out of the way: keyword service -> picsum -> nothing. */
+  /* referrerpolicy keeps Ticketmaster's CDN from rejecting the request in
+     browsers that send a cross-site referer; onerror falls back once, then
+     stops trying. */
   function imgTag(src, ev) {
-    var fallback = 'https://picsum.photos/seed/' + seedFor(ev) + '/800/500';
-    return '<img class="art__img" src="' + esc(src) + '" alt="" loading="lazy" ' +
-      'onerror="if(this.dataset.fb){this.remove();}else{this.dataset.fb=1;this.src=\'' + esc(fallback) + '\';}">';
+    var fb = esc(standIn(ev));
+    return '<img class="art__img" src="' + esc(src) + '" alt="" loading="lazy" referrerpolicy="no-referrer"' +
+      ' onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src=\'' + fb + '\';}else{this.remove();}" />';
   }
-  function artImg(ev) { return imgTag(imgFor(ev), ev); }
-
   function injectAfterOpen(html, img) {
     var i = html.indexOf('>');
     if (i < 0) return html;
@@ -92,13 +55,13 @@
       var origArt = V.art;
       V.art = function (ev, cls) {
         var html = origArt(ev, cls);
-        return injectAfterOpen(html, artImg(ev));
+        return injectAfterOpen(html, imgTag(imgFor(ev), ev));
       };
       var origHero = V.hero;
       if (typeof origHero === 'function') {
         V.hero = function (ev) {
           var html = origHero(ev);
-          return html.replace(/(<div class="hero__art"[^>]*>)/, '$1' + artImg(ev));
+          return html.replace(/(<div class="hero__art"[^>]*>)/, '$1' + imgTag(imgFor(ev), ev));
         };
       }
       V.__tileArtPatched2 = true;
@@ -109,7 +72,7 @@
       var origModal = V2.eventModal;
       V2.eventModal = function (ev) {
         var html = origModal(ev);
-        return html.replace(/(<div class="sheet__art[^"]*"[^>]*>)/, '$1' + artImg(ev));
+        return html.replace(/(<div class="sheet__art[^"]*"[^>]*>)/, '$1' + imgTag(imgFor(ev), ev));
       };
       V2.__tileArtPatched2 = true;
       V2.__tileArtPatched = true;
