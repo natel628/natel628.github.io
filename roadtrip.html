@@ -19,7 +19,7 @@
   main { max-width:1100px; margin:0 auto; padding:20px; display:grid; grid-template-columns:minmax(0,1fr); gap:24px; }
   .card { min-width:0; background:var(--card); border-radius:12px; padding:18px; border:1px solid #334155; }
   .card h2 { margin-top:0; } .muted { color:var(--muted); font-size:.9rem; }
-  .row { display:flex; gap:8px; flex-wrap:wrap; } input,select,button { padding:10px 12px; border-radius:8px; border:1px solid #475569; font-size:1rem; }
+  .row { position:relative; display:flex; gap:8px; flex-wrap:wrap; } input,select,button { padding:10px 12px; border-radius:8px; border:1px solid #475569; font-size:1rem; }
   input,select { background:#0f172a; color:var(--text); flex:1; min-width:160px; }
   button { background:var(--accent); border:none; color:#111; font-weight:700; cursor:pointer; }
   button:disabled { opacity:.45; cursor:not-allowed; }
@@ -31,7 +31,8 @@
   /* The name gets its own room and the buttons can never sit on top of it. */
   #stops .stop-info { flex:1 1 150px; min-width:0; overflow-wrap:anywhere; }
   #stops .stop-actions { display:flex; gap:6px; flex-wrap:wrap; margin-left:auto; }
-  .row { position:relative; }
+  /* A flex row would otherwise out-rank the hidden attribute and stay visible. */
+  #mapAdd[hidden] { display:none; }
   .mapmenu { position:absolute; right:8px; top:calc(100% + 4px); z-index:1600; display:grid; gap:4px; min-width:220px; padding:6px; background:#0f172a; border:1px solid #475569; border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,.5); }
   .row > .mapmenu { left:8px; right:auto; }
   .mapmenu button { text-align:left; background:transparent; color:var(--text); border:1px solid transparent; border-radius:6px; padding:8px 10px; font-size:.9rem; font-weight:600; }
@@ -344,6 +345,11 @@
       <button id="addLoc" type="button">Add stop</button>
     </div>
     <div id="map"></div>
+    <div id="mapAdd" class="row" hidden style="margin-top:10px;align-items:center">
+      <input id="mapAddName" placeholder="Name this stop" aria-label="Name for the stop you clicked on the map" autocomplete="off" />
+      <button type="button" id="mapAddGo">Add this stop</button>
+      <button type="button" id="mapAddCancel" class="ghost">Cancel</button>
+    </div>
     <p class="muted" id="tripStats" style="margin-top:8px"></p>
     <div class="row" style="margin-top:2px">
       <button type="button" id="openMaps" class="small ghost" title="Open the whole route in a map app" hidden>Open whole route ↗</button>
@@ -800,17 +806,43 @@ async function write(method, path, payload){
     syncing = false;
   }
 }
-// A 503 on the CORS preflight reaches the page as a bare network failure, and in
-// that case the POST never left the browser — so one more try cannot duplicate a
-// note or a stop. A real HTTP error is never retried: that write may already
-// have landed.
+// Only a browser that knows it is offline is safe to retry. There the request
+// never got out, so a second try cannot duplicate a note, stop or photo. A bare
+// network failure while online could have reached the Worker with the response
+// lost — retrying that would write twice — so it is reported instead.
 async function send(method, path, payload){
   try { return await api(method, path, payload); }
   catch (err) {
-    if (!(err instanceof TypeError)) throw err;
+    if (!(err instanceof TypeError) || navigator.onLine !== false) throw err;
     await new Promise(r => setTimeout(r, 800));
     return api(method, path, payload);
   }
+}
+
+// Every lookup the page makes feeds a button that stays disabled until it
+// answers, so no request may hang forever on a weak highway signal. Reads get a
+// deadline; writes deliberately do not, because a timed-out write leaves you
+// unsure whether it landed.
+const NET_TIMEOUT = 12000;
+async function timedFetch(url, opts){
+  const o = Object.assign({}, opts);
+  if (typeof AbortSignal.timeout === 'function') o.signal = netSignal(opts && opts.signal);
+  try {
+    return await fetch(url, o);
+  } catch (err) {
+    if (err && (err.name === 'TimeoutError' || err.name === 'AbortError')) {
+      const slow = new Error('That took too long — check your signal and try again.');
+      slow.timeout = err.name === 'TimeoutError';
+      throw slow;
+    }
+    throw err;
+  }
+}
+function netSignal(extra){
+  const deadline = (typeof AbortSignal.timeout === 'function') ? AbortSignal.timeout(NET_TIMEOUT) : null;
+  if (!extra) return deadline || undefined;
+  if (!deadline) return extra;
+  return (typeof AbortSignal.any === 'function') ? AbortSignal.any([extra, deadline]) : extra;
 }
 
 /* ---------- address suggestions ---------- */
@@ -822,7 +854,7 @@ const PLACE_CLASSES = /^(tourism|leisure|natural|historic|amenity|shop|building|
 // Name-first search: Photon matches landmarks, parks, towns and venues, which
 // the address-oriented geocoder below tends to bury under street addresses.
 async function photonSearch(q, signal){
-  const res = await fetch('https://photon.komoot.io/api/?limit=12&lang=en&q=' + encodeURIComponent(q), { signal });
+  const res = await timedFetch('https://photon.komoot.io/api/?limit=12&lang=en&q=' + encodeURIComponent(q), { signal });
   if (!res.ok) return [];
   const data = await res.json();
   const feats = data && Array.isArray(data.features) ? data.features : [];
@@ -848,7 +880,7 @@ async function photonSearch(q, signal){
 
 async function nominatimSearch(q, signal){
   const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=12&dedupe=1&q=' + encodeURIComponent(q);
-  const res = await fetch(url, { signal });
+  const res = await timedFetch(url, { signal });
   if (!res.ok) return [];
   const rows = await res.json();
   if (!Array.isArray(rows)) return [];
@@ -1004,6 +1036,9 @@ acSetup($('locInput'));
 const map = L.map('map').setView([39.5,-98.35],4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
 let markers=[], line=null;
+// The route map only pulls itself back to the whole route when the route
+// actually changed — a plan edit by someone else should not undo your pan.
+let stopsLineKey = '';
 
 function hav(a,b){ const R=3958.8,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180;
   const h=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;
@@ -1020,7 +1055,7 @@ async function attachDriving(origin, places){
   const coords = [[origin.lng, origin.lat]].concat(places.map(p => [p.lng, p.lat]))
     .map(([lng, lat]) => lng.toFixed(5) + ',' + lat.toFixed(5)).join(';');
   try {
-    const res = await fetch('https://router.project-osrm.org/table/v1/driving/' + coords + '?sources=0&annotations=distance,duration');
+    const res = await timedFetch('https://router.project-osrm.org/table/v1/driving/' + coords + '?sources=0&annotations=distance,duration');
     if (!res.ok) return;
     const data = await res.json();
     const dist = data && data.distances && data.distances[0];
@@ -1127,7 +1162,7 @@ async function refreshLegs(){
   const coords = stops.map(s => s.lng.toFixed(5) + ',' + s.lat.toFixed(5)).join(';');
   let rows = null;
   try {
-    const res = await fetch('https://router.project-osrm.org/table/v1/driving/' + coords + '?annotations=distance,duration');
+    const res = await timedFetch('https://router.project-osrm.org/table/v1/driving/' + coords + '?annotations=distance,duration');
     if (res.ok) {
       const data = await res.json();
       if (data && data.distances && data.durations) {
@@ -1280,12 +1315,15 @@ function renderStops(){
     ul.appendChild(li);
   });
 
+  const lineKey = state.stops.map(s => s.id + ':' + (+s.lat).toFixed(3) + ':' + (+s.lng).toFixed(3)).join('|');
+  const routeMoved = lineKey !== stopsLineKey;
+  stopsLineKey = lineKey;
   if (state.stops.length > 1) {
     line = L.polyline(state.stops.map(s => [s.lat, s.lng]), { color:'#f59e0b', weight:4 }).addTo(map);
-    fitMap(map, state.stops.map(s => [s.lat, s.lng]), { maxZoom: 10 });
+    if (routeMoved) fitMap(map, state.stops.map(s => [s.lat, s.lng]), { maxZoom: 10 });
     updateTripStats();
   } else if (state.stops.length === 1) {
-    fitMap(map, [[state.stops[0].lat, state.stops[0].lng]], { maxZoom: 8 });
+    if (routeMoved) fitMap(map, [[state.stops[0].lat, state.stops[0].lng]], { maxZoom: 8 });
     $('tripStats').textContent = '1 stop — set a start/end or add another stop to draw a route.';
   } else {
     $('tripStats').textContent = '';
@@ -1321,7 +1359,7 @@ $('stops').addEventListener('click', e => {
 });
 
 async function geocode(name){
-  const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(name))
+  const r = await timedFetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(name))
     .then(res => { if (!res.ok) throw new Error('geocoder unavailable'); return res.json(); });
   if (!r.length) throw new Error('not found');
   return { name: r[0].display_name.split(',').slice(0, 2).join(','), lat: +r[0].lat, lng: +r[0].lon };
@@ -1376,9 +1414,44 @@ $('setEnds').onclick = async () => {
     btn.disabled = false;
   }
 };
+// Clicking the map opens a small name field under it. A browser prompt() is
+// blocked outright in some phone in-app browsers, and it hides the pin you just
+// dropped behind a dialog.
+let mapAddPoint = null;
+function closeMapAdd(){
+  mapAddPoint = null;
+  const box = $('mapAdd'); if (box) box.hidden = true;
+  const input = $('mapAddName'); if (input) input.value = '';
+}
 map.on('click', e => {
-  const n = prompt('Name this stop:', 'Custom stop');
-  if (n && n.trim()) write('POST', '/api/stops', { name: n.trim(), lat: e.latlng.lat, lng: e.latlng.lng });
+  mapAddPoint = { lat: e.latlng.lat, lng: e.latlng.lng };
+  const box = $('mapAdd');
+  const input = $('mapAddName');
+  if (!box || !input) return;
+  box.hidden = false;
+  input.value = '';
+  input.placeholder = 'Name this stop — ' + mapAddPoint.lat.toFixed(3) + ', ' + mapAddPoint.lng.toFixed(3);
+  hint('Pin dropped — name it below and press Add this stop.');
+  input.focus();
+  box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+});
+async function addMapStop(){
+  const point = mapAddPoint;
+  if (!point) return;
+  const name = ($('mapAddName').value || '').trim();
+  if (!name) { hint('Give the stop a name first — or press Cancel.'); $('mapAddName').focus(); return; }
+  const btn = $('mapAddGo');
+  btn.disabled = true;
+  const ok = await write('POST', '/api/stops', { name: name, lat: point.lat, lng: point.lng });
+  btn.disabled = false;
+  if (ok) { closeMapAdd(); hint(''); }
+  else hint('Could not add that stop — try again.');
+}
+$('mapAddGo').onclick = addMapStop;
+$('mapAddCancel').onclick = () => { closeMapAdd(); hint(''); };
+$('mapAddName').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); addMapStop(); }
+  else if (e.key === 'Escape') { closeMapAdd(); hint(''); }
 });
 
 /* ---------- itinerary helpers: weather, maps handoff, fuel memory ---------- */
@@ -1445,7 +1518,7 @@ async function wxLoad(lat, lng, place, btn){
       daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum',
       temperature_unit: 'fahrenheit', timezone: 'auto', forecast_days: '7'
     });
-    const res = await fetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
+    const res = await timedFetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
     if (!res.ok) throw new Error('The forecast service refused (' + res.status + ')');
     wxRender(place, await res.json());
     try { localStorage.setItem(WX_LAST, JSON.stringify({ place: place, lat: +lat, lng: +lng })); } catch (e) {}
@@ -1479,7 +1552,7 @@ function wxFromHere(){
     const lat = pos.coords.latitude, lng = pos.coords.longitude;
     let label = 'Where you are';
     try {
-      const r = await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&lat=' + lat.toFixed(4) + '&lon=' + lng.toFixed(4));
+      const r = await timedFetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&lat=' + lat.toFixed(4) + '&lon=' + lng.toFixed(4));
       if (r.ok) {
         const p = await r.json(), a = (p && p.address) || {};
         label = a.city || a.town || a.village || a.hamlet || a.county || label;
@@ -2307,7 +2380,7 @@ function golfMsg(t){
 }
 
 async function findGolfByName(name){
-  const res = await fetch('https://photon.komoot.io/api/?limit=30&lang=en&osm_tag=leisure:golf_course&q=' + encodeURIComponent(name));
+  const res = await timedFetch('https://photon.komoot.io/api/?limit=30&lang=en&osm_tag=leisure:golf_course&q=' + encodeURIComponent(name));
   if (!res.ok) throw new Error('The course index is busy right now — try again in a moment.');
   const data = await res.json();
   const seen = new Set();
@@ -2367,7 +2440,7 @@ async function findGolfCourses(center, radiusKm){
   // ways a course is usually named and merge the answers.
   const terms = ['golf', 'country club', 'links', 'golf club'];
   const answers = await Promise.allSettled(terms.map(term =>
-    fetch('https://photon.komoot.io/api/?limit=30&lang=en&osm_tag=leisure:golf_course&bbox=' + bbox + '&q=' + encodeURIComponent(term))
+    timedFetch('https://photon.komoot.io/api/?limit=30&lang=en&osm_tag=leisure:golf_course&bbox=' + bbox + '&q=' + encodeURIComponent(term))
       .then(res => (res.ok ? res.json() : null))
   ));
 
@@ -2570,7 +2643,7 @@ async function nominatim(query, center, radiusKm){
     params.set('viewbox', [center.lng - dLon, center.lat + dLat, center.lng + dLon, center.lat - dLat].join(','));
     params.set('bounded', '1');
   }
-  const res = await fetch('https://nominatim.openstreetmap.org/search?' + params.toString());
+  const res = await timedFetch('https://nominatim.openstreetmap.org/search?' + params.toString());
   if (!res.ok) throw new Error('The restaurant index is busy right now — try again in a moment.');
   return res.json();
 }
@@ -2838,6 +2911,9 @@ async function campAnswer(phrase, types, bbox){
     }
   } catch (e) { rows = []; }
   campAnswers.set(key, rows);
+  // A long trip plus a few radii is a handful of answers; keep the cache small
+  // rather than holding every search for the life of the tab.
+  if (campAnswers.size > 60) campAnswers.delete(campAnswers.keys().next().value);
   return rows;
 }
 
@@ -3165,7 +3241,7 @@ function eventLinks(area, date){
 }
 async function seatGeekEvents(place, date, miles){
   const url = 'https://api.seatgeek.com/2/events?client_id=' + SEATGEEK_ID + '&lat=' + place.lat + '&lon=' + place.lng + '&range=' + miles + 'mi&datetime_local.gte=' + date + 'T00:00:00&datetime_local.lte=' + date + 'T23:59:59&taxonomies.name=sports&per_page=50&sort=datetime_local.asc';
-  const res = await fetch(url);
+  const res = await timedFetch(url);
   const data = await res.json();
   if (!res.ok) throw new Error('SeatGeek failed');
   return (data.events || []).map(e => ({ name: e.short_title || e.title, date: (e.datetime_local || '').slice(0, 10), time: (e.datetime_local || '').slice(11, 16), venue: e.venue ? e.venue.name : '', city: e.venue ? e.venue.city : '', genre: e.taxonomies && e.taxonomies[0] ? e.taxonomies[0].name : '', url: e.url, source: 'SeatGeek' }));
@@ -3211,7 +3287,7 @@ $('eventFind').onclick = async () => {
       ? { name: picked.label, lat: picked.lat, lng: picked.lng }
       : await geocode(area);
     const miles = $('eventRadius').value;
-    const tmP = fetch(API_BASE + '/api/events?lat=' + place.lat + '&lng=' + place.lng + '&date=' + encodeURIComponent(date) + '&radius=' + encodeURIComponent(miles)).then(async res => { const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.error || 'Ticketmaster failed'); return d; });
+    const tmP = timedFetch(API_BASE + '/api/events?lat=' + place.lat + '&lng=' + place.lng + '&date=' + encodeURIComponent(date) + '&radius=' + encodeURIComponent(miles)).then(async res => { const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.error || 'Ticketmaster failed'); return d; });
     const sgP = seatGeekEvents(place, date, miles).catch(() => []);
     const results = await Promise.allSettled([tmP, sgP]);
     const tm = results[0].status === 'fulfilled' ? results[0].value : { configured: false, events: [] };
@@ -3843,7 +3919,7 @@ function makeBackup(){
   try { json = JSON.stringify({ exported: new Date().toISOString(), extras: extra, state }, null, 2); } catch (e) { json = ''; }
   if (!json) { backupNote('Could not read the plan to back it up.'); return null; }
   const at = new Date();
-  return { at: at.toISOString(), name: 'roadtrip-backup-' + isoDate(at) + '.json', bytes: json.length, stops: ((state && state.stops) || []).length, json: json, driveAt: 0 };
+  return { at: at.toISOString(), name: 'roadtrip-backup-' + isoDate(at) + '.json', bytes: new Blob([json]).size, stops: ((state && state.stops) || []).length, json: json, driveAt: 0 };
 }
 function keepBackup(entry){
   const list = backupStore().filter(b => b.at !== entry.at);
@@ -3952,17 +4028,23 @@ $('backupImport').addEventListener('change', async e => {
   const file = e.target.files && e.target.files[0];
   e.target.value = '';
   if (!file) return;
-  if (!confirm('Restore this backup?\n\nThis replaces the route for everyone: stops added since the backup are removed, missing ones come back, the order is reset, and the budget and RV details are overwritten. Photos and notes are untouched.')) return;
+  if (!confirm('Restore this backup?\n\nThis replaces the route for everyone: stops added since the backup are removed, missing ones come back, the order is reset, and the budget, bets, handicaps, departure times and RV details are overwritten. Photos and notes are untouched.')) return;
   let data = null;
   try { data = JSON.parse(await file.text()); } catch (err) { data = null; }
   if (!data) { $('glanceMsg').textContent = 'That file is not a Road Trip backup.'; return; }
   const ex = data.extras || null;
   if (ex) {
     const d = extraDefaults();
+    // Restore everything the backup holds. Bets, handicaps and the departure
+    // times used to be dropped here even though the file carried them.
     extra = {
       rv: Object.assign(d.rv, ex.rv || {}),
       travelers: +ex.travelers > 0 ? +ex.travelers : 2,
+      depart: /^\d{1,2}:\d{2}$/.test(ex.depart || '') ? ex.depart : '08:00',
+      dayDepart: (ex.dayDepart && typeof ex.dayDepart === 'object' && !Array.isArray(ex.dayDepart)) ? ex.dayDepart : {},
       budget: Object.assign(d.budget, ex.budget || {}),
+      players: Object.assign(d.players, ex.players || {}),
+      bets: Array.isArray(ex.bets) ? ex.bets : [],
       drive: Object.assign(d.drive, ex.drive || {}),
       driveFiles: (ex.driveFiles && typeof ex.driveFiles === 'object') ? ex.driveFiles : {}
     };
@@ -4305,23 +4387,38 @@ loadFuel();
 // One request per tick, straight to the plan. /api/rev only saved bytes, and it
 // was a second thing that could fail on its own: a browser whose /api/rev kept
 // 503ing sat on "storage unavailable" while /api/state was answering fine.
+// /api/state carries every note and all the photo details, so the tick stays
+// fast only while the page is being used: eight seconds during use, half a
+// minute after two idle minutes, and a hidden tab does not poll at all.
+// (The real saving would be a size-only revision endpoint on the Worker.)
 let pollMisses = 0;
-setInterval(async () => {
-  if (document.hidden || syncing) return;
-  try {
-    const fresh = await getJSON('/api/state');
-    if (fresh && fresh.rev !== state.rev) applyState(fresh);
-    pollMisses = 0;
-    // A good poll means the plan is live again, so clear a stale notice instead
-    // of leaving it up until the next successful save.
-    setSync('ok', 'Shared · synced');
-  } catch (err) {
-    pollMisses++;
-    // One missed poll is a blip, not a reason to shout at the crew.
-    if (pollMisses < 2) setSync('saving', 'Reconnecting…');
-    else setSync('error', syncWhy(err, 'live updates paused, retrying'));
+let pollTimer = 0;
+let pollBusyAt = Date.now();
+['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(evt =>
+  addEventListener(evt, () => { pollBusyAt = Date.now(); }, { passive: true }));
+function pollDelay(){
+  return (Date.now() - pollBusyAt > 120000) ? 30000 : 8000;
+}
+async function pollTick(){
+  if (!document.hidden && !syncing) {
+    try {
+      const fresh = await getJSON('/api/state');
+      if (fresh && fresh.rev !== state.rev) applyState(fresh);
+      pollMisses = 0;
+      // A good poll means the plan is live again, so clear a stale notice
+      // instead of leaving it up until the next successful save.
+      setSync('ok', 'Shared · synced');
+    } catch (err) {
+      pollMisses++;
+      // One missed poll is a blip, not a reason to shout at the crew.
+      if (pollMisses < 2) setSync('saving', 'Reconnecting…');
+      else setSync('error', syncWhy(err, 'live updates paused, retrying'));
+    }
   }
-}, 8000);
+  clearTimeout(pollTimer);
+  pollTimer = setTimeout(pollTick, document.hidden ? 30000 : pollDelay());
+}
+pollTimer = setTimeout(pollTick, 8000);
 
 document.addEventListener('visibilitychange', () => { if (!document.hidden) loadState(); });
 </script>
