@@ -7,7 +7,7 @@ X-WR-CALNAME:What's Happening? - Online
 X-WR-CALDESC:Scheduled streams and premieres you can actually open.
 BEGIN:VEVENT
 UID:yt-gNiSv8rAOV0@whats-happening.natel628.github.io
-DTSTAMP:20261118T005835Z
+DTSTAMP:20261118T011355Z
 DTSTART:20261118T013000Z
 DTEND:20261118T030000Z
 SUMMARY:On Deck - Presented by Comedy Reviewers
@@ -19,20 +19,5 @@ DESCRIPTION:WELCOME TO ON DECK LIVE! \n\nYou're watching the premiere of O
 LOCATION:Comedy Reviewers
 STATUS:CONFIRMED
 URL:https://www.youtube.com/watch?v=gNiSv8rAOV0
-END:VEVENT
-BEGIN:VEVENT
-UID:yt-5Mj8Dg2-TG8@whats-happening.natel628.github.io
-DTSTAMP:20261118T005835Z
-DTSTART:20261121T020000Z
-DTEND:20261121T033000Z
-SUMMARY:MS. CORNELL MEDIA PRESENTS: LADY CC LIVE COMEDY NIGHT!
-DESCRIPTION:MS. CORNELL MEDIA PRESENTS: LADY CC LIVE COMEDY NIGHT!\n\nY'al
- l ready for some laughs? Because Ms. Cornell is taking the mic LIVE!\n\nJ
- oin me for an evening of comedy\, real talk\, hilarious observations\, an
- d the kind of humor\\n\\nhttps://www.youtube.com/watch?v=5Mj8Dg2-TG8\\n\\
- nRefreshed daily from live listings.
-LOCATION:Ms. Cornell Media
-STATUS:CONFIRMED
-URL:https://www.youtube.com/watch?v=5Mj8Dg2-TG8
 END:VEVENT
 END:VCALENDAR
