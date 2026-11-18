@@ -1,24 +1,36 @@
 #!/usr/bin/env node
 /* What's Happening? - scheduled listing sync.
-   Runs in GitHub Actions with TICKETMASTER_API_KEY and YOUTUBE_API_KEY.
-   Pulls upcoming events, normalises to site shape, writes live.json and a
-   health.json that records what each source returned. Images: uses provider
-   thumbnails (no new key). Tiles fall back to CSS gradient.
 
-   A run where nothing came back, or where most sources failed, does not
-   overwrite live.json: the previous good feed plus health.json's "aborted"
-   status is better than a silently gutted one. */
-import { writeFileSync, appendFileSync, mkdirSync } from 'node:fs';
+   Runs in GitHub Actions (see .github/workflows/sync-live.yml) with the repo
+   secrets TICKETMASTER_API_KEY and YOUTUBE_API_KEY. It pulls upcoming events
+   from both providers, normalises them to the exact event shape the site
+   renders, and writes sites/whats-happening/data/live.json.
+
+   Design rules:
+   - No dependencies. Only Node 20 built-ins (fetch, fs, path).
+   - Never fail the workflow on an API hiccup: per-source errors are recorded
+     in the JSON and the run exits 0.
+   - Never wipe good data on a transient failure: if the run produces zero
+     events but a previous live.json exists, the old file is kept.
+   - Times: Ticketmaster gives venue-local wall time, which the site already
+     treats as viewer-local (documented caveat). YouTube gives UTC, stored in
+     `startUtc` so the site can render it in each viewer's own timezone.
+   - Artwork: each event carries the provider's own photo in `image` /
+     `thumbnail` (Ticketmaster's 16:9 shot, YouTube's thumbnail) so tiles show
+     the real event, not a stand-in. Missing photos are left null and the site
+     falls back to its own art.
+*/
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'sites', 'whats-happening', 'data', 'live.json');
-const HEALTH = join(ROOT, 'sites', 'whats-happening', 'data', 'health.json');
 
 const TM_KEY = process.env.TICKETMASTER_API_KEY || '';
 const YT_KEY = process.env.YOUTUBE_API_KEY || '';
 
+/* Same ten places the site knows about; 100-mile radius for coverage. */
 const CITIES = [
   { id: 'greenville-sc', lat: 34.8526, lng: -82.3940 },
   { id: 'charlotte-nc', lat: 35.2271, lng: -80.8431 },
@@ -29,11 +41,9 @@ const CITIES = [
   { id: 'austin-tx', lat: 30.2672, lng: -97.7431 },
   { id: 'denver-co', lat: 39.7392, lng: -104.9903 },
   { id: 'seattle-wa', lat: 47.6062, lng: -122.3321 },
-  { id: 'new-york-ny', lat: 40.7128, lng: -74.0060 },
-  { id: 'providence-ri', lat: 41.8240, lng: -71.4128 },
-  { id: 'boston-ma', lat: 42.3601, lng: -71.0589 },
-  { id: 'hartford-ct', lat: 41.7658, lng: -72.6734 }
+  { id: 'new-york-ny', lat: 40.7128, lng: -74.0060 }
 ];
+
 const YT_QUERIES = [
   { q: 'live comedy show', category: 'comedy' },
   { q: 'live concert stream', category: 'music' },
@@ -54,6 +64,26 @@ async function getJSON(url, timeoutMs) {
   }
 }
 
+/* Ticketmaster sends one entry per crop and size. The 16:9 shot is the one
+   that fits a tile; fall back to the first usable URL rather than to nothing. */
+function tmImage(images) {
+  if (!Array.isArray(images) || !images.length) return null;
+  let first = null;
+  for (const im of images) {
+    if (!im || typeof im.url !== 'string' || !im.url) continue;
+    if (im.ratio === '16_9' && (im.width || 0) >= 640) return im.url;
+    if (!first) first = im.url;
+    if (!first && im.ratio === '16_9') first = im.url;
+  }
+  return first;
+}
+
+function ytImage(snippet) {
+  const t = (snippet && snippet.thumbnails) || {};
+  const pick = t.maxres || t.standard || t.high || t.medium || t.default || null;
+  return pick && typeof pick.url === 'string' ? pick.url : null;
+}
+
 function tmCategory(item) {
   const cls = (item.classifications && item.classifications[0]) || {};
   const seg = (cls.segment || {}).name || '';
@@ -65,23 +95,12 @@ function tmCategory(item) {
   return 'music';
 }
 
-function pickTMImage(item) {
-  const imgs = item.images || [];
-  let best = null;
-  for (const im of imgs) {
-    if (!im || !im.url || !/^https:\/\//.test(im.url)) continue;
-    if (!best || (im.width || 0) > (best.width || 0)) best = im;
-  }
-  return best ? best.url : null;
-}
-
 function normalizeTM(item) {
   const v = (item._embedded && item._embedded.venues && item._embedded.venues[0]) || {};
   const loc = v.location || {};
   const start = (item.dates && item.dates.start) || {};
   if (!start.localDate) return null;
   const pr = (item.priceRanges && item.priceRanges[0]) || null;
-  const img = pickTMImage(item);
   return {
     id: 'tm-' + item.id,
     source: 'ticketmaster',
@@ -108,8 +127,8 @@ function normalizeTM(item) {
     premiere: false,
     timezone: (item.dates && item.dates.timezone) || '',
     venueCity: (v.city && v.city.name) || '',
-    image: img,
-    thumbnail: img,
+    image: tmImage(item.images),
+    thumbnail: tmImage(item.images),
     lastUpdated: new Date().toISOString()
   };
 }
@@ -122,18 +141,12 @@ function ytCategory(title, fallback) {
   return fallback || 'online';
 }
 
-function pickYTImage(sn) {
-  const th = (sn && sn.thumbnails) || {};
-  return (th.high && th.high.url) || (th.medium && th.medium.url) || (th.default && th.default.url) || null;
-}
-
 function normalizeYT(v, fallbackCat) {
   const sn = v.snippet || {};
   const ld = v.liveStreamingDetails || {};
   const iso = ld.actualStartTime || ld.scheduledStartTime;
   if (!iso) return null;
   const live = sn.liveBroadcastContent === 'live';
-  const img = pickYTImage(sn);
   return {
     id: 'yt-' + v.id,
     source: 'youtube',
@@ -160,8 +173,8 @@ function normalizeYT(v, fallbackCat) {
     channel: 'yt:' + sn.channelId,
     resort: null,
     premiere: sn.liveBroadcastContent === 'upcoming' && /premiere/i.test(sn.title || ''),
-    image: img,
-    thumbnail: img,
+    image: ytImage(sn),
+    thumbnail: ytImage(sn),
     lastUpdated: new Date().toISOString()
   };
 }
@@ -169,17 +182,19 @@ function normalizeYT(v, fallbackCat) {
 async function fetchTicketmaster() {
   if (!TM_KEY) return { status: 'skipped', error: 'TICKETMASTER_API_KEY secret not set', events: [] };
   const events = [];
+  let pages = 0;
   try {
     for (const c of CITIES) {
       const url = 'https://app.ticketmaster.com/discovery/v2/events.json?apikey=' + encodeURIComponent(TM_KEY) +
         '&latlong=' + c.lat + ',' + c.lng + '&radius=100&unit=miles&size=50&sort=date,asc';
       const j = await getJSON(url, 20000);
+      pages += 1;
       const items = (j._embedded && j._embedded.events) || [];
       for (const item of items) {
         const e = normalizeTM(item);
         if (e) events.push(e);
       }
-      await sleep(300);
+      await sleep(300); // stay far under the 5 req/sec limit
     }
     return { status: 'ok', error: null, events };
   } catch (e) {
@@ -214,6 +229,7 @@ async function fetchYouTube() {
 async function main() {
   const generatedAt = new Date().toISOString();
   const [tm, yt] = [await fetchTicketmaster(), await fetchYouTube()];
+
   const seen = new Set();
   const events = [];
   for (const e of tm.events.concat(yt.events)) {
@@ -222,46 +238,28 @@ async function main() {
     events.push(e);
     if (events.length >= 400) break;
   }
-  const sources = {
-    ticketmaster: { status: tm.status, events: tm.events.length, error: tm.error },
-    youtube: { status: yt.status, events: yt.events.length, error: yt.error }
-  };
-  const names = Object.keys(sources);
-  const ok = names.filter((n) => sources[n].status === 'ok').length;
-  const failed = names.filter((n) => sources[n].status === 'error').length;
-  const mostFailed = failed > names.length / 2;
-  /* Never overwrite a good feed with nothing, or with a run where most sources
-     failed: one stale day beats a silently gutted feed. */
-  const aborted = events.length === 0 || ok === 0 || mostFailed;
-  const reason = events.length === 0 ? 'no events fetched'
-    : ok === 0 ? (failed ? 'every source failed' : 'no source configured')
-    : mostFailed ? failed + ' of ' + names.length + ' sources failed' : null;
-  for (const n of names) {
-    const src = sources[n];
-    console.log(n + ': ' + src.status + ' (' + src.events + ' events)' + (src.error ? ' - ' + src.error : ''));
-  }
+
+  console.log('ticketmaster: ' + tm.status + ' (' + tm.events.length + ' events)' + (tm.error ? ' - ' + tm.error : ''));
+  console.log('youtube: ' + yt.status + ' (' + yt.events.length + ' events)' + (yt.error ? ' - ' + yt.error : ''));
   console.log('total unique events: ' + events.length);
-  mkdirSync(dirname(HEALTH), { recursive: true });
-  writeFileSync(HEALTH, JSON.stringify({
-    ranAt: generatedAt,
-    status: aborted ? 'aborted' : 'ok',
-    reason,
-    eventsFetched: events.length,
-    sources
-  }, null, 2) + '\n');
-  console.log('wrote ' + HEALTH);
-  if (aborted) {
-    console.log('::warning::Sync aborted (' + reason + ') - keeping the previous live.json.');
-    if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=aborted\n');
+
+  if (!events.length && existsSync(OUT)) {
+    console.log('::warning::No events fetched and a previous live.json exists - keeping the old file.');
     return;
   }
-  writeFileSync(OUT, JSON.stringify({ generatedAt, sources, events }));
+
+  mkdirSync(dirname(OUT), { recursive: true });
+  writeFileSync(OUT, JSON.stringify({
+    generatedAt,
+    sources: {
+      ticketmaster: { status: tm.status, events: tm.events.length, error: tm.error },
+      youtube: { status: yt.status, events: yt.events.length, error: yt.error }
+    },
+    events
+  }));
   console.log('wrote ' + OUT);
-  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=ok\n');
 }
 
 main().catch((e) => {
-  console.error('::error::sync failed: ' + String((e && e.stack) || e));
-  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'result=aborted\n');
-  process.exit(1);
+  console.log('::warning::sync failed: ' + String((e && e.stack) || e));
 });
