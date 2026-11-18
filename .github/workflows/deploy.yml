@@ -41,6 +41,11 @@ jobs:
       - name: Syntax-check smoke script
         run: node --check scripts/smoke-whats-happening.mjs
 
+      # Refuse to publish a site whose live feed is missing, empty or stale.
+      # scripts/check-live.mjs explains what it found and exits non-zero.
+      - name: Verify live feed is present and fresh
+        run: node scripts/check-live.mjs
+
       - name: Smoke test whats-happening
         run: |
           npm init -y >/dev/null 2>&1 || true
