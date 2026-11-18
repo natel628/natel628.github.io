@@ -24,7 +24,10 @@ const CITIES = [
   { id: 'austin-tx', lat: 30.2672, lng: -97.7431 },
   { id: 'denver-co', lat: 39.7392, lng: -104.9903 },
   { id: 'seattle-wa', lat: 47.6062, lng: -122.3321 },
-  { id: 'new-york-ny', lat: 40.7128, lng: -74.0060 }
+  { id: 'new-york-ny', lat: 40.7128, lng: -74.0060 },
+  { id: 'providence-ri', lat: 41.8240, lng: -71.4128 },
+  { id: 'boston-ma', lat: 42.3601, lng: -71.0589 },
+  { id: 'hartford-ct', lat: 41.7658, lng: -72.6734 }
 ];
 const YT_QUERIES = [
   { q: 'live comedy show', category: 'comedy' },
