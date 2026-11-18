@@ -5,19 +5,4 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Online
 X-WR-CALDESC:Scheduled streams and premieres you can actually open.
-BEGIN:VEVENT
-UID:yt-gNiSv8rAOV0@whats-happening.natel628.github.io
-DTSTAMP:20261118T011355Z
-DTSTART:20261118T013000Z
-DTEND:20261118T030000Z
-SUMMARY:On Deck - Presented by Comedy Reviewers
-DESCRIPTION:WELCOME TO ON DECK LIVE! \n\nYou're watching the premiere of O
- N DECK\, a live stand-up comedy showcase presented by ComedyReviewers.com
- \, broadcasting from L.A. Comedy Club inside The STRAT on the Las Vegas S
- trip!\n\nON DECK b\\n\\nhttps://www.youtube.com/watch?v=gNiSv8rAOV0\\n\\n
- Refreshed daily from live listings.
-LOCATION:Comedy Reviewers
-STATUS:CONFIRMED
-URL:https://www.youtube.com/watch?v=gNiSv8rAOV0
-END:VEVENT
 END:VCALENDAR
