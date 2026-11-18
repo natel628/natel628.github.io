@@ -18,13 +18,26 @@ window.WHV = (function () {
 
   function art(ev, cls) {
     var c = W.catOf(ev.category);
-    var saved = S.saved.indexOf(ev.id) >= 0;
     var demo = ev.source === 'demo' ? '<span class="badge badge--demo">Demo</span>' : '';
     return '<div class="art ' + (cls || '') + '" style="--h:' + c.hue + '">' +
       '<span class="art__glyph" aria-hidden="true">' + W.icon(c.icon) + '</span>' +
       '<div class="art__tags">' + demo + badge(ev) + '</div>' +
-      '<button class="save' + (saved ? ' is-on' : '') + '" data-action="save" data-id="' + ev.id + '" aria-pressed="' + saved + '" aria-label="' + (saved ? 'Remove from watchlist' : 'Save to watchlist') + '">' + W.icon('bookmark') + '</button>' +
       '</div>';
+  }
+
+  /* A card has two controls, and they are siblings: the open control is a
+     full-card overlay button and the save control sits above it. Nesting a
+     <button> inside an element with role="button" (the previous markup) is
+     invalid, and gave assistive tech two competing activations for one card.
+     Both controls stay separate tab stops. */
+  function openControl(ev) {
+    return '<button type="button" class="card__open" data-action="open" data-id="' + ev.id + '"' +
+      ' aria-label="View event: ' + W.esc(ev.title) + '"></button>';
+  }
+  function saveButton(ev) {
+    var saved = S.saved.indexOf(ev.id) >= 0;
+    return '<button type="button" class="save' + (saved ? ' is-on' : '') + '" data-action="save" data-id="' + ev.id + '"' +
+      ' aria-pressed="' + saved + '" aria-label="' + (saved ? 'Remove from watchlist' : 'Save to watchlist') + '">' + W.icon('bookmark') + '</button>';
   }
 
   function distLabel(dist) {
@@ -65,7 +78,7 @@ window.WHV = (function () {
     opts = opts || {};
     var why = opts.why === true ? (W.score(ev).reasons[0] || '') : (opts.why || '');
     var c = W.catOf(ev.category);
-    return '<article class="card' + (S.highlight === ev.id ? ' is-hl' : '') + '" data-id="' + ev.id + '" data-action="open" role="button" tabindex="0">' +
+    return '<article class="card' + (S.highlight === ev.id ? ' is-hl' : '') + '" data-id="' + ev.id + '">' +
       art(ev) +
       '<div class="card__body">' +
       '<p class="card__kicker"><span class="dotcat" style="--h:' + c.hue + '"></span>' + W.esc(c.short) + '</p>' +
@@ -73,7 +86,10 @@ window.WHV = (function () {
       '<p class="card__meta">' + metaLine(ev) + '</p>' +
       weatherBlock(ev) +
       '<p class="card__foot"><span class="price">' + W.esc(W.priceLabel(ev)) + '</span>' + (why ? '<span class="why" title="Why this is here">' + W.esc(why) + '</span>' : '') + '</p>' +
-      '</div></article>';
+      '</div>' +
+      openControl(ev) +
+      saveButton(ev) +
+      '</article>';
   }
 
   function hero(ev) {
@@ -243,7 +259,7 @@ window.WHV = (function () {
   }
 
   return {
-    badge: badge, art: art, card: card, hero: hero, sectionHead: sectionHead, row: row, filterBar: filterBar,
+    badge: badge, art: art, card: card, hero: hero, sectionHead: sectionHead, row: row, filterBar: filterBar, saveButton: saveButton, openControl: openControl,
     notice: notice, results: results, viewDiscover: viewDiscover, collectionView: collectionView, watchable: watchable,
     viewNear: viewNear, viewCategory: viewCategory, viewOnline: viewOnline, viewBrowse: viewBrowse
   };

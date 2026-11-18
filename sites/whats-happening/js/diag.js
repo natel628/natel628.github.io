@@ -304,7 +304,7 @@ window.WHDIAG = (function () {
   }
 
   function openSheet(c) {
-    click(c.d, '.card[data-id]');
+    click(c.d, '.card[data-id] [data-action="open"]');
     return wait(function () { return q(c.d, '.sheet'); }, 3000, 'event sheet');
   }
   function closeSheet(c) {
