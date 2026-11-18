@@ -116,7 +116,9 @@
   #hotelMsg:empty { display:none; }
   #hotelMsg { font-size:.85rem; margin-top:8px; }
   #eventList { display:grid; gap:8px; margin-top:12px; }
-  .event { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+  .event { position:relative; background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+  .event-actions { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .event-actions a { text-decoration:none; border:1px solid #475569; border-radius:8px; padding:6px 10px; font-size:.85rem; }
   .event-name { font-weight:700; }
   .event-meta { color:var(--muted); font-size:.8rem; display:flex; gap:8px; flex-wrap:wrap; margin-top:3px; }
   .event-links { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
@@ -555,7 +557,7 @@
 
   <section class="card" id="sec-events">
     <h2>🏟️ Sporting events</h2>
-    <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page.</p>
+    <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page, and can be put on the map or added to the route.</p>
     <div class="row">
       <div class="ac"><input id="eventArea" placeholder="Area — e.g. Denver, CO" aria-label="Area to search for events" /></div>
       <input id="eventDate" type="date" style="max-width:190px;flex:none" aria-label="Event date" />
@@ -3245,11 +3247,21 @@ async function seatGeekEvents(place, date, miles){
   const res = await timedFetch(url);
   const data = await res.json();
   if (!res.ok) throw new Error('SeatGeek failed');
-  return (data.events || []).map(e => ({ name: e.short_title || e.title, date: (e.datetime_local || '').slice(0, 10), time: (e.datetime_local || '').slice(11, 16), venue: e.venue ? e.venue.name : '', city: e.venue ? e.venue.city : '', genre: e.taxonomies && e.taxonomies[0] ? e.taxonomies[0].name : '', url: e.url, source: 'SeatGeek' }));
+  return (data.events || []).map(e => ({
+    name: e.short_title || e.title, date: (e.datetime_local || '').slice(0, 10), time: (e.datetime_local || '').slice(11, 16),
+    venue: e.venue ? e.venue.name : '', city: e.venue ? e.venue.city : '',
+    genre: e.taxonomies && e.taxonomies[0] ? e.taxonomies[0].name : '', url: e.url, source: 'SeatGeek',
+    // SeatGeek knows the venue's coordinate; Ticketmaster listings only name it.
+    lat: e.venue && e.venue.location ? +e.venue.location.lat : NaN,
+    lng: e.venue && e.venue.location ? +e.venue.location.lon : NaN
+  }));
 }
+// The rows currently on screen, so a button can find the event it belongs to.
+let eventShown = [];
 function renderEvents(data, place, date){
   const el = $('eventList');
   const where = place.name;
+  eventShown = data.events || [];
   if (!data.configured) {
     el.innerHTML = '<p class="muted">Live event search is not switched on for this site yet — it needs a Ticketmaster Discovery API key stored as TICKETMASTER_API_KEY in the site settings. Until then these open the same area and date on the ticketing sites:</p>'
       + eventLinks(where, date);
@@ -3264,15 +3276,64 @@ function renderEvents(data, place, date){
       + eventLinks(where, date);
     return;
   }
-  el.innerHTML = data.events.map(ev =>
-    '<div class="event">'
-    + '<div><div class="event-name">' + esc(ev.name) + '</div>'
-    + '<div class="event-meta"><span>' + esc(ev.date) + (ev.time ? ' · ' + esc(ev.time) : '') + '</span>'
-    + (ev.venue ? '<span>' + esc(ev.venue) + (ev.city ? ', ' + esc(ev.city) : '') + '</span>' : '')
-    + (ev.genre ? '<span>' + esc(ev.genre) + '</span>' : '') + (ev.source ? '<span>' + esc(ev.source) + '</span>' : '') + '</div></div>'
-    + (ev.url ? '<a class="small" href="' + esc(ev.url) + '" target="_blank" rel="noopener noreferrer">Tickets ↗</a>' : '')
-    + '</div>').join('');
+  el.innerHTML = data.events.map((ev, i) => {
+    const at = [ev.venue, ev.city].filter(Boolean).join(', ') || ev.name;
+    return '<div class="event">'
+      + '<div><div class="event-name">' + esc(ev.name) + '</div>'
+      + '<div class="event-meta"><span>' + esc(ev.date) + (ev.time ? ' · ' + esc(ev.time) : '') + '</span>'
+      + (ev.venue ? '<span>' + esc(ev.venue) + (ev.city ? ', ' + esc(ev.city) : '') + '</span>' : '')
+      + (ev.genre ? '<span>' + esc(ev.genre) + '</span>' : '') + (ev.source ? '<span>' + esc(ev.source) + '</span>' : '') + '</div></div>'
+      + '<div class="event-actions">'
+      + '<button type="button" class="small ghost" data-evmap="' + i + '" data-maptrig="event" aria-label="Map options for ' + esc(at) + '" title="Map options">🗺️</button>'
+      + '<button type="button" class="small" data-evadd="' + i + '" aria-label="Add ' + esc(at) + ' to the trip">Add to trip</button>'
+      + (ev.url ? '<a class="small" href="' + esc(ev.url) + '" target="_blank" rel="noopener noreferrer">Tickets ↗</a>' : '')
+      + '</div>'
+      + '</div>';
+  }).join('');
 }
+
+// A ticket listing names the venue and its town but does not always carry a
+// coordinate — Ticketmaster only gives the name — so the first tap geocodes the
+// venue once and remembers where it was.
+async function eventPoint(i){
+  const ev = eventShown[i];
+  if (!ev) return null;
+  if (Number.isFinite(+ev.lat) && Number.isFinite(+ev.lng)) {
+    return { name: ev.venue || ev.name, lat: +ev.lat, lng: +ev.lng };
+  }
+  const at = [ev.venue, ev.city].filter(Boolean).join(', ') || ev.name;
+  eventsMsg('Finding ' + at + ' on the map…');
+  try {
+    const p = await geocode(at);
+    ev.lat = p.lat; ev.lng = p.lng;
+    eventsMsg('');
+    return { name: ev.venue || at, lat: p.lat, lng: p.lng };
+  } catch (err) {
+    eventsMsg('Could not place ' + at + ' — the ticketing link still works.');
+    return null;
+  }
+}
+async function addEventStop(i, btn){
+  const ev = eventShown[i];
+  if (!ev) return;
+  btn.disabled = true;
+  const point = await eventPoint(i);
+  if (!point) { btn.disabled = false; return; }
+  const at = [ev.venue, ev.city].filter(Boolean).join(', ') || ev.name;
+  const ok = await write('POST', '/api/stops', { name: at, lat: point.lat, lng: point.lng });
+  btn.disabled = false;
+  eventsMsg(ok ? at + ' added to your route.' : 'Could not add that venue — try again.');
+}
+$('eventList').addEventListener('click', async e => {
+  const mapBtn = e.target.closest('[data-evmap]');
+  if (mapBtn) {
+    const point = await eventPoint(+mapBtn.dataset.evmap);
+    if (point) openMapMenu(mapBtn, point);
+    return;
+  }
+  const addBtn = e.target.closest('[data-evadd]');
+  if (addBtn) addEventStop(+addBtn.dataset.evadd, addBtn);
+});
 
 $('eventFind').onclick = async () => {
   const area = $('eventArea').value.trim();
@@ -3811,13 +3872,13 @@ function closeTour(){
   const m = $('tourModal'), b = $('tourBackdrop');
   if (m) { m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); }
   if (b) b.classList.remove('open');
-  try { localStorage.setItem('rt-tour-v1', 'seen'); } catch (e) {}
 }
 $('tourGo').onclick = closeTour;
 $('tourClose').onclick = closeTour;
 $('tourBackdrop').onclick = closeTour;
 $('showTour').onclick = openTour;
-try { if (!localStorage.getItem('rt-tour-v1')) openTour(); } catch (e) {}
+// The tour no longer opens itself on a first visit — it was a dialog over the
+// plan people came for. Settings still offers “Replay the welcome tour”.
 $('hideAll').onclick = () => {
   const p = devicePrefs();
   p.hidden = NAV_LINKS.map(a => a.getAttribute('href').slice(1));
