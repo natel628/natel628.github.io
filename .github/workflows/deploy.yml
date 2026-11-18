@@ -30,11 +30,20 @@ jobs:
         with:
           node-version: '20'
 
+      # ── Fail the build on a JS syntax error instead of shipping it ──
+      - name: Syntax-check whats-happening JS
+        run: |
+          for f in sites/whats-happening/js/*.js; do
+            echo "node --check $f"
+            node --check "$f"
+          done
+
       # ── Preflight: confirm source file and secrets ─────────────────
       - name: Preflight checks
         run: |
           echo "=== Working directory ==="
           pwd
+
           echo "=== Files present ==="
           ls -lh
 
@@ -43,6 +52,7 @@ jobs:
             exit 1
           fi
           echo "OK: showsnew.html present ($(wc -c < showsnew.html) bytes)"
+
           echo "=== First 3 lines ==="
           head -3 showsnew.html
 
@@ -122,15 +132,19 @@ jobs:
             echo "::warning::OMDB_KEY secret is not set — IMDb scores will stay hidden."
             exit 0
           fi
+
           if ! grep -q '__OMDB_KEY__' showsnew.html; then
             echo "::error::Placeholder __OMDB_KEY__ not found in showsnew.html."
             exit 1
           fi
+
           sed -i "s|__OMDB_KEY__|${OMDB_KEY}|g" showsnew.html
+
           if grep -q '__OMDB_KEY__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
+
           echo "OK: OMDb key injected into showsnew.html."
 
       # ── Inject MDBList key (optional) ──────────────────────────────
@@ -142,15 +156,19 @@ jobs:
             echo "::warning::MDBLIST_KEY secret is not set — multi-source scores stay off unless a key is added in Settings."
             exit 0
           fi
+
           if ! grep -q '__MDBLIST_KEY__' showsnew.html; then
             echo "::error::Placeholder __MDBLIST_KEY__ not found in showsnew.html."
             exit 1
           fi
+
           sed -i "s|__MDBLIST_KEY__|${MDBLIST_KEY}|g" showsnew.html
+
           if grep -q '__MDBLIST_KEY__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
+
           echo "OK: MDBList key injected into showsnew.html."
 
       # ── Inject Trakt client id (optional) ──────────────────────────
@@ -162,15 +180,19 @@ jobs:
             echo "::warning::TRAKT_KEY secret is not set — Trakt community ratings stay off unless a key is added in Settings."
             exit 0
           fi
+
           if ! grep -q '__TRAKT_KEY__' showsnew.html; then
             echo "::error::Placeholder __TRAKT_KEY__ not found in showsnew.html."
             exit 1
           fi
+
           sed -i "s|__TRAKT_KEY__|${TRAKT_KEY}|g" showsnew.html
+
           if grep -q '__TRAKT_KEY__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
+
           echo "OK: Trakt client id injected into showsnew.html."
 
       # ── Inject Trakt client secret (optional) ──────────────────────
@@ -182,15 +204,19 @@ jobs:
             echo "::notice::TRAKT_SECRET is not set. That is normal: Trakt now issues PKCE apps with no client secret, and the account sync signs in with PKCE."
             exit 0
           fi
+
           if ! grep -q '__TRAKT_SECRET__' showsnew.html; then
             echo "::error::Placeholder __TRAKT_SECRET__ not found in showsnew.html."
             exit 1
           fi
+
           sed -i "s|__TRAKT_SECRET__|${TRAKT_SECRET}|g" showsnew.html
+
           if grep -q '__TRAKT_SECRET__' showsnew.html; then
             echo "::error::Placeholder still present in showsnew.html after sed."
             exit 1
           fi
+
           echo "OK: Trakt client secret injected into showsnew.html."
 
       # ── Encrypt showsnew.html ──────────────────────────────────────
