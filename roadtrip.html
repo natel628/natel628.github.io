@@ -4388,10 +4388,12 @@ loadFuel();
 // One request per tick, straight to the plan. /api/rev only saved bytes, and it
 // was a second thing that could fail on its own: a browser whose /api/rev kept
 // 503ing sat on "storage unavailable" while /api/state was answering fine.
-// /api/state carries every note and all the photo details, so the tick stays
-// fast only while the page is being used: eight seconds during use, half a
-// minute after two idle minutes, and a hidden tab does not poll at all.
-// (The real saving would be a size-only revision endpoint on the Worker.)
+// The tick is two steps: /api/rev answers with a dozen bytes, and /api/state —
+// which carries every note and all the photo details — is only fetched when that
+// number actually moved. If the revision call itself is unavailable the tick
+// falls straight through to the full read, so a flaky /api/rev can never leave
+// the plan unrefreshed. Eight seconds while the page is in use, half a minute
+// after two idle minutes, and nothing at all while the tab is hidden.
 let pollMisses = 0;
 let pollTimer = 0;
 let pollBusyAt = Date.now();
@@ -4403,8 +4405,16 @@ function pollDelay(){
 async function pollTick(){
   if (!document.hidden && !syncing) {
     try {
-      const fresh = await getJSON('/api/state');
-      if (fresh && fresh.rev !== state.rev) applyState(fresh);
+      // Ask for the revision alone first; the plan is only pulled when it moved.
+      let rev = null;
+      try { rev = (await api('GET', '/api/rev')).rev; } catch (e) { rev = null; }
+      if (rev === null || rev !== state.rev) {
+        const fresh = await getJSON('/api/state');
+        if (fresh) {
+          if (fresh.rev !== state.rev) applyState(fresh);
+          rev = fresh.rev;
+        }
+      }
       pollMisses = 0;
       // A good poll means the plan is live again, so clear a stale notice
       // instead of leaving it up until the next successful save.
