@@ -1282,10 +1282,10 @@ function renderStops(){
 
   if (state.stops.length > 1) {
     line = L.polyline(state.stops.map(s => [s.lat, s.lng]), { color:'#f59e0b', weight:4 }).addTo(map);
-    map.fitBounds(line.getBounds().pad(0.2));
+    fitMap(map, state.stops.map(s => [s.lat, s.lng]), { maxZoom: 10 });
     updateTripStats();
   } else if (state.stops.length === 1) {
-    map.setView([state.stops[0].lat, state.stops[0].lng], 8);
+    fitMap(map, [[state.stops[0].lat, state.stops[0].lng]], { maxZoom: 8 });
     $('tripStats').textContent = '1 stop — set a start/end or add another stop to draw a route.';
   } else {
     $('tripStats').textContent = '';
@@ -1524,11 +1524,48 @@ try {
 } catch (e) {}
 
 // Maps stay hidden until they have something to show, which keeps the page short.
+// Leaflet measures the box when it fits, and a map that is still display:none
+// measures 0x0 — which fitBounds answers with zoom 0, the whole world. So every
+// fit goes through fitMap: it remembers the pins, fits once the box has a real
+// size, and fits again when a collapsed card or a resized window gets in the way.
+function applyFit(mapObj){
+  const want = mapObj && mapObj._rtFit;
+  if (!want) return;
+  const size = mapObj.getSize();
+  if (!size.x || !size.y) return; // hidden or collapsed: fit once it is showing
+  try {
+    mapObj.invalidateSize({ animate: false });
+    mapObj.fitBounds(want.box, { maxZoom: want.zoom, padding: [26, 26], animate: false });
+  } catch (e) { /* a map that will not fit simply keeps its view */ }
+}
+function fitMap(mapObj, points, opts){
+  const o = opts || {};
+  const pts = (points || []).filter(p => p && Number.isFinite(+p[0]) && Number.isFinite(+p[1]));
+  if (!pts.length) return false;
+  let box = L.latLngBounds(pts);
+  let wide = false;
+  if (o.maxSpread) {
+    const sw = box.getSouthWest(), ne = box.getNorthEast();
+    // A name search can match places on other continents; fitting all of them
+    // would zoom out to the planet, so land on the first (best) pin instead and
+    // let the list below do the rest.
+    if (hav({ lat: sw.lat, lng: sw.lng }, { lat: ne.lat, lng: ne.lng }) > o.maxSpread) {
+      box = L.latLngBounds(pts[0], pts[0]);
+      wide = true;
+    }
+  }
+  mapObj._rtFit = { box: box, zoom: o.maxZoom || 13 };
+  applyFit(mapObj);
+  return wide;
+}
 function revealMap(mapObj, id){
   const el = $(id);
-  if (!el || el.classList.contains('show')) return;
-  el.classList.add('show');
-  mapObj.invalidateSize();
+  if (!el) return;
+  if (!el.classList.contains('show')) {
+    el.classList.add('show');
+    mapObj.invalidateSize({ animate: false });
+  }
+  applyFit(mapObj);
 }
 
 // With no origin, a map app starts the route wherever you are standing, which
@@ -2261,7 +2298,7 @@ const golfMap = L.map('golfMap').setView([39.5, -98.35], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(golfMap);
 const golfLayer = L.layerGroup().addTo(golfMap);
 const golfCenterLayer = L.layerGroup().addTo(golfMap);
-let golfCourses = [], golfCenter = null, golfSelected = -1, golfPin = null, golfPinMarker = null;
+let golfCourses = [], golfCenter = null, golfSelected = -1, golfPin = null, golfPinMarker = null, golfWide = false;
 
 function golfMsg(t){
   const m = $('golfMsg');
@@ -2364,7 +2401,9 @@ function selectGolf(i, pan){
   if (!course) return;
   const marker = golfLayer.getLayers()[i];
   if (!marker) return;
-  if (pan) golfMap.setView([course.lat, course.lng], Math.max(golfMap.getZoom(), 13));
+  // A chosen row wins over the search's whole-pin fit, so a later resize or a
+  // reopened card does not drag the map back to all the results.
+  if (pan) { golfMap._rtFit = null; golfMap.setView([course.lat, course.lng], Math.max(golfMap.getZoom(), 13)); }
   marker.openPopup();
 }
 
@@ -2402,19 +2441,10 @@ function renderGolf(){
       .on('click', () => selectGolf(i, false));
   });
 
-  // Name searches match courses worldwide — fitting all of them zooms out to
-  // the whole planet. If the results span a wide area, show the top match
-  // instead; tapping any list row zooms to that course.
-  const courseLayers = golfLayer.getLayers();
-  if (courseLayers.length === 1) {
-    golfMap.setView([golfCourses[0].lat, golfCourses[0].lng], 14);
-  } else {
-    const bounds = L.featureGroup(courseLayers).getBounds().pad(0.15);
-    const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
-    const spanMi = hav({ lat: sw.lat, lng: sw.lng }, { lat: ne.lat, lng: ne.lng });
-    if (spanMi > 300) golfMap.setView([golfCourses[0].lat, golfCourses[0].lng], 12);
-    else golfMap.fitBounds(bounds);
-  }
+  // Every course the search returned should be in the picture: fit all the pins,
+  // whatever the zoom level. Only a name search that matched courses spread over
+  // the country falls back to the best match, and the list row zooms to any one.
+  golfWide = fitMap(golfMap, golfCourses.map(c => [c.lat, c.lng]), { maxSpread: 400, maxZoom: 13 });
   revealMap(golfMap, 'golfMap');
 }
 
@@ -2506,6 +2536,7 @@ $('golfFindName').onclick = async () => {
     renderGolf();
     golfMsg(found.length
       ? found.length + ' course' + (found.length === 1 ? '' : 's') + ' matching “' + name + '”.'
+        + (golfWide ? ' They are far apart, so the map is on the best match — tap any row to jump to it.' : '')
       : 'No courses matched “' + name + '”.');
   } catch (err) {
     golfMsg(err.message || 'Could not search for that course right now.');
@@ -2610,7 +2641,7 @@ function selectFood(i, pan){
   if (!place) return;
   const marker = foodLayer.getLayers()[i];
   if (!marker) return;
-  if (pan) foodMap.setView([place.lat, place.lng], Math.max(foodMap.getZoom(), 14));
+  if (pan) { foodMap._rtFit = null; foodMap.setView([place.lat, place.lng], Math.max(foodMap.getZoom(), 14)); }
   marker.openPopup();
 }
 
@@ -2641,7 +2672,7 @@ function renderFood(){
       .on('click', () => selectFood(i, false));
   });
 
-  foodMap.fitBounds(L.featureGroup(foodLayer.getLayers()).getBounds().pad(0.15));
+  fitMap(foodMap, foodPlaces.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(foodMap, 'foodMap');
 }
 
@@ -2762,7 +2793,7 @@ function paintCampStops(){
       .bindPopup('<b>' + esc((i + 1) + '. ' + s.name) + '</b>');
   });
   if (!campSites.length && state.stops.length > 1) {
-    campMap.fitBounds(L.featureGroup(campStopLayer.getLayers()).getBounds().pad(0.2), { animate: false });
+    fitMap(campMap, state.stops.map(s => [s.lat, s.lng]), { maxZoom: 9 });
   } else if (!campSites.length && state.stops.length === 1) {
     campMap.setView([state.stops[0].lat, state.stops[0].lng], 7, { animate: false });
   }
@@ -2834,7 +2865,7 @@ function selectCamp(i, pan){
   if (!site) return;
   const marker = campLayer.getLayers()[i];
   if (!marker) return;
-  if (pan) campMap.setView([site.lat, site.lng], Math.max(campMap.getZoom(), 13));
+  if (pan) { campMap._rtFit = null; campMap.setView([site.lat, site.lng], Math.max(campMap.getZoom(), 13)); }
   marker.openPopup();
 }
 
@@ -2865,7 +2896,7 @@ function renderCamps(){
       .on('click', () => selectCamp(i, false));
   });
 
-  campMap.fitBounds(L.featureGroup(campLayer.getLayers()).getBounds().pad(0.15), { animate: false });
+  fitMap(campMap, shown.map(s => [s.lat, s.lng]), { maxZoom: 12 });
 }
 
 function sortCamps(){
@@ -2992,7 +3023,7 @@ function selectHotel(i, pan){
   if (!hotel) return;
   const marker = hotelLayer.getLayers()[i];
   if (!marker) return;
-  if (pan) hotelMap.setView([hotel.lat, hotel.lng], Math.max(hotelMap.getZoom(), 14));
+  if (pan) { hotelMap._rtFit = null; hotelMap.setView([hotel.lat, hotel.lng], Math.max(hotelMap.getZoom(), 14)); }
   marker.openPopup();
 }
 
@@ -3043,8 +3074,7 @@ function renderHotels(stop){
       .on('click', () => selectHotel(i, false));
   });
 
-  const layers = hotelLayer.getLayers();
-  if (layers.length) hotelMap.fitBounds(L.featureGroup(layers).getBounds().pad(0.15));
+  fitMap(hotelMap, hotelResults.map(h => [h.lat, h.lng]), { maxZoom: 14 });
 }
 
 $('hotelList').addEventListener('click', async e => {
@@ -4218,9 +4248,11 @@ function fixMapsIn(sec){
   const maps = { map, golfMap, foodMap, campMap, hotelMap };
   sec.querySelectorAll('#map,#golfMap,#foodMap,#campMap,#hotelMap').forEach(el => {
     const m = maps[el.id];
-    if (m) { try { m.invalidateSize(); } catch (e) {} }
+    if (m) { try { m.invalidateSize(); applyFit(m); } catch (e) {} }
   });
 }
+// A hand-driven pan stays put: only the fits the page makes are re-applied.
+[map, golfMap, foodMap, campMap, hotelMap].forEach(m => m.on('dragstart', () => { m._rtFit = null; }));
 let resizeTimer = 0;
 addEventListener('resize', () => {
   clearTimeout(resizeTimer);
