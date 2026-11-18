@@ -173,13 +173,7 @@ window.WHV2 = (function () {
       '<label class="check check--wide"><input type="checkbox" data-action="online-interest"' + (S.onlineInterest ? ' checked' : '') + '>I am interested in online and livestream events</label></section>' +
       '<section class="panel"><h2>Notifications</h2><p class="panel__sub">Shown in the bell menu. Browser notifications are opt-in.</p><div class="checks">' + notifs + '</div>' +
       '<button class="btn btn--ghost" data-action="enable-push">' + W.icon('bell') + 'Enable browser notifications</button><p class="hint" id="push-hint"></p></section>' +
-      '<section class="panel"><h2>Live data sources</h2><p class="panel__sub">Both are free. Keys never leave this browser and are sent only to the provider you are calling.</p>' +
-      '<div class="field"><label for="key-tm">Ticketmaster Discovery API key</label><input id="key-tm" type="password" autocomplete="off" placeholder="Optional" value="' + W.esc(S.keys.ticketmaster) + '"></div>' +
-      '<div class="field"><label for="key-yt">YouTube Data API v3 key</label><input id="key-yt" type="password" autocomplete="off" placeholder="Optional" value="' + W.esc(S.keys.youtube) + '"></div>' +
-      '<div class="btnrow"><button class="btn btn--primary" data-action="save-keys">Save keys and refresh</button>' +
-      (S.keys.ticketmaster || S.keys.youtube ? '<button class="btn btn--ghost" data-action="clear-keys">Remove keys</button>' : '') + '</div>' +
-      '<p class="hint">Ticketmaster: free key, 5,000 calls/day, 5 req/sec. YouTube: 10,000 units/day with a separate 100/day search bucket. Results are cached for 10 minutes.</p>' +
-      '<p class="hint">Status: Ticketmaster ' + W.esc(S.liveStatus.tm) + ' \u00b7 YouTube ' + W.esc(S.liveStatus.yt) + (S.liveError ? ' \u00b7 ' + W.esc(S.liveError) : '') + '</p></section>' +
+      '<section class="panel"><h2>Live data</h2><p class="panel__sub">Live listings refresh automatically every day from the site feed. No keys needed in this browser.</p></section>' +
       '<section class="panel"><h2>Your data</h2><p class="panel__sub">' + S.saved.length + ' saved events \u00b7 ' + S.follows.length + ' follows</p>' +
       '<div class="btnrow"><button class="btn btn--ghost" data-action="clear-data">Clear saved events and follows</button><button class="btn btn--ghost" data-action="onboarding">Re-run setup</button></div>' +
       '<p class="hint">Demonstration events are invented and labelled Demo. Nothing here claims a ticket link, a broadcast or a price that was not published by a source. Distances and snow data are real: calculated from your chosen location and Open-Meteo.</p></section>' +
