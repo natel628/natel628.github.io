@@ -222,7 +222,7 @@
   }
 
   /* The scheduled Action publishes data/live.json once a day. Everyone gets
-     the real listings; pasted API keys only ever add fresher local data. */
+     the real listings. */
   function loadLiveFile(cb) {
     fetch('data/live.json', { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error('http ' + r.status);
