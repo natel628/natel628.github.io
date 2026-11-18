@@ -12793,10 +12793,12 @@ const DAILY_SHOW = {
 };
 
 /* The authored minutes are the house cut. A target keeps the seven segments
-   and their order but re-splits the minutes to add up to it exactly. */
+   and their order but re-splits the minutes to add up to it exactly. Which
+   target is a per-episode decision, not a preference, so it is not saved:
+   every visit opens on the house cut. */
 const POD_TARGETS = [0, 15, 18, 20];
 const POD_BASE_TOTAL = DAILY_SHOW.segments.reduce((n, s) => n + s.min, 0);
-let podTarget = POD_TARGETS.includes(LS.get('pod_target')) ? LS.get('pod_target') : 0;
+let podTarget = 0;
 
 /* Largest-remainder split: same proportions, whole minutes, exact total. */
 function podMinutesFor(target) {
@@ -12840,9 +12842,8 @@ function podToday() {
 function podBoard() {
   const saved = LS.get('pod_rundown');
   if (!saved || saved.day !== podToday()) return { ids: [], notes: {} };
-  const known = id => DAILY_SHOW.segments.some(s => s.id === id);
   return {
-    ids: (Array.isArray(saved.ids) ? saved.ids : []).filter(known),
+    ids: Array.isArray(saved.ids) ? saved.ids : [],
     notes: saved.notes && typeof saved.notes === 'object' ? saved.notes : {},
   };
 }
@@ -12864,16 +12865,11 @@ function podWriteBoard() {
   LS.set('pod_rundown', { day: podToday(), ids, notes });
 }
 
-/* Typing lands on a short delay; a tick saves at once. */
-let podSaveTimer = 0;
-function podSaveSoon() {
-  clearTimeout(podSaveTimer);
-  podSaveTimer = setTimeout(podWriteBoard, 300);
-}
-
+/* Paint from the DOM: the boxes are the state, the record is the copy. */
 function podPaintRundown() {
-  const total = DAILY_SHOW.segments.length;
-  const done = podBoard().ids.length;
+  const boxes = [...document.querySelectorAll('[data-pod-seg]')];
+  const total = boxes.length;
+  const done = boxes.filter(box => box.checked).length;
   const count = document.getElementById('pod-count');
   const bar = document.getElementById('pod-bar');
   if (count) count.textContent = done + ' of ' + total + ' segments ready';
@@ -12891,16 +12887,16 @@ function podSyncSource(input) {
 }
 
 function podScriptFields(seg, note) {
-  const field = (key, type, mark, placeholder, label) =>
-    '<input class="pod-scr-input' + (mark ? ' pod-scr-wide' : '') + '" type="' + type + '"' +
+  const field = (key, type, placeholder, wide) =>
+    '<input class="pod-scr-input' + (wide ? ' pod-scr-wide' : '') + '" type="' + type + '"' +
     ' data-pod-field="' + key + '" data-pod-for="' + seg.id + '"' +
     ' value="' + esc(note[key] || '') + '" placeholder="' + placeholder + '"' +
-    ' aria-label="' + esc(seg.name) + ' — ' + label + '">';
+    ' aria-label="' + esc(seg.name) + ' — ' + placeholder.toLowerCase() + '">';
   return '<div class="pod-script-fields">' +
-    field('h', 'text', true, 'Headline', 'headline') +
-    field('w', 'text', false, 'Why it matters', 'why it matters') +
+    field('h', 'text', 'Headline', true) +
+    field('w', 'text', 'Why it matters', false) +
     '<span class="pod-scr-src">' +
-      field('u', 'url', false, 'Source link', 'source link') +
+      field('u', 'url', 'Source link', false) +
       '<a class="pod-scr-open" href="' + esc(note.u || '') + '" target="_blank" rel="noopener noreferrer"' +
       ' aria-label="Open the source for ' + esc(seg.name) + '"' + (note.u ? '' : ' hidden') + '>↗</a>' +
     '</span>' +
@@ -12989,21 +12985,19 @@ function renderDailyCatchUp(main) {
     btn.addEventListener('click', () => {
       const next = Number(btn.dataset.podTarget);
       if (next === podTarget) return;
-      podWriteBoard(); // flush a pending keystroke before the re-render
+      podWriteBoard(); // the re-render reads the board back from storage
       podTarget = next;
-      LS.set('pod_target', next);
       renderDailyCatchUp(main);
     });
   });
 
+  /* The board is seven short segments, so a write per keystroke is cheaper
+     than a timer that a fast tab switch can outrun. */
   main.querySelectorAll('[data-pod-field]').forEach(input => {
     input.addEventListener('input', () => {
       podSyncSource(input);
-      podSaveSoon();
+      podWriteBoard();
     });
-    /* Blurring writes at once, so leaving the field or the view mid-delay
-       cannot drop the last keystrokes. */
-    input.addEventListener('change', podWriteBoard);
   });
 }
 
