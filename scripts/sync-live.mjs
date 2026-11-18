@@ -1,20 +1,8 @@
 #!/usr/bin/env node
 /* What's Happening? - scheduled listing sync.
-
-   Runs in GitHub Actions (see .github/workflows/sync-live.yml) with the repo
-   secrets TICKETMASTER_API_KEY and YOUTUBE_API_KEY. It pulls upcoming events
-   from both providers, normalises them to the exact event shape the site
-   renders, and writes sites/whats-happening/data/live.json.
-
-   Design rules:
-   - No dependencies. Only Node 20 built-ins (fetch, fs, path).
-   - Never fail the workflow on an API hiccup: per-source errors are recorded
-     in the JSON and the run exits 0.
-   - Never wipe good data on a transient failure: if the run produces zero
-     events but a previous live.json exists, the old file is kept.
-   - Times: Ticketmaster gives venue-local wall time, which the site already
-     treats as viewer-local (documented caveat). YouTube gives UTC, stored in
-     `startUtc` so the site can render it in each viewer's own timezone.
+   Runs in GitHub Actions with TICKETMASTER_API_KEY and YOUTUBE_API_KEY.
+   Pulls upcoming events, normalises to site shape, writes live.json.
+   Images: uses provider thumbnails (no new key). Tiles fall back to CSS gradient.
 */
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -26,7 +14,6 @@ const OUT = join(ROOT, 'sites', 'whats-happening', 'data', 'live.json');
 const TM_KEY = process.env.TICKETMASTER_API_KEY || '';
 const YT_KEY = process.env.YOUTUBE_API_KEY || '';
 
-/* Same ten places the site knows about; 100-mile radius for coverage. */
 const CITIES = [
   { id: 'greenville-sc', lat: 34.8526, lng: -82.3940 },
   { id: 'charlotte-nc', lat: 35.2271, lng: -80.8431 },
@@ -39,7 +26,6 @@ const CITIES = [
   { id: 'seattle-wa', lat: 47.6062, lng: -122.3321 },
   { id: 'new-york-ny', lat: 40.7128, lng: -74.0060 }
 ];
-
 const YT_QUERIES = [
   { q: 'live comedy show', category: 'comedy' },
   { q: 'live concert stream', category: 'music' },
@@ -71,12 +57,23 @@ function tmCategory(item) {
   return 'music';
 }
 
+function pickTMImage(item) {
+  const imgs = item.images || [];
+  let best = null;
+  for (const im of imgs) {
+    if (!im || !im.url || !/^https:\/\//.test(im.url)) continue;
+    if (!best || (im.width || 0) > (best.width || 0)) best = im;
+  }
+  return best ? best.url : null;
+}
+
 function normalizeTM(item) {
   const v = (item._embedded && item._embedded.venues && item._embedded.venues[0]) || {};
   const loc = v.location || {};
   const start = (item.dates && item.dates.start) || {};
   if (!start.localDate) return null;
   const pr = (item.priceRanges && item.priceRanges[0]) || null;
+  const img = pickTMImage(item);
   return {
     id: 'tm-' + item.id,
     source: 'ticketmaster',
@@ -103,6 +100,8 @@ function normalizeTM(item) {
     premiere: false,
     timezone: (item.dates && item.dates.timezone) || '',
     venueCity: (v.city && v.city.name) || '',
+    image: img,
+    thumbnail: img,
     lastUpdated: new Date().toISOString()
   };
 }
@@ -115,12 +114,18 @@ function ytCategory(title, fallback) {
   return fallback || 'online';
 }
 
+function pickYTImage(sn) {
+  const th = (sn && sn.thumbnails) || {};
+  return (th.high && th.high.url) || (th.medium && th.medium.url) || (th.default && th.default.url) || null;
+}
+
 function normalizeYT(v, fallbackCat) {
   const sn = v.snippet || {};
   const ld = v.liveStreamingDetails || {};
   const iso = ld.actualStartTime || ld.scheduledStartTime;
   if (!iso) return null;
   const live = sn.liveBroadcastContent === 'live';
+  const img = pickYTImage(sn);
   return {
     id: 'yt-' + v.id,
     source: 'youtube',
@@ -147,6 +152,8 @@ function normalizeYT(v, fallbackCat) {
     channel: 'yt:' + sn.channelId,
     resort: null,
     premiere: sn.liveBroadcastContent === 'upcoming' && /premiere/i.test(sn.title || ''),
+    image: img,
+    thumbnail: img,
     lastUpdated: new Date().toISOString()
   };
 }
@@ -154,19 +161,17 @@ function normalizeYT(v, fallbackCat) {
 async function fetchTicketmaster() {
   if (!TM_KEY) return { status: 'skipped', error: 'TICKETMASTER_API_KEY secret not set', events: [] };
   const events = [];
-  let pages = 0;
   try {
     for (const c of CITIES) {
       const url = 'https://app.ticketmaster.com/discovery/v2/events.json?apikey=' + encodeURIComponent(TM_KEY) +
         '&latlong=' + c.lat + ',' + c.lng + '&radius=100&unit=miles&size=50&sort=date,asc';
       const j = await getJSON(url, 20000);
-      pages += 1;
       const items = (j._embedded && j._embedded.events) || [];
       for (const item of items) {
         const e = normalizeTM(item);
         if (e) events.push(e);
       }
-      await sleep(300); // stay far under the 5 req/sec limit
+      await sleep(300);
     }
     return { status: 'ok', error: null, events };
   } catch (e) {
@@ -201,7 +206,6 @@ async function fetchYouTube() {
 async function main() {
   const generatedAt = new Date().toISOString();
   const [tm, yt] = [await fetchTicketmaster(), await fetchYouTube()];
-
   const seen = new Set();
   const events = [];
   for (const e of tm.events.concat(yt.events)) {
@@ -210,16 +214,13 @@ async function main() {
     events.push(e);
     if (events.length >= 400) break;
   }
-
   console.log('ticketmaster: ' + tm.status + ' (' + tm.events.length + ' events)' + (tm.error ? ' - ' + tm.error : ''));
   console.log('youtube: ' + yt.status + ' (' + yt.events.length + ' events)' + (yt.error ? ' - ' + yt.error : ''));
   console.log('total unique events: ' + events.length);
-
   if (!events.length && existsSync(OUT)) {
     console.log('::warning::No events fetched and a previous live.json exists - keeping the old file.');
     return;
   }
-
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify({
     generatedAt,
