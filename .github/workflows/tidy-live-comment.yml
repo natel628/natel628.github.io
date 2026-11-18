@@ -1,0 +1,24 @@
+name: Tidy live comment
+on:
+  workflow_dispatch: {}
+jobs:
+  tidy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Drop stale key sentence
+        run: |
+          node -e "const fs=require('fs'),p='sites/whats-happening/js/app.js';let s=fs.readFileSync(p,'utf8');const a='; pasted API keys only ever add fresher local data';if(!s.includes(a)){throw new Error('anchor missing')}fs.writeFileSync(p,s.split(a).join(''));"
+          node --check sites/whats-happening/js/app.js
+          if grep -nF "pasted API keys" sites/whats-happening/js/app.js; then echo leftover; exit 1; fi
+      - name: Commit and self-remove
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add sites/whats-happening/js/app.js
+          git commit -m "Drop stale API-key sentence from live feed comment"
+          git rm .github/workflows/tidy-live-comment.yml
+          git commit -m "Remove tidy helper workflow"
+          git push
