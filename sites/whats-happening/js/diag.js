@@ -10,11 +10,15 @@
    spends its full limit when something is actually broken, so a healthy run
    takes a few seconds. Filter checks compare the rendered cards against the
    model set, so an empty-but-wrong list fails instead of passing quietly.
+
+   diag-9: FAIL details now carry the first stack frame (file:line:col) and
+   the report prints up to five frames underneath, so a failure names its
+   source instead of just its message.
 */
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-8';
+  var LIB = 'diag-9';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
@@ -47,6 +51,25 @@ window.WHDIAG = (function () {
     });
   }
 
+  /* One stack frame, trimmed to file:line:col so the report line stays short. */
+  function tidyFrame(line) {
+    var l = String(line).trim();
+    if (l.indexOf('at ') === 0) l = l.slice(3);
+    var i = l.indexOf('http');
+    if (i > 0) l = l.slice(i);
+    var j = l.indexOf('://');
+    if (j >= 0) {
+      var k = l.indexOf('/', j + 3);
+      if (k >= 0) l = l.slice(k + 1);
+    }
+    return l.trim();
+  }
+  function frames(e) {
+    var s = (e && e.stack) || '';
+    if (!s) return [];
+    return s.split('\n').slice(1).map(tidyFrame).filter(Boolean).slice(0, 5);
+  }
+
   function params() {
     try { return new URLSearchParams(location.search); } catch (e) { return null; }
   }
@@ -69,8 +92,8 @@ window.WHDIAG = (function () {
   }
 
   function reloadFrame(c) {
+    var f = c.frame, done = false;
     return new Promise(function (res) {
-      var f = c.frame, done = false;
       function go() { if (done) return; done = true; res(); }
       f.addEventListener('load', function () { setTimeout(go, 60); });
       setTimeout(go, 8000);
@@ -362,7 +385,6 @@ window.WHDIAG = (function () {
     row.querySelector('.diag__st').textContent = status === 'pass' ? 'PASS' : status === 'fail' ? 'FAIL' : '\u00b7';
     row.querySelector('.diag__d').textContent = (detail || '') + (time ? ' (' + time + ')' : '');
   }
-
   function setSummary(text, cls) {
     var el = document.getElementById('diag-sum');
     if (!el) return;
@@ -376,8 +398,12 @@ window.WHDIAG = (function () {
     var failed = results.filter(function (r) { return r.status === 'fail'; }).length;
     var head = ['whats-happening diagnostics  ' + nowStamp(), 'url   ' + location.href,
       'ua    ' + navigator.userAgent, 'lib   ' + LIB, '----------------------------------------'];
-    var lines = results.map(function (r) {
-      return (r.status === 'pass' ? 'PASS  ' : 'FAIL  ') + pad(r.id) + (r.detail || '') + ' (' + r.time + 'ms)';
+    var lines = [];
+    results.forEach(function (r) {
+      lines.push((r.status === 'pass' ? 'PASS  ' : 'FAIL  ') + pad(r.id) + (r.detail || '') + ' (' + r.time + 'ms)');
+      if (r.status === 'fail' && r.stack && r.stack.length) {
+        r.stack.forEach(function (fr) { lines.push('      at ' + fr); });
+      }
     });
     return head.concat(lines, ['----------------------------------------', passed + ' passed, ' + failed + ' failed']).join('\n');
   }
@@ -411,7 +437,6 @@ window.WHDIAG = (function () {
     frame.setAttribute('aria-hidden', 'true');
     frame.src = location.pathname + '?frame=1&d=' + Date.now();
     (root || document.body).appendChild(frame);
-
     var ctx = { frame: frame };
 
     new Promise(function (res) {
@@ -427,13 +452,20 @@ window.WHDIAG = (function () {
         return chain.then(function () {
           setRow(c.id, 'run', '');
           var t0 = Date.now();
-          return Promise.resolve().then(function () { return c.fn(ctx); }).then(function (detail) {
+          return Promise.resolve().then(function () {
+            /* A previous check may have reloaded the frame; always drive the
+               live document so one failure cannot poison the next check. */
+            if (ctx.w && ctx.w.WH && ctx.w.WH.state) refresh(ctx);
+            return c.fn(ctx);
+          }).then(function (detail) {
             results.push({ id: c.id, status: 'pass', detail: detail || '', time: Date.now() - t0 });
             setRow(c.id, 'pass', detail, ms(t0));
           }).catch(function (e) {
             var msg = (e && e.message) || String(e);
-            results.push({ id: c.id, status: 'fail', detail: msg, time: Date.now() - t0 });
-            setRow(c.id, 'fail', msg, ms(t0));
+            var st = frames(e);
+            var detail = msg + (st.length ? ' @ ' + st[0] : '');
+            results.push({ id: c.id, status: 'fail', detail: detail, stack: st, time: Date.now() - t0 });
+            setRow(c.id, 'fail', detail, ms(t0));
           });
         });
       }, Promise.resolve());
@@ -444,9 +476,11 @@ window.WHDIAG = (function () {
       if (failed) { try { console.error('[diagnostics]\n' + report); } catch (e) {} }
     }).catch(function (e) {
       var msg = 'harness failed: ' + ((e && e.message) || e);
-      report = 'whats-happening diagnostics  ' + nowStamp() + '\n' + msg;
+      var st = frames(e);
+      report = 'whats-happening diagnostics  ' + nowStamp() + '\n' + msg +
+        (st.length ? '\n' + st.map(function (fr) { return '      at ' + fr; }).join('\n') : '');
       setSummary('could not run', 'fail');
-      results.push({ id: 'harness', status: 'fail', detail: msg, time: 0 });
+      results.push({ id: 'harness', status: 'fail', detail: msg, stack: st, time: 0 });
     }).then(function () {
       frame.remove();
       ensurePanel();
