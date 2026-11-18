@@ -30,9 +30,7 @@ function show(html) {
     box.innerHTML = html;
   }
   window.addEventListener('error', function (e) {
-    show('<b>Script error - the page could not start.</b>\n' +
-(e.message || 'unknown error') + '\n' +
-      String(e.filename || '').split('/').pop() + ':' + (e.lineno || '?'));
+    show('<b>Script error - the page could not start.</b>\n' + (e.message || 'unknown error') + '\n' + String(e.filename || '').split('/').pop() + ':' + (e.lineno || '?'));
   });
   window.addEventListener('DOMContentLoaded', function () {
     setTimeout(function () {
@@ -57,7 +55,7 @@ show('<b>Nothing rendered.</b>\nThe page loaded but the discovery view produced 
 <button class='iconbtn sb__close' data-action='close-nav' aria-label='Close navigation' data-icon='close'></button>
     </div>
 <nav class='sb__nav'>
-      <p class='sb__label'>Browse</p>
+<p class='sb__label'>Browse</p>
       <a class='navitem' href='#/discover'><span data-icon='compass'></span>Discover</a>
 <a class='navitem' href='#/near'><span data-icon='pin'></span>Near me</a>
       <a class='navitem' href='#/comedy'><span data-icon='mic'></span>Comedy</a>
@@ -96,11 +94,11 @@ show('<b>Nothing rendered.</b>\nThe page loaded but the discovery view produced 
   </div>
 </div>
 <nav class='tabbar' aria-label='Quick navigation'>
-  <a class='tab' href='#/discover'><span data-icon='compass'></span>Discover</a>
+<a class='tab' href='#/discover'><span data-icon='compass'></span>Discover</a>
 <a class='tab' href='#/near'><span data-icon='pin'></span>Near</a>
   <a class='tab' href='#/online'><span data-icon='play'></span>Online</a>
 <a class='tab' href='#/calendar'><span data-icon='calendar'></span>Calendar</a>
-  <a class='tab' href='#/watchlist'><span data-icon='bookmark'></span>Saved</a>
+<a class='tab' href='#/watchlist'><span data-icon='bookmark'></span>Saved</a>
 </nav>
 <div id='modal' class='modal' hidden></div>
 <div id='toasts' class='toasts' aria-live='polite'></div>
@@ -113,7 +111,6 @@ show('<b>Nothing rendered.</b>\nThe page loaded but the discovery view produced 
 <script src='js/views2.js'></script>
 <script src='js/tile-art.js'></script>
 <script src='js/empty-state.js'></script>
-<script src='js/no-browser-keys.js'></script>
 <script src='js/location.js'></script>
 <script src='js/app.js'></script>
 <script src='js/live-status.js'></script>
