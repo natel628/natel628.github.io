@@ -18,11 +18,15 @@
    diag-10: the first row is feed health - per-source counts and errors from
    data/health.json plus how old data/live.json is, which is what the deploy
    guard enforces.
+
+   diag-11: the calendar check takes its fixture from the invented set
+   (W.demoEvents()) instead of from W.allEvents(), which now returns only the
+   live feed whenever the feed has events.
 */
 window.WHDIAG = (function () {
   'use strict';
 
-  var LIB = 'diag-10';
+  var LIB = 'diag-11';
   var running = false, report = '', panel = null;
   var root = null;   // stable wrapper so the panel cannot be lost
 
@@ -305,10 +309,20 @@ window.WHDIAG = (function () {
     });
   }
 
+  /* Fixture: the invented set, taken straight from the data module. It used to
+     come from allEvents(), which now returns only the live feed whenever the
+     feed has events, so this check has to reach past it. */
+  function icsFixture(W) {
+    var demo = (typeof W.demoEvents === 'function' ? W.demoEvents() : []).filter(function (e) {
+      return e && e.source === 'demo';
+    });
+    return demo[0] || (W.allEvents() || [])[0] || null;
+  }
+
   function checkCalendar(c) {
     var W = c.W, d = c.d;
     assert(W && W.icsFor, 'icsFor is not available');
-    var ev = W.allEvents().filter(function (e) { return e.source === 'demo'; })[0];
+    var ev = icsFixture(W);
     assert(ev, 'no event available to export');
     var text = W.icsFor([ev]);
     assert(/^BEGIN:VCALENDAR\r\n/.test(text), 'ICS does not start with BEGIN:VCALENDAR');
