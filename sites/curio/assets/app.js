@@ -572,8 +572,7 @@ function renderSuggest(items) {
   if (!items.length) { host.innerHTML = ''; return; }
   host.innerHTML = items.map((s, i) => `<button class="suggest-row" role="option" data-suggest="${i}" title="Save to Inbox">
     <span class="suggest-kind ${esc(s.kind || 'wiki')}">${esc(s.kind === 'web' ? 'web' : 'wiki')}</span>
-    <span class="suggest-body"><span class="suggest-title">${esc(s.title)}</span>${s.snippet ? `<span class="suggest-snip">${esc(s.snippet)}</span>` : ''}</span>
-    <span class="suggest-add">+ Save</span></button>`).join('');
+    <span class="suggest-body"><span class="suggest-title">${esc(s.title)}</span>${s.snippet ? `<span class="suggest-snip">${esc(s.snippet)}</span>` : ''}</span></button>`).join('');
   window._curioSuggestHosts = items;
   host.querySelectorAll('[data-suggest]').forEach((b) => (b.onclick = (e) => {
     e.preventDefault();
