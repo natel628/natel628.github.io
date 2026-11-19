@@ -268,6 +268,10 @@
     .wx-tile { flex-basis:72px; padding:7px 4px; }
     .max-w-100 { max-width:100%; }
   }
+  .explore-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px; }
+  .explore-tab { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:8px 14px; border-radius:var(--radius-md); cursor:pointer; font:inherit; }
+  .explore-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+  .explore-panel[hidden] { display:none; }
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%230f172a'/%3E%3Cpath%20d='M10%2023V9l12%2014V9'%20fill='none'%20stroke='%23f59e0b'%20stroke-width='3.4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E" />
 </head>
@@ -487,89 +491,92 @@
     <div id="practical"></div>
   </section>
 
-  <section class="card" id="sec-golf">
-    <h2>⛳ Golf courses</h2>
-    <p class="muted">Search a town or area, or click the map to drop a search pin, then look over the courses and add one straight to your route.</p>
-    <div class="row">
-      <input id="golfQuery" placeholder="Search near — e.g. Bethpage, NY" aria-label="Search golf courses near" />
-      <select id="golfRadius" aria-label="Search radius" style="max-width:170px;flex:none">
-        <option value="16">Within 10 mi</option>
-        <option value="40" selected>Within 25 mi</option>
-        <option value="80">Within 50 mi</option>
-      </select>
-      <button type="button" id="golfFind">Find courses</button>
-      <button type="button" id="golfClearPin" class="ghost">Clear pin</button>
+  <section class="card" id="sec-explore">
+    <h2>🗺️ Explore nearby</h2>
+    <p class="muted">Pick a category, then search an area or drop a pin on the map to find places and add them to your route.</p>
+    <div class="explore-tabs" role="tablist">
+      <button type="button" class="explore-tab active" data-tab="golf" role="tab" aria-selected="true">⛳ Golf</button>
+      <button type="button" class="explore-tab" data-tab="food" role="tab" aria-selected="false">🍽️ Food</button>
+      <button type="button" class="explore-tab" data-tab="camp" role="tab" aria-selected="false">🏕️ Camp</button>
+      <button type="button" class="explore-tab" data-tab="events" role="tab" aria-selected="false">🏟️ Events</button>
     </div>
-    <div class="row" style="margin-top:8px">
-      <input id="golfName" placeholder="Or search a course by name — e.g. Pebble Beach" aria-label="Search a golf course by name" />
-      <button type="button" id="golfFindName">Find by name</button>
+    <div class="explore-panel" id="panel-golf">
+      <p class="muted">Search a town or area, or click the map to drop a search pin, then look over the courses and add one straight to your route.</p>
+      <div class="row">
+        <input id="golfQuery" placeholder="Search near — e.g. Bethpage, NY" aria-label="Search golf courses near" />
+        <select id="golfRadius" aria-label="Search radius" style="max-width:170px;flex:none">
+          <option value="16">Within 10 mi</option>
+          <option value="40" selected>Within 25 mi</option>
+          <option value="80">Within 50 mi</option>
+        </select>
+        <button type="button" id="golfFind">Find courses</button>
+        <button type="button" id="golfClearPin" class="ghost">Clear pin</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="golfName" placeholder="Or search a course by name — e.g. Pebble Beach" aria-label="Search a golf course by name" />
+        <button type="button" id="golfFindName">Find by name</button>
+      </div>
+      <p class="muted" id="golfPinState" style="margin-top:6px"></p>
+      <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="golfMap"></div>
+      <div id="golfList"></div>
     </div>
-    <p class="muted" id="golfPinState" style="margin-top:6px"></p>
-    <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="golfMap"></div>
-    <div id="golfList"></div>
-  </section>
-
-  <section class="card" id="sec-food">
-    <h2>🍽️ Places to eat</h2>
-    <p class="muted">Search a town or area — or click the map to drop a pin — to list restaurants and cafés around it, then add the ones you like to your route. Distances and drive times are real roads from the search point.</p>
-    <div class="row">
-      <input id="foodQuery" placeholder="Search near — e.g. Nashville, TN" aria-label="Search places to eat near" />
-      <select id="foodRadius" style="max-width:170px;flex:none" aria-label="Search radius">
-        <option value="3">Within 3 mi</option>
-        <option value="10" selected>Within 10 mi</option>
-        <option value="30">Within 30 mi</option>
-      </select>
-      <button type="button" id="foodFind">Find places to eat</button>
-      <button type="button" id="foodClearPin" class="ghost">Clear pin</button>
+    <div class="explore-panel" id="panel-food" hidden>
+      <p class="muted">Search a town or area — or click the map to drop a pin — to list restaurants and cafés around it, then add the ones you like to your route. Distances and drive times are real roads from the search point.</p>
+      <div class="row">
+        <input id="foodQuery" placeholder="Search near — e.g. Nashville, TN" aria-label="Search places to eat near" />
+        <select id="foodRadius" style="max-width:170px;flex:none" aria-label="Search radius">
+          <option value="3">Within 3 mi</option>
+          <option value="10" selected>Within 10 mi</option>
+          <option value="30">Within 30 mi</option>
+        </select>
+        <button type="button" id="foodFind">Find places to eat</button>
+        <button type="button" id="foodClearPin" class="ghost">Clear pin</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="foodName" placeholder="Or search a place by name — e.g. Franklin Barbecue" aria-label="Search a place to eat by name" />
+        <button type="button" id="foodFindName">Find by name</button>
+      </div>
+      <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
+      <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="foodMap"></div>
+      <div id="foodList"></div>
     </div>
-    <div class="row" style="margin-top:8px">
-      <input id="foodName" placeholder="Or search a place by name — e.g. Franklin Barbecue" aria-label="Search a place to eat by name" />
-      <button type="button" id="foodFindName">Find by name</button>
+    <div class="explore-panel" id="panel-camp" hidden>
+      <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
+      <div class="row">
+        <select id="campRadius" style="max-width:170px;flex:none" aria-label="Campground search radius">
+          <option value="5">Within 5 mi</option>
+          <option value="15" selected>Within 15 mi</option>
+          <option value="40">Within 40 mi</option>
+        </select>
+        <button type="button" id="campAlong">Find along my route</button>
+        <button type="button" id="campClearPin" class="ghost">Clear pin</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="campArea" placeholder="Or search near a town — e.g. Lexington, VA" aria-label="Search campgrounds near a town" />
+        <button type="button" id="campFind">Find near town</button>
+      </div>
+      <p class="muted" id="campPinState" style="margin:8px 0 0"></p>
+      <p id="campMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="campMap"></div>
+      <div id="campList"></div>
     </div>
-    <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
-    <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="foodMap"></div>
-    <div id="foodList"></div>
-  </section>
-
-  <section class="card" id="sec-camp">
-    <h2>🏕️ Campgrounds &amp; rest areas</h2>
-    <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
-    <div class="row">
-      <select id="campRadius" style="max-width:170px;flex:none" aria-label="Campground search radius">
-        <option value="5">Within 5 mi</option>
-        <option value="15" selected>Within 15 mi</option>
-        <option value="40">Within 40 mi</option>
-      </select>
-      <button type="button" id="campAlong">Find along my route</button>
-      <button type="button" id="campClearPin" class="ghost">Clear pin</button>
+    <div class="explore-panel" id="panel-events" hidden>
+      <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page, and can be put on the map or added to the route.</p>
+      <div class="row">
+        <div class="ac"><input id="eventArea" placeholder="Area — e.g. Denver, CO" aria-label="Area to search for events" /></div>
+        <input id="eventDate" type="date" style="max-width:190px;flex:none" aria-label="Event date" />
+        <select id="eventRadius" aria-label="Event search radius" style="max-width:170px;flex:none">
+          <option value="25">Within 25 mi</option>
+          <option value="50" selected>Within 50 mi</option>
+          <option value="100">Within 100 mi</option>
+        </select>
+        <button type="button" id="eventFind">Find events</button>
+      </div>
+      <p id="eventMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="eventList"></div>
     </div>
-    <p class="muted" id="campPinState" style="margin:8px 0 0"></p>
-    <div class="row" style="margin-top:8px">
-      <input id="campArea" placeholder="Or search near a town — e.g. Lexington, VA" aria-label="Search campgrounds near a town" />
-      <button type="button" id="campFind">Find near town</button>
-    </div>
-    <p id="campMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="campMap"></div>
-    <div id="campList"></div>
-  </section>
-
-  <section class="card" id="sec-events">
-    <h2>🏟️ Sporting events</h2>
-    <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page, and can be put on the map or added to the route.</p>
-    <div class="row">
-      <div class="ac"><input id="eventArea" placeholder="Area — e.g. Denver, CO" aria-label="Area to search for events" /></div>
-      <input id="eventDate" type="date" style="max-width:190px;flex:none" aria-label="Event date" />
-      <select id="eventRadius" aria-label="Event search radius" style="max-width:170px;flex:none">
-        <option value="25">Within 25 mi</option>
-        <option value="50" selected>Within 50 mi</option>
-        <option value="100">Within 100 mi</option>
-      </select>
-      <button type="button" id="eventFind">Find events</button>
-    </div>
-    <p id="eventMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="eventList"></div>
   </section>
 
   <section class="card" id="sec-bets">
@@ -4493,6 +4500,24 @@ async function pollTick(){
 pollTimer = setTimeout(pollTick, 8000);
 
 document.addEventListener('visibilitychange', () => { if (!document.hidden) loadState(); });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.explore-tab').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.explore-tab').forEach(function(b){b.classList.remove('active');b.setAttribute('aria-selected','false');});
+      btn.classList.add('active');btn.setAttribute('aria-selected','true');
+      document.querySelectorAll('.explore-panel').forEach(function(p){p.hidden=true;});
+      var panel=document.getElementById('panel-'+btn.dataset.tab);
+      if(panel) panel.hidden=false;
+      // leaflet maps need resize after reveal
+      ['golfMap','foodMap','campMap'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el && window.L && el._leaflet_id){ var m=L.Util?null:null; }
+      });
+    });
+  });
+});
 </script>
 </body>
 </html>
