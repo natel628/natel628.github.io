@@ -104,8 +104,7 @@
     .nav-right .nav-icon-btn, #ai-btn, #search-btn, #ai-send, .modal-btn,
     .nav-tab, .subnav-tab, .ai-tab, .thumbs-btn, .time-travel-btn,
     .more-item, .more-action, .bn-item, label.filter-toggle,
-    .row-scroll-btn, .card-dismiss, #filters-toggle, .ai-icon-btn,
-    .pod-check {
+    .row-scroll-btn, .card-dismiss, #filters-toggle, .ai-icon-btn {
       min-height: 44px;
     }
     /* Text fields and selects take the same 44px; the 16px mobile type
@@ -2493,8 +2492,6 @@
     }
     /* The clock bar: one span per segment, flex-grow set to its minutes, so
        the widths are the running order at a glance. */
-    .pod-clock { display: flex; height: 14px; border-radius: var(--radius-pill); overflow: hidden; margin: 16px 0 8px; gap: 2px; }
-    .pod-clock span { height: 100%; }
     .pod-section {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -2503,59 +2500,9 @@
     }
     .pod-section h3 { font-size: var(--text-md); margin-bottom: 4px; }
     .pod-note { font-size: var(--text-xs); color: var(--text-muted); margin-bottom: 12px; line-height: 1.55; }
-    .pod-run-row {
-      display: grid;
-      grid-template-columns: 1fr 66px 108px;
-      gap: 10px;
-      align-items: center;
-      padding: 7px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: var(--text-sm);
-      line-height: 1.4;
-    }
-    .pod-run-row:last-child { border-bottom: 0; }
-    .pod-run-head {
-      font-size: var(--text-xs);
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .pod-min { text-align: right; font-weight: 700; color: var(--accent-2); font-variant-numeric: tabular-nums; }
-    .pod-run-head .pod-min { color: var(--text-muted); }
-    .pod-time { text-align: right; font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
     .pod-swatch { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 8px; vertical-align: baseline; }
-    .pod-style { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
-    .pod-style li { font-size: var(--text-sm); color: var(--text-muted); line-height: 1.55; padding-left: 20px; position: relative; }
-    .pod-style li strong { color: var(--text); }
-    .pod-style li::before { content: '▸'; position: absolute; left: 2px; color: var(--accent-2); }
-    .pod-progress { height: 8px; background: var(--surface2); border-radius: var(--radius-pill); overflow: hidden; margin-bottom: 10px; }
-    .pod-progress span {
-      display: block;
-      height: 100%;
-      background: var(--accent-2);
-      border-radius: var(--radius-pill);
-      transform-origin: left center;
-      transform: scaleX(var(--p, 0));
-      transition: transform 320ms var(--ease-out);
-    }
-    .pod-check {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 4px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-size: var(--text-sm);
-    }
-    .pod-check:hover { background: var(--surface2); }
-    .pod-check input { width: 18px; height: 18px; flex: 0 0 auto; accent-color: var(--accent-2); cursor: pointer; }
-    .pod-check .pc-name { flex: 1 1 auto; min-width: 0; }
-    .pod-check .pc-min { font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .pod-check.done .pc-name { text-decoration: line-through; color: var(--text-muted); }
-    /* Rundown actions: play, copy and rebuild sit on one line above the board. */
+    /* Copy and rebuild sit under the episode. */
     .pod-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 10px; }
-    .pod-script-row.pod-playing { background: var(--surface2); box-shadow: inset 3px 0 0 var(--accent-2); }
     /* Home: today's briefing, so the show is one tap from the top. */
     .pod-home {
       display: flex; gap: 12px; align-items: center;
@@ -2574,11 +2521,8 @@
     }
     .pod-home-meta { display: block; font-size: var(--text-xs); color: var(--text-muted); }
     .pod-home-go { flex: 0 0 auto; font-size: var(--text-xs); font-weight: 700; color: var(--accent-2); white-space: nowrap; }
-    /* Script board: a tick plus three one-line fields per segment. */
-    .pod-script-row { border-top: 1px solid var(--border); padding: 4px 0 8px; }
-    .pod-script-row:first-child { border-top: 0; }
     /* Baked candidate stories: a click swaps the headline and source in. */
-    .pod-ideas-wrap { padding: 6px 0 0 28px; }
+    .pod-ideas-wrap { padding: 10px 0 0; }
     .pod-ideas-wrap summary {
       cursor: pointer;
       font-size: var(--text-xs);
@@ -2615,7 +2559,6 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 8px;
-      padding-left: 28px;
     }
     .pod-scr-wide { grid-column: 1 / -1; }
     .pod-scr-input {
@@ -2712,28 +2655,6 @@
       border-radius: var(--radius-sm);
     }
     .pod-empty { font-size: var(--text-sm); color: var(--text-muted); }
-    /* The clock is a proposal, not a contract: every segment can be nudged. */
-    .pod-min { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; }
-    .pod-min strong { min-width: 1.2ch; }
-    .pod-step {
-      width: 40px;
-      height: 40px;
-      flex: none;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface2);
-      color: var(--text);
-      font: inherit;
-      font-size: var(--text-md);
-      font-weight: 700;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .pod-step:hover { border-color: var(--accent); color: var(--accent-2); }
-    .pod-step:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
     /* The player: it says what will be read before it reads it, and shows the
        sentence being spoken while it runs. */
     .pod-player {
@@ -2760,8 +2681,6 @@
     @keyframes pod-beat { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .3; transform: scale(.7); } }
     .pod-player-meta { font-size: var(--text-xs); color: var(--text-muted); text-align: right; font-variant-numeric: tabular-nums; }
     .pod-player-line { margin: 0 0 10px; font-size: var(--text-sm); line-height: 1.6; color: var(--text); min-height: 3.2em; }
-    .pod-player-bar { height: 6px; border-radius: var(--radius-pill); background: var(--surface); overflow: hidden; margin-bottom: 12px; }
-    .pod-player-bar span { display: block; height: 100%; width: 0; background: var(--accent-2); border-radius: var(--radius-pill); transition: width .25s var(--ease-out); }
     .pod-player-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
     .pod-voice { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); color: var(--text-muted); }
     .pod-voice select {
@@ -2776,9 +2695,94 @@
       font-size: var(--text-xs);
     }
     .pod-player-est { margin: 8px 0 0; font-size: var(--text-xs); color: var(--text-muted); }
+    /* Listening first: the episode card sits high in the hero, and the
+       production notes fold away underneath the show. */
+    .pod-listen {
+      margin: 16px 0 4px;
+      background: var(--surface);
+      border-color: color-mix(in srgb, var(--accent-2) 35%, var(--border));
+    }
+    .pod-listen .pod-player-line { font-size: var(--text-md); min-height: 3.6em; }
+    .pod-hint { margin: 8px 0 0; font-size: var(--text-xs); color: var(--text-muted); line-height: 1.5; }
+    .pod-hint:empty { display: none; }
+    .pod-episode { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+    .pod-ep-row { padding: 12px 0; border-top: 1px solid var(--border); }
+    .pod-ep-row:first-child { border-top: 0; }
+    .pod-ep-row.pod-playing {
+      background: var(--surface2);
+      box-shadow: inset 3px 0 0 var(--accent-2);
+      border-radius: var(--radius-sm);
+      padding-left: 10px;
+    }
+    .pod-ep-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pod-ep-name {
+      font-size: var(--text-xs);
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .pod-ep-time { margin-left: auto; font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .pod-ep-h { margin: 6px 0 0; font-size: var(--text-md); font-weight: 600; line-height: 1.35; }
+    .pod-ep-why { margin: 4px 0 0; font-size: var(--text-sm); color: var(--text-muted); line-height: 1.55; }
+    .pod-ep-empty { color: var(--text-muted); font-weight: 400; font-style: italic; }
+    .pod-ep-src { display: inline-block; margin-top: 6px; font-size: var(--text-xs); color: var(--accent-2); text-decoration: none; }
+    .pod-ep-src:hover { text-decoration: underline; }
+    .pod-ep-edit {
+      margin-left: auto;
+      background: none;
+      border: 0;
+      padding: 6px 4px;
+      font: inherit;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--accent-2);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .pod-ep-edit:hover { text-decoration: underline; }
+    .pod-ep-edit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+    .pod-ep-form {
+      margin-top: 10px;
+      padding: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    /* The console: transport up top, chapters as the progress bar. */
+    .pod-transport { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 2px 0 10px; }
+    .pod-tbtn {
+      width: 44px; height: 44px; border-radius: 50%; flex: 0 0 auto;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); font-size: var(--text-md); line-height: 1; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .pod-tbtn:hover { border-color: var(--accent-2); }
+    .pod-tbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+    .pod-bigplay.modal-btn { width: 64px; height: 64px; border-radius: 50%; font-size: 24px; padding: 0; flex: 0 0 auto; }
+    .pod-times { display: flex; justify-content: space-between; font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; margin-bottom: 6px; }
+    .pod-segbar { display: flex; height: 14px; border-radius: var(--radius-pill); overflow: hidden; margin-bottom: 12px; gap: 2px; }
+    .pod-segbar > span { height: 100%; position: relative; min-width: 0; }
+    .pod-segbar i { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background: rgba(0, 0, 0, .45); display: block; transition: width .25s var(--ease-out); }
+    .pod-ep-go {
+      width: 30px; height: 30px; border-radius: 50%; flex: 0 0 auto;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--accent-2); font-size: var(--text-xs); line-height: 1; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .pod-ep-go:hover { border-color: var(--accent-2); }
+    .pod-ep-go:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+    .pod-ep-row.pod-played .pod-ep-h, .pod-ep-row.pod-played .pod-ep-why { opacity: .55; }
+    .pod-eq { display: none; gap: 2px; align-items: flex-end; height: 12px; flex: 0 0 auto; }
+    .pod-ep-row.pod-playing .pod-eq { display: inline-flex; }
+    .pod-eq i { width: 3px; height: 12px; background: var(--accent-2); border-radius: 2px; animation: pod-eq-bounce .9s ease-in-out infinite; }
+    .pod-eq i:nth-child(2) { animation-delay: .25s; }
+    .pod-eq i:nth-child(3) { animation-delay: .5s; }
+    @keyframes pod-eq-bounce { 0%, 100% { height: 4px; } 50% { height: 12px; } }
     @media (prefers-reduced-motion: reduce) {
       .pod-player.live .pod-player-state::before { animation: none; }
-      .pod-player-bar span { transition: none; }
+      .pod-segbar i { transition: none; }
+      .pod-eq i { animation: none; }
     }
     /* A curated pick explains itself, so its card needs room for the reason. */
     .pod-grid-picks { grid-template-columns: repeat(auto-fill, minmax(238px, 1fr)); }
@@ -2827,11 +2831,8 @@
     @media (max-width: 700px) {
       .pod-hero { padding: 14px; }
       .pod-hero h2 { font-size: var(--text-xl); }
-      .pod-run-row { grid-template-columns: 1fr 132px; }
-      .pod-run-row .pod-time { display: none; }
       .pod-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
       .pod-script-fields { grid-template-columns: 1fr; padding-left: 0; }
-      .pod-check .pc-min { display: none; }
     }
   </style>
 </head>
@@ -3232,15 +3233,15 @@ const REGIONS = [
    both the control visibility and the client-side filter pipeline, so a
    control can never be shown while silently doing nothing. */
 const FILTER_VIEWS = {
-  type:          ['trending', 'upcoming'],
-  genre:         ['trending', 'upcoming', 'recommended', 'discoveries'],
-  sort:          ['trending', 'upcoming'],
-  provider:      ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard'],
-  region:        ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard', 'wheretowatch'],
-  contentRating: ['trending', 'upcoming'],
-  year:          ['trending', 'upcoming', 'discoveries'],
-  language:      ['trending', 'upcoming', 'recommended', 'discoveries'],
-  hideRated:     ['upcoming'],
+  type:          ['trending', 'upcoming', 'theatres'],
+  genre:         ['trending', 'upcoming', 'theatres', 'recommended', 'discoveries'],
+  sort:          ['trending', 'theatres', 'upcoming'],
+  provider:      ['trending', 'upcoming', 'theatres', 'recommended', 'discoveries', 'moodboard'],
+  region:        ['trending', 'upcoming', 'theatres', 'recommended', 'discoveries', 'moodboard', 'wheretowatch'],
+  contentRating: ['trending', 'upcoming', 'theatres'],
+  year:          ['trending', 'upcoming', 'theatres', 'discoveries'],
+  language:      ['trending', 'upcoming', 'theatres', 'recommended', 'discoveries'],
+  hideRated:     ['upcoming', 'theatres'],
   /* Era and mood are client-side only, so they belong exactly on the views
      whose pipeline runs them — nowhere else. */
   era:           ['trending', 'upcoming', 'recommended'],
@@ -7789,7 +7790,7 @@ function removeFromWatchlist(type, id) {
    ───────────────────────────────────────────────────────────────────── */
 const VIEW_SECTION = {
   home: 'home', trending: 'home', recommended: 'home', search: 'home',
-  discover: 'discover', discoveries: 'discover', moodboard: 'discover', upcoming: 'discover',
+  discover: 'discover', discoveries: 'discover', moodboard: 'discover', upcoming: 'discover', theatres: 'discover',
   wheretowatch: 'discover',
   list: 'list', watchlist: 'list', quickrate: 'list', stats: 'list',
   lists: 'lists',
@@ -7801,7 +7802,7 @@ const ICON = id => `<svg class="icon" aria-hidden="true"><use href="#${id}"/></s
 
 const SECTION_VIEWS = {
   home:     [['recommended', ICON('i-sparkles') + 'For You'], ['trending', ICON('i-flame') + 'Trending']],
-  discover: [['discoveries', ICON('i-search') + 'Discoveries'], ['moodboard', ICON('i-palette') + 'Mood Board'], ['upcoming', ICON('i-film') + 'Upcoming']],
+  discover: [['discoveries', ICON('i-search') + 'Discoveries'], ['moodboard', ICON('i-palette') + 'Mood Board'], ['upcoming', ICON('i-film') + 'Upcoming'], ['theatres', ICON('i-film') + 'In Theatres']],
   list:     [['watchlist', ICON('i-star') + 'My List'], ['quickrate', ICON('i-bolt') + 'Quick Rate'], ['stats', ICON('i-chart') + 'Stats']],
   podcasts: [['dailycatchup', ICON('i-podcast') + 'Daily Catch-Up'], ['podcasts', ICON('i-search') + 'Browse']],
 };
@@ -7840,7 +7841,7 @@ function renderSectionActions(section) {
 const SECTION_LABEL = { home: 'Home', discover: 'Discover', calendar: 'Calendar', list: 'My List', lists: 'Lists', settings: 'Settings', catchup: 'New Episodes', podcasts: 'Podcasts' };
 const VIEW_LABEL = {
   trending: 'Trending', recommended: 'For You', discoveries: 'Discoveries', moodboard: 'Mood Board',
-  upcoming: 'Upcoming', watchlist: 'My List', quickrate: 'Quick Rate', stats: 'Stats',
+  upcoming: 'Upcoming', theatres: 'In Theatres', watchlist: 'My List', quickrate: 'Quick Rate', stats: 'Stats',
   calendar: 'Calendar', settings: 'Settings', lists: 'Lists', search: 'Search', catchup: 'New Episodes',
   podcasts: 'Browse podcasts', dailycatchup: 'Daily Catch-Up',
 };
@@ -7925,7 +7926,9 @@ async function renderView() {
   updateWelcome();
   window.scrollTo({ top: 0, behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' });
 
-  if (podPlayer) podPlayerStop(null);
+  /* Leaving the tab stops the voice, but the saved line stays so the
+     episode offers Resume instead of starting over. */
+  if (podPlayer) podPlayerStop(null, true);
   main.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading…</p></div>';
 
   try {
@@ -7933,6 +7936,7 @@ async function renderView() {
       case 'trending':    await renderTrending(main, token);   break;
       case 'calendar':    await renderCalendar(main, token);   break;
       case 'upcoming':    await renderUpcoming(main, token);   break;
+      case 'theatres':    await renderTheatres(main, token);   break;
       case 'catchup':     await renderCatchUp(main, token);    break;
       case 'watchlist':   await renderWatchlist(main, token);  break;
       case 'recommended': await renderRecommended(main, token);break;
@@ -8938,6 +8942,37 @@ async function renderUpcoming(main, token) {
     if (token !== renderToken) return;
     console.warn('renderUpcoming error:', e);
     main.innerHTML = emptyStateHTML('⚠️', 'Could not load upcoming releases', esc(friendlyError(e)), 'retry');
+  }
+}
+/* ── IN THEATRES ─────────────────────────────────────────────────── */
+/* Now-playing movies for the selected region (TMDB /movie/now_playing).
+   Honest about downloads: films still in theatres are generally NOT
+   available to legally download or stream yet. This view is for tracking
+   what is out now — open a title to see its trailer, add it to My List,
+   and check rent/buy providers once they appear. No piracy links here. */
+async function renderTheatres(main, token) {
+  main.innerHTML = '';
+  addSkeletonRow(main, 'Now Playing 🎟️');
+
+  try {
+    let data = await tmdb('/movie/now_playing', { region: state.region, page: 1 });
+    let items = data.results || [];
+    if (!items.length && state.region !== 'US') {
+      data = await tmdb('/movie/now_playing', { region: 'US', page: 1 });
+      items = data.results || [];
+    }
+    if (token !== renderToken) return;
+    const movies = await filterResults(items.map(m => ({ ...m, media_type: 'movie' })));
+    if (token !== renderToken) return;
+    main.innerHTML = '';
+    addNotice(
+      `🎟️ <strong>In theatres now</strong> in ${esc(regionLabel())} — these titles are still in cinemas, so there is no legal download yet. ` +
+      `Open a title for its trailer, add it to My List to track it, and check its rent/buy providers once it leaves theatres.`);
+    renderRow(main, 'Now Playing in Theatres 🎟️', movies);
+  } catch (e) {
+    if (token !== renderToken) return;
+    console.warn('renderTheatres error:', e);
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load theatrical releases', esc(friendlyError(e)), 'retry');
   }
 }
 function debounce(fn, ms = 250) {
@@ -12961,8 +12996,7 @@ window.PODCAST_CANDIDATES = {"at":"2026-11-18T02:35:24.099Z","segments":{"headli
 const DAILY_SHOW = {
   title: 'The Daily Catch-Up',
   tagline: 'THE STORIES. THE TRENDS. THE THINGS YOU MISSED.',
-  runtime: 'A 15–20 minute daily briefing',
-  lede: 'One sitting, the whole day: the headlines that moved, what shipped in tech and AI, where the money went, the scores and the next games, what was funny, what happened around Rhode Island and New England, and one story you would otherwise never have found. Every segment says why it matters and gives the context behind it, and the hosts argue it out when they disagree.',
+  lede: 'One sitting, the whole day: the headlines that moved, what shipped in tech and AI, where the money went, the scores and the next games, what was funny, what happened around Rhode Island and New England, and one story you would otherwise never have found. Every segment says why it matters and gives the context behind it, and where a story is contested, both sides get heard.',
   topics: [
     'National & world news',
     'Technology & AI',
@@ -12972,74 +13006,91 @@ const DAILY_SHOW = {
     'Rhode Island & New England',
     'Stories you would not find yourself',
   ],
-  /* The running order is the show: fixed segments, fixed minutes, fixed
-     colours so the clock bar and the table read as one thing. */
+  /* The running order is the show: the same seven segments, in the same
+     order, every day. */
   segments: [
-    { id: 'headlines',  name: 'The big headlines',           min: 3, color: '#e50914', note: 'National and world news, in the order it matters' },
-    { id: 'tech',       name: 'Tech & AI',                   min: 3, color: '#2ec4b6', note: 'Technology and AI developments, and what they change' },
-    { id: 'money',      name: 'Money & markets',             min: 2, color: '#f5a623', note: 'Stocks, markets and cryptocurrency' },
-    { id: 'sports',     name: 'Sports',                      min: 3, color: '#7c5cff', note: 'Highlights, plus the games coming up' },
-    { id: 'culture',    name: 'Entertainment & pop culture', min: 3, color: '#ff7a59', note: 'Entertainment, comedy and pop culture' },
-    { id: 'newengland', name: 'Around New England',          min: 2, color: '#3ba55d', note: 'Rhode Island, New England, and the events worth leaving the house for' },
-    { id: 'rabbit',     name: 'The rabbit hole',             min: 3, color: '#5b8def', note: 'The interesting story you would not have found yourself' },
+    { id: 'headlines',  name: 'The big headlines',           color: '#e50914', note: 'National and world news, in the order it matters' },
+    { id: 'tech',       name: 'Tech & AI',                   color: '#2ec4b6', note: 'Technology and AI developments, and what they change' },
+    { id: 'money',      name: 'Money & markets',             color: '#f5a623', note: 'Stocks, markets and cryptocurrency' },
+    { id: 'sports',     name: 'Sports',                      color: '#7c5cff', note: 'Highlights, plus the games coming up' },
+    { id: 'culture',    name: 'Entertainment & pop culture', color: '#ff7a59', note: 'Entertainment, comedy and pop culture' },
+    { id: 'newengland', name: 'Around New England',          color: '#3ba55d', note: 'Rhode Island, New England, and the events worth leaving the house for' },
+    { id: 'rabbit',     name: 'The rabbit hole',             color: '#5b8def', note: 'The interesting story you would not have found yourself' },
   ],
   style: [
     ['Why it matters', 'every story earns its slot with a reason to care, not just a headline read aloud.'],
     ['Context first', 'the two sentences of background that make the headline make sense to someone who missed it.'],
-    ['Disagree out loud', 'the hosts push back on each other and say so; listeners hear both sides instead of one voice.'],
+    ['Disagreement, stated plainly', 'where a story is contested, the episode says so and gives each side its due: one voice, both sides.'],
     ['A little humor', 'a joke is welcome; a bit is never the whole segment.'],
   ],
 };
 
-/* The authored minutes are the house cut. A target keeps the seven segments
-   and their order but re-splits the minutes to add up to it exactly. Which
-   target is a per-episode decision, not a preference, so it is not saved:
-   every visit opens on the house cut. */
-const POD_TARGETS = [0, 15, 18, 20];
-const POD_BASE_TOTAL = DAILY_SHOW.segments.reduce((n, s) => n + s.min, 0);
-/* A segment can be nudged to anything in this range; the total then follows
-   instead of being forced to a target. */
-const POD_MIN_FLOOR = 1;
-const POD_MIN_CEIL = 15;
-let podTarget = 0;
+/* The only honest clock is the words on the page: each segment reads its
+   headline plus the full why-it-matters text, so a segment lasts whatever
+   its words take at speaking pace — computed, never planned. */
+const POD_WHY_SENTENCES = 8;
 
-/* Largest-remainder split: same proportions, whole minutes, exact total. */
-function podMinutesFor(target) {
-  const base = DAILY_SHOW.segments.map(s => s.min);
-  if (!target) return base;
-  const raw = base.map(min => (min * target) / POD_BASE_TOTAL);
-  const mins = raw.map(Math.floor);
-  const order = raw
-    .map((value, i) => ({ i, part: value - Math.floor(value) }))
-    .sort((a, b) => b.part - a.part || a.i - b.i);
-  let left = target - mins.reduce((n, m) => n + m, 0);
-  for (let k = 0; k < left; k++) mins[order[k].i] += 1;
-  return mins;
+/* Speaking pace, measured where possible: the first cleanly-heard line of a
+   playback calibrates the current voice, so estimates fit the device instead
+   of a guess. Until then the house pace times the selected speed applies. */
+function podVoiceKey() {
+  const voice = podVoice();
+  return (voice ? (voice.voiceURI || voice.name) : 'default') + '@' + podRate();
 }
 
-/* Segments with their minutes, start and end for the current target, with any
-   per-segment nudge applied on top. */
-function podSegments() {
-  const mins = podMinutesFor(podTarget);
-  const over = podBoard().mins || {};
-  let at = 0;
-  return DAILY_SHOW.segments.map((seg, i) => {
-    const nudge = Number(over[seg.id]);
-    const min = Number.isFinite(nudge) && nudge >= POD_MIN_FLOOR && nudge <= POD_MIN_CEIL
-      ? Math.round(nudge)
-      : mins[i];
-    const row = { ...seg, min, at, end: at + min };
-    at = row.end;
-    return row;
+function podEffectiveWpm() {
+  const table = LS.get('pod_wpm') || {};
+  const wpm = Number(table[podVoiceKey()]);
+  if (Number.isFinite(wpm) && wpm >= 60 && wpm <= 400) return wpm;
+  return POD_WPM * podRate();
+}
+
+/* Build the spoken script from a notes map ({segId: {h, w}}), the same shape
+   the board holds and the draft picks return. One place builds the words, so
+   the player, the episode list and every time shown always agree. */
+function podSpeakBuild(notes) {
+  const segs = DAILY_SHOW.segments;
+  const day = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  const lines = [{
+    kind: 'intro', seg: null,
+    text: DAILY_SHOW.title + '. ' + day + '. ' + segs.length + ' stories, with why each one matters.',
+  }];
+  const perSeg = {};
+  segs.forEach((seg, i) => {
+    const note = notes[seg.id] || {};
+    const headline = podReadable(note.h || '');
+    if (!headline) return;
+    const segLines = [
+      { kind: 'cue', seg: seg.id, text: (i === 0 ? 'First' : i === segs.length - 1 ? 'Last' : 'Next') + ', ' + seg.name.replace(/\s*&\s*/g, ' and ') + '.' },
+      { kind: 'head', seg: seg.id, text: /[.!?…]$/.test(headline) ? headline : headline + '.' },
+    ];
+    podSentences(podReadable(note.w || ''), POD_WHY_SENTENCES)
+      .forEach(sentence => segLines.push({ kind: 'why', seg: seg.id, text: sentence }));
+    lines.push(...segLines);
+    /* Seconds, not words: every time shown divides by the speaking pace. */
+    perSeg[seg.id] = podLineSeconds(segLines, segLines.length);
   });
+  if (lines.length > 1) {
+    lines.push({
+      kind: 'outro', seg: null,
+      text: 'That’s the Catch-Up for ' + new Date().toLocaleDateString(undefined, { weekday: 'long' }) + '. Back tomorrow with ' + segs.length + ' more.',
+    });
+  }
+  const words = lines.reduce((n, line) => n + podSpeakWords(line.text), 0);
+  return { lines, perSeg, segCount: Object.keys(perSeg).length, seconds: Math.round((words / podEffectiveWpm()) * 60) };
 }
 
-function podTotal() {
-  return podSegments().reduce((n, s) => n + s.min, 0);
+function podSpeakWords(text) {
+  return String(text || '').trim().split(/\s+/).filter(Boolean).length;
 }
 
-function podClock(min) {
-  return Math.floor(min / 60) + ':' + String(min % 60).padStart(2, '0');
+/* What the times are computed from when the fields are not on screen (the
+   hero, the Home card): today's saved board, or the same draft the episode
+   writes itself from while the board is still empty. */
+function podDisplayNotes() {
+  const board = podBoard();
+  if (Object.values(board.notes || {}).some(n => n && n.h)) return board.notes;
+  return podDraftPicks();
 }
 
 /* The board is today's episode: which segments are cut, and the headline,
@@ -13054,42 +13105,18 @@ function podToday() {
 
 function podBoard() {
   const saved = LS.get('pod_rundown');
-  if (!saved || saved.day !== podToday()) return { ids: [], notes: {}, mins: {} };
+  if (!saved || saved.day !== podToday()) return { notes: {} };
   return {
-    ids: Array.isArray(saved.ids) ? saved.ids : [],
     notes: saved.notes && typeof saved.notes === 'object' ? saved.notes : {},
-    mins: saved.mins && typeof saved.mins === 'object' ? saved.mins : {},
   };
-}
-
-/* Nudging one segment is the only thing that changes the shape of an episode,
-   so it writes the whole record: text, ticks and the new clock together. */
-function podNudgeMin(id, delta) {
-  const segs = podSegments();
-  const seg = segs.find(s => s.id === id);
-  if (!seg) return;
-  const next = Math.min(POD_MIN_CEIL, Math.max(POD_MIN_FLOOR, seg.min + delta));
-  if (next === seg.min) return;
-  const base = podMinutesFor(podTarget)[DAILY_SHOW.segments.findIndex(s => s.id === id)];
-  podWriteBoard(); // save what is typed before re-splitting the clock
-  const board = podBoard();
-  const mins = { ...board.mins };
-  if (next === base) delete mins[id];
-  else mins[id] = next;
-  LS.set('pod_rundown', { day: podToday(), ids: board.ids, notes: board.notes, mins });
-}
-
-function podResetMins() {
-  const board = podBoard();
-  LS.set('pod_rundown', { day: podToday(), ids: board.ids, notes: board.notes, mins: {} });
 }
 
 /* Ticks and text are read and written together, so the two can never
    disagree about what today's board holds. */
-function podWriteBoard() {
-  const box = document.getElementById('pod-checks');
+/* Persist only — callers repaint afterwards, so a write never paints twice. */
+function podWriteBoard(main) {
+  const box = (main && main.querySelector ? main : document).querySelector('#pod-episode');
   if (!box) return;
-  const ids = [...box.querySelectorAll('[data-pod-seg]')].filter(el => el.checked).map(el => el.dataset.podSeg);
   const notes = {};
   box.querySelectorAll('[data-pod-field]').forEach(input => {
     const value = input.value.trim();
@@ -13098,18 +13125,7 @@ function podWriteBoard() {
     notes[id] = notes[id] || {};
     notes[id][input.dataset.podField] = value;
   });
-      LS.set('pod_rundown', { day: podToday(), ids, notes, mins: podBoard().mins || {} });
-}
-
-/* Paint from the DOM: the boxes are the state, the record is the copy. */
-function podPaintRundown() {
-  const boxes = [...document.querySelectorAll('[data-pod-seg]')];
-  const total = boxes.length;
-  const done = boxes.filter(box => box.checked).length;
-  const count = document.getElementById('pod-count');
-  const bar = document.getElementById('pod-bar');
-  if (count) count.textContent = done + ' of ' + total + ' segments ready';
-  if (bar) bar.style.setProperty('--p', String(total ? done / total : 0));
+  LS.set('pod_rundown', { day: podToday(), notes });
 }
 
 /* The source link only exists once the field holds an http(s) URL. */
@@ -13185,6 +13201,126 @@ function podScriptFields(seg, note) {
   '</div>';
 }
 
+/* ── The episode, as the listener reads it ─────────────────────────────
+   One list, in play order: the story rows ARE the rundown. Each row shows
+   the headline, the why line, the source and the time its own words take to
+   speak — computed from the same build the player reads, so the page and
+   the voice cannot disagree. Tapping Edit opens that segment's fields in
+   place; the highlight lands on the row while it is being read. */
+function podEpRow(seg, note, secs) {
+  const headline = podReadable(note.h || '');
+  const why = podReadable(note.w || '');
+  const url = /^https?:\/\//i.test(note.u || '') ? note.u : '';
+  return '<li class="pod-ep-row" data-pod-episode="' + seg.id + '">' +
+    '<div class="pod-ep-head">' +
+      '<span class="pod-swatch" style="background:' + seg.color + '"></span>' +
+      '<span class="pod-eq" aria-hidden="true"><i></i><i></i><i></i></span>' +
+      '<span class="pod-ep-name">' + esc(seg.name) + '</span>' +
+      '<span class="pod-ep-time" data-pod-len>' + (secs ? '≈' + podClockSeconds(secs) : '—') + '</span>' +
+      '<button type="button" class="pod-ep-go" data-pod-go="' + seg.id + '" aria-label="Play from ' + esc(seg.name) + '">▶</button>' +
+      '<button type="button" class="pod-ep-edit" data-pod-edit="' + seg.id + '" aria-expanded="false">Edit</button>' +
+    '</div>' +
+    '<p class="pod-ep-h' + (headline ? '' : ' pod-ep-empty') + '" data-ep-h>' + esc(headline || 'Story to be picked.') + '</p>' +
+    '<p class="pod-ep-why" data-ep-w' + (why ? '' : ' hidden') + '>' + esc(why) + '</p>' +
+    (url
+      ? '<a class="pod-ep-src" data-ep-u href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(podSourceName(url)) + ' ↗</a>'
+      : '<a class="pod-ep-src" data-ep-u hidden>Source ↗</a>') +
+    '<div class="pod-ep-form" data-ep-form hidden>' +
+      podScriptFields(seg, note) +
+      podIdeasHTML(seg) +
+    '</div>' +
+  '</li>';
+}
+
+function podHeroNote(built) {
+  if (!built.segCount) return 'No stories are baked for today yet — the episode writes itself when they land.';
+  return built.segCount + ' of ' + DAILY_SHOW.segments.length + ' segments · about ' + podClockSeconds(built.seconds) + ' of audio, read straight through.';
+}
+
+/* The progress bar is the clock: one span per chapter, widths from spoken
+   seconds, each with a fill the player paints as it reads. */
+function podSegTrack(built) {
+  return DAILY_SHOW.segments.map(seg =>
+    '<span style="flex:' + Math.max(built.perSeg[seg.id] || 0, 0.001) + ';background:' + seg.color + '"><i data-segfill="' + seg.id + '"></i></span>'
+  ).join('');
+}
+
+/* One paint for everything derived: rows update in place so an open Edit
+   form never loses focus, then the hero note and the clock follow. */
+function podPaintEpisode(main) {
+  if (!main || !main.querySelector) return;
+  const notes = podDisplayNotes();
+  const built = podSpeakBuild(notes);
+  main.querySelectorAll('[data-pod-episode]').forEach(row => {
+    const seg = DAILY_SHOW.segments.find(s => s.id === row.dataset.podEpisode);
+    if (!seg) return;
+    const note = notes[seg.id] || {};
+    const headline = podReadable(note.h || '');
+    const why = podReadable(note.w || '');
+    const url = /^https?:\/\//i.test(note.u || '') ? note.u : '';
+    const secs = built.perSeg[seg.id] || 0;
+    const h = row.querySelector('[data-ep-h]');
+    if (h) { h.textContent = headline || 'Story to be picked.'; h.classList.toggle('pod-ep-empty', !headline); }
+    const w = row.querySelector('[data-ep-w]');
+    if (w) { w.textContent = why; w.hidden = !why; }
+    const u = row.querySelector('[data-ep-u]');
+    if (u) {
+      u.textContent = (url ? podSourceName(url) : 'Source') + ' ↗';
+      if (url) u.setAttribute('href', url); else u.removeAttribute('href');
+      u.hidden = !url;
+    }
+    const t = row.querySelector('[data-pod-len]');
+    if (t) t.textContent = secs ? '≈' + podClockSeconds(secs) : '—';
+  });
+  const note = main.querySelector('#pod-hero-note');
+  if (note) note.textContent = podHeroNote(built);
+  const track = main.querySelector('#pod-segbar');
+  if (track) track.innerHTML = podSegTrack(built);
+  podPaintFills(main);
+}
+
+function podSourceName(url) {
+  try { return new URL(url).hostname.replace(/^www\./, ''); } catch (_) { return 'Source'; }
+}
+
+function podDateLabel() {
+  return new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
+/* The listen card belongs at the top of the episode, not under the form
+   fields: pressing play is the first thing a visitor can do. */
+function podPlayerHTML() {
+  return '<div class="pod-player pod-listen" id="pod-player">' +
+    '<div class="pod-player-top">' +
+      '<span class="pod-player-state" id="pod-player-state">Ready</span>' +
+      '<span class="pod-player-meta" id="pod-player-meta"></span>' +
+    '</div>' +
+    '<div class="pod-transport">' +
+      '<button type="button" class="pod-tbtn" id="pod-prev" aria-label="Previous chapter">⏮</button>' +
+      '<button type="button" class="modal-btn primary pod-bigplay" id="pod-play" aria-pressed="false" aria-label="Play episode"' + (podSpeechSupported() ? '' : ' hidden') + '>▶</button>' +
+      '<button type="button" class="pod-tbtn" id="pod-next" aria-label="Next chapter">⏭</button>' +
+    '</div>' +
+    '<div class="pod-times"><span id="pod-elapsed">0:00</span><span id="pod-total"></span></div>' +
+    '<div class="pod-segbar" id="pod-segbar" aria-hidden="true"></div>' +
+    '<p class="pod-player-line" id="pod-player-line" aria-live="polite"></p>' +
+    '<div class="pod-player-controls">' +
+      '<button type="button" class="modal-btn" id="pod-stop" hidden>Stop</button>' +
+      '<button type="button" class="modal-btn" id="pod-sleep" title="Stop playing after a while. Ticks in real time, even while paused.">Sleep · Off</button>' +
+      '<label class="pod-voice"><span>Voice</span>' +
+        '<select id="pod-voice" aria-label="Voice for the episode"></select>' +
+      '</label>' +
+      '<label class="pod-voice"><span>Speed</span>' +
+        '<select id="pod-rate" aria-label="Speaking speed">' +
+          POD_RATES.map(rate => '<option value="' + rate + '"' + (rate === podRate() ? ' selected' : '') + '>' + rate + '×</option>').join('') +
+        '</select>' +
+      '</label>' +
+    '</div>' +
+    '<p class="pod-player-est" id="pod-player-est"></p>' +
+    '<p class="pod-hint" id="pod-voice-hint"></p>' +
+    (podSpeechSupported() ? '' : '<p class="pod-hint">This browser has no speech engine, so the episode cannot be played here. The script below is the episode.</p>') +
+  '</div>';
+}
+
 /* ── The episode writes itself ─────────────────────────────────────────
    Opening the tab should land on a finished briefing: seven segments, each
    with the story, why it matters and its source. The baked candidates pick
@@ -13228,11 +13364,11 @@ function podIdeaAt(segId, offset) {
   return list[Math.abs(offset) % list.length] || null;
 }
 
-function podDraftPicks(offset) {
-  const rotate = Number.isInteger(offset) ? offset : podDayRotate();
+function podDraftPicks() {
+  const rotate = podDayRotate();
   const used = new Set();
   const picks = {};
-  for (const seg of podSegments()) {
+  for (const seg of DAILY_SHOW.segments) {
     const list = podIdeas(seg.id);
     if (!list.length) continue;
     let pick = null;
@@ -13255,15 +13391,9 @@ function podApplyDraft(main, picks) {
       el.value = row[field];
       if (field === 'u') podSyncSource(el);
     });
-    /* A row with a headline, a reason and a source is cut, so it opens
-       ticked: "7 of 7 segments ready" is the promise the tab makes. */
-    if (row.h && row.w && row.u) {
-      const tick = main.querySelector('#pod-seg-' + id);
-      if (tick) { tick.checked = true; tick.closest('.pod-check')?.classList.add('done'); }
-    }
   }
-  podWriteBoard();
-  podPaintRundown();
+  podWriteBoard(main);
+  podPaintEpisode(main);
 }
 
 function podSetDraftNote(main, text) {
@@ -13327,42 +13457,18 @@ function podSentences(text, limit) {
   return out;
 }
 
-/* The script is the single source for the player, the transcript and the
-   show notes, so all three always say the same thing. */
-function podScript(main) {
-  const segs = podSegments();
-  const now = new Date();
-  const day = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
-  const total = segs.reduce((n, s) => n + s.min, 0);
-  const lines = [{
-    kind: 'intro', seg: null,
-    text: DAILY_SHOW.title + '. ' + day + '. Seven stories, about ' + total + ' minutes.',
-  }];
-  const read = (seg, field) => {
-    const el = main.querySelector('[data-pod-for="' + seg.id + '"][data-pod-field="' + field + '"]');
-    return podReadable(el ? el.value : '');
-  };
-  segs.forEach((seg, i) => {
-    const headline = read(seg, 'h');
-    if (!headline) return;
-    const cue = i === 0 ? 'First' : i === segs.length - 1 ? 'Last' : 'Next';
-    lines.push({ kind: 'cue', seg: seg.id, text: cue + ', ' + seg.name.toLowerCase() + '.' });
-    lines.push({ kind: 'head', seg: seg.id, text: /[.!?…]$/.test(headline) ? headline : headline + '.' });
-    podSentences(read(seg, 'w'), 2).forEach(sentence =>
-      lines.push({ kind: 'why', seg: seg.id, text: sentence }));
-  });
-  if (lines.length > 1) {
-    lines.push({
-      kind: 'outro', seg: null,
-      text: 'That’s the Catch-Up for ' + now.toLocaleDateString(undefined, { weekday: 'long' }) + '. Back tomorrow with seven more.',
-    });
-  }
-  return lines;
+/* The script is the single source for the player and the transcript, and it
+   is the same build everything shown on the page uses — the board is written
+   on every keystroke, so it is never behind the fields. */
+function podScript() {
+  return podSpeakBuild(podDisplayNotes()).lines;
 }
 
-function podScriptSeconds(lines) {
-  const words = lines.reduce((n, line) => n + line.text.split(/\s+/).length, 0);
-  return Math.round((words / POD_WPM) * 60);
+/* Spoken seconds for the first `upto` lines — elapsed time, resume points,
+   and totals when `upto` covers the whole script. */
+function podLineSeconds(lines, upto) {
+  const words = (lines || []).slice(0, Math.max(0, upto)).reduce((n, line) => n + podSpeakWords(line.text), 0);
+  return Math.round((words / podEffectiveWpm()) * 60);
 }
 
 function podClockSeconds(seconds) {
@@ -13370,19 +13476,34 @@ function podClockSeconds(seconds) {
   return Math.floor(safe / 60) + ':' + String(safe % 60).padStart(2, '0');
 }
 
-/* Device voices vary wildly. These name families are the ones that sound like
-   a person rather than a 1998 screen reader, in the order worth preferring. */
+/* Device voices vary wildly. A network voice from Google, or Microsoft's
+   "Natural" family, is the one that sounds like a person rather than a 1998
+   screen reader, so the ranking puts those first and the compact voices last
+   instead of trusting the order the browser hands them over. */
 const POD_VOICE_WANT = [
-  /natural/i, /neural/i, /premium/i, /enhanced/i, /siri/i,
-  /\b(aria|jenny|sonia|ryan|ava|allison|samantha|serena|daniel|karen|moira|tessa|fiona|alex|guy)\b/i,
-  /google/i,
+  [/natural|neural/i, 100],
+  [/premium|enhanced/i, 80],
+  [/\b(aria|jenny|sonia|ryan|guy|ava|allison|emma|brian|andrew|samantha|serena|daniel|karen|moira|tessa|fiona|alex)\b/i, 60],
+  [/google/i, 55],
+  [/siri/i, 45],
+  [/compact|eloquence|espeak|festival|pico/i, -60],
 ];
+
+/* Lower rank, lower score: the picker is sorted by this, so the first entry
+   is the voice the player uses by default. */
+function podVoiceScore(voice) {
+  const name = (voice.name || '') + ' ' + (voice.voiceURI || '');
+  let score = 0;
+  for (const [want, points] of POD_VOICE_WANT) if (want.test(name)) score += points;
+  if (voice.localService === false && score > 0) score += 10;
+  return score;
+}
 
 function podVoices() {
   try {
     return (window.speechSynthesis.getVoices() || [])
       .filter(voice => /^en([-_]|$)/i.test(voice.lang || ''))
-      .sort((a, b) => Number(b.localService === false) - Number(a.localService === false));
+      .sort((a, b) => podVoiceScore(b) - podVoiceScore(a) || Number(a.localService === false) - Number(b.localService === false));
   } catch (_) {
     return [];
   }
@@ -13390,17 +13511,24 @@ function podVoices() {
 
 function podBestVoice() {
   const list = podVoices();
-  for (const want of POD_VOICE_WANT) {
-    const hit = list.find(voice => want.test(voice.name) || want.test(voice.voiceURI || ''));
-    if (hit) return hit;
-  }
   return list[0] || null;
+}
+
+/* Pace is part of sounding like a person: 1× is the default, and the picker
+   tops out at 1.25× rather than the chipmunk speeds browsers allow. */
+const POD_RATES = [0.9, 1, 1.1, 1.25];
+
+function podRate() {
+  const saved = Number(LS.get('pod_rate'));
+  return POD_RATES.includes(saved) ? saved : 1;
 }
 
 function podVoice() {
   const saved = LS.get('pod_voice');
   return podVoices().find(voice => voice.name === saved) || podBestVoice();
 }
+
+const POD_VOICE_NATURAL = /natural|neural|premium|enhanced|google|siri/i;
 
 function podFillVoices(main) {
   const select = main && main.querySelector('#pod-voice');
@@ -13409,34 +13537,207 @@ function podFillVoices(main) {
   const chosen = podVoice();
   select.innerHTML = list.length
     ? list.map(voice => '<option value="' + esc(voice.name) + '"' + (chosen && voice.name === chosen.name ? ' selected' : '') + '>' +
-        esc(voice.name.replace(/\s*\(.*?\)\s*/g, ' ').trim() || voice.name) + '</option>').join('')
+        esc(voice.name.replace(/\s*\(.*\)\s*$/, '').trim() || voice.name) +
+        (POD_VOICE_NATURAL.test(voice.name || '') ? ' · natural' : '') + '</option>').join('')
     : '<option value="">Device default</option>';
   select.disabled = !list.length;
+  const hint = main.querySelector('#pod-voice-hint');
+  if (!hint) return;
+  hint.textContent = !list.length
+    ? 'No English voice is installed, so the browser default will read the episode.'
+    : POD_VOICE_NATURAL.test(list[0].name || '')
+      ? 'This device’s most natural voice is selected — the episode is read with it.'
+      : 'Only basic voices are installed here, which is why the reading sounds synthetic. Edge’s online voices and Chrome’s Google voices sound much closer to a person.';
 }
 
 function podPlayerRow(main, segId) {
-  main.querySelectorAll('.pod-script-row.pod-playing').forEach(row => row.classList.remove('pod-playing'));
+  main.querySelectorAll('.pod-ep-row.pod-playing').forEach(row => row.classList.remove('pod-playing'));
+  /* Chapters left behind read as done until the episode rewinds or ends.
+     The last-line map is built once per script, not once per spoken line. */
+  if (podPlayer) {
+    if (!podPlayer.segLast || podPlayer.segLast.src !== podPlayer.lines) {
+      const last = {};
+      podPlayer.lines.forEach((line, i) => { if (line.seg) last[line.seg] = i; });
+      podPlayer.segLast = { src: podPlayer.lines, last };
+    }
+    const last = podPlayer.segLast.last;
+    main.querySelectorAll('[data-pod-episode]').forEach(row => {
+      const at = last[row.dataset.podEpisode];
+      row.classList.toggle('pod-played', at !== undefined && at < podPlayer.index);
+    });
+  }
   if (!segId) return;
-  const row = main.querySelector('#pod-seg-' + segId)?.closest('.pod-script-row');
-  if (!row) return;
-  row.classList.add('pod-playing');
-  try { row.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) { /* jsdom, old browsers */ }
+  const story = main.querySelector('[data-pod-episode="' + segId + '"]');
+  if (!story) return;
+  story.classList.add('pod-playing');
+  try { story.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) { /* jsdom, old browsers */ }
+}
+
+/* Where you left off, per day: every spoken line saves its place, so coming
+   back offers Resume instead of starting over. A real stop clears it. */
+function podSavedPosition() {
+  const saved = LS.get('pod_position');
+  if (saved && saved.day === podToday() && Number.isInteger(saved.index) && saved.index > 0) return saved.index;
+  return 0;
+}
+
+/* Sleep timer: off, 10 minutes, 20 minutes. It ticks in real time — pausing
+   does not buy extra minutes. Stopping at the end needs no mode: the episode
+   ends itself. */
+const POD_SLEEP_MODES = [
+  { id: 'off', label: 'Off', mins: 0 },
+  { id: '10', label: '10 min', mins: 10 },
+  { id: '20', label: '20 min', mins: 20 },
+];
+
+function podSleepMode() {
+  const saved = Number(LS.get('pod_sleep'));
+  return POD_SLEEP_MODES[saved] ? saved : 0;
+}
+
+function podSleepClear() {
+  if (podPlayer && podPlayer.sleepWatch) { clearInterval(podPlayer.sleepWatch); podPlayer.sleepWatch = 0; }
+}
+
+function podSleepArm(main) {
+  podSleepClear();
+  if (!podPlayer) return;
+  const mins = POD_SLEEP_MODES[podSleepMode()].mins;
+  if (!(mins > 0)) return;
+  podPlayer.sleepUntil = Date.now() + mins * 60000;
+  podPlayer.sleepWatch = setInterval(() => {
+    if (!podPlayer || Date.now() < podPlayer.sleepUntil) return;
+    const box = main && main.querySelector ? main : document.getElementById('main-content');
+    podPlayerStop(box);
+    toast('Sleep timer stopped the episode.');
+  }, 2000);
+}
+
+/* Chapters in play order: only the segments that made the script. */
+function podChapterSegIds(lines) {
+  const ids = [];
+  for (const line of lines || []) if (line.seg && ids[ids.length - 1] !== line.seg) ids.push(line.seg);
+  return ids;
+}
+
+function podFirstLineOf(lines, segId) {
+  return lines.findIndex(line => line.seg === segId);
+}
+
+/* Jump the running episode — or start one — at a chapter. */
+function podPlayerJump(main, segId) {
+  if (!podSpeechSupported()) { toast('This browser has no voice engine.'); return; }
+  const lines = podPlayer ? podPlayer.lines : podScript();
+  const index = podFirstLineOf(lines, segId);
+  if (index < 0) return;
+  try { window.speechSynthesis.cancel(); } catch (_) { /* nothing was speaking */ }
+  if (podPlayer) clearTimeout(podPlayer.timer);
+  if (!podPlayer) podPlayer = { lines, index, seg: null, paused: false, timer: 0 };
+  else { podPlayer.lines = lines; podPlayer.index = index; podPlayer.paused = false; }
+  podPlayerPaint(main);
+  podSleepArm(main);
+  /* Chrome drops a speak() issued in the same tick as cancel(). */
+  setTimeout(() => { if (podPlayer && !podPlayer.paused) podPlayerSpeak(main, podPlayer.index); }, 90);
+}
+
+/* Step chapters. Backing up replays the chapter when you are already a few
+   lines into it, the way podcast apps do. */
+function podPlayerStep(main, dir) {
+  if (!podSpeechSupported()) { toast('This browser has no voice engine.'); return; }
+  const lines = podPlayer ? podPlayer.lines : podScript();
+  const ids = podChapterSegIds(lines);
+  if (!ids.length) return;
+  if (!podPlayer) { podPlayerJump(main, dir > 0 ? ids[0] : ids[ids.length - 1]); return; }
+  const cur = podPlayer.lines[podPlayer.index] ? podPlayer.lines[podPlayer.index].seg : null;
+  let at = ids.indexOf(cur);
+  if (at < 0) at = dir > 0 ? 0 : ids.length - 1;
+  else if (dir > 0 || podPlayer.index - podFirstLineOf(podPlayer.lines, cur) <= 2) {
+    at = Math.min(ids.length - 1, Math.max(0, at + dir));
+  }
+  podPlayerJump(main, ids[at]);
+}
+
+/* Lock-screen and headset buttons drive the same transport. The handlers are
+   wired once — only the now-playing chapter changes per line. */
+var podMediaWired = false;
+function podMediaSetup() {
+  if (podMediaWired) return;
+  try {
+    if (!('mediaSession' in navigator)) return;
+    const box = () => document.getElementById('main-content');
+    navigator.mediaSession.setActionHandler('play', () => podPlayerToggle(box()));
+    navigator.mediaSession.setActionHandler('pause', () => podPlayerToggle(box()));
+    navigator.mediaSession.setActionHandler('previoustrack', () => podPlayerStep(box(), -1));
+    navigator.mediaSession.setActionHandler('nexttrack', () => podPlayerStep(box(), 1));
+    navigator.mediaSession.setActionHandler('stop', () => podPlayerStop(box()));
+    podMediaWired = true;
+  } catch (_) { /* older browsers simply get no lock-screen controls */ }
+}
+function podMediaMeta(line) {
+  try {
+    if (!('mediaSession' in navigator)) return;
+    const seg = line && line.seg ? DAILY_SHOW.segments.find(s => s.id === line.seg) : null;
+    navigator.mediaSession.metadata = new window.MediaMetadata({
+      title: seg ? seg.name + ' — The Daily Catch-Up' : 'The Daily Catch-Up',
+      artist: 'The Daily Catch-Up',
+      album: podDateLabel(),
+    });
+  } catch (_) { /* older browsers simply get no lock-screen controls */ }
+}
+
+/* One cleanly-heard line per playback calibrates the current voice, and every
+   estimate on the page follows it from then on. */
+function podCalibrate(main) {
+  if (!podPlayer || podPlayer.calibrated || !podPlayer.calClean) return;
+  const words = podPlayer.calWords || 0;
+  const elapsed = (Date.now() - (podPlayer.calT0 || Date.now())) / 1000;
+  if (words < 12 || elapsed < 1) return;
+  const wpm = Math.round((words / elapsed) * 60);
+  if (!(wpm >= 60 && wpm <= 400)) return;
+  podPlayer.calibrated = true;
+  const key = podVoiceKey();
+  const table = LS.get('pod_wpm') || {};
+  const prev = Number(table[key]);
+  if (prev && Math.abs(prev - wpm) / prev < 0.08) return;
+  table[key] = wpm;
+  LS.set('pod_wpm', table);
+  if (main) { podPaintEpisode(main); podPlayerPaint(main); }
+}
+
+/* Chapter fills follow the spoken line; the track itself is repainted with
+   the words. */
+function podPaintFills(main) {
+  if (!main || !main.querySelector) return;
+  const card = main.querySelector('#pod-player');
+  if (!card) return;
+  const playing = !!podPlayer;
+  const lines = playing ? podPlayer.lines : [];
+  const fills = {};
+  lines.forEach((l, i) => {
+    if (!l.seg) return;
+    fills[l.seg] = fills[l.seg] || { done: 0, total: 0 };
+    fills[l.seg].total++;
+    if (playing && i <= podPlayer.index) fills[l.seg].done++;
+  });
+  card.querySelectorAll('[data-segfill]').forEach(el => {
+    const f = fills[el.dataset.segfill];
+    el.style.width = f && f.total ? Math.round((f.done / f.total) * 100) + '%' : '0%';
+  });
 }
 
 function podPlayerPaint(main) {
   if (!main || !main.querySelector) return;
   const card = main.querySelector('#pod-player');
   if (!card) return;
-  const lines = podPlayer ? podPlayer.lines : podScript(main);
+  const lines = podPlayer ? podPlayer.lines : podScript();
   const playing = !!podPlayer;
   const line = playing ? lines[podPlayer.index] : null;
-  const segs = podSegments();
+  const segs = DAILY_SHOW.segments;
   const seg = line && line.seg ? segs.find(s => s.id === line.seg) : null;
 
   const state = card.querySelector('#pod-player-state');
   const meta = card.querySelector('#pod-player-meta');
   const text = card.querySelector('#pod-player-line');
-  const fill = card.querySelector('#pod-player-fill');
   const play = card.querySelector('#pod-play');
   const stop = card.querySelector('#pod-stop');
   const est = card.querySelector('#pod-player-est');
@@ -13454,18 +13755,35 @@ function podPlayerPaint(main) {
       ? 'Press play and this is the first line you will hear: “' + lines[0].text + '”'
       : 'Nothing drafted yet — rebuild the rundown to make today’s script.');
   }
-  if (fill) fill.style.width = lines.length ? Math.round(((playing ? podPlayer.index + 1 : 0) / lines.length) * 100) + '%' : '0%';
   if (play) {
-    play.textContent = playing ? (podPlayer.paused ? '▶ Resume' : '❚❚ Pause') : '▶ Play briefing';
+    const resumeIdx = !playing ? podSavedPosition() : 0;
+    play.textContent = playing ? (podPlayer.paused ? '▶' : '❚❚') : '▶';
     play.setAttribute('aria-pressed', String(playing && !podPlayer.paused));
+    play.setAttribute('aria-label', playing
+      ? (podPlayer.paused ? 'Resume' : 'Pause')
+      : (resumeIdx ? 'Resume episode' : 'Play episode'));
   }
   if (stop) stop.hidden = !playing;
   if (est) {
+    const readCount = new Set(lines.filter(l => l.seg).map(l => l.seg)).size;
+    const resumeIdx = !playing ? podSavedPosition() : 0;
+    const totalSecs = podLineSeconds(lines, lines.length);
     est.textContent = lines.length
-      ? (playing ? 'About ' + podClockSeconds(podScriptSeconds(lines)) + ' in total'
-        : 'Reads ' + segs.length + ' segments · about ' + podClockSeconds(podScriptSeconds(lines)))
+      ? (playing ? 'About ' + podClockSeconds(totalSecs) + ' in total'
+        : resumeIdx && resumeIdx < lines.length
+          ? 'Resume from ' + podClockSeconds(podLineSeconds(lines, resumeIdx)) + ' · ' + readCount + ' segments · about ' + podClockSeconds(totalSecs) + ' in total'
+          : readCount
+            ? 'Reads ' + readCount + ' of ' + segs.length + ' segments · about ' + podClockSeconds(totalSecs)
+            : 'No stories with headlines yet — the episode writes itself when they land.')
       : '';
   }
+  const elapsed = card.querySelector('#pod-elapsed');
+  if (elapsed) elapsed.textContent = podClockSeconds(podLineSeconds(lines, playing ? podPlayer.index + 1 : 0));
+  const total = card.querySelector('#pod-total');
+  if (total) total.textContent = lines.length ? podClockSeconds(podLineSeconds(lines, lines.length)) : '';
+  const sleep = card.querySelector('#pod-sleep');
+  if (sleep) sleep.textContent = 'Sleep · ' + POD_SLEEP_MODES[podSleepMode()].label;
+  podPaintFills(main);
 }
 
 function podPlayerSpeak(main, index) {
@@ -13474,36 +13792,56 @@ function podPlayerSpeak(main, index) {
   if (!line) { podPlayerStop(main); return; }
   podPlayer.index = index;
   podPlayer.paused = false;
+  LS.set('pod_position', { day: podToday(), index });
   if (podPlayer.seg !== line.seg) {
     podPlayer.seg = line.seg;
     podPlayerRow(main, line.seg);
   }
   podPlayerPaint(main);
+  podMediaMeta(line);
+  podPlayer.calWords = podSpeakWords(line.text);
+  podPlayer.calT0 = Date.now();
+  podPlayer.calClean = true;
 
-  const utterance = new SpeechSynthesisUtterance(line.text);
-  const voice = podVoice();
-  if (voice) { utterance.voice = voice; utterance.lang = voice.lang; }
-  utterance.rate = 0.98;
-  utterance.pitch = 1;
-  utterance.volume = 1;
-  utterance.onend = () => {
-    if (podPlayer && podPlayer.index === index && !podPlayer.paused) podPlayerSpeak(main, index + 1);
+  const speak = () => {
+    if (!podPlayer || podPlayer.index !== index || podPlayer.paused) return;
+    const utterance = new SpeechSynthesisUtterance(line.text);
+    const voice = podVoice();
+    if (voice) { utterance.voice = voice; utterance.lang = voice.lang; }
+    utterance.rate = podRate();
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    utterance.onend = () => {
+      if (podPlayer && podPlayer.index === index && !podPlayer.paused) {
+        podCalibrate(main);
+        podPlayerSpeak(main, index + 1);
+      }
+    };
+    utterance.onerror = ev => {
+      if (ev && (ev.error === 'interrupted' || ev.error === 'canceled')) return;
+      if (podPlayer) { podPlayerStop(main); toast('The voice stopped — try another voice.'); }
+    };
+    podPlayer.utterance = utterance;
+    window.speechSynthesis.speak(utterance);
   };
-  utterance.onerror = ev => {
-    if (ev && (ev.error === 'interrupted' || ev.error === 'canceled')) return;
-    if (podPlayer) { podPlayerStop(main); toast('The voice stopped — try another voice.'); }
-  };
-  podPlayer.utterance = utterance;
-  window.speechSynthesis.speak(utterance);
+
+  /* A breath between sentences and a longer beat before a new segment is most
+     of what separates a show from a screen reader reading a list. */
+  const gap = line.kind === 'cue' ? 420 : line.kind === 'intro' ? 0 : 140;
+  clearTimeout(podPlayer.timer);
+  if (gap) podPlayer.timer = setTimeout(speak, gap);
+  else speak();
 }
 
 function podPlayerStart(main, from) {
   if (!podSpeechSupported()) { toast('This browser has no voice engine.'); return; }
-  const lines = podScript(main);
+  const lines = podScript();
   if (!lines.length) { toast('Nothing drafted yet — rebuild the rundown first.'); return; }
   try { window.speechSynthesis.cancel(); } catch (_) { /* nothing was speaking */ }
-  podPlayer = { lines, index: Math.min(from || 0, lines.length - 1), seg: null, paused: false };
+  const saved = Number.isInteger(from) ? from : podSavedPosition();
+  podPlayer = { lines, index: Math.min(saved, lines.length - 1), seg: null, paused: false, timer: 0 };
   podPlayerPaint(main);
+  podSleepArm(main);
   /* Chrome drops a speak() issued in the same tick as cancel(), which is how
      a stale line from a previous run used to turn up first. */
   const start = podPlayer.index;
@@ -13513,30 +13851,38 @@ function podPlayerStart(main, from) {
 function podPlayerToggle(main) {
   if (!podSpeechSupported()) { toast('This browser has no voice engine.'); return; }
   const synth = window.speechSynthesis;
-  if (!podPlayer) { podPlayerStart(main, 0); return; }
+  if (!podPlayer) { podPlayerStart(main); return; }
   if (podPlayer.paused) {
     podPlayer.paused = false;
     synth.resume();
     if (!synth.speaking) podPlayerSpeak(main, podPlayer.index);
+    podSleepArm(main);
   } else {
     podPlayer.paused = true;
+    podPlayer.calClean = false;
+    clearTimeout(podPlayer.timer);
     synth.pause();
   }
   podPlayerPaint(main);
 }
 
-function podPlayerStop(main) {
+function podPlayerStop(main, keep) {
+  if (podPlayer) clearTimeout(podPlayer.timer);
+  podSleepClear();
+  if (!keep) LS.set('pod_position', { day: '', index: 0 });
   try { window.speechSynthesis.cancel(); } catch (_) { /* nothing was speaking */ }
   podPlayer = null;
   if (main) {
-    main.querySelectorAll('.pod-script-row.pod-playing').forEach(row => row.classList.remove('pod-playing'));
+    main.querySelectorAll('.pod-ep-row.pod-playing, .pod-ep-row.pod-played').forEach(row => row.classList.remove('pod-playing', 'pod-played'));
     podPlayerPaint(main);
   }
 }
 
-/* Restart the current line so a new voice is heard immediately. */
+/* A new voice or speed is heard from the current line — unless paused, in
+   which case the change waits for Resume instead of talking over silence. */
 function podPlayerVoiceChanged(main) {
-  if (!podPlayer) return;
+  if (!podPlayer || podPlayer.paused) return;
+  clearTimeout(podPlayer.timer);
   try { window.speechSynthesis.cancel(); } catch (_) { /* nothing was speaking */ }
   const resume = podPlayer.index;
   podPlayer.paused = false;
@@ -13557,25 +13903,27 @@ if (podSpeechSupported() && typeof window.speechSynthesis.addEventListener === '
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden || !podPlayer || podPlayer.paused) return;
   try { window.speechSynthesis.pause(); } catch (_) { /* nothing was speaking */ }
+  podPlayer.calClean = false;
   podPlayer.paused = true;
   podPlayerPaint(document.getElementById('main-content'));
 });
 
 /* Show notes: the spoken script, in order, with the source kept next to each
    segment so the copy is both readable and checkable. */
-function podShowNotes(main) {
-  const script = podScript(main);
+function podShowNotes() {
+  const notes = podDisplayNotes();
+  const built = podSpeakBuild(notes);
+  const script = built.lines;
   if (script.length <= 1) return '';
-  const segs = podSegments();
   const when = new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const out = [DAILY_SHOW.title + ' — ' + when, '', script[0].text, ''];
   script.slice(1).forEach(line => {
     if (line.kind === 'cue') {
-      const seg = segs.find(s => s.id === line.seg) || {};
-      const source = main.querySelector('[data-pod-for="' + line.seg + '"][data-pod-field="u"]');
-      out.push('[' + (seg.name || 'Segment') + ' · ' + (seg.min || 0) + ' min]');
+      const seg = DAILY_SHOW.segments.find(s => s.id === line.seg) || {};
+      const url = /^https?:\/\//i.test((notes[line.seg] || {}).u || '') ? notes[line.seg].u.trim() : '';
+      const secs = built.perSeg[line.seg] || 0;
+      out.push('[' + (seg.name || 'Segment') + (secs ? ' · ≈' + podClockSeconds(secs) : '') + ']');
       out.push(line.text);
-      const url = source ? source.value.trim() : '';
       if (url) out.push('Source: ' + url);
       return;
     }
@@ -13584,8 +13932,8 @@ function podShowNotes(main) {
   return out.join('\n').trim() + '\n';
 }
 
-function podCopyNotes(main) {
-  const text = podShowNotes(main);
+function podCopyNotes() {
+  const text = podShowNotes();
   const fail = () => toast('Copy failed — select the rundown text instead.');
   try {
     navigator.clipboard.writeText(text).then(() => toast('Transcript copied.'), fail);
@@ -13594,6 +13942,14 @@ function podCopyNotes(main) {
 
 /* The Catch-Up is the reason the tab exists, so Home offers today's lead story
    instead of burying the show behind the More sheet. */
+/* The Home card promises the episode as it will actually play: the real
+   spoken length, not a planned one. */
+function podHomeMeta() {
+  const built = podSpeakBuild(podDisplayNotes());
+  if (!built.segCount) return 'today’s stories are still baking';
+  return 'about ' + podClockSeconds(built.seconds) + ' of audio · ' + DAILY_SHOW.segments.length + ' segments';
+}
+
 function podHomeCard() {
   const lead = podIdeaAt('headlines', podDayRotate());
   if (!lead) return null;
@@ -13605,7 +13961,7 @@ function podHomeCard() {
     '<span class="pod-home-body">' +
       '<span class="pod-home-kicker">Today’s briefing</span>' +
       '<span class="pod-home-h">' + esc(lead.h) + '</span>' +
-      '<span class="pod-home-meta">' + esc(DAILY_SHOW.title) + ' · ' + podTotal() + ' min · ' + DAILY_SHOW.segments.length + ' segments</span>' +
+      '<span class="pod-home-meta">' + esc(DAILY_SHOW.title) + ' · ' + esc(podHomeMeta()) + '</span>' +
     '</span>' +
     '<span class="pod-home-go" aria-hidden="true">Open →</span>';
   a.addEventListener('click', ev => { ev.preventDefault(); navigateTo('dailycatchup'); });
@@ -13614,7 +13970,7 @@ function podHomeCard() {
 
 async function podAskForScript(picks) {
   const rows = (picks || podDraftPicks());
-  const list = podSegments()
+  const list = DAILY_SHOW.segments
     .filter(seg => Object.prototype.hasOwnProperty.call(rows, seg.id))
     .map(seg => ({
       id: seg.id,
@@ -13624,7 +13980,7 @@ async function podAskForScript(picks) {
       source: rows[seg.id]?.s || '',
       summary: rows[seg.id]?.d || '',
     }));
-  if (!rows.length) return null;
+  if (!Object.keys(rows).length) return null;
   const system = [
     'You produce The Daily Catch-Up, a 15–20 minute daily audio briefing.',
     'House style: ' + DAILY_SHOW.style.map(([head, body]) => head.toLowerCase() + ' — ' + body).join(' '),
@@ -13656,7 +14012,7 @@ async function podAutoEpisode(main, force) {
   podApplyDraft(main, picks);
   try {
     const made = Object.keys(picks).length;
-    const total = podSegments().length;
+    const total = DAILY_SHOW.segments.length;
     const cover = made === total ? 'All ' + total + ' segments' : made + ' of ' + total + ' segments';
     const script = llmConfigured() ? await podAskForScript(picks) : null;
     if (script) {
@@ -13678,112 +14034,53 @@ async function podAutoEpisode(main, force) {
 }
 
 function renderDailyCatchUp(main) {
-  if (podPlayer) podPlayerStop(main);
-  const board = podBoard();
-  const segs = podSegments();
-  const total = segs.reduce((n, s) => n + s.min, 0);
+  if (podPlayer) podPlayerStop(main, true);
+  const notes = podDisplayNotes();
+  const built = podSpeakBuild(notes);
 
   main.innerHTML =
     '<div class="pod-wrap">' +
       '<section class="pod-hero">' +
-        '<div class="pod-kicker">New show · daily</div>' +
+        '<div class="pod-kicker">Daily briefing · ' + esc(podDateLabel()) + '</div>' +
         '<h2>' + esc(DAILY_SHOW.title) + '</h2>' +
         '<div class="pod-tagline">' + esc(DAILY_SHOW.tagline) + '</div>' +
         '<p class="pod-lede">' + esc(DAILY_SHOW.lede) + '</p>' +
+        podPlayerHTML() +
         '<div class="pod-chips">' + DAILY_SHOW.topics.map(t => '<span class="pod-chip">' + esc(t) + '</span>').join('') + '</div>' +
-        '<div class="pod-clock" aria-hidden="true">' +
-          segs.map(s => '<span style="flex:' + s.min + ';background:' + s.color + '"></span>').join('') +
-        '</div>' +
-        '<p class="pod-note" style="margin:0">' + esc(DAILY_SHOW.runtime) + ' · ' + total + ' minutes of segment time, plus a short cold open.</p>' +
+        '<p class="pod-note" id="pod-hero-note" style="margin:0">' + esc(podHeroNote(built)) + '</p>' +
       '</section>' +
 
       '<section class="pod-section">' +
-        '<h3>How each episode runs</h3>' +
-        '<div class="pod-chips" style="margin:0 0 10px">' +
-          POD_TARGETS.map(t => '<button type="button" class="filter-chip' + (t === podTarget ? ' active' : '') + '" data-pod-target="' + t + '">' +
-            (t ? t + ' min' : 'House · ' + POD_BASE_TOTAL + ' min') + '</button>').join('') +
-        '</div>' +
-        '<p class="pod-note">Seven segments in a fixed order, so a listener always knows when Sports starts. Pick a target and the minutes re-split to add up exactly — or nudge any segment with − and +; the clock and the total follow. Nothing about the length is locked.</p>' +
-        '<div class="pod-run">' +
-          '<div class="pod-run-row pod-run-head"><span>Segment</span><span class="pod-min">Length</span><span class="pod-time">Clock</span></div>' +
-          segs.map(s =>
-            '<div class="pod-run-row">' +
-              '<span><span class="pod-swatch" style="background:' + s.color + '"></span><strong>' + esc(s.name) + '</strong><br>' +
-              '<span class="pod-genre">' + esc(s.note) + '</span></span>' +
-              '<span class="pod-min">' +
-                '<button type="button" class="pod-step" data-pod-nudge="' + s.id + '" data-step="-1"' +
-                ' aria-label="Give ' + esc(s.name) + ' one minute less">−</button>' +
-                '<strong>' + s.min + '</strong> min' +
-                '<button type="button" class="pod-step" data-pod-nudge="' + s.id + '" data-step="1"' +
-                ' aria-label="Give ' + esc(s.name) + ' one minute more">+</button>' +
-              '</span>' +
-              '<span class="pod-time">' + podClock(s.at) + '–' + podClock(s.end) + '</span>' +
-            '</div>').join('') +
-        '</div>' +
-      '</section>' +
-
-      '<section class="pod-section">' +
-        '<h3>House style</h3>' +
-        '<p class="pod-note">The four rules every segment is cut against.</p>' +
-        '<ul class="pod-style">' +
-          DAILY_SHOW.style.map(([head, body]) => '<li><strong>' + esc(head) + '</strong> — ' + esc(body) + '</li>').join('') +
-        '</ul>' +
-      '</section>' +
-
-      '<section class="pod-section">' +
-        '<h3>Today’s rundown</h3>' +
-        '<p class="pod-note">The headline, why it matters and where it came from, one line each. ' +
-          '<strong id="pod-count"></strong> · resets each day, kept on this device. ' +
-          '<span id="pod-draft"></span></p>' +
-        '<div class="pod-player" id="pod-player">' +
-          '<div class="pod-player-top">' +
-            '<span class="pod-player-state" id="pod-player-state">Ready</span>' +
-            '<span class="pod-player-meta" id="pod-player-meta"></span>' +
-          '</div>' +
-          '<p class="pod-player-line" id="pod-player-line" aria-live="polite"></p>' +
-          '<div class="pod-player-bar" aria-hidden="true"><span id="pod-player-fill"></span></div>' +
-          '<div class="pod-player-controls">' +
-            '<button type="button" class="modal-btn primary" id="pod-play" aria-pressed="false"' + (podSpeechSupported() ? '' : ' hidden') + '>▶ Play briefing</button>' +
-            '<button type="button" class="modal-btn" id="pod-stop" hidden>Stop</button>' +
-            '<label class="pod-voice"><span>Voice</span>' +
-              '<select id="pod-voice" aria-label="Voice for the briefing"></select>' +
-            '</label>' +
-          '</div>' +
-          '<p class="pod-player-est" id="pod-player-est"></p>' +
-        '</div>' +
+        '<h3>In this episode</h3>' +
+        '<p class="pod-note">Tap ▶ on a segment to start there, or Edit to change its story — each time shown is computed from its words. <span id="pod-draft"></span></p>' +
+        '<ol class="pod-episode" id="pod-episode">' +
+          DAILY_SHOW.segments.map(seg => podEpRow(seg, notes[seg.id] || {}, built.perSeg[seg.id] || 0)).join('') +
+        '</ol>' +
         '<div class="pod-actions">' +
           '<button type="button" class="modal-btn" id="pod-copy">Copy transcript</button>' +
           '<button type="button" class="link-btn" id="pod-rebuild">Rebuild</button>' +
         '</div>' +
-        '<div class="pod-progress"><span id="pod-bar"></span></div>' +
-        '<div id="pod-checks">' +
-          segs.map(s => {
-            const note = board.notes[s.id] || {};
-            const done = board.ids.includes(s.id);
-            return '<div class="pod-script-row">' +
-              '<label class="pod-check' + (done ? ' done' : '') + '" for="pod-seg-' + s.id + '">' +
-                '<input id="pod-seg-' + s.id + '" type="checkbox" data-pod-seg="' + s.id + '"' + (done ? ' checked' : '') + '>' +
-                '<span class="pc-name"><span class="pod-swatch" style="background:' + s.color + '"></span>' + esc(s.name) + '</span>' +
-                '<span class="pc-min">' + s.min + ' min · ' + podClock(s.at) + '</span>' +
-              '</label>' +
-              podScriptFields(s, note) +
-              podIdeasHTML(s) +
-            '</div>';
-          }).join('') +
-        '</div>' +
       '</section>' +
     '</div>';
 
-  podPaintRundown();
   podFillVoices(main);
+  podMediaSetup();
   podPlayerPaint(main);
+  podPaintEpisode(main);
 
-  main.querySelectorAll('[data-pod-seg]').forEach(cb => {
-    cb.addEventListener('change', () => {
-      cb.closest('.pod-check')?.classList.toggle('done', cb.checked);
-      podWriteBoard();
-      podPaintRundown();
+  main.querySelectorAll('[data-pod-edit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const form = btn.closest('[data-pod-episode]')?.querySelector('[data-ep-form]');
+      if (!form) return;
+      const opening = form.hidden;
+      form.hidden = !opening;
+      btn.setAttribute('aria-expanded', String(opening));
+      btn.textContent = opening ? 'Done' : 'Edit';
     });
+  });
+
+  main.querySelectorAll('[data-pod-go]').forEach(btn => {
+    btn.addEventListener('click', () => podPlayerJump(main, btn.dataset.podGo));
   });
 
   main.querySelectorAll('[data-pod-idea]').forEach(btn => {
@@ -13800,26 +14097,8 @@ function renderDailyCatchUp(main) {
         source.value = idea.u;
         podSyncSource(source);
       }
-      podWriteBoard();
-    });
-  });
-
-  main.querySelectorAll('[data-pod-target]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const next = Number(btn.dataset.podTarget);
-      if (next === podTarget) return;
-      podWriteBoard(); // the re-render reads the board back from storage
-      podTarget = next;
-      podResetMins(); // a target is a fresh split of the whole show
-      renderDailyCatchUp(main);
-    });
-  });
-
-  main.querySelectorAll('[data-pod-nudge]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (podPlayer) podPlayerStop(main);
-      podNudgeMin(btn.dataset.podNudge, Number(btn.dataset.step));
-      renderDailyCatchUp(main);
+      podWriteBoard(main);
+      podPaintEpisode(main);
     });
   });
 
@@ -13828,7 +14107,8 @@ function renderDailyCatchUp(main) {
   main.querySelectorAll('[data-pod-field]').forEach(input => {
     input.addEventListener('input', () => {
       podSyncSource(input);
-      podWriteBoard();
+      podWriteBoard(main);
+      podPaintEpisode(main);
     });
     /* The idle card promises the first line, so it has to follow the edits. */
     input.addEventListener('change', () => { if (!podPlayer) podPlayerPaint(main); });
@@ -13840,10 +14120,28 @@ function renderDailyCatchUp(main) {
   });
   main.querySelector('#pod-play')?.addEventListener('click', () => podPlayerToggle(main));
   main.querySelector('#pod-stop')?.addEventListener('click', () => podPlayerStop(main));
-  main.querySelector('#pod-copy')?.addEventListener('click', () => podCopyNotes(main));
+  main.querySelector('#pod-prev')?.addEventListener('click', () => podPlayerStep(main, -1));
+  main.querySelector('#pod-next')?.addEventListener('click', () => podPlayerStep(main, 1));
+  main.querySelector('#pod-sleep')?.addEventListener('click', () => {
+    LS.set('pod_sleep', (podSleepMode() + 1) % POD_SLEEP_MODES.length);
+    podPlayerPaint(main);
+    /* Re-arm even while paused: the timer ticks in real time, and cycling to
+       Off has to disarm the old watch instead of leaving it ticking. */
+    if (podPlayer) podSleepArm(main);
+    const mode = POD_SLEEP_MODES[podSleepMode()];
+    toast(mode.mins > 0 ? 'Sleep timer: stopping in ' + mode.mins + ' minutes.' : 'Sleep timer off.');
+  });
+  main.querySelector('#pod-copy')?.addEventListener('click', () => podCopyNotes());
   main.querySelector('#pod-voice')?.addEventListener('change', ev => {
     LS.set('pod_voice', ev.target.value);
     podPlayerVoiceChanged(main);
+    /* Pace calibration is per voice, so every time shown follows the switch. */
+    podPaintEpisode(main);
+  });
+  main.querySelector('#pod-rate')?.addEventListener('change', ev => {
+    LS.set('pod_rate', Number(ev.target.value));
+    podPlayerVoiceChanged(main);
+    podPaintEpisode(main);
   });
   podAutoEpisode(main, false);
 }
