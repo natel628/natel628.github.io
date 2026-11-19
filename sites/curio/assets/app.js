@@ -92,20 +92,27 @@ async function refreshDiscover() {
     state.rediscover = localRediscover(state.guest);
   }
 }
+const POOL = [
+  { title: 'The Library of Alexandria', query: 'Library of Alexandria', reason: 'A legendary starting point for any curiosity library.' },
+  { title: 'The Fermi paradox', query: 'Fermi paradox', reason: 'Where is everybody? A vast, quiet universe.' },
+  { title: 'The psychology of déjà vu', query: 'psychology of deja vu', reason: 'Why a moment can feel strangely familiar.' },
+  { title: 'Octopus intelligence', query: 'octopus intelligence', reason: 'Tool use and escape artistry from a mind unlike ours.' },
+  { title: 'The Antikythera mechanism', query: 'Antikythera mechanism', reason: 'A 2,000-year-old Greek computer from a shipwreck.' },
+  { title: 'Why time feels faster as you age', query: 'why time feels faster as you age', reason: 'Attention, novelty, and the compression of memory.' },
+  { title: 'The Voynich manuscript', query: 'Voynich manuscript', reason: 'An undeciphered 15th-century codex full of strange plants.' },
+  { title: 'Bioluminescence in the deep sea', query: 'bioluminescence deep sea', reason: 'How light is made in total darkness.' },
+  { title: 'The concept of zero', query: 'history of zero', reason: 'A number that changed mathematics forever.' },
+  { title: 'Circadian rhythms', query: 'circadian rhythm', reason: 'Your body\u2019s internal clock and how it drifts.' },
+  { title: 'The Tunguska event', query: 'Tunguska event', reason: 'A 1908 explosion over Siberia still debated.' },
+  { title: 'Synesthesia', query: 'synesthesia', reason: 'When senses blend into colors and shapes.' },
+];
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 function localDiscover(topics) {
-  const pool = [
-    { title: 'The Library of Alexandria', query: 'Library of Alexandria', reason: 'A legendary starting point for any curiosity library.' },
-    { title: 'The Fermi paradox', query: 'Fermi paradox', reason: 'Where is everybody? A vast, quiet universe.' },
-    { title: 'The psychology of déjà vu', query: 'psychology of deja vu', reason: 'Why a moment can feel strangely familiar.' },
-    { title: 'Octopus intelligence', query: 'octopus intelligence', reason: 'Tool use and escape artistry from a mind unlike ours.' },
-    { title: 'The Antikythera mechanism', query: 'Antikythera mechanism', reason: 'A 2,000-year-old Greek computer from a shipwreck.' },
-    { title: 'Why time feels faster as you age', query: 'why time feels faster as you age', reason: 'Attention, novelty, and the compression of memory.' },
-  ];
   const owned = new Set(topics.map((t) => t.title.toLowerCase()));
-  const fresh = pool.filter((p) => !owned.has(p.title.toLowerCase())).slice(0, 3);
+  const fresh = shuffle(POOL.filter((p) => !owned.has(p.title.toLowerCase()))).slice(0, 4);
   const related = topics.slice(0, 2).map((t) => ({ title: 'Deeper into ' + t.title, query: t.title + ' explained', reason: 'A natural next layer beneath something you saved.' }));
-  while (related.length < 2) related.push({ title: fresh[related.length]?.title || 'The Voynich manuscript', query: fresh[related.length]?.query || 'Voynich manuscript', reason: 'A good rabbit hole to start with.' });
-  return { related, unexpected: [{ title: 'A 10-minute rabbit hole', query: topics[0]?.title || 'curiosity', reason: 'Pick your least-explored topic and ask one “why” deeper.' }], newCuriosities: fresh, aiPowered: false };
+  while (related.length < 2 && fresh.length) related.push({ title: fresh[related.length]?.title || 'The Voynich manuscript', query: fresh[related.length]?.query || 'Voynich manuscript', reason: 'A good rabbit hole to start with.' });
+  return { related, unexpected: [{ title: 'A 10-minute rabbit hole', query: (fresh[0]||POOL[0]).query, reason: 'Pick your least-explored topic and ask one “why” deeper.' }], newCuriosities: fresh, aiPowered: false };
 }
 function localRediscover(topics) {
   const week = Date.now() - 7 * 24 * 3600 * 1000;
