@@ -523,63 +523,6 @@
     </div>
   </section>
 
-  <section class="card" id="sec-budget">
-    <h2>💵 Budget</h2>
-    <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
-    <div class="rv-grid">
-      <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
-      <label>Gas $/gal<input id="budGas" type="number" min="0" max="20" step="0.05" value="3.60" aria-label="Gas price per gallon" /></label>
-      <label>MPG towing<input id="budMpg" type="number" min="3" max="30" step="0.5" value="8" aria-label="Miles per gallon while towing" /></label>
-      <label>Lodging $<input id="budLodging" type="number" min="0" step="25" value="0" /></label>
-      <label>Food $<input id="budFood" type="number" min="0" step="25" value="0" /></label>
-      <label>Tolls &amp; bridges $<input id="budTolls" type="number" min="0" step="5" value="0" /></label>
-      <label>Propane refills $<input id="budPropane" type="number" min="0" step="5" value="0" /></label>
-      <label>Golf &amp; activities $<input id="budFun" type="number" min="0" step="25" value="0" /></label>
-      <label>Misc / repairs $<input id="budMisc" type="number" min="0" step="25" value="0" /></label>
-    </div>
-    <div id="budgetLines" class="budget-lines"></div>
-  </section>
-
-  <section class="card" id="sec-rv">
-    <h2>🚐 RV profile &amp; route cautions</h2>
-    <p class="muted">Your rig's numbers, then the restrictions worth checking before you drive this corridor. Confirm with the operator — heights and rules change.</p>
-    <div class="rv-grid">
-      <label>Height ft<input id="rvHeight" type="number" min="6" max="15" step="0.1" value="12.5" /></label>
-      <label>Length ft<input id="rvLength" type="number" min="10" max="60" step="1" value="30" /></label>
-      <label>Weight lb<input id="rvWeight" type="number" min="0" step="500" value="0" /></label>
-      <label>MPG towing<input id="rvMpg" type="number" min="3" max="30" step="0.5" value="8" /></label>
-      <label>Fresh water gal<input id="rvWater" type="number" min="0" step="5" value="60" /></label>
-      <label>Propane lb<input id="rvPropane" type="number" min="0" step="5" value="40" /></label>
-    </div>
-    <p id="rvSummary" class="muted rv-summary"></p>
-    <details id="rvDetails" class="rv-details">
-      <summary id="rvDetailsLabel">Show warnings &amp; route cautions</summary>
-      <div id="rvWarn"></div>
-      <div id="cautionList"></div>
-    </details>
-  </section>
-
-  <section class="card" id="sec-practical">
-    <h2>🧰 Practical estimates</h2>
-    <p class="muted">Distances and drive times are real road routing; when the router is unreachable you get a straight-line estimate instead, which understates the drive.</p>
-    <div class="row" style="margin-top:10px">
-      <label class="muted" for="fuelMpg" style="align-self:center">MPG</label>
-      <input id="fuelMpg" type="number" min="4" max="40" step="0.5" value="25" style="max-width:110px;flex:none" aria-label="Miles per gallon" />
-      <label class="muted" for="fuelPrice" style="align-self:center">$ per gallon</label>
-      <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
-      <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
-      <label class="muted" for="planDepart" style="align-self:center">default leave</label>
-      <input id="planDepart" type="time" value="08:00" style="max-width:130px;flex:none" aria-label="Default time you leave each morning" />
-    </div>
-    <p class="muted" style="margin:6px 0 0;font-size:.8rem">Trip start, trip days and the default leave time feed these estimates and how the nights split.</p>
-    <div id="practical"></div>
-  </section>
-
-
   <section class="card" id="sec-bets">
     <h2>🏆 Bets &amp; who owes who</h2>
     <p class="muted">Small stakes between the four of us. Add a bet when someone loses a hole, mark it settled when cash changes hands.</p>
@@ -685,6 +628,67 @@
   </div>
   <div class="set-foot"><button type="button" id="tourGo">Let's fuckin' go</button></div>
 </div>
+
+  <section class="card" id="sec-budget">
+    <h2>💵 Budget</h2>
+    <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
+    <div class="rv-grid">
+      <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
+      <label>Gas $/gal<input id="budGas" type="number" min="0" max="20" step="0.05" value="3.60" aria-label="Gas price per gallon" /></label>
+      <label>MPG towing<input id="budMpg" type="number" min="3" max="30" step="0.5" value="8" aria-label="Miles per gallon while towing" /></label>
+      <label>Lodging $<input id="budLodging" type="number" min="0" step="25" value="0" /></label>
+      <label>Food $<input id="budFood" type="number" min="0" step="25" value="0" /></label>
+      <label>Tolls &amp; bridges $<input id="budTolls" type="number" min="0" step="5" value="0" /></label>
+      <label>Propane refills $<input id="budPropane" type="number" min="0" step="5" value="0" /></label>
+      <label>Golf &amp; activities $<input id="budFun" type="number" min="0" step="25" value="0" /></label>
+      <label>Misc / repairs $<input id="budMisc" type="number" min="0" step="25" value="0" /></label>
+    </div>
+    <div id="budgetLines" class="budget-lines"></div>
+  </section>
+
+  <section class="card" id="sec-rv">
+    <h2>🚐 RV profile &amp; route cautions</h2>
+    <details>
+      <summary>Expand to read all warnings and cautions</summary>
+    <p class="muted">Your rig's numbers, then the restrictions worth checking before you drive this corridor. Confirm with the operator — heights and rules change.</p>
+    <div class="rv-grid">
+      <label>Height ft<input id="rvHeight" type="number" min="6" max="15" step="0.1" value="12.5" /></label>
+      <label>Length ft<input id="rvLength" type="number" min="10" max="60" step="1" value="30" /></label>
+      <label>Weight lb<input id="rvWeight" type="number" min="0" step="500" value="0" /></label>
+      <label>MPG towing<input id="rvMpg" type="number" min="3" max="30" step="0.5" value="8" /></label>
+      <label>Fresh water gal<input id="rvWater" type="number" min="0" step="5" value="60" /></label>
+      <label>Propane lb<input id="rvPropane" type="number" min="0" step="5" value="40" /></label>
+    </div>
+    <p id="rvSummary" class="muted rv-summary"></p>
+    <details id="rvDetails" class="rv-details">
+      <summary id="rvDetailsLabel">Show warnings &amp; route cautions</summary>
+      <div id="rvWarn"></div>
+      <div id="cautionList"></div>
+    </details>
+</details>
+  </section>
+
+  <section class="card" id="sec-practical">
+    <h2>🧰 Practical estimates</h2>
+    <p class="muted">Distances and drive times are real road routing; when the router is unreachable you get a straight-line estimate instead, which understates the drive.</p>
+    <div class="row" style="margin-top:10px">
+      <label class="muted" for="fuelMpg" style="align-self:center">MPG</label>
+      <input id="fuelMpg" type="number" min="4" max="40" step="0.5" value="25" style="max-width:110px;flex:none" aria-label="Miles per gallon" />
+      <label class="muted" for="fuelPrice" style="align-self:center">$ per gallon</label>
+      <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
+      <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
+      <label class="muted" for="planDepart" style="align-self:center">default leave</label>
+      <input id="planDepart" type="time" value="08:00" style="max-width:130px;flex:none" aria-label="Default time you leave each morning" />
+    </div>
+    <p class="muted" style="margin:6px 0 0;font-size:.8rem">Trip start, trip days and the default leave time feed these estimates and how the nights split.</p>
+    <div id="practical"></div>
+  </section>
+
+
 
 </main>
 
