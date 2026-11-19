@@ -264,13 +264,14 @@ details.note p{margin-top:8px;font-size:13.5px;color:var(--muted)}
 .rd-card .timeline p{font-size:12.8px;line-height:1.55}
 .rd-card .tl-year{font-size:13px}
 .rd-card .cat-chips span{font-size:11.5px;padding:4px 10px}
-.rd-after{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px 32px;margin-top:44px}
+.rd-stage{position:relative}
+.rd-after{display:grid;gap:26px;margin-top:44px;max-width:70ch}
+.rd-after .story-block{margin-top:0}
 /* two columns only when the text column still gets ~60 characters */
 @media(max-width:1240px){
   .rd-grid{grid-template-columns:1fr;gap:24px}
   .rd-rail{position:static;max-height:none;overflow:visible;order:2}
 }
-@media(max-width:900px){.rd-after{grid-template-columns:1fr}}
 @media(max-width:600px){
   .rd-body p{font-size:16.5px;line-height:1.72}
   .rd-h{font-size:21px}

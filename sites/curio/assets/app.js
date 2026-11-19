@@ -696,7 +696,7 @@ function storyBodyHTML(t) {
     <a class="rel" href="https://news.google.com/search?q=${q}" target="_blank" rel="noopener"><span>Search the news<small>Latest coverage and follow-ups</small></span><span>↗</span></a>
     <a class="rel" href="https://en.wikipedia.org/w/index.php?title=Special:WhatLinksHere&target=${q}" target="_blank" rel="noopener"><span>What links here<small>Every article that mentions this one — the wider web of the story</small></span><span>↗</span></a>
   </div></div>`;
-  return `<div class="rd-top">
+  return `<div class="rd-stage"><div class="rd-top">
       <div class="rd-meta"><strong id="rd-left">${Math.max(1, Math.round(story.words / 200))} min read</strong><span class="rd-dot rd-extra">·</span><span class="rd-extra">${story.words.toLocaleString()} words</span><span class="rd-dot rd-extra">·</span><span class="rd-extra">${article.length} sections</span></div>
       <span class="spacer"></span><button class="btn small ghost" id="story-start">Start reading</button><button class="btn small ghost" id="story-refresh">Refresh</button><button class="btn small ghost" id="story-hide">Close</button>
       <div class="rd-progress"><i id="rd-bar"></i></div>
@@ -707,7 +707,7 @@ function storyBodyHTML(t) {
         <article class="rd-body" id="rd-body">${body}</article>
       </div>
       <aside class="rd-rail">${tl}${cats}</aside>
-    </div>
+    </div></div>
     <div class="rd-after">${threads}${elsewhere}${dig}</div>
     <p class="hint" style="margin-top:22px">All of this comes from the Wikipedia article <a href="${esc(story.url)}" target="_blank" rel="noopener">${esc(story.title)} ↗</a>.</p>`;
 }
@@ -729,7 +729,7 @@ function bindReadingProgress(t) {
     const anchor = window.innerHeight * 0.72;
     const pct = Math.min(1, Math.max(0, (anchor - r.top) / Math.max(r.height, 1)));
     bar.style.width = (pct * 100).toFixed(1) + '%';
-    if (left) left.textContent = pct >= 0.99 ? 'Finished · ' + mins + ' min read' : pct <= 0.01 ? mins + ' min read' : Math.max(1, Math.round(mins * (1 - pct))) + ' min left';
+    if (left) left.textContent = pct >= 0.99 ? 'Finished' : pct <= 0.01 ? mins + ' min read' : Math.max(1, Math.round(mins * (1 - pct))) + ' min left';
   };
   const onScroll = () => { if (!raf) raf = requestAnimationFrame(paint); };
   window.addEventListener('scroll', onScroll, { passive: true });
