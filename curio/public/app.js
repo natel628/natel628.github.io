@@ -15,7 +15,7 @@ const timeAgo = (ts) => {
 };
 const fmtDate = (ts) => new Date(ts).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
 const readMins = (t) => {
-  const w = String(t?.overview || '' + ' ' + (t?.keyFacts || []).join(' ')).split(/\s+/).filter(Boolean).length;
+  const w = String((t?.overview || '') + ' ' + (t?.keyFacts || []).join(' ')).split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(w / 200));
 };
 
@@ -25,6 +25,10 @@ function loadPrefs() {
 }
 const prefs = Object.assign({ view: 'grid', sort: 'newest', summaryMode: 'full' }, loadPrefs());
 function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify({ view: prefs.view, sort: prefs.sort, summaryMode: prefs.summaryMode })); } catch {} }
+
+const IS_MIRROR = typeof location !== 'undefined' && /(^|\.)github\.io$/.test(location.hostname || '');
+const API_BASE = IS_MIRROR ? 'https://curio-oqu69z.freebuff.site' : '';
+const PUBLIC_API = new Set(['/api/health', '/api/wikipedia', '/api/search', '/api/research']);
 
 const state = {
   user: null, authChecked: false,
@@ -41,7 +45,9 @@ function loadGuest() {
 function saveGuest() { localStorage.setItem('curio_guest_v1', JSON.stringify(state.guest)); }
 
 async function api(path, opts = {}) {
-  const r = await fetch(path, { ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) } });
+  const base = path.split('?')[0];
+  const url = IS_MIRROR && PUBLIC_API.has(base) ? API_BASE + path : path;
+  const r = await fetch(url, { ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) } });
   if (r.status === 401) { state.user = null; return { _unauth: true }; }
   const ct = r.headers.get('content-type') || '';
   const data = ct.includes('json') ? await r.json().catch(() => ({})) : {};
@@ -238,14 +244,18 @@ function renderSide() {
     <div class="side-foot">
       ${state.user ? `<div class="user-row"><span class="avatar">${state.user.picture ? `<img src="${esc(state.user.picture)}" alt="">` : '◉'}</span><span>${esc(state.user.name || state.user.email || 'Curious mind')}</span></div>
       <form method="post" action="/auth/freebuff/signout"><button class="btn ghost small" type="submit">Sign out</button></form>`
+      : IS_MIRROR ? `<a class="btn primary small" href="https://curio-oqu69z.freebuff.site">Open the full synced app</a>
+         <div class="hint">This mirror keeps your library in this browser only.</div>`
       : `<a class="btn primary small" href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}">Sign in with Freebuff</a>
          <div class="hint">Sync across devices. Guests save on this device only.</div>`}
     </div>`;
   $('#side').querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
   const bn = $('#bottomnav');
-  const items = [NAV[0], NAV[2], NAV[3], NAV[5]];
-  bn.innerHTML = items.map((n) => `<button class="${active(n.id) ? 'active' : ''}" data-nav="${n.id}" aria-label="${esc(n.label)}"><span class="bi">${n.icon}</span>${n.label.split(' ')[0] === 'Feed' ? 'Discover' : n.label.split(' ')[0] === 'My' ? 'Library' : n.label}</button>`).join('') +
-    (state.user ? '' : `<a href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}"><span class="bi">○</span>Sign in</a>`);
+  const short = { home: 'Capture', inbox: 'Inbox', library: 'Library', exploring: 'Exploring', completed: 'Done', discover: 'Discover' };
+  bn.innerHTML = NAV.map((n) => `<button class="${active(n.id) ? 'active' : ''}" data-nav="${n.id}" aria-label="${esc(n.label)}"><span class="bi">${n.icon}</span>${short[n.id] || n.label}</button>`).join('') +
+    (state.user ? '' : IS_MIRROR
+      ? `<a href="https://curio-oqu69z.freebuff.site"><span class="bi">✦</span>Full app</a>`
+      : `<a href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}"><span class="bi">○</span>Sign in</a>`);
   bn.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
 }
 
@@ -265,7 +275,7 @@ function cardHTML(t) {
     <div class="card-meta"><span class="pill ${esc(t.status)}">${esc(t.status)}</span><span>${timeAgo(t.createdAt)}</span>${srcs ? `<span>· ${srcs} sources</span>` : ''}</div>
   </article>`;
 }
-function filteredTopics(base) {
+function filteredTopics(base, opts = {}) {
   const f = state.filter;
   let list = f.showArchived ? [...base] : base.filter((t) => !t.archived);
   if (state.route === 'inbox') list = list.filter((t) => t.status === 'unread');
@@ -273,7 +283,7 @@ function filteredTopics(base) {
   if (state.route === 'completed') list = list.filter((t) => t.status === 'completed');
   if (!f.showArchived) list = list.filter((t) => !t.archived);
   if (state.route === 'library' && f.status !== 'all') list = list.filter((t) => t.status === f.status);
-  if (f.q) { const q = f.q.toLowerCase(); list = list.filter((t) => (t.title + ' ' + t.overview + ' ' + t.category + ' ' + (t.input || '')).toLowerCase().includes(q)); }
+  if (f.q && !opts.ignoreQ) { const q = f.q.toLowerCase(); list = list.filter((t) => (t.title + ' ' + t.overview + ' ' + t.category + ' ' + (t.input || '')).toLowerCase().includes(q)); }
   if (f.category !== 'All') list = list.filter((t) => t.category === f.category);
   if (f.sort === 'title') list = [...list].sort((a, b) => a.title.localeCompare(b.title));
   else if (f.sort === 'oldest') list = [...list].sort((a, b) => a.createdAt - b.createdAt);
@@ -339,10 +349,10 @@ function bindCards(root) {
 function emptyHTML(msg, cta) {
   return `<div class="empty"><div class="big">○</div><p>${esc(msg)}</p>${cta || ''}</div>`;
 }
-function renderList(limit) {
+function renderList(limit, opts = {}) {
   const host = $('#list-host');
   if (!host) return;
-  let list = filteredTopics(allTopics());
+  let list = filteredTopics(allTopics(), opts);
   if (state.route === 'library' && state.filter.status !== 'all') list = list.filter((t) => t.status === state.filter.status);
   if (typeof limit === 'number') list = list.slice(0, limit);
   host.className = 'grid' + (state.filter.view === 'list' ? ' list' : '');
@@ -398,10 +408,17 @@ function discoverHTML() {
 function stepsHTML(t) {
   const order = ['unread', 'exploring', 'completed'];
   const idx = order.indexOf(t.status);
-  return `<div class="steps" role="group" aria-label="Progress">${order.map((s, i) => `<button class="step ${i <= idx ? 'done' : ''} ${t.status === s ? 'now' : ''}" data-status="${s}"><span class="dot">${i < idx ? '✓' : (i + 1)}</span>${s}</button>${i < 2 ? '<span class="bar"></span>' : ''}`).join('')}</div>`;
+  return `<div class="steps" role="group" aria-label="Progress">${order.map((s, i) => `<button type="button" class="step ${i <= idx ? 'done' : ''} ${t.status === s ? 'now' : ''}" data-status="${s}" aria-pressed="${t.status === s}"><span class="dot">${i < idx ? '✓' : (i + 1)}</span>${s}</button>${i < 2 ? '<span class="bar" aria-hidden="true"></span>' : ''}`).join('')}</div>`;
+}
+
+function disputedText(t) {
+  if (t.disputed) return t.disputed;
+  if ((t.sources || []).length) return 'Established: the overview above comes from Wikipedia and the sources linked below. Debated: interpretations and open questions vary — compare the linked sources before treating any claim as settled.';
+  return '';
 }
 
 function topicHTML(t) {
+  const disputed = disputedText(t);
   const facts = (t.keyFacts || []).map((f) => `<li>${esc(f)}</li>`).join('');
   const srcs = (t.sources || []).map((s, i) => {
     let host = 'source';
@@ -435,7 +452,7 @@ function topicHTML(t) {
         ${hasSimple ? `<div class="seg sm" id="sum-toggle" role="tablist" aria-label="Summary style"><button data-m="full" class="${mode === 'full' ? 'active' : ''}">Full</button><button data-m="simple" class="${mode === 'simple' ? 'active' : ''}">Plain English</button></div>` : ''}
       </div><p>${esc(overviewText)}</p>
         ${hasSimple && mode === 'simple' ? `<p class="hint" style="margin-top:10px">Plain-language version from Simple English Wikipedia. <a href="${esc(t.simple.url || '#')}" target="_blank" rel="noopener">Read there ↗</a></p>` : ''}
-        ${t.disputed ? `<details class="note"><summary>Established vs debated</summary><p>${esc(t.disputed)}</p></details>` : ''}</div>
+        ${disputed ? `<details class="note"><summary>Established vs debated</summary><p>${esc(disputed)}</p></details>` : ''}</div>
       ${facts ? `<div class="panel"><h3>Key facts</h3><ul class="facts">${facts}</ul></div>` : ''}
       <div class="panel"><div class="panel-head"><h3>Sources & further reading</h3><span class="hint">${(t.sources || []).length} links</span></div>${srcs || '<p class="hint">No sources found yet.</p>'}</div>
       ${(t.related || []).length ? `<div class="panel"><h3>Rabbit holes</h3><p class="hint" style="margin-bottom:12px">Each one opens fresh research — your current notes stay put.</p><div class="rel-grid">${t.related.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>` : ''}
@@ -459,7 +476,7 @@ function render() {
   const main = $('#main');
   if (state.route === 'home') {
     main.innerHTML = homeHTML();
-    bindCapture(); renderList(6);
+    bindCapture(); renderList(6, { ignoreQ: true });
     bindCards(main);
     main.querySelectorAll('[data-ex]').forEach((b) => (b.onclick = () => capture(b.dataset.ex)));
     main.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
@@ -468,7 +485,11 @@ function render() {
     if (!t) { main.innerHTML = `<div class="empty"><div class="big">?</div><p>That topic isn't here. It may have been deleted.</p><br><button class="btn" onclick="location.hash='#/library'">Back to library</button></div>`; return; }
     main.innerHTML = topicHTML(t);
     $('#back-btn').onclick = () => history.length > 1 ? history.back() : (location.hash = '#/library');
-    $('#status-row').querySelectorAll('.step').forEach((b) => (b.onclick = () => patchTopic(t.id, { status: b.dataset.status })));
+    main.querySelectorAll('.steps .step').forEach((b) => (b.onclick = async () => {
+      const y = window.scrollY;
+      await patchTopic(t.id, { status: b.dataset.status });
+      window.scrollTo(0, y);
+    }));
     const tog = $('#sum-toggle');
     if (tog) tog.querySelectorAll('button').forEach((b) => (b.onclick = () => { prefs.summaryMode = b.dataset.m; savePrefs(); render(); }));
     $('#del-btn').onclick = () => deleteTopic(t.id);
@@ -560,10 +581,12 @@ document.addEventListener('keydown', (e) => {
 async function boot() {
   window.addEventListener('hashchange', render);
   render();
-  try {
-    const me = await api('/api/me');
-    if (!me._unauth && me.user) state.user = me.user;
-  } catch { /* signed out or DB not attached yet */ }
+  if (!IS_MIRROR) {
+    try {
+      const me = await api('/api/me');
+      if (!me._unauth && me.user) state.user = me.user;
+    } catch { /* signed out or DB not attached yet */ }
+  }
   state.authChecked = true;
   if (state.user) await refreshLibrary();
   await refreshDiscover();
