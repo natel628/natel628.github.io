@@ -462,7 +462,6 @@ function topicHTML(t) {
   const hasSimple = Boolean(t.simple?.overview);
   const mode = hasSimple ? (prefs.summaryMode === 'simple' ? 'simple' : 'full') : 'full';
   const overviewText = mode === 'simple' && hasSimple ? t.simple.overview : (t.overview || 'No overview yet.');
-  const words = (t.notes || '').trim() ? (t.notes || '').trim().split(/\s+/).length : 0;
   return `<button class="back" id="back-btn">← Back</button>
   <div class="topic-hero">
     <div class="topic-top"><div class="cat">${esc(t.category)} · ${esc(t.inputType || 'topic')} · ${readMins(t)} min read</div>
@@ -492,13 +491,14 @@ function topicHTML(t) {
       ${(t.related || []).length ? `<div class="panel"><h3>Rabbit holes</h3><p class="hint" style="margin-bottom:12px">Each one opens fresh research — your current notes stay put.</p><div class="rel-grid">${t.related.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>` : ''}
     </div>
     <aside class="topic-side">
-      <div class="panel side-card"><h3>Your take</h3>
-        <textarea class="notes-area" id="notes" placeholder="What struck you? What do you want to remember or follow up on?">${esc(t.notes || '')}</textarea>
-        <div class="notes-foot"><span class="save-note" id="notes-state">Autosaves · ${words} words</span><button class="btn small ghost" id="notes-copy">Copy notes</button></div>
-      </div>
       <div class="panel side-card"><h3>Details</h3>
         <dl class="meta"><dt>Status</dt><dd>${esc(t.status)}</dd><dt>Category</dt><dd>${esc(t.category)}</dd><dt>Added</dt><dd>${esc(fmtDate(t.createdAt))}</dd>${t.wikiTitle ? `<dt>Wikipedia</dt><dd>${esc(t.wikiTitle)}</dd>` : ''}</dl>
       </div>
+      ${(() => {
+        const others = allTopics().filter((x) => x.id !== t.id && !x.archived).slice(0, 3);
+        if (!others.length) return '';
+        return `<div class="panel side-card"><h3>If you liked this…</h3><div class="rel-grid">${others.map((o) => `<button class="rel" data-open-topic="${esc(o.id)}"><span>${esc(o.title)}<small>${esc(o.category)}</small></span><span>→</span></button>`).join('')}</div></div>`;
+      })()}
     </aside>
   </div>`;
 }
@@ -538,21 +538,7 @@ function render() {
       const text = `${t.title}\n\n${t.overview || ''}\n\nSources:\n${(t.sources || []).map((s) => '- ' + s.title + ' ' + s.url).join('\n')}`;
       try { await navigator.clipboard.writeText(text); toast('Summary copied.'); } catch { toast('Copy blocked by browser.'); }
     };
-    const notes = $('#notes');
-    let h;
-    notes.oninput = () => {
-      const w = notes.value.trim() ? notes.value.trim().split(/\s+/).length : 0;
-      $('#notes-state').textContent = 'Saving… · ' + w + ' words';
-      clearTimeout(h);
-      h = setTimeout(async () => {
-        await patchTopic(t.id, { notes: notes.value }, { silent: true });
-        const ns = $('#notes-state');
-        if (ns) ns.textContent = 'Saved ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · ' + w + ' words';
-      }, 700);
-    };
-    const nc = $('#notes-copy');
-    if (nc) nc.onclick = async () => { try { await navigator.clipboard.writeText(notes.value || ''); toast('Notes copied.'); } catch { toast('Copy blocked by browser.'); } };
-    main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
+    main.querySelectorAll('[data-open-topic]').forEach((b) => (b.onclick = () => (location.hash = '#/topic/' + encodeURIComponent(b.dataset.openTopic))));
   } else if (state.route === 'discover') {
     main.innerHTML = discoverHTML();
     main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
