@@ -6,23 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Seattle\, WA
 X-WR-CALDESC:Upcoming events within 100 miles of Seattle\, WA.
 BEGIN:VEVENT
-UID:tm-vvG1HZ_4lK11mC@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T110000
-DTEND:20261118T133000
-SUMMARY:Women's Basketball vs Pacific Lutheran
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/womens-basketball-vs-pacific-lutheran-seattle-
- washington-11-18-2026/event/0F00655AD328AB8E\\n\\nRefreshed daily from li
- ve listings.
-LOCATION:Seattle University Redhawk Center\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/womens-basketball-vs-pacific-lutheran-sea
- ttle-washington-11-18-2026/event/0F00655AD328AB8E
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Af1fQf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T183000
 DTEND:20261118T210000
 SUMMARY:Raised By TV Events Presents: all ages Friends Thanksgiving Eps Tr
@@ -37,7 +22,7 @@ URL:https://www.ticketweb.com/event/raised-by-tv-events-presents-clock-out
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7PO3K@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:State Champs w/ Cartel
@@ -50,7 +35,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PO3K
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZy_J@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Jervis Campbell (21+ Event)
@@ -63,7 +48,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZy_J
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7kJb@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Louie TheSinger
@@ -76,7 +61,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7kJb
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfGJO0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Trash Talk with Chris Crayzie
@@ -94,7 +79,7 @@ URL:https://www.ticketweb.com/event/trash-talk-with-chris-crayzie-nate-jac
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_fl5Eln8@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Washington State Cougars vs. Hawai'i Rainbow Warriors Men's Basket
@@ -110,7 +95,7 @@ URL:https://www.ticketmaster.com/washington-state-cougars-vs-hawaii-rainbo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7x3-I@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:KINO (21 and Over)
@@ -123,7 +108,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7x3-I
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_C5qmjnp@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Todd Rundgren: DAMNED IF I DO TOUR
@@ -138,5 +123,173 @@ LOCATION:Neptune Theatre\, Seattle
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/todd-rundgren-damned-if-i-do-seattle-wash
  ington-11-18-2026/event/0F0064E2DDB9CA96
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZ7_E@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261118T200000
+DTEND:20261118T223000
+SUMMARY:The Residents
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZ7_E\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Airport Tavern\, Tacoma
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ7_E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1Af83oV@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261118T210000
+DTEND:20261118T233000
+SUMMARY:WIG!
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/wig-chop-suey-tickets/14412474\\n\
+ \nRefreshed daily from live listings.
+LOCATION:Chop Suey\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/wig-chop-suey-tickets/14412474
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA7Z-z@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T180000
+DTEND:20261119T203000
+SUMMARY:Washington Huskies Mens Basketball vs. Utah Tech Trailblazers Mens
+  Basketball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7Z-z\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Alaska Airlines Arena at Hec Edmundson Pavilion\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Z-z
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_G3Ob111@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T184000
+DTEND:20261119T211000
+SUMMARY:Seattle Kraken vs. Vancouver Canucks
+DESCRIPTION:https://www.climatepledgearena.com/arena-guide/#bag-policy\\n\
+ \nhttps://www.ticketmaster.com/seattle-kraken-vs-vancouver-canucks-seattl
+ e-washington-11-19-2026/event/0F0064C4A060A28A\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Climate Pledge Arena\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/seattle-kraken-vs-vancouver-canucks-seatt
+ le-washington-11-19-2026/event/0F0064C4A060A28A
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_fqY8e-y@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T190000
+DTEND:20261119T213000
+SUMMARY:Seattle Sounders FC vs. Real Salt Lake
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/seattle-sounders-fc-vs-real-salt-seattle-washi
+ ngton-11-19-2026/event/0F00654770402879\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:Lumen Field\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/seattle-sounders-fc-vs-real-salt-seattle-
+ washington-11-19-2026/event/0F00654770402879
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvwje@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T190000
+DTEND:20261119T213000
+SUMMARY:Julien Baker
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvwje\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Neumos\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvwje
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_f1xSb7Q@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T190000
+DTEND:20261119T213000
+SUMMARY:Tacoma City Theaters: Movie Series - Planes\, Trains and Automobil
+ es
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/tacoma-city-theaters-movie-series-planes-tacom
+ a-washington-11-19-2026/event/0F006542A2CD811A\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Theatre On the Square\, Tacoma
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/tacoma-city-theaters-movie-series-planes-
+ tacoma-washington-11-19-2026/event/0F006542A2CD811A
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfF_Q7@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T190000
+DTEND:20261119T213000
+SUMMARY:KevOnStage
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . TERMS OF USE Nate Jackson's Super Funny Comedy Club By purchasing ticke
+ ts\, entering our ven\\n\\nhttps://www.ticketweb.com/event/kevonstage-nat
+ e-jacksons-super-funny-comedy-tickets/14219684\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Nate Jackson's Super Funny Comedy Club\, Tacoma
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/kevonstage-nate-jacksons-super-funny-c
+ omedy-tickets/14219684
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_1M1OrSK@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T193000
+DTEND:20261119T220000
+SUMMARY:Straight No Chaser
+DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
+ . www.stgpresents.org/about/safety When purchasing ADA accessible seating
+ \, please feel free to contact us by email if assistance is needed with a
+ ccommodations or companion seating\; you may reach us at accessibility@st
+ gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/straight-no-chase
+ r-seattle-washington-11-19-2026/event/0F0064ADCA81ECD3\\n\\nRefreshed dai
+ ly from live listings.
+LOCATION:Paramount Theatre\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/straight-no-chaser-seattle-washington-11-
+ 19-2026/event/0F0064ADCA81ECD3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_G25R8U2@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T193000
+DTEND:20261119T220000
+SUMMARY:Rodrigo y Gabriela - OurHome Tour
+DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
+ . www.stgpresents.org/about/safety When purchasing ADA accessible seating
+ \, please feel free to contact us by email if assistance is needed with a
+ ccommodations or companion seating\; you may reach us at accessibility@st
+ gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/rodrigo-y-gabriel
+ a-ourhome-tour-seattle-washington-11-19-2026/event/0F0064C3CBBD0D8F\\n\\n
+ Refreshed daily from live listings.
+LOCATION:Moore Theatre\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/rodrigo-y-gabriela-ourhome-tour-seattle-w
+ ashington-11-19-2026/event/0F0064C3CBBD0D8F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAAo1p@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T193000
+DTEND:20261119T220000
+SUMMARY:Hard Maybe - Ages 21+
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAo1p\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Nectar Lounge\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAo1p
 END:VEVENT
 END:VCALENDAR

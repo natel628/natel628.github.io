@@ -6,157 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Concerts
 X-WR-CALDESC:Upcoming concerts and music.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A704-f@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T100000
-DTEND:20261118T123000
-SUMMARY:Hot Rods and High Heels
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A704-f\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Clay Cooper Theatre\, Branson
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A704-f
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZs4N@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T100000
-DTEND:20261118T123000
-SUMMARY:Beach Boys: California Dreamin
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZs4N\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Hamners Variety Theater\, Branson
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZs4N
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70UbN@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T103000
-DTEND:20261118T130000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70UbN\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbN
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7oC3@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T110000
-DTEND:20261118T133000
-SUMMARY:Joshua Live On Stage
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7oC3\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Sight and Sound Theatres - PA\, Ronks
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7oC3
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7JKue@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T110000
-DTEND:20261118T133000
-SUMMARY:Players Era 8 Men's Tournament - Session 3
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7JKue\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Michelob Ultra Arena\, Las Vegas
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JKue
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7Jobd@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T123000
-DTEND:20261118T150000
-SUMMARY:The Heart
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7Jobd\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Laura Pels Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Jobd
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70FQK@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T130000
-DTEND:20261118T153000
-SUMMARY:It's A Wonderful Life - A Live Radio Play
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70FQK\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Citadel Theatre Lake Forest\, Chicago
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70FQK
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qlg7NNARYE_bau3y@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T130000
-DTEND:20261118T153000
-SUMMARY:KSE Venue Ball Arena Tours
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36CFQ4?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Ball Arena\, Denver
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36C
- FQ4?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvoAE@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T130000
-DTEND:20261118T153000
-SUMMARY:The Visitors
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvoAE\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Irene Diamond Stage at Signature Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvoAE
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvoaO@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T130000
-DTEND:20261118T153000
-SUMMARY:The Unbelievers
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvoaO\\n\\nRefreshed daily from 
- live listings.
-LOCATION:New York City Center\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvoaO
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv17FZ_4GkVA-2xp@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T130000
-DTEND:20261118T153000
-SUMMARY:Godzilla Minus Zero: The IMAX Experience
-DESCRIPTION:This event takes places on multiple dates at multiple times. P
- lease make sure you are purchasing tickets for the correct show. We would
-  like to assure you that Tropicana Atlantic City will remain open for bus
- iness\, and all events\, shows and movies are being presented as schedule
- d. Should any event b\\n\\nhttps://www.ticketmaster.com/godzilla-minus-ze
- ro-the-imax-experience-atlantic-city-new-jersey-11-18-2026/event/0200655D
- 0584F896\\n\\nRefreshed daily from live listings.
-LOCATION:IMAX THEATRE at TROPICANA\, Atlantic City
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/godzilla-minus-zero-the-imax-experience-a
- tlantic-city-new-jersey-11-18-2026/event/0200655D0584F896
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-1AdZZ_pGkl8NbUl@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T133000
 DTEND:20261118T160000
 SUMMARY:Jimmy
@@ -170,7 +21,7 @@ URL:https://www.ticketmaster.com/jimmy-middletown-new-york-11-18-2026/even
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-J_s@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:Maybe Happy Ending
@@ -183,7 +34,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-J_s
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7J67_@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:The Imaginary Invalid
@@ -196,7 +47,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J67_
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P_oA@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:CATS: The Jellicle Ball
@@ -209,7 +60,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P_oA
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7qxjf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:Lost Boys Musical w/ Unknown Mortal Orchestra
@@ -222,7 +73,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qxjf
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7x6q-@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:Stir - Play w/ Stir
@@ -235,7 +86,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7x6q-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7xkJ8@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:Two Strangers
@@ -248,7 +99,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7xkJ8
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7yjU@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:Buena Vista Social Club
@@ -261,7 +112,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7yjU
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAAZjx@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:Operation Mincemeat: A New Musical
@@ -274,7 +125,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAZjx
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv0eZ@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:Here There Are Blueberries
@@ -287,7 +138,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv0eZ
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvPOV@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:Schmigadoon!
@@ -300,7 +151,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvPOV
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZsbp@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T140000
 DTEND:20261118T163000
 SUMMARY:The Sound of Simon and Garfunkel
@@ -313,7 +164,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZsbp
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7oCo@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T150000
 DTEND:20261118T173000
 SUMMARY:Joshua Live On Stage
@@ -326,7 +177,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7oCo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vv17FZ_4GkVAxLxL@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T160000
 DTEND:20261118T183000
 SUMMARY:Dune: Part One Reissue (2026)
@@ -344,7 +195,7 @@ URL:https://www.ticketmaster.com/dune-part-one-reissue-2026-atlantic-city-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4vfuS@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T163000
 DTEND:20261118T190000
 SUMMARY:Martin Krusche
@@ -361,8 +212,21 @@ URL:https://www.ticketweb.com/event/martinkrusche-snug-harbor-jazz-bistro-
  tickets/15054373
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7JKFv@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261118T163000
+DTEND:20261118T190000
+SUMMARY:Players Era 8 Men's Tournament - Session 4
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7JKFv\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Michelob Ultra Arena\, Las Vegas
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JKFv
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-G5dIZ_1YdMUBy@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T170000
 DTEND:20261118T193000
 SUMMARY:Holywatr: Deo Gratias Tour
@@ -376,7 +240,7 @@ URL:https://www.ticketmaster.com/holywatr-deo-gratias-tour-austin-texas-11
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZsfd@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T170000
 DTEND:20261118T193000
 SUMMARY:Back to the Bee Gees
@@ -389,7 +253,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZsfd
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfuyF0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T171500
 DTEND:20261118T194500
 SUMMARY:The Player (1992)
@@ -407,7 +271,7 @@ URL:https://www.ticketweb.com/event/the-player-1992-williams-center-cinema
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_5ptZNu5@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T173000
 DTEND:20261118T200000
 SUMMARY:Periphery - A Pale White Dot US Tour
@@ -425,7 +289,7 @@ URL:https://www.ticketmaster.com/periphery-a-pale-white-dot-us-raleigh-nor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afkp-f@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T173000
 DTEND:20261118T200000
 SUMMARY:David Ostwald's Louis Armstrong Eternity Band
@@ -440,7 +304,7 @@ URL:https://www.ticketweb.com/event/david-ostwalds-louis-armstrong-eternit
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_KBt0GrK@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:I Set My Friends On Fire
@@ -454,7 +318,7 @@ URL:https://www.ticketmaster.com/i-set-my-friends-on-fire-atlanta-georgia-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfAKAf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Ladies Night 2026
@@ -470,7 +334,7 @@ URL:https://www.ticketweb.com/event/ladies-night-2026-stampede-tickets/141
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7Ptxv@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Lenny Pearce
@@ -483,7 +347,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Ptxv
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-k7vGF_8wJ12ag@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Girl Tones
@@ -497,7 +361,7 @@ URL:https://www.ticketmaster.com/girl-tones-new-york-new-york-11-18-2026/e
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfF840@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Happy Hour w/ Graveyard Pete & New Appalachian Sound at Woodlands 
@@ -512,7 +376,7 @@ URL:https://www.ticketweb.com/event/happy-hour-w-graveyard-pete-woodlands-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afu--f@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Uri Gurvich Quartet
@@ -530,7 +394,7 @@ URL:https://www.ticketweb.com/event/uri-gurvich-quartet-smalls-jazz-club-t
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afu90f@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Asen Doykin Trio
@@ -547,7 +411,7 @@ URL:https://www.ticketweb.com/event/asen-doykin-trio-mezzrow-tickets/14357
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1VZ_1q25GWP@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:The Revivalists
@@ -565,7 +429,7 @@ URL:https://www.ticketmaster.com/the-revivalists-st-petersburg-florida-11-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vv17bZ_fGkMik7tr@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Front & Center - Local MN Artist Showcase
@@ -583,7 +447,7 @@ URL:https://www.ticketmaster.com/front-center-local-mn-artist-showcase-min
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG18Z_5hkX5Sz@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Hawthorne Heights - 20th anniversary of If Only You Were Lonely
@@ -601,7 +465,7 @@ URL:https://www.ticketmaster.com/hawthorne-heights-20th-anniversary-of-if-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1bZ_13Qt1VO@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Saosin: 20 Years of Self-Titled
@@ -619,7 +483,7 @@ URL:https://www.ticketmaster.com/saosin-20-years-of-selftitled-minneapolis
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-17A8v0G6u6x8Nks@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T183000
 DTEND:20261118T210000
 SUMMARY:BAILEN - SWIM!!! At Your Own Risk Tour
@@ -637,7 +501,7 @@ URL:https://www.ticketmaster.com/bailen-swim-at-your-own-risk-washington-d
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-17AOv0G6GwWXBdr@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T183000
 DTEND:20261118T210000
 SUMMARY:Imminence - Axis Mundi Tour: North America 2026
@@ -652,7 +516,7 @@ URL:https://www.ticketmaster.com/imminence-axis-mundi-tour-north-america-m
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-k7vGF_GFZjLGH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T183000
 DTEND:20261118T210000
 SUMMARY:WAGE WAR - EMERGENCY BROADCAST TOUR
@@ -666,7 +530,7 @@ URL:https://www.ticketmaster.com/wage-war-emergency-broadcast-tour-hunting
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfuIJf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T183000
 DTEND:20261118T210000
 SUMMARY:Jessie Mazin\, Anya True
@@ -683,7 +547,7 @@ URL:https://www.ticketweb.com/event/jessie-mazin-anya-true-sonia-tickets/1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG17Z_5R6TraW@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T183000
 DTEND:20261118T210000
 SUMMARY:Motionless In White: The Sweat and Blood Tour
@@ -698,7 +562,7 @@ URL:https://www.ticketmaster.com/motionless-in-white-the-sweat-and-portlan
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_5CDbqdm@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T183000
 DTEND:20261118T210000
 SUMMARY:DragonForce: Inhuman Rampage 20th Anniversary
@@ -716,7 +580,7 @@ URL:https://www.ticketmaster.com/dragonforce-inhuman-rampage-20th-annivers
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8PlrK3l@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Miss May I
@@ -734,7 +598,7 @@ URL:https://www.ticketmaster.com/miss-may-i-charlotte-north-carolina-11-18
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_GSLYBoi@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:The Paradox
@@ -748,7 +612,7 @@ URL:https://www.ticketmaster.com/the-paradox-atlanta-georgia-11-18-2026/ev
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_2NRpwI9@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Los Gaiteros de San Jacinto\, Fruko\, and Carmelo Torres: Madre Cu
@@ -764,7 +628,7 @@ URL:https://www.ticketmaster.com/los-gaiteros-de-san-jacinto-fruko-atlanta
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_8L9CDSn@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Nick Niespodziani w/ Family & Friends at Eddie's Attic!
@@ -781,7 +645,7 @@ URL:https://www.ticketmaster.com/nick-niespodziani-w-family-friends-at-dec
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_G1yj1s_@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Evan Honer - It's An Even Longer Road Tour
@@ -797,7 +661,7 @@ URL:https://www.ticketmaster.com/evan-honer-its-an-even-longer-austin-texa
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZ4bk@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:The Wrecks
@@ -810,7 +674,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ4bk
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4Za-N@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Shimmy Shakin' Blues
@@ -826,7 +690,7 @@ URL:https://www.ticketweb.com/event/shimmy-shakin-blues-la-rumba-tickets/1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_3lqEGIH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:1 Umbrella
@@ -844,7 +708,7 @@ URL:https://www.ticketmaster.com/1-umbrella-denver-colorado-11-18-2026/eve
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_k4yJfD0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Sabaton: Legends on Tour
@@ -857,7 +721,7 @@ URL:https://www.axs.com/events/1123852/sabaton-tickets
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-Ojz@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Sabaton: Legends on Tour
@@ -870,7 +734,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Ojz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7PO3K@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:State Champs w/ Cartel
@@ -883,7 +747,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PO3K
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZy_J@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Jervis Campbell (21+ Event)
@@ -896,7 +760,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZy_J
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7kJb@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Louie TheSinger
@@ -909,7 +773,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7kJb
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfGJO0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Trash Talk with Chris Crayzie
@@ -927,7 +791,7 @@ URL:https://www.ticketweb.com/event/trash-talk-with-chris-crayzie-nate-jac
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-17A8v0G652QcQgT@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Matt Hansen - The Orchid Tour
@@ -945,7 +809,7 @@ URL:https://www.ticketmaster.com/matt-hansen-the-orchid-tour-washington-di
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-17A8v0G6CLByq7I@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Suicide Silence: REMINDERS OF HELL TOUR
@@ -960,7 +824,7 @@ URL:https://www.ticketmaster.com/suicide-silence-reminders-of-hell-tour-ba
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-1FAOvPAoObZ78178@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Yung Gravy: The Joyrider Tour
@@ -978,7 +842,7 @@ URL:https://www.ticketmaster.com/yung-gravy-the-joyrider-tour-cincinnati-o
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-J_O@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Maybe Happy Ending
@@ -991,7 +855,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-J_O
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7Jobe@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:The Heart
@@ -1004,7 +868,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Jobe
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P6Ps@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Floyd Nation
@@ -1017,7 +881,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P6Ps
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7PkQF@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Marilyn Maye
@@ -1030,7 +894,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PkQF
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7Pwow@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:A Place To Bury Strangers
@@ -1043,7 +907,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Pwow
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7Vrd@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Ben Bankas
@@ -1056,7 +920,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Vrd
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7Y0_@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:A Kidman Carol
@@ -1069,7 +933,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Y0_
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7fZp@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Stranger Things: The First Shadow
@@ -1082,7 +946,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7fZp
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZV43@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Mary In the Junkyard (21 and Over)
@@ -1095,7 +959,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZV43
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZaoP@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Spafford
@@ -1108,7 +972,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZaoP
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvZ_0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Maria Schneider Orchestra
@@ -1121,7 +985,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvZ_0
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvoAJ@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:The Visitors
@@ -1134,7 +998,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvoAJ
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvoa_@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:The Unbelievers
@@ -1147,7 +1011,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvoa_
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvzP7@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Danny Gonzalez
@@ -1160,7 +1024,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvzP7
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-k7v17_A0AG7IuRE@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:STING 3.0 Tour
@@ -1178,7 +1042,7 @@ URL:https://www.ticketmaster.com/sting-30-tour-brooklyn-new-york-11-18-202
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-k7vGF_3RydStS@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:JoJo - THE HIGH ROAD - 20 YEARS UNPLUGGED
@@ -1194,7 +1058,7 @@ URL:https://www.ticketmaster.com/jojo-the-high-road-20-years-new-york-new-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-k7vGF_8kru5hF@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Pentatonix: Christmas in the City Tour 
@@ -1212,7 +1076,7 @@ URL:https://www.ticketmaster.com/pentatonix-christmas-in-the-city-tour-buf
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-k7vGF_u1iUVTA@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Liana Flores
@@ -1226,7 +1090,7 @@ URL:https://www.ticketmaster.com/liana-flores-new-york-new-york-11-18-2026
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4Z3uS@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Crystal Bowersox
@@ -1240,7 +1104,7 @@ URL:https://www.ticketweb.com/event/crystal-bowersox-daryls-house-tickets/
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4Z9Zd@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Boots at the Brewery | Line Dancing
@@ -1254,7 +1118,7 @@ URL:https://www.ticketweb.com/event/boots-at-the-brewery-middle-ages-music
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4ZA8d@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Maria Schneider Orchestra
@@ -1269,7 +1133,7 @@ URL:https://www.ticketweb.com/event/maria-schneider-orchestra-birdland-jaz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4Z_0K@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Midwinter: Haunt Me Forever Tour + What Lies Below + Coldstate + D
@@ -1284,7 +1148,7 @@ URL:https://www.ticketweb.com/event/midwinter-haunt-me-forever-tour-the-py
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4Ze-N@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Prince Daddy & The Hyena in Jacksonville
@@ -1298,7 +1162,7 @@ URL:https://www.ticketweb.com/event/prince-daddy-the-hyena-albatross-ticke
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4voad@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Hard Swingin' Country Soiree with Decker & Dimitrov
@@ -1314,7 +1178,7 @@ URL:https://www.ticketweb.com/event/hard-swingin-country-soiree-with-lil-i
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Af17-7@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Samy Sharif\, Cauley
@@ -1330,7 +1194,7 @@ URL:https://www.ticketweb.com/event/samy-sharif-cauley-night-club-101-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Af1eJf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:EARSHOT WITH THE LONELY ONES AND MORE TBA
@@ -1347,7 +1211,7 @@ URL:https://www.ticketweb.com/event/earshot-with-the-lonely-ones-west-end-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Af8OqV@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:99 Minutes
@@ -1363,7 +1227,7 @@ URL:https://www.ticketweb.com/event/99-minutes-night-club-101-tickets/1442
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfCpaf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Loose Touch Record Release with Skeletizer and Gasoline Heart
@@ -1379,7 +1243,7 @@ URL:https://www.ticketweb.com/event/loose-touch-record-release-with-wills-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfGFC7@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:In The Company of Serpents\, Omit All\, SLUDGE
@@ -1393,7 +1257,7 @@ URL:https://www.ticketweb.com/event/in-the-company-of-serpents-nikki-lopez
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afa7G0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:First to Eleven
@@ -1411,7 +1275,7 @@ URL:https://www.ticketweb.com/event/first-to-eleven-middle-east-upstairs-t
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfaPf7@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Magic Bag Presents: Sqwerv Fall Tour 2026
@@ -1429,7 +1293,7 @@ URL:https://www.ticketweb.com/event/magic-bag-presents-sqwerv-fall-the-mag
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afr6xK@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Red Leather - Tahoe Tour in Orlando
@@ -1443,7 +1307,7 @@ URL:https://www.ticketweb.com/event/red-leather-tahoe-conduit-tickets/1478
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afu0F0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Good Company Wedding Band Showcase at Woodlands Tavern
@@ -1457,7 +1321,7 @@ URL:https://www.ticketweb.com/event/good-company-wedding-band-showcase-woo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afu8qf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Open Mic Show & Tell with Adam Flaig
@@ -1474,7 +1338,7 @@ URL:https://www.ticketweb.com/event/open-mic-show-tell-the-southgate-house
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfuUOV@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:American Psycho (2000) *CUG Film Society Film Meetup*
@@ -1492,7 +1356,7 @@ URL:https://www.ticketweb.com/event/american-psycho-2000-cug-film-williams
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afuvvf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Sky White Tiger | Caíto Sánchez
@@ -1508,7 +1372,7 @@ URL:https://www.ticketweb.com/event/sky-white-tiger-cato-bowery-palace-tic
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vv177Z_3GkD_ZpTh@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Tune-Yards (18+)
@@ -1522,7 +1386,7 @@ URL:https://www.ticketmaster.com/tuneyards-18-boston-massachusetts-11-18-2
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vv177Z_FGkD86gqb@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Low Cut Connie (18+)
@@ -1536,7 +1400,7 @@ URL:https://www.ticketmaster.com/low-cut-connie-18-boston-massachusetts-11
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vv17FZ_4GkVANLxt@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:The Hunger Games: Sunrise On The Reaping Early Access Screening
@@ -1554,7 +1418,7 @@ URL:https://www.ticketmaster.com/the-hunger-games-sunrise-on-the-atlantic-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vv1AvZk36GkdFNKEx@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:SOMBR - You Are The Reason Tour
@@ -1572,7 +1436,7 @@ URL:https://www.ticketmaster.com/sombr-you-are-the-reason-tour-boston-mass
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG17Z_5YLJsTQ@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:An Evening With Goose
@@ -1590,7 +1454,7 @@ URL:https://www.ticketmaster.com/an-evening-with-goose-charlottesville-vir
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1VZ_KhOHq1s@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Hunxho's "2Night Only"
@@ -1608,7 +1472,7 @@ URL:https://www.ticketmaster.com/hunxhos-2night-only-ft-lauderdale-florida
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1VZ_o3EbEnD@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Lindsey Stirling - The Snow Waltz Tour
@@ -1625,7 +1489,7 @@ URL:https://www.ticketmaster.com/lindsey-stirling-the-snow-waltz-tour-holl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1fZ_uk-St4L@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Rival Sons - Domestic Bliss Tour
@@ -1643,7 +1507,7 @@ URL:https://www.ticketmaster.com/rival-sons-domestic-bliss-tour-cleveland-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZbSEmDaLV@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Doja Cat - Tour Ma Vie World Tour
@@ -1658,7 +1522,7 @@ URL:https://www.ticketmaster.com/doja-cat-tour-ma-vie-world-charlotte-nort
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv0C6@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Moral w/ Decaine
@@ -1671,7 +1535,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv0C6
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv3bd@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:What a Glorious Feeling
@@ -1684,7 +1548,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3bd
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-1718v0G62b2EYJR@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:In Color W/ Rival Hearts
@@ -1698,7 +1562,7 @@ URL:https://www.ticketweb.com/event/in-color-rival-hearts-musica-tickets/1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-1A4Zk3fGkeSNzdq@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Judy Collins - Sweet Judy Blue Eyes: Farewell Tour
@@ -1713,7 +1577,7 @@ URL:https://www.ticketmaster.com/judy-collins-sweet-judy-blue-eyes-alexand
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-1A4ZkfkGkdT4m3D@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Rishab Rikhiram Sharma | Sitar For Mental Health
@@ -1731,7 +1595,7 @@ URL:https://www.ticketmaster.com/rishab-rikhiram-sharma-sitar-for-mental-t
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vVZ_GJVA6LD@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Pouya
@@ -1745,7 +1609,7 @@ URL:https://www.etix.com/ticket/p/52340046/pouyathe-foreverglades-tour-new
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vVZ_GMGSyEE@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Greensky Bluegrass
@@ -1760,7 +1624,7 @@ URL:https://www.ticketmaster.com/greensky-bluegrass-red-bank-new-jersey-11
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_akBs6x1@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Palace - USA & Canada Tour 2026
@@ -1778,7 +1642,7 @@ URL:https://www.ticketmaster.com/palace-usa-canada-tour-2026-charlotte-nor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_GF0ebTH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:JALEN NGONDA: Doctrine of Love Tour 2026 *Canceled*
@@ -1796,7 +1660,7 @@ URL:https://www.ticketmaster.com/jalen-ngonda-doctrine-of-love-tour-charlo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_uZryHLw@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Rod Wave: Don't Look Down Tour
@@ -1810,7 +1674,7 @@ URL:https://www.ticketmaster.com/rod-wave-dont-look-down-tour-atlanta-geor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_GpEM5QD@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Helado Negro and Reyna Tropical as "Helado Tropical"
@@ -1828,7 +1692,7 @@ URL:https://www.ticketmaster.com/helado-negro-and-reyna-tropical-as-atlant
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZ8a-@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Joy Oladokun
@@ -1841,7 +1705,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ8a-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7Pg-9@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:The WLDLFE w/ Landon Conrath
@@ -1854,7 +1718,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Pg-9
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_u7iI0j5@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:AJ McLean presents Alexander James : The Better Man Tour
@@ -1869,7 +1733,7 @@ URL:https://www.ticketmaster.com/aj-mclean-presents-alexander-james-the-at
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_52ruv_o@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Stop Light Observations w/ Runner and Bobby
@@ -1887,7 +1751,7 @@ URL:https://www.ticketmaster.com/stop-light-observations-w-runner-and-aust
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAve7I@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:The Music of Hey Arnold
@@ -1900,7 +1764,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAve7I
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_aBwilEA@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Scott Bradlee's Postmodern Jukebox - The Future Is Vintage World T
@@ -1916,7 +1780,7 @@ URL:https://www.ticketmaster.com/scott-bradlees-postmodern-jukebox-the-fut
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAeaog@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Ivy Queen - Ages 16+
@@ -1929,7 +1793,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAeaog
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZfxb@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Vansire
@@ -1942,7 +1806,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZfxb
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvzfo@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:The Mainliners
@@ -1955,7 +1819,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvzfo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfxAed@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Goth Night hosted by Gotica Nouveau
@@ -1971,7 +1835,7 @@ URL:https://www.ticketweb.com/event/goth-night-hosted-by-gotica-vultures-t
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7x3-I@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:KINO (21 and Over)
@@ -1984,7 +1848,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7x3-I
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_C5qmjnp@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Todd Rundgren: DAMNED IF I DO TOUR
@@ -2001,8 +1865,36 @@ URL:https://www.ticketmaster.com/todd-rundgren-damned-if-i-do-seattle-wash
  ington-11-18-2026/event/0F0064E2DDB9CA96
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZ7_E@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261118T200000
+DTEND:20261118T223000
+SUMMARY:The Residents
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZ7_E\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Airport Tavern\, Tacoma
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ7_E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1Af83oV@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261118T210000
+DTEND:20261118T233000
+SUMMARY:WIG!
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/wig-chop-suey-tickets/14412474\\n\
+ \nRefreshed daily from live listings.
+LOCATION:Chop Suey\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/wig-chop-suey-tickets/14412474
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ub0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T140000
 DTEND:20261119T163000
 SUMMARY:Elf the Musical
@@ -2015,7 +1907,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ub0
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_29IVefH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T170000
 DTEND:20261119T193000
 SUMMARY:KUTX's Horizontes Pres:Aterciopelados: La Pipa De Laz Paz 30 Anos 
@@ -2031,7 +1923,7 @@ URL:https://www.ticketmaster.com/kutxs-horizontes-presaterciopelados-la-pi
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2p_iazT@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T180000
 DTEND:20261119T203000
 SUMMARY:DJ Raphi: HYPE TOUR USA 2.0
@@ -2049,7 +1941,7 @@ URL:https://www.ticketmaster.com/dj-raphi-hype-tour-usa-20-charlotte-north
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_2QhVbtg@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T180000
 DTEND:20261119T203000
 SUMMARY:Chase Petra
@@ -2063,7 +1955,7 @@ URL:https://www.ticketmaster.com/chase-petra-atlanta-georgia-11-19-2026/ev
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_CD5XHa3@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:for KING & COUNTRY's 'A Drummer Boy Christmas'
@@ -2078,7 +1970,7 @@ URL:https://www.ticketmaster.com/for-king-countrys-a-drummer-boy-greenvill
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ki9E2OR@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Disney Descendants\, ZOMBIES & Camp Rock: Worlds Collide Concert T
@@ -2094,7 +1986,7 @@ URL:https://www.ticketmaster.com/disney-descendants-zombies-camp-rock-worl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_1Ns1ROM@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Hovvdy
@@ -2108,7 +2000,7 @@ URL:https://www.ticketmaster.com/hovvdy-atlanta-georgia-11-19-2026/event/0
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afu4p7@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:2026 82MAJOR [82CLUB : out of control] TOUR in Atlanta
@@ -2122,7 +2014,7 @@ URL:https://www.ticketweb.com/event/2026-82major-82club-out-ray-charles-pe
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Af870f@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Cabaret Cafe
@@ -2136,7 +2028,7 @@ URL:https://www.ticketweb.com/event/cabaret-cafe-midtown-high-school-theat
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_GNhtwfw@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Joe Alterman
@@ -2148,7 +2040,7 @@ URL:https://link.dice.fm/P1cc5c6c3641
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_fH3GM0B@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Jonah Kagen
@@ -2164,7 +2056,7 @@ URL:https://www.ticketmaster.com/jonah-kagen-decatur-georgia-11-19-2026/ev
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_1rQanOl@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:An Evening With Band Of Horses
@@ -2182,7 +2074,7 @@ URL:https://www.ticketmaster.com/an-evening-with-band-of-horses-austin-tex
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_G5wT2dj@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Dexter and The Moonrocks
@@ -2196,7 +2088,7 @@ URL:https://www.ticketmaster.com/dexter-and-the-moonrocks-austin-texas-11-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_53xq1SU@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Alter Bridge - What Lies Within Tour
@@ -2212,8 +2104,37 @@ URL:https://www.ticketmaster.com/alter-bridge-what-lies-within-tour-san-an
  tonio-texas-11-19-2026/event/3A0064B4A274ACF6
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvwje@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T190000
+DTEND:20261119T213000
+SUMMARY:Julien Baker
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvwje\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Neumos\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvwje
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_f1xSb7Q@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T190000
+DTEND:20261119T213000
+SUMMARY:Tacoma City Theaters: Movie Series - Planes\, Trains and Automobil
+ es
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/tacoma-city-theaters-movie-series-planes-tacom
+ a-washington-11-19-2026/event/0F006542A2CD811A\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Theatre On the Square\, Tacoma
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/tacoma-city-theaters-movie-series-planes-
+ tacoma-washington-11-19-2026/event/0F006542A2CD811A
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-vvG1zZ_uEGRw-d@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:Mannheim Steamroller Christmas
@@ -2231,7 +2152,7 @@ URL:https://www.ticketmaster.com/mannheim-steamroller-christmas-evans-geor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7PtaM@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:Actors From The London Stage
@@ -2243,8 +2164,57 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PtaM
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-vvG1HZ_1M1OrSK@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T193000
+DTEND:20261119T220000
+SUMMARY:Straight No Chaser
+DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
+ . www.stgpresents.org/about/safety When purchasing ADA accessible seating
+ \, please feel free to contact us by email if assistance is needed with a
+ ccommodations or companion seating\; you may reach us at accessibility@st
+ gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/straight-no-chase
+ r-seattle-washington-11-19-2026/event/0F0064ADCA81ECD3\\n\\nRefreshed dai
+ ly from live listings.
+LOCATION:Paramount Theatre\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/straight-no-chaser-seattle-washington-11-
+ 19-2026/event/0F0064ADCA81ECD3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_G25R8U2@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T193000
+DTEND:20261119T220000
+SUMMARY:Rodrigo y Gabriela - OurHome Tour
+DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
+ . www.stgpresents.org/about/safety When purchasing ADA accessible seating
+ \, please feel free to contact us by email if assistance is needed with a
+ ccommodations or companion seating\; you may reach us at accessibility@st
+ gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/rodrigo-y-gabriel
+ a-ourhome-tour-seattle-washington-11-19-2026/event/0F0064C3CBBD0D8F\\n\\n
+ Refreshed daily from live listings.
+LOCATION:Moore Theatre\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/rodrigo-y-gabriela-ourhome-tour-seattle-w
+ ashington-11-19-2026/event/0F0064C3CBBD0D8F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAAo1p@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261119T193000
+DTEND:20261119T220000
+SUMMARY:Hard Maybe - Ages 21+
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAo1p\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Nectar Lounge\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAo1p
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-G5eVZ_7mi3DgH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -2258,7 +2228,7 @@ URL:https://www.etix.com/ticket/p/58776099/hiss-golden-messenger-asheville
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-7Ag@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -2271,7 +2241,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-7Ag
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZIus@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Austin Snell
@@ -2284,7 +2254,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZIus
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_3SXQvSe@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:An Evening With Tamar Braxton
@@ -2301,7 +2271,7 @@ URL:https://www.ticketmaster.com/an-evening-with-tamar-braxton-charlotte-n
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_GlDneJ7@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Carbon Leaf
@@ -2317,7 +2287,7 @@ URL:https://www.ticketmaster.com/carbon-leaf-charlotte-north-carolina-11-1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvvFv@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:The Heavy Heavy w/ The Point.
@@ -2330,7 +2300,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvvFv
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4vZbS@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:lespecial\, Natalie Brooke 
@@ -2346,7 +2316,7 @@ URL:https://www.ticketweb.com/event/lespecial-natalie-brooke-the-808-ticke
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70sfs@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Anthony Gomes
@@ -2359,7 +2329,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70sfs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A704kF@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Gabby Bryan
@@ -2372,7 +2342,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A704kF
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P414@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -2382,5 +2352,18 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:The Scorpio\, Charlotte
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P414
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70UbP@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Elf the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70UbP\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barter Theatre\, Abingdon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbP
 END:VEVENT
 END:VCALENDAR

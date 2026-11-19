@@ -18,7 +18,7 @@
   function routeDefaults(name) {
     var f = freshFilters(CATROUTE[name] ? [CATROUTE[name]] : []);
     if (name === 'online') f.where = 'online';
-    else if (CATROUTE[name]) f.where = 'anywhere';
+    else if (name === 'browse' || CATROUTE[name]) f.where = 'anywhere';
     return f;
   }
 
@@ -54,7 +54,7 @@
     main.innerHTML = renderFor(S.view);
     markNav();
     if (scrollTop) window.scrollTo({ top: 0, behavior: 'auto' });
-    if (document.getElementById('map')) initMap();
+    if (document.getElementById('map')) initMap(); else destroyMap();
     updateNotifDot();
   }
 
@@ -73,17 +73,50 @@
   }
 
   /* ---------------- modal ---------------- */
-  function openModal(html) {
+  var returnFocus = null, returnKey = null;
+  /* Saving re-renders the feed, which replaces the very card that opened the
+     sheet. Remember enough of the control to find its replacement, otherwise
+     closing the sheet drops keyboard focus onto the body. */
+  function focusKeyOf(el) {
+    if (!el || !el.getAttribute) return null;
+    var id = el.getAttribute('data-id'), act = el.getAttribute('data-action');
+    return (id && act) ? { id: id, act: act } : null;
+  }
+  function findEquivalent(key) {
+    if (!key) return null;
+    var nodes = document.querySelectorAll('[data-action="' + key.act + '"]');
+    for (var i = 0; i < nodes.length; i++) if (nodes[i].getAttribute('data-id') === key.id) return nodes[i];
+    return null;
+  }
+  function openModal(html, keepSelector, opener) {
+    if (modal.hidden) {
+      returnFocus = opener || document.activeElement;
+      returnKey = focusKeyOf(returnFocus);
+    }
     modal.innerHTML = '<div class="modal__backdrop" data-action="close-modal"></div>' + html;
     modal.hidden = false;
     document.body.classList.add('is-locked');
-    var f = modal.querySelector('button, a, input, select');
+    /* Re-rendering the sheet after a save must land back on the same control
+       rather than jumping to the first one. */
+    var f = (keepSelector && modal.querySelector(keepSelector)) || modal.querySelector('button, a, input, select');
     if (f) f.focus({ preventScroll: true });
   }
   function closeModal() {
     modal.hidden = true;
     modal.innerHTML = '';
     document.body.classList.remove('is-locked');
+    var target = (returnFocus && document.contains(returnFocus)) ? returnFocus : findEquivalent(returnKey);
+    if (target && target.focus) target.focus({ preventScroll: true });
+    returnFocus = null;
+    returnKey = null;
+  }
+  function trapFocus(e) {
+    if (e.key !== 'Tab') return;
+    var nodes = modal.querySelectorAll('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!nodes.length) return;
+    var first = nodes[0], last = nodes[nodes.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
   function toast(msg) {
@@ -125,11 +158,14 @@
   function refreshOpenEvent(id) {
     if (modal.hidden) return;
     var ev = W.byId(id);
-    if (ev && modal.querySelector('.sheet')) openModal(V2.eventModal(ev));
+    if (ev && modal.querySelector('.sheet')) openModal(V2.eventModal(ev), '[data-action="save"]');
   }
 
   function updateNotifDot() {
-    var list = W.upcoming(W.allEvents(), 3);
+    /* The dot used to light for any event within three days, which with a
+       full feed meant it was always on. It now means what the bell says:
+       a saved event is coming up. */
+    var list = W.upcoming(S.saved.map(W.byId).filter(Boolean), 3);
     var dot = document.getElementById('notif-dot');
     if (dot) dot.hidden = list.length === 0;
   }
@@ -255,14 +291,14 @@
           if (!ev) return;
           S.viewed[id] = (S.viewed[id] || 0) + 1;
           W.store.set('viewed', S.viewed);
-          openModal(V2.eventModal(ev));
+          openModal(V2.eventModal(ev), null, t);
           break;
         }
-        case 'person': openModal(V2.personModal(id)); break;
+        case 'person': openModal(V2.personModal(id), null, t); break;
         case 'save': e.stopPropagation(); toggleSave(id); break;
         case 'follow': toggleFollow(t.getAttribute('data-key')); break;
         case 'close-modal': closeModal(); break;
-        case 'notifications': openModal(V2.notifications()); break;
+        case 'notifications': openModal(V2.notifications(), null, t); break;
         case 'filter': {
           var g = t.getAttribute('data-group');
           if (g === 'cats') {
@@ -304,7 +340,7 @@
           toast('Saved events and follows cleared');
           paint(false);
           break;
-        case 'onboarding': openModal(V2.onboarding()); break;
+        case 'onboarding': openModal(V2.onboarding(), null, t); break;
         case 'ob-finish': finishOnboarding(); break;
         case 'ob-skip': S.onboarded = true; W.store.set('onboarded', true); closeModal(); break;
         case 'open-nav': document.body.classList.add('nav-open'); break;
@@ -349,12 +385,29 @@
       e.preventDefault();
       S.q = q.value.trim();
       S.browseTitle = S.q ? 'Results for ' + S.q : 'All events';
+      S.filters.where = 'anywhere';   // search is not radius-bound
       if (location.hash === '#/browse') paint(true);
       else location.hash = '#/browse';
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !modal.hidden) closeModal();
+      if (modal.hidden) return;
+      if (e.key === 'Escape') { closeModal(); return; }
+      trapFocus(e);
+    });
+
+    /* Cards are articles with a click action; without this they are mouse-only
+       for keyboard and screen-reader users. Buttons and links keep their own
+       native activation. */
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (!e.target || !e.target.closest) return;
+      var tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'button' || tag === 'a' || tag === 'input' || tag === 'select' || tag === 'textarea') return;
+      var open = e.target.closest('[data-action="open"]');
+      if (!open || e.target.closest('.save')) return;
+      e.preventDefault();
+      open.click();
     });
     window.addEventListener('hashchange', function () { route(false); });
   }

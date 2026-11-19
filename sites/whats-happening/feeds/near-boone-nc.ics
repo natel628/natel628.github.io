@@ -6,21 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Boone\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Boone\, NC.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70UbN@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T103000
-DTEND:20261118T130000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70UbN\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbN
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-1kAOvPb8GA26WFo@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T173000
 DTEND:20261118T200000
 SUMMARY:UPike Women's Basketball
@@ -35,7 +22,7 @@ URL:https://www.ticketmaster.com/upike-womens-basketball-pikeville-kentuck
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8PlrK3l@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Miss May I
@@ -53,7 +40,7 @@ URL:https://www.ticketmaster.com/miss-may-i-charlotte-north-carolina-11-18
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZbSEmDaLV@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Doja Cat - Tour Ma Vie World Tour
@@ -68,7 +55,7 @@ URL:https://www.ticketmaster.com/doja-cat-tour-ma-vie-world-charlotte-nort
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-1kAOvPb8GAupW6h@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Upike Men's Basketball
@@ -83,7 +70,7 @@ URL:https://www.ticketmaster.com/upike-mens-basketball-pikeville-kentucky-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_akBs6x1@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Palace - USA & Canada Tour 2026
@@ -101,7 +88,7 @@ URL:https://www.ticketmaster.com/palace-usa-canada-tour-2026-charlotte-nor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_GF0ebTH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:JALEN NGONDA: Doctrine of Love Tour 2026 *Canceled*
@@ -119,7 +106,7 @@ URL:https://www.ticketmaster.com/jalen-ngonda-doctrine-of-love-tour-charlo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ub0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T140000
 DTEND:20261119T163000
 SUMMARY:Elf the Musical
@@ -132,7 +119,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ub0
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KLA0xpN@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T170000
 DTEND:20261119T193000
 SUMMARY:Southern Conference Volleyball Championship: First Round
@@ -147,7 +134,7 @@ URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2p_iazT@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T180000
 DTEND:20261119T203000
 SUMMARY:DJ Raphi: HYPE TOUR USA 2.0
@@ -165,7 +152,7 @@ URL:https://www.ticketmaster.com/dj-raphi-hype-tour-usa-20-charlotte-north
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ki9E2OR@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Disney Descendants\, ZOMBIES & Camp Rock: Worlds Collide Concert T
@@ -181,7 +168,7 @@ URL:https://www.ticketmaster.com/disney-descendants-zombies-camp-rock-worl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8So8Kf1@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Rhythm & Roots: Soul Amplified
@@ -199,7 +186,7 @@ URL:https://www.ticketmaster.com/rhythm-roots-soul-amplified-charlotte-nor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_7mi3DgH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -213,7 +200,7 @@ URL:https://www.etix.com/ticket/p/58776099/hiss-golden-messenger-asheville
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-7Ag@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -226,7 +213,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-7Ag
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_3SXQvSe@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:An Evening With Tamar Braxton
@@ -243,7 +230,7 @@ URL:https://www.ticketmaster.com/an-evening-with-tamar-braxton-charlotte-n
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_GlDneJ7@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Carbon Leaf
@@ -259,7 +246,7 @@ URL:https://www.ticketmaster.com/carbon-leaf-charlotte-north-carolina-11-1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvvFv@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:The Heavy Heavy w/ The Point.
@@ -272,7 +259,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvvFv
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KLAPepE@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T110000
 DTEND:20261120T133000
 SUMMARY:Southern Conference Volleyball Championship: Quarterfinals
@@ -288,7 +275,7 @@ URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7Kaz@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T183000
 DTEND:20261120T210000
 SUMMARY:Appalachian State Mountaineers Mens Basketball vs. North Texas Mea
@@ -302,7 +289,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Kaz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P414@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -312,5 +299,18 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:The Scorpio\, Charlotte
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P414
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70UbP@whats-happening.natel628.github.io
+DTSTAMP:20261118T155010Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Elf the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70UbP\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barter Theatre\, Abingdon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbP
 END:VEVENT
 END:VCALENDAR

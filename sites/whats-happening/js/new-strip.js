@@ -126,9 +126,10 @@
         return;
       }
       var card = document.querySelector('#main .card[data-id="' + t.getAttribute('data-newid') + '"]');
+      var opener = card ? card.querySelector('[data-action="open"]') : null;
       if (card) {
         if (card.scrollIntoView) card.scrollIntoView({ block: 'center' });
-        card.click();            // the page's own handler opens the event sheet
+        if (opener) opener.click();   // the page's own handler opens the event sheet
       } else {
         location.hash = '#/discover';
       }

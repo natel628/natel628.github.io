@@ -6,22 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Denver\, CO
 X-WR-CALDESC:Upcoming events within 100 miles of Denver\, CO.
 BEGIN:VEVENT
-UID:tm-LvZ18Qlg7NNARYE_bau3y@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
-DTSTART:20261118T130000
-DTEND:20261118T153000
-SUMMARY:KSE Venue Ball Arena Tours
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36CFQ4?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Ball Arena\, Denver
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36C
- FQ4?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvsa-@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T173000
 DTEND:20261118T200000
 SUMMARY:AEW Presents Dynamite
@@ -34,7 +20,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvsa-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfAKAf@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Ladies Night 2026
@@ -50,7 +36,7 @@ URL:https://www.ticketweb.com/event/ladies-night-2026-stampede-tickets/141
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70vOS@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T180000
 DTEND:20261118T203000
 SUMMARY:Ladies Night at Stampede
@@ -63,7 +49,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70vOS
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7xke@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T183000
 DTEND:20261118T210000
 SUMMARY:Air Force Academy Falcons Womens Basketball vs. Southern Utah Thun
@@ -77,7 +63,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7xke
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4Za-N@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Shimmy Shakin' Blues
@@ -93,7 +79,7 @@ URL:https://www.ticketweb.com/event/shimmy-shakin-blues-la-rumba-tickets/1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_3lqEGIH@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:1 Umbrella
@@ -111,7 +97,7 @@ URL:https://www.ticketmaster.com/1-umbrella-denver-colorado-11-18-2026/eve
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZVao@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
@@ -124,7 +110,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZVao
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAe3uz@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Colorado Buffaloes Mens Basketball vs. Portland Pilots Mens Basket
@@ -138,7 +124,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAe3uz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_k4yJfD0@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Sabaton: Legends on Tour
@@ -151,7 +137,7 @@ URL:https://www.axs.com/events/1123852/sabaton-tickets
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-Ojz@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Sabaton: Legends on Tour
@@ -164,7 +150,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Ojz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7AGo@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T190000
 DTEND:20261118T213000
 SUMMARY:Colorado State University Rams Mens Basketball vs. North Dakota St
@@ -178,7 +164,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7AGo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_8mM8DLV@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Denver Nuggets v Boston Celtics
@@ -196,7 +182,7 @@ URL:https://www.ticketmaster.com/denver-nuggets-v-boston-celtics-denver-co
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv3bd@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:What a Glorious Feeling
@@ -209,7 +195,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3bd
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_fNu7hxG@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T193000
 DTEND:20261118T220000
 SUMMARY:Wild Card: Colorado Rapids vs. TBD
@@ -227,7 +213,7 @@ URL:https://www.ticketmaster.com/wild-card-colorado-rapids-vs-tbd-commerce
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_aBwilEA@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Scott Bradlee's Postmodern Jukebox - The Future Is Vintage World T
@@ -243,7 +229,7 @@ URL:https://www.ticketmaster.com/scott-bradlees-postmodern-jukebox-the-fut
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAeaog@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Ivy Queen - Ages 16+
@@ -256,7 +242,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAeaog
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZfxb@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Vansire
@@ -269,7 +255,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZfxb
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvzfo@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:The Mainliners
@@ -282,7 +268,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvzfo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfxAed@whats-happening.natel628.github.io
-DTSTAMP:20261118T030424Z
+DTSTAMP:20261118T155010Z
 DTSTART:20261118T200000
 DTEND:20261118T223000
 SUMMARY:Goth Night hosted by Gotica Nouveau
