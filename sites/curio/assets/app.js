@@ -499,7 +499,7 @@ function renderSide() {
     <div class="nav-label">Discovery</div>
     <button class="nav-item ${active('discover')}" data-nav="discover"><span class="ico">✧</span>Feed Your Curiosity</button>
     <div class="side-foot">
-      <div class="hint">Your library lives in this browser. Use Export in My Library to keep a backup.</div>
+      <div class="hint">Your library lives in this browser. Export keeps a backup; Import restores one.</div>
     </div>`;
   $('#side').querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
   const bn = $('#bottomnav');
@@ -645,7 +645,9 @@ function homeHTML() {
 function libraryHTML(title, sub, showStatus) {
   const archivedCount = allTopics().filter((t) => t.archived).length;
   return `<section class="page-head"><div class="section-head"><h2>${esc(title)}</h2><p>${esc(sub)}${archivedCount && !state.filter.showArchived ? ` · ${archivedCount} archived` : ''}</p><span class="spacer"></span>
-    <button class="btn small ghost" id="export-btn" title="Download your library as JSON">Export</button></div>
+    <button class="btn small ghost" id="import-btn" title="Restore topics from a Curio backup file">Import</button>
+    <button class="btn small ghost" id="export-btn" title="Download your whole library as JSON">Export</button></div>
+  <input type="file" id="import-file" accept="application/json,.json" hidden>
   ${toolbarHTML(showStatus)}<div class="grid" id="list-host"></div></section>
   <section class="section tight"><div class="section-head"><h2>Capture another</h2></div>
   <div class="capture slim"><textarea id="cap-input" rows="2" placeholder="What are you curious about now?"></textarea>
@@ -888,20 +890,155 @@ function render() {
     bindToolbar(); bindCapture(); renderList();
     const ex = $('#export-btn');
     if (ex) ex.onclick = exportLibrary;
+    const im = $('#import-btn');
+    if (im) im.onclick = () => $('#import-file')?.click();
+    const imf = $('#import-file');
+    if (imf) imf.onchange = (e) => importBackupFile(e.target.files && e.target.files[0]);
   }
 }
 async function patchTopicSilent(id, patch) {
   return patchTopic(id, patch, { silent: true });
 }
+/* ---------- backup & restore ---------- */
+const BACKUP_APP = 'curio';
+const BACKUP_VERSION = 2;
+const cloneTopic = (t) => JSON.parse(JSON.stringify(t || {}));
+const emptyField = (v) => v == null || v === '' || (Array.isArray(v) && v.length === 0);
+const normKey = (s) => String(s || '').toLowerCase().replace(/[\s_]+/g, ' ').replace(/[^\p{L}\p{N} ]/gu, '').trim();
+function topicStamp(v, fallback) {
+  if (typeof v === 'number' && Number.isFinite(v)) return v;
+  const n = typeof v === 'string' ? Date.parse(v) : NaN;
+  return Number.isFinite(n) ? n : fallback;
+}
+function backupTopic(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const src = raw.topic && typeof raw.topic === 'object' && raw.topic.title ? raw.topic : raw;
+  const title = String(src.title || '').trim();
+  if (!title) return null;
+  const now = Date.now();
+  const t = cloneTopic(src);
+  t.createdAt = topicStamp(src.createdAt, now);
+  t.updatedAt = topicStamp(src.updatedAt, t.createdAt);
+  if (!t.id || typeof t.id !== 'string') t.id = 'g_' + t.createdAt.toString(36) + Math.random().toString(36).slice(2, 7);
+  t.title = title;
+  t.input = String(src.input || '');
+  t.inputType = ['topic', 'question', 'link'].includes(src.inputType) ? src.inputType : 'topic';
+  t.category = String(src.category || 'Curiosity');
+  t.status = ['unread', 'exploring', 'completed'].includes(src.status) ? src.status : 'exploring';
+  t.overview = String(src.overview || '');
+  t.notes = String(src.notes || '');
+  t.keyFacts = Array.isArray(src.keyFacts) ? src.keyFacts.filter((x) => typeof x === 'string' && x.trim()) : [];
+  t.sources = Array.isArray(src.sources) ? src.sources.filter((s) => s && s.url).map((s) => ({ title: String(s.title || ''), url: String(s.url), publisher: String(s.publisher || ''), snippet: String(s.snippet || '') })) : [];
+  t.related = Array.isArray(src.related) ? src.related.filter((r) => r && r.title).map((r) => ({ title: String(r.title), reason: String(r.reason || '') })) : [];
+  t.wikiTitle = src.wikiTitle ? String(src.wikiTitle) : null;
+  t.wikiUrl = src.wikiUrl ? String(src.wikiUrl) : null;
+  t.simple = src.simple && src.simple.overview ? { overview: String(src.simple.overview), url: src.simple.url ? String(src.simple.url) : null } : null;
+  t.archived = Boolean(src.archived);
+  t.aiPowered = Boolean(src.aiPowered);
+  if (src.disputed) t.disputed = String(src.disputed); else delete t.disputed;
+  if (Number.isFinite(topicStamp(src.lastOpenedAt, NaN))) t.lastOpenedAt = topicStamp(src.lastOpenedAt, NaN); else delete t.lastOpenedAt;
+  return t;
+}
+function backupTopics(data) {
+  const list = Array.isArray(data) ? data : (data && Array.isArray(data.topics) ? data.topics : null);
+  if (!list) throw new Error('That file doesn’t look like a Curio backup.');
+  const topics = list.map(backupTopic).filter(Boolean);
+  if (!topics.length) throw new Error('No topics found in that backup.');
+  return topics;
+}
+function sameTopic(a, b) {
+  if (!a || !b) return false;
+  if (a.id && b.id && a.id === b.id) return true;
+  if (a.wikiTitle && b.wikiTitle && normKey(a.wikiTitle) === normKey(b.wikiTitle)) return true;
+  const ta = normKey(a.title), tb = normKey(b.title);
+  return Boolean(ta) && ta === tb;
+}
+// keep what the library already has; only carry over fields it is missing
+function fillMissing(target, incoming) {
+  let filled = 0;
+  for (const [k, v] of Object.entries(incoming)) {
+    if (k === 'id' || k === 'createdAt' || k === 'updatedAt' || k === 'lastOpenedAt') continue;
+    if (emptyField(v) || !emptyField(target[k])) continue;
+    target[k] = v;
+    filled++;
+  }
+  if (!target.createdAt || incoming.createdAt < target.createdAt) target.createdAt = incoming.createdAt;
+  if (incoming.updatedAt > (target.updatedAt || 0)) target.updatedAt = incoming.updatedAt;
+  if (incoming.lastOpenedAt && incoming.lastOpenedAt > (target.lastOpenedAt || 0)) target.lastOpenedAt = incoming.lastOpenedAt;
+  return filled;
+}
+function planImport(incoming) {
+  const work = allTopics().map(cloneTopic);
+  const added = [];
+  let merged = 0, filled = 0;
+  for (const inc of incoming) {
+    const dup = work.find((e) => sameTopic(e, inc));
+    if (!dup) { work.push(inc); added.push(inc); continue; }
+    merged++;
+    filled += fillMissing(dup, inc);
+  }
+  return { work, added, merged, filled };
+}
+function persistLibrary(list) {
+  if (state.user) state.topics = list;
+  else { state.guest = list; saveGuest(); }
+}
+function backupPayload() {
+  const topics = allTopics().map(cloneTopic);
+  return { app: BACKUP_APP, version: BACKUP_VERSION, exportedAt: new Date().toISOString(), count: topics.length, topics };
+}
+function backupFileName() {
+  const d = new Date();
+  return `curio-library-${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}.json`;
+}
 function exportLibrary() {
-  const data = JSON.stringify(allTopics().map((t) => ({ title: t.title, category: t.category, status: t.status, overview: t.overview, sources: t.sources, notes: t.notes, createdAt: new Date(t.createdAt).toISOString() })), null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
+  const payload = backupPayload();
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'curio-library.json';
+  a.download = backupFileName();
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  toast('Library exported.');
+  toast(`Backed up ${payload.count} ${payload.count === 1 ? 'topic' : 'topics'}.`);
+}
+function openImportPreview(plan, fileName) {
+  const root = $('#modal-root');
+  const parts = [];
+  if (plan.added.length) parts.push(`${plan.added.length} new`);
+  if (plan.merged) parts.push(`${plan.merged} already here`);
+  if (plan.filled) parts.push(`${plan.filled} empty ${plan.filled === 1 ? 'field' : 'fields'} filled in`);
+  const action = plan.added.length
+    ? `Import ${plan.added.length} new ${plan.added.length === 1 ? 'topic' : 'topics'}`
+    : 'Fill in the gaps';
+  root.innerHTML = `<div class="modal-wrap"><div class="modal" role="dialog" aria-modal="true" aria-label="Import backup"><h3>Import backup</h3>
+    <p class="hint">${esc(fileName || 'Backup file')} · ${esc(parts.join(' · '))}</p>
+    <p class="hint">Nothing already in your library is overwritten — matching topics keep what you have and only pick up what's missing.</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn ghost small" id="i-cancel">Cancel</button><button class="btn primary small" id="i-confirm">${esc(action)}</button></div></div></div>`;
+  const close = () => { root.innerHTML = ''; };
+  $('#i-cancel').onclick = close;
+  $('#i-confirm').onclick = () => {
+    persistLibrary(plan.work);
+    close();
+    refreshDiscover().then(render).catch(render);
+    toast(plan.added.length ? `Imported ${plan.added.length} ${plan.added.length === 1 ? 'topic' : 'topics'}.` : 'Library updated.');
+  };
+  root.querySelector('.modal-wrap').onkeydown = (e) => { if (e.key === 'Escape') close(); };
+  $('#i-confirm').focus();
+}
+async function importBackupFile(file) {
+  if (!file) return;
+  const input = $('#import-file');
+  try {
+    let data;
+    try { data = JSON.parse(await file.text()); } catch { throw new Error('That file isn’t valid JSON.'); }
+    const plan = planImport(backupTopics(data));
+    if (!plan.added.length && !plan.filled) { toast('Everything in that backup is already here.'); return; }
+    openImportPreview(plan, file.name);
+  } catch (e) {
+    toast(e.message || 'Could not read that backup.');
+  } finally {
+    if (input) input.value = '';
+  }
 }
 function bindCapture() {
   const btn = $('#cap-btn'), input = $('#cap-input');
