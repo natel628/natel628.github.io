@@ -1,0 +1,7 @@
+# Local-only working files
+video-backup/
+image-backup/
+tools/.drive-sync.json
+
+# Node
+node_modules/

@@ -1,0 +1,30 @@
+/* What's Happening? - "somewhere else" location field. */
+
+.cityfinder {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+
+.cityfinder input {
+  flex: 1;
+  min-width: 0;
+}
+
+.cityfinder .btn {
+  white-space: nowrap;
+}
+
+.city-hint:empty {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .cityfinder {
+    flex-wrap: wrap;
+  }
+  .cityfinder .btn {
+    width: 100%;
+  }
+}

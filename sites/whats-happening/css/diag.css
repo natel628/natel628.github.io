@@ -1,0 +1,146 @@
+/* What's Happening? - hidden diagnostics panel. Scoped to .diag so it cannot
+   touch the rest of the interface. */
+
+.diag {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10000;
+  width: min(460px, calc(100vw - 24px));
+  max-height: min(72vh, 580px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #0f1116;
+  border: 1px solid #2a2e37;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px -24px #000, 0 0 0 1px rgba(255, 107, 61, .10);
+  font: 12px/1.5 ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #c9ced8;
+}
+
+.diag__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #12151b;
+  border-bottom: 1px solid #23262e;
+}
+
+.diag__head b {
+  font-size: 12px;
+  letter-spacing: .02em;
+  color: #e9ebf0;
+}
+
+.diag__sum {
+  margin-right: auto;
+  font-size: 11px;
+  color: #8b93a1;
+}
+
+.diag__sum.is-pass { color: #5fd3a0; }
+.diag__sum.is-fail { color: #ff7a66; }
+
+.diag__btns {
+  display: flex;
+  gap: 6px;
+}
+
+.diag__btns button {
+  font: inherit;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid #333944;
+  background: #191d25;
+  color: #c9ced8;
+  cursor: pointer;
+}
+
+.diag__btns button:hover {
+  border-color: #4a5261;
+  color: #fff;
+}
+
+.diag__btns button:focus-visible {
+  outline: 2px solid #ff6b3d;
+  outline-offset: 1px;
+}
+
+.diag__list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  overflow: auto;
+}
+
+.diag__row {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 2px 8px;
+  padding: 7px 6px;
+  border-radius: 8px;
+}
+
+.diag__row + .diag__row {
+  border-top: 1px solid #1b1f26;
+}
+
+.diag__st {
+  font: 700 9.5px/1.8 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .06em;
+  color: #6b7280;
+}
+
+.diag__l {
+  color: #dfe3ea;
+}
+
+.diag__d {
+  grid-column: 2;
+  font-size: 11px;
+  color: #8b93a1;
+  overflow-wrap: anywhere;
+}
+
+.diag__row.is-pass .diag__st { color: #5fd3a0; }
+.diag__row.is-fail .diag__st { color: #ff7a66; }
+.diag__row.is-fail .diag__d { color: #ffb3a5; }
+.diag__row.is-run .diag__st { color: #ffc27a; }
+
+.diag__hint {
+  margin: 0;
+  padding: 8px 12px;
+  border-top: 1px solid #23262e;
+  font-size: 10.5px;
+  color: #6b7280;
+}
+
+/* The harness iframe stays rendered but off-screen: Leaflet needs real
+   dimensions, so display:none would break the map check. */
+.diag__frame {
+  position: fixed;
+  left: -12000px;
+  top: 0;
+  width: 1024px;
+  height: 768px;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 560px) {
+  .diag {
+    right: 8px;
+    left: 8px;
+    bottom: 8px;
+    width: auto;
+    max-height: 76vh;
+  }
+  .diag__head { flex-wrap: wrap; }
+  .diag__sum { margin-right: 0; }
+}

@@ -1,0 +1,18 @@
+{
+  "ranAt": "2026-11-18T02:18:37.783Z",
+  "status": "ok",
+  "reason": null,
+  "eventsFetched": 400,
+  "sources": {
+    "ticketmaster": {
+      "status": "ok",
+      "events": 650,
+      "error": null
+    },
+    "youtube": {
+      "status": "ok",
+      "events": 36,
+      "error": null
+    }
+  }
+}

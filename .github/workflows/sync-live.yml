@@ -1,0 +1,71 @@
+name: Sync live events
+
+# Pulls real Ticketmaster + YouTube listings once a day and commits them as
+# sites/whats-happening/data/live.json, so every visitor sees real events
+# without pasting their own API keys. Then regenerates the subscribable
+# calendar feeds in sites/whats-happening/feeds/ from that same file, so
+# Google/Apple Calendar subscriptions stay current with no extra keys.
+# Also writes data/health.json (per-source counts and errors) for ?diag=1, and
+# leaves live.json alone when most sources fail so one bad run cannot wipe a
+# good feed.
+# Needs two repo secrets:
+#   TICKETMASTER_API_KEY  (free key from developer.ticketmaster.com)
+#   YOUTUBE_API_KEY       (free key from console.cloud.google.com, YouTube Data API v3)
+# Until both exist the fetch job exits quietly, the site keeps its demo data,
+# and the feeds stay valid-but-empty. Manually trigger any time from the
+# Actions tab (workflow_dispatch).
+
+on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-live
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch listings
+        id: sync
+        env:
+          TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/sync-live.mjs
+
+      - name: Build calendar feeds
+        if: steps.sync.outputs.result != 'aborted'
+        run: node scripts/build-feeds.mjs
+
+      - name: Commit live.json and feeds
+        env:
+          SYNC_RESULT: ${{ steps.sync.outputs.result }}
+        run: |
+          git config user.name 'whats-happening-sync'
+          git config user.email 'whats-happening-sync@users.noreply.github.com'
+          git add sites/whats-happening/data/health.json
+          if [ "$SYNC_RESULT" = 'aborted' ]; then
+            echo '::warning::Sync aborted - live.json and the calendar feeds were left untouched.'
+          else
+            git add sites/whats-happening/data/live.json sites/whats-happening/feeds
+          fi
+          git diff --cached --quiet && echo 'live data unchanged' && exit 0
+          if [ "$SYNC_RESULT" = 'aborted' ]; then
+            git commit -m 'data(whats-happening): record aborted sync in health.json'
+          else
+            git commit -m 'data(whats-happening): refresh live events and calendar feeds'
+          fi
+          git push

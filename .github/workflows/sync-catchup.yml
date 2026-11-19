@@ -1,0 +1,76 @@
+name: Sync Daily Catch-Up candidates
+
+# The Daily Catch-Up rundown in showsnew.html starts blank every day. This job
+# bakes a few candidate stories per segment into one line of the page
+# (`window.PODCAST_CANDIDATES = {...};`) from keyless public sources — NPR,
+# CNBC, ESPN, Variety, WPRI, Hacker News and Wikipedia's "on this day" — so the
+# board opens with real options instead of seven empty rows.
+#
+# No secrets are needed and the commit is data-only, so the existing pagecrypt
+# deploy still runs unchanged on the resulting push. Manually trigger any time
+# from the Actions tab (workflow_dispatch). Runs at 09:17 UTC, which is early
+# morning in New England, before most people plan their day.
+
+on:
+  schedule:
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-catchup
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Bake candidate stories
+        run: node scripts/sync-catchup.mjs
+
+      # The script only rewrites its own line and refuses to write a nearly
+      # empty run, but a malformed line would still be encrypted and deployed,
+      # so check it before committing.
+      - name: Check the rewrite is sane
+        run: |
+          node -e '
+            const fs = require("fs");
+            const html = fs.readFileSync("showsnew.html", "utf8");
+            const mark = "window.PODCAST_CANDIDATES = ";
+            const at = html.indexOf(mark);
+            if (at < 0 || html.indexOf(mark, at + mark.length) >= 0) {
+              throw new Error("candidate line missing or duplicated");
+            }
+            const end = html.indexOf(";\n", at);
+            if (end < 0) throw new Error("candidate line has no end");
+            const data = JSON.parse(html.slice(at + mark.length, end));
+            const counts = Object.entries(data.segments).map(([k, v]) => k + " " + v.length);
+            const total = counts.reduce((n, line) => n + Number(line.split(" ")[1]), 0);
+            console.log("candidates: " + data.at + " · " + counts.join(" · "));
+            if (total < 8) throw new Error("too few candidates to publish");
+            for (const [id, list] of Object.entries(data.segments)) {
+              for (const c of list) {
+                if (!c.h || !/^https?:\/\//.test(c.u || "")) throw new Error(id + " has a candidate with no headline or link");
+              }
+            }
+            if (html.length < 400000) throw new Error("showsnew.html is unexpectedly small");
+          '
+
+      - name: Commit the candidates
+        run: |
+          git config user.name 'catchup-sync'
+          git config user.email 'catchup-sync@users.noreply.github.com'
+          git add showsnew.html
+          git diff --cached --quiet && echo 'candidates unchanged' && exit 0
+          git commit -m 'data(catchup): refresh Daily Catch-Up story candidates'
+          git push

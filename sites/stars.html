@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteor Shower Tracker — what's visible tonight</title>
+<meta name="description" content="Track the year's major meteor showers: peak dates, the best viewing hours from your location, radiant altitude and moon interference.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%230f172a'/%3E%3Cpath%20d='M10%2023V9l12%2014V9'%20fill='none'%20stroke='%23f59e0b'%20stroke-width='3.4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/stars.css">
+</head>
+<body>
+<div class="sky" aria-hidden="true"></div>
+
+<main class="wrap">
+  <header class="site">
+    <div class="site-intro">
+      <p class="eyebrow">Night sky</p>
+      <h1>Meteor shower tracker</h1>
+      <p class="lede">Peak dates for the year's major showers, plus the hours tonight when the radiant is actually high enough from where you are to make going outside worth it.</p>
+    </div>
+
+    <div class="loc">
+      <p class="loc-label">Observer <strong id="locName">—</strong></p>
+      <div class="loc-row">
+        <button class="btn" type="button" id="geoBtn">Use my location</button>
+        <button class="btn btn-ghost" type="button" id="manualBtn" aria-expanded="false" aria-controls="manual">Enter coordinates</button>
+        <label class="sky-pick">Sky
+          <select id="sky">
+            <option value="dark">Dark rural</option>
+            <option value="suburban">Suburban</option>
+            <option value="city">City</option>
+          </select>
+        </label>
+      </div>
+      <form class="manual" id="manual" hidden>
+        <label>Lat <input id="lat" name="lat" type="text" inputmode="decimal" placeholder="41.82" required></label>
+        <label>Long <input id="lon" name="lon" type="text" inputmode="decimal" placeholder="-71.40" required></label>
+        <button class="btn btn-sm" type="submit">Apply</button>
+      </form>
+      <p class="loc-msg" id="locMsg" role="status"></p>
+    </div>
+  </header>
+
+  <section class="hero" id="hero" aria-label="Tonight's outlook"></section>
+
+  <section aria-labelledby="gridTitle">
+    <div class="section-head">
+      <h2 id="gridTitle" class="section-title">Showers</h2>
+      <div class="filters" role="group" aria-label="Filter showers">
+        <button type="button" class="filter-btn" data-filter="soon" aria-pressed="true">Active &amp; upcoming</button>
+        <button type="button" class="filter-btn" data-filter="all" aria-pressed="false">All showers</button>
+      </div>
+    </div>
+    <p class="section-hint"><span id="showCount">—</span> · ranked for tonight · all times local</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="strip-wrap" aria-labelledby="stripTitle">
+    <h2 id="stripTitle" class="section-title">The year at a glance</h2>
+    <div class="gantt" id="strip"></div>
+    <p class="strip-legend">Each bar is a shower's active range with a tick at its peak — gold rows are running right now, and the bright line is today.</p>
+  </section>
+
+  <footer class="note">
+    <p><strong>How the numbers work.</strong> ZHR is the ideal rate at peak with the radiant directly overhead under a perfectly dark sky — real counts are lower. The radiant is the patch of sky the meteors appear to stream from; the higher it sits, the more of them clear the horizon. A shower's best window is the stretch where the Sun is at least 12° below the horizon and the radiant is above 15°, and every estimate here also accounts for moonlight, your sky setting and any forecast cloud.</p>
+    <p>Peak dates drift a day or two year to year, radiant positions are approximate, and moon illumination comes from the synodic month, so treat this as planning guidance rather than an ephemeris. Cloud cover comes from the free <a href="https://open-meteo.com/">Open-Meteo</a> forecast, requested straight from your browser.</p>
+  </footer>
+</main>
+
+<script type="module" src="assets/stars.js"></script>
+</body>
+</html>
