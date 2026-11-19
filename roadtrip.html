@@ -640,14 +640,6 @@
     <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
     <div class="rv-grid">
       <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
-      <label>Gas $/gal<input id="budGas" type="number" min="0" max="20" step="0.05" value="3.60" aria-label="Gas price per gallon" /></label>
-      <label>MPG towing<input id="budMpg" type="number" min="3" max="30" step="0.5" value="8" aria-label="Miles per gallon while towing" /></label>
-      <label>Lodging $<input id="budLodging" type="number" min="0" step="25" value="0" /></label>
-      <label>Food $<input id="budFood" type="number" min="0" step="25" value="0" /></label>
-      <label>Tolls &amp; bridges $<input id="budTolls" type="number" min="0" step="5" value="0" /></label>
-      <label>Propane refills $<input id="budPropane" type="number" min="0" step="5" value="0" /></label>
-      <label>Golf &amp; activities $<input id="budFun" type="number" min="0" step="25" value="0" /></label>
-      <label>Misc / repairs $<input id="budMisc" type="number" min="0" step="25" value="0" /></label>
     </div>
     <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap">
       <select id="budCat" aria-label="Budget category" style="max-width:160px;flex:none">
@@ -663,6 +655,7 @@
     <div id="budgetWrap" class="stops-preview">
       <div id="budgetLines" class="budget-lines"></div>
     </div>
+  </section>
 
   <section class="card" id="sec-rv">
     <h2>🚐 RV profile &amp; route cautions</h2>
