@@ -274,20 +274,14 @@ function renderSide() {
     <div class="nav-label">Discovery</div>
     <button class="nav-item ${active('discover')}" data-nav="discover"><span class="ico">✧</span>Feed Your Curiosity</button>
     <div class="side-foot">
-      ${state.user ? `<div class="user-row"><span class="avatar">${state.user.picture ? `<img src="${esc(state.user.picture)}" alt="">` : '◉'}</span><span>${esc(state.user.name || state.user.email || 'Curious mind')}</span></div>
-      <form method="post" action="/auth/freebuff/signout"><button class="btn ghost small" type="submit">Sign out</button></form>`
-      : IS_MIRROR ? `<a class="btn primary small" href="https://curio-oqu69z.freebuff.site">Open the full synced app</a>
-         <div class="hint">This mirror keeps your library in this browser only.</div>`
-      : `<a class="btn primary small" href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}">Sign in with Freebuff</a>
-         <div class="hint">Sync across devices. Guests save on this device only.</div>`}
+      <div class="hint">Saved on this device only.</div>
+      <button class="btn ghost small" id="export-btn-side" title="Download your library as JSON">Export backup</button>
     </div>`;
   $('#side').querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
+  const eb = $('#export-btn-side'); if (eb) eb.onclick = exportLibrary;
   const bn = $('#bottomnav');
   const short = { home: 'Capture', inbox: 'Inbox', library: 'Library', exploring: 'Exploring', completed: 'Done', discover: 'Discover' };
-  bn.innerHTML = NAV.map((n) => `<button class="${active(n.id) ? 'active' : ''}" data-nav="${n.id}" aria-label="${esc(n.label)}"><span class="bi">${n.icon}</span>${short[n.id] || n.label}</button>`).join('') +
-    (state.user ? '' : IS_MIRROR
-      ? `<a href="https://curio-oqu69z.freebuff.site"><span class="bi">✦</span>Full app</a>`
-      : `<a href="/auth/freebuff/signin?returnTo=${encodeURIComponent(location.hash || '#/')}"><span class="bi">○</span>Sign in</a>`);
+  bn.innerHTML = NAV.map((n) => `<button class="${active(n.id) ? 'active' : ''}" data-nav="${n.id}" aria-label="${esc(n.label)}"><span class="bi">${n.icon}</span>${short[n.id] || n.label}</button>`).join('');
   bn.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
 }
 
