@@ -436,7 +436,10 @@ async function capture(input) {
       }
       state.topics.unshift(d.topic);
       await refreshDiscover();
-      location.hash = '#/topic/' + d.topic.id;
+      const _inp = $('#cap-input'); if (_inp) _inp.value = '';
+      setStatusText('Saved to your Inbox — open it when you\u2019re ready to dig in.');
+      toast('Saved to Inbox: ' + d.topic.title);
+      render();
     } else {
       setStatusText('Researching…');
       const r = await localResearch(input);
@@ -451,8 +454,11 @@ async function capture(input) {
       if (r.overviewNote) setTimeout(() => toast(r.overviewNote), 50);
       state.guest.unshift(topic); saveGuest();
       await refreshDiscover();
-      location.hash = '#/topic/' + topic.id;
-      playChime();
+      const _inp2 = $('#cap-input'); if (_inp2) _inp2.value = '';
+      setStatusText('Saved to your Inbox — open it when you\u2019re ready to dig in.');
+      toast('Saved to Inbox: ' + topic.title);
+      render();
+      try { playChime(); } catch {}
     }
   } catch (e) {
     setStatusText(e.message);

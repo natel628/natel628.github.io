@@ -28,7 +28,7 @@ function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify({ vi
 
 const IS_MIRROR = typeof location !== 'undefined' && /(^|\.)github\.io$/.test(location.hostname || '');
 const API_BASE = IS_MIRROR ? 'https://curio-oqu69z.freebuff.site' : '';
-const PUBLIC_API = new Set(['/api/health', '/api/wikipedia', '/api/search', '/api/research']);
+const PUBLIC_API = new Set(['/api/health', '/api/wikipedia', '/api/search', '/api/suggest', '/api/research']);
 
 const state = {
   user: null, authChecked: false,
@@ -132,10 +132,13 @@ async function capture(input) {
         return;
       }
       state.topics.unshift(d.topic);
-      if (d.overviewNote) toast(d.overviewNote);
-      else if (d.searchMeta?.suggestion) toast('Did you mean “' + d.searchMeta.suggestion + '”? Showing the closest match.');
       await refreshDiscover();
-      location.hash = '#/topic/' + d.topic.id;
+      const inp = $('#cap-input'); if (inp) inp.value = '';
+      clearSuggest();
+      setStatusHTML('Saved to <a href="#/inbox">Inbox</a> — open it when you\u2019re ready to dig in.');
+      if (d.overviewNote) toast(d.overviewNote);
+      else toast('Saved to Inbox: ' + d.topic.title);
+      render();
     } else {
       setStatusText('Researching… (sign in to sync across devices)');
       const d = await api('/api/research', { method: 'POST', body: JSON.stringify({ input }) });
@@ -157,7 +160,12 @@ async function capture(input) {
       };
       state.guest.unshift(topic); saveGuest();
       await refreshDiscover();
-      location.hash = '#/topic/' + topic.id;
+      const inp = $('#cap-input'); if (inp) inp.value = '';
+      clearSuggest();
+      setStatusHTML('Saved to <a href="#/inbox">Inbox</a> — open it when you\u2019re ready to dig in.');
+      if (r.overviewNote) toast(r.overviewNote);
+      else toast('Saved to Inbox: ' + topic.title);
+      render();
     }
   } catch (e) {
     setStatusText(e.message);
@@ -393,11 +401,12 @@ function homeHTML() {
   const total = allTopics().filter((t) => !t.archived).length;
   return `<section class="hero compact">
     <h1>What's on <em>your mind?</em></h1>
-    <p>Capture it — research builds itself. <span class="kbd-hint">press <kbd>/</kbd></span></p>
+    <p>Type it, pick the match, save it to your list. <span class="kbd-hint">press <kbd>/</kbd></span></p>
   </section>
   <div class="capture">
-    <textarea id="cap-input" rows="2" placeholder="A topic, a question, a half-formed thought, a link…"></textarea>
-    <div class="capture-row"><span class="hint" id="cap-mode">${state.user ? 'Auto-saves to your library' : 'Guest mode — saves on this device'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Explore ✦</button></div>
+    <textarea id="cap-input" rows="2" placeholder="Start typing — pick from what comes up…" autocomplete="off"></textarea>
+    <div class="suggest" id="suggest-list" role="listbox" aria-label="Matching topics"></div>
+    <div class="capture-row"><span class="hint" id="cap-mode">${state.user ? 'Pick a result to save it to your Inbox' : 'Guest mode — picks save on this device'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Save ✦</button></div>
   </div>
   <div class="examples">${EXAMPLES.map((e) => `<button class="chip" data-ex="${esc(e)}">${esc(e)}</button>`).join('')}</div>
   <div class="status-line" id="cap-status" role="status"></div>
@@ -413,8 +422,9 @@ function libraryHTML(title, sub, showStatus) {
     <button class="btn small ghost" id="export-btn" title="Download your library as JSON">Export</button></div>
   ${toolbarHTML(showStatus)}<div class="grid" id="list-host"></div></section>
   <section class="section tight"><div class="section-head"><h2>Capture another</h2></div>
-  <div class="capture slim"><textarea id="cap-input" rows="2" placeholder="What are you curious about now?"></textarea>
-  <div class="capture-row"><span class="hint">Auto-saves${state.user ? '' : ' on this device'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Explore ✦</button></div></div>
+  <div class="capture slim"><textarea id="cap-input" rows="2" placeholder="Start typing — pick from what comes up…" autocomplete="off"></textarea>
+  <div class="suggest" id="suggest-list" role="listbox" aria-label="Matching topics"></div>
+  <div class="capture-row"><span class="hint">Pick a result to save it to your Inbox</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Save ✦</button></div></div>
   <div class="status-line" id="cap-status" role="status"></div></section>`;
 }
 
@@ -571,12 +581,59 @@ function exportLibrary() {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   toast('Library exported.');
 }
+function clearSuggest() {
+  const host = $('#suggest-list');
+  if (host) host.innerHTML = '';
+  if (window._curioSuggestHosts) window._curioSuggestHosts.length = 0;
+}
+function renderSuggest(items) {
+  const host = $('#suggest-list');
+  if (!host) return;
+  if (!items.length) { host.innerHTML = ''; return; }
+  host.innerHTML = items.map((s, i) => `<button class="suggest-row" role="option" data-suggest="${i}" title="Save to Inbox">
+    <span class="suggest-kind ${esc(s.kind || 'wiki')}">${esc(s.kind === 'web' ? 'web' : 'wiki')}</span>
+    <span class="suggest-body"><span class="suggest-title">${esc(s.title)}</span>${s.snippet ? `<span class="suggest-snip">${esc(s.snippet)}</span>` : ''}</span>
+    <span class="suggest-add">+ Save</span></button>`).join('');
+  window._curioSuggestHosts = items;
+  host.querySelectorAll('[data-suggest]').forEach((b) => (b.onclick = (e) => {
+    e.preventDefault();
+    const item = (window._curioSuggestHosts || [])[Number(b.dataset.suggest)];
+    if (item) capture(item.query || item.title);
+  }));
+}
+let _suggestTimer = null;
+async function fetchSuggest(q) {
+  const host = $('#suggest-list');
+  if (!host) return;
+  q = (q || '').trim();
+  if (q.length < 3) { host.innerHTML = ''; return; }
+  try {
+    const d = await api('/api/suggest?q=' + encodeURIComponent(q.slice(0, 200)));
+    if (d._unauth || !Array.isArray(d.suggestions)) return;
+    // Only render if the input still matches (avoid stale dropdowns).
+    const cur = ($('#cap-input')?.value || '').trim();
+    if (cur !== q) return;
+    renderSuggest(d.suggestions.slice(0, 8));
+  } catch { /* suggestions are best-effort; Save button still works */ }
+}
 function bindCapture() {
   const btn = $('#cap-btn'), input = $('#cap-input');
   if (!btn || !input) return;
   const goCap = () => capture(input.value);
   btn.onclick = goCap;
-  input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); goCap(); } };
+  input.onkeydown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const first = (window._curioSuggestHosts || [])[0];
+      // Enter picks the top match when there is one — otherwise saves raw input.
+      capture(first ? (first.query || first.title) : input.value);
+    }
+    if (e.key === 'Escape') clearSuggest();
+  };
+  input.oninput = () => {
+    clearTimeout(_suggestTimer);
+    _suggestTimer = setTimeout(() => fetchSuggest(input.value), 300);
+  };
   if (window.matchMedia('(pointer:fine)').matches) input.focus();
 }
 function openRename(t) {
