@@ -5,19 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Curio — Never lose a thought worth exploring</title>
 <meta name="description" content="Curio is your personal curiosity library. Capture anything you're curious about — we'll help you explore it.">
+<meta name="theme-color" content="#0D0C12">
+<meta name="color-scheme" content="dark light">
+<link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%238b7cf6'/%3E%3Ctext x='32' y='44' font-family='Georgia' font-style='italic' font-size='36' fill='white' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./assets/styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 <div id="app">
-  <aside class="side" id="side"></aside>
-  <main class="main" id="main" aria-live="polite"></main>
+  <aside class="side" id="side" aria-label="Primary navigation"></aside>
+  <main class="main" id="main" tabindex="-1"></main>
 </div>
 <nav class="bottomnav" id="bottomnav" aria-label="Primary"></nav>
-<div class="toast" id="toast" role="status"></div>
+<button id="fab" aria-label="Capture" style="display:none"></button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div id="modal-root"></div>
 <script src="./assets/app.js" defer></script>
 </body>
