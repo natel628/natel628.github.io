@@ -1,4 +1,4 @@
-const CACHE = 'curio-shell-v3';
+const CACHE = 'curio-shell-v4';
 const SHELL = ['./', './index.html', './assets/styles.css', './assets/app.js', './manifest.webmanifest'];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => {}));
