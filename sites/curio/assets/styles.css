@@ -405,3 +405,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 @media (prefers-contrast: high){
   :root{--line:rgba(244,239,228,.25);--line-strong:rgba(244,239,228,.4)}
 }
+
+.suggest-row{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:13px;cursor:pointer;margin:4px;transition:background .15s,border-color .15s}.suggest-row:hover{background:var(--surface-3);border-color:var(--accent)}.suggest-kind{font-size:10px;text-transform:uppercase;letter-spacing:.08em;padding:2px 6px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
