@@ -42,7 +42,8 @@ const REVIEW_KEY = 'curio_review_v1';
 function loadPrefs() {
   let p = {};
   try { p = JSON.parse(localStorage.getItem(PREFS_V2_KEY) || localStorage.getItem(PREFS_KEY) || '{}'); } catch {}
-  const out = Object.assign({ view: 'grid', sort: 'newest', summaryMode: 'full', theme: 'system', readingSize: 'md', readingMeasure: 'normal', readingTheme: 'dark', sound: false, onboarded: false, tags: [] }, p);
+  const out = Object.assign({ view: 'grid', sort: 'newest', summaryMode: 'full', theme: 'dark', readingSize: 'md', readingMeasure: 'normal', readingTheme: 'dark', sound: false, onboarded: false, tags: [] }, p);
+  if (out.theme === 'system') out.theme = 'dark'; // dark-first: 'system' used to flash white on light-OS devices
   if (!localStorage.getItem(PREFS_V2_KEY) && localStorage.getItem(PREFS_KEY)) {
     try { localStorage.setItem(PREFS_V2_KEY, JSON.stringify(out)); } catch {}
   }
@@ -57,10 +58,8 @@ function savePrefs() {
   })); } catch {}
 }
 function applyTheme() {
-  const t = prefs.theme === 'system' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : prefs.theme;
-  document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = prefs.theme === 'light' ? 'light' : 'dark';
 }
-matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (prefs.theme === 'system') applyTheme(); });
 
 function loadReadingProgress() { try { return JSON.parse(localStorage.getItem(READING_KEY) || '{}'); } catch { return {}; } }
 const readingProgress = loadReadingProgress();
@@ -541,7 +540,7 @@ function toggleMore() {
 function closeMore() { state.moreOpen = false; const m = $('#more-menu'); if (m) m.style.display = 'none'; }
 function renderMore() { const b = $('#mm-theme'); if (b) b.textContent = 'Theme: ' + prefs.theme; }
 function cycleTheme() {
-  const order = ['system', 'dark', 'light'];
+  const order = ['dark', 'light'];
   prefs.theme = order[(order.indexOf(prefs.theme) + 1) % order.length];
   savePrefs(); applyTheme(); toast('Theme: ' + prefs.theme);
 }
