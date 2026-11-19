@@ -26,10 +26,10 @@
   button.ghost { background:transparent; color:var(--text); border:1px solid #475569; }
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
-  #stopsWrap.stops-preview{position:relative;max-height:120px;overflow:hidden;}
-  #stopsWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(transparent,var(--bg));pointer-events:none;}
-  #stopsWrap.expanded{max-height:none;overflow:visible;}
-  #stopsWrap.expanded::after{display:none;}
+  #stopsWrap.stops-preview, #budgetWrap.stops-preview{position:relative;max-height:120px;overflow:hidden;}
+  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(transparent,var(--bg));pointer-events:none;}
+  #stopsWrap.expanded, #budgetWrap.expanded{max-height:none;overflow:visible;}
+  #stopsWrap.expanded::after, #budgetWrap.expanded::after{display:none;}
   #stops li { position:relative; display:flex; flex-wrap:wrap; align-items:flex-start; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
   /* The name gets its own room and the buttons can never sit on top of it. */
   #stops .stop-info { flex:1 1 150px; min-width:0; overflow-wrap:anywhere; }
@@ -649,8 +649,20 @@
       <label>Golf &amp; activities $<input id="budFun" type="number" min="0" step="25" value="0" /></label>
       <label>Misc / repairs $<input id="budMisc" type="number" min="0" step="25" value="0" /></label>
     </div>
-    <div id="budgetLines" class="budget-lines"></div>
-  </section>
+    <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap">
+      <select id="budCat" aria-label="Budget category" style="max-width:160px;flex:none">
+        <option>Food</option><option>Tolls</option><option>Items</option><option>Gas</option><option>Lodging</option><option>Activities</option><option>Other</option>
+      </select>
+      <input id="budCustomCat" placeholder="Custom category (if Other)" style="max-width:180px;flex:none" />
+      <input id="budNote" placeholder="Note (e.g. towels)" style="flex:1 1 160px" />
+      <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" style="max-width:100px;flex:none" />
+      <button type="button" id="budAdd">Add</button>
+    </div>
+    <p class="muted" id="budgetTotal" style="margin-top:8px"></p>
+    <button type="button" id="toggleBudget" class="small ghost" style="margin-top:6px">Show entries ▾</button>
+    <div id="budgetWrap" class="stops-preview">
+      <div id="budgetLines" class="budget-lines"></div>
+    </div>
 
   <section class="card" id="sec-rv">
     <h2>🚐 RV profile &amp; route cautions</h2>
@@ -4536,6 +4548,46 @@ document.addEventListener('DOMContentLoaded',function(){
   var w=document.getElementById('stopsWrap');
   if(b&&w){b.addEventListener('click',function(){w.classList.toggle('expanded');b.textContent=w.classList.contains('expanded')?'Hide stops ▴':'Show all stops ▾';});}
 });
+</script>
+<script>
+(function(){
+  var KEY='budgetEntries';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return[];}}
+  function save(x){localStorage.setItem(KEY,JSON.stringify(x));}
+  function render(){
+    var el=document.getElementById('budgetLines');
+    var tot=document.getElementById('budgetTotal');
+    var entries=load();
+    if(!el) return;
+    el.innerHTML=entries.map(function(e,i){
+      return '<div class="budget-line"><span>'+e.cat+(e.note?' — '+e.note:'')+'</span><span>$'+Number(e.amt).toFixed(2)+'</span><button type="button" data-del="'+i+'" class="small ghost">✕</button></div>';
+    }).join('');
+    var total=entries.reduce(function(s,e){return s+Number(e.amt||0);},0);
+    var travelers=Number((document.getElementById('budTravelers')||{}).value)||4;
+    if(tot) tot.textContent='Total: $'+total.toFixed(2)+' · Per person ('+travelers+'): $'+(total/travelers).toFixed(2);
+    el.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var a=load();a.splice(+b.dataset.del,1);save(a);render();};});
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    var b=document.getElementById('budAdd');
+    if(b){b.onclick=function(){
+      var cat=document.getElementById('budCat').value;
+      var custom=document.getElementById('budCustomCat').value.trim();
+      if(cat==='Other' && custom) cat=custom;
+      var note=document.getElementById('budNote').value.trim();
+      var amt=document.getElementById('budAmt').value;
+      if(!amt) return;
+      var a=load(); a.push({cat:cat,note:note,amt:amt}); save(a);
+      document.getElementById('budNote').value='';
+      document.getElementById('budAmt').value='';
+      document.getElementById('budCustomCat').value='';
+      render();
+    };}
+    var t=document.getElementById('budTravelers'); if(t) t.oninput=render;
+    var tg=document.getElementById('toggleBudget'); var w=document.getElementById('budgetWrap');
+    if(tg&&w){tg.onclick=function(){w.classList.toggle('expanded');tg.textContent=w.classList.contains('expanded')?'Hide entries ▴':'Show entries ▾';};}
+    render();
+  });
+})();
 </script>
 </body>
 </html>
