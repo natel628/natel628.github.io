@@ -26,7 +26,10 @@
   button.ghost { background:transparent; color:var(--text); border:1px solid #475569; }
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
-  #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
+  #stopsWrap.stops-preview{position:relative;max-height:120px;overflow:hidden;}
+  #stopsWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(transparent,var(--bg));pointer-events:none;}
+  #stopsWrap.expanded{max-height:none;overflow:visible;}
+  #stopsWrap.expanded::after{display:none;}
   #stops li { position:relative; display:flex; flex-wrap:wrap; align-items:flex-start; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
   /* The name gets its own room and the buttons can never sit on top of it. */
   #stops .stop-info { flex:1 1 150px; min-width:0; overflow-wrap:anywhere; }
@@ -362,9 +365,11 @@
       <button type="button" id="openMaps" class="small ghost" title="Open the whole route in a map app" hidden>Open whole route ↗</button>
     </div>
     <p class="muted" id="tripHint" role="status" aria-live="polite"></p>
-    <button type="button" id="toggleStops" class="small ghost" style="margin-top:8px">Show stops ▾</button>
+    <button type="button" id="toggleStops" class="small ghost" style="margin-top:8px">Show all stops ▾</button>
     <p class="muted" id="stopsEmpty">No stops yet — set a start and an end above, or click the map.</p>
-    <ul id="stops" hidden></ul>
+    <div id="stopsWrap" class="stops-preview">
+      <ul id="stops"></ul>
+    </div>
     <div id="stopPanel" hidden style="margin-top:14px;border-top:1px solid #334155;padding-top:12px">
       <h3 style="margin:0 0 4px;font-size:1rem">📎 <span id="stopPanelTitle"></span></h3>
       <p class="muted" style="margin:0 0 8px">Anything saved here is filed under this stop — the note goes to Notes and the media to Photos &amp; videos, both tagged with the place.</p>
@@ -4528,8 +4533,8 @@ document.addEventListener('DOMContentLoaded',function(){
 <script>
 document.addEventListener('DOMContentLoaded',function(){
   var b=document.getElementById('toggleStops');
-  var u=document.getElementById('stops');
-  if(b&&u){b.addEventListener('click',function(){u.hidden=!u.hidden;b.textContent=u.hidden?'Show stops ▾':'Hide stops ▴';});}
+  var w=document.getElementById('stopsWrap');
+  if(b&&w){b.addEventListener('click',function(){w.classList.toggle('expanded');b.textContent=w.classList.contains('expanded')?'Hide stops ▴':'Show all stops ▾';});}
 });
 </script>
 </body>
