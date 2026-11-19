@@ -34,6 +34,7 @@ const state = {
   filter: { q: '', status: 'all', category: 'All', sort: prefs.sort, view: prefs.view, showArchived: false },
   discover: null, discoverEmpty: false, rediscover: [],
   capturing: false,
+  stories: {}, storyOpen: new Set(),
 };
 function loadGuest() {
   try { return JSON.parse(localStorage.getItem('curio_guest_v1') || '[]'); } catch { return []; }
@@ -174,6 +175,132 @@ async function wikiIntro(title) {
 }
 function sentences(text) {
   return (String(text || '').replace(/\s+/g, ' ').match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim()).filter((s) => s.length > 40);
+}
+
+/* ---------- the whole story: full article, timeline, threads ---------- */
+const STORY_SKIP_SECTION = /^(see also|references|external links|further reading|notes|citations|bibliography|sources|footnotes|works cited|general references|explanatory notes|gallery)$/i;
+function splitSections(text) {
+  const out = [];
+  let cur = { heading: 'The lead', level: 2, blocks: [] };
+  let skip = false;
+  for (const raw of String(text || '').replace(/\u00a0/g, ' ').split('\n')) {
+    const line = raw.trim();
+    if (!line) continue;
+    const h = line.match(/^(={2,6})\s*(.+?)\s*\1$/);
+    if (h) {
+      const level = h[1].length;
+      if (level === 2) {
+        if (cur.blocks.length) out.push(cur);
+        skip = STORY_SKIP_SECTION.test(h[2]);
+        cur = { heading: h[2], level, blocks: [] };
+      } else if (!skip) {
+        cur.blocks.push({ t: 'h', text: h[2] });
+      }
+      continue;
+    }
+    if (!skip) cur.blocks.push({ t: 'p', text: line });
+  }
+  if (cur.blocks.length) out.push(cur);
+  return out;
+}
+function storyTimeline(sections) {
+  const seen = new Set();
+  const rows = [];
+  for (const s of sections) for (const b of s.blocks) {
+    if (b.t !== 'p') continue;
+    for (const raw of sentences(b.text)) {
+      if (/retrieved|archived from the original|doi:|isbn|issn/i.test(raw)) continue;
+      // the opening "Name (1943–2025) was a…" definition line is already the overview
+      if (/^[A-Z][^()]{2,90}\([^)]*\b(?:1[5-9]\d{2}|20\d{2})\b[^)]*\)\s*(?:was|is|were)\b/.test(raw)) continue;
+      const m = raw.match(/\b(1[5-9]\d{2}|20\d{2})\b/);
+      if (!m) continue;
+      const clipped = raw.replace(/^["'”“)\]]+\s*/, '');
+      const text = clipped.length > 320 ? clipped.slice(0, 320).trim() + '…' : clipped;
+      const key = text.slice(0, 70).toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      rows.push({ year: Number(m[1]), text });
+    }
+  }
+  rows.sort((a, b) => a.year - b.year);
+  return rows.slice(0, 18);
+}
+function wikitextThreads(wt, title) {
+  const body = String(wt || '')
+    .replace(/<ref[^>]*\/>/g, ' ')
+    .replace(/<ref[^>]*>[\s\S]*?<\/ref>/g, ' ')
+    .replace(/\{\{[\s\S]*?\}\}/g, ' ');
+  const counts = new Map();
+  for (const m of body.matchAll(/\[\[([^\]\|#:]+)(?:#[^\]\|]*)?(?:\|[^\]]*)?\]\]/g)) {
+    const name = m[1].trim();
+    if (!name || name.length > 40) continue;
+    if (/^(file|image|category|template|wikipedia|help|portal|wikt|wiktionary|isbn|doi|pmid)\b/i.test(name)) continue;
+    if (/^\d+$/.test(name)) continue;
+    counts.set(name, (counts.get(name) || 0) + 1);
+  }
+  const self = String(title || '').toLowerCase();
+  const PUBLISHERS = /^(the )?(associated press|reuters|the new york times|the philadelphia inquirer|the washington post|the guardian|bbc|cnn|nbc news|cbs news|abc news|npr|newspapers\.com|abebooks|amazon|google books|youtube|imdb)$/i;
+  return [...counts.entries()]
+    .filter(([name, n]) => n >= 2 && name.toLowerCase() !== self && !PUBLISHERS.test(name))
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name, n]) => ({ title: name, reason: `Comes up ${n} times in the article` }));
+}
+const CATEGORY_NOISE = /^(articles|short description|use .*english|use mdy|use dmy|all wikipedia|pages using|webarchive|cs1 |good articles|featured articles|comics infobox|template)/i;
+function cleanCategory(c) {
+  return String(c || '').replace(/_/g, ' ').replace(/\s*\(.*?\)\s*$/, '').trim();
+}
+function linkLabel(url) {
+  try {
+    const u = new URL(url);
+    const seg = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || '');
+    const nice = seg.replace(/\.(html?|php|aspx?|cms)$/i, '').replace(/[-_+]+/g, ' ').replace(/\b\d{5,}\b/g, '').replace(/\s+/g, ' ').trim();
+    return nice.length > 4 ? nice : u.hostname.replace(/^www\./, '');
+  } catch { return String(url); }
+}
+function dedupeLinks(list) {
+  const map = new Map();
+  for (const raw of list || []) {
+    const url = String(raw);
+    const archived = /^https?:\/\/web\.archive\.org\/web\//i.test(url);
+    const live = url.replace(/^https?:\/\/web\.archive\.org\/web\/\d+\//i, '');
+    const key = live.split('#')[0].split('?')[0].replace(/\/+$/, '').toLowerCase();
+    if (!key) continue;
+    const prev = map.get(key);
+    if (!prev || (prev.archived && !archived)) map.set(key, { url, archived });
+  }
+  return [...map.values()].map(({ url }) => {
+    let host = 'link';
+    try { host = new URL(url).hostname.replace(/^www\./, ''); } catch { /* ignore */ }
+    return { url, publisher: host, title: linkLabel(url) };
+  }).slice(0, 12);
+}
+async function loadStory(title) {
+  const fullURL = `${WIKI}/w/api.php?action=query&format=json&origin=*&prop=extracts&explaintext=1&redirects=1&titles=${encodeURIComponent(title)}`;
+  const parseURL = `${WIKI}/w/api.php?action=parse&format=json&origin=*&prop=wikitext|categories|externallinks&redirects=1&page=${encodeURIComponent(title)}`;
+  let full, parsed;
+  try {
+    [full, parsed] = await Promise.all([getJSON(fullURL, 20000), getJSON(parseURL, 20000).catch(() => null)]);
+  } catch {
+    throw new Error('Couldn’t reach Wikipedia for the full article. Check your connection and try again.');
+  }
+  const page = full && full.query && full.query.pages ? Object.values(full.query.pages)[0] : null;
+  if (!page || !page.extract) throw new Error('Wikipedia has no full article text for that page yet.');
+  const all = splitSections(page.extract);
+  const timeline = storyTimeline(all);
+  const p = parsed && parsed.parse;
+  const words = page.extract.split(/\s+/).filter(Boolean).length;
+  return {
+    title: page.title,
+    url: articleURL('en', page.title),
+    sections: all.filter((s) => s.heading !== 'The lead'),
+    lead: all.find((s) => s.heading === 'The lead') || null,
+    timeline,
+    threads: p ? wikitextThreads(p.wikitext && p.wikitext['*'], page.title) : [],
+    categories: p && p.categories ? [...new Set(p.categories.map((c) => cleanCategory(c['*'])).filter((c) => c && !CATEGORY_NOISE.test(c)))].slice(0, 12) : [],
+    elsewhere: p ? dedupeLinks(p.externallinks) : [],
+    words,
+  };
 }
 const CATEGORY_RULES = [
   ['History', /histor|ancient|centur|empire|dynasty|\bwar\b|revolution|archaeolog|medieval|roman|greek/i],
@@ -524,6 +651,62 @@ function stepsHTML(t) {
   return `<div class="steps" role="group" aria-label="Progress">${order.map((s, i) => `<button class="step ${i <= idx ? 'done' : ''} ${t.status === s ? 'now' : ''}" data-status="${s}"><span class="dot">${i < idx ? '✓' : (i + 1)}</span>${s}</button>${i < 2 ? '<span class="bar"></span>' : ''}`).join('')}</div>`;
 }
 
+function storyKey(t) { return t.wikiTitle || t.title; }
+function storyPanelHTML(t) {
+  return `<div class="panel" id="story-panel"><div class="panel-head"><h3>The whole story</h3><span class="hint" id="story-hint">beyond the opening paragraph</span></div><div id="story-body">${storyBodyHTML(t)}</div></div>`;
+}
+function storyBodyHTML(t) {
+  const story = state.stories[storyKey(t)];
+  if (!story || !state.storyOpen.has(t.id)) {
+    return `<p class="hint">The overview above is only the opening paragraph. Open the full story to get the rest of it: every section of the article, a timeline of dated events, the names and places that keep coming back, and the reporting behind it.</p>
+      <div class="story-actions"><button class="btn small primary" id="story-btn">Open the full story</button><span class="hint" id="story-note">Reads the complete Wikipedia article — nothing is stored.</span></div>`;
+  }
+  const words = (s) => s.blocks.reduce((n, b) => n + b.text.split(/\s+/).filter(Boolean).length, 0);
+  const secs = story.sections.map((s) => `<details class="story-sec"><summary><span class="ss-h">${esc(s.heading)}</span><span class="ss-n">${words(s)} words</span></summary><div class="ss-body">${s.blocks.map((b) => b.t === 'h' ? `<h4>${esc(b.text)}</h4>` : `<p>${esc(b.text)}</p>`).join('')}</div></details>`).join('');
+  const tl = story.timeline.length ? `<div class="story-block"><h4>What happened, in order</h4><ol class="timeline">${story.timeline.map((r) => `<li><span class="tl-year">${r.year}</span><p>${esc(r.text)}</p></li>`).join('')}</ol></div>` : '';
+  const threads = story.threads.length ? `<div class="story-block"><h4>Threads that run through it</h4><p class="hint" style="margin-bottom:10px">Tap one to make it its own topic — your notes here stay put.</p><div class="rel-grid">${story.threads.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason)}</small></span><span>→</span></button>`).join('')}</div></div>` : '';
+  const cats = story.categories.length ? `<div class="story-block"><h4>Filed under</h4><div class="cat-chips">${story.categories.map((c) => `<span>${esc(c)}</span>`).join('')}</div></div>` : '';
+  const elsewhere = story.elsewhere.length ? `<div class="story-block"><h4>Reported elsewhere</h4><p class="hint" style="margin-bottom:8px">The sources the article itself cites — go to the primary reporting.</p>${story.elsewhere.map((s, i) => `<a class="src" href="${esc(s.url)}" target="_blank" rel="noopener"><span class="src-n">${i + 1}</span><span class="src-body"><span class="src-p">${esc(s.publisher)}</span><span class="src-t">${esc(s.title)}</span></span><span class="src-go">↗</span></a>`).join('')}</div>` : '';
+  const q = encodeURIComponent(story.title);
+  const dig = `<div class="story-block"><h4>Keep digging</h4><div class="rel-grid">
+    <a class="rel" href="https://duckduckgo.com/?q=${q}" target="_blank" rel="noopener"><span>Search the wider web<small>News, interviews, forums — anything newer than the article</small></span><span>↗</span></a>
+    <a class="rel" href="https://news.google.com/search?q=${q}" target="_blank" rel="noopener"><span>Search the news<small>Latest coverage and follow-ups</small></span><span>↗</span></a>
+    <a class="rel" href="https://en.wikipedia.org/w/index.php?title=Special:WhatLinksHere&target=${q}" target="_blank" rel="noopener"><span>What links here<small>Every article that mentions this one — the wider web of the story</small></span><span>↗</span></a>
+  </div></div>`;
+  return `<div class="story-tools"><span class="hint">${story.words.toLocaleString()} words · ${story.sections.length} sections · read from Wikipedia just now</span><span class="spacer"></span><button class="btn small ghost" id="story-refresh">Refresh</button><button class="btn small ghost" id="story-hide">Close</button></div>
+    ${tl}${secs ? `<div class="story-block"><h4>Section by section</h4><div class="story-sections">${secs}</div></div>` : ''}${threads}${cats}${elsewhere}${dig}
+    <p class="hint" style="margin-top:18px">All of this comes from the Wikipedia article <a href="${esc(story.url)}" target="_blank" rel="noopener">${esc(story.title)} ↗</a>.</p>`;
+}
+function bindStory(t) {
+  const open = $('#story-btn');
+  if (open) open.onclick = () => openStory(t);
+  const refresh = $('#story-refresh');
+  if (refresh) refresh.onclick = () => openStory(t, true);
+  const hide = $('#story-hide');
+  if (hide) hide.onclick = () => { state.storyOpen.delete(t.id); render(); };
+  const panel = $('#story-panel');
+  if (panel) panel.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
+}
+async function openStory(t, force) {
+  const key = storyKey(t);
+  state.storyOpen.add(t.id);
+  if (!force && state.stories[key]) { render(); return; }
+  const btn = $('#story-btn') || $('#story-refresh');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Loading…'; }
+  const note = $('#story-note');
+  if (note) note.textContent = 'Loading the full article from Wikipedia…';
+  try {
+    state.stories[key] = await loadStory(key);
+    render();
+  } catch (e) {
+    state.storyOpen.delete(t.id);
+    const n = $('#story-note');
+    if (n) n.textContent = e.message;
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Try again'; }
+    toast(e.message);
+  }
+}
+
 function topicHTML(t) {
   const facts = (t.keyFacts || []).map((f) => `<li>${esc(f)}</li>`).join('');
   const srcs = (t.sources || []).map((s, i) => {
@@ -559,6 +742,7 @@ function topicHTML(t) {
       </div><p>${esc(overviewText)}</p>
         ${hasSimple && mode === 'simple' ? `<p class="hint" style="margin-top:10px">Plain-language version from Simple English Wikipedia. <a href="${esc(t.simple.url || '#')}" target="_blank" rel="noopener">Read there ↗</a></p>` : ''}
         ${t.disputed ? `<details class="note"><summary>Established vs debated</summary><p>${esc(t.disputed)}</p></details>` : ''}</div>
+      ${storyPanelHTML(t)}
       ${facts ? `<div class="panel"><h3>Key facts</h3><ul class="facts">${facts}</ul></div>` : ''}
       <div class="panel"><div class="panel-head"><h3>Sources & further reading</h3><span class="hint">${(t.sources || []).length} links</span></div>${srcs || '<p class="hint">No sources found yet.</p>'}</div>
       ${(t.related || []).length ? `<div class="panel"><h3>Rabbit holes</h3><p class="hint" style="margin-bottom:12px">Each one opens fresh research — your current notes stay put.</p><div class="rel-grid">${t.related.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>` : ''}
@@ -615,6 +799,7 @@ function render() {
     };
     const nc = $('#notes-copy');
     if (nc) nc.onclick = async () => { try { await navigator.clipboard.writeText(notes.value || ''); toast('Notes copied.'); } catch { toast('Copy blocked by browser.'); } };
+    bindStory(t);
     main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
   } else if (state.route === 'discover') {
     main.innerHTML = discoverHTML();
