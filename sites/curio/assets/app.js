@@ -87,32 +87,29 @@ async function refreshDiscover() {
       if (!r._unauth) state.rediscover = r.items || [];
     } catch { /* offline */ }
   } else {
-    state.discover = localDiscover(state.guest);
+    state.discover = await localDiscover(state.guest);
     state.discoverEmpty = state.guest.length === 0;
     state.rediscover = localRediscover(state.guest);
   }
 }
-const POOL = [
-  { title: 'The Library of Alexandria', query: 'Library of Alexandria', reason: 'A legendary starting point for any curiosity library.' },
-  { title: 'The Fermi paradox', query: 'Fermi paradox', reason: 'Where is everybody? A vast, quiet universe.' },
-  { title: 'The psychology of déjà vu', query: 'psychology of deja vu', reason: 'Why a moment can feel strangely familiar.' },
-  { title: 'Octopus intelligence', query: 'octopus intelligence', reason: 'Tool use and escape artistry from a mind unlike ours.' },
-  { title: 'The Antikythera mechanism', query: 'Antikythera mechanism', reason: 'A 2,000-year-old Greek computer from a shipwreck.' },
-  { title: 'Why time feels faster as you age', query: 'why time feels faster as you age', reason: 'Attention, novelty, and the compression of memory.' },
-  { title: 'The Voynich manuscript', query: 'Voynich manuscript', reason: 'An undeciphered 15th-century codex full of strange plants.' },
-  { title: 'Bioluminescence in the deep sea', query: 'bioluminescence deep sea', reason: 'How light is made in total darkness.' },
-  { title: 'The concept of zero', query: 'history of zero', reason: 'A number that changed mathematics forever.' },
-  { title: 'Circadian rhythms', query: 'circadian rhythm', reason: 'Your body\u2019s internal clock and how it drifts.' },
-  { title: 'The Tunguska event', query: 'Tunguska event', reason: 'A 1908 explosion over Siberia still debated.' },
-  { title: 'Synesthesia', query: 'synesthesia', reason: 'When senses blend into colors and shapes.' },
-];
-function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
-function localDiscover(topics) {
+async function fetchRandomWiki() {
+  const items = [];
+  for (let i = 0; i < 6; i++) {
+    try {
+      const r = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
+      const d = await r.json();
+      if (d && d.title) items.push({ title: d.title, query: d.title, reason: (d.extract || '').slice(0, 120) });
+    } catch {}
+  }
+  return items;
+}
+async function localDiscover(topics) {
   const owned = new Set(topics.map((t) => t.title.toLowerCase()));
-  const fresh = shuffle(POOL.filter((p) => !owned.has(p.title.toLowerCase()))).slice(0, 4);
+  const pool = await fetchRandomWiki();
+  const fresh = pool.filter((p) => !owned.has(p.title.toLowerCase())).slice(0, 6);
   const related = topics.slice(0, 2).map((t) => ({ title: 'Deeper into ' + t.title, query: t.title + ' explained', reason: 'A natural next layer beneath something you saved.' }));
-  while (related.length < 2 && fresh.length) related.push({ title: fresh[related.length]?.title || 'The Voynich manuscript', query: fresh[related.length]?.query || 'Voynich manuscript', reason: 'A good rabbit hole to start with.' });
-  return { related, unexpected: [{ title: 'A 10-minute rabbit hole', query: (fresh[0]||POOL[0]).query, reason: 'Pick your least-explored topic and ask one “why” deeper.' }], newCuriosities: fresh, aiPowered: false };
+  while (related.length < 2 && fresh.length) related.push({ title: fresh[related.length]?.title || 'A random rabbit hole', query: fresh[related.length]?.query || 'curiosity', reason: 'A good rabbit hole to start with.' });
+  return { related, unexpected: fresh.slice(0, 2).map((f) => ({ title: f.title, query: f.query, reason: f.reason })), newCuriosities: fresh, aiPowered: false };
 }
 function localRediscover(topics) {
   const week = Date.now() - 7 * 24 * 3600 * 1000;
@@ -544,7 +541,16 @@ function render() {
     main.innerHTML = discoverHTML();
     main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
     const s = $('#surprise-btn');
-    if (s) s.onclick = () => capture(s.dataset.query);
+    if (s) s.onclick = async () => {
+      try {
+        const r = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
+        const d = await r.json();
+        if (d && d.title) {
+          const inp = $('#cap-input'); if (inp) { inp.value = d.title; inp.focus(); }
+          toast('Surprise: ' + d.title);
+        }
+      } catch { toast('Could not fetch a surprise.'); }
+    };
   } else {
     const meta = { inbox: ['Inbox', 'New arrivals — triage into exploring or completed'], library: ['My Library', 'Everything you have saved'], exploring: ['Exploring', 'Actively being researched'], completed: ['Completed', 'Finished — revisit anytime'] }[state.route];
     const showStatus = state.route === 'library';
