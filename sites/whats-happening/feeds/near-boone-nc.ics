@@ -6,107 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Boone\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Boone\, NC.
 BEGIN:VEVENT
-UID:tm-1kAOvPb8GA26WFo@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T173000
-DTEND:20261118T200000
-SUMMARY:UPike Women's Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/upike-womens-basketball-pikeville-kentucky-11-
- 18-2026/event/160065610F1FD211\\n\\nRefreshed daily from live listings.
-LOCATION:Appalachian Wireless Arena (Formerly Eastern Kentucky Expo Ctr)\,
-  Pikeville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/upike-womens-basketball-pikeville-kentuck
- y-11-18-2026/event/160065610F1FD211
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_8PlrK3l@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T190000
-DTEND:20261118T213000
-SUMMARY:Miss May I
-DESCRIPTION:The Underground Is A General Admission Standing Room Only Venu
- e Unless Otherwise Noted. Ages Welcome Doors: 6:00PM Show: 7:00PM Ticket 
- prices will increase the day of the show. All dates\, acts\, and ticket p
- rices subject to change without notice. All tickets are subject to applic
- able service fees via\\n\\nhttps://www.ticketmaster.com/miss-may-i-charlo
- tte-north-carolina-11-18-2026/event/2D0065096B7934AB\\n\\nRefreshed daily
-  from live listings.
-LOCATION:The Underground\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/miss-may-i-charlotte-north-carolina-11-18
- -2026/event/2D0065096B7934AB
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZbSEmDaLV@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T193000
-DTEND:20261118T220000
-SUMMARY:Doja Cat - Tour Ma Vie World Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/doja-cat-tour-ma-vie-world-charlotte-north-car
- olina-11-18-2026/event/2D006339EEEC97F4\\n\\nRefreshed daily from live li
- stings.
-LOCATION:Spectrum Center\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/doja-cat-tour-ma-vie-world-charlotte-nort
- h-carolina-11-18-2026/event/2D006339EEEC97F4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1kAOvPb8GAupW6h@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T193000
-DTEND:20261118T220000
-SUMMARY:Upike Men's Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/upike-mens-basketball-pikeville-kentucky-11-18
- -2026/event/160065610D5BD1DB\\n\\nRefreshed daily from live listings.
-LOCATION:Appalachian Wireless Arena (Formerly Eastern Kentucky Expo Ctr)\,
-  Pikeville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/upike-mens-basketball-pikeville-kentucky-
- 11-18-2026/event/160065610D5BD1DB
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_akBs6x1@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T200000
-DTEND:20261118T223000
-SUMMARY:Palace - USA & Canada Tour 2026
-DESCRIPTION:The Fillmore Is A General Admission Standing Room Only Venue U
- nless Otherwise Noted. All Ages Welcome Doors: 7:00pm Show: 8:00pm Ticket
-  prices will increase the day of the show. All dates\, acts\, and ticket 
- prices subject to change without notice. All tickets are subject to appli
- cable service fees vi\\n\\nhttps://www.ticketmaster.com/palace-usa-canada
- -tour-2026-charlotte-north-carolina-11-18-2026/event/2D006491BAC4788A\\n\
- \nRefreshed daily from live listings.
-LOCATION:The Fillmore Charlotte\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/palace-usa-canada-tour-2026-charlotte-nor
- th-carolina-11-18-2026/event/2D006491BAC4788A
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_GF0ebTH@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T200000
-DTEND:20261118T223000
-SUMMARY:JALEN NGONDA: Doctrine of Love Tour 2026 *Canceled*
-DESCRIPTION:Unfortunately\, the Event Organizer has had to cancel your eve
- nt. You don't need to do a thing. We'll issue a refund to the [original m
- ethod of payment](https://help.ticketmaster.com/hc/en-us/articles/9614074
- 869009) used at time of purchase\, as soon as funds are received from the
-  Event Organizer. It \\n\\nhttps://www.ticketmaster.com/jalen-ngonda-doct
- rine-of-love-tour-charlotte-north-carolina-11-18-2026/event/2D0064C224098
- FFC\\n\\nRefreshed daily from live listings.
-LOCATION:Neighborhood Theatre Main Room\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/jalen-ngonda-doctrine-of-love-tour-charlo
- tte-north-carolina-11-18-2026/event/2D0064C224098FFC
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ub0@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T140000
 DTEND:20261119T163000
 SUMMARY:Elf the Musical
@@ -119,7 +20,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ub0
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KLA0xpN@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T170000
 DTEND:20261119T193000
 SUMMARY:Southern Conference Volleyball Championship: First Round
@@ -134,7 +35,7 @@ URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2p_iazT@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T180000
 DTEND:20261119T203000
 SUMMARY:DJ Raphi: HYPE TOUR USA 2.0
@@ -152,7 +53,7 @@ URL:https://www.ticketmaster.com/dj-raphi-hype-tour-usa-20-charlotte-north
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ki9E2OR@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Disney Descendants\, ZOMBIES & Camp Rock: Worlds Collide Concert T
@@ -168,7 +69,7 @@ URL:https://www.ticketmaster.com/disney-descendants-zombies-camp-rock-worl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8So8Kf1@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Rhythm & Roots: Soul Amplified
@@ -186,7 +87,7 @@ URL:https://www.ticketmaster.com/rhythm-roots-soul-amplified-charlotte-nor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_7mi3DgH@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -200,7 +101,7 @@ URL:https://www.etix.com/ticket/p/58776099/hiss-golden-messenger-asheville
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-7Ag@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -213,7 +114,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-7Ag
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_3SXQvSe@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:An Evening With Tamar Braxton
@@ -230,7 +131,7 @@ URL:https://www.ticketmaster.com/an-evening-with-tamar-braxton-charlotte-n
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_GlDneJ7@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Carbon Leaf
@@ -246,7 +147,7 @@ URL:https://www.ticketmaster.com/carbon-leaf-charlotte-north-carolina-11-1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvvFv@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:The Heavy Heavy w/ The Point.
@@ -259,7 +160,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvvFv
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KLAPepE@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T110000
 DTEND:20261120T133000
 SUMMARY:Southern Conference Volleyball Championship: Quarterfinals
@@ -275,7 +176,7 @@ URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7Kaz@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T183000
 DTEND:20261120T210000
 SUMMARY:Appalachian State Mountaineers Mens Basketball vs. North Texas Mea
@@ -289,7 +190,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Kaz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P414@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -301,8 +202,56 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P414
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-G5eVZ_3VpDdNK@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Black Jacket Symphony presents Led Zepplin IV
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/black-jacket-symphony-presents-led-zepplin-spa
+ rtanburg-south-carolina-11-20-2026/event/2D00652D16EC38D3\\n\\nRefreshed 
+ daily from live listings.
+LOCATION:Spartanburg Memorial Auditorium\, Spartanburg
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/black-jacket-symphony-presents-led-zeppli
+ n-spartanburg-south-carolina-11-20-2026/event/2D00652D16EC38D3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZbgkYZarC@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:RUSH: Fifty Something
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/rush-fifty-something-charlotte-north-carolina-
+ 11-20-2026/event/2D006351B000978E\\n\\nRefreshed daily from live listings
+ .
+LOCATION:Spectrum Center\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/rush-fifty-something-charlotte-north-caro
+ lina-11-20-2026/event/2D006351B000978E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_ChCO-oB@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:THE STRAY CATS
+DESCRIPTION:BAG POLICY: Any non-clear bag larger than 4.5" x 6.5" is not p
+ ermitted. Parking is included in the ticket price. Ticket delivery will b
+ e mobile only. All purchase transactions will be cashless. Purchases can 
+ be made with a debit card or credit card\; matching ID required. Concessi
+ ons will be availabl\\n\\nhttps://www.ticketmaster.com/the-stray-cats-cha
+ rlotte-north-carolina-11-20-2026/event/2D0064E6CE82147A\\n\\nRefreshed da
+ ily from live listings.
+LOCATION:Ovens Auditorium\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/the-stray-cats-charlotte-north-carolina-1
+ 1-20-2026/event/2D0064E6CE82147A
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70UbP@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T193000
 DTEND:20261120T220000
 SUMMARY:Elf the Musical
@@ -312,5 +261,52 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:Barter Theatre\, Abingdon
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbP
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_ol5yxe6@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T193500
+DTEND:20261120T220500
+SUMMARY:Twin City Thunderbirds Vs Indiana Sentinels
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/twin-city-thunderbirds-vs-indiana-sentinels-wi
+ nston-salem-north-carolina-11-20-2026/event/2D00651ACBE62087\\n\\nRefresh
+ ed daily from live listings.
+LOCATION:Winston-Salem Fairgrounds\, Winston Salem
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/twin-city-thunderbirds-vs-indiana-sentine
+ ls-winston-salem-north-carolina-11-20-2026/event/2D00651ACBE62087
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfuOOV@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Hickory Rave presents DJ Matt Martinez w/Gelli & DankkLoud
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketweb.com/event/hickory-rave-presents-dj-matt-the-premier-t
+ ickets/14360834\\n\\nRefreshed daily from live listings.
+LOCATION:The Premier\, Hickory
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/hickory-rave-presents-dj-matt-the-prem
+ ier-tickets/14360834
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5viZ_CnB9iya@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Keb' Mo'
+DESCRIPTION:MUST BE 21+ WITH VALID PHOTO ID. All sales final\; no refunds.
+  Doors open at 7PM. Reserved seating only - no standing room. ADA seating
+  in Sections 101 - 103\; contact box office for accommodations. Venue is 
+ smoke-free\, no vaping. Located inside Hard Rock Hotel & Casino Bristol. 
+ Box Office: NW corner \\n\\nhttps://www.ticketmaster.com/keb-mo-bristol-v
+ irginia-11-20-2026/event/1B0064EABA5ECE49\\n\\nRefreshed daily from live 
+ listings.
+LOCATION:Hard Rock Live Bristol\, Bristol
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/keb-mo-bristol-virginia-11-20-2026/event/
+ 1B0064EABA5ECE49
 END:VEVENT
 END:VCALENDAR

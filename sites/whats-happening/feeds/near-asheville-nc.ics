@@ -6,93 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Asheville\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Asheville\, NC.
 BEGIN:VEVENT
-UID:tm-G5eVZ_KS76uU-@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T180000
-DTEND:20261118T203000
-SUMMARY:Clemson University Tigers Women's Basketball vs. USC Upstate Spart
- ans Women's Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/clemson-university-tigers-womens-basketball-vs
- -clemson-south-carolina-11-18-2026/event/2D00653CC41CDDA1\\n\\nRefreshed 
- daily from live listings.
-LOCATION:Littlejohn Coliseum\, Clemson
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/clemson-university-tigers-womens-basketba
- ll-vs-clemson-south-carolina-11-18-2026/event/2D00653CC41CDDA1
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_8PlrK3l@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T190000
-DTEND:20261118T213000
-SUMMARY:Miss May I
-DESCRIPTION:The Underground Is A General Admission Standing Room Only Venu
- e Unless Otherwise Noted. Ages Welcome Doors: 6:00PM Show: 7:00PM Ticket 
- prices will increase the day of the show. All dates\, acts\, and ticket p
- rices subject to change without notice. All tickets are subject to applic
- able service fees via\\n\\nhttps://www.ticketmaster.com/miss-may-i-charlo
- tte-north-carolina-11-18-2026/event/2D0065096B7934AB\\n\\nRefreshed daily
-  from live listings.
-LOCATION:The Underground\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/miss-may-i-charlotte-north-carolina-11-18
- -2026/event/2D0065096B7934AB
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZbSEmDaLV@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T193000
-DTEND:20261118T220000
-SUMMARY:Doja Cat - Tour Ma Vie World Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/doja-cat-tour-ma-vie-world-charlotte-north-car
- olina-11-18-2026/event/2D006339EEEC97F4\\n\\nRefreshed daily from live li
- stings.
-LOCATION:Spectrum Center\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/doja-cat-tour-ma-vie-world-charlotte-nort
- h-carolina-11-18-2026/event/2D006339EEEC97F4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_akBs6x1@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261118T200000
-DTEND:20261118T223000
-SUMMARY:Palace - USA & Canada Tour 2026
-DESCRIPTION:The Fillmore Is A General Admission Standing Room Only Venue U
- nless Otherwise Noted. All Ages Welcome Doors: 7:00pm Show: 8:00pm Ticket
-  prices will increase the day of the show. All dates\, acts\, and ticket 
- prices subject to change without notice. All tickets are subject to appli
- cable service fees vi\\n\\nhttps://www.ticketmaster.com/palace-usa-canada
- -tour-2026-charlotte-north-carolina-11-18-2026/event/2D006491BAC4788A\\n\
- \nRefreshed daily from live listings.
-LOCATION:The Fillmore Charlotte\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/palace-usa-canada-tour-2026-charlotte-nor
- th-carolina-11-18-2026/event/2D006491BAC4788A
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5viZ_1UpatD1@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
-DTSTART:20261119T103000
-DTEND:20261119T130000
-SUMMARY:Disney On Ice presents Spotlight Magic!
-DESCRIPTION:All guest age 2 & older are required to have a ticket. Note: N
- o Costumes for guests 14 & older. Monitor the venue website for venue pol
- icies\, including health and safety protocols\, which are subject to chan
- ge. All ticket are subject to availability. Prices are subject to change.
-  Visit DisneyOnIce.co\\n\\nhttps://www.ticketmaster.com/disney-on-ice-pre
- sents-spotlight-magic-knoxville-tennessee-11-19-2026/event/1B0064AD96269E
- CA\\n\\nRefreshed daily from live listings.
-LOCATION:Knoxville Civic Coliseum\, Knoxville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-kn
- oxville-tennessee-11-19-2026/event/1B0064AD96269ECA
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ub0@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T140000
 DTEND:20261119T163000
 SUMMARY:Elf the Musical
@@ -105,7 +20,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ub0
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KLA0xpN@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T170000
 DTEND:20261119T193000
 SUMMARY:Southern Conference Volleyball Championship: First Round
@@ -120,7 +35,7 @@ URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2p_iazT@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T180000
 DTEND:20261119T203000
 SUMMARY:DJ Raphi: HYPE TOUR USA 2.0
@@ -138,7 +53,7 @@ URL:https://www.ticketmaster.com/dj-raphi-hype-tour-usa-20-charlotte-north
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_CD5XHa3@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:for KING & COUNTRY's 'A Drummer Boy Christmas'
@@ -153,7 +68,7 @@ URL:https://www.ticketmaster.com/for-king-countrys-a-drummer-boy-greenvill
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ki9E2OR@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Disney Descendants\, ZOMBIES & Camp Rock: Worlds Collide Concert T
@@ -169,7 +84,7 @@ URL:https://www.ticketmaster.com/disney-descendants-zombies-camp-rock-worl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8So8Kf1@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Rhythm & Roots: Soul Amplified
@@ -187,7 +102,7 @@ URL:https://www.ticketmaster.com/rhythm-roots-soul-amplified-charlotte-nor
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_1Upu_DE@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -205,7 +120,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-kn
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_o2jx48R@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T190000
 DTEND:20261119T213000
 SUMMARY:Tennessee Lady Volunteers Women's Basketball vs. Radford Universit
@@ -224,7 +139,7 @@ URL:https://www.ticketmaster.com/tennessee-lady-volunteers-womens-basketba
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_GwRmLva@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:Jay Leno
@@ -242,7 +157,7 @@ URL:https://www.ticketmaster.com/jay-leno-knoxville-tennessee-11-19-2026/e
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_5KZiXQL@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T193000
 DTEND:20261119T220000
 SUMMARY:A Christmas Carol (CBT)
@@ -260,7 +175,7 @@ URL:https://www.ticketmaster.com/a-christmas-carol-cbt-knoxville-tennessee
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_7mi3DgH@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -274,7 +189,7 @@ URL:https://www.etix.com/ticket/p/58776099/hiss-golden-messenger-asheville
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-7Ag@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Hiss Golden Messenger
@@ -287,7 +202,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-7Ag
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_3SXQvSe@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:An Evening With Tamar Braxton
@@ -304,7 +219,7 @@ URL:https://www.ticketmaster.com/an-evening-with-tamar-braxton-charlotte-n
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1A4vZbS@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:lespecial\, Natalie Brooke 
@@ -320,7 +235,7 @@ URL:https://www.ticketweb.com/event/lespecial-natalie-brooke-the-808-ticke
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70sfs@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261119T200000
 DTEND:20261119T223000
 SUMMARY:Anthony Gomes
@@ -332,8 +247,26 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A70sfs
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-G5viZ_1Up2tHa@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T103000
+DTEND:20261120T130000
+SUMMARY:Disney On Ice presents Spotlight Magic!
+DESCRIPTION:All guest age 2 & older are required to have a ticket. Note: N
+ o Costumes for guests 14 & older. Monitor the venue website for venue pol
+ icies\, including health and safety protocols\, which are subject to chan
+ ge. All ticket are subject to availability. Prices are subject to change.
+  Visit DisneyOnIce.co\\n\\nhttps://www.ticketmaster.com/disney-on-ice-pre
+ sents-spotlight-magic-knoxville-tennessee-11-20-2026/event/1B0064AD963E9F
+ 09\\n\\nRefreshed daily from live listings.
+LOCATION:Knoxville Civic Coliseum\, Knoxville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-kn
+ oxville-tennessee-11-20-2026/event/1B0064AD963E9F09
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-G5eVZ_KLAPepE@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T110000
 DTEND:20261120T133000
 SUMMARY:Southern Conference Volleyball Championship: Quarterfinals
@@ -349,7 +282,7 @@ URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_KS7FqUV@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T170000
 DTEND:20261120T193000
 SUMMARY:Clemson University Tigers Women's Basketball vs. UNC Asheville Bul
@@ -365,7 +298,7 @@ URL:https://www.ticketmaster.com/clemson-university-tigers-womens-basketba
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7Kaz@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T183000
 DTEND:20261120T210000
 SUMMARY:Appalachian State Mountaineers Mens Basketball vs. North Texas Mea
@@ -379,7 +312,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Kaz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A704kF@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Gabby Bryan
@@ -392,7 +325,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A704kF
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P414@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -404,8 +337,38 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P414
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-G5eVZ_3VpDdNK@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Black Jacket Symphony presents Led Zepplin IV
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/black-jacket-symphony-presents-led-zepplin-spa
+ rtanburg-south-carolina-11-20-2026/event/2D00652D16EC38D3\\n\\nRefreshed 
+ daily from live listings.
+LOCATION:Spartanburg Memorial Auditorium\, Spartanburg
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/black-jacket-symphony-presents-led-zeppli
+ n-spartanburg-south-carolina-11-20-2026/event/2D00652D16EC38D3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZbgkYZarC@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:RUSH: Fifty Something
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/rush-fifty-something-charlotte-north-carolina-
+ 11-20-2026/event/2D006351B000978E\\n\\nRefreshed daily from live listings
+ .
+LOCATION:Spectrum Center\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/rush-fifty-something-charlotte-north-caro
+ lina-11-20-2026/event/2D006351B000978E
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70UbP@whats-happening.natel628.github.io
-DTSTAMP:20261118T155010Z
+DTSTAMP:20261119T155352Z
 DTSTART:20261120T193000
 DTEND:20261120T220000
 SUMMARY:Elf the Musical
@@ -415,5 +378,37 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:Barter Theatre\, Abingdon
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbP
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfuOOV@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Hickory Rave presents DJ Matt Martinez w/Gelli & DankkLoud
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketweb.com/event/hickory-rave-presents-dj-matt-the-premier-t
+ ickets/14360834\\n\\nRefreshed daily from live listings.
+LOCATION:The Premier\, Hickory
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/hickory-rave-presents-dj-matt-the-prem
+ ier-tickets/14360834
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5viZ_CnB9iya@whats-happening.natel628.github.io
+DTSTAMP:20261119T155352Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Keb' Mo'
+DESCRIPTION:MUST BE 21+ WITH VALID PHOTO ID. All sales final\; no refunds.
+  Doors open at 7PM. Reserved seating only - no standing room. ADA seating
+  in Sections 101 - 103\; contact box office for accommodations. Venue is 
+ smoke-free\, no vaping. Located inside Hard Rock Hotel & Casino Bristol. 
+ Box Office: NW corner \\n\\nhttps://www.ticketmaster.com/keb-mo-bristol-v
+ irginia-11-20-2026/event/1B0064EABA5ECE49\\n\\nRefreshed daily from live 
+ listings.
+LOCATION:Hard Rock Live Bristol\, Bristol
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/keb-mo-bristol-virginia-11-20-2026/event/
+ 1B0064EABA5ECE49
 END:VEVENT
 END:VCALENDAR
