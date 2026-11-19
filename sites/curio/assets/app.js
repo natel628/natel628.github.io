@@ -703,7 +703,7 @@ function storyBodyHTML(t) {
     </div>
     <div class="rd-grid">
       <div class="rd-main">
-        <nav class="rd-toc" aria-label="In this story"><div class="rd-toc-head"><h4>In this story</h4><span class="hint">tap a section to jump</span></div><div class="rd-toc-list">${toc}</div></nav>
+        <nav class="rd-toc" aria-label="In this story"><div class="rd-toc-head"><h4>In this story</h4><span class="hint">jump to a section</span></div><div class="rd-toc-list">${toc}</div></nav>
         <article class="rd-body" id="rd-body">${body}</article>
       </div>
       <aside class="rd-rail">${tl}${cats}</aside>
