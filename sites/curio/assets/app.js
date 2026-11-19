@@ -697,7 +697,7 @@ function storyBodyHTML(t) {
     <a class="rel" href="https://en.wikipedia.org/w/index.php?title=Special:WhatLinksHere&target=${q}" target="_blank" rel="noopener"><span>What links here<small>Every article that mentions this one — the wider web of the story</small></span><span>↗</span></a>
   </div></div>`;
   return `<div class="rd-top">
-      <div class="rd-meta"><strong id="rd-left">${Math.max(1, Math.round(story.words / 200))} min read</strong><span class="rd-dot">·</span><span>${story.words.toLocaleString()} words</span><span class="rd-dot">·</span><span>${article.length} sections</span></div>
+      <div class="rd-meta"><strong id="rd-left">${Math.max(1, Math.round(story.words / 200))} min read</strong><span class="rd-dot rd-extra">·</span><span class="rd-extra">${story.words.toLocaleString()} words</span><span class="rd-dot rd-extra">·</span><span class="rd-extra">${article.length} sections</span></div>
       <span class="spacer"></span><button class="btn small ghost" id="story-start">Start reading</button><button class="btn small ghost" id="story-refresh">Refresh</button><button class="btn small ghost" id="story-hide">Close</button>
       <div class="rd-progress"><i id="rd-bar"></i></div>
     </div>

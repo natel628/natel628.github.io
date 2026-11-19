@@ -278,4 +278,5 @@ details.note p{margin-top:8px;font-size:13.5px;color:var(--muted)}
   .rd-top .btn.small{padding:6px 11px;font-size:12px}
   .rd-toc{padding:14px}
   .rd-meta{gap:6px;font-size:11.5px}
+  .rd-extra{display:none}
 }
