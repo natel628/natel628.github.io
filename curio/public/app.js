@@ -126,6 +126,11 @@ async function capture(input) {
     if (state.user) {
       const d = await api('/api/topics', { method: 'POST', body: JSON.stringify({ input }) });
       if (d._unauth) { state.user = null; render(); return; }
+      if (d.duplicate) {
+        toast('Already in your library — opened it instead.');
+        location.hash = '#/topic/' + d.topic.id;
+        return;
+      }
       state.topics.unshift(d.topic);
       await refreshDiscover();
       location.hash = '#/topic/' + d.topic.id;
@@ -133,6 +138,12 @@ async function capture(input) {
       setStatusText('Researching… (sign in to sync across devices)');
       const d = await api('/api/research', { method: 'POST', body: JSON.stringify({ input }) });
       const r = d.result;
+      const dup = state.guest.find((x) => sameTopic(x, { title: r.title, wikiTitle: r.wiki?.title }));
+      if (dup) {
+        toast('Already in your library — opened it instead.');
+        location.hash = '#/topic/' + dup.id;
+        return;
+      }
       const now = Date.now();
       const topic = {
         id: 'g_' + now.toString(36) + Math.random().toString(36).slice(2, 7),
@@ -185,6 +196,14 @@ async function patchTopic(id, patch, opts = {}) {
   if (!opts.silent) render();
   return t;
 }
+const normKey = (s) => String(s || '').toLowerCase().replace(/[\s_]+/g, ' ').replace(/[^\p{L}\p{N} ]/gu, '').trim();
+function sameTopic(a, b) {
+  if (!a || !b) return false;
+  if (a.id && b.id && a.id === b.id) return true;
+  if (a.wikiTitle && b.wikiTitle && normKey(a.wikiTitle) === normKey(b.wikiTitle)) return true;
+  const ta = normKey(a.title), tb = normKey(b.title);
+  return Boolean(ta) && ta === tb;
+}
 async function deleteTopic(id) {
   const t = findTopic(id);
   if (!t) return;
@@ -198,7 +217,9 @@ async function deleteTopic(id) {
     saveGuest();
   }
   await refreshDiscover();
-  location.hash = '#/library';
+  // Re-render immediately: if we're already on #/library the hash won't change, so no hashchange fires.
+  if (state.route === 'topic' && state.topicId === id) location.hash = '#/library';
+  render();
   toast('Deleted.');
 }
 
@@ -379,7 +400,7 @@ function homeHTML() {
   <div class="status-line" id="cap-status" role="status"></div>
   ${red.length ? `<section class="section tight"><div class="section-head"><h2>Gently resurfacing</h2><p>no pressure — just wonder</p></div>
     <div class="strip">${red.map(({ topic, prompt }) => `<article class="strip-card" data-open="${esc(topic.id)}" tabindex="0"><div class="cat">${esc(prompt)}</div><h3>${esc(topic.title)}</h3><div class="card-meta"><span class="pill ${esc(topic.status)}">${esc(topic.status)}</span><span>${timeAgo(topic.createdAt)}</span></div></article>`).join('')}</div></section>` : ''}
-  <section class="section tight"><div class="section-head"><h2>Recent curiosities</h2><p>${total} saved</p><span class="spacer"></span><button class="link" data-nav="library">View all →</button></div>
+  <section class="section tight"><div class="section-head"><h2>Recent curiosities</h2><p>${total} saved</p><span class="spacer"></span><div class="seg sm" id="f-view-home" aria-label="View"><button data-v="grid">Tiles</button><button data-v="list">List</button></div><button class="link" data-nav="library">View all →</button></div>
     <div class="grid" id="list-host"></div></section>`;
 }
 
@@ -477,6 +498,11 @@ function render() {
   if (state.route === 'home') {
     main.innerHTML = homeHTML();
     bindCapture(); renderList(6, { ignoreQ: true });
+    const vh = document.getElementById('f-view-home');
+    if (vh) vh.querySelectorAll('button').forEach((b) => {
+      b.classList.toggle('active', b.dataset.v === state.filter.view);
+      b.onclick = () => { state.filter.view = b.dataset.v; prefs.view = b.dataset.v; savePrefs(); render(); };
+    });
     bindCards(main);
     main.querySelectorAll('[data-ex]').forEach((b) => (b.onclick = () => capture(b.dataset.ex)));
     main.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));

@@ -365,12 +365,24 @@ async function capture(input) {
     if (state.user) {
       const d = await api('/api/topics', { method: 'POST', body: JSON.stringify({ input }) });
       if (d._unauth) { state.user = null; render(); return; }
+      if (d.duplicate) {
+        const existing = findTopic(d.topic.id) || d.topic;
+        toast('Already in your library — opened it instead.');
+        location.hash = '#/topic/' + encodeURIComponent(existing.id);
+        return;
+      }
       state.topics.unshift(d.topic);
       await refreshDiscover();
       location.hash = '#/topic/' + d.topic.id;
     } else {
       setStatusText('Researching…');
       const r = await localResearch(input);
+      const dup = state.guest.find((x) => sameTopic(x, { title: r.title, wikiTitle: r.wiki?.title }));
+      if (dup) {
+        toast('Already in your library — opened it instead.');
+        location.hash = '#/topic/' + encodeURIComponent(dup.id);
+        return;
+      }
       const now = Date.now();
       const topic = { id: uid(), title: r.title, input, inputType: r.inputType, category: r.category, status: 'unread', overview: r.overview, keyFacts: r.keyFacts, wikiUrl: r.wiki?.url || null, wikiTitle: r.wiki?.title || null, sources: r.sources, related: r.related, simple: r.simple || null, notes: '', tags: [], archived: false, createdAt: now, updatedAt: now, readPct: 0, reviewDueAt: now + 2 * 86400000, reviewInterval: 2 };
       state.guest.unshift(topic); saveGuest();
@@ -422,7 +434,9 @@ async function deleteTopic(id) {
   }
   delete readingProgress[id]; saveReadingProgress();
   await refreshDiscover();
-  location.hash = '#/library';
+  // Re-render immediately: if we're already on #/library the hash won't change, so no hashchange fires.
+  if (state.route === 'topic' && state.topicId === id) location.hash = '#/library';
+  render();
   toast('Deleted.');
 }
 function openRename(t) {
@@ -724,7 +738,9 @@ function homeHTML() {
     }).join('')}</div></section>` : ''}
   ${red.length ? `<section class="section tight"><div class="section-head"><h2>Gently resurfacing</h2><p>no pressure — just wonder</p></div>
     <div class="strip">${red.map(({ topic, prompt }) => `<article class="strip-card" data-open="${esc(topic.id)}" tabindex="0"><div class="cat">${esc(prompt)}</div><h3>${esc(topic.title)}</h3><div class="card-meta"><span class="pill ${esc(topic.status)}">${esc(topic.status)}</span><span>${timeAgo(topic.createdAt)}</span></div></article>`).join('')}</div></section>` : ''}
-  <section class="section tight"><div class="section-head"><h2>Recent curiosities</h2><p>${total} saved</p><span class="spacer"></span><button class="link" data-nav="library">View all →</button></div>
+  <section class="section tight"><div class="section-head"><h2>Recent curiosities</h2><p>${total} saved</p><span class="spacer"></span>
+    <div class="seg sm" id="f-view-home" aria-label="View"><button data-v="grid" class="${state.filter.view === 'grid' ? 'active' : ''}" aria-pressed="${state.filter.view === 'grid'}">Tiles</button><button data-v="list" class="${state.filter.view === 'list' ? 'active' : ''}" aria-pressed="${state.filter.view === 'list'}">List</button></div>
+    <button class="link" data-nav="library">View all →</button></div>
     <div class="grid" id="list-host"></div></section>`;
 }
 function libraryHTML(title, sub, showStatus) {
@@ -976,6 +992,8 @@ function render() {
   if (state.route === 'home') {
     main.innerHTML = homeHTML();
     bindCapture(); renderList(6);
+    const vh = $('#f-view-home');
+    if (vh) vh.querySelectorAll('button').forEach((b) => (b.onclick = () => { state.filter.view = b.dataset.v; prefs.view = b.dataset.v; savePrefs(); render(); }));
     bindCards(main);
     main.querySelectorAll('[data-ex]').forEach((b) => (b.onclick = () => capture(b.dataset.ex)));
     main.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
