@@ -15,8 +15,11 @@ const timeAgo = (ts) => {
 };
 const fmtDate = (ts) => new Date(ts).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
 const readMins = (t) => {
-  const w = String(t?.overview || '' + ' ' + (t?.keyFacts || []).join(' ')).split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.round(w / 200));
+  const story = state.stories[storyKey(t)];
+  const words = story
+    ? story.words
+    : (String(t?.overview || '') + ' ' + (t?.keyFacts || []).join(' ')).split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
 };
 
 const PREFS_KEY = 'curio_prefs_v1';
@@ -449,6 +452,13 @@ async function deleteTopic(id) {
   toast('Deleted.');
 }
 
+function markOpened(t) {
+  if (!t) return;
+  t.lastOpenedAt = Date.now();
+  if (state.user && !String(t.id).startsWith('g_')) patchTopic(t.id, { lastOpenedAt: t.lastOpenedAt }, { silent: true }).catch(() => {});
+  else saveGuest();
+}
+
 /* ---------- navigation ---------- */
 const NAV = [
   { id: 'home', label: 'Capture', icon: '✦' },
@@ -604,8 +614,15 @@ function renderList(limit) {
 }
 
 /* ---------- views ---------- */
+function continueReading() {
+  return allTopics()
+    .filter((t) => t.lastOpenedAt && !t.archived && t.status !== 'completed')
+    .sort((a, b) => b.lastOpenedAt - a.lastOpenedAt)
+    .slice(0, 3);
+}
 function homeHTML() {
   const red = state.rediscover;
+  const cont = continueReading();
   const total = allTopics().filter((t) => !t.archived).length;
   return `<section class="hero compact">
     <h1>What's on <em>your mind?</em></h1>
@@ -617,6 +634,8 @@ function homeHTML() {
   </div>
   <div class="examples">${EXAMPLES.map((e) => `<button class="chip" data-ex="${esc(e)}">${esc(e)}</button>`).join('')}</div>
   <div class="status-line" id="cap-status" role="status"></div>
+  ${cont.length ? `<section class="section tight"><div class="section-head"><h2>Pick up where you left off</h2><p>${cont.length === 1 ? 'one story in progress' : cont.length + ' stories in progress'}</p></div>
+    <div class="strip">${cont.map((t) => `<article class="strip-card" data-open="${esc(t.id)}" tabindex="0" role="link" aria-label="${esc(t.title)}"><div class="cat">Last read ${esc(timeAgo(t.lastOpenedAt))} · ${readMins(t)} min read</div><h3>${esc(t.title)}</h3><div class="card-meta"><span class="pill ${esc(t.status)}">${esc(t.status)}</span>${(t.notes || '').trim() ? '<span>· has notes</span>' : ''}</div></article>`).join('')}</div></section>` : ''}
   ${red.length ? `<section class="section tight"><div class="section-head"><h2>Gently resurfacing</h2><p>no pressure — just wonder</p></div>
     <div class="strip">${red.map(({ topic, prompt }) => `<article class="strip-card" data-open="${esc(topic.id)}" tabindex="0"><div class="cat">${esc(prompt)}</div><h3>${esc(topic.title)}</h3><div class="card-meta"><span class="pill ${esc(topic.status)}">${esc(topic.status)}</span><span>${timeAgo(topic.createdAt)}</span></div></article>`).join('')}</div></section>` : ''}
   <section class="section tight"><div class="section-head"><h2>Recent curiosities</h2><p>${total} saved</p><span class="spacer"></span><button class="link" data-nav="library">View all →</button></div>
@@ -653,6 +672,8 @@ function stepsHTML(t) {
 
 function storyKey(t) { return t.wikiTitle || t.title; }
 function storyPanelHTML(t) {
+  const story = state.stories[storyKey(t)];
+  if (story && state.storyOpen.has(t.id)) return `<section class="reader" id="story-panel" aria-label="The whole story">${storyBodyHTML(t)}</section>`;
   return `<div class="panel" id="story-panel"><div class="panel-head"><h3>The whole story</h3><span class="hint" id="story-hint">beyond the opening paragraph</span></div><div id="story-body">${storyBodyHTML(t)}</div></div>`;
 }
 function storyBodyHTML(t) {
@@ -662,10 +683,12 @@ function storyBodyHTML(t) {
       <div class="story-actions"><button class="btn small primary" id="story-btn">Open the full story</button><span class="hint" id="story-note">Reads the complete Wikipedia article — nothing is stored.</span></div>`;
   }
   const words = (s) => s.blocks.reduce((n, b) => n + b.text.split(/\s+/).filter(Boolean).length, 0);
-  const secs = story.sections.map((s) => `<details class="story-sec"><summary><span class="ss-h">${esc(s.heading)}</span><span class="ss-n">${words(s)} words</span></summary><div class="ss-body">${s.blocks.map((b) => b.t === 'h' ? `<h4>${esc(b.text)}</h4>` : `<p>${esc(b.text)}</p>`).join('')}</div></details>`).join('');
-  const tl = story.timeline.length ? `<div class="story-block"><h4>What happened, in order</h4><ol class="timeline">${story.timeline.map((r) => `<li><span class="tl-year">${r.year}</span><p>${esc(r.text)}</p></li>`).join('')}</ol></div>` : '';
+  const article = story.sections.length ? story.sections : (story.lead ? [{ heading: 'The article', blocks: story.lead.blocks }] : []);
+  const toc = article.map((s, i) => `<button class="toc-item" data-sec="${i}"><span class="toc-n">${i + 1}</span><span class="toc-t">${esc(s.heading)}</span><span class="toc-w">${words(s)}</span></button>`).join('');
+  const body = article.map((s, i) => `<section class="rd-sec" id="rd-sec-${i}"><h3 class="rd-h"><span class="rd-num">${i + 1}</span><span>${esc(s.heading)}</span></h3>${s.blocks.map((b) => b.t === 'h' ? `<h4>${esc(b.text)}</h4>` : `<p>${esc(b.text)}</p>`).join('')}</section>`).join('');
+  const tl = story.timeline.length ? `<div class="rd-card"><h4>What happened, in order</h4><ol class="timeline">${story.timeline.map((r) => `<li><span class="tl-year">${r.year}</span><p>${esc(r.text)}</p></li>`).join('')}</ol></div>` : '';
   const threads = story.threads.length ? `<div class="story-block"><h4>Threads that run through it</h4><p class="hint" style="margin-bottom:10px">Tap one to make it its own topic — your notes here stay put.</p><div class="rel-grid">${story.threads.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason)}</small></span><span>→</span></button>`).join('')}</div></div>` : '';
-  const cats = story.categories.length ? `<div class="story-block"><h4>Filed under</h4><div class="cat-chips">${story.categories.map((c) => `<span>${esc(c)}</span>`).join('')}</div></div>` : '';
+  const cats = story.categories.length ? `<div class="rd-card"><h4>Filed under</h4><div class="cat-chips">${story.categories.map((c) => `<span>${esc(c)}</span>`).join('')}</div></div>` : '';
   const elsewhere = story.elsewhere.length ? `<div class="story-block"><h4>Reported elsewhere</h4><p class="hint" style="margin-bottom:8px">The sources the article itself cites — go to the primary reporting.</p>${story.elsewhere.map((s, i) => `<a class="src" href="${esc(s.url)}" target="_blank" rel="noopener"><span class="src-n">${i + 1}</span><span class="src-body"><span class="src-p">${esc(s.publisher)}</span><span class="src-t">${esc(s.title)}</span></span><span class="src-go">↗</span></a>`).join('')}</div>` : '';
   const q = encodeURIComponent(story.title);
   const dig = `<div class="story-block"><h4>Keep digging</h4><div class="rel-grid">
@@ -673,9 +696,46 @@ function storyBodyHTML(t) {
     <a class="rel" href="https://news.google.com/search?q=${q}" target="_blank" rel="noopener"><span>Search the news<small>Latest coverage and follow-ups</small></span><span>↗</span></a>
     <a class="rel" href="https://en.wikipedia.org/w/index.php?title=Special:WhatLinksHere&target=${q}" target="_blank" rel="noopener"><span>What links here<small>Every article that mentions this one — the wider web of the story</small></span><span>↗</span></a>
   </div></div>`;
-  return `<div class="story-tools"><span class="hint">${story.words.toLocaleString()} words · ${story.sections.length} sections · read from Wikipedia just now</span><span class="spacer"></span><button class="btn small ghost" id="story-refresh">Refresh</button><button class="btn small ghost" id="story-hide">Close</button></div>
-    ${tl}${secs ? `<div class="story-block"><h4>Section by section</h4><div class="story-sections">${secs}</div></div>` : ''}${threads}${cats}${elsewhere}${dig}
-    <p class="hint" style="margin-top:18px">All of this comes from the Wikipedia article <a href="${esc(story.url)}" target="_blank" rel="noopener">${esc(story.title)} ↗</a>.</p>`;
+  return `<div class="rd-top">
+      <div class="rd-meta"><strong id="rd-left">${Math.max(1, Math.round(story.words / 200))} min read</strong><span class="rd-dot">·</span><span>${story.words.toLocaleString()} words</span><span class="rd-dot">·</span><span>${article.length} sections</span></div>
+      <span class="spacer"></span><button class="btn small ghost" id="story-start">Start reading</button><button class="btn small ghost" id="story-refresh">Refresh</button><button class="btn small ghost" id="story-hide">Close</button>
+      <div class="rd-progress"><i id="rd-bar"></i></div>
+    </div>
+    <div class="rd-grid">
+      <div class="rd-main">
+        <nav class="rd-toc" aria-label="In this story"><div class="rd-toc-head"><h4>In this story</h4><span class="hint">tap a section to jump</span></div><div class="rd-toc-list">${toc}</div></nav>
+        <article class="rd-body" id="rd-body">${body}</article>
+      </div>
+      <aside class="rd-rail">${tl}${cats}</aside>
+    </div>
+    <div class="rd-after">${threads}${elsewhere}${dig}</div>
+    <p class="hint" style="margin-top:22px">All of this comes from the Wikipedia article <a href="${esc(story.url)}" target="_blank" rel="noopener">${esc(story.title)} ↗</a>.</p>`;
+}
+function detachProgress() {
+  if (state._progress) { state._progress(); state._progress = null; }
+}
+function bindReadingProgress(t) {
+  detachProgress();
+  const body = $('#rd-body');
+  const bar = $('#rd-bar');
+  const left = $('#rd-left');
+  const story = state.stories[storyKey(t)];
+  if (!body || !bar || !story) return;
+  const mins = Math.max(1, Math.round(story.words / 200));
+  let raf = 0;
+  const paint = () => {
+    raf = 0;
+    const r = body.getBoundingClientRect();
+    const anchor = window.innerHeight * 0.72;
+    const pct = Math.min(1, Math.max(0, (anchor - r.top) / Math.max(r.height, 1)));
+    bar.style.width = (pct * 100).toFixed(1) + '%';
+    if (left) left.textContent = pct >= 0.99 ? 'Finished · ' + mins + ' min read' : pct <= 0.01 ? mins + ' min read' : Math.max(1, Math.round(mins * (1 - pct))) + ' min left';
+  };
+  const onScroll = () => { if (!raf) raf = requestAnimationFrame(paint); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  paint();
+  state._progress = () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
 }
 function bindStory(t) {
   const open = $('#story-btn');
@@ -683,14 +743,23 @@ function bindStory(t) {
   const refresh = $('#story-refresh');
   if (refresh) refresh.onclick = () => openStory(t, true);
   const hide = $('#story-hide');
-  if (hide) hide.onclick = () => { state.storyOpen.delete(t.id); render(); };
+  if (hide) hide.onclick = () => { state.storyOpen.delete(t.id); detachProgress(); render(); };
+  const start = $('#story-start');
+  if (start) start.onclick = () => $('#rd-body')?.scrollIntoView({ block: 'start' });
   const panel = $('#story-panel');
-  if (panel) panel.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
+  if (panel) {
+    panel.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
+    panel.querySelectorAll('[data-sec]').forEach((b) => (b.onclick = () => {
+      panel.querySelectorAll('[data-sec]').forEach((x) => x.classList.toggle('on', x === b));
+      document.getElementById('rd-sec-' + b.dataset.sec)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+  }
+  bindReadingProgress(t);
 }
 async function openStory(t, force) {
   const key = storyKey(t);
   state.storyOpen.add(t.id);
-  if (!force && state.stories[key]) { render(); return; }
+  if (!force && state.stories[key]) { render(); $('#story-panel')?.scrollIntoView({ block: 'start' }); return; }
   const btn = $('#story-btn') || $('#story-refresh');
   if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Loading…'; }
   const note = $('#story-note');
@@ -698,6 +767,7 @@ async function openStory(t, force) {
   try {
     state.stories[key] = await loadStory(key);
     render();
+    $('#story-panel')?.scrollIntoView({ block: 'start' });
   } catch (e) {
     state.storyOpen.delete(t.id);
     const n = $('#story-note');
@@ -718,6 +788,7 @@ function topicHTML(t) {
   const mode = hasSimple ? (prefs.summaryMode === 'simple' ? 'simple' : 'full') : 'full';
   const overviewText = mode === 'simple' && hasSimple ? t.simple.overview : (t.overview || 'No overview yet.');
   const words = (t.notes || '').trim() ? (t.notes || '').trim().split(/\s+/).length : 0;
+  const storyReady = Boolean(state.storyOpen.has(t.id) && state.stories[storyKey(t)]);
   return `<button class="back" id="back-btn">← Back</button>
   <div class="topic-hero">
     <div class="topic-top"><div class="cat">${esc(t.category)} · ${esc(t.inputType || 'topic')} · ${readMins(t)} min read</div>
@@ -735,6 +806,7 @@ function topicHTML(t) {
       <button class="btn small ghost danger" id="del-btn">Delete</button>
     </div>
   </div>
+  ${storyReady ? storyPanelHTML(t) : ''}
   <div class="topic-layout">
     <div class="prose">
       <div class="panel"><div class="panel-head"><h3>Overview</h3>
@@ -742,7 +814,7 @@ function topicHTML(t) {
       </div><p>${esc(overviewText)}</p>
         ${hasSimple && mode === 'simple' ? `<p class="hint" style="margin-top:10px">Plain-language version from Simple English Wikipedia. <a href="${esc(t.simple.url || '#')}" target="_blank" rel="noopener">Read there ↗</a></p>` : ''}
         ${t.disputed ? `<details class="note"><summary>Established vs debated</summary><p>${esc(t.disputed)}</p></details>` : ''}</div>
-      ${storyPanelHTML(t)}
+      ${storyReady ? '' : storyPanelHTML(t)}
       ${facts ? `<div class="panel"><h3>Key facts</h3><ul class="facts">${facts}</ul></div>` : ''}
       <div class="panel"><div class="panel-head"><h3>Sources & further reading</h3><span class="hint">${(t.sources || []).length} links</span></div>${srcs || '<p class="hint">No sources found yet.</p>'}</div>
       ${(t.related || []).length ? `<div class="panel"><h3>Rabbit holes</h3><p class="hint" style="margin-bottom:12px">Each one opens fresh research — your current notes stay put.</p><div class="rel-grid">${t.related.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>` : ''}
@@ -762,6 +834,7 @@ function topicHTML(t) {
 /* ---------- render ---------- */
 function render() {
   parseRoute();
+  detachProgress();
   renderSide();
   const main = $('#main');
   if (state.route === 'home') {
@@ -773,6 +846,7 @@ function render() {
   } else if (state.route === 'topic') {
     const t = findTopic(state.topicId);
     if (!t) { main.innerHTML = `<div class="empty"><div class="big">?</div><p>That topic isn't here. It may have been deleted.</p><br><button class="btn" onclick="location.hash='#/library'">Back to library</button></div>`; return; }
+    markOpened(t);
     main.innerHTML = topicHTML(t);
     $('#back-btn').onclick = () => history.length > 1 ? history.back() : (location.hash = '#/library');
     $('#status-row').querySelectorAll('.step').forEach((b) => (b.onclick = () => patchTopic(t.id, { status: b.dataset.status })));
