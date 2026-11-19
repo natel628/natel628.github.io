@@ -132,12 +132,15 @@ async function capture(input) {
         return;
       }
       state.topics.unshift(d.topic);
+      if (d.overviewNote) toast(d.overviewNote);
+      else if (d.searchMeta?.suggestion) toast('Did you mean “' + d.searchMeta.suggestion + '”? Showing the closest match.');
       await refreshDiscover();
       location.hash = '#/topic/' + d.topic.id;
     } else {
       setStatusText('Researching… (sign in to sync across devices)');
       const d = await api('/api/research', { method: 'POST', body: JSON.stringify({ input }) });
       const r = d.result;
+      if (r.overviewNote) setTimeout(() => toast(r.overviewNote), 50);
       const dup = state.guest.find((x) => sameTopic(x, { title: r.title, wikiTitle: r.wiki?.title }));
       if (dup) {
         toast('Already in your library — opened it instead.');
@@ -148,7 +151,7 @@ async function capture(input) {
       const topic = {
         id: 'g_' + now.toString(36) + Math.random().toString(36).slice(2, 7),
         title: r.title, input, inputType: r.inputType, category: r.category, status: 'exploring',
-        overview: r.overview, keyFacts: r.keyFacts, wikiUrl: r.wiki?.url || null, wikiTitle: r.wiki?.title || null,
+        overview: r.overview, overviewNote: r.overviewNote || '', keyFacts: r.keyFacts, wikiUrl: r.wiki?.url || null, wikiTitle: r.wiki?.title || null,
         sources: r.sources, related: r.related, simple: r.simple || null, notes: '', aiPowered: r.aiPowered, archived: false,
         createdAt: now, updatedAt: now,
       };
@@ -471,7 +474,7 @@ function topicHTML(t) {
     <div class="prose">
       <div class="panel"><div class="panel-head"><h3>Overview</h3>
         ${hasSimple ? `<div class="seg sm" id="sum-toggle" role="tablist" aria-label="Summary style"><button data-m="full" class="${mode === 'full' ? 'active' : ''}">Full</button><button data-m="simple" class="${mode === 'simple' ? 'active' : ''}">Plain English</button></div>` : ''}
-      </div><p>${esc(overviewText)}</p>
+      </div>${t.overviewNote ? `<p class="hint" style="margin-bottom:8px">🔍 ${esc(t.overviewNote)}</p>` : ''}<p>${esc(overviewText)}</p>
         ${hasSimple && mode === 'simple' ? `<p class="hint" style="margin-top:10px">Plain-language version from Simple English Wikipedia. <a href="${esc(t.simple.url || '#')}" target="_blank" rel="noopener">Read there ↗</a></p>` : ''}
         ${disputed ? `<details class="note"><summary>Established vs debated</summary><p>${esc(disputed)}</p></details>` : ''}</div>
       ${facts ? `<div class="panel"><h3>Key facts</h3><ul class="facts">${facts}</ul></div>` : ''}

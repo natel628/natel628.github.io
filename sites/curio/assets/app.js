@@ -332,14 +332,76 @@ const CATEGORY_RULES = [
   ['Society', /politic|econom|societ|\blaw\b|government|religion|\bcity\b|country/i],
 ];
 function guessCategory(text) { for (const [name, rx] of CATEGORY_RULES) if (rx.test(text)) return name; return 'Curiosity'; }
+/* Tolerant matching: misspellings + synonyms + relaxed variants, so
+   "bill clinton drug lord aquittel" still lands on "Bill Clinton pardon controversy". */
+const SEARCH_SYNONYMS = { acquittal: 'pardon', acquited: 'pardon', acquitted: 'pardon', aquittal: 'acquittal', aquittel: 'acquittal', pardoned: 'pardon', pardoning: 'pardon', pardons: 'pardon', clemency: 'pardon', controvercy: 'controversy', controversey: 'controversy', presedent: 'president', druglord: 'drug lord' };
+const fixSearchToken = (t) => SEARCH_SYNONYMS[String(t).toLowerCase()] || t;
+const fixedSearchQuery = (q) => String(q).split(/\s+/).map(fixSearchToken).join(' ');
+const synonymSearchQuery = (q) => String(q).split(/\s+/).map((w) => SEARCH_SYNONYMS[String(w).toLowerCase()] || w).join(' ');
+function searchVariants(q) {
+  const tokens = String(q).split(/\s+/).filter(Boolean);
+  const out = [];
+  const push = (c) => { c = String(c || '').trim(); if (c.length > 2 && !out.includes(c)) out.push(c); };
+  push(q);
+  const fixed = fixedSearchQuery(q);
+  push(fixed); push(synonymSearchQuery(fixed)); push(synonymSearchQuery(q));
+  const fe = fixed.split(/\s+/); const fhe = fe.slice(0, 2).join(' ');
+  if (tokens.length >= 3 && [...tokens, ...fe].some((k) => ['pardon', 'pardoned', 'pardons', 'acquittal', 'acquitted', 'aquittal', 'aquittel', 'clemency'].includes(String(k).toLowerCase()))) push(fhe + ' pardon');
+  if (tokens.length >= 3 && tokens.length <= 7) for (let i = tokens.length - 1; i >= 0; i--) push(tokens.filter((_, j) => j !== i).join(' '));
+  if (tokens.length >= 3) {
+    const kwSet = [...new Set([...tokens.slice(2), ...fe.slice(2), ...synonymSearchQuery(fixed).split(/\s+/).slice(2)])];
+    for (const kw of kwSet) { if (kw.length > 3) push(fhe + ' ' + kw); if (out.length >= 10) break; }
+    push(tokens.slice(0, 3).join(' ')); push(tokens.slice(0, 2).join(' '));
+  }
+  return out.slice(0, 10);
+}
+function scoreSearchPage(title, q, variant) {
+  const stop = new Set(['the', 'of', 'a', 'an', 'and', 'why', 'did', 'does', 'what', 'how', 'lord']);
+  const toks = (s) => String(s || '').toLowerCase().split(/[^a-z]+/).filter((w) => w.length > 3 && !stop.has(w));
+  const tl = String(title || '').toLowerCase();
+  const qw = toks(q), vw = toks(variant);
+  let s = 0;
+  for (const w of vw) if (tl.includes(w)) s += w.length > 6 ? 2 : 1;
+  for (const w of qw) if (!vw.includes(w) && tl.includes(w)) s += 0.5;
+  if (vw.length >= 2 && tl.includes(vw.slice(0, 2).join(' '))) s += 1.5;
+  return s;
+}
+async function wikiActionSearch(q, limit = 5) {
+  const d = await getJSON(`${WIKI}/w/api.php?action=query&format=json&origin=*&list=search&srsearch=${encodeURIComponent(q)}&srlimit=${limit}&srinfo=suggestion`);
+  const pages = (d && d.query && d.query.search ? d.query.search : []).map((h) => ({ title: h.title, description: '', excerpt: '', url: articleURL('en', h.title) }));
+  const suggestion = d && d.query && d.query.searchinfo ? d.query.searchinfo.suggestion : null;
+  return { pages, suggestion };
+}
 async function localResearch(input) {
   const kind = inputKind(input);
   const q = searchQuery(input);
-  let pages = [];
-  try { pages = await wikiSearchPages(q); if (!pages.length && q !== input) pages = await wikiSearchPages(input); }
+  const variants = searchVariants(q);
+  const seen = new Map();
+  let suggestion = null;
+  try {
+    for (const v of variants.slice(0, 6)) {
+      let pages = [];
+      try { pages = await wikiSearchPages(v, 3); } catch {}
+      if (!pages.length) {
+        try { const r = await wikiActionSearch(v, 3); pages = r.pages; if (r.suggestion && !suggestion) suggestion = r.suggestion; } catch {}
+      }
+      for (const p of pages.slice(0, 2)) if (p && p.title && !seen.has(p.title.toLowerCase())) seen.set(p.title.toLowerCase(), { page: p, variant: v });
+      if (seen.size >= 4) break;
+    }
+    if (!seen.size) {
+      try {
+        const r = await wikiActionSearch(q, 5);
+        for (const p of r.pages.slice(0, 2)) if (p && p.title && !seen.has(p.title.toLowerCase())) seen.set(p.title.toLowerCase(), { page: p, variant: q });
+        if (r.suggestion && !suggestion) suggestion = r.suggestion;
+      } catch {}
+    }
+  }
   catch { throw new Error('Couldn’t reach Wikipedia. Check your connection and try again.'); }
-  if (!pages.length) throw new Error('No Wikipedia article matched that. Try rewording it.');
-  const best = pages[0];
+  if (!seen.size) throw new Error('No Wikipedia article matched that. Try fewer words — e.g. just the name and one keyword.');
+  const ranked = [...seen.values()].map(({ page, variant }) => ({ page, variant, score: scoreSearchPage(page.title, q, variant) })).sort((a, b) => b.score - a.score);
+  const best = ranked[0].page;
+  const matchedVariant = ranked[0].variant;
+  const pages = ranked.map((r) => r.page);
   const [summary, simple, intro] = await Promise.all([wikiSummary('en', best.title).catch(() => null), wikiSummary('simple', best.title).catch(() => null), wikiIntro(best.title).catch(() => '')]);
   const overview = (summary && summary.overview) || intro || best.excerpt || best.description;
   if (!overview) throw new Error('Wikipedia has no summary for that page yet. Try another wording.');
@@ -350,7 +412,8 @@ async function localResearch(input) {
   if (summary) sources.push({ title: summary.title + ' — Wikipedia', url: summary.url, publisher: 'Wikipedia', snippet: (summary.description || best.excerpt || '').slice(0, 220) });
   if (kind === 'link') { let host = 'link'; try { host = new URL(input).hostname.replace(/^www\./, ''); } catch {} sources.push({ title: 'The link you saved', url: input, publisher: host, snippet: 'Your original link' }); }
   pages.slice(1, 5).forEach((p) => sources.push({ title: p.title, url: p.url, publisher: 'Wikipedia', snippet: (p.description || p.excerpt || '').slice(0, 220) }));
-  return { title: (summary && summary.title) || best.title, inputType: kind, category: guessCategory([overview, best.description, q].join(' ')), overview, keyFacts, wiki: summary ? { title: summary.title, url: summary.url } : { title: best.title, url: best.url }, simple: simple ? { overview: simple.overview, url: simple.url } : null, sources, related: pages.slice(1, 4).map((p) => ({ title: p.title, reason: p.description || 'A nearby article worth a look.' })), aiPowered: false };
+  const overviewNote = matchedVariant && matchedVariant.toLowerCase() !== q.toLowerCase() ? 'Closest Wikipedia match for “' + q.slice(0, 80) + '” — matched via “' + matchedVariant.slice(0, 80) + '”.' : '';
+  return { title: (summary && summary.title) || best.title, inputType: kind, category: guessCategory([overview, best.description, q].join(' ')), overview, overviewNote, keyFacts, wiki: summary ? { title: summary.title, url: summary.url } : { title: best.title, url: best.url }, simple: simple ? { overview: simple.overview, url: simple.url } : null, sources, related: pages.slice(1, 4).map((p) => ({ title: p.title, reason: p.description || 'A nearby article worth a look.' })), aiPowered: false };
 }
 
 /* ---------- capture ---------- */
@@ -384,7 +447,8 @@ async function capture(input) {
         return;
       }
       const now = Date.now();
-      const topic = { id: uid(), title: r.title, input, inputType: r.inputType, category: r.category, status: 'unread', overview: r.overview, keyFacts: r.keyFacts, wikiUrl: r.wiki?.url || null, wikiTitle: r.wiki?.title || null, sources: r.sources, related: r.related, simple: r.simple || null, notes: '', tags: [], archived: false, createdAt: now, updatedAt: now, readPct: 0, reviewDueAt: now + 2 * 86400000, reviewInterval: 2 };
+      const topic = { id: uid(), title: r.title, input, inputType: r.inputType, category: r.category, status: 'unread', overview: r.overview, overviewNote: r.overviewNote || '', keyFacts: r.keyFacts, wikiUrl: r.wiki?.url || null, wikiTitle: r.wiki?.title || null, sources: r.sources, related: r.related, simple: r.simple || null, notes: '', tags: [], archived: false, createdAt: now, updatedAt: now, readPct: 0, reviewDueAt: now + 2 * 86400000, reviewInterval: 2 };
+      if (r.overviewNote) setTimeout(() => toast(r.overviewNote), 50);
       state.guest.unshift(topic); saveGuest();
       await refreshDiscover();
       location.hash = '#/topic/' + topic.id;
@@ -919,6 +983,7 @@ function topicHTML(t) {
   const hasSimple = Boolean(t.simple?.overview);
   const mode = hasSimple ? (prefs.summaryMode === 'simple' ? 'simple' : 'full') : 'full';
   const overviewText = mode === 'simple' && hasSimple ? t.simple.overview : (t.overview || 'No overview yet.');
+  const overviewNote = t.overviewNote ? `<p class="hint" style="margin-bottom:8px">🔍 ${esc(t.overviewNote)}</p>` : '';
   const words = (t.notes || '').trim() ? (t.notes || '').trim().split(/\s+/).length : 0;
   const storyReady = Boolean(state.storyOpen.has(t.id) && state.stories[storyKey(t)]);
   const tags = (t.tags || []).map((tg) => `<span class="pill" style="font-size:10px">${esc(tg)}</span>`).join(' ');
@@ -947,7 +1012,7 @@ function topicHTML(t) {
     <div class="prose">
       <div class="panel"><div class="panel-head"><h3>Overview</h3>
         ${hasSimple ? `<div class="seg sm" id="sum-toggle" role="tablist" aria-label="Summary style"><button data-m="full" class="${mode === 'full' ? 'active' : ''}">Full</button><button data-m="simple" class="${mode === 'simple' ? 'active' : ''}">Plain English</button></div>` : ''}
-      </div><p>${esc(overviewText)}</p>
+      </div>${overviewNote}<p>${esc(overviewText)}</p>
         ${hasSimple && mode === 'simple' ? `<p class="hint" style="margin-top:10px">Plain-language version from Simple English Wikipedia. <a href="${esc(safeHref(t.simple.url || '#'))}" target="_blank" rel="noopener">Read there ↗</a></p>` : ''}
         ${t.disputed ? `<details class="note"><summary>Established vs debated</summary><p>${esc(t.disputed)}</p></details>` : ''}</div>
       ${storyReady ? '' : storyPanelHTML(t)}
