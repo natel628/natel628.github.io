@@ -27,9 +27,7 @@
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   #stopsWrap.stops-preview, #budgetWrap.stops-preview{position:relative;max-height:120px;overflow:hidden;}
-  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(transparent,var(--bg));pointer-events:none;}
   #stopsWrap.expanded, #budgetWrap.expanded{max-height:none;overflow:visible;}
-  #stopsWrap.expanded::after, #budgetWrap.expanded::after{display:none;}
   #stops li { position:relative; display:flex; flex-wrap:wrap; align-items:flex-start; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
   /* The name gets its own room and the buttons can never sit on top of it. */
   #stops .stop-info { flex:1 1 150px; min-width:0; overflow-wrap:anywhere; }
@@ -639,13 +637,13 @@
     <h2>💵 Budget</h2>
     <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
     <div class="rv-grid">
-      <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
+      <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="4" readonly /></label>
     </div>
     <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap">
       <select id="budCat" aria-label="Budget category" style="max-width:160px;flex:none">
         <option>Food</option><option>Tolls</option><option>Items</option><option>Gas</option><option>Lodging</option><option>Activities</option><option>Other</option>
       </select>
-      <input id="budCustomCat" placeholder="Custom category (if Other)" style="max-width:180px;flex:none" />
+      <input id="budCustomCat" placeholder="Custom category (if Other)" style="max-width:180px;flex:none;display:none" />
       <input id="budNote" placeholder="Note (e.g. towels)" style="flex:1 1 160px" />
       <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" style="max-width:100px;flex:none" />
       <button type="button" id="budAdd">Add</button>
@@ -4557,7 +4555,7 @@ document.addEventListener('DOMContentLoaded',function(){
     }).join('');
     var total=entries.reduce(function(s,e){return s+Number(e.amt||0);},0);
     var travelers=Number((document.getElementById('budTravelers')||{}).value)||4;
-    if(tot) tot.textContent='Total: $'+total.toFixed(2)+' · Per person ('+travelers+'): $'+(total/travelers).toFixed(2);
+    if(tot) tot.innerHTML='<strong>Total: $'+total.toFixed(2)+'</strong> · Per person (4): $'+(total/4).toFixed(2);
     el.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var a=load();a.splice(+b.dataset.del,1);save(a);render();};});
   }
   document.addEventListener('DOMContentLoaded',function(){
@@ -4575,7 +4573,10 @@ document.addEventListener('DOMContentLoaded',function(){
       document.getElementById('budCustomCat').value='';
       render();
     };}
-    var t=document.getElementById('budTravelers'); if(t) t.oninput=render;
+    var catSel=document.getElementById('budCat');
+    var customInp=document.getElementById('budCustomCat');
+    function toggleCustom(){ if(customInp) customInp.style.display = (catSel.value==='Other')?'':'none'; }
+    if(catSel){ catSel.onchange=toggleCustom; toggleCustom(); }
     var tg=document.getElementById('toggleBudget'); var w=document.getElementById('budgetWrap');
     if(tg&&w){tg.onclick=function(){w.classList.toggle('expanded');tg.textContent=w.classList.contains('expanded')?'Hide entries ▴':'Show entries ▾';};}
     render();
