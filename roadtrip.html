@@ -120,7 +120,7 @@
   #golfMap, #foodMap, #barMap, #brewMap, #campMap, #hotelMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
   #golfList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .golf-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
-  .golf-item.sel { border-color:var(--green); }
+  .golf-item.sel { border-color:var(--green); background:#12261b; }
   .golf-pick { flex:1; text-align:left; background:transparent; color:var(--text); border:none; padding:0; display:grid; gap:2px; cursor:pointer; font-weight:600; }
   .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
   #golfMsg:empty { display:none; }
@@ -133,7 +133,10 @@
   #foodList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .food-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
   .food-item, .golf-item { position:relative; }
-  .food-item.sel { border-color:var(--green); }
+  .food-item.sel { border-color:var(--green); background:#12261b; box-shadow:0 0 0 1px var(--green) inset; }
+  .rating-chip { color:#fbbf24; font-weight:600; }
+  .msg-warn { color:#f87171; }
+  .field-warn { border-color:#ef4444 !important; box-shadow:0 0 0 1px #ef4444 inset; }
   .food-pick { flex:1; text-align:left; background:transparent; color:var(--text); border:none; padding:0; display:grid; gap:2px; cursor:pointer; font-weight:600; }
   .food-sub { color:var(--muted); font-size:.78rem; font-weight:400; }
   #foodMsg:empty { display:none; }
@@ -791,6 +794,7 @@
       <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" aria-label="Budget line amount" style="max-width:100px;flex:none" />
       <button type="button" id="budAdd">Add</button>
     </div>
+    <p id="budMsg" class="muted" role="status" aria-live="polite" style="font-size:.85rem"></p>
     <button type="button" id="toggleBudget" class="small ghost stops-toggle" aria-controls="budgetWrap" aria-expanded="false">Show entries ▾</button>
     <div id="budgetWrap" class="stops-preview">
       <div id="budgetLines"></div>
@@ -2129,10 +2133,11 @@ $('noteList').addEventListener('click', e => {
 });
 
 /* ---------- 6. shared photos ---------- */
-function photoMsg(t){
+function photoMsg(t, warn){
   const m = $('photoMsg');
   m.textContent = t;
-  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
+  m.classList.toggle('msg-warn', !!warn);
+  setTimeout(() => { if (m.textContent === t) { m.textContent = ''; m.classList.remove('msg-warn'); } }, 6000);
 }
 function photoSize(n){ return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
 let activeUpload = null;
@@ -2875,7 +2880,7 @@ async function findGolfCourses(center, radiusKm){
 
 function selectGolf(i, pan){
   golfSelected = i;
-  [...document.querySelectorAll('#golfList .golf-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  highlightRow('#golfList .golf-item', i);
   const course = golfCourses[i];
   if (!course) return;
   const marker = golfLayer.getLayers()[i];
@@ -3025,6 +3030,97 @@ $('golfFindName').onclick = async () => {
 };
 $('golfName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFindName').click(); } });
 
+/* ---------- 6b. star ratings & list highlighting ---------- */
+// OpenStreetMap has no ratings, so the star figure comes from Google Places when
+// a key was injected at build time. With no key the lists simply carry no stars.
+const PLACES_KEY = '__GOOGLE_PLACES_KEY__';
+function placesKey(){ return PLACES_KEY.indexOf('__') === 0 ? '' : PLACES_KEY; }
+const ratingCache = new Map();
+const ratingName = n => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+async function ratingsNear(center, radiusKm, types){
+  const key = placesKey();
+  if (!key || !center) return [];
+  const cacheKey = [center.lat.toFixed(3), center.lng.toFixed(3), Math.round(radiusKm / 5), types.join('+')].join('|');
+  const cached = ratingCache.get(cacheKey);
+  if (cached) return cached;
+  const radius = Math.min(Math.max(Math.round(radiusKm * 1000), 500), 50000);
+  const out = [];
+  for (const type of types) {
+    try {
+      const res = await timedFetch('https://places.googleapis.com/v1/places:searchNearby', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': key,
+          'X-Goog-FieldMask': 'places.displayName,places.rating,places.userRatingCount,places.location'
+        },
+        body: JSON.stringify({
+          includedTypes: [type],
+          maxResultCount: 20,
+          rankPreference: 'DISTANCE',
+          locationRestriction: { circle: { center: { latitude: center.lat, longitude: center.lng }, radius } }
+        })
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      for (const p of data.places || []) {
+        const name = (p.displayName && p.displayName.text) || '';
+        if (!name || !(p.rating > 0)) continue;
+        out.push({
+          name,
+          rating: +p.rating,
+          count: +p.userRatingCount || 0,
+          lat: p.location ? +p.location.latitude : NaN,
+          lng: p.location ? +p.location.longitude : NaN
+        });
+      }
+    } catch (e) { /* no quota, no signal or no key: the list just has no stars */ }
+  }
+  if (out.length) ratingCache.set(cacheKey, out);
+  return out;
+}
+
+// A name is not enough to go on (every town has its own Main Street Grill), so a
+// rating is only used when the rated place sits within a couple of hundred yards.
+function attachRatings(places, ratings){
+  if (!places.length || !ratings.length) return;
+  const byName = new Map();
+  ratings.forEach(r => {
+    const k = ratingName(r.name);
+    if (!k) return;
+    if (!byName.has(k)) byName.set(k, []);
+    byName.get(k).push(r);
+  });
+  places.forEach(p => {
+    const list = byName.get(ratingName(p.name));
+    if (!list) return;
+    let best = null, bestMi = Infinity;
+    list.forEach(r => {
+      if (!Number.isFinite(r.lat) || !Number.isFinite(r.lng)) return;
+      const mi = hav(p, { lat: r.lat, lng: r.lng });
+      if (mi < bestMi) { bestMi = mi; best = r; }
+    });
+    if (best && bestMi <= 0.25) { p.rating = best.rating; p.ratingCount = best.count; }
+  });
+}
+
+function ratingChip(place){
+  if (!place || !(place.rating > 0)) return '';
+  const count = place.ratingCount ? ' (' + place.ratingCount.toLocaleString() + ')' : '';
+  return '<span class="rating-chip">★ ' + (+place.rating).toFixed(1) + count + '</span> · ';
+}
+
+// A pin on the map should be findable in the list under it: mark that row and
+// bring it into view, so the Add to trip button is right there.
+function highlightRow(selector, i){
+  const rows = [...document.querySelectorAll(selector)];
+  rows.forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  const row = i >= 0 ? rows[i] : null;
+  if (!row || typeof row.scrollIntoView !== 'function') return;
+  try { row.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) { try { row.scrollIntoView(false); } catch (e2) {} }
+}
+
 /* ---------- 7. places to eat ---------- */
 const foodMap = L.map('foodMap').setView([39.5, -98.35], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(foodMap);
@@ -3075,14 +3171,50 @@ function foodFromNominatim(rows, center){
   return places;
 }
 
+const FOOD_TAGS = ['amenity=restaurant', 'amenity=cafe', 'amenity=fast_food', 'amenity=pub',
+  'amenity=ice_cream', 'amenity=food_court'];
+
+function foodFromOverpass(data, center){
+  const seen = new Set();
+  const places = [];
+  for (const el of (data && data.elements) || []) {
+    const tags = el.tags || {};
+    const name = (tags.name || '').trim();
+    if (!name) continue;
+    const lat = Number.isFinite(el.lat) ? el.lat : (el.center && el.center.lat);
+    const lng = Number.isFinite(el.lon) ? el.lon : (el.center && el.center.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    const key = name.toLowerCase() + '|' + lat.toFixed(4) + '|' + lng.toFixed(4);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    places.push({
+      name,
+      kind: tags.amenity || '',
+      cuisine: (tags.cuisine || '').replace(/;/g, ', '),
+      lat, lng,
+      dist: center ? hav(center, { lat, lng }) : null,
+      where: [tags['addr:housenumber'], tags['addr:street'], tags['addr:city']].filter(Boolean).join(' ')
+    });
+  }
+  return places;
+}
+
 async function findFoodNear(center, radiusKm){
-  // Nominatim asks for one request a second, so the café pass waits its turn
-  // instead of firing alongside the restaurant pass.
-  const places = foodFromNominatim(await nominatim('restaurant', center, radiusKm), center);
-  await new Promise(r => setTimeout(r, 1100));
+  // The venue index lists every place of a kind in the area. Nominatim's
+  // category search only ranks a handful (which is why one Main Street looked
+  // half-empty), so it is the fallback now instead of the primary lookup.
+  let places = [];
   try {
-    places.push(...foodFromNominatim(await nominatim('cafe', center, radiusKm), center));
-  } catch (e) { /* a café lookup failing should not hide the restaurants */ }
+    places = foodFromOverpass(await overpassSearch(center, radiusKm, null, 0, 1, FOOD_TAGS, 250), center);
+  } catch (e) { /* the index has busy days */ }
+  if (!places.length) {
+    // Nominatim asks for one request a second, so the café pass waits its turn.
+    places = foodFromNominatim(await nominatim('restaurant', center, radiusKm), center);
+    await new Promise(r => setTimeout(r, 1100));
+    try {
+      places.push(...foodFromNominatim(await nominatim('cafe', center, radiusKm), center));
+    } catch (e) { /* a café lookup failing should not hide the restaurants */ }
+  }
   const seen = new Set();
   const merged = places.filter(p => {
     const key = p.name.toLowerCase() + '|' + p.lat.toFixed(4) + '|' + p.lng.toFixed(4);
@@ -3093,6 +3225,8 @@ async function findFoodNear(center, radiusKm){
   merged.sort((a, b) => a.dist - b.dist);
   const nearest = merged.slice(0, 40);
   await attachDriving(center, nearest);
+  try { attachRatings(nearest, await ratingsNear(center, radiusKm, ['restaurant', 'cafe', 'bar'])); }
+  catch (e) { /* stars are a bonus, never a reason to fail the search */ }
   nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
   return nearest;
 }
@@ -3115,7 +3249,7 @@ function foodSubText(place){
 
 function selectFood(i, pan){
   foodSelected = i;
-  [...document.querySelectorAll('#foodList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  highlightRow('#foodList .food-item', i);
   const place = foodPlaces[i];
   if (!place) return;
   const marker = foodLayer.getLayers()[i];
@@ -3139,7 +3273,7 @@ function renderFood(){
     '<div class="food-item">'
     + '<button type="button" class="food-pick" data-pick="' + i + '">'
     + '<span class="food-name">' + esc(p.name) + '</span>'
-    + '<span class="food-sub">' + esc(foodSubText(p)) + '</span>'
+    + '<span class="food-sub">' + ratingChip(p) + esc(foodSubText(p)) + '</span>'
     + '</button>'
     + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(p.name) + '">🗺️</button>'
     + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(p.name) + ' to the trip">Add to trip</button>'
@@ -3287,7 +3421,9 @@ function nightChecked(){
 function nightKindOf(tags){
   const shop = tags.shop || '', a = tags.amenity || '';
   if (shop === 'erotic' || shop === 'sex_shop' || a === 'adult_gaming_centre') return 'adult shop';
-  return ({ bar: 'bar', pub: 'pub', nightclub: 'club', music_venue: 'live music', strip_club: 'strip club', casino: 'casino' })[a]
+  // Restaurants only reach this list when their name carries "Bar" or
+  // "Tavern", so they are bars as far as the crew is concerned.
+  return ({ bar: 'bar', pub: 'pub', nightclub: 'club', music_venue: 'live music', strip_club: 'strip club', casino: 'casino', restaurant: 'bar' })[a]
     || (a || shop || 'venue').replace(/_/g, ' ');
 }
 
@@ -3300,15 +3436,21 @@ const OVERPASS_HOSTS = [
 // Exact tag matches use the index; a regex on amenity makes the server scan the
 // area, which is most of why this search used to sit and spin.
 const OVERPASS_TAGS = ['amenity=bar', 'amenity=pub', 'amenity=nightclub', 'amenity=music_venue',
-  'amenity=strip_club', 'amenity=casino', 'shop=erotic', 'shop=sex_shop'];
-async function overpassSearch(center, radiusKm, progress, startAt, tries){
+  'amenity=strip_club', 'amenity=casino', 'shop=erotic', 'shop=sex_shop',
+  // Plenty of bars are tagged as a restaurant that happens to have "Bar" in the
+  // name (Kai Restaurant and Bar), so those are asked for by name as well.
+  '["amenity"="restaurant"]["name"~"(^| )(bar|tavern)( |$)",i]'];
+async function overpassSearch(center, radiusKm, progress, startAt, tries, tags, limit){
   const around = Math.round(radiusKm * 1000) + ',' + center.lat.toFixed(5) + ',' + center.lng.toFixed(5);
+  const wanted = tags || OVERPASS_TAGS;
   const q = '[out:json][timeout:20];('
-    + OVERPASS_TAGS.map(tag => {
+    + wanted.map(tag => {
+      // A clause starting with "[" carries its own filters, e.g. a name match.
+      if (tag.charAt(0) === '[') return 'nwr' + tag + '(around:' + around + ');';
       const [key, value] = tag.split('=');
       return 'nwr["' + key + '"="' + value + '"](around:' + around + ');';
     }).join('')
-    + ');out tags center 150;';
+    + ');out tags center ' + (limit || 150) + ';';
   const from = startAt || 0;
   const end = Math.min(OVERPASS_HOSTS.length, from + (tries || OVERPASS_HOSTS.length));
   for (let i = from; i < end; i++) {
@@ -3385,6 +3527,8 @@ async function upgradeBarsInBackground(center, radiusKm, hadCount){
     const nearest = full.slice(0, 60);
     await attachDriving(center, nearest);
     nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+    try { attachRatings(nearest, await ratingsNear(center, radiusKm, ['bar', 'restaurant'])); }
+    catch (e) { /* stars are a bonus, never a reason to fail the search */ }
     if (!barPlaces.length) return; // they have moved on to another search
     barPlaces = nearest;
     renderBars();
@@ -3411,6 +3555,8 @@ async function findBarsNear(center, radiusKm, progress){
   await attachDriving(center, nearest);
   nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
   nearest.partial = partial;
+  try { attachRatings(nearest, await ratingsNear(center, radiusKm, ['bar', 'restaurant'])); }
+  catch (e) { /* stars are a bonus, never a reason to fail the search */ }
   return nearest;
 }
 
@@ -3431,6 +3577,14 @@ function visibleBars(){
 
 function selectBar(place){
   if (!place || !place._marker) return;
+  // The list hides filtered venues, so find the row by the place's own index
+  // instead of by its position in the visible rows.
+  const rows = [...document.querySelectorAll('#barList .food-item')];
+  const idx = rows.findIndex(row => {
+    const pick = row.querySelector('[data-pick]');
+    return pick && +pick.dataset.pick === barPlaces.indexOf(place);
+  });
+  highlightRow('#barList .food-item', idx);
   barMap._rtFit = null;
   barMap.setView([place.lat, place.lng], Math.max(barMap.getZoom(), 14));
   place._marker.openPopup();
@@ -3456,7 +3610,7 @@ function renderBars(){
     return '<div class="food-item">'
       + '<button type="button" class="food-pick" data-pick="' + i + '">'
       + '<span class="food-name">' + esc(p.name) + '</span>'
-      + '<span class="food-sub">' + esc(barSubText(p)) + '</span>'
+      + '<span class="food-sub">' + ratingChip(p) + esc(barSubText(p)) + '</span>'
       + '</button>'
       + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(p.name) + '">🗺️</button>'
       + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(p.name) + ' to the trip">Add to trip</button>'
@@ -3826,7 +3980,7 @@ async function campsNear(anchor, radiusKm){
 let campSelected = -1;
 function selectCamp(i, pan){
   campSelected = i;
-  [...document.querySelectorAll('#campList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  highlightRow('#campList .food-item', i);
   const site = campSites[i];
   if (!site) return;
   const marker = campLayer.getLayers()[i];
@@ -3984,7 +4138,7 @@ const hotelLayer = L.layerGroup().addTo(hotelMap);
 
 function selectHotel(i, pan){
   hotelSelected = i;
-  [...document.querySelectorAll('#hotelList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  highlightRow('#hotelList .food-item', i);
   const hotel = hotelResults[i];
   if (!hotel) return;
   const marker = hotelLayer.getLayers()[i];
@@ -4632,15 +4786,43 @@ function renderBudget(){
   if (entries.length) lines.innerHTML += budSettle(entries);
   applyBudgetCollapse();
 }
+// Every "pick a name" field answers the same way: a red edge on the control and
+// a red line of text, both cleared the moment a choice is made.
+function fieldWarn(el, on){
+  if (!el) return;
+  el.classList.toggle('field-warn', !!on);
+  if (!on) return;
+  const clear = () => {
+    el.classList.remove('field-warn');
+    el.removeEventListener('change', clear);
+    el.removeEventListener('input', clear);
+  };
+  el.addEventListener('change', clear);
+  el.addEventListener('input', clear);
+}
+function budMsg(t, warn){
+  const m = $('budMsg');
+  if (!m) return;
+  m.textContent = t;
+  m.classList.toggle('msg-warn', !!warn);
+  setTimeout(() => { if (m.textContent === t) { m.textContent = ''; m.classList.remove('msg-warn'); } }, 6000);
+}
 function addBudgetEntry(){
   const catSel = $('budCat'), custom = $('budCustomCat'), note = $('budNote'), amt = $('budAmt');
   if (!catSel || !amt) return;
   let cat = catSel.value;
   if (cat === 'Other') { const c = ((custom && custom.value) || '').trim(); if (c) cat = c; }
   const value = Math.round((+amt.value || 0) * 100) / 100;
-  if (!value) { amt.focus(); return; }
+  if (!value) { fieldWarn(amt, true); budMsg('Enter an amount first.', true); amt.focus(); return; }
   const whoSel = $('budWho');
-  if (!whoSel || !whoSel.value) { if (whoSel) whoSel.focus(); return; }
+  if (!whoSel || !whoSel.value) {
+    fieldWarn(whoSel, true);
+    budMsg('Pick a name first — a line is saved under whoever added it.', true);
+    if (whoSel) whoSel.focus();
+    return;
+  }
+  fieldWarn(whoSel, false);
+  fieldWarn(amt, false);
   const list = budgetEntries();
   list.push({ who: whoSel.value, cat, note: ((note && note.value) || '').trim(), amt: value, at: Date.now() });
   saveBudgetEntries(list);
@@ -4740,12 +4922,14 @@ function uploadAllowed(){
   const input = $('photoPass');
   try { const remembered = devicePrefs().uploadName; if (remembered) { input.value = remembered; return true; } } catch (e) {}
   const v = (input.value || '').trim().toLowerCase();
-  if (!v) { photoMsg('Enter your name to upload.'); input.focus(); return false; }
+  if (!v) { fieldWarn(input, true); photoMsg('Enter your name to upload.', true); input.focus(); return false; }
   if (UPLOAD_NAMES.indexOf(v) < 0) {
-    photoMsg('“' + input.value.trim() + '” is not on the upload list.');
+    fieldWarn(input, true);
+    photoMsg('“' + input.value.trim() + '” is not on the upload list.', true);
     input.select();
     return false;
   }
+  fieldWarn(input, false);
   try { sessionStorage.setItem('rt_uploader', v); } catch (e) {}
   return true;
 }
@@ -5309,10 +5493,11 @@ function netBalances(settled){
   return net;
 }
 
-function betMsg(t){
+function betMsg(t, warn){
   const m = $('betMsg');
   m.textContent = t;
-  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
+  m.classList.toggle('msg-warn', !!warn);
+  setTimeout(() => { if (m.textContent === t) { m.textContent = ''; m.classList.remove('msg-warn'); } }, 6000);
 }
 
 // The title board: handicaps decide the pecking order, then two cash figures
@@ -5339,13 +5524,16 @@ function renderBoard(){
 
 function renderBets(){
   const people = betPeople();
+  // Nobody is preselected: "Select name" is where both sides start, so a bet can
+  // never be filed against whoever happens to sort first.
   ['betFrom', 'betTo'].forEach(id => {
     const sel = $(id);
     const cur = sel.value;
-    sel.innerHTML = people.map(p => '<option>' + esc(p) + '</option>').join('');
+    sel.innerHTML = '<option value="">Select name</option>'
+      + people.map(p => '<option value="' + esc(p) + '">' + esc(p) + '</option>').join('');
     if (people.indexOf(cur) >= 0) sel.value = cur;
   });
-  if (people.length > 1 && $('betTo').value === $('betFrom').value) $('betTo').value = people[1];
+  if ($('betFrom').value && $('betFrom').value === $('betTo').value) $('betTo').value = '';
 
   renderBoard();
 
@@ -5411,8 +5599,19 @@ function renderBets(){
 $('betAdd').onclick = () => {
   const from = $('betFrom').value, to = $('betTo').value;
   const amount = Math.round((+$('betAmount').value || 0) * 100) / 100;
-  if (from === to) { betMsg('Pick two different people.'); return; }
-  if (!(amount > 0)) { betMsg('Enter an amount first.'); return; }
+  if (!from || !to) {
+    fieldWarn($('betFrom'), !from);
+    fieldWarn($('betTo'), !to);
+    betMsg(!from && !to ? 'Pick who owes and who is owed first.'
+      : (!from ? 'Pick who owes first.' : 'Pick who is owed first.'), true);
+    (!from ? $('betFrom') : $('betTo')).focus();
+    return;
+  }
+  fieldWarn($('betFrom'), false);
+  fieldWarn($('betTo'), false);
+  if (from === to) { betMsg('Pick two different people.', true); return; }
+  if (!(amount > 0)) { fieldWarn($('betAmount'), true); betMsg('Enter an amount first.', true); return; }
+  fieldWarn($('betAmount'), false);
   extra.bets = extra.bets || [];
   extra.bets.push({ id: 'b' + Date.now() + Math.floor(Math.random() * 1000), at: Date.now(), from, to, amount, note: $('betNote').value.trim(), settled: false });
   $('betAmount').value = '';
@@ -5454,9 +5653,10 @@ $('betHcp').addEventListener('input', e => {
 
 /* ---------- per-stop note & media panel ---------- */
 var panelStop = null;
-function stopPanelMsg(t){
+function stopPanelMsg(t, warn){
   const m = $('stopPanelMsg');
   m.textContent = t;
+  m.classList.toggle('msg-warn', !!warn);
 }
 function savedUploader(){
   try { const remembered = devicePrefs().uploadName; if (remembered) return remembered; } catch (e) {}
@@ -5512,10 +5712,12 @@ $('stopUpload').onclick = async () => {
   const who = panelUploader();
   if (!who.ok) {
     $('stopName').hidden = false;
+    fieldWarn($('stopName'), true);
     $('stopName').focus();
-    stopPanelMsg(who.msg);
+    stopPanelMsg(who.msg, true);
     return;
   }
+  fieldWarn($('stopName'), false);
   for (const f of files) {
     const fh = f.name || 'one file';
     const isV = /^video\//.test(f.type);
