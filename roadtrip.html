@@ -4463,6 +4463,7 @@ applyStartCollapsed();
 loadRadii();
 loadFuel();
   applyState(state);
+  setSync('ok', 'Shared · synced');
   loadState().then(() => { finishOwnerReturn(); wxDefault(); });
 
 // One request per tick, straight to the plan. /api/rev only saved bytes, and it
