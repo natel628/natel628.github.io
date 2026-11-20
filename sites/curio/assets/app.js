@@ -495,7 +495,7 @@ function topicHTML(t) {
       ${(() => {
         const others = (t.related || []).slice(0, 4);
         if (!others.length) return '';
-        return `<div class="panel side-card"><h3>If you liked this…</h3><div class="rel-grid">${others.map((r) => `<button class="rel" data-query="${esc(r.title)}" onclick="capture('${esc(r.title).replace(/'/g,'\\'')}')"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>`;
+        return `<div class="panel side-card"><h3>If you liked this…</h3><div class="rel-grid">${others.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>`;
       })()}
     </aside>
   </div>`;
