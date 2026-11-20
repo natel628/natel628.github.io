@@ -307,7 +307,7 @@
 <p class="muted" id="hiddenNotice" hidden style="margin:0 0 12px"></p>
 
   <section class="card" id="sec-glance">
-    <h2>📊 Trip at a glance <span id="syncState" class="sync" role="status" aria-live="polite" style="margin:0 0 0 8px;vertical-align:middle">Shared · synced</span><button type="button" id="syncRetry" class="small ghost" hidden aria-label="Reload the shared plan">Retry</button></h2>
+    <h2>📊 Trip at a glance <span id="syncState" class="sync" role="status" aria-live="polite" style="margin:0 0 0 8px;vertical-align:middle">Connecting…</span><button type="button" id="syncRetry" class="small ghost" hidden aria-label="Reload the shared plan">Retry</button></h2>
     <p class="muted">Nashville to Rhode Island, mixing hotel nights and campground nights. Everything on this page is shared — anyone who opens it sees the same plan and can change it.</p>
     <div id="glanceGrid" class="glance"></div>
     <p id="glanceMsg" class="muted" role="status" aria-live="polite"></p>
@@ -4461,6 +4461,7 @@ applyStartCollapsed();
 
 loadRadii();
 loadFuel();
+  applyState(state);
   setSync('ok', 'Shared · synced');
   loadState().then(() => { finishOwnerReturn(); wxDefault(); });
   setTimeout(loadState, 1500);
