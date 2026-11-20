@@ -632,7 +632,7 @@
 </div>
 
   <section class="card" id="sec-budget">
-    <h2>💵 Budget</h2>
+    <h2>💵 Budget <span id="budgetTotal" style="font-size:.9rem;font-weight:400;margin-left:12px"></span></h2>
     <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
     <div class="rv-grid">
       <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="4" readonly /></label>
@@ -646,7 +646,6 @@
       <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" style="max-width:100px;flex:none" />
       <button type="button" id="budAdd">Add</button>
     </div>
-    <p class="muted" id="budgetTotal" style="margin-top:8px"></p>
     <button type="button" id="toggleBudget" class="small ghost" style="margin-top:6px">Show entries ▾</button>
     <div id="budgetWrap" class="stops-preview">
       <div id="budgetLines" class="budget-lines"></div>
@@ -4465,6 +4464,7 @@ loadFuel();
   applyState(state);
   setSync('ok', 'Shared · synced');
   loadState().then(() => { finishOwnerReturn(); wxDefault(); });
+  setTimeout(loadState, 1500);
 
 // One request per tick, straight to the plan. /api/rev only saved bytes, and it
 // was a second thing that could fail on its own: a browser whose /api/rev kept
@@ -4549,8 +4549,8 @@ document.addEventListener('DOMContentLoaded',function(){
     var tot=document.getElementById('budgetTotal');
     var entries=load();
     if(!el) return;
-    el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.9rem"><thead><tr><th style="text-align:left;padding:4px">Category</th><th style="text-align:left;padding:4px">Note</th><th style="text-align:right;padding:4px">Amount</th><th></th></tr></thead><tbody>'+entries.map(function(e,i){
-      return '<tr><td style="padding:4px">'+e.cat+'</td><td style="padding:4px">'+(e.note||'')+'</td><td style="padding:4px;text-align:right">$'+Number(e.amt).toFixed(2)+'</td><td style="padding:4px"><button type="button" data-del="'+i+'" class="small ghost">✕</button></td></tr>';
+    el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.9rem"><thead><tr><th style="text-align:left;padding:4px">Category</th><th style="text-align:left;padding:4px">Note</th><th style="text-align:right;padding:4px">Amount</th><th style="text-align:right;padding:4px">Per person</th><th></th></tr></thead><tbody>'+entries.map(function(e,i){
+      return '<tr><td style="padding:4px">'+e.cat+'</td><td style="padding:4px">'+(e.note||'')+'</td><td style="padding:4px;text-align:right">$'+Number(e.amt).toFixed(2)+'</td><td style="padding:4px;text-align:right">$'+(Number(e.amt)/4).toFixed(2)+'</td><td style="padding:4px"><button type="button" data-del="'+i+'" class="small ghost">✕</button></td></tr>';
     }).join('')+'</tbody></table>';
     var total=entries.reduce(function(s,e){return s+Number(e.amt||0);},0);
     var travelers=Number((document.getElementById('budTravelers')||{}).value)||4;
