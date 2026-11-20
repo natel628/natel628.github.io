@@ -580,6 +580,7 @@
       <div id="foodWrap" class="stops-preview">
         <div id="foodList"></div>
       </div>
+      <p id="foodCredit" class="muted" style="font-size:.75rem;margin:6px 0 0" hidden>Ratings and review counts from Yelp.</p>
       <button type="button" id="toggleFood" class="small ghost stops-toggle" hidden aria-controls="foodWrap" aria-expanded="false">Show all places ▾</button>
     </div>
     <div class="explore-panel" id="panel-bar" hidden>
@@ -612,6 +613,7 @@
       <div id="barWrap" class="stops-preview">
         <div id="barList"></div>
       </div>
+      <p id="barCredit" class="muted" style="font-size:.75rem;margin:6px 0 0" hidden>Ratings and review counts from Yelp.</p>
       <button type="button" id="toggleBar" class="small ghost stops-toggle" hidden aria-controls="barWrap" aria-expanded="false">Show all bars ▾</button>
     </div>
     <div class="explore-panel" id="panel-brew" hidden>
@@ -3123,12 +3125,16 @@ const placeByRating = (a, b) => (b.rating || 0) - (a.rating || 0)
 
 // The rating sort only appears once there are stars to sort by, so the control is
 // never sitting there doing nothing.
-function syncSortChoice(id, places){
-  const sel = $(id);
-  if (!sel) return;
+function syncSortChoice(id, places, creditId){
   const rated = places.some(p => p.rating > 0);
-  sel.hidden = !rated;
-  if (!rated) sel.value = 'distance';
+  const sel = $(id);
+  if (sel) {
+    sel.hidden = !rated;
+    if (!rated) sel.value = 'distance';
+  }
+  // Yelp's terms ask for the credit wherever their numbers are shown.
+  const credit = creditId ? $(creditId) : null;
+  if (credit) credit.hidden = !rated;
 }
 function sortFoodByChoice(){
   foodPlaces.sort($('foodSort').value === 'rating' ? placeByRating : placeByDistance);
@@ -3300,7 +3306,7 @@ function renderFood(){
 
   if (!foodPlaces.length) {
     el.innerHTML = '<p class="muted">No places found — try a wider radius, or search a place by name.</p>';
-    syncSortChoice('foodSort', foodPlaces);
+    syncSortChoice('foodSort', foodPlaces, 'foodCredit');
     applyFoodCollapse();
     return;
   }
@@ -3324,7 +3330,7 @@ function renderFood(){
 
   fitMap(foodMap, foodPlaces.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(foodMap, 'foodMap');
-  syncSortChoice('foodSort', foodPlaces);
+  syncSortChoice('foodSort', foodPlaces, 'foodCredit');
   applyFoodCollapse();
 }
 
@@ -3701,7 +3707,7 @@ function renderBars(){
 
   fitMap(barMap, rows.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(barMap, 'barMap');
-  syncSortChoice('barSort', rows);
+  syncSortChoice('barSort', rows, 'barCredit');
   applyBarCollapse();
 }
 
