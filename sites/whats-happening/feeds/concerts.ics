@@ -6,2666 +6,545 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Concerts
 X-WR-CALDESC:Upcoming concerts and music.
 BEGIN:VEVENT
-UID:tm-1AdZZ_pGkloTIDy@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T133000
-DTEND:20261119T160000
-SUMMARY:Jimmy
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/jimmy-middletown-new-york-11-19-2026/event/300
- 0656AD1FE8EF9\\n\\nRefreshed daily from live listings.
-LOCATION:The Paramount Theatre (Middletown\, NY)\, Middletown
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/jimmy-middletown-new-york-11-19-2026/even
- t/3000656AD1FE8EF9
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PgZo@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T133000
-DTEND:20261119T160000
-SUMMARY:New Jersey Symphony Orchestra - Rachmaninoff???s Symphonic Dances
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PgZo\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Prudential Hall at New Jersey PAC\, Newark
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PgZo
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv17FZ_4GkVA0LxD@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T133000
-DTEND:20261119T160000
+UID:tm-vv17FZ_4GkVAETNz@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T133000
+DTEND:20261120T160000
 SUMMARY:The Hunger Games: Sunrise on the Reaping
 DESCRIPTION:This event takes places on multiple dates at multiple times. P
  lease make sure you are purchasing tickets for the correct show. We would
   like to assure you that Tropicana Atlantic City will remain open for bus
  iness\, and all events\, shows and movies are being presented as schedule
  d. Should any event b\\n\\nhttps://www.ticketmaster.com/the-hunger-games-
- sunrise-on-the-atlantic-city-new-jersey-11-19-2026/event/0200655D0591F8BB
+ sunrise-on-the-atlantic-city-new-jersey-11-20-2026/event/0200655D059FF8F8
  \\n\\nRefreshed daily from live listings.
 LOCATION:IMAX THEATRE at TROPICANA\, Atlantic City
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/the-hunger-games-sunrise-on-the-atlantic-
- city-new-jersey-11-19-2026/event/0200655D0591F8BB
+ city-new-jersey-11-20-2026/event/0200655D059FF8F8
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70Ub0@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T140000
-DTEND:20261119T163000
-SUMMARY:Elf the Musical
+UID:tm-Z7r9jZ1AAZ7O4@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T140000
+DTEND:20261120T163000
+SUMMARY:Thank You For The Music
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70Ub0\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZ7O4\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Barter Theatre\, Abingdon
+LOCATION:Hamners Variety Theater\, Branson
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ub0
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ7O4
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAk4U@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T140000
-DTEND:20261119T163000
-SUMMARY:Jamie Allan
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAk4U\\n\\nRefreshed daily from 
- live listings.
-LOCATION:New World Stages - Stage 5\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAk4U
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvxjs@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T143000
-DTEND:20261119T170000
-SUMMARY:Trans-Siberian Orchestra - The Ghosts Of Christmas Eve
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvxjs\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Resch Center\, Green Bay
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvxjs
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1A6ZkfIGkdFHP3m@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T143000
-DTEND:20261119T170000
-SUMMARY:Trans-Siberian Orchestra - The Ghosts Of Christmas Eve
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://ticketstar.evenue.net/events/26TSO?utm_source=client&utm_medium=web
- &utm_campaign=tso-26\\n\\nRefreshed daily from live listings.
-LOCATION:Resch Center\, Green Bay
-STATUS:CONFIRMED
-URL:https://ticketstar.evenue.net/events/26TSO?utm_source=client&utm_mediu
- m=web&utm_campaign=tso-26
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7oCf@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T150000
-DTEND:20261119T173000
+UID:tm-Z7r9jZ1AA7oCp@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T150000
+DTEND:20261120T173000
 SUMMARY:Joshua Live On Stage
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7oCf\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7oCp\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Sight and Sound Theatres - PA\, Ronks
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7oCf
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7oCp
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QR23BR4MZwFLz6rV@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T160000
-DTEND:20261119T183000
-SUMMARY:Wes Winters - The Lounge Show
+UID:tm-Z7r9jZ1AAZeOO@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T150000
+DTEND:20261120T173000
+SUMMARY:Mannheim Steamroller Christmas
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/wes-winters-the-lounge-show-tickets-0RZWDY?
- ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:The Composers Room\, Las Vegas
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZeOO\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Wilson Center-NC\, Wilmington
 STATUS:CONFIRMED
-URL:https://www.universe.com/events/wes-winters-the-lounge-show-tickets-0R
- ZWDY?ref=ticketmaster
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZeOO
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vv17FZ_4GkVAPRNa@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T164500
-DTEND:20261119T191500
+UID:tm-Z7r9jZ1A70-rv@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T160000
+DTEND:20261120T183000
+SUMMARY:Campbell\, Rogers\, and Denver: A Tribute
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70-rv\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Hale Centre Theatre - Arizona\, Gilbert
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70-rv
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7j878@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T160000
+DTEND:20261120T183000
+SUMMARY:Anastasia (Touring)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7j878\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Young Living Centre Stage at Hale Centre Theatre\, Sandy
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7j878
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv17FZ_4GkVAIT0a@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T164500
+DTEND:20261120T191500
 SUMMARY:The Hunger Games: Sunrise on the Reaping
 DESCRIPTION:This event takes places on multiple dates at multiple times. P
  lease make sure you are purchasing tickets for the correct show. We would
   like to assure you that Tropicana Atlantic City will remain open for bus
  iness\, and all events\, shows and movies are being presented as schedule
  d. Should any event b\\n\\nhttps://www.ticketmaster.com/the-hunger-games-
- sunrise-on-the-atlantic-city-new-jersey-11-19-2026/event/0200655D0596F8C9
+ sunrise-on-the-atlantic-city-new-jersey-11-20-2026/event/0200655D05A3F909
  \\n\\nRefreshed daily from live listings.
 LOCATION:IMAX THEATRE at TROPICANA\, Atlantic City
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/the-hunger-games-sunrise-on-the-atlantic-
- city-new-jersey-11-19-2026/event/0200655D0596F8C9
+ city-new-jersey-11-20-2026/event/0200655D05A3F909
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5dIZ_29IVefH@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T170000
-DTEND:20261119T193000
-SUMMARY:KUTX's Horizontes Pres:Aterciopelados: La Pipa De Laz Paz 30 Anos 
- Tour
-DESCRIPTION:All Ages Welcome Doors: 5:00pm Show: 6:00pm\\n\\nhttps://www.t
- icketmaster.com/kutxs-horizontes-presaterciopelados-la-pipa-de-austin-tex
- as-11-19-2026/event/3A0064F5E8D0253C\\n\\nRefreshed daily from live listi
- ngs.
-LOCATION:Scoot Inn\, Austin
+UID:tm-LvZ18QfqvObLx6ZZyywIV@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T170000
+DTEND:20261120T193000
+SUMMARY:Funkmaster Flex Reunion *TICKETS AVAILABLE @TICKETMASTER
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/funkmaster-flex-reunion-tickets-available-t
+ icketmaster-tickets-G01264?ref=ticketmaster\\n\\nRefreshed daily from liv
+ e listings.
+LOCATION:The INKwell Harbor-Club Rooftop\, New York
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/kutxs-horizontes-presaterciopelados-la-pi
- pa-de-austin-texas-11-19-2026/event/3A0064F5E8D0253C
+URL:https://www.universe.com/events/funkmaster-flex-reunion-tickets-availa
+ ble-ticketmaster-tickets-G01264?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af0Spd@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T170000
-DTEND:20261119T193000
-SUMMARY:Linsy Clark
+UID:tm-LvZ18QnkDxRjFZzXKkIdr@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T170000
+DTEND:20261120T193000
+SUMMARY:Car Crash Rhetoric
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/car-crash-rhetoric-tickets-JGV64S?ref=ticke
+ tmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Historic Masonic Temple\, Bay City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/car-crash-rhetoric-tickets-JGV64S?ref=
+ ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7v1F_KOkfb3b@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T170000
+DTEND:20261120T193000
+SUMMARY:Funkmaster Flex 80's Babies All Black Reunion NYC 
+DESCRIPTION:VIP Sections come with admission and appetizers (INKwell Famou
+ s Wings). Stage\, Floor\, and Seating configuration may change without no
+ tice. 21+ Required to enter Prices are subject to change based on perform
+ ance demand. Pricing & locations are subject to availability. No Refunds 
+ or Exchanges. DRESSCO\\n\\nhttps://www.ticketmaster.com/funkmaster-flex-8
+ 0s-babies-all-black-new-york-new-york-11-20-2026/event/0000653806518498\\
+ n\\nRefreshed daily from live listings.
+LOCATION:The INKwell Harbor-Club Rooftop\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/funkmaster-flex-80s-babies-all-black-new-
+ york-new-york-11-20-2026/event/0000653806518498
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1A4v6pK@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T170000
+DTEND:20261120T193000
+SUMMARY:Adi Uppal
 DESCRIPTION:FAQ: WILL CALL CUSTOMERS - Will Call pick up is located at the
   Door when doors open\, night of show (NOTE: Will Call never closes)\, yo
  u'll just need to show your I.D. PLEASE NOTE: The time listed on the tick
  et is the time when doors open\, not when the performance starts. For que
- stions head to mideast\\n\\nhttps://www.ticketweb.com/event/linsy-clark-m
- iddle-east-cornerbakery-tickets/14933583\\n\\nRefreshed daily from live l
- istings.
+ stions head to mideast\\n\\nhttps://www.ticketweb.com/event/adi-uppal-mid
+ dle-east-cornerbakery-tickets/15047593\\n\\nRefreshed daily from live lis
+ tings.
 LOCATION:Middle East - Corner/Bakery\, Cambridge
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/linsy-clark-middle-east-cornerbakery-t
- ickets/14933583
+URL:https://www.ticketweb.com/event/adi-uppal-middle-east-cornerbakery-tic
+ kets/15047593
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZ7OM@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T170000
-DTEND:20261119T193000
-SUMMARY:Thank You For The Music
+UID:tm-Z7r9jZ1AAZsf7@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T170000
+DTEND:20261120T193000
+SUMMARY:Back to the Bee Gees
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZ7OM\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZsf7\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Hamners Variety Theater\, Branson
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ7OM
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZsf7
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afuya7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T171500
-DTEND:20261119T194500
+UID:tm-rZ7HnEZ1Afuya0@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T171500
+DTEND:20261120T194500
 SUMMARY:The Player (1992)
 DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
   valid identification indicating that they are at least 18 years of age w
  ill not be admitted to this event\, and will not be eligible for a refund
  . Attendance at the Williams Center involves risks associated with live e
  ntertainment\, includ\\n\\nhttps://www.ticketweb.com/event/the-player-199
- 2-williams-center-cinema-tickets/14379244\\n\\nRefreshed daily from live 
+ 2-williams-center-cinema-tickets/14379264\\n\\nRefreshed daily from live 
  listings.
 LOCATION:Williams Center - Cinema Underground - Rutherford\, Rutherford
 STATUS:CONFIRMED
 URL:https://www.ticketweb.com/event/the-player-1992-williams-center-cinema
- -tickets/14379244
+ -tickets/14379264
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfCZ7V@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T172000
-DTEND:20261119T195000
-SUMMARY:Tekkonkinkreet (2006)
+UID:tm-rZ7HnEZ1AfuU-V@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T172000
+DTEND:20261120T195000
+SUMMARY:American Psycho (2000)
 DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
   valid identification indicating that they are at least 18 years of age w
  ill not be admitted to this event\, and will not be eligible for a refund
  . Attendance at the Williams Center involves risks associated with live e
- ntertainment\, includ\\n\\nhttps://www.ticketweb.com/event/tekkonkinkreet
- -2006-williams-center-cinema-tickets/14380134\\n\\nRefreshed daily from l
- ive listings.
+ ntertainment\, includ\\n\\nhttps://www.ticketweb.com/event/american-psych
+ o-2000-williams-center-cinema-tickets/14376874\\n\\nRefreshed daily from 
+ live listings.
 LOCATION:Williams Center - Cinema Underground - Rutherford\, Rutherford
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/tekkonkinkreet-2006-williams-center-ci
- nema-tickets/14380134
+URL:https://www.ticketweb.com/event/american-psycho-2000-williams-center-c
+ inema-tickets/14376874
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfkpOf@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T173000
-DTEND:20261119T200000
-SUMMARY:The High Society New Orleans Jazz Band
-DESCRIPTION:Please be aware of the following age-related restrictions for 
- this event: Ages 10+.\\n\\nhttps://www.ticketweb.com/event/the-high-socie
- ty-new-orleans-birdland-theater-tickets/14196814\\n\\nRefreshed daily fro
- m live listings.
-LOCATION:Birdland Theater\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/the-high-society-new-orleans-birdland-
- theater-tickets/14196814
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_2p_iazT@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:DJ Raphi: HYPE TOUR USA 2.0
-DESCRIPTION:The Underground Is A General Admission Standing Room Only Venu
- e Unless Otherwise Noted. All Ages Welcome Doors: 5:00pm Show: 6:00pm Tic
- ket prices will increase the day of the show. All dates\, acts\, and tick
- et prices subject to change without notice. All tickets are subject to ap
- plicable service fees\\n\\nhttps://www.ticketmaster.com/dj-raphi-hype-tou
- r-usa-20-charlotte-north-carolina-11-19-2026/event/2D0064F599B09E3F\\n\\n
- Refreshed daily from live listings.
-LOCATION:The Underground\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/dj-raphi-hype-tour-usa-20-charlotte-north
- -carolina-11-19-2026/event/2D0064F599B09E3F
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_2QhVbtg@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Chase Petra
+UID:tm-Z7r9jZ1AAZdbU@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T173000
+DTEND:20261120T200000
+SUMMARY:Trivium w/ In Flames
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/chase-petra-atlanta-georgia-11-19-2026/event/0
- E0064F69BD18A75\\n\\nRefreshed daily from live listings.
-LOCATION:The Masquerade - Purgatory\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/chase-petra-atlanta-georgia-11-19-2026/ev
- ent/0E0064F69BD18A75
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_8mcSnfN@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:The Burial Plot - Final Show
-DESCRIPTION:Doors 6PM Show 7PM This show is ALL AGES All acts subject to c
- hange without notice\\n\\nhttps://www.ticketmaster.com/the-burial-plot-fi
- nal-show-denver-colorado-11-19-2026/event/1E00650BADCEA523\\n\\nRefreshed
-  daily from live listings.
-LOCATION:Marquis\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-burial-plot-final-show-denver-colorad
- o-11-19-2026/event/1E00650BADCEA523
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17AOv0G62d8WQS8@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Goldfinger w/ Mustard Plug\, The Planet Smashers\, Sullvn
-DESCRIPTION:DOORS: 6:00 PM SHOW: 7:00 PM ALL AGES SHOW\\n\\nhttps://www.ti
- cketmaster.com/goldfinger-w-mustard-plug-the-planet-mckees-rocks-pennsylv
- ania-11-19-2026/event/160064F0D0F5ACD0\\n\\nRefreshed daily from live lis
- tings.
-LOCATION:Roxian Theatre Presented By Citizens\, McKees Rocks
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/goldfinger-w-mustard-plug-the-planet-mcke
- es-rocks-pennsylvania-11-19-2026/event/160064F0D0F5ACD0
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QmRerh0WsuOSVqzQ@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Turkey Trash Talk Drag Show + Games
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/turkey-trash-talk-drag-show-games-tickets-8
- YBQ0G?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Banksy Museum New York\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/turkey-trash-talk-drag-show-games-tick
- ets-8YBQ0G?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-0C6@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Deer Tick
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-0C6\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZdbU\\n\\nRefreshed daily from 
  live listings.
-LOCATION:House of Independents\, Asbury Park
+LOCATION:Royal Oak Music Theatre\, Royal Oak
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-0C6
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZdbU
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PNqd@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Lenny Pearce
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PNqd\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Stage AE\, Pittsburgh
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PNqd
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-k7vGF_GwBWwQ_@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Austin Giorgio
-DESCRIPTION:State or Federal forms of ID will be required for entry.\\n\\n
- https://www.ticketmaster.com/austin-giorgio-new-york-new-york-11-19-2026/
- event/000064CCBAF72699\\n\\nRefreshed daily from live listings.
-LOCATION:Mercury Lounge\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/austin-giorgio-new-york-new-york-11-19-20
- 26/event/000064CCBAF72699
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4vk-K@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Ebril\, Kristiane\, Vcente
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/ebril-kristiane-vcente-nikki-lopez-philly-t
- ickets/15046853\\n\\nRefreshed daily from live listings.
-LOCATION:Nikki Lopez Philly\, Philadelphia
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/ebril-kristiane-vcente-nikki-lopez-phi
- lly-tickets/15046853
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af1kQf@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:With Sails Ahead and Novumora with GILT\, Elders\, and Letters To 
- Part
-DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 18 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/with-sails-ahead-and-novumora-will
- s-pub-tickets/14286694\\n\\nRefreshed daily from live listings.
-LOCATION:Will's Pub\, Orlando
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/with-sails-ahead-and-novumora-wills-pu
- b-tickets/14286694
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af8A-0@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Off The Rails Boston VIP Event
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/off-the-rails-boston-vip-off-the-rails-bost
- on-tickets/14405864\\n\\nRefreshed daily from live listings.
-LOCATION:Off The Rails Boston\, Boston
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/off-the-rails-boston-vip-off-the-rails
- -boston-tickets/14405864
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afag-7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Ventana\, Deadly Apples\, Aeternum\, Garbage World\, Veilborn
-DESCRIPTION:The Sanctuary Detroit Music And Art Center is registered 501c3
-  Non Profit and an All Ages establishment\, however\, anyone under the ag
- e of 17 must be accompanied by a parent or guardian per Michigan Law. All
-  tickets sales are final - no refunds or credits. Tickets cannot be repla
- ced if lost\, stolen o\\n\\nhttps://www.ticketweb.com/event/ventana-deadl
- y-apples-aeternum-garbage-tsdmaac-tickets/14275844\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:TSDMAAC\, Detroit
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/ventana-deadly-apples-aeternum-garbage
- -tsdmaac-tickets/14275844
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfoA0V@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:The West Side Cowboys
+UID:tm-rZ7HnEZ1AfC6Zf@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T173000
+DTEND:20261120T200000
+SUMMARY:CASEY MICHAEL
 DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
   valid identification indicating that they are at least 21 years of age w
  ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/the-west-side-cowboys-lucindas-tic
- kets/14445934\\n\\nRefreshed daily from live listings.
-LOCATION:Lucinda's\, New York
+ .\\n\\nhttps://www.ticketweb.com/event/casey-michael-wild-west-end-ticket
+ s/14387014\\n\\nRefreshed daily from live listings.
+LOCATION:WILD WEST END\, Sanford
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/the-west-side-cowboys-lucindas-tickets
- /14445934
+URL:https://www.ticketweb.com/event/casey-michael-wild-west-end-tickets/14
+ 387014
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afub7f@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Thomas Linger Trio
-DESCRIPTION:Please arrive on time for the show. Doors open 30 minutes in a
- dvance. Your entry is guaranteed\, but choice of seats is always first co
- me\, first served. All attractions and lineups are subject to change beyo
- nd our control. There is a required one drink minimum per person. Non-alc
- oholic options are av\\n\\nhttps://www.ticketweb.com/event/thomas-linger-
- trio-mezzrow-tickets/14358114\\n\\nRefreshed daily from live listings.
-LOCATION:Mezzrow\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/thomas-linger-trio-mezzrow-tickets/143
- 58114
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfuxAf@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Sheryl Bailey Quartet
-DESCRIPTION:Please arrive on time for the show. Doors open 30 minutes in a
- dvance. Your entry is guaranteed\, but choice of seats is always first co
- me\, first served. All attractions and lineups are subject to change beyo
- nd our control. There is a required one drink minimum per person. Non-alc
- oholic options are av\\n\\nhttps://www.ticketweb.com/event/sheryl-bailey-
- quartet-smalls-jazz-club-tickets/14362154\\n\\nRefreshed daily from live 
- listings.
-LOCATION:Smalls Jazz Club\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/sheryl-bailey-quartet-smalls-jazz-club
- -tickets/14362154
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1FZ_5S7FN3L@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Motionless In White: The Sweat and Blood Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/motionless-in-white-the-sweat-and-newark-new-j
- ersey-11-19-2026/event/020064BCC422349F\\n\\nRefreshed daily from live li
+UID:tm-rZ7HnEZ1AfkpjV@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T173000
+DTEND:20261120T200000
+SUMMARY:Birdland Big Band
+DESCRIPTION:Please be aware of the following age-related restrictions for 
+ this event: Ages 10+.\\n\\nhttps://www.ticketweb.com/event/birdland-big-b
+ and-birdland-jazz-club-tickets/14196734\\n\\nRefreshed daily from live li
  stings.
-LOCATION:Prudential Center\, Newark
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/motionless-in-white-the-sweat-and-newark-
- new-jersey-11-19-2026/event/020064BCC422349F
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1AOZk4KGkdylIBm@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Hot Mulligan: North American Fall Tour
-DESCRIPTION:General admission. Standing room only. All sales final. No ref
- unds.\\n\\nhttps://www.ticketmaster.com/hot-mulligan-north-american-fall-
- tour-birmingham-alabama-11-19-2026/event/20006553F9AE8EAE\\n\\nRefreshed 
- daily from live listings.
-LOCATION:Iron City\, Birmingham
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/hot-mulligan-north-american-fall-tour-bir
- mingham-alabama-11-19-2026/event/20006553F9AE8EAE
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4vfFd@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:BSL Trio
-DESCRIPTION:Please be aware of the following age-related restrictions for 
- this event: Under 18 must be accompanied by parent. This is your event ti
- cket. Ticket holders must present their tickets on entry. You can either 
- print your ticket or present this digital version. You can find all the d
- etails about this e\\n\\nhttps://www.ticketweb.com/event/bsl-trio-ground-
- zero-blues-club-biloxi-tickets/15054203\\n\\nRefreshed daily from live li
- stings.
-LOCATION:Ground Zero Blues Club Biloxi\, Biloxi
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/bsl-trio-ground-zero-blues-club-biloxi
- -tickets/15054203
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afvo37@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T180000
-DTEND:20261119T203000
-SUMMARY:Mike Wheeler Blues Band/Nicholas Alexander Blues Band
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- . 21 years and over\\n\\nhttps://www.ticketweb.com/event/mike-wheeler-blu
- es-bandnicholas-alexander-kingston-mines-chicago-tickets/14051484\\n\\nRe
- freshed daily from live listings.
-LOCATION:Kingston Mines - Chicago Blues Center\, Chicago
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/mike-wheeler-blues-bandnicholas-alexan
- der-kingston-mines-chicago-tickets/14051484
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17A8v0G61UJPEyi@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T183000
-DTEND:20261119T210000
-SUMMARY:Stella Lefty: Lefty Live
-DESCRIPTION:Tickets are non-transferable until 72 hours prior to the show 
- time. Any tickets suspected of being purchased for the sole purpose of re
- selling can be cancelled at the discretion of The Atlantis / Ticketmaster
- \, and buyers may be denied future ticket purchases for I.M.P. shows. Ope
- ning acts\, door time\\n\\nhttps://www.ticketmaster.com/stella-lefty-left
- y-live-washington-district-of-columbia-11-19-2026/event/150064ADA6967E6C\
- \n\\nRefreshed daily from live listings.
-LOCATION:The Atlantis\, Washington
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/stella-lefty-lefty-live-washington-distri
- ct-of-columbia-11-19-2026/event/150064ADA6967E6C
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1AYZkfAGkdvfpeV@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T183000
-DTEND:20261119T210000
-SUMMARY:AngelMaker
-DESCRIPTION:16+ with a VALID PHOTO ID ALL patrons are required to have a V
- ALID PHOTO ID to enter. Unless accompanied by a parent or legal guardian 
- 21 years of age or older.\\n\\nhttps://www.ticketmaster.com/angelmaker-al
- bany-new-york-11-19-2026/event/30006505C15160B4\\n\\nRefreshed daily from
-  live listings.
-LOCATION:Empire Underground\, Albany
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/angelmaker-albany-new-york-11-19-2026/eve
- nt/30006505C15160B4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZIv8@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T183000
-DTEND:20261119T210000
-SUMMARY:Missio
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZIv8\\n\\nRefreshed daily from 
- live listings.
-LOCATION:TSDMAAC CRYPT\, Detroit
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZIv8
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4ZEuS@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T183000
-DTEND:20261119T210000
-SUMMARY:Missio \, Oxymorrons\, Kent Osborne
-DESCRIPTION:The Sanctuary Detroit Music And Art Center is registered 501c3
-  Non Profit and an All Ages establishment\, however\, anyone under the ag
- e of 17 must be accompanied by a parent or guardian per Michigan Law. All
-  tickets sales are final - no refunds or credits. Tickets cannot be repla
- ced if lost\, stolen o\\n\\nhttps://www.ticketweb.com/event/missio-oxymor
- rons-kent-osborne-tsdmaac-tickets/15027373\\n\\nRefreshed daily from live
-  listings.
-LOCATION:TSDMAAC\, Detroit
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/missio-oxymorrons-kent-osborne-tsdmaac
- -tickets/15027373
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4ZS7N@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T183000
-DTEND:20261119T210000
-SUMMARY:Grayskull Booking Presents : Exhumed\, Jarhead Fertilizer\, Savage
-  Master\, Molder
-DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 18 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- . FAQ: WILL CALL CUSTOMERS - Will Call pick up is located at the Door whe
- n doors open\, night \\n\\nhttps://www.ticketweb.com/event/grayskull-book
- ing-presents-exhumed-sonia-tickets/15033123\\n\\nRefreshed daily from liv
- e listings.
-LOCATION:Sonia\, Cambridge
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/grayskull-booking-presents-exhumed-son
- ia-tickets/15033123
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfoF7V@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T183000
-DTEND:20261119T210000
-SUMMARY:The Star Spangles | The Stones | Willis Willis
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/the-star-spangles-the-berlin-ticke
- ts/14448134\\n\\nRefreshed daily from live listings.
-LOCATION:Berlin\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/the-star-spangles-the-berlin-tickets/1
- 4448134
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afokx7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T183000
-DTEND:20261119T210000
-SUMMARY:Frances De Vargas 'Graduation' Release Show
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/frances-de-vargas-graduation-release-wild-h
- orses-tickets/14446884\\n\\nRefreshed daily from live listings.
-LOCATION:Wild Horses\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/frances-de-vargas-graduation-release-w
- ild-horses-tickets/14446884
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afu040@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T183000
-DTEND:20261119T210000
-SUMMARY:Lobo | Ava Trepeck | Esmé
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/lobo-ava-trepeck-bowery-palace-tic
- kets/14364564\\n\\nRefreshed daily from live listings.
-LOCATION:Bowery Palace\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/lobo-ava-trepeck-bowery-palace-tickets
- /14364564
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_CD5XHa3@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:for KING & COUNTRY's 'A Drummer Boy Christmas'
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/for-king-countrys-a-drummer-boy-greenville-sou
- th-carolina-11-19-2026/event/2D0064EECBFBC252\\n\\nRefreshed daily from l
- ive listings.
-LOCATION:Bon Secours Wellness Arena \, Greenville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/for-king-countrys-a-drummer-boy-greenvill
- e-south-carolina-11-19-2026/event/2D0064EECBFBC252
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_ki9E2OR@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Disney Descendants\, ZOMBIES & Camp Rock: Worlds Collide Concert T
- our
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/disney-descendants-zombies-camp-rock-worlds-ch
- arlotte-north-carolina-11-19-2026/event/2D00646B179CF82F\\n\\nRefreshed d
- aily from live listings.
-LOCATION:Spectrum Center\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/disney-descendants-zombies-camp-rock-worl
- ds-charlotte-north-carolina-11-19-2026/event/2D00646B179CF82F
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_1Ns1ROM@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Hovvdy
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/hovvdy-atlanta-georgia-11-19-2026/event/0E0064
- A8F12AF837\\n\\nRefreshed daily from live listings.
-LOCATION:The Masquerade - Hell\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/hovvdy-atlanta-georgia-11-19-2026/event/0
- E0064A8F12AF837
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afu4p7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:2026 82MAJOR [82CLUB : out of control] TOUR in Atlanta
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/2026-82major-82club-out-ray-charles-perform
- ing-arts-center-tickets/14355584\\n\\nRefreshed daily from live listings.
-LOCATION:Ray Charles Performing Arts Center\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/2026-82major-82club-out-ray-charles-pe
- rforming-arts-center-tickets/14355584
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af870f@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Cabaret Cafe
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/cabaret-cafe-midtown-high-school-theater-ti
- ckets/14404914\\n\\nRefreshed daily from live listings.
-LOCATION:Midtown High School Theater\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/cabaret-cafe-midtown-high-school-theat
- er-tickets/14404914
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_GNhtwfw@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Joe Alterman
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://link.dice.fm/P1cc5c6c3641\\n\\nRefreshed daily from live listings.
-LOCATION:Eddie's Attic\, Decatur
-STATUS:CONFIRMED
-URL:https://link.dice.fm/P1cc5c6c3641
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_fH3GM0B@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Jonah Kagen
-DESCRIPTION:The Purchaser/ ticket holder must bring a photo ID to will-cal
- l to check-in for the show. If you transfer your tickets to another patro
- n\, we request that they bring their photo ID. Check-in begins at 5 PM.\\
- n\\nhttps://www.ticketmaster.com/jonah-kagen-decatur-georgia-11-19-2026/e
- vent/0E00654F1233793A\\n\\nRefreshed daily from live listings.
-LOCATION:Eddie's Attic\, Decatur
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/jonah-kagen-decatur-georgia-11-19-2026/ev
- ent/0E00654F1233793A
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dIZ_1rQanOl@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:An Evening With Band Of Horses
-DESCRIPTION:All Ages Welcome Doors: 7:00pm Show: 8:00pm Band of Horses wil
- l be performing as they celebrate the 20th anniversary of Everything All 
- The Time $1 of every ticket sold will go to The Vera Project. The Vera Pr
- oject is an all-ages nonprofit space dedicated to fostering personal and 
- community transform\\n\\nhttps://www.ticketmaster.com/an-evening-with-ban
- d-of-horses-austin-texas-11-19-2026/event/3A0064A79A26A82B\\n\\nRefreshed
-  daily from live listings.
-LOCATION:Stubb's Waller Creek Amphitheater\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/an-evening-with-band-of-horses-austin-tex
- as-11-19-2026/event/3A0064A79A26A82B
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dIZ_G5wT2dj@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Dexter and The Moonrocks
-DESCRIPTION:All Ages Welcome Doors: 7:00pm Show: 8:00pm\\n\\nhttps://www.t
- icketmaster.com/dexter-and-the-moonrocks-austin-texas-11-19-2026/event/3A
- 0064C2F2FCF0DC\\n\\nRefreshed daily from live listings.
-LOCATION:Emo's Austin\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/dexter-and-the-moonrocks-austin-texas-11-
- 19-2026/event/3A0064C2F2FCF0DC
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dIZ_53xq1SU@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Alter Bridge - What Lies Within Tour
-DESCRIPTION:Ticket text reflects door time. This show is all ages. Everyon
- e requires a ticket regardless of age. All support acts subject to change
-  without notice. Please note that the Mezzanine and Balcony are only acce
- ssible by stairs. Doors 6pm Show 7pm\\n\\nhttps://www.ticketmaster.com/al
- ter-bridge-what-lies-within-tour-san-antonio-texas-11-19-2026/event/3A006
- 4B4A274ACF6\\n\\nRefreshed daily from live listings.
-LOCATION:Aztec Theatre\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/alter-bridge-what-lies-within-tour-san-an
- tonio-texas-11-19-2026/event/3A0064B4A274ACF6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_8Q8SEHp@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:A Twilight Conversation with Ashley Greene & Kellan Lutz
-DESCRIPTION:Relive the epic conclusion of one of the most beloved film fra
- nchises of all time with A Twilight Conversation with Ashley Greene and K
- ellan Lutz. The evening begins with a full screening of The Twilight Saga
- : Breaking Dawn - Part 2. After the film\, Ashley (Alice Cullen) and Kell
- an (Emmett Cullen) t\\n\\nhttps://www.ticketmaster.com/a-twilight-convers
- ation-with-ashley-greene-denver-colorado-11-19-2026/event/1E00650690CE7F1
- 6\\n\\nRefreshed daily from live listings.
-LOCATION:Paramount Theatre\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/a-twilight-conversation-with-ashley-green
- e-denver-colorado-11-19-2026/event/1E00650690CE7F16
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_uCJAaPb@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:almost monday
-DESCRIPTION:DOORS: 7PM SHOW: 8PM THIS SHOW IS: ALL AGES All support acts a
- re subject to change without notice.\\n\\nhttps://www.ticketmaster.com/al
- most-monday-denver-colorado-11-19-2026/event/1E0064D3A6149958\\n\\nRefres
- hed daily from live listings.
-LOCATION:Summit Music Hall\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/almost-monday-denver-colorado-11-19-2026/
- event/1E0064D3A6149958
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvwje@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Julien Baker
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvwje\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Neumos\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvwje
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1HZ_f1xSb7Q@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Tacoma City Theaters: Movie Series - Planes\, Trains and Automobil
- es
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/tacoma-city-theaters-movie-series-planes-tacom
- a-washington-11-19-2026/event/0F006542A2CD811A\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Theatre On the Square\, Tacoma
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/tacoma-city-theaters-movie-series-planes-
- tacoma-washington-11-19-2026/event/0F006542A2CD811A
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-16e0Z_fqdG7Y8t2@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Ocean of Illusions\, Diamonds To Dust\, Tarcil\, Jawdust
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/ocean-of-illusions-diamonds-to-dingbatz-tic
- kets/14369094?REFERRAL_ID=tmfeed\\n\\nRefreshed daily from live listings.
-LOCATION:Dingbatz\, Clifton
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/ocean-of-illusions-diamonds-to-dingbat
- z-tickets/14369094?REFERRAL_ID=tmfeed
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17A8v0G659J1cED@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Whitechapel - 20th Anniversary Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/whitechapel-20th-anniversary-tour-baltimore-ma
- ryland-11-19-2026/event/150064B5E62AD9FB\\n\\nRefreshed daily from live l
- istings.
-LOCATION:Nevermore Hall\, Baltimore
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/whitechapel-20th-anniversary-tour-baltimo
- re-maryland-11-19-2026/event/150064B5E62AD9FB
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17A8v0G6GJdr0sY@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:The Menzingers: Everything I Ever Saw North American Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/the-menzingers-everything-i-ever-saw-baltimore
- -maryland-11-19-2026/event/150064C9837A4C70\\n\\nRefreshed daily from liv
- e listings.
-LOCATION:Baltimore Soundstage\, Baltimore
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-menzingers-everything-i-ever-saw-balt
- imore-maryland-11-19-2026/event/150064C9837A4C70
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17AOv0G65Rjc5Jp@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:An Evening with Goose Presented by WYEP
-DESCRIPTION:All ages welcome Doors: 5:30PM All support acts are subject to
-  change without notice In partnership with Goose\, $1 per ticket will be 
- contributed by Live Nation to benefit Backline Foundation. No portion of 
- the ticket purchase is tax deductible.\\n\\nhttps://www.ticketmaster.com/
- an-evening-with-goose-presented-by-pittsburgh-pennsylvania-11-19-2026/eve
- nt/160064BBDCB4B996\\n\\nRefreshed daily from live listings.
-LOCATION:Citizens Live at The Wylie\, Pittsburgh
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/an-evening-with-goose-presented-by-pittsb
- urgh-pennsylvania-11-19-2026/event/160064BBDCB4B996
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17AOv0G6CnCUKPe@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Cheap Trick - All Washed Up Tour
-DESCRIPTION:The venue enforces a clear bag policy for all events. To view 
- the bag policy and a complete list of Rules and Prohibited items\, please
-  go to our website: www.tafttheatre.org. There are no elevators in the Th
- eatre. All Balcony seats require climbing stairs.\\n\\nhttps://www.ticket
- master.com/cheap-trick-all-washed-up-tour-cincinnati-ohio-11-19-2026/even
- t/160064EA8ED93942\\n\\nRefreshed daily from live listings.
-LOCATION:Taft Theatre\, Cincinnati
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/cheap-trick-all-washed-up-tour-cincinnati
- -ohio-11-19-2026/event/160064EA8ED93942
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17FOv0G659XSzM7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:10 Years of 6LACK Tour
-DESCRIPTION:Unfortunately\, the Event Organizer has had to cancel your eve
- nt. You don't need to do a thing. We'll issue a refund to the [original m
- ethod of payment](https://help.ticketmaster.com/hc/en-us/articles/9614074
- 869009) used at time of purchase\, as soon as funds are received from the
-  Event Organizer. It \\n\\nhttps://www.ticketmaster.com/10-years-of-6lack
- -tour-orlando-florida-11-19-2026/event/220064B5FECF8DC4\\n\\nRefreshed da
- ily from live listings.
-LOCATION:House of Blues Orlando\, Orlando
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/10-years-of-6lack-tour-orlando-florida-11
- -19-2026/event/220064B5FECF8DC4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1A4Zk3FGkdZaQvH@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:They Might Be Giants
-DESCRIPTION:Tickets are non-transferable until 72 hours prior to the show 
- time. Any tickets suspected of being purchased for the sole purpose of re
- selling can be cancelled at the discretion of 9:30 Club / Ticketmaster\, 
- and buyers may be denied future ticket purchases for I.M.P. shows. Openin
- g acts\, door times\, \\n\\nhttps://www.ticketmaster.com/they-might-be-gi
- ants-washington-district-of-columbia-11-19-2026/event/15006488C025A07C\\n
- \\nRefreshed daily from live listings.
-LOCATION:9:30 CLUB\, Washington
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/they-might-be-giants-washington-district-
- of-columbia-11-19-2026/event/15006488C025A07C
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1AvbZ_oGklL_DTp@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Skilla Baby: The Price of Fame Tour (18+ with VALID ID)
-DESCRIPTION:This is an 18+ show. Please have a VALID ID. DOORS: 7PM SHOW: 
- 8PM Click here for additional event information and Bogart's FAQs! https:
- //www.bogarts.com/ CASHLESS VENUE: Bogart's services all credit and debit
-  payments only. No cash is accepted. All schedules and support bands are 
- subject to change w\\n\\nhttps://www.ticketmaster.com/skilla-baby-the-pri
- ce-of-fame-cincinnati-ohio-11-19-2026/event/1600651ADF67BFD6\\n\\nRefresh
- ed daily from live listings.
-LOCATION:Bogart's\, Cincinnati
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/skilla-baby-the-price-of-fame-cincinnati-
- ohio-11-19-2026/event/1600651ADF67BFD6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1kGZv0xbGA5zeAe@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:SOMBR - You Are The Reason Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/sombr-you-are-the-reason-tour-philadelphia-pen
- nsylvania-11-19-2026/event/300064898BE02142\\n\\nRefreshed daily from liv
- e listings.
-LOCATION:Xfinity Mobile Arena\, Philadelphia
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/sombr-you-are-the-reason-tour-philadelphi
- a-pennsylvania-11-19-2026/event/300064898BE02142
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_8n4CMWr@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Born Of Osiris x Miss May I
-DESCRIPTION:Doors at 6:30 pm | Show at 7:00 pm AGE POLICY: Minors 17 & und
- er are required to be accompanied by an adult\, age 18 or older. The venu
- e is not responsible for minors on the premises. Parents and/or guardians
-  are responsible for minor children when on the venue premises. Children 
- 2 & under do not nee\\n\\nhttps://www.ticketmaster.com/born-of-osiris-x-m
- iss-may-charleston-south-carolina-11-19-2026/event/2D00650A953B7F5E\\n\\n
- Refreshed daily from live listings.
-LOCATION:Music Farm\, Charleston
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/born-of-osiris-x-miss-may-charleston-sout
- h-carolina-11-19-2026/event/2D00650A953B7F5E
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-J_-@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Maybe Happy Ending
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-J_-\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Belasco Theatre - NY\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-J_-
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7030Z@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Carolina Opry
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7030Z\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Carolina Opry Theater\, Myrtle Beach
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7030Z
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7067F@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Olivia Rodrigo w/ Devon Again
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7067F\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Amerant Bank Arena\, Sunrise
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7067F
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7J67J@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:The Imaginary Invalid
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7J67J\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Todd Haimes Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J67J
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7Job7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:The Heart
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7Job7\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Laura Pels Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Job7
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PY0-@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:The Revivalists
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PY0-\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Adderley Amphitheater at Cascades Park\, Tallahassee
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PY0-
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7P_o6@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:CATS: The Jellicle Ball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7P_o6\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Broadhurst Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P_o6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7Pboy@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Sassy 009 - In the Round
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7Pboy\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Elsewhere\, Brooklyn
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Pboy
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PgFg@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Southern New Hampshire Dance Theater - The Nutcracker
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PgFg\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Palace Theatre-NH\, Manchester
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PgFg
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7qxjp@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Lost Boys Musical w/ Unknown Mortal Orchestra
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7qxjp\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Palace Theatre-NY\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qxjp
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA74_4@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Love Me
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA74_4\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Soho Playhouse\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA74_4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7Y0O@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:A Kidman Carol
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7Y0O\\n\\nRefreshed daily from 
- live listings.
-LOCATION:New World Stages - Stage 3\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Y0O
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7fZ9@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Stranger Things: The First Shadow
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7fZ9\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Marquis Theatre - NY\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7fZ9
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7wFU@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Big Daddy Weave
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7wFU\\n\\nRefreshed daily from 
- live listings.
-LOCATION:The Clyde Theatre-IN\, Fort Wayne
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7wFU
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7yjz@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Buena Vista Social Club
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7yjz\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Gerald Schoenfeld Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7yjz
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAZjN@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Operation Mincemeat: A New Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAZjN\\n\\nRefreshed daily from 
- live listings.
-LOCATION:John Golden Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAZjN
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAk4M@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Jamie Allan
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAk4M\\n\\nRefreshed daily from 
- live listings.
-LOCATION:New World Stages - Stage 5\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAk4M
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAkft@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Best In Grass - Ages 21+
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAkft\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Royale Boston\, Boston
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAkft
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZOFo@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Pentatonix: Christmas in the City Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZOFo\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Rocket Arena\, Cleveland
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZOFo
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZPe6@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Pain Of Truth w/ Madball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZPe6\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Union Transfer\, Philadelphia
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZPe6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAv0ev@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Here There Are Blueberries
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAv0ev\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barrymore Theatre-NY\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv0ev
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvJ13@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Downstate
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvJ13\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Booth Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvJ13
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvJQ6@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Buko Boys (Under 18 must be accompanied by parent or guardian)
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvJQ6\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Heartwood Soundstage\, Gainesville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvJQ6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvPOU@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Schmigadoon!
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvPOU\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Nederlander Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvPOU
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvS1b@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Twilight Rave (21 and Over)
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvS1b\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Vogue Theatre - IN\, Indianapolis
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvS1b
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvV-s@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:James Ivy
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvV-s\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Zone One at Elsewhere\, Brooklyn
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvV-s
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvoAI@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:The Visitors
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvoAI\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Irene Diamond Stage at Signature Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvoAI
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvzPA@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Danny Gonzalez
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvzPA\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Comedy Zone - Jacksonville\, Jacksonville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvzPA
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-k7vGF_5M5GbBp@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Julia Jacklin - North America Tour 2026
-DESCRIPTION:Doors: 7PM Show: 8PM All set times and opening acts are subjec
- t to change without notice. For accessible seating inquiries\, please ema
- il us directly at Info@BrooklynParamount.com to reserve accommodations. B
- alcony Includes: Exclusive Entrance via Dekalb Ave. Balcony Access Privat
- e Bar Private Bathro\\n\\nhttps://www.ticketmaster.com/julia-jacklin-nort
- h-america-tour-2026-brooklyn-new-york-11-19-2026/event/000064BDCB318E96\\
- n\\nRefreshed daily from live listings.
-LOCATION:Brooklyn Paramount\, Brooklyn
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/julia-jacklin-north-america-tour-2026-bro
- oklyn-new-york-11-19-2026/event/000064BDCB318E96
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-k7vGF_G2KkbOi@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Pigeons Playing Ping Pong
-DESCRIPTION:Valid photo ID required for entry. Doors: 6pm Show: 7pm 18+ Ti
- me of show was 8 PM ET - Now 7 PM. Doors are still at 6 PM. Original tick
- ets are still valid for entry.\\n\\nhttps://www.ticketmaster.com/pigeons-
- playing-ping-pong-brooklyn-new-york-11-19-2026/event/000064C3D319882C\\n\
- \nRefreshed daily from live listings.
-LOCATION:Brooklyn Bowl\, Brooklyn
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/pigeons-playing-ping-pong-brooklyn-new-yo
- rk-11-19-2026/event/000064C3D319882C
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-k7vGF_GE1Lk35@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Pouya: The Forever Glades Tour
-DESCRIPTION:DOORS - 7:00PM SHOW - 8:00PM SHOWTIME IS SUBJECT TO CHANGE. Ag
- e Restriction: 16+ Unless Accompanied by a Guardian\\n\\nhttps://www.tick
- etmaster.com/pouya-the-forever-glades-tour-new-york-new-york-11-19-2026/e
- vent/000064C9CA7C648B\\n\\nRefreshed daily from live listings.
-LOCATION:Gramercy Theatre\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/pouya-the-forever-glades-tour-new-york-ne
- w-york-11-19-2026/event/000064C9CA7C648B
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-k7vGF_a9nm-2r@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Low Cut Connie
-DESCRIPTION:State or Federal forms of ID will be required for entry. Origi
- nally scheduled for 8pm. Previously purchased tickets will be honored for
-  the new time.\\n\\nhttps://www.ticketmaster.com/low-cut-connie-new-york-
- new-york-11-19-2026/event/00006495EABA13DE\\n\\nRefreshed daily from live
-  listings.
-LOCATION:Bowery Ballroom\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/low-cut-connie-new-york-new-york-11-19-20
- 26/event/00006495EABA13DE
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4ZAud@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Maria Schneider Orchestra
-DESCRIPTION:Please be aware of the following age-related restrictions for 
- this event: Ages 10+.\\n\\nhttps://www.ticketweb.com/event/maria-schneide
- r-orchestra-birdland-jazz-club-tickets/15005343\\n\\nRefreshed daily from
-  live listings.
 LOCATION:Birdland Jazz Club\, New York
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/maria-schneider-orchestra-birdland-jaz
- z-club-tickets/15005343
+URL:https://www.ticketweb.com/event/birdland-big-band-birdland-jazz-club-t
+ ickets/14196734
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4ZxQK@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Magic Bag Presents: Surprise Chef
-DESCRIPTION:*All shows are General Admission. *All shows are standing room
-  only unless otherwise noted. *You will need your Valid Picture ID should
-  use wish to consume adult beverages. *Ticket purchasers will be scanned-
- in when the Magic Bag doors open on your event day. *Please refer to the 
- event listing for a\\n\\nhttps://www.ticketweb.com/event/magic-bag-presen
- ts-surprise-chef-the-magic-bag-tickets/15022693\\n\\nRefreshed daily from
+UID:tm-rZ7HnEZ1AfZE-f@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T173000
+DTEND:20261120T200000
+SUMMARY:Hard Country Honky Tonk with The Hoyle Brothers
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . Make sure to bring a valid ID\\n\\nhttps://www.ticketweb.com/event/hard
+ -country-honky-tonk-with-empty-bottle-tickets/14027854\\n\\nRefreshed dai
+ ly from live listings.
+LOCATION:Empty Bottle\, Chicago
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/hard-country-honky-tonk-with-empty-bot
+ tle-tickets/14027854
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfuSq7@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T173000
+DTEND:20261120T200000
+SUMMARY:Happy Hour in the SIDEBAR w/ GROOVE WITNESS
+DESCRIPTION:Thank you for purchasing a ticket to FITZGERALDS! If you selec
+ ted Will Call\, you'll check in at the entrance when doors open for the s
+ how. Please have an ID ready. If the event is General Admission\, there i
+ s no Reserved Seating. Under 21 ok if accompanied by parent or guardian. 
+ Tickets are NOT maile\\n\\nhttps://www.ticketweb.com/event/happy-hour-in-
+ the-sidebar-fitzgeralds-sidebar-tickets/14373744\\n\\nRefreshed daily fro
+ m live listings.
+LOCATION:FITZGERALDS SIDEBAR\, Berwyn
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/happy-hour-in-the-sidebar-fitzgeralds-
+ sidebar-tickets/14373744
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5vzZ_19koCIM@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Saosin: 20 Years of Self-Titled
+DESCRIPTION:DOORS: 6PM SHOW: 7PM THIS SHOW IS: ALL AGES All support acts a
+ re subject to change without notice.\\n\\nhttps://www.ticketmaster.com/sa
+ osin-20-years-of-selftitled-denver-colorado-11-20-2026/event/1E0064A5C644
+ EA37\\n\\nRefreshed daily from live listings.
+LOCATION:Summit Music Hall\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/saosin-20-years-of-selftitled-denver-colo
+ rado-11-20-2026/event/1E0064A5C644EA37
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QmR7mTrBB46dg6-E@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Community Gallery Opening
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/community-gallery-opening-tickets-329TMP?re
+ f=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/community-gallery-opening-tickets-329T
+ MP?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZYu0@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Miss May I w/ Born of Osiris
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZYu0\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Orpheum Theatre - Tampa\, Tampa
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZYu0
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_2ULXxXQ@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Hugo The Ultimate Journey Tribute
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/hugo-the-ultimate-journey-tribute-elmira-new-y
+ ork-11-20-2026/event/000064FD9FFA2F9A\\n\\nRefreshed daily from live list
+ ings.
+LOCATION:LECOM Event Center\, Elmira
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/hugo-the-ultimate-journey-tribute-elmira-
+ new-york-11-20-2026/event/000064FD9FFA2F9A
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_35skj0l@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:James Ivy
+DESCRIPTION:State or Federal forms of ID will be required for entry.\\n\\n
+ https://www.ticketmaster.com/james-ivy-new-york-new-york-11-20-2026/event
+ /00006522F119C92B\\n\\nRefreshed daily from live listings.
+LOCATION:Mercury Lounge\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/james-ivy-new-york-new-york-11-20-2026/ev
+ ent/00006522F119C92B
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_5zQT0Kj@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Punchline "37 Everywhere" 20th Anniversary -  21+ Event
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/punchline-37-everywhere-20th-anniversary-21-as
+ bury-park-new-jersey-11-20-2026/event/000064BE1AFE44DC\\n\\nRefreshed dai
+ ly from live listings.
+LOCATION:The Wonder Bar\, Asbury Park
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/punchline-37-everywhere-20th-anniversary-
+ 21-asbury-park-new-jersey-11-20-2026/event/000064BE1AFE44DC
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1A4ZE8K@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Midwinter\, What Lies Below\, Coldstate\, The Harbor Divide
+DESCRIPTION:The Sanctuary Detroit Music And Art Center is registered 501c3
+  Non Profit and an All Ages establishment\, however\, anyone under the ag
+ e of 17 must be accompanied by a parent or guardian per Michigan Law. All
+  tickets sales are final - no refunds or credits. Tickets cannot be repla
+ ced if lost\, stolen o\\n\\nhttps://www.ticketweb.com/event/midwinter-wha
+ t-lies-below-coldstate-tsdmaac-tickets/15027413\\n\\nRefreshed daily from
   live listings.
-LOCATION:The Magic Bag\, Ferndale
+LOCATION:TSDMAAC\, Detroit
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/magic-bag-presents-surprise-chef-the-m
- agic-bag-tickets/15022693
+URL:https://www.ticketweb.com/event/midwinter-what-lies-below-coldstate-ts
+ dmaac-tickets/15027413
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4vo7K@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:COCKTAILS AND CHOREO SAMBA NIGHT
+UID:tm-rZ7HnEZ1Af8AO7@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:North To Nashville at The Grainery Live!
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/cocktails-and-choreo-samba-night-west-end-t
- rading-company-tickets/15051113\\n\\nRefreshed daily from live listings.
-LOCATION:West End Trading Company\, Sanford
+ tps://www.ticketweb.com/event/north-to-nashville-at-the-the-grainery-tick
+ ets/14405804\\n\\nRefreshed daily from live listings.
+LOCATION:The Grainery \, Plain City
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/cocktails-and-choreo-samba-night-west-
- end-trading-company-tickets/15051113
+URL:https://www.ticketweb.com/event/north-to-nashville-at-the-the-grainery
+ -tickets/14405804
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af0yad@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Ha Ha Tonka w/ Angela Perley (duo)
-DESCRIPTION:You must bring your valid ID to pick up tickets. By clicking t
- he "Place Order" button on the Payment page\, you are agreeing to the Tic
- ketWeb Purchase Policy and Privacy Notice. I also understand and agree th
- at all sales are final. There are no refunds unless the event is cancelle
- d or postponed. I un\\n\\nhttps://www.ticketweb.com/event/ha-ha-tonka-w-a
- ngela-rumba-cafe-tickets/14939243\\n\\nRefreshed daily from live listings
- .
-LOCATION:Rumba Cafe\, Columbus
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/ha-ha-tonka-w-angela-rumba-cafe-ticket
- s/14939243
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af8eOf@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:BoogieManja
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- . By purchasing tickets to this event\, you are authorizing this charge a
- nd agreeing to our te\\n\\nhttps://www.ticketweb.com/event/boogiemanja-br
- ooklyn-improv-the-lab-tickets/14402814\\n\\nRefreshed daily from live lis
- tings.
-LOCATION:Brooklyn Improv (The Lab)\, Brooklyn
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/boogiemanja-brooklyn-improv-the-lab-ti
- ckets/14402814
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af8ov0@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:G8V\, Myzandre\, CLBZ\, TAKURU!\, Alaska-303\, girlgonemissing
+UID:tm-rZ7HnEZ1AfoAj7@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:John Boerstler & Friends ft. Steve Sweney / Phil Clark / Aaron Sco
+ tt at Woodlands Tavern
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/g8v-myzandre-clbz-takuru-alaska-the-foundry
- -tickets/14411064\\n\\nRefreshed daily from live listings.
-LOCATION:The Foundry\, Cleveland
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/g8v-myzandre-clbz-takuru-alaska-the-fo
- undry-tickets/14411064
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af8vJ7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:THEKIDSZN
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/thekidszn-night-club-101-tickets/1
- 4401984\\n\\nRefreshed daily from live listings.
-LOCATION:Night Club 101\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/thekidszn-night-club-101-tickets/14401
- 984
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfFKfV@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Noah Smith's Crooner Circus
-DESCRIPTION:Ticket price includes all taxes and fees as required by Kentuc
- ky laws.\\n\\nhttps://www.ticketweb.com/event/noah-smiths-crooner-circus-
- the-southgate-house-revival-tickets/14213534\\n\\nRefreshed daily from li
- ve listings.
-LOCATION:The Southgate House Revival - Revival Room\, Newport
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/noah-smiths-crooner-circus-the-southga
- te-house-revival-tickets/14213534
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfFppf@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Megan Woods: The Truth Tour - Tifton\, GA
-DESCRIPTION:This ticket is a revocable license and may be taken up and adm
- ission refused upon refunding the purchase price appearing hereon and is 
- grounds for seizure and cancellation without compensation. Holder of this
-  ticket voluntarily assumes all risks and danger incidental to the game o
- r event for which t\\n\\nhttps://www.ticketweb.com/event/megan-woods-the-
- truth-tour-university-of-georgia-tifton-campus-tickets/14216594\\n\\nRefr
- eshed daily from live listings.
-LOCATION:University of Georgia Tifton Campus Conference Center - John Hunt
-  Auditorium\, Tifton
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/megan-woods-the-truth-tour-university-
- of-georgia-tifton-campus-tickets/14216594
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfGMZV@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Garret Elias
-DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 18 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- . FAQ: WILL CALL CUSTOMERS - Will Call pick up is located at the Door whe
- n doors open\, night \\n\\nhttps://www.ticketweb.com/event/garret-elias-m
- iddle-east-upstairs-tickets/14337034\\n\\nRefreshed daily from live listi
- ngs.
-LOCATION:Middle East - Upstairs\, Cambridge
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/garret-elias-middle-east-upstairs-tick
- ets/14337034
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfGUJ7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Bad Ideas Presents: Elbow Room\, City Sidestep\, & Zombie Fashion 
- Show
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/bad-ideas-presents-elbow-room-the-wincheste
- r-tickets/14336984\\n\\nRefreshed daily from live listings.
-LOCATION:The Winchester\, Lakewood
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/bad-ideas-presents-elbow-room-the-winc
- hester-tickets/14336984
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfGv-7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:June Henry \, Chrysalis\, Will Hasell
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/june-henry-chrysalis-will-gold-sounds-ticke
- ts/14301844\\n\\nRefreshed daily from live listings.
-LOCATION:Gold Sounds\, Brooklyn
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/june-henry-chrysalis-will-gold-sounds-
- tickets/14301844
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfGzA0@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:P.E.E.\, Soap Box Derby\, gapyear\, and Punxsutawney
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/pee-soap-box-derby-gapyear-conduit-tickets/
- 14338164\\n\\nRefreshed daily from live listings.
-LOCATION:Conduit\, Winter Park
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/pee-soap-box-derby-gapyear-conduit-tic
- kets/14338164
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfGzAf@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:P.E.E.\, Soap Box Derby\, gapyear\, and Punxsutawney in Orlando
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/pee-soap-box-derby-gapyear-conduit-tickets/
- 14338154\\n\\nRefreshed daily from live listings.
-LOCATION:Conduit\, Winter Park
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/pee-soap-box-derby-gapyear-conduit-tic
- kets/14338154
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfJoaN@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:GEORGE BIRGE wsg Deltona and GlenBrooke
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- . NO REFUNDS OR EXCHANGES. This ticket is a revocable license which may b
- e withdrawn and admi\\n\\nhttps://www.ticketweb.com/event/george-birge-ws
- g-deltona-and-district-142-tickets/14991263\\n\\nRefreshed daily from liv
- e listings.
-LOCATION:District 142\, Wyandotte
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/george-birge-wsg-deltona-and-district-
- 142-tickets/14991263
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfPp0d@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Dar Williams at Woodlands Tavern
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/dar-williams-at-woodlands-tavern-woodlands-
- tavern-tickets/14956903\\n\\nRefreshed daily from live listings.
+ tps://www.ticketweb.com/event/john-boerstler-friends-ft-woodlands-tavern-
+ tickets/14445704\\n\\nRefreshed daily from live listings.
 LOCATION:Woodlands Tavern\, Columbus
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/dar-williams-at-woodlands-tavern-woodl
- ands-tavern-tickets/14956903
+URL:https://www.ticketweb.com/event/john-boerstler-friends-ft-woodlands-ta
+ vern-tickets/14445704
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afap7V@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Token\, Clark D\, DJ Lucas
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/token-clark-d-dj-lucas-blind-pig-tickets/14
- 256134\\n\\nRefreshed daily from live listings.
-LOCATION:Blind Pig\, Ann Arbor
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/token-clark-d-dj-lucas-blind-pig-ticke
- ts/14256134
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afof0V@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Reunion
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/reunion-night-club-101-tickets/144
- 54934\\n\\nRefreshed daily from live listings.
-LOCATION:Night Club 101\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/reunion-night-club-101-tickets/1445493
- 4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afr60K@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Red Leather - Tahoe Tour in Jacksonville
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/red-leather-tahoe-albatross-tickets/1478791
- 3\\n\\nRefreshed daily from live listings.
-LOCATION:Albatross\, Jacksonville
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/red-leather-tahoe-albatross-tickets/14
- 787913
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afu4v0@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Benny Green Solo Piano
-DESCRIPTION:Please arrive on time for the show. Doors open 45 minutes in a
+UID:tm-rZ7HnEZ1Afu9O0@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Kenny Davis Quartet
+DESCRIPTION:Please arrive on time for the show. Doors open 30 minutes in a
  dvance. Your entry is guaranteed\, but choice of seats is always first co
  me\, first served. All attractions and lineups are subject to change beyo
  nd our control. There is a required one drink minimum per person. Non-alc
- oholic options are av\\n\\nhttps://www.ticketweb.com/event/benny-green-so
- lo-piano-jazzcultural-tickets/14355064\\n\\nRefreshed daily from live lis
- tings.
-LOCATION:Jazzcultural\, New York
+ oholic options are av\\n\\nhttps://www.ticketweb.com/event/kenny-davis-qu
+ artet-mezzrow-tickets/14357824\\n\\nRefreshed daily from live listings.
+LOCATION:Mezzrow\, New York
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/benny-green-solo-piano-jazzcultural-ti
- ckets/14355064
+URL:https://www.ticketweb.com/event/kenny-davis-quartet-mezzrow-tickets/14
+ 357824
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfukJf@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Hannah Wicklund wsg/ Slow Funeral
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/hannah-wicklund-wsg-slow-funeral-c
- lub-cafe-tickets/14346994\\n\\nRefreshed daily from live listings.
-LOCATION:Club Cafe\, Pittsburgh
+UID:tm-rZ7HnEZ1Afuxof@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Valery Ponomarev Quintet
+DESCRIPTION:Please arrive on time for the show. Doors open 30 minutes in a
+ dvance. Your entry is guaranteed\, but choice of seats is always first co
+ me\, first served. All attractions and lineups are subject to change beyo
+ nd our control. There is a required one drink minimum per person. Non-alc
+ oholic options are av\\n\\nhttps://www.ticketweb.com/event/valery-ponomar
+ ev-quintet-smalls-jazz-club-tickets/14362454\\n\\nRefreshed daily from li
+ ve listings.
+LOCATION:Smalls Jazz Club\, New York
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/hannah-wicklund-wsg-slow-funeral-club-
- cafe-tickets/14346994
+URL:https://www.ticketweb.com/event/valery-ponomarev-quintet-smalls-jazz-c
+ lub-tickets/14362454
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfxpZN@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:William Elliott Whitmore with Special Guests The Division Men
-DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 18 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- . No Name Changes & No Ticket Transfers Allowed\\n\\nhttps://www.ticketwe
- b.com/event/william-elliott-whitmore-with-special-new-world-music-hall-ti
- ckets/14896023\\n\\nRefreshed daily from live listings.
-LOCATION:New World Music Hall\, Tampa
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/william-elliott-whitmore-with-special-
- new-world-music-hall-tickets/14896023
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv177Z_oGkwkU1Go@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:IT'S A WONDERFUL LIFE - 7pm - Classic Movie Nights!
-DESCRIPTION:Every Time A Bell Rings... An Angel Gets His Wings! The 1946 A
- merican Christmas fantasy drama film directed and produced by Frank Capra
- . Stars James Stewart as George Bailey\, a decent small-town banker who l
- earns what life would have been like if he'd never been born after he unw
- ittingly becomes inv\\n\\nhttps://www.ticketmaster.com/its-a-wonderful-li
- fe-7pm-classic-hampton-virginia-11-19-2026/event/0100651C86D8A311\\n\\nRe
- freshed daily from live listings.
-LOCATION:American Theatre\, Hampton
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/its-a-wonderful-life-7pm-classic-hampton-
- virginia-11-19-2026/event/0100651C86D8A311
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv17OZ_3Gkl7RMdW@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:DJ Meredith Marks - YOU.CAN.DANCE.TOUR
+UID:tm-vvG1OZ_52gfQyW@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Catch Your Breath - Not Broken Enough Tour
 DESCRIPTION:All Ages Welcome. General Admission\, standing room only. Door
- s are scheduled to open to the public at 7:00PM.\\n\\nhttps://www.ticketm
- aster.com/dj-meredith-marks-youcandancetour-detroit-michigan-11-19-2026/e
- vent/0800652AC4BF70FD\\n\\nRefreshed daily from live listings.
+ s are scheduled to open to the public at 6:00PM.\\n\\nhttps://www.ticketm
+ aster.com/catch-your-breath-not-broken-enough-detroit-michigan-11-20-2026
+ /event/080064B3F551AE7D\\n\\nRefreshed daily from live listings.
 LOCATION:Saint Andrew's Hall\, Detroit
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/dj-meredith-marks-youcandancetour-detroit
- -michigan-11-19-2026/event/0800652AC4BF70FD
+URL:https://www.ticketmaster.com/catch-your-breath-not-broken-enough-detro
+ it-michigan-11-20-2026/event/080064B3F551AE7D
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vv17OZ_7GkwiaINO@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:The Neighbourhood: THE WOURLD TOUR
+UID:tm-1Ae0Z_KGkDq4ZR-@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Miss B Haven @ Route 20
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/the-neighbourhood-the-wourld-tour-detroit-mich
- igan-11-19-2026/event/0800644CAC2688E0\\n\\nRefreshed daily from live lis
- tings.
-LOCATION:Little Caesars Arena\, Detroit
+ tps://www.ticketweb.com/event/miss-b-haven-route-route-20-tickets/1435309
+ 4?REFERRAL_ID=tmfeed\\n\\nRefreshed daily from live listings.
+LOCATION:Route 20\, Sturtevant
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-neighbourhood-the-wourld-tour-detroit
- -michigan-11-19-2026/event/0800644CAC2688E0
+URL:https://www.ticketweb.com/event/miss-b-haven-route-route-20-tickets/14
+ 353094?REFERRAL_ID=tmfeed
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vv17fZ_FGkl8Zu0b@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Zach Williams With Cochren & Co. And Christian Hohn: Revival Night
- s
-DESCRIPTION:VIP Experience includes: Best seating\, early entry\, & early 
- access to merch. Meet & Greet and photo opportunity with Zach Williams. M
- ust arrive by 5:30 PM. Late arrivals will forfeit the M&G opportunity. No
-  refunds.\\n\\nhttps://www.ticketmaster.com/zach-williams-with-cochren-co
- -and-akron-ohio-11-19-2026/event/0500648AD000D918\\n\\nRefreshed daily fr
- om live listings.
-LOCATION:Akron Civic Theatre\, Akron
+UID:tm-G5viZ_9esQLpx@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:The Great NOLA Trendkill FRIDAY
+DESCRIPTION:Please note that everyone must have a valid ticket to enter th
+ e venue. Entry requirements are subject to change. By purchasing tickets 
+ to this event you agree to abide by entry requirements in effect at the t
+ ime of the event. Check the venue website leading up to your event for th
+ e latest protocols.\\n\\nhttps://www.ticketmaster.com/the-great-nola-tren
+ dkill-friday-new-orleans-louisiana-11-20-2026/event/1B006570B169F5A2\\n\\
+ nRefreshed daily from live listings.
+LOCATION:Lakefront Arena\, New Orleans
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/zach-williams-with-cochren-co-and-akron-o
- hio-11-19-2026/event/0500648AD000D918
+URL:https://www.ticketmaster.com/the-great-nola-trendkill-friday-new-orlea
+ ns-louisiana-11-20-2026/event/1B006570B169F5A2
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vv17fZ_oGkRbNcla@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Jackson Dean: Magnolia Sage Tour
+UID:tm-LvZ18QPv9cD2-bkNQJmNb@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:Trap Karaoke: Milwaukee
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/jackson-dean-magnolia-sage-tour-akron-ohio-11-
- 19-2026/event/0500651BD88EDAC9\\n\\nRefreshed daily from live listings.
-LOCATION:Goodyear Theater\, Akron
+ tps://www.universe.com/events/trap-karaoke-milwaukee-tickets-V52JCY?ref=t
+ icketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Landmark Credit Union Live\, Milwaukee
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/jackson-dean-magnolia-sage-tour-akron-ohi
- o-11-19-2026/event/0500651BD88EDAC9
+URL:https://www.universe.com/events/trap-karaoke-milwaukee-tickets-V52JCY?
+ ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vv1AAZkfAGkdtK9YN@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Pentatonix: Christmas in the City Tour 
+UID:tm-Z7r9jZ1AAvk1d@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T180000
+DTEND:20261120T203000
+SUMMARY:St. Thomas Tommies Womens Hockey vs. Minnesota Gophers Womens Hock
+ ey
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.rocketarena.com/events/detail/pentatonix-261119\\n\\nRefreshed 
- daily from live listings.
-LOCATION:Rocket Arena\, Cleveland
-STATUS:CONFIRMED
-URL:https://www.rocketarena.com/events/detail/pentatonix-261119
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1AvZk36GkeIgqfc@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:West 22nd: Places To Be
-DESCRIPTION:THIS EVENT IS ALL AGES.\\n\\nhttps://www.ticketmaster.com/west
- -22nd-places-to-be-boston-massachusetts-11-19-2026/event/01006487A8D5D52D
- \\n\\nRefreshed daily from live listings.
-LOCATION:Paradise Rock Club presented by Citizens\, Boston
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/west-22nd-places-to-be-boston-massachuset
- ts-11-19-2026/event/01006487A8D5D52D
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1AvZkf_GkdFG42E@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Frost Children
-DESCRIPTION:All Ages Doors 7pm / Show 8pm Lineup: FROST CHILDREN +Kuru +Ol
- swel All support acts are subject to change without notice. All items bro
- ught onto the property are subject to inspection. Lighters\, Cigarettes &
-  Vapes are prohibited in the venue\, there is NO SMOKING OR VAPING allowe
- d at the venue per th\\n\\nhttps://www.ticketmaster.com/frost-children-bo
- ston-massachusetts-11-19-2026/event/01006519C83153E7\\n\\nRefreshed daily
-  from live listings.
-LOCATION:Big Night Live\, Boston
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/frost-children-boston-massachusetts-11-19
- -2026/event/01006519C83153E7
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1AvZkfwGkemSKbm@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Trippie Redd - The Non-disclosure Agreement Tour
-DESCRIPTION:Box Seats receive free 1-Night Foundation Room access for gues
- ts 21+ and when available. Please check the Foundation Room website for m
- ore details. houseofblues.com/boston/fr\\n\\nhttps://www.ticketmaster.com
- /trippie-redd-the-nondisclosure-agreement-tour-boston-massachusetts-11-19
- -2026/event/01006532AECD362E\\n\\nRefreshed daily from live listings.
-LOCATION:Citizens House of Blues Boston\, Boston
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/trippie-redd-the-nondisclosure-agreement-
- tour-boston-massachusetts-11-19-2026/event/01006532AECD362E
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG17Z_29_YE1s@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Patrick Wolf
-DESCRIPTION:EVENT IS ALL AGES.\\n\\nhttps://www.ticketmaster.com/patrick-w
- olf-boston-massachusetts-11-19-2026/event/010064F5D9C272B1\\n\\nRefreshed
-  daily from live listings.
-LOCATION:Brighton Music Hall presented by Citizens\, Boston
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/patrick-wolf-boston-massachusetts-11-19-2
- 026/event/010064F5D9C272B1
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1VZ_aV2E9ub@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Olivia Rodrigo: The Unraveled Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://seatgeek.com/olivia-rodrigo-tickets/sunrise-florida-amerant-bank-ar
- ena-2026-11-19-7-30-pm/concert/18208621\\n\\nRefreshed daily from live li
- stings.
-LOCATION:Amerant Bank Arena \, Sunrise
-STATUS:CONFIRMED
-URL:https://seatgeek.com/olivia-rodrigo-tickets/sunrise-florida-amerant-ba
- nk-arena-2026-11-19-7-30-pm/concert/18208621
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1fZ_1hjbMSa@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Everclear - Lucky 7 Tour
-DESCRIPTION:Doors open at 7:00pm. Music begins at 8:00pm. This event is Ge
- neral Admission (GA) Standing Room Only\, with Reserved seating in the Ba
- lcony. All GA tickets are for standing room only. For accessible tickets\
- , use the filter option on the right of the purchase page and click SHOW 
- ACCESSIBLE TICKETS bu\\n\\nhttps://www.ticketmaster.com/everclear-lucky-7
- -tour-cleveland-ohio-11-19-2026/event/050064A6DC637CC9\\n\\nRefreshed dai
- ly from live listings.
-LOCATION:House of Blues Cleveland\, Cleveland
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/everclear-lucky-7-tour-cleveland-ohio-11-
- 19-2026/event/050064A6DC637CC9
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1fZ_29qtsov@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T190000
-DTEND:20261119T213000
-SUMMARY:Campus Nights Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/campus-nights-tour-bloomington-indiana-11-19-2
- 026/event/050064F5DDA71441\\n\\nRefreshed daily from live listings.
-LOCATION:Indiana University Auditorium\, Bloomington
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/campus-nights-tour-bloomington-indiana-11
- -19-2026/event/050064F5DDA71441
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_uEGRw-d@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T193000
-DTEND:20261119T220000
-SUMMARY:Mannheim Steamroller Christmas
-DESCRIPTION:- NO REFUNDS / NO EXCHANGES - Children ages 2 years and older 
- require a ticket for entry - No outside food & beverages - No oversized b
- ags (backpacks\, duffle bags etc.) - NO RE-ENTRY once ticket is scanned i
- nto the venue - The CCPAC is a non-smoking Columbia County property - Som
- e fees may not be re\\n\\nhttps://www.ticketmaster.com/mannheim-steamroll
- er-christmas-evans-georgia-11-19-2026/event/0E0064D9CCBF2843\\n\\nRefresh
- ed daily from live listings.
-LOCATION:Columbia County Performing Arts Center\, Evans
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/mannheim-steamroller-christmas-evans-geor
- gia-11-19-2026/event/0E0064D9CCBF2843
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PtaM@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T193000
-DTEND:20261119T220000
-SUMMARY:Actors From The London Stage
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PtaM\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvk1d\\n\\nRefreshed daily from 
  live listings.
-LOCATION:McCullough Theater\, Austin
+LOCATION:Lee and Penny Anderson Arena\, St. Paul
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PtaM
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAv3b7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T193000
-DTEND:20261119T220000
-SUMMARY:What a Glorious Feeling
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAv3b7\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Galleria Theatre\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3b7
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZ3uZ@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T193000
-DTEND:20261119T220000
-SUMMARY:Taste of Ireland Company presents A Celtic Christmas
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZ3uZ\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Pikes Peak Center\, Colorado Springs
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ3uZ
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1HZ_1M1OrSK@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T193000
-DTEND:20261119T220000
-SUMMARY:Straight No Chaser
-DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
- . www.stgpresents.org/about/safety When purchasing ADA accessible seating
- \, please feel free to contact us by email if assistance is needed with a
- ccommodations or companion seating\; you may reach us at accessibility@st
- gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/straight-no-chase
- r-seattle-washington-11-19-2026/event/0F0064ADCA81ECD3\\n\\nRefreshed dai
- ly from live listings.
-LOCATION:Paramount Theatre\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/straight-no-chaser-seattle-washington-11-
- 19-2026/event/0F0064ADCA81ECD3
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1HZ_G25R8U2@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T193000
-DTEND:20261119T220000
-SUMMARY:Rodrigo y Gabriela - OurHome Tour
-DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
- . www.stgpresents.org/about/safety When purchasing ADA accessible seating
- \, please feel free to contact us by email if assistance is needed with a
- ccommodations or companion seating\; you may reach us at accessibility@st
- gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/rodrigo-y-gabriel
- a-ourhome-tour-seattle-washington-11-19-2026/event/0F0064C3CBBD0D8F\\n\\n
- Refreshed daily from live listings.
-LOCATION:Moore Theatre\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/rodrigo-y-gabriela-ourhome-tour-seattle-w
- ashington-11-19-2026/event/0F0064C3CBBD0D8F
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAo1p@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T193000
-DTEND:20261119T220000
-SUMMARY:Hard Maybe - Ages 21+
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAo1p\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Nectar Lounge\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAo1p
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7N76@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T193000
-DTEND:20261119T220000
-SUMMARY:Warren Miller's Days Off
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7N76\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Admiral Theatre - WA\, Bremerton
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7N76
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_7mi3DgH@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Hiss Golden Messenger
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.etix.com/ticket/p/58776099/hiss-golden-messenger-asheville-the-
- orange-peel\\n\\nRefreshed daily from live listings.
-LOCATION:The Orange Peel\, Asheville
-STATUS:CONFIRMED
-URL:https://www.etix.com/ticket/p/58776099/hiss-golden-messenger-asheville
- -the-orange-peel
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-7Ag@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Hiss Golden Messenger
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-7Ag\\n\\nRefreshed daily from 
- live listings.
-LOCATION:The Orange Peel\, Asheville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-7Ag
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZIus@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Austin Snell
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZIus\\n\\nRefreshed daily from 
- live listings.
-LOCATION:40 Watt Club\, Athens
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZIus
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_3SXQvSe@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:An Evening With Tamar Braxton
-DESCRIPTION:All Ages Welcome Doors: 7:00PM Show: 8:00PM Ticket prices will
-  increase the day of the show. All dates\, acts\, and ticket prices subje
- ct to change without notice. All tickets are subject to applicable servic
- e fees via all points of purchase.\\n\\nhttps://www.ticketmaster.com/an-e
- vening-with-tamar-braxton-charlotte-north-carolina-11-19-2026/event/2D006
- 52CFE681CC2\\n\\nRefreshed daily from live listings.
-LOCATION:The Fillmore Charlotte\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/an-evening-with-tamar-braxton-charlotte-n
- orth-carolina-11-19-2026/event/2D00652CFE681CC2
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_GlDneJ7@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Carbon Leaf
-DESCRIPTION:Age Policy: 18+ Valid ID required for entry into venue / Under
-  18 permitted with parent (Accepted forms of ID: State Issued ID or Drive
- r's License\, Military ID\, Passport.)\\n\\nhttps://www.ticketmaster.com/
- carbon-leaf-charlotte-north-carolina-11-19-2026/event/2D0064CAFBA82984\\n
- \\nRefreshed daily from live listings.
-LOCATION:Neighborhood Theatre Main Room\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/carbon-leaf-charlotte-north-carolina-11-1
- 9-2026/event/2D0064CAFBA82984
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvvFv@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:The Heavy Heavy w/ The Point.
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvvFv\\n\\nRefreshed daily from 
- live listings.
-LOCATION:The Ramkat\, Winston Salem
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvvFv
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4vZbS@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:lespecial\, Natalie Brooke 
-DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 18 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/lespecial-natalie-brooke-the-808-t
- ickets/15040633\\n\\nRefreshed daily from live listings.
-LOCATION:The 808\, Knoxville
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/lespecial-natalie-brooke-the-808-ticke
- ts/15040633
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70sfs@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Anthony Gomes
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70sfs\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Open Chord Music\, Knoxville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70sfs
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_uQsZFce@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Rod Wave: Don't Look Down Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/rod-wave-dont-look-down-tour-atlanta-georgia-1
- 1-19-2026/event/0E0064D6B1008B42\\n\\nRefreshed daily from live listings.
-LOCATION:State Farm Arena\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/rod-wave-dont-look-down-tour-atlanta-geor
- gia-11-19-2026/event/0E0064D6B1008B42
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_o63ioO4@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:bleood
-DESCRIPTION:The price you see is the price you pay! All fees are included 
- in the price you see on Ticketmaster (excluding taxes). All sales are fin
- al/non-refundable for this event. For ADA Accommodations\, email info@riv
- alentertainment.com. For parking information and an FAQ\, visit us at cen
- terstage-atlanta.com.\\n\\nhttps://www.ticketmaster.com/bleood-atlanta-ge
- orgia-11-19-2026/event/0E006511D2B11815\\n\\nRefreshed daily from live li
- stings.
-LOCATION:Center Stage Theater\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/bleood-atlanta-georgia-11-19-2026/event/0
- E006511D2B11815
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_uBNxMju@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Chrissy Chlapecka
-DESCRIPTION:The price you see is the price you pay! All fees are included 
- in the price you see on Ticketmaster (excluding taxes). All sales are fin
- al/non-refundable for this event. For ADA Accommodations\, email info@riv
- alentertainment.com. For parking information and an FAQ\, visit us at cen
- terstage-atlanta.com.\\n\\nhttps://www.ticketmaster.com/chrissy-chlapecka
- -atlanta-georgia-11-19-2026/event/0E0064DEA38B770D\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Vinyl\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/chrissy-chlapecka-atlanta-georgia-11-19-2
- 026/event/0E0064DEA38B770D
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PxFt@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Jalen N'Gonda w/ Brooke Combe
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PxFt\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Variety Playhouse\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PxFt
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfuZqV@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Bungalow Collect Live at Smith's Olde Bar (Atlanta\, GA)
-DESCRIPTION:This event is 16 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 16 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- . ALL SALES FINAL. NO REFUNDS/EXCHANGES. COVID-19 WARNING: An inherent ri
- sk of exposure to CO\\n\\nhttps://www.ticketweb.com/event/bungalow-collec
- t-live-at-smiths-smiths-olde-bar-tickets/14340774\\n\\nRefreshed daily fr
- om live listings.
-LOCATION:Smith's Olde Bar\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/bungalow-collect-live-at-smiths-smiths
- -olde-bar-tickets/14340774
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7xboY@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Donny Benet w/ OTNES
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7xboY\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Terminal West\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7xboY
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_2TeuXA0@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:BEAT: Belew/Vai/Levin/Bozzio Performing the Music of KING CRIMSON
-DESCRIPTION:Seats in the mezzanine and grand tier are not ADA accessible. 
- If you need accessible seats\, you should only buy seats designated as wh
- eelchair accessible and their companion tickets in the orchestra. Please 
- note: Anyone attending a performance at the Cobb Energy Performing Arts C
- entre requires a tic\\n\\nhttps://www.ticketmaster.com/beat-belewvailevin
- bozzio-performing-the-music-of-atlanta-georgia-11-19-2026/event/0E0064FFC
- 237E164\\n\\nRefreshed daily from live listings.
-LOCATION:Cobb Energy Performing Arts Centre\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/beat-belewvailevinbozzio-performing-the-m
- usic-of-atlanta-georgia-11-19-2026/event/0E0064FFC237E164
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dIZ_6GZmyWg@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Tank and The Bangas: The Last Balloon Tour w/ Ariel J. & ZEUS
-DESCRIPTION:Please Note: SEATING Your Antones ticket grants you General Ad
- mission entry with standing room. Limited seating may be available on a f
- irst-come\, first-served basis\, but is subject to change show to show. I
- f you have an ADA request\, please reach out and we will do our best to a
- ccommodate you. PARKIN\\n\\nhttps://www.ticketmaster.com/tank-and-the-ban
- gas-the-last-austin-texas-11-19-2026/event/3A00647300BB9F75\\n\\nRefreshe
- d daily from live listings.
-LOCATION:Antone's Nightclub\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/tank-and-the-bangas-the-last-austin-texas
- -11-19-2026/event/3A00647300BB9F75
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZ8uI@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Daisy Grenade w/ Boyish
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZ8uI\\n\\nRefreshed daily from 
- live listings.
-LOCATION:3TEN ACL Live\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ8uI
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZAjJ@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Los Dos de Tamaulipas
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZAjJ\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Austin City Limits Live at The Moody Theater\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZAjJ
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvkAI@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:River Shook
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvkAI\\n\\nRefreshed daily from 
- live listings.
-LOCATION:04 Center\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvkAI
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAv0CF@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Tear Dungeon
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAv0CF\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Paper Tiger\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv0CF
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZMOI@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Oso Oso
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZMOI\\n\\nRefreshed daily from 
- live listings.
-LOCATION:The Rock Box\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZMOI
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfZU00@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:$5 Thursdays!
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/5-thursdays-la-rumba-tickets/14036
- 924\\n\\nRefreshed daily from live listings.
-LOCATION:La Rumba\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/5-thursdays-la-rumba-tickets/14036924
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_CNtkGGK@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Krooked Kings: In Another Life Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://tickets.meowwolf.com/events/denver/krooked-kings/\\n\\nRefreshed da
- ily from live listings.
-LOCATION:Meow Wolf Denver\, Denver
-STATUS:CONFIRMED
-URL:https://tickets.meowwolf.com/events/denver/krooked-kings/
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7JAf6@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Krooked Kings: In Another Life Tour
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7JAf6\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Meow Wolf  Denver Convergence Station\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JAf6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZY_y@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Shwayze - Ages 16+
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZY_y\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Cervantes Other Side\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZY_y
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7P-1a@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Bonobo (16+)
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7P-1a\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Mission Ballroom\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P-1a
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7Psf0@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Russian Circles (16 and Over)
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7Psf0\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Gothic Theatre\, Englewood
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Psf0
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7v_A@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Lil Tracy
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7v_A\\n\\nRefreshed daily from 
- live listings.
-LOCATION:The Showbox\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7v_A
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfCZff@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Ruby Mimosa Presents: BurlesKaraoke
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/ruby-mimosa-presents-burleskaraoke
- -clock-out-lounge-tickets/14380514\\n\\nRefreshed daily from live listing
- s.
-LOCATION:Clock-Out Lounge\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/ruby-mimosa-presents-burleskaraoke-clo
- ck-out-lounge-tickets/14380514
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1HZ_amzOW8k@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T200000
-DTEND:20261119T223000
-SUMMARY:Gary Numan
-DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
- . www.stgpresents.org/about/safety When purchasing ADA accessible seating
- \, please feel free to contact us by email if assistance is needed with a
- ccommodations or companion seating\; you may reach us at accessibility@st
- gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/gary-numan-seattl
- e-washington-11-19-2026/event/0F00649BB883D406\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Neptune Theatre\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/gary-numan-seattle-washington-11-19-2026/
- event/0F00649BB883D406
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfGd40@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T203000
-DTEND:20261119T230000
-SUMMARY:Deante' Hitchcock
-DESCRIPTION:ALL SALES FINAL. NO REFUNDS/EXCHANGES. COVID-19 WARNING: An in
- herent risk of exposure to COVID-19 exists in any place where people gath
- er. COVID-19 is an extremely contagious disease that can lead to severe i
- llness and death. You assume all risks\, hazards\, and dangers arising fr
- om or relating in any\\n\\nhttps://www.ticketweb.com/event/deante-hitchco
- ck-the-roxy-theater-tickets/14303564\\n\\nRefreshed daily from live listi
- ngs.
-LOCATION:The Roxy Theater\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/deante-hitchcock-the-roxy-theater-tick
- ets/14303564
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_o5N-0JZ@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T204500
-DTEND:20261119T231500
-SUMMARY:Breakthrough Presents: Vertical Horizon
-DESCRIPTION:This event is Ages 21+ w/ valid ID. 100% of proceeds benefit B
- reakthrough Alliance of Colorado.\\n\\nhttps://www.ticketmaster.com/break
- through-presents-vertical-horizon-denver-colorado-11-19-2026/event/1E0065
- 12E3864980\\n\\nRefreshed daily from live listings.
-LOCATION:Ophelia's Electric Soapbox\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/breakthrough-presents-vertical-horizon-de
- nver-colorado-11-19-2026/event/1E006512E3864980
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1HZ_f1xVF7q@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T213000
-DTEND:20261120T000000
-SUMMARY:Tacoma City Theaters: Movie Series - Planes\, Trains and Automobil
- es
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/tacoma-city-theaters-movie-series-planes-tacom
- a-washington-11-19-2026/event/0F006542A2D0811D\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Theatre On the Square\, Tacoma
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/tacoma-city-theaters-movie-series-planes-
- tacoma-washington-11-19-2026/event/0F006542A2D0811D
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dIZ_phh7N61@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261119T213500
-DTEND:20261120T000500
-SUMMARY:The Crystal Fall & Paper Sister
-DESCRIPTION:All Ages Welcome. Doors: 9:35PM. Show: 10:05PM. Free with wris
- tband from Band of Horses *Capacity Permitting*\\n\\nhttps://www.ticketma
- ster.com/the-crystal-fall-paper-sister-austin-texas-11-19-2026/event/3A00
- 6566DB1231CA\\n\\nRefreshed daily from live listings.
-LOCATION:Stubb's Indoors\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-crystal-fall-paper-sister-austin-texa
- s-11-19-2026/event/3A006566DB1231CA
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qlg7NNARYE_bau3B@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
-DTSTART:20261120T130000
-DTEND:20261120T153000
-SUMMARY:KSE Venue Ball Arena Tours
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36CFQ4?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Ball Arena\, Denver
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36C
- FQ4?ref=ticketmaster
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvk1d
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv90M@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T183000
 DTEND:20261120T210000
 SUMMARY:Static Dress
@@ -2677,8 +556,155 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv90M
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-G5vzZ_2QDTig-@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:TYLA - THE A*POP WORLD TOUR
+DESCRIPTION:ALL AGES WELCOME BAG POLICY: Bags up to 12" X 6" x 12" are all
+ owed in the venue. All bags will be searched prior to entry. Bags that ar
+ e not clear will be subject to additional search. DOORS: 6:30PM SHOW: 7:3
+ 0PM *ALL SUPPORT ACTS & SET TIMES ARE SUBJECT TO CHANGE WITHOUT NOTICE\\n
+ \\nhttps://www.ticketmaster.com/tyla-the-apop-world-tour-denver-colorado-
+ 11-20-2026/event/1E0064F6BBFECD61\\n\\nRefreshed daily from live listings
+ .
+LOCATION:Fillmore Auditorium (Denver)\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/tyla-the-apop-world-tour-denver-colorado-
+ 11-20-2026/event/1E0064F6BBFECD61
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17A8v0G6CXDVlxv@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:Eggy
+DESCRIPTION:Tickets are non-transferable until 72 hours prior to the show 
+ time. Any tickets suspected of being purchased for the sole purpose of re
+ selling can be cancelled at the discretion of The Atlantis / Ticketmaster
+ \, and buyers may be denied future ticket purchases for I.M.P. shows. Ope
+ ning acts\, door time\\n\\nhttps://www.ticketmaster.com/eggy-washington-d
+ istrict-of-columbia-11-20-2026/event/150064EFBBD2B881\\n\\nRefreshed dail
+ y from live listings.
+LOCATION:The Atlantis\, Washington
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/eggy-washington-district-of-columbia-11-2
+ 0-2026/event/150064EFBBD2B881
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17AOv0G65mH-tZB@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:Motionless In White: The Sweat and Blood Tour
+DESCRIPTION:Mobile Ticketing Alert: In an effort to ensure a ticketing exp
+ erience that is more convenient\, safe and secure for all PPG Paints Aren
+ a fans\, guests must present a mobile ticket on a smartphone for entry. S
+ creenshots and print outs will not be accepted. Bags are not permitted in
+  PPG Paints Arena. Ex\\n\\nhttps://www.ticketmaster.com/motionless-in-whi
+ te-the-sweat-and-pittsburgh-pennsylvania-11-20-2026/event/160064BBBC86903
+ A\\n\\nRefreshed daily from live listings.
+LOCATION:PPG Paints Arena\, Pittsburgh
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/motionless-in-white-the-sweat-and-pittsbu
+ rgh-pennsylvania-11-20-2026/event/160064BBBC86903A
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17FOv0G652g_JWa@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:DragonForce: Inhuman Rampage 20th Anniversary
+DESCRIPTION:Before you Arrive for a show: When parking at Disney Springs\,
+  please arrive at least 60 minutes before any scheduled event\, show or r
+ eservation. Digital Message boards along Buena Vista Drive will indicate 
+ when garages and surface lots are full. Disney Springs currently closes a
+ t 11pm or 11:30pm dep\\n\\nhttps://www.ticketmaster.com/dragonforce-inhum
+ an-rampage-20th-anniversary-orlando-florida-11-20-2026/event/220064B3F566
+ 6F49\\n\\nRefreshed daily from live listings.
+LOCATION:House of Blues Orlando\, Orlando
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/dragonforce-inhuman-rampage-20th-annivers
+ ary-orlando-florida-11-20-2026/event/220064B3F5666F49
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AdZZ_oGkBGZ-nd@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:Bass Invasion - Emergence
+DESCRIPTION:16+ with a VALID PHOTO ID ALL patrons are required to have a V
+ ALID PHOTO ID to enter. Unless accompanied by a parent or legal guardian 
+ 21 years of age or older.\\n\\nhttps://www.ticketmaster.com/bass-invasion
+ -emergence-albany-new-york-11-20-2026/event/3000651E8C021A83\\n\\nRefresh
+ ed daily from live listings.
+LOCATION:Empire Underground\, Albany
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/bass-invasion-emergence-albany-new-york-1
+ 1-20-2026/event/3000651E8C021A83
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZbOz@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:Pain Of Truth w/ Madball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZbOz\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Palladium-MA\, Worcester
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZbOz
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvP3k@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:Amorphis w/ Insomnium
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvP3k\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The KING of CLUBS - Columbus\, Columbus
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvP3k
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1Af8sqf@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:Skully's Music-Diner's 25th Anniversary Party!
+DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 18 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . You must bring your valid ID to pick up tickets. By clicking the "Place
+  Order" button on th\\n\\nhttps://www.ticketweb.com/event/skullys-music-d
+ iners-25th-anniversary-skullys-music-diner-tickets/14431754\\n\\nRefreshe
+ d daily from live listings.
+LOCATION:Skully's Music Diner\, Columbus
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/skullys-music-diners-25th-anniversary-
+ skullys-music-diner-tickets/14431754
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv17FZ_aGkScw7_j@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T183000
+DTEND:20261120T210000
+SUMMARY:The Menzingers: Everything I Ever Saw North American Tour
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/the-menzingers-everything-i-ever-saw-philadelp
+ hia-pennsylvania-11-20-2026/event/0200649CEDC8465C\\n\\nRefreshed daily f
+ rom live listings.
+LOCATION:The Fillmore Philadelphia\, Philadelphia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/the-menzingers-everything-i-ever-saw-phil
+ adelphia-pennsylvania-11-20-2026/event/0200649CEDC8465C
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-Z7r9jZ1A704kF@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Gabby Bryan
@@ -2691,7 +717,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A704kF
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7JdxA@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Kurt Vile And The Violators - Twisted Teens (Under 18 with parent 
@@ -2705,7 +731,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JdxA
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P414@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -2718,7 +744,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P414
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_kmMirmD@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Disney Descendants\, ZOMBIES & Camp Rock: Worlds Collide Concert T
@@ -2734,8 +760,52 @@ URL:https://www.ticketmaster.com/disney-descendants-zombies-camp-rock-worl
  ds-greensboro-north-carolina-11-20-2026/event/2D00646BB7B1EBBB
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-vvG1zZ_8rVnzxO@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Waterparks - NIGHT 1
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/waterparks-night-1-atlanta-georgia-11-20-2026/
+ event/0E006507B4AB88A0\\n\\nRefreshed daily from live listings.
+LOCATION:The Masquerade - Hell\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/waterparks-night-1-atlanta-georgia-11-20-
+ 2026/event/0E006507B4AB88A0
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_KkIalsS@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Liim - LE MONDE EST À NOUS
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/liim-le-monde-est-a-nous-atlanta-georgia-11-20
+ -2026/event/0E006531A826BC73\\n\\nRefreshed daily from live listings.
+LOCATION:The Masquerade - Purgatory\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/liim-le-monde-est-a-nous-atlanta-georgia-
+ 11-20-2026/event/0E006531A826BC73
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_fHKUFkW@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Jonah Kagen
+DESCRIPTION:The Purchaser/ ticket holder must bring a photo ID to will-cal
+ l to check-in for the show. If you transfer your tickets to another patro
+ n\, we request that they bring their photo ID. Check-in begins at 5 PM.\\
+ n\\nhttps://www.ticketmaster.com/jonah-kagen-decatur-georgia-11-20-2026/e
+ vent/0E00654F13D881BD\\n\\nRefreshed daily from live listings.
+LOCATION:Eddie's Attic\, Decatur
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/jonah-kagen-decatur-georgia-11-20-2026/ev
+ ent/0E00654F13D881BD
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-G5dIZ_uhE2wr6@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Paul Cauthen
@@ -2748,8 +818,94 @@ URL:https://www.ticketmaster.com/paul-cauthen-austin-texas-11-20-2026/even
  t/3A0064D6E73F2787
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-G5dIZ_GXm2yyK@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Dexter and The Moonrocks
+DESCRIPTION:All Ages Welcome Doors: 7:00pm Show: 8:00pm\\n\\nhttps://www.t
+ icketmaster.com/dexter-and-the-moonrocks-austin-texas-11-20-2026/event/3A
+ 0064CFAE3F9E53\\n\\nRefreshed daily from live listings.
+LOCATION:Emo's Austin\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/dexter-and-the-moonrocks-austin-texas-11-
+ 20-2026/event/3A0064CFAE3F9E53
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZIk9@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:The Floozies
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZIk9\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The Far Out Lounge\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZIk9
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfZUG0@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Ladies Night & Noche Sonidera
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/ladies-night-noche-sonidera-la-rum
+ ba-tickets/14036324\\n\\nRefreshed daily from live listings.
+LOCATION:La Rumba\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/ladies-night-noche-sonidera-la-rumba-t
+ ickets/14036324
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70Aqp@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:AVELLO (16 and Over)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70Aqp\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Ogden Theatre\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Aqp
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfoK3f@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Brandi Denise 
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . Seating: All seating is first come\, first served at Management's discr
+ etion. All tables\, in\\n\\nhttps://www.ticketweb.com/event/brandi-denise
+ -denver-improv-tickets/14453494\\n\\nRefreshed daily from live listings.
+LOCATION:Denver Improv\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/brandi-denise-denver-improv-tickets/14
+ 453494
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvA8F@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Havok (16 and Over)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvA8F\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Gothic Theatre\, Englewood
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvA8F
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvwjd@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T190000
 DTEND:20261120T213000
 SUMMARY:Julien Baker
@@ -2761,8 +917,688 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvwjd
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA79GO@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Fear Factory
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA79GO\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:El Corazon\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA79GO
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-16dZZ_kp4G7tNPs@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Deer Tick
+DESCRIPTION:Age Restrictions: ALL AGES Doors: 7:00PM Show: 8:00PM To inqui
+ re about accessibility accommodations\, please email ArcherBoxOffice@live
+ nation.com\\n\\nhttps://www.ticketmaster.com/deer-tick-allentown-pennsylv
+ ania-11-20-2026/event/3000646595A63971\\n\\nRefreshed daily from live lis
+ tings.
+LOCATION:Arrow\, Allentown
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/deer-tick-allentown-pennsylvania-11-20-20
+ 26/event/3000646595A63971
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-16e0Z_3j4G7svrU@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Luminis (Symphonic Metal Tribute)\, Moonlight Lily\, Gothika\, Jad
+ ed Visi
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketweb.com/event/luminis-symphonic-metal-tribute-moonlight-d
+ ingbatz-tickets/14307324?REFERRAL_ID=tmfeed\\n\\nRefreshed daily from liv
+ e listings.
+LOCATION:Dingbatz\, Clifton
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/luminis-symphonic-metal-tribute-moonli
+ ght-dingbatz-tickets/14307324?REFERRAL_ID=tmfeed
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-16tZk4pFwZACv867@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:The E Street Shuffle  the WorldâS Greatest Bruce Springsteen T
+ rib
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketweb.com/event/the-e-street-shuffle-six-string-grill-stage
+ -tickets/14393814?REFERRAL_ID=tmfeed\\n\\nRefreshed daily from live listi
+ ngs.
+LOCATION:Six String Grill and Stage\, Foxboro
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/the-e-street-shuffle-six-string-grill-
+ stage-tickets/14393814?REFERRAL_ID=tmfeed
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17A8v0G6CHc3ajR@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Goldfinger
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/goldfinger-baltimore-maryland-11-20-2026/event
+ /150064EF2D48972F\\n\\nRefreshed daily from live listings.
+LOCATION:Nevermore Hall\, Baltimore
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/goldfinger-baltimore-maryland-11-20-2026/
+ event/150064EF2D48972F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17A8v0G6CJzKIGT@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:for KING + COUNTRY: A Drummer Boy Christmas
+DESCRIPTION:Everyone age 2 and older must have a ticket. EagleBank Arena n
+ ow has a CLEAR BAG POLICY: Bags must be clear plastic\, vinyl\, or PVC wi
+ th no obstructed inside pockets. Bag must not exceed 12"x12"x6". Bag may 
+ be a 1 gallon plastic zip lock style bag. A clutch style bag/purse (non-c
+ lear) is also allowed\\n\\nhttps://www.ticketmaster.com/for-king-country-
+ a-drummer-boy-fairfax-virginia-11-20-2026/event/150064E9B84E833F\\n\\nRef
+ reshed daily from live listings.
+LOCATION:EagleBank Arena\, Fairfax
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/for-king-country-a-drummer-boy-fairfax-vi
+ rginia-11-20-2026/event/150064E9B84E833F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17A8v0G6G1lNr6W@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:WAGE WAR - EMERGENCY BROADCAST TOUR
+DESCRIPTION:This is a General Admission - Standing Room Only Event with Re
+ served Seating in the Balcony. This Show is for All Ages.\\n\\nhttps://ww
+ w.ticketmaster.com/wage-war-emergency-broadcast-tour-silver-spring-maryla
+ nd-11-20-2026/event/150064C2AB8DE1FD\\n\\nRefreshed daily from live listi
+ ngs.
+LOCATION:The Fillmore Silver Spring\, Silver Spring
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/wage-war-emergency-broadcast-tour-silver-
+ spring-maryland-11-20-2026/event/150064C2AB8DE1FD
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17AOv0G61GbQJ4b@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Everclear - Lucky 7 Tour
+DESCRIPTION:This is an all ages show DOORS: 7PM SHOW: 8PM All schedules / 
+ support bands are subject to change without notice or refund. Everclear i
+ s hitting the road again this fall with The Lucky 7 Tour! One of the defi
+ ning alternative rock bands of the '90s\, the group ? led by founder\, vo
+ calist\, and guitarist\\n\\nhttps://www.ticketmaster.com/everclear-lucky-
+ 7-tour-cincinnati-ohio-11-20-2026/event/160064A3186A6558\\n\\nRefreshed d
+ aily from live listings.
+LOCATION:Bogart's\, Cincinnati
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/everclear-lucky-7-tour-cincinnati-ohio-11
+ -20-2026/event/160064A3186A6558
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17AOv0G65RqFhEm@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:An Evening with Goose Presented by WYEP
+DESCRIPTION:All ages welcome Doors: 5:30PM All support acts are subject to
+  change without notice In partnership with Goose\, $1 per ticket will be 
+ contributed by Live Nation to benefit Backline Foundation. No portion of 
+ the ticket purchase is tax deductible.\\n\\nhttps://www.ticketmaster.com/
+ an-evening-with-goose-presented-by-pittsburgh-pennsylvania-11-20-2026/eve
+ nt/160064BBDD21B9EE\\n\\nRefreshed daily from live listings.
+LOCATION:Citizens Live at The Wylie\, Pittsburgh
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/an-evening-with-goose-presented-by-pittsb
+ urgh-pennsylvania-11-20-2026/event/160064BBDD21B9EE
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17AOv0G6u5Keiwr@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Taylorville - A Tribute to Taylor Swift
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/taylorville-a-tribute-to-taylor-swift-charlest
+ on-west-virginia-11-20-2026/event/160064D2D30ACC9E\\n\\nRefreshed daily f
+ rom live listings.
+LOCATION:Charleston Theater\, Charleston
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/taylorville-a-tribute-to-taylor-swift-cha
+ rleston-west-virginia-11-20-2026/event/160064D2D30ACC9E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1A4Zk3FGkdZJ17d@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:They Might Be Giants
+DESCRIPTION:Tickets are non-transferable until 72 hours prior to the show 
+ time. Any tickets suspected of being purchased for the sole purpose of re
+ selling can be cancelled at the discretion of 9:30 Club / Ticketmaster\, 
+ and buyers may be denied future ticket purchases for I.M.P. shows. Openin
+ g acts\, door times\, \\n\\nhttps://www.ticketmaster.com/they-might-be-gi
+ ants-washington-district-of-columbia-11-20-2026/event/15006488C098A103\\n
+ \\nRefreshed daily from live listings.
+LOCATION:9:30 CLUB\, Washington
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/they-might-be-giants-washington-district-
+ of-columbia-11-20-2026/event/15006488C098A103
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AeFZ_8GkMGONir@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Florida Blue Battle of the Bands
+DESCRIPTION:Bands play to the East (104-107) No refunds/No exchange All ch
+ ildren 2 years of age and older require a ticket for entry Clear bag poli
+ cy is in effect for this event\\n\\nhttps://www.ticketmaster.com/florida-
+ blue-battle-of-the-bands-orlando-florida-11-20-2026/event/2200650DCC823B1
+ E\\n\\nRefreshed daily from live listings.
+LOCATION:Kia Center\, Orlando
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/florida-blue-battle-of-the-bands-orlando-
+ florida-11-20-2026/event/2200650DCC823B1E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_35p00tW@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Big Green Tractor: Nashville's Tribute To The Music Of Jason Aldea
+ n
+DESCRIPTION:Doors - 7:00pm Show - 8:00pm Confirmed Line Up: Big Green Trac
+ tor: Nashville's Tribute To The Music Of Jason Aldean All support acts ar
+ e subject to change without notice. This is an All Ages event subject to 
+ parental discretion. THE FOLLOWING BAG POLICY IS IN PLACE: Bags up to 12"
+  x 6" x 12" are all\\n\\nhttps://www.ticketmaster.com/big-green-tractor-n
+ ashvilles-tribute-to-north-myrtle-beach-south-carolina-11-20-2026/event/2
+ D006522D6924A7D\\n\\nRefreshed daily from live listings.
+LOCATION:House of Blues Myrtle Beach\, North Myrtle Beach
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/big-green-tractor-nashvilles-tribute-to-n
+ orth-myrtle-beach-south-carolina-11-20-2026/event/2D006522D6924A7D
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7-J_x@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Maybe Happy Ending
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7-J_x\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Belasco Theatre - NY\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-J_x
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A703-y@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Carolina Opry
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A703-y\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Carolina Opry Theater\, Myrtle Beach
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A703-y
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7067o@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Olivia Rodrigo w/ Devon Again
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7067o\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Amerant Bank Arena\, Sunrise
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7067o
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7070E@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Francis of Delirium (18+ Event)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7070E\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Baby's All Right\, Brooklyn
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7070E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A709vb@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Villages Philharmonic Orchestra
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A709vb\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Sharon L Morse Performing Arts Center\, The Villages
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A709vb
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70to7@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Anthony Robustiano
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70to7\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Funny Bone Comedy Club - Syracuse\, Syracuse
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70to7
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7J67E@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:The Imaginary Invalid
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7J67E\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Todd Haimes Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J67E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7Jdbx@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Ruben Studdard
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7Jdbx\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Blues Alley Club\, Washington
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Jdbx
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7Jf-p@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Plymouth Philharmonic Orchestra: An American Soundtrack
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7Jf-p\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Plymouth Memorial Hall\, Plymouth
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Jf-p
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7JobA@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:The Heart
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7JobA\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Laura Pels Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JobA
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7OJaw@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Marcus D Wiley
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7OJaw\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Funny Bone Comedy Club - Richmond\, Richmond
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7OJaw
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7PK7a@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Whitechapel w/ Chelsea Grin
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PK7a\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Starland Ballroom\, Sayreville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PK7a
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7P_oF@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:CATS: The Jellicle Ball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7P_oF\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Broadhurst Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P_oF
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7Pd7Y@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Julia Jacklin
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7Pd7Y\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Royale Boston\, Boston
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Pd7Y
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7PgZk@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Nicole Atkins
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PgZk\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The Pyramid Scheme\, Grand Rapids
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PgZk
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7qxj9@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Lost Boys Musical w/ Unknown Mortal Orchestra
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7qxj9\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Palace Theatre-NY\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qxj9
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA74_p@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Love Me
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA74_p\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Soho Playhouse\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA74_p
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA7fZb@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Stranger Things: The First Shadow
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7fZb\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Marquis Theatre - NY\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7fZb
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA7oC4@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Joshua Live On Stage
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7oC4\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Sight and Sound Theatres - PA\, Ronks
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7oC4
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA7yjy@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Buena Vista Social Club
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7yjy\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Gerald Schoenfeld Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7yjy
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA7z89@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Carlos Hernandez
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7z89\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Boca Black Box\, Boca Raton
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7z89
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAAk4z@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Jamie Allan
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAk4z\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:New World Stages - Stage 5\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAk4z
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZabb@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:North Carolina Tar Heels Womens Volleyball vs. Miami Hurricanes Wo
+ mens Volleyball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZabb\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Carmichael Arena\, Chapel Hill
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZabb
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAv0ee@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Here There Are Blueberries
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAv0ee\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barrymore Theatre-NY\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv0ee
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAv7Qe@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Lindsey Stirling (All persons who are one years old or older requi
+ re a ticket)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAv7Qe\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barbara B. Mann Performing Arts Hall\, Fort Myers
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv7Qe
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvIQa@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Nether Hour
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvIQa\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Heartwood Soundstage\, Gainesville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvIQa
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvJ1K@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Downstate
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvJ1K\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Booth Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvJ1K
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvPOM@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Schmigadoon!
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvPOM\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Nederlander Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvPOM
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAv_Je@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Michael McDermott
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAv_Je\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Jammin Java\, Vienna
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv_Je
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvoAt@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:The Visitors
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvoAt\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Irene Diamond Stage at Signature Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvoAt
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvoax@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:The Unbelievers
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvoax\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:New York City Center\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvoax
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvtbE@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Pittsburgh Symphony Orchestra: How To Train Your Dragon In Concert
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvtbE\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Heinz Hall\, Pittsburgh
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvtbE
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7v16k4vP3qEZe5C@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Wason Brazoban
+DESCRIPTION:Wason Brazoban llega por primera en el Carro Cafe de Union Cit
+ y\, cantando solo exitos toda la noche. Para reservacion de mesas llamar 
+ al (718) 216-5982\\n\\nhttps://www.ticketmaster.com/wason-brazoban-union-
+ city-new-jersey-11-20-2026/event/00006541952767AD\\n\\nRefreshed daily fr
+ om live listings.
+LOCATION:Carro Café of Union City\, Union City
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/wason-brazoban-union-city-new-jersey-11-2
+ 0-2026/event/00006541952767AD
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7v1Ako_v_ZACCG27@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:STING 3.0 Tour
+DESCRIPTION:Doors: 7PM Shows: 8PM All set times and opening acts are subje
+ ct to change without notice. For accessible seating inquiries\, please em
+ ail us directly at Info@BrooklynParamount.com to reserve accommodations. 
+ Balcony Includes: Exclusive Entrance via Dekalb Ave. Balcony Access Priva
+ te Bar Private Bathr\\n\\nhttps://www.ticketmaster.com/sting-30-tour-broo
+ klyn-new-york-11-20-2026/event/00006459059DDBE3\\n\\nRefreshed daily from
+  live listings.
+LOCATION:Brooklyn Paramount\, Brooklyn
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/sting-30-tour-brooklyn-new-york-11-20-202
+ 6/event/00006459059DDBE3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_CNXP5Om@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T190000
+DTEND:20261120T213000
+SUMMARY:Marky Ramone Plays The Ramones Classics
+DESCRIPTION:Age Restriction: 16+ Unless Accompanied by a Guardian All set 
+ times and opening acts are subject to change without notice Doors open at
+  7PM\\n\\nhttps://www.ticketmaster.com/marky-ramone-plays-the-ramones-cla
+ ssics-new-york-new-york-11-20-2026/event/000064E8FE94B82E\\n\\nRefreshed 
+ daily from live listings.
+LOCATION:Irving Plaza Powered By Verizon 5G\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/marky-ramone-plays-the-ramones-classics-n
+ ew-york-new-york-11-20-2026/event/000064E8FE94B82E
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-G5eVZ_3VpDdNK@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T193000
 DTEND:20261120T220000
 SUMMARY:Black Jacket Symphony presents Led Zepplin IV
@@ -2777,7 +1613,7 @@ URL:https://www.ticketmaster.com/black-jacket-symphony-presents-led-zeppli
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZbgkYZarC@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T193000
 DTEND:20261120T220000
 SUMMARY:RUSH: Fifty Something
@@ -2792,7 +1628,7 @@ URL:https://www.ticketmaster.com/rush-fifty-something-charlotte-north-caro
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_2rlfnnh@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T193000
 DTEND:20261120T220000
 SUMMARY:Blackberry Smoke: 25th Anniversary Tour 2026
@@ -2810,7 +1646,7 @@ URL:https://www.ticketmaster.com/blackberry-smoke-25th-anniversary-tour-20
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ChCO-oB@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T193000
 DTEND:20261120T220000
 SUMMARY:THE STRAY CATS
@@ -2828,7 +1664,7 @@ URL:https://www.ticketmaster.com/the-stray-cats-charlotte-north-carolina-1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70UbP@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T193000
 DTEND:20261120T220000
 SUMMARY:Elf the Musical
@@ -2840,8 +1676,152 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbP
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-vvG1zZ_G00so2o@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Imminence - Axis Mundi Tour: North America 2026
+DESCRIPTION:This is a show has a general admission standing room floor wit
+ h fully reserved assigned seating balconies. All ages welcome. Box Office
+  Open at 5:30pm. Doors at 6:30pm. Show at 7:30pm. Please be aware our bal
+ conies are not ADA accessible. All accommodations are located on the main
+  floor level. There\\n\\nhttps://www.ticketmaster.com/imminence-axis-mund
+ i-tour-north-america-atlanta-georgia-11-20-2026/event/0E0064C924C513D1\\n
+ \\nRefreshed daily from live listings.
+LOCATION:Tabernacle Presented by iTHINK Financial\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/imminence-axis-mundi-tour-north-america-a
+ tlanta-georgia-11-20-2026/event/0E0064C924C513D1
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7xaqN@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:It's A Wonderful Life - A Live Radio Play
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7xaqN\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Strand Theatre - GA\, Marietta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7xaqN
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5dIZ_kUOPazl@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Ty Myers: The Legal Tour 2026
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/ty-myers-the-legal-tour-2026-austin-texas-11-2
+ 0-2026/event/3A00646DA0949E2B\\n\\nRefreshed daily from live listings.
+LOCATION:Moody Center ATX\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/ty-myers-the-legal-tour-2026-austin-texas
+ -11-20-2026/event/3A00646DA0949E2B
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7Ptaz@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Actors From The London Stage
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7Ptaz\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:McCullough Theater\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Ptaz
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5dIZ_u55HxY7@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Bowling For Soup - Hey! Let's Be Friends...the Tour
+DESCRIPTION:Ticket text reflects door time. This show is all ages. Everyon
+ e requires a ticket regardless of age. All support acts subject to change
+  without notice. Please note that the Mezzanine and Balcony are only acce
+ ssible by stairs. Doors - 6:30 pm Show - 7:30 pm\\n\\nhttps://www.ticketm
+ aster.com/bowling-for-soup-hey-lets-be-san-antonio-texas-11-20-2026/event
+ /3A0064D2CBF22C04\\n\\nRefreshed daily from live listings.
+LOCATION:Aztec Theatre\, San Antonio
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/bowling-for-soup-hey-lets-be-san-antonio-
+ texas-11-20-2026/event/3A0064D2CBF22C04
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7PYuZ@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Braxton Keith
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PYuZ\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:John T Floore Country Store\, Helotes
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PYuZ
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5vzZ_3CisBJ_@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Warren Miller's "Days Off" - Ft. Katie Burrell Live
+DESCRIPTION:All seating is Reserved\\n\\nhttps://www.ticketmaster.com/warr
+ en-millers-days-off-ft-katie-denver-colorado-11-20-2026/event/1E006523ACC
+ 7A999\\n\\nRefreshed daily from live listings.
+LOCATION:Paramount Theatre\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/warren-millers-days-off-ft-katie-denver-c
+ olorado-11-20-2026/event/1E006523ACC7A999
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5vzZ_4UH1JTf@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Paramount Theatre Club Seating: Warren Miller
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/paramount-theatre-club-seating-warren-miller-d
+ enver-colorado-11-20-2026/event/1E00655DBC2A6FD4\\n\\nRefreshed daily fro
+ m live listings.
+LOCATION:Paramount Theatre\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/paramount-theatre-club-seating-warren-mil
+ ler-denver-colorado-11-20-2026/event/1E00655DBC2A6FD4
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70JG-@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Colorado Symphony Orchestra presents Elgar Cello Concerto & Dvor??
+ k Symphony No. 7 with Peter Oundjian
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70JG-\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Boettcher Hall\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70JG-
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAv3bA@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:What a Glorious Feeling
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAv3bA\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Galleria Theatre\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3bA
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-1778v0G6uhjdji_@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T193000
 DTEND:20261120T220000
 SUMMARY:Amanda Marshall - The Dirty 30 Tour
@@ -2854,8 +1834,50 @@ URL:https://www.rmts.bc.ca/production-detail-pages/2026-royal-theatre/aman
  da-marshall/
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAeZkA@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:End of the Line - An Allman Brothers Tribute
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAeZkA\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Admiral Theatre - WA\, Bremerton
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAeZkA
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_Kh40HAN@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:That Arena Rock Show
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/that-arena-rock-show-tacoma-washington-11-20-2
+ 026/event/0F006536D593C163\\n\\nRefreshed daily from live listings.
+LOCATION:Rialto Theater\, Tacoma
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/that-arena-rock-show-tacoma-washington-11
+ -20-2026/event/0F006536D593C163
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_3JAl0sO@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T193000
+DTEND:20261120T220000
+SUMMARY:Noise Pollution
+DESCRIPTION:This event is 21+. Doors open at 7:00PM. Show starts at 7:30PM
+ . Kings Hall at APEX Everett. 1611 Everett Ave. Everett\, WA 98201\\n\\nh
+ ttps://www.ticketmaster.com/noise-pollution-everett-washington-11-20-2026
+ /event/0F00652985AE4C60\\n\\nRefreshed daily from live listings.
+LOCATION:APEX Everett\, Everett
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/noise-pollution-everett-washington-11-20-
+ 2026/event/0F00652985AE4C60
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfuOOV@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T200000
 DTEND:20261120T223000
 SUMMARY:Hickory Rave presents DJ Matt Martinez w/Gelli & DankkLoud
@@ -2868,8 +1890,72 @@ URL:https://www.ticketweb.com/event/hickory-rave-presents-dj-matt-the-prem
  ier-tickets/14360834
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-G5eVZ_6mIVrr1@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Akeem Ali: The Texture Tour
+DESCRIPTION:The Underground Is A General Admission Standing Room Only Venu
+ e Unless Otherwise Noted. All Ages Welcome Doors: 7:00pm Show: 8:00pm Tic
+ ket prices will increase the day of the show. All dates\, acts\, and tick
+ et prices subject to change without notice. All tickets are subject to ap
+ plicable service fees\\n\\nhttps://www.ticketmaster.com/akeem-ali-the-tex
+ ture-tour-charlotte-north-carolina-11-20-2026/event/2D00647BA8D1E78A\\n\\
+ nRefreshed daily from live listings.
+LOCATION:The Underground\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/akeem-ali-the-texture-tour-charlotte-nort
+ h-carolina-11-20-2026/event/2D00647BA8D1E78A
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_ukSl6AY@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Phillip Phillips: Let's Go Far Tour
+DESCRIPTION:Age Policy: 18+ Valid ID required for entry into venue / Under
+  18 permitted with parent (Accepted forms of ID: State Issued ID or Drive
+ r's License\, Military ID\, Passport.)\\n\\nhttps://www.ticketmaster.com/
+ phillip-phillips-lets-go-far-tour-charlotte-north-carolina-11-20-2026/eve
+ nt/2D0064D1B3AC7170\\n\\nRefreshed daily from live listings.
+LOCATION:Neighborhood Theatre Main Room\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/phillip-phillips-lets-go-far-tour-charlot
+ te-north-carolina-11-20-2026/event/2D0064D1B3AC7170
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_2h9Tyvf@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Corey Smith 2026 Tour
+DESCRIPTION:Bag Policy: -Clear bag that does not exceed 12"x6"x12" -One ga
+ llon clear plastic bag -Small clutch bags with a max size of 4.5"x6.5" -F
+ anny packs must be clear You must have a valid physical ID to consume alc
+ ohol at The Senate. The Senate is now a cashless venue\\n\\nhttps://www.t
+ icketmaster.com/corey-smith-2026-tour-columbia-south-carolina-11-20-2026/
+ event/2D0064F6D7FF9054\\n\\nRefreshed daily from live listings.
+LOCATION:The Senate\, Columbia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/corey-smith-2026-tour-columbia-south-caro
+ lina-11-20-2026/event/2D0064F6D7FF9054
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7PI3Z@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:The War and Treaty
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PI3Z\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Haw River Ballroom\, Saxapahaw
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PI3Z
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-G5viZ_CnB9iya@whats-happening.natel628.github.io
-DTSTAMP:20261119T155352Z
+DTSTAMP:20261120T153737Z
 DTSTART:20261120T200000
 DTEND:20261120T223000
 SUMMARY:Keb' Mo'
@@ -2884,5 +1970,254 @@ LOCATION:Hard Rock Live Bristol\, Bristol
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/keb-mo-bristol-virginia-11-20-2026/event/
  1B0064EABA5ECE49
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5viZ_4etzT3x@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Knoxville Firefighter Association: Ultimate Garth Brooks Tribute
+DESCRIPTION:Clear Bags No Larger Than 12" X 6" X 12"\; Small Clutch Purse 
+ No Larger Than 4.5 " X 6.5"\; Clear Plastic Storage Bag One Gallon Reseal
+ able. All Bags Subject To Search Upon Entry Into KCAC. There are no eleva
+ tors to the balcony areas in the Auditorium.\\n\\nhttps://www.ticketmaste
+ r.com/knoxville-firefighter-association-ultimate-garth-brooks-knoxville-t
+ ennessee-11-20-2026/event/1B006550A9E3F4A2\\n\\nRefreshed daily from live
+  listings.
+LOCATION:Knoxville Civic Auditorium\, Knoxville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/knoxville-firefighter-association-ultimat
+ e-garth-brooks-knoxville-tennessee-11-20-2026/event/1B006550A9E3F4A2
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfGIu7@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Deadtronica (feat. Aron Magner of The Disco Biscuits)
+DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 18 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/deadtronica-feat-aron-magner-of-th
+ e-808-tickets/14328344\\n\\nRefreshed daily from live listings.
+LOCATION:The 808\, Knoxville
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/deadtronica-feat-aron-magner-of-the-80
+ 8-tickets/14328344
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1A4Z9OS@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Austin Snell\, Atlus
+DESCRIPTION:This event is 18 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 18 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . (PATRONS UNDER 18 PERMITTED WITH PARENT OR LEGAL GUARDIAN) PLEASE NOTE:
+  There is a delivery\\n\\nhttps://www.ticketweb.com/event/austin-snell-at
+ lus-the-mill-mine-tickets/15017833\\n\\nRefreshed daily from live listing
+ s.
+LOCATION:The Mill & Mine\, Knoxville
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/austin-snell-atlus-the-mill-mine-ticke
+ ts/15017833
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZIuw@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Austin Snell (18+ Event)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZIuw\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The Mill & Mine\, Knoxville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZIuw
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_3kTviky@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Alyssa Grace
+DESCRIPTION:The price you see is the price you pay! All fees are included 
+ in the price you see on Ticketmaster (excluding taxes). All sales are fin
+ al/non-refundable for this event. For ADA Accommodations\, email info@riv
+ alentertainment.com. For parking information and an FAQ\, visit us at cen
+ terstage-atlanta.com.\\n\\nhttps://www.ticketmaster.com/alyssa-grace-atla
+ nta-georgia-11-20-2026/event/0E006521BF06C1B9\\n\\nRefreshed daily from l
+ ive listings.
+LOCATION:Center Stage Theater\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/alyssa-grace-atlanta-georgia-11-20-2026/e
+ vent/0E006521BF06C1B9
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_kU_Skmf@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Red Leather
+DESCRIPTION:The price you see is the price you pay! All fees are included 
+ in the price you see on Ticketmaster (excluding taxes). All sales are fin
+ al/non-refundable for this event. For ADA Accommodations\, email info@riv
+ alentertainment.com. For parking information and an FAQ\, visit us at cen
+ terstage-atlanta.com.\\n\\nhttps://www.ticketmaster.com/red-leather-atlan
+ ta-georgia-11-20-2026/event/0E00646D99CC6B94\\n\\nRefreshed daily from li
+ ve listings.
+LOCATION:Vinyl\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/red-leather-atlanta-georgia-11-20-2026/ev
+ ent/0E00646D99CC6B94
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZAFF@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:L'Rain
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZAFF\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Aisle 5\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZAFF
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZPee@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Frankly Scarlet - Grateful Dead Tribute w/ Runaway Gin
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZPee\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Variety Playhouse\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZPee
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5dIZ_6GZR_Xe@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Tank and The Bangas: The Last Balloon Tour w/ Ariel J. & ZEUS
+DESCRIPTION:Please Note: SEATING Your Antones ticket grants you General Ad
+ mission entry with standing room. Limited seating may be available on a f
+ irst-come\, first-served basis\, but is subject to change show to show. I
+ f you have an ADA request\, please reach out and we will do our best to a
+ ccommodate you. PARKIN\\n\\nhttps://www.ticketmaster.com/tank-and-the-ban
+ gas-the-last-austin-texas-11-20-2026/event/3A00647300BD9F82\\n\\nRefreshe
+ d daily from live listings.
+LOCATION:Antone's Nightclub\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/tank-and-the-bangas-the-last-austin-texas
+ -11-20-2026/event/3A00647300BD9F82
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAe7uP@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Baby Smoove Live! - The Purple Heart Tour
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAe7uP\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The Showbox\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAe7uP
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7J3_x@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:Thundercat w/ fera
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7J3_x\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Showbox SODO\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J3_x
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAv8bN@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T200000
+DTEND:20261120T223000
+SUMMARY:GARAJ MAHAL - Ages 21+
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAv8bN\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Nectar Lounge\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv8bN
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A704k6@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T213000
+DTEND:20261121T000000
+SUMMARY:Gabby Bryan
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A704k6\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Comedy Zone - Greenville\, Greenville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A704k6
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAAFCk@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T220000
+DTEND:20261121T003000
+SUMMARY:Thought Process - Ages 21+
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAFCk\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The Rabbit Hole\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAFCk
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70PZw@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T220000
+DTEND:20261121T003000
+SUMMARY:Ian Asher (18 and Over)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70PZw\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Blackbox Theater - Charlotte\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70PZw
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAva-6@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261120T230000
+DTEND:20261121T013000
+SUMMARY:Mack Geiger (18 and Over)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAva-6\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Coyote Joes\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAva-6
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70UbE@whats-happening.natel628.github.io
+DTSTAMP:20261120T153737Z
+DTSTART:20261121T140000
+DTEND:20261121T163000
+SUMMARY:Elf the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70UbE\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barter Theatre\, Abingdon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbE
 END:VEVENT
 END:VCALENDAR
