@@ -492,11 +492,6 @@ function topicHTML(t) {
       <div class="panel side-card"><h3>Details</h3>
         <dl class="meta"><dt>Status</dt><dd>${esc(t.status)}</dd><dt>Category</dt><dd>${esc(t.category)}</dd><dt>Added</dt><dd>${esc(fmtDate(t.createdAt))}</dd>${t.wikiTitle ? `<dt>Wikipedia</dt><dd>${esc(t.wikiTitle)}</dd>` : ''}</dl>
       </div>
-      ${(() => {
-        const others = (t.related || []).slice(0, 4);
-        if (!others.length) return '';
-        return `<div class="panel side-card"><h3>If you liked this…</h3><div class="rel-grid">${others.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>`;
-      })()}
     </aside>
   </div>`;
 }
