@@ -107,7 +107,7 @@
   .progress-row { display:flex; gap:12px; align-items:center; margin-top:6px; font-size:.8rem; color:var(--muted); flex-wrap:wrap; }
   .progress-row #photoPct { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
   @media (prefers-reduced-motion: reduce) { .progress-fill { transition:none; } }
-  #golfMap, #foodMap, #campMap, #hotelMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
+  #golfMap, #foodMap, #barMap, #campMap, #hotelMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
   #golfList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .golf-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
   .golf-item.sel { border-color:var(--green); }
@@ -115,8 +115,8 @@
   .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
   #golfMsg:empty { display:none; }
   #golfMsg { font-size:.85rem; margin-top:8px; }
-  #golfMap, #foodMap, #campMap, #hotelMap { display:none; }
-  #golfMap.show, #foodMap.show, #campMap.show, #hotelMap.show { display:block; }
+  #golfMap, #foodMap, #barMap, #campMap, #hotelMap { display:none; }
+  #golfMap.show, #foodMap.show, #barMap.show, #campMap.show, #hotelMap.show { display:block; }
   .day.long { border-left-color:#f59e0b; }
   .day-weather { font-size:.8rem; font-weight:600; color:var(--muted); margin-left:6px; }
   .warn-text { color:#f59e0b; font-size:.8rem; margin-top:6px; }
@@ -315,6 +315,12 @@
   .explore-tab { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:8px 14px; border-radius:var(--radius-md); cursor:pointer; font:inherit; }
   .explore-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
   .explore-panel[hidden] { display:none; }
+  /* The 18+ categories stay folded away until someone opens this. */
+  .night-door { margin:10px 0 4px; border:1px solid #334155; border-radius:10px; background:#0f172a; padding:0 12px; }
+  .night-door > summary { cursor:pointer; padding:9px 0; font-size:.86rem; color:var(--accent); }
+  .night-door > summary .muted { color:var(--muted); font-weight:400; }
+  .night-door p { margin:2px 0 8px; font-size:.82rem; }
+  .night-door label { display:inline-flex; align-items:center; gap:6px; margin:0 14px 10px 0; font-size:.88rem; }
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%230f172a'/%3E%3Cpath%20d='M10%2023V9l12%2014V9'%20fill='none'%20stroke='%23f59e0b'%20stroke-width='3.4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E" />
 </head>
@@ -322,12 +328,14 @@
 <nav class="secnav" aria-label="Jump to a section">
   <div class="secnav-inner">
     <a href="#sec-glance" aria-label="Overview">📊 <span>Overview</span></a>
+    <a href="#sec-weather" aria-label="Weather">🌤️ <span>Weather</span></a>
     <a href="#sec-notes" aria-label="Notes">📝 <span>Notes</span></a>
     <a href="#sec-route" aria-label="Route map">🗺️ <span>Map</span></a>
     <a href="#sec-photos" aria-label="Photos and videos">📸 <span>Photos</span></a>
     <a href="#sec-explore" data-explore-tab="golf" aria-label="Golf courses">⛳ <span>Golf</span></a>
-    <a href="#sec-explore" data-explore-tab="food" aria-label="Places to eat">🍽️ <span>Food</span></a>
-    <a href="#sec-explore" data-explore-tab="camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
+          <a href="#sec-explore" data-explore-tab="food" aria-label="Places to eat">🍽️ <span>Food</span></a>
+      <a href="#sec-explore" data-explore-tab="bar" aria-label="Bars and nightlife">🍸 <span>Bars</span></a>
+      <a href="#sec-explore" data-explore-tab="camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
     <a href="#sec-explore" data-explore-tab="events" aria-label="Sporting events">🏟️ <span>Events</span></a>
     <a href="#sec-bets" aria-label="Bets">🏆 <span>Bets</span></a>
     <a href="#sec-budget" aria-label="Budget">💵 <span>Budget</span></a>
@@ -487,6 +495,7 @@
     <div class="explore-tabs" role="tablist">
       <button type="button" class="explore-tab active" data-tab="golf" role="tab" aria-selected="true">⛳ Golf</button>
       <button type="button" class="explore-tab" data-tab="food" role="tab" aria-selected="false">🍽️ Food</button>
+      <button type="button" class="explore-tab" data-tab="bar" role="tab" aria-selected="false">🍸 Bars</button>
       <button type="button" class="explore-tab" data-tab="camp" role="tab" aria-selected="false">🏕️ Camp</button>
       <button type="button" class="explore-tab" data-tab="events" role="tab" aria-selected="false">🏟️ Events</button>
     </div>
@@ -531,6 +540,30 @@
       <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
       <div id="foodMap"></div>
       <div id="foodList"></div>
+    </div>
+    <div class="explore-panel" id="panel-bar" hidden>
+      <p class="muted">Bars, pubs, clubs, live-music venues and casinos around a town or a map pin — real road distance and drive time from the search point. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear.</p>
+      <div class="row">
+        <input id="barQuery" placeholder="Search near — e.g. Nashville, TN" aria-label="Search bars near" />
+        <select id="barRadius" style="max-width:170px;flex:none" aria-label="Bar search radius">
+          <option value="2">Within 2 mi</option>
+          <option value="8" selected>Within 8 mi</option>
+          <option value="20">Within 20 mi</option>
+        </select>
+        <button type="button" id="barFind">Find bars</button>
+        <button type="button" id="barClearPin" class="ghost">Clear pin</button>
+      </div>
+      <p class="muted" id="barPinState" style="margin:8px 0 0"></p>
+      <p id="barMsg" class="muted" role="status" aria-live="polite"></p>
+      <details class="night-door" id="nightDoor">
+        <summary>🔞 18+ after dark <span class="muted">— strip clubs, adult shops, casinos</span></summary>
+        <p class="muted">Those categories are left out of every result until you tick one here. Nothing goes on the shared plan unless you add it to the route.</p>
+        <label><input type="checkbox" data-night="strip club" /> Strip clubs</label>
+        <label><input type="checkbox" data-night="adult shop" /> Adult shops</label>
+        <label><input type="checkbox" data-night="casino" /> Casinos</label>
+      </details>
+      <div id="barMap"></div>
+      <div id="barList"></div>
     </div>
     <div class="explore-panel" id="panel-camp" hidden>
       <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
@@ -2968,6 +3001,232 @@ $('foodFindName').onclick = async () => {
 };
 $('foodName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFindName').click(); } });
 
+/* ---------- 7b. bars, clubs & after dark ---------- */
+const barMap = L.map('barMap').setView([39.5, -98.35], 4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(barMap);
+const barLayer = L.layerGroup().addTo(barMap);
+let barPlaces = [], barAnchor = null, barPin = null, barPinMarker = null;
+
+function barMsg(t){
+  const m = $('barMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 9000);
+}
+
+// Three kinds sit behind the 18+ disclosure in the panel. The search asks for
+// them in the same request, but the list and the map leave them out until one
+// of the boxes is ticked, so they never appear by accident.
+const BAR_ADULT = ['strip club', 'adult shop', 'casino'];
+function nightChecked(){
+  const on = new Set();
+  document.querySelectorAll('[data-night]').forEach(cb => { if (cb.checked) on.add(cb.dataset.night); });
+  return on;
+}
+function nightKindOf(tags){
+  const shop = tags.shop || '', a = tags.amenity || '';
+  if (shop === 'erotic' || shop === 'sex_shop' || a === 'adult_gaming_centre') return 'adult shop';
+  return ({ bar: 'bar', pub: 'pub', nightclub: 'club', music_venue: 'live music', strip_club: 'strip club', casino: 'casino' })[a]
+    || (a || shop || 'venue').replace(/_/g, ' ');
+}
+
+// Overpass lists everything of a kind in an area, which Nominatim's category
+// search cannot do. It also has busy days, so the mirrors get a turn.
+const OVERPASS_HOSTS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter'
+];
+async function overpassSearch(center, radiusKm){
+  const around = Math.round(radiusKm * 1000) + ',' + center.lat.toFixed(5) + ',' + center.lng.toFixed(5);
+  const q = '[out:json][timeout:25];('
+    + 'nwr["amenity"~"^(bar|pub|nightclub|music_venue|strip_club|casino)$"](around:' + around + ');'
+    + 'nwr["shop"~"^(erotic|sex_shop)$"](around:' + around + ');'
+    + ');out tags center 150;';
+  for (const host of OVERPASS_HOSTS) {
+    try {
+      const res = await timedFetch(host, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'Accept': 'application/json' },
+        body: 'data=' + encodeURIComponent(q)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) { /* a mirror that is down or slow just hands over to the next */ }
+  }
+  throw new Error('The venue index is busy right now — try again in a minute.');
+}
+
+function barsFromOverpass(data, center){
+  const seen = new Set();
+  const out = [];
+  for (const el of (data && data.elements) || []) {
+    const tags = el.tags || {};
+    const name = (tags.name || '').trim();
+    if (!name) continue;
+    const lat = Number.isFinite(el.lat) ? el.lat : (el.center && el.center.lat);
+    const lng = Number.isFinite(el.lon) ? el.lon : (el.center && el.center.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    const key = name.toLowerCase() + '|' + lat.toFixed(4) + '|' + lng.toFixed(4);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const kind = nightKindOf(tags);
+    out.push({
+      name, kind,
+      adult: BAR_ADULT.indexOf(kind) >= 0,
+      lat, lng,
+      dist: center ? hav(center, { lat, lng }) : null,
+      where: [tags['addr:housenumber'], tags['addr:street'], tags['addr:city']].filter(Boolean).join(' ')
+    });
+  }
+  return out;
+}
+
+async function findBarsNear(center, radiusKm){
+  const found = barsFromOverpass(await overpassSearch(center, radiusKm), center);
+  found.sort((a, b) => a.dist - b.dist);
+  const nearest = found.slice(0, 60);
+  await attachDriving(center, nearest);
+  nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  return nearest;
+}
+
+function barSubText(place){
+  const bits = [place.kind];
+  if (place.dist === null || place.dist === undefined) {
+    if (place.where) bits.push(place.where);
+  } else {
+    bits.push(distanceLabel(place, barAnchor || 'search'));
+  }
+  return bits.join(' · ');
+}
+
+function visibleBars(){
+  const on = nightChecked();
+  return barPlaces.filter(p => !p.adult || on.has(p.kind));
+}
+
+function selectBar(place){
+  if (!place || !place._marker) return;
+  barMap._rtFit = null;
+  barMap.setView([place.lat, place.lng], Math.max(barMap.getZoom(), 14));
+  place._marker.openPopup();
+}
+
+function renderBars(){
+  const el = $('barList');
+  barLayer.clearLayers();
+  if (!barPlaces.length) {
+    el.innerHTML = '<p class="muted">No bars found — try a wider radius, or search a bigger town.</p>';
+    return;
+  }
+  const rows = visibleBars();
+  if (!rows.length) {
+    el.innerHTML = '<p class="muted">Only 18+ places matched — open “18+ after dark” above to see them.</p>';
+    return;
+  }
+
+  el.innerHTML = rows.map(p => {
+    const i = barPlaces.indexOf(p);
+    return '<div class="food-item">'
+      + '<button type="button" class="food-pick" data-pick="' + i + '">'
+      + '<span class="food-name">' + esc(p.name) + '</span>'
+      + '<span class="food-sub">' + esc(barSubText(p)) + '</span>'
+      + '</button>'
+      + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(p.name) + '">🗺️</button>'
+      + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(p.name) + ' to the trip">Add to trip</button>'
+      + '</div>';
+  }).join('');
+
+  rows.forEach(p => {
+    p._marker = L.circleMarker([p.lat, p.lng], { radius: 7, color: '#a78bfa', weight: 2, fillColor: '#a78bfa', fillOpacity: 0.55 })
+      .addTo(barLayer)
+      .bindPopup('<b>' + esc(p.name) + '</b><br><span class="muted">' + esc(barSubText(p)) + '</span>')
+      .on('click', () => selectBar(p));
+  });
+
+  fitMap(barMap, rows.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
+  revealMap(barMap, 'barMap');
+}
+
+$('barList').addEventListener('click', async e => {
+  if (handleMapMenuClick(e)) return;
+  const trig = e.target.closest('[data-maptrig]');
+  if (trig) { openMapMenu(trig, barPlaces[+trig.dataset.maptrig]); return; }
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { selectBar(barPlaces[+pick.dataset.pick]); return; }
+  const add = e.target.closest('[data-add]');
+  if (!add) return;
+  const place = barPlaces[+add.dataset.add];
+  if (!place) return;
+  add.disabled = true;
+  const ok = await write('POST', '/api/stops', { name: place.name, lat: place.lat, lng: place.lng });
+  add.disabled = false;
+  barMsg(ok ? place.name + ' added to your route.' : 'Could not add that place.');
+});
+
+function clearBarPin(){
+  barPin = null;
+  if (barPinMarker) { barMap.removeLayer(barPinMarker); barPinMarker = null; }
+  $('barPinState').textContent = '';
+}
+
+function setBarPin(lat, lng){
+  barPin = { lat, lng };
+  if (barPinMarker) barMap.removeLayer(barPinMarker);
+  $('barPinState').textContent = 'Search pin at ' + lat.toFixed(3) + ', ' + lng.toFixed(3) + ' — press Find bars to search around it.';
+  barPinMarker = L.marker([lat, lng], { draggable: true }).addTo(barMap)
+    .bindPopup('Search pin — drag to move, then press Find bars.');
+  barPinMarker.on('dragend', ev => {
+    const moved = ev.target.getLatLng();
+    barPin = { lat: moved.lat, lng: moved.lng };
+    $('barPinState').textContent = 'Search pin at ' + barPin.lat.toFixed(3) + ', ' + barPin.lng.toFixed(3) + ' — press Find bars to search around it.';
+    barMsg('Pin moved — press Find bars to search here.');
+  });
+  barPinMarker.openPopup();
+  barMsg('Pin set — press Find bars to search around it.');
+}
+
+barMap.on('click', e => setBarPin(e.latlng.lat, e.latlng.lng));
+$('barClearPin').onclick = () => {
+  if (!barPin) { barMsg('No pin set — click the map to drop one.'); return; }
+  clearBarPin();
+  barMsg('Pin cleared — search uses the typed area again.');
+};
+$('barQuery').addEventListener('input', () => { if (barPin) clearBarPin(); });
+
+$('barFind').onclick = async () => {
+  const btn = $('barFind');
+  const place = $('barQuery').value.trim();
+  if (!barPin && !place) { barMsg('Type a town or area, or click the map to drop a search pin.'); return; }
+  btn.disabled = true;
+  try {
+    const center = barPin
+      ? { name: 'the map pin', lat: barPin.lat, lng: barPin.lng }
+      : await geocode(place);
+    barMsg('Looking for bars near ' + center.name + '…');
+    // The options read miles and the lookup takes kilometres.
+    const found = await findBarsNear(center, +$('barRadius').value * 1.609344);
+    barAnchor = center.name;
+    barPlaces = found;
+    renderBars();
+    const shown = visibleBars().length;
+    barMsg(!found.length
+      ? 'Nothing found near ' + center.name + ' — try a wider radius.'
+      : shown + ' place' + (shown === 1 ? '' : 's') + ' near ' + center.name + '.'
+        + (shown < found.length ? ' Some 18+ places are hidden until you tick them above.' : ''));
+  } catch (err) {
+    barMsg(err && err.message ? err.message : 'Could not search for bars right now.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('barQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('barFind').click(); } });
+
+document.querySelectorAll('[data-night]').forEach(cb => cb.addEventListener('change', () => {
+  if (!barPlaces.length) return;
+  renderBars();
+  barMsg('Showing ' + visibleBars().length + ' place' + (visibleBars().length === 1 ? '' : 's') + ' at this radius.');
+}));
+
 /* ---------- 8. campgrounds & rest areas ---------- */
 const campMap = L.map('campMap').setView([39.5, -98.35], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(campMap);
@@ -3531,15 +3790,21 @@ acSetup($('eventArea'), { cityFirst: true });
     }
     mark.forEach(a => a.setAttribute('aria-current', 'true'));
   };
-  // The sidebar preselects what you clicked, the same way the top bar does.
-  window.markNavCurrent = setCurrent;
+  // The sidebar preselects what you clicked, the same way the top bar does, and
+  // holds it while the smooth scroll settles so the scroll tracker cannot put
+  // the previous section back.
+  window.markNavCurrent = (id) => { setCurrent(id); hold = Date.now() + 1600; };
 
   // Whichever section sits above the bottom of the sticky bar is the one you are in.
   const mark = () => {
     queued = false;
     // A section counts as current once it has landed near the bar, which is
-    // where scroll-margin-top puts it after a jump.
-    const line = (bar ? bar.getBoundingClientRect().bottom : 0) + 60;
+    // where scroll-margin-top puts it after a jump. In sidebar mode the top bar
+    // is display:none, so its edge is the top of the page and the 72px scroll
+    // margin left the target just below the line — the previous section stayed
+    // marked (Estimates, then Food, lit up Photos).
+    const barBottom = (bar && bar.offsetParent !== null) ? bar.getBoundingClientRect().bottom : 0;
+    const line = barBottom + 80;
     let current = sections[0];
     for (const section of sections) {
       if (section.getBoundingClientRect().top <= line) current = section;
@@ -4819,11 +5084,9 @@ document.addEventListener('DOMContentLoaded',function(){
       document.querySelectorAll('.explore-panel').forEach(function(p){p.hidden=true;});
       var panel=document.getElementById('panel-'+btn.dataset.tab);
       if(panel) panel.hidden=false;
-      // leaflet maps need resize after reveal
-      ['golfMap','foodMap','campMap'].forEach(function(id){
-        var el=document.getElementById(id);
-        if(el && window.L && el._leaflet_id){ var m=L.Util?null:null; }
-      });
+      // Leaflet measures a map when it is built; a panel revealed later needs
+      // every map to measure itself again or the tiles come up half-drawn.
+      if (window.L) window.dispatchEvent(new Event('resize'));
     });
   });
 });
