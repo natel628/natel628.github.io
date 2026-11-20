@@ -537,6 +537,7 @@ function render() {
       try { await navigator.clipboard.writeText(text); toast('Summary copied.'); } catch { toast('Copy blocked by browser.'); }
     };
     main.querySelectorAll('[data-open-topic]').forEach((b) => (b.onclick = () => (location.hash = '#/topic/' + encodeURIComponent(b.dataset.openTopic))));
+    main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
   } else if (state.route === 'discover') {
     main.innerHTML = discoverHTML();
     main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
