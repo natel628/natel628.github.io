@@ -4550,9 +4550,9 @@ document.addEventListener('DOMContentLoaded',function(){
     var tot=document.getElementById('budgetTotal');
     var entries=load();
     if(!el) return;
-    el.innerHTML=entries.map(function(e,i){
-      return '<div class="budget-line"><span>'+e.cat+(e.note?' — '+e.note:'')+'</span><span>$'+Number(e.amt).toFixed(2)+'</span><button type="button" data-del="'+i+'" class="small ghost">✕</button></div>';
-    }).join('');
+    el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.9rem"><thead><tr><th style="text-align:left;padding:4px">Category</th><th style="text-align:left;padding:4px">Note</th><th style="text-align:right;padding:4px">Amount</th><th></th></tr></thead><tbody>'+entries.map(function(e,i){
+      return '<tr><td style="padding:4px">'+e.cat+'</td><td style="padding:4px">'+(e.note||'')+'</td><td style="padding:4px;text-align:right">$'+Number(e.amt).toFixed(2)+'</td><td style="padding:4px"><button type="button" data-del="'+i+'" class="small ghost">✕</button></td></tr>';
+    }).join('')+'</tbody></table>';
     var total=entries.reduce(function(s,e){return s+Number(e.amt||0);},0);
     var travelers=Number((document.getElementById('budTravelers')||{}).value)||4;
     if(tot) tot.innerHTML='<strong>Total: $'+total.toFixed(2)+'</strong> · Per person (4): $'+(total/4).toFixed(2);
