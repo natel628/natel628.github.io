@@ -26,7 +26,8 @@
   button.ghost { background:transparent; color:var(--text); border:1px solid #475569; }
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
-  #stops { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px; }
+  #stopsWrap.stops-preview, #budgetWrap.stops-preview{position:relative;max-height:120px;overflow:hidden;}
+  #stopsWrap.expanded, #budgetWrap.expanded{max-height:none;overflow:visible;}
   #stops li { position:relative; display:flex; flex-wrap:wrap; align-items:flex-start; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
   /* The name gets its own room and the buttons can never sit on top of it. */
   #stops .stop-info { flex:1 1 150px; min-width:0; overflow-wrap:anywhere; }
@@ -268,6 +269,10 @@
     .wx-tile { flex-basis:72px; padding:7px 4px; }
     .max-w-100 { max-width:100%; }
   }
+  .explore-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px; }
+  .explore-tab { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:8px 14px; border-radius:var(--radius-md); cursor:pointer; font:inherit; }
+  .explore-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+  .explore-panel[hidden] { display:none; }
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%230f172a'/%3E%3Cpath%20d='M10%2023V9l12%2014V9'%20fill='none'%20stroke='%23f59e0b'%20stroke-width='3.4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E" />
 </head>
@@ -358,6 +363,7 @@
       <button type="button" id="openMaps" class="small ghost" title="Open the whole route in a map app" hidden>Open whole route ↗</button>
     </div>
     <p class="muted" id="tripHint" role="status" aria-live="polite"></p>
+    <button type="button" id="toggleStops" class="small ghost" style="margin-top:8px">Show all stops ▾</button>
     <p class="muted" id="stopsEmpty">No stops yet — set a start and an end above, or click the map.</p>
     <ul id="stops"></ul>
     <div id="stopPanel" hidden style="margin-top:14px;border-top:1px solid #334155;padding-top:12px">
@@ -431,145 +437,92 @@
     <div id="photoGrid"></div>
   </section>
 
-  <section class="card" id="sec-budget">
-    <h2>💵 Budget</h2>
-    <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
-    <div class="rv-grid">
-      <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="2" /></label>
-      <label>Gas $/gal<input id="budGas" type="number" min="0" max="20" step="0.05" value="3.60" aria-label="Gas price per gallon" /></label>
-      <label>MPG towing<input id="budMpg" type="number" min="3" max="30" step="0.5" value="8" aria-label="Miles per gallon while towing" /></label>
-      <label>Lodging $<input id="budLodging" type="number" min="0" step="25" value="0" /></label>
-      <label>Food $<input id="budFood" type="number" min="0" step="25" value="0" /></label>
-      <label>Tolls &amp; bridges $<input id="budTolls" type="number" min="0" step="5" value="0" /></label>
-      <label>Propane refills $<input id="budPropane" type="number" min="0" step="5" value="0" /></label>
-      <label>Golf &amp; activities $<input id="budFun" type="number" min="0" step="25" value="0" /></label>
-      <label>Misc / repairs $<input id="budMisc" type="number" min="0" step="25" value="0" /></label>
+  <section class="card" id="sec-explore">
+    <h2>🗺️ Explore nearby</h2>
+    <p class="muted">Pick a category, then search an area or drop a pin on the map to find places and add them to your route.</p>
+    <div class="explore-tabs" role="tablist">
+      <button type="button" class="explore-tab active" data-tab="golf" role="tab" aria-selected="true">⛳ Golf</button>
+      <button type="button" class="explore-tab" data-tab="food" role="tab" aria-selected="false">🍽️ Food</button>
+      <button type="button" class="explore-tab" data-tab="camp" role="tab" aria-selected="false">🏕️ Camp</button>
+      <button type="button" class="explore-tab" data-tab="events" role="tab" aria-selected="false">🏟️ Events</button>
     </div>
-    <div id="budgetLines" class="budget-lines"></div>
-  </section>
-
-  <section class="card" id="sec-rv">
-    <h2>🚐 RV profile &amp; route cautions</h2>
-    <p class="muted">Your rig's numbers, then the restrictions worth checking before you drive this corridor. Confirm with the operator — heights and rules change.</p>
-    <div class="rv-grid">
-      <label>Height ft<input id="rvHeight" type="number" min="6" max="15" step="0.1" value="12.5" /></label>
-      <label>Length ft<input id="rvLength" type="number" min="10" max="60" step="1" value="30" /></label>
-      <label>Weight lb<input id="rvWeight" type="number" min="0" step="500" value="0" /></label>
-      <label>MPG towing<input id="rvMpg" type="number" min="3" max="30" step="0.5" value="8" /></label>
-      <label>Fresh water gal<input id="rvWater" type="number" min="0" step="5" value="60" /></label>
-      <label>Propane lb<input id="rvPropane" type="number" min="0" step="5" value="40" /></label>
+    <div class="explore-panel" id="panel-golf">
+      <p class="muted">Search a town or area, or click the map to drop a search pin, then look over the courses and add one straight to your route.</p>
+      <div class="row">
+        <input id="golfQuery" placeholder="Search near — e.g. Bethpage, NY" aria-label="Search golf courses near" />
+        <select id="golfRadius" aria-label="Search radius" style="max-width:170px;flex:none">
+          <option value="16">Within 10 mi</option>
+          <option value="40" selected>Within 25 mi</option>
+          <option value="80">Within 50 mi</option>
+        </select>
+        <button type="button" id="golfFind">Find courses</button>
+        <button type="button" id="golfClearPin" class="ghost">Clear pin</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="golfName" placeholder="Or search a course by name — e.g. Pebble Beach" aria-label="Search a golf course by name" />
+        <button type="button" id="golfFindName">Find by name</button>
+      </div>
+      <p class="muted" id="golfPinState" style="margin-top:6px"></p>
+      <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="golfMap"></div>
+      <div id="golfList"></div>
     </div>
-    <p id="rvSummary" class="muted rv-summary"></p>
-    <details id="rvDetails" class="rv-details">
-      <summary id="rvDetailsLabel">Show warnings &amp; route cautions</summary>
-      <div id="rvWarn"></div>
-      <div id="cautionList"></div>
-    </details>
-  </section>
-
-  <section class="card" id="sec-practical">
-    <h2>🧰 Practical estimates</h2>
-    <p class="muted">Distances and drive times are real road routing; when the router is unreachable you get a straight-line estimate instead, which understates the drive.</p>
-    <div class="row" style="margin-top:10px">
-      <label class="muted" for="fuelMpg" style="align-self:center">MPG</label>
-      <input id="fuelMpg" type="number" min="4" max="40" step="0.5" value="25" style="max-width:110px;flex:none" aria-label="Miles per gallon" />
-      <label class="muted" for="fuelPrice" style="align-self:center">$ per gallon</label>
-      <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
+    <div class="explore-panel" id="panel-food" hidden>
+      <p class="muted">Search a town or area — or click the map to drop a pin — to list restaurants and cafés around it, then add the ones you like to your route. Distances and drive times are real roads from the search point.</p>
+      <div class="row">
+        <input id="foodQuery" placeholder="Search near — e.g. Nashville, TN" aria-label="Search places to eat near" />
+        <select id="foodRadius" style="max-width:170px;flex:none" aria-label="Search radius">
+          <option value="3">Within 3 mi</option>
+          <option value="10" selected>Within 10 mi</option>
+          <option value="30">Within 30 mi</option>
+        </select>
+        <button type="button" id="foodFind">Find places to eat</button>
+        <button type="button" id="foodClearPin" class="ghost">Clear pin</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="foodName" placeholder="Or search a place by name — e.g. Franklin Barbecue" aria-label="Search a place to eat by name" />
+        <button type="button" id="foodFindName">Find by name</button>
+      </div>
+      <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
+      <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="foodMap"></div>
+      <div id="foodList"></div>
     </div>
-
-    <div class="row" style="margin-top:10px">
-      <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
-      <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
-      <label class="muted" for="planDepart" style="align-self:center">default leave</label>
-      <input id="planDepart" type="time" value="08:00" style="max-width:130px;flex:none" aria-label="Default time you leave each morning" />
+    <div class="explore-panel" id="panel-camp" hidden>
+      <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
+      <div class="row">
+        <select id="campRadius" style="max-width:170px;flex:none" aria-label="Campground search radius">
+          <option value="5">Within 5 mi</option>
+          <option value="15" selected>Within 15 mi</option>
+          <option value="40">Within 40 mi</option>
+        </select>
+        <button type="button" id="campAlong">Find along my route</button>
+        <button type="button" id="campClearPin" class="ghost">Clear pin</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="campArea" placeholder="Or search near a town — e.g. Lexington, VA" aria-label="Search campgrounds near a town" />
+        <button type="button" id="campFind">Find near town</button>
+      </div>
+      <p class="muted" id="campPinState" style="margin:8px 0 0"></p>
+      <p id="campMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="campMap"></div>
+      <div id="campList"></div>
     </div>
-    <p class="muted" style="margin:6px 0 0;font-size:.8rem">Trip start, trip days and the default leave time feed these estimates and how the nights split.</p>
-    <div id="practical"></div>
-  </section>
-
-  <section class="card" id="sec-golf">
-    <h2>⛳ Golf courses</h2>
-    <p class="muted">Search a town or area, or click the map to drop a search pin, then look over the courses and add one straight to your route.</p>
-    <div class="row">
-      <input id="golfQuery" placeholder="Search near — e.g. Bethpage, NY" aria-label="Search golf courses near" />
-      <select id="golfRadius" aria-label="Search radius" style="max-width:170px;flex:none">
-        <option value="16">Within 10 mi</option>
-        <option value="40" selected>Within 25 mi</option>
-        <option value="80">Within 50 mi</option>
-      </select>
-      <button type="button" id="golfFind">Find courses</button>
-      <button type="button" id="golfClearPin" class="ghost">Clear pin</button>
+    <div class="explore-panel" id="panel-events" hidden>
+      <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page, and can be put on the map or added to the route.</p>
+      <div class="row">
+        <div class="ac"><input id="eventArea" placeholder="Area — e.g. Denver, CO" aria-label="Area to search for events" /></div>
+        <input id="eventDate" type="date" style="max-width:190px;flex:none" aria-label="Event date" />
+        <select id="eventRadius" aria-label="Event search radius" style="max-width:170px;flex:none">
+          <option value="25">Within 25 mi</option>
+          <option value="50" selected>Within 50 mi</option>
+          <option value="100">Within 100 mi</option>
+        </select>
+        <button type="button" id="eventFind">Find events</button>
+      </div>
+      <p id="eventMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="eventList"></div>
     </div>
-    <div class="row" style="margin-top:8px">
-      <input id="golfName" placeholder="Or search a course by name — e.g. Pebble Beach" aria-label="Search a golf course by name" />
-      <button type="button" id="golfFindName">Find by name</button>
-    </div>
-    <p class="muted" id="golfPinState" style="margin-top:6px"></p>
-    <p id="golfMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="golfMap"></div>
-    <div id="golfList"></div>
-  </section>
-
-  <section class="card" id="sec-food">
-    <h2>🍽️ Places to eat</h2>
-    <p class="muted">Search a town or area — or click the map to drop a pin — to list restaurants and cafés around it, then add the ones you like to your route. Distances and drive times are real roads from the search point.</p>
-    <div class="row">
-      <input id="foodQuery" placeholder="Search near — e.g. Nashville, TN" aria-label="Search places to eat near" />
-      <select id="foodRadius" style="max-width:170px;flex:none" aria-label="Search radius">
-        <option value="3">Within 3 mi</option>
-        <option value="10" selected>Within 10 mi</option>
-        <option value="30">Within 30 mi</option>
-      </select>
-      <button type="button" id="foodFind">Find places to eat</button>
-      <button type="button" id="foodClearPin" class="ghost">Clear pin</button>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <input id="foodName" placeholder="Or search a place by name — e.g. Franklin Barbecue" aria-label="Search a place to eat by name" />
-      <button type="button" id="foodFindName">Find by name</button>
-    </div>
-    <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
-    <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="foodMap"></div>
-    <div id="foodList"></div>
-  </section>
-
-  <section class="card" id="sec-camp">
-    <h2>🏕️ Campgrounds &amp; rest areas</h2>
-    <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
-    <div class="row">
-      <select id="campRadius" style="max-width:170px;flex:none" aria-label="Campground search radius">
-        <option value="5">Within 5 mi</option>
-        <option value="15" selected>Within 15 mi</option>
-        <option value="40">Within 40 mi</option>
-      </select>
-      <button type="button" id="campAlong">Find along my route</button>
-      <button type="button" id="campClearPin" class="ghost">Clear pin</button>
-    </div>
-    <p class="muted" id="campPinState" style="margin:8px 0 0"></p>
-    <div class="row" style="margin-top:8px">
-      <input id="campArea" placeholder="Or search near a town — e.g. Lexington, VA" aria-label="Search campgrounds near a town" />
-      <button type="button" id="campFind">Find near town</button>
-    </div>
-    <p id="campMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="campMap"></div>
-    <div id="campList"></div>
-  </section>
-
-  <section class="card" id="sec-events">
-    <h2>🏟️ Sporting events</h2>
-    <p class="muted">Choose an area and a date to see live sport happening there — each result opens its official ticketing page, and can be put on the map or added to the route.</p>
-    <div class="row">
-      <div class="ac"><input id="eventArea" placeholder="Area — e.g. Denver, CO" aria-label="Area to search for events" /></div>
-      <input id="eventDate" type="date" style="max-width:190px;flex:none" aria-label="Event date" />
-      <select id="eventRadius" aria-label="Event search radius" style="max-width:170px;flex:none">
-        <option value="25">Within 25 mi</option>
-        <option value="50" selected>Within 50 mi</option>
-        <option value="100">Within 100 mi</option>
-      </select>
-      <button type="button" id="eventFind">Find events</button>
-    </div>
-    <p id="eventMsg" class="muted" role="status" aria-live="polite"></p>
-    <div id="eventList"></div>
   </section>
 
   <section class="card" id="sec-bets">
@@ -677,6 +630,71 @@
   </div>
   <div class="set-foot"><button type="button" id="tourGo">Let's fuckin' go</button></div>
 </div>
+
+  <section class="card" id="sec-budget">
+    <h2>💵 Budget <span id="budgetTotal" style="font-size:.9rem;font-weight:400;margin-left:12px"></span></h2>
+    <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
+    <div class="rv-grid">
+      <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="4" readonly /></label>
+    </div>
+    <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap">
+      <select id="budCat" aria-label="Budget category" style="max-width:160px;flex:none">
+        <option>Food</option><option>Tolls</option><option>Items</option><option>Gas</option><option>Lodging</option><option>Activities</option><option>Other</option>
+      </select>
+      <input id="budCustomCat" placeholder="Custom category (if Other)" style="max-width:180px;flex:none;display:none" />
+      <input id="budNote" placeholder="Note (e.g. towels)" style="flex:1 1 160px" />
+      <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" style="max-width:100px;flex:none" />
+      <button type="button" id="budAdd">Add</button>
+    </div>
+    <button type="button" id="toggleBudget" class="small ghost" style="margin-top:6px">Show entries ▾</button>
+    <div id="budgetWrap" class="stops-preview">
+      <div id="budgetLines" class="budget-lines"></div>
+    </div>
+  </section>
+
+  <section class="card" id="sec-rv">
+    <h2>🚐 RV profile &amp; route cautions</h2>
+    <details>
+      <summary>Expand to read all warnings and cautions</summary>
+    <p class="muted">Your rig's numbers, then the restrictions worth checking before you drive this corridor. Confirm with the operator — heights and rules change.</p>
+    <div class="rv-grid">
+      <label>Height ft<input id="rvHeight" type="number" min="6" max="15" step="0.1" value="12.5" /></label>
+      <label>Length ft<input id="rvLength" type="number" min="10" max="60" step="1" value="30" /></label>
+      <label>Weight lb<input id="rvWeight" type="number" min="0" step="500" value="0" /></label>
+      <label>MPG towing<input id="rvMpg" type="number" min="3" max="30" step="0.5" value="8" /></label>
+      <label>Fresh water gal<input id="rvWater" type="number" min="0" step="5" value="60" /></label>
+      <label>Propane lb<input id="rvPropane" type="number" min="0" step="5" value="40" /></label>
+    </div>
+    <p id="rvSummary" class="muted rv-summary"></p>
+    <details id="rvDetails" class="rv-details">
+      <summary id="rvDetailsLabel">Show warnings &amp; route cautions</summary>
+      <div id="rvWarn"></div>
+      <div id="cautionList"></div>
+    </details>
+</details>
+  </section>
+
+  <section class="card" id="sec-practical">
+    <h2>🧰 Practical estimates</h2>
+    <p class="muted">Distances and drive times are real road routing; when the router is unreachable you get a straight-line estimate instead, which understates the drive.</p>
+    <div class="row" style="margin-top:10px">
+      <label class="muted" for="fuelMpg" style="align-self:center">MPG</label>
+      <input id="fuelMpg" type="number" min="4" max="40" step="0.5" value="25" style="max-width:110px;flex:none" aria-label="Miles per gallon" />
+      <label class="muted" for="fuelPrice" style="align-self:center">$ per gallon</label>
+      <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
+      <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
+      <label class="muted" for="planDepart" style="align-self:center">default leave</label>
+      <input id="planDepart" type="time" value="08:00" style="max-width:130px;flex:none" aria-label="Default time you leave each morning" />
+    </div>
+    <p class="muted" style="margin:6px 0 0;font-size:.8rem">Trip start, trip days and the default leave time feed these estimates and how the nights split.</p>
+    <div id="practical"></div>
+  </section>
+
+
 
 </main>
 
@@ -1690,7 +1708,10 @@ function loadFuel(){
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(FUEL_KEY) || '{}') || {}; } catch (e) { saved = {}; }
   if (saved.mpg) $('fuelMpg').value = saved.mpg;
-  if (saved.price) { $('fuelPrice').value = saved.price; $('budGas').value = saved.price; }
+  if (saved.price) {
+    $('fuelPrice').value = saved.price;
+    if ($('budGas')) $('budGas').value = saved.price;
+  }
 }
 function saveFuel(){
   try { localStorage.setItem(FUEL_KEY, JSON.stringify({ mpg: $('fuelMpg').value, price: $('fuelPrice').value })); } catch (e) {}
@@ -3709,7 +3730,12 @@ function syncExtraInputs(){
   }
 }
 function bindExtra(id, path, parse){
-  $(id).addEventListener('input', e => {
+  // The Budget card was rebuilt around manual entries, so several of these
+  // fields are gone. A missing one must not stop the rest of the page from
+  // booting — this runs before the state load.
+  const el = $(id);
+  if (!el) return;
+  el.addEventListener('input', e => {
     const v = parse ? parse(e.target.value) : e.target.value;
     if (path.length === 1) extra[path[0]] = v;
     else { extra[path[0]] = extra[path[0]] || {}; extra[path[0]][path[1]] = v; }
@@ -3734,7 +3760,7 @@ bindExtra('rvPropane', ['rv', 'propane'], v => +v || 0);
 // show the same number, and whichever you type into updates the other.
 let gasPlanTimer = 0;
 function syncGasPrice(value){
-  if ($('budGas').value !== value) $('budGas').value = value;
+  if ($('budGas') && $('budGas').value !== value) $('budGas').value = value;
   if ($('fuelPrice').value !== value) $('fuelPrice').value = value;
   saveFuel();
   renderBudget();
@@ -3744,15 +3770,15 @@ function syncGasPrice(value){
   clearTimeout(gasPlanTimer);
   gasPlanTimer = setTimeout(renderPlan, 400);
 }
-$('budGas').addEventListener('input', e => syncGasPrice(e.target.value));
+if ($('budGas')) $('budGas').addEventListener('input', e => syncGasPrice(e.target.value));
 $('fuelPrice').addEventListener('input', () => syncGasPrice($('fuelPrice').value));
 // Towing MPG is one setting too: the Budget field and the RV profile field are
 // the same shared number, since both describe the same rig.
 function syncMpgInputs(value){
-  if ($('budMpg').value !== value) $('budMpg').value = value;
+  if ($('budMpg') && $('budMpg').value !== value) $('budMpg').value = value;
   if ($('rvMpg').value !== value) $('rvMpg').value = value;
 }
-$('budMpg').addEventListener('input', e => {
+if ($('budMpg')) $('budMpg').addEventListener('input', e => {
   extra.rv = extra.rv || {};
   extra.rv.mpg = Math.max(3, +e.target.value || 0);
   queueExtraSave();
@@ -4444,7 +4470,15 @@ applyStartCollapsed();
 loadRadii();
 loadFuel();
   applyState(state);
-  loadState().then(() => { finishOwnerReturn(); wxDefault(); });
+  setSync('ok', 'Shared · synced');
+  (async () => {
+    for (let i = 0; i < 5; i++) {
+      await loadState();
+      if ((state.stops && state.stops.length) || (state.notes && state.notes.length)) break;
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    finishOwnerReturn(); wxDefault();
+  })();
 
 // One request per tick, straight to the plan. /api/rev only saved bytes, and it
 // was a second thing that could fail on its own: a browser whose /api/rev kept
@@ -4493,6 +4527,74 @@ async function pollTick(){
 pollTimer = setTimeout(pollTick, 8000);
 
 document.addEventListener('visibilitychange', () => { if (!document.hidden) loadState(); });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.explore-tab').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.explore-tab').forEach(function(b){b.classList.remove('active');b.setAttribute('aria-selected','false');});
+      btn.classList.add('active');btn.setAttribute('aria-selected','true');
+      document.querySelectorAll('.explore-panel').forEach(function(p){p.hidden=true;});
+      var panel=document.getElementById('panel-'+btn.dataset.tab);
+      if(panel) panel.hidden=false;
+      // leaflet maps need resize after reveal
+      ['golfMap','foodMap','campMap'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el && window.L && el._leaflet_id){ var m=L.Util?null:null; }
+      });
+    });
+  });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var b=document.getElementById('toggleStops');
+  var w=document.getElementById('stopsWrap');
+  if(b&&w){b.addEventListener('click',function(){w.classList.toggle('expanded');b.textContent=w.classList.contains('expanded')?'Hide stops ▴':'Show all stops ▾';});}
+});
+</script>
+<script>
+(function(){
+  var KEY='budgetEntries';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return[];}}
+  function save(x){localStorage.setItem(KEY,JSON.stringify(x));}
+  function render(){
+    var el=document.getElementById('budgetLines');
+    var tot=document.getElementById('budgetTotal');
+    var entries=load();
+    if(!el) return;
+    el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.9rem"><thead><tr><th style="text-align:left;padding:4px">Category</th><th style="text-align:left;padding:4px">Note</th><th style="text-align:right;padding:4px">Amount</th><th style="text-align:right;padding:4px">Per person</th><th></th></tr></thead><tbody>'+entries.map(function(e,i){
+      return '<tr><td style="padding:4px">'+e.cat+'</td><td style="padding:4px">'+(e.note||'')+'</td><td style="padding:4px;text-align:right">$'+Number(e.amt).toFixed(2)+'</td><td style="padding:4px;text-align:right">$'+(Number(e.amt)/4).toFixed(2)+'</td><td style="padding:4px"><button type="button" data-del="'+i+'" class="small ghost">✕</button></td></tr>';
+    }).join('')+'</tbody></table>';
+    var total=entries.reduce(function(s,e){return s+Number(e.amt||0);},0);
+    var travelers=Number((document.getElementById('budTravelers')||{}).value)||4;
+    if(tot) tot.innerHTML='<strong>Total: $'+total.toFixed(2)+'</strong> · Per person (4): $'+(total/4).toFixed(2);
+    el.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var a=load();a.splice(+b.dataset.del,1);save(a);render();};});
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    var b=document.getElementById('budAdd');
+    if(b){b.onclick=function(){
+      var cat=document.getElementById('budCat').value;
+      var custom=document.getElementById('budCustomCat').value.trim();
+      if(cat==='Other' && custom) cat=custom;
+      var note=document.getElementById('budNote').value.trim();
+      var amt=document.getElementById('budAmt').value;
+      if(!amt) return;
+      var a=load(); a.push({cat:cat,note:note,amt:amt}); save(a);
+      document.getElementById('budNote').value='';
+      document.getElementById('budAmt').value='';
+      document.getElementById('budCustomCat').value='';
+      render();
+    };}
+    var catSel=document.getElementById('budCat');
+    var customInp=document.getElementById('budCustomCat');
+    function toggleCustom(){ if(customInp) customInp.style.display = (catSel.value==='Other')?'':'none'; }
+    if(catSel){ catSel.onchange=toggleCustom; toggleCustom(); }
+    var tg=document.getElementById('toggleBudget'); var w=document.getElementById('budgetWrap');
+    if(tg&&w){tg.onclick=function(){w.classList.toggle('expanded');tg.textContent=w.classList.contains('expanded')?'Hide entries ▴':'Show entries ▾';};}
+    render();
+  });
+})();
 </script>
 </body>
 </html>
