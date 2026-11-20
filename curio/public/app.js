@@ -28,7 +28,7 @@ function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify({ vi
 
 const IS_MIRROR = typeof location !== 'undefined' && /(^|\.)github\.io$/.test(location.hostname || '');
 const API_BASE = IS_MIRROR ? 'https://curio-oqu69z.freebuff.site' : '';
-const PUBLIC_API = new Set(['/api/health', '/api/wikipedia', '/api/search', '/api/research']);
+const PUBLIC_API = new Set(['/api/health', '/api/wikipedia', '/api/search', '/api/suggest', '/api/research']);
 
 const state = {
   user: null, authChecked: false,
@@ -126,24 +126,46 @@ async function capture(input) {
     if (state.user) {
       const d = await api('/api/topics', { method: 'POST', body: JSON.stringify({ input }) });
       if (d._unauth) { state.user = null; render(); return; }
+      if (d.duplicate) {
+        toast('Already in your library — opened it instead.');
+        location.hash = '#/topic/' + d.topic.id;
+        return;
+      }
       state.topics.unshift(d.topic);
       await refreshDiscover();
-      location.hash = '#/topic/' + d.topic.id;
+      const inp = $('#cap-input'); if (inp) inp.value = '';
+      clearSuggest();
+      setStatusHTML('Saved to <a href="#/inbox">Inbox</a> — open it when you\u2019re ready to dig in.');
+      if (d.overviewNote) toast(d.overviewNote);
+      else toast('Saved to Inbox: ' + d.topic.title);
+      render();
     } else {
       setStatusText('Researching… (sign in to sync across devices)');
       const d = await api('/api/research', { method: 'POST', body: JSON.stringify({ input }) });
       const r = d.result;
+      if (r.overviewNote) setTimeout(() => toast(r.overviewNote), 50);
+      const dup = state.guest.find((x) => sameTopic(x, { title: r.title, wikiTitle: r.wiki?.title }));
+      if (dup) {
+        toast('Already in your library — opened it instead.');
+        location.hash = '#/topic/' + dup.id;
+        return;
+      }
       const now = Date.now();
       const topic = {
         id: 'g_' + now.toString(36) + Math.random().toString(36).slice(2, 7),
         title: r.title, input, inputType: r.inputType, category: r.category, status: 'exploring',
-        overview: r.overview, keyFacts: r.keyFacts, wikiUrl: r.wiki?.url || null, wikiTitle: r.wiki?.title || null,
+        overview: r.overview, overviewNote: r.overviewNote || '', keyFacts: r.keyFacts, wikiUrl: r.wiki?.url || null, wikiTitle: r.wiki?.title || null,
         sources: r.sources, related: r.related, simple: r.simple || null, notes: '', aiPowered: r.aiPowered, archived: false,
         createdAt: now, updatedAt: now,
       };
       state.guest.unshift(topic); saveGuest();
       await refreshDiscover();
-      location.hash = '#/topic/' + topic.id;
+      const inp = $('#cap-input'); if (inp) inp.value = '';
+      clearSuggest();
+      setStatusHTML('Saved to <a href="#/inbox">Inbox</a> — open it when you\u2019re ready to dig in.');
+      if (r.overviewNote) toast(r.overviewNote);
+      else toast('Saved to Inbox: ' + topic.title);
+      render();
     }
   } catch (e) {
     setStatusText(e.message);
@@ -185,6 +207,14 @@ async function patchTopic(id, patch, opts = {}) {
   if (!opts.silent) render();
   return t;
 }
+const normKey = (s) => String(s || '').toLowerCase().replace(/[\s_]+/g, ' ').replace(/[^\p{L}\p{N} ]/gu, '').trim();
+function sameTopic(a, b) {
+  if (!a || !b) return false;
+  if (a.id && b.id && a.id === b.id) return true;
+  if (a.wikiTitle && b.wikiTitle && normKey(a.wikiTitle) === normKey(b.wikiTitle)) return true;
+  const ta = normKey(a.title), tb = normKey(b.title);
+  return Boolean(ta) && ta === tb;
+}
 async function deleteTopic(id) {
   const t = findTopic(id);
   if (!t) return;
@@ -198,7 +228,9 @@ async function deleteTopic(id) {
     saveGuest();
   }
   await refreshDiscover();
-  location.hash = '#/library';
+  // Re-render immediately: if we're already on #/library the hash won't change, so no hashchange fires.
+  if (state.route === 'topic' && state.topicId === id) location.hash = '#/library';
+  render();
   toast('Deleted.');
 }
 
@@ -369,17 +401,18 @@ function homeHTML() {
   const total = allTopics().filter((t) => !t.archived).length;
   return `<section class="hero compact">
     <h1>What's on <em>your mind?</em></h1>
-    <p>Capture it — research builds itself. <span class="kbd-hint">press <kbd>/</kbd></span></p>
+    <p>Type it, pick the match, save it to your list. <span class="kbd-hint">press <kbd>/</kbd></span></p>
   </section>
   <div class="capture">
-    <textarea id="cap-input" rows="2" placeholder="A topic, a question, a half-formed thought, a link…"></textarea>
-    <div class="capture-row"><span class="hint" id="cap-mode">${state.user ? 'Auto-saves to your library' : 'Guest mode — saves on this device'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Explore ✦</button></div>
+    <textarea id="cap-input" rows="2" placeholder="Start typing — pick from what comes up…" autocomplete="off"></textarea>
+    <div class="suggest" id="suggest-list" role="listbox" aria-label="Matching topics"></div>
+    <div class="capture-row"><span class="hint" id="cap-mode">${state.user ? 'Pick a result to save it to your Inbox' : 'Guest mode — picks save on this device'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Save ✦</button></div>
   </div>
   <div class="examples">${EXAMPLES.map((e) => `<button class="chip" data-ex="${esc(e)}">${esc(e)}</button>`).join('')}</div>
   <div class="status-line" id="cap-status" role="status"></div>
   ${red.length ? `<section class="section tight"><div class="section-head"><h2>Gently resurfacing</h2><p>no pressure — just wonder</p></div>
     <div class="strip">${red.map(({ topic, prompt }) => `<article class="strip-card" data-open="${esc(topic.id)}" tabindex="0"><div class="cat">${esc(prompt)}</div><h3>${esc(topic.title)}</h3><div class="card-meta"><span class="pill ${esc(topic.status)}">${esc(topic.status)}</span><span>${timeAgo(topic.createdAt)}</span></div></article>`).join('')}</div></section>` : ''}
-  <section class="section tight"><div class="section-head"><h2>Recent curiosities</h2><p>${total} saved</p><span class="spacer"></span><button class="link" data-nav="library">View all →</button></div>
+  <section class="section tight"><div class="section-head"><h2>Recent curiosities</h2><p>${total} saved</p><span class="spacer"></span><div class="seg sm" id="f-view-home" aria-label="View"><button data-v="grid">Tiles</button><button data-v="list">List</button></div><button class="link" data-nav="library">View all →</button></div>
     <div class="grid" id="list-host"></div></section>`;
 }
 
@@ -389,8 +422,9 @@ function libraryHTML(title, sub, showStatus) {
     <button class="btn small ghost" id="export-btn" title="Download your library as JSON">Export</button></div>
   ${toolbarHTML(showStatus)}<div class="grid" id="list-host"></div></section>
   <section class="section tight"><div class="section-head"><h2>Capture another</h2></div>
-  <div class="capture slim"><textarea id="cap-input" rows="2" placeholder="What are you curious about now?"></textarea>
-  <div class="capture-row"><span class="hint">Auto-saves${state.user ? '' : ' on this device'}</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Explore ✦</button></div></div>
+  <div class="capture slim"><textarea id="cap-input" rows="2" placeholder="Start typing — pick from what comes up…" autocomplete="off"></textarea>
+  <div class="suggest" id="suggest-list" role="listbox" aria-label="Matching topics"></div>
+  <div class="capture-row"><span class="hint">Pick a result to save it to your Inbox</span><span class="spacer"></span><button class="btn primary" id="cap-btn">Save ✦</button></div></div>
   <div class="status-line" id="cap-status" role="status"></div></section>`;
 }
 
@@ -428,7 +462,6 @@ function topicHTML(t) {
   const hasSimple = Boolean(t.simple?.overview);
   const mode = hasSimple ? (prefs.summaryMode === 'simple' ? 'simple' : 'full') : 'full';
   const overviewText = mode === 'simple' && hasSimple ? t.simple.overview : (t.overview || 'No overview yet.');
-  const words = (t.notes || '').trim() ? (t.notes || '').trim().split(/\s+/).length : 0;
   return `<button class="back" id="back-btn">← Back</button>
   <div class="topic-hero">
     <div class="topic-top"><div class="cat">${esc(t.category)} · ${esc(t.inputType || 'topic')} · ${readMins(t)} min read</div>
@@ -450,7 +483,7 @@ function topicHTML(t) {
     <div class="prose">
       <div class="panel"><div class="panel-head"><h3>Overview</h3>
         ${hasSimple ? `<div class="seg sm" id="sum-toggle" role="tablist" aria-label="Summary style"><button data-m="full" class="${mode === 'full' ? 'active' : ''}">Full</button><button data-m="simple" class="${mode === 'simple' ? 'active' : ''}">Plain English</button></div>` : ''}
-      </div><p>${esc(overviewText)}</p>
+      </div>${t.overviewNote ? `<p class="hint" style="margin-bottom:8px">🔍 ${esc(t.overviewNote)}</p>` : ''}<p>${esc(overviewText)}</p>
         ${hasSimple && mode === 'simple' ? `<p class="hint" style="margin-top:10px">Plain-language version from Simple English Wikipedia. <a href="${esc(t.simple.url || '#')}" target="_blank" rel="noopener">Read there ↗</a></p>` : ''}
         ${disputed ? `<details class="note"><summary>Established vs debated</summary><p>${esc(disputed)}</p></details>` : ''}</div>
       ${facts ? `<div class="panel"><h3>Key facts</h3><ul class="facts">${facts}</ul></div>` : ''}
@@ -458,13 +491,14 @@ function topicHTML(t) {
       ${(t.related || []).length ? `<div class="panel"><h3>Rabbit holes</h3><p class="hint" style="margin-bottom:12px">Each one opens fresh research — your current notes stay put.</p><div class="rel-grid">${t.related.map((r) => `<button class="rel" data-query="${esc(r.title)}"><span>${esc(r.title)}<small>${esc(r.reason || '')}</small></span><span>→</span></button>`).join('')}</div></div>` : ''}
     </div>
     <aside class="topic-side">
-      <div class="panel side-card"><h3>Your take</h3>
-        <textarea class="notes-area" id="notes" placeholder="What struck you? What do you want to remember or follow up on?">${esc(t.notes || '')}</textarea>
-        <div class="notes-foot"><span class="save-note" id="notes-state">Autosaves · ${words} words</span><button class="btn small ghost" id="notes-copy">Copy notes</button></div>
-      </div>
       <div class="panel side-card"><h3>Details</h3>
         <dl class="meta"><dt>Status</dt><dd>${esc(t.status)}</dd><dt>Category</dt><dd>${esc(t.category)}</dd><dt>Added</dt><dd>${esc(fmtDate(t.createdAt))}</dd>${t.wikiTitle ? `<dt>Wikipedia</dt><dd>${esc(t.wikiTitle)}</dd>` : ''}</dl>
       </div>
+      ${(() => {
+        const others = allTopics().filter((x) => x.id !== t.id && !x.archived).slice(0, 3);
+        if (!others.length) return '';
+        return `<div class="panel side-card"><h3>If you liked this…</h3><div class="rel-grid">${others.map((o) => `<button class="rel" data-open-topic="${esc(o.id)}"><span>${esc(o.title)}<small>${esc(o.category)}</small></span><span>→</span></button>`).join('')}</div></div>`;
+      })()}
     </aside>
   </div>`;
 }
@@ -477,6 +511,11 @@ function render() {
   if (state.route === 'home') {
     main.innerHTML = homeHTML();
     bindCapture(); renderList(6, { ignoreQ: true });
+    const vh = document.getElementById('f-view-home');
+    if (vh) vh.querySelectorAll('button').forEach((b) => {
+      b.classList.toggle('active', b.dataset.v === state.filter.view);
+      b.onclick = () => { state.filter.view = b.dataset.v; prefs.view = b.dataset.v; savePrefs(); render(); };
+    });
     bindCards(main);
     main.querySelectorAll('[data-ex]').forEach((b) => (b.onclick = () => capture(b.dataset.ex)));
     main.querySelectorAll('[data-nav]').forEach((b) => (b.onclick = () => go(b.dataset.nav)));
@@ -499,21 +538,7 @@ function render() {
       const text = `${t.title}\n\n${t.overview || ''}\n\nSources:\n${(t.sources || []).map((s) => '- ' + s.title + ' ' + s.url).join('\n')}`;
       try { await navigator.clipboard.writeText(text); toast('Summary copied.'); } catch { toast('Copy blocked by browser.'); }
     };
-    const notes = $('#notes');
-    let h;
-    notes.oninput = () => {
-      const w = notes.value.trim() ? notes.value.trim().split(/\s+/).length : 0;
-      $('#notes-state').textContent = 'Saving… · ' + w + ' words';
-      clearTimeout(h);
-      h = setTimeout(async () => {
-        await patchTopic(t.id, { notes: notes.value }, { silent: true });
-        const ns = $('#notes-state');
-        if (ns) ns.textContent = 'Saved ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · ' + w + ' words';
-      }, 700);
-    };
-    const nc = $('#notes-copy');
-    if (nc) nc.onclick = async () => { try { await navigator.clipboard.writeText(notes.value || ''); toast('Notes copied.'); } catch { toast('Copy blocked by browser.'); } };
-    main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
+    main.querySelectorAll('[data-open-topic]').forEach((b) => (b.onclick = () => (location.hash = '#/topic/' + encodeURIComponent(b.dataset.openTopic))));
   } else if (state.route === 'discover') {
     main.innerHTML = discoverHTML();
     main.querySelectorAll('[data-query]').forEach((b) => (b.onclick = () => capture(b.dataset.query)));
@@ -542,12 +567,59 @@ function exportLibrary() {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   toast('Library exported.');
 }
+function clearSuggest() {
+  const host = $('#suggest-list');
+  if (host) host.innerHTML = '';
+  if (window._curioSuggestHosts) window._curioSuggestHosts.length = 0;
+}
+function renderSuggest(items) {
+  const host = $('#suggest-list');
+  if (!host) return;
+  if (!items.length) { host.innerHTML = ''; return; }
+  host.innerHTML = items.map((s, i) => `<button class="suggest-row" role="option" data-suggest="${i}" title="Save to Inbox">
+    <span class="suggest-kind ${esc(s.kind || 'wiki')}">${esc(s.kind === 'web' ? 'web' : 'wiki')}</span>
+    <span class="suggest-body"><span class="suggest-title">${esc(s.title)}</span>${s.snippet ? `<span class="suggest-snip">${esc(s.snippet)}</span>` : ''}</span>
+    <span class="suggest-add">+ Save</span></button>`).join('');
+  window._curioSuggestHosts = items;
+  host.querySelectorAll('[data-suggest]').forEach((b) => (b.onclick = (e) => {
+    e.preventDefault();
+    const item = (window._curioSuggestHosts || [])[Number(b.dataset.suggest)];
+    if (item) capture(item.query || item.title);
+  }));
+}
+let _suggestTimer = null;
+async function fetchSuggest(q) {
+  const host = $('#suggest-list');
+  if (!host) return;
+  q = (q || '').trim();
+  if (q.length < 3) { host.innerHTML = ''; return; }
+  try {
+    const d = await api('/api/suggest?q=' + encodeURIComponent(q.slice(0, 200)));
+    if (d._unauth || !Array.isArray(d.suggestions)) return;
+    // Only render if the input still matches (avoid stale dropdowns).
+    const cur = ($('#cap-input')?.value || '').trim();
+    if (cur !== q) return;
+    renderSuggest(d.suggestions.slice(0, 8));
+  } catch { /* suggestions are best-effort; Save button still works */ }
+}
 function bindCapture() {
   const btn = $('#cap-btn'), input = $('#cap-input');
   if (!btn || !input) return;
   const goCap = () => capture(input.value);
   btn.onclick = goCap;
-  input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); goCap(); } };
+  input.onkeydown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const first = (window._curioSuggestHosts || [])[0];
+      // Enter picks the top match when there is one — otherwise saves raw input.
+      capture(first ? (first.query || first.title) : input.value);
+    }
+    if (e.key === 'Escape') clearSuggest();
+  };
+  input.oninput = () => {
+    clearTimeout(_suggestTimer);
+    _suggestTimer = setTimeout(() => fetchSuggest(input.value), 300);
+  };
   if (window.matchMedia('(pointer:fine)').matches) input.focus();
 }
 function openRename(t) {

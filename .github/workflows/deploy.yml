@@ -255,9 +255,19 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
+        id: upload
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
+
+      - name: Verify Pages artifact
+        run: |
+          echo "Artifact ID: ${{ steps.upload.outputs.artifact_id }}"
+          if [ -z "${{ steps.upload.outputs.artifact_id }}" ]; then
+            echo "::error::Pages artifact was not uploaded."
+            exit 1
+          fi
+          echo "Pages artifact uploaded successfully."
 
       - name: Deploy to GitHub Pages
         id: deployment
