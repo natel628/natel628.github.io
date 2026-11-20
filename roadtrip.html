@@ -161,6 +161,26 @@
   #sideBackdrop.open { opacity:1; pointer-events:auto; }
   #sidebar { position:fixed; top:0; left:0; bottom:0; width:min(280px,84vw); z-index:1600; background:#0f172a; border-right:1px solid #334155; transform:translateX(-105%); transition:transform .22s ease; display:flex; flex-direction:column; }
   #sidebar.open { transform:none; }
+  /* Sidebar mode: docked on a wide screen, with a button that folds it to an
+     icon rail. Below 900px there is no room, so it stays a drawer. */
+  #sideCollapse { display:none; }
+  #sideList a { display:flex; align-items:center; gap:10px; }
+  #sideList a .ico { flex:none; width:1.35em; text-align:center; }
+  .side-foot .ico { margin-right:8px; }
+  @media (min-width: 900px) {
+    body.nav-side { padding-left:250px; transition:padding-left .18s ease; }
+    body.nav-side #sidebar { transform:none; width:250px; transition:width .18s ease; }
+    body.nav-side #navToggle, body.nav-side #sideBackdrop, body.nav-side #sideClose { display:none; }
+    body.nav-side #sideCollapse { display:inline-flex; align-items:center; justify-content:center; }
+    body.nav-side.nav-side-collapsed { padding-left:60px; }
+    body.nav-side.nav-side-collapsed #sidebar { width:60px; }
+    body.nav-side.nav-side-collapsed .side-head { justify-content:center; padding:14px 6px; }
+    body.nav-side.nav-side-collapsed .side-head b { display:none; }
+    body.nav-side.nav-side-collapsed #sideList a { justify-content:center; padding:10px 4px; }
+    body.nav-side.nav-side-collapsed #sideList a .lbl { display:none; }
+    body.nav-side.nav-side-collapsed .side-foot { text-align:center; font-size:1.1rem; }
+    body.nav-side.nav-side-collapsed .side-foot .lbl { display:none; }
+  }
   .side-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #334155; }
   #sideList { overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:2px; }
   #sideList a { color:var(--text); text-decoration:none; padding:10px 12px; border-radius:8px; font-size:.92rem; }
@@ -308,10 +328,10 @@
     <a href="#sec-practical" aria-label="Practical estimates">🧰 <span>Estimates</span></a>
     <a href="#sec-photos" aria-label="Photos and videos">📸 <span>Photos</span></a>
     <a href="#sec-bets" aria-label="Bets">🏆 <span>Bets</span></a>
-    <a href="#sec-golf" aria-label="Golf courses">⛳ <span>Golf</span></a>
-    <a href="#sec-food" aria-label="Places to eat">🍽️ <span>Food</span></a>
-    <a href="#sec-camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
-    <a href="#sec-events" aria-label="Sporting events">🏟️ <span>Events</span></a>
+    <a href="#sec-explore" data-explore-tab="golf" aria-label="Golf courses">⛳ <span>Golf</span></a>
+    <a href="#sec-explore" data-explore-tab="food" aria-label="Places to eat">🍽️ <span>Food</span></a>
+    <a href="#sec-explore" data-explore-tab="camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
+    <a href="#sec-explore" data-explore-tab="events" aria-label="Sporting events">🏟️ <span>Events</span></a>
     <a href="#" data-open-settings aria-label="Settings">⚙️ <span>Settings</span></a>
     <a class="to-top" href="#top">↑ Top</a>
   </div>
@@ -320,9 +340,9 @@
 <button type="button" id="setOpen" data-open-settings aria-label="Open display settings">⚙️</button>
 <div id="sideBackdrop"></div>
 <aside id="sidebar" aria-label="Section menu">
-  <div class="side-head"><b>Sections</b><button type="button" id="sideClose" class="small ghost" aria-label="Close section menu">✕</button></div>
+  <div class="side-head"><b>Sections</b><button type="button" id="sideCollapse" class="small ghost" aria-label="Collapse the section menu" aria-expanded="true">⟨</button><button type="button" id="sideClose" class="small ghost" aria-label="Close section menu">✕</button></div>
   <nav id="sideList" aria-label="Sections"></nav>
-  <a class="side-foot" href="#" data-open-settings>⚙️ Display settings</a>
+  <a class="side-foot" href="#" data-open-settings><span class="ico" aria-hidden="true">⚙️</span><span class="lbl">Display settings</span></a>
 </aside>
 <main>
 <p class="muted" id="hiddenNotice" hidden style="margin:0 0 12px"></p>
@@ -585,7 +605,7 @@
     <p class="muted">These live on this device only — everyone else keeps their own view.</p>
     <h3 style="margin:12px 0 4px;font-size:.95rem">Navigation</h3>
     <label style="display:block;margin:4px 0"><input type="radio" name="navmode" value="bar" /> Top bar (scrolls with the sections)</label>
-    <label style="display:block;margin:4px 0"><input type="radio" name="navmode" value="side" /> Sidebar (a ☰ button, bottom-left)</label>
+    <label style="display:block;margin:4px 0"><input type="radio" name="navmode" value="side" /> Sidebar (docked on screen, collapsible to icons)</label>
     <h3 style="margin:12px 0 4px;font-size:.95rem">Hidden sections</h3>
     <p class="muted">Tick anything you don't want to see. Settings itself can't be hidden, so you can always come back and untick.</p>
     <div class="row" style="margin:4px 0 6px">
@@ -3476,6 +3496,14 @@ acSetup($('eventArea'), { cityFirst: true });
   const links = [...document.querySelectorAll('.secnav-inner a[href^="#"]')]
     .filter(a => a.getAttribute('href') !== '#top');
   const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  // Several chips can share one section (Golf/Food/Camping/Events → Explore),
+  // so keep every link per section and highlight the one matching the open tab.
+  const byIdAll = new Map();
+  links.forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    if (!byIdAll.has(id)) byIdAll.set(id, []);
+    byIdAll.get(id).push(a);
+  });
   const sections = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
   if (!sections.length) return;
 
@@ -3485,8 +3513,16 @@ acSetup($('eventArea'), { cityFirst: true });
 
   const setCurrent = (id) => {
     links.forEach(a => a.removeAttribute('aria-current'));
-    const link = byId.get(id);
-    if (link) link.setAttribute('aria-current', 'true');
+    const group = byIdAll.get(id) || [];
+    if (!group.length) return;
+    const tabbed = group.filter(a => a.dataset.exploreTab);
+    let link = group[0];
+    if (tabbed.length === group.length) {
+      const active = document.querySelector('.explore-tab.active');
+      const tab = active ? active.dataset.tab : '';
+      link = tabbed.find(a => a.dataset.exploreTab === tab) || tabbed[0];
+    }
+    link.setAttribute('aria-current', 'true');
   };
 
   // Whichever section sits above the bottom of the sticky bar is the one you are in.
@@ -3949,6 +3985,7 @@ function devicePrefs(){
     lowData: p.lowData === true,
     textSize: p.textSize === 'l' ? 'l' : (p.textSize === 's' ? 's' : 'm'),
     startCollapsed: p.startCollapsed === true,
+    navCollapsed: p.navCollapsed === true,
     hour24: p.hour24 === true
   };
 }
@@ -3960,8 +3997,10 @@ function applyPrefs(){
   document.body.classList.toggle('nav-side', p.nav === 'side');
   const topBar = document.querySelector('.secnav');
   if (topBar) topBar.style.display = p.nav === 'side' ? 'none' : '';
+  // No inline display here: CSS decides. The ☰ shows only in sidebar mode
+  // below 900px; the docked rail replaces it on wider screens.
   const nt = $('navToggle');
-  if (nt) nt.style.display = p.nav === 'side' ? 'flex' : 'none';
+  if (nt) nt.style.display = '';
   document.body.classList.toggle('ts-s', p.textSize === 's');
   document.body.classList.toggle('ts-l', p.textSize === 'l');
   document.querySelectorAll('input[name="textsize"]').forEach(r => { r.checked = r.value === p.textSize; });
@@ -3973,16 +4012,40 @@ function applyPrefs(){
   document.querySelectorAll('input[name="navmode"]').forEach(r => { r.checked = r.value === p.nav; });
   const names = {};
   NAV_LINKS.forEach(a => { names[a.getAttribute('href').slice(1)] = a.textContent.trim().replace(/\s+/g, ' '); });
+  // The docked sidebar folds to an icon rail; the choice sticks per device.
+  document.body.classList.toggle('nav-side-collapsed', p.nav === 'side' && p.navCollapsed === true);
+  const foldBtn = $('sideCollapse');
+  if (foldBtn) {
+    const folded = p.navCollapsed === true;
+    foldBtn.textContent = folded ? '⟩' : '⟨';
+    foldBtn.setAttribute('aria-expanded', String(!folded));
+    foldBtn.title = folded ? 'Expand the section menu' : 'Collapse the section menu';
+    foldBtn.setAttribute('aria-label', foldBtn.title);
+  }
   const list = $('sideList');
   if (list && !list.children.length) {
-    list.innerHTML = NAV_LINKS.map(a => '<a href="' + a.getAttribute('href') + '">' + esc(names[a.getAttribute('href').slice(1)]) + '</a>').join('');
+    list.innerHTML = NAV_LINKS.map(a => {
+      const href = a.getAttribute('href');
+      const id = href.slice(1);
+      const label = names[id] || id;
+      const parts = label.match(/^(\S+)\s+(.+)$/);
+      const ico = parts ? parts[1] : '';
+      const txt = parts ? parts[2] : label;
+      const tab = a.dataset.exploreTab ? ' data-explore-tab="' + esc(a.dataset.exploreTab) + '"' : '';
+      return '<a href="' + href + '"' + tab + ' title="' + esc(txt) + '">'
+        + '<span class="ico" aria-hidden="true">' + esc(ico) + '</span><span class="lbl">' + esc(txt) + '</span></a>';
+    }).join('');
   }
   const box = $('hideList');
   if (box && !box.children.length) {
-    box.innerHTML = NAV_LINKS.map(a => {
-      const id = a.getAttribute('href').slice(1);
-      return '<label style="display:block;margin:4px 0"><input type="checkbox" data-hide-sec="' + id + '" /> ' + esc(names[id]) + '</label>';
-    }).join('');
+    // Golf, Food, Camping and Events all land on the one Explore card, so the
+    // hidden-sections list names each destination once.
+    const seenIds = [];
+    box.innerHTML = NAV_LINKS.map(a => a.getAttribute('href').slice(1)).filter(id => {
+      if (seenIds.indexOf(id) >= 0) return false;
+      seenIds.push(id);
+      return true;
+    }).map(id => '<label style="display:block;margin:4px 0"><input type="checkbox" data-hide-sec="' + id + '" /> ' + esc(names[id]) + '</label>').join('');
   }
   const hidden = new Set(p.hidden.filter(id => names[id]));
   NAV_LINKS.forEach(a => {
@@ -4062,6 +4125,23 @@ $('setSave').onclick = closeSettings;
 $('setClose').onclick = closeSettings;
 $('setClose2').onclick = closeSettings;
 $('settingsBackdrop').onclick = closeSettings;
+/* Golf / Food / Camping / Events all live in the one Explore card, so a click
+   opens that card's tab and lets the link's #sec-explore jump do the scroll. */
+function showExploreTab(tab){
+  const btn = document.querySelector('.explore-tab[data-tab="' + tab + '"]');
+  if (btn) btn.click();
+}
+// Capture phase so the tab is open before the section nav marks the current chip.
+document.addEventListener('click', e => {
+  const link = e.target.closest('[data-explore-tab]');
+  if (link) showExploreTab(link.dataset.exploreTab);
+}, true);
+if ($('sideCollapse')) $('sideCollapse').onclick = () => {
+  const p = devicePrefs();
+  p.navCollapsed = !p.navCollapsed;
+  savePrefs(p);
+  applyPrefs();
+};
 $('navToggle').onclick = openSidebar;
 $('sideClose').onclick = closeSidebar;
 $('sideBackdrop').onclick = closeSidebar;
