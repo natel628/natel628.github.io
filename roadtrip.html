@@ -4461,7 +4461,6 @@ applyStartCollapsed();
 
 loadRadii();
 loadFuel();
-  applyState(state);
   setSync('ok', 'Shared · synced');
   loadState().then(() => { finishOwnerReturn(); wxDefault(); });
   setTimeout(loadState, 1500);
