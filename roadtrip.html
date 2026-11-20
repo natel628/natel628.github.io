@@ -39,7 +39,8 @@
   .bud-table th{text-align:left;color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;border-bottom:1px solid #334155;white-space:nowrap;}
   .bud-table td{padding:7px 8px;border-bottom:1px solid #24354d;vertical-align:top;overflow-wrap:anywhere;}
   .bud-table tr:last-child td{border-bottom:none;}
-  .bud-table .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  /* Deliberately not .num: that class is the amber stop-number badge. */
+  .bud-table .amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
   .bud-del{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:2px 6px;font-size:.95rem;}
   .bud-del:hover,.bud-del:focus-visible{color:#f87171;}
   .bud-empty{color:var(--muted);font-size:.9rem;padding:12px 2px 4px;}
@@ -3709,13 +3710,13 @@ function renderBudget(){
   const total = entries.reduce((s, e) => s + (+e.amt || 0), 0);
   if (head) head.innerHTML = '<strong>' + money(total) + '</strong> total · ' + money(total / TRAVELERS) + ' each';
   lines.innerHTML = entries.length
-    ? '<table class="bud-table"><thead><tr><th>Category</th><th>Note</th><th class="num">Amount</th><th class="num">Each</th><th></th></tr></thead><tbody>'
+    ? '<table class="bud-table"><thead><tr><th>Category</th><th>Note</th><th class="amt">Amount</th><th class="amt">Each</th><th></th></tr></thead><tbody>'
       + entries.map((e, i) => '<tr>'
         + '<td>' + esc(e.cat || 'Other') + '</td>'
         + '<td>' + esc(e.note || '') + '</td>'
-        + '<td class="num">' + money(e.amt) + '</td>'
-        + '<td class="num">' + money((+e.amt || 0) / TRAVELERS) + '</td>'
-        + '<td class="num"><button type="button" class="bud-del" data-bud-del="' + i + '" aria-label="Remove the ' + esc(e.cat || 'budget') + ' line">✕</button></td>'
+        + '<td class="amt">' + money(e.amt) + '</td>'
+        + '<td class="amt">' + money((+e.amt || 0) / TRAVELERS) + '</td>'
+        + '<td class="amt"><button type="button" class="bud-del" data-bud-del="' + i + '" aria-label="Remove the ' + esc(e.cat || 'budget') + ' line">✕</button></td>'
         + '</tr>').join('')
       + '</tbody></table>'
     : '<p class="bud-empty">No line items yet — add the first one above.</p>';
