@@ -214,6 +214,11 @@
   body.ts-s { font-size:14.5px; }
   body.ts-l { font-size:18px; }
   main > section { scroll-margin-top:72px; }
+  @media (min-width: 900px) {
+    /* With the sidebar docked there is no sticky top bar, so a jump should land
+       at the top of the card instead of 72px below it. */
+    body.nav-side main > section { scroll-margin-top:16px; }
+  }
   /* --- trip overview + planning sections --- */
   .glance { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
   .glance > div { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; }
