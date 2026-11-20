@@ -1734,13 +1734,37 @@ function loadFuel(){
 function saveFuel(){
   try { localStorage.setItem(FUEL_KEY, JSON.stringify({ mpg: $('fuelMpg').value, price: $('fuelPrice').value })); } catch (e) {}
 }
-$('fuelMpg').addEventListener('change', () => { saveFuel(); renderPlan(); });
-$('fuelPrice').addEventListener('change', () => { saveFuel(); renderPlan(); });
+/* Fuel numbers follow every keystroke, not just blur, so the grid responds
+   while you type instead of looking inert. */
+let fuelRenderTimer = 0;
+function fuelChanged(withGlance){
+  saveFuel();
+  clearTimeout(fuelRenderTimer);
+  fuelRenderTimer = setTimeout(() => { renderPlan(); if (withGlance) renderGlance(); }, 120);
+}
+['input', 'change'].forEach(evt => {
+  $('fuelMpg').addEventListener(evt, () => fuelChanged(false));
+  $('fuelPrice').addEventListener(evt, () => fuelChanged(true));
+});
 
 /* ---------- 2 & 3. itinerary + practical estimates ---------- */
 function renderPlan(){
   const pr = $('practical');
-  const days = Math.min(60, Math.max(1, +state.plan.days || 1));
+  // While the days field has focus its typed value wins, so the grid answers
+  // each keystroke instead of waiting for the blur that saves it.
+  const daysField = $('planDays');
+  const daysRaw = (daysField && document.activeElement === daysField) ? daysField.value : state.plan.days;
+  const days = Math.min(60, Math.max(1, +daysRaw || 1));
+  const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
+  const depart = (extra && extra.depart) || ($('planDepart') && $('planDepart').value) || '08:00';
+  const dates = d0
+    ? fmtDate(d0) + ' – ' + fmtDate(new Date(d0.getTime() + (days - 1) * 864e5))
+    : 'no trip start date set';
+  // The trip settings print under the grid so a date or day change is visible
+  // here even before the shared plan finishes saving.
+  const foot = '<p class="muted prac-when" style="margin:10px 0 0">' + esc(dates)
+    + ' · ' + days + ' day' + (days === 1 ? '' : 's') + ' · ' + Math.max(0, days - 1) + ' night' + (days - 1 === 1 ? '' : 's')
+    + ' · leaves ' + esc(depart) + '</p>';
 
   if (state.stops.length > 1) {
     const total = segMiles(0, state.stops.length - 1);
@@ -1752,9 +1776,10 @@ function renderPlan(){
       + '<div><b>' + state.stops.length + '</b><span>stops</span></div>'
       + '<div><b>' + days + '</b><span>days</span></div>'
       + '<div><b>' + Math.round(gallons) + ' gal</b><span>fuel @ ' + mpg + ' mpg</span></div>'
-      + '<div><b>$' + Math.round(gallons * price).toLocaleString() + '</b><span>fuel cost</span></div></div>';
+      + '<div><b>$' + Math.round(gallons * price).toLocaleString() + '</b><span>fuel cost</span></div></div>'
+      + foot;
   } else {
-    pr.innerHTML = '<p class="muted">Estimates appear once your route has 2+ stops.</p>';
+    pr.innerHTML = '<p class="muted">Estimates appear once your route has 2+ stops.</p>' + foot;
   }
 }
 
@@ -1762,11 +1787,29 @@ function syncPlanInputs(){
   if (document.activeElement !== $('planStart')) $('planStart').value = state.plan.start || '';
   if (document.activeElement !== $('planDays')) $('planDays').value = state.plan.days || 3;
 }
-$('planStart').addEventListener('change', () => write('PUT', '/api/plan', { start: $('planStart').value }));
+/* Show a trip-setting change at once and persist it in the background. Waiting
+   for the round trip left the estimates showing the old numbers, and a failed
+   save left them stuck there for good; now the grid and fields move straight
+   away and roll back only if the save really fails. */
+function setPlan(patch){
+  const before = { start: state.plan.start, days: state.plan.days };
+  state.plan = Object.assign({}, state.plan, patch);
+  renderPlan(); renderGlance(); syncPlanInputs();
+  write('PUT', '/api/plan', patch).then(ok => {
+    if (ok) return;
+    state.plan = Object.assign({}, state.plan, before);
+    renderPlan(); renderGlance(); syncPlanInputs();
+  });
+}
+$('planStart').addEventListener('change', () => setPlan({ start: $('planStart').value }));
+$('planDays').addEventListener('input', () => {
+  const v = Math.min(60, Math.max(1, Math.round(+$('planDays').value || 1)));
+  renderPlan();
+});
 $('planDays').addEventListener('change', () => {
   const v = Math.min(60, Math.max(1, Math.round(+$('planDays').value || 1)));
   $('planDays').value = v;
-  write('PUT', '/api/plan', { days: v });
+  if (+state.plan.days !== v) setPlan({ days: v });
 });
 
 /* ---------- 5. shared notes ---------- */
