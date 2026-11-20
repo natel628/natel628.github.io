@@ -2786,11 +2786,49 @@ function saveRadii(){
   } catch (e) { /* private mode or full storage: the radius just is not remembered */ }
 }
 
-async function findGolfCourses(center, radiusKm){
+// Both course lookups box the same circle; Nominatim wants that box as two
+// lon,lat corners.
+function golfBox(center, radiusKm){
   const dLat = radiusKm / 111;
   const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
-  const bbox = [center.lng - dLon, center.lat - dLat, center.lng + dLon, center.lat + dLat]
-    .map(n => n.toFixed(4)).join(',');
+  return {
+    minLng: center.lng - dLon, minLat: center.lat - dLat,
+    maxLng: center.lng + dLon, maxLat: center.lat + dLat
+  };
+}
+
+// The tag search above only matches names containing the asked-for term, and the
+// public Photon server throttles bursts, so an empty or unreachable answer gets a
+// second opinion from Nominatim, which lists every course inside the same box.
+async function findGolfNominatim(center, radiusKm){
+  const box = golfBox(center, radiusKm);
+  const viewbox = [box.minLng, box.minLat, box.maxLng, box.maxLat].map(n => n.toFixed(4)).join(',');
+  const res = await timedFetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=50&q='
+    + encodeURIComponent('golf course') + '&viewbox=' + viewbox + '&bounded=1');
+  if (!res.ok) throw new Error('The course index is busy right now — try again in a moment.');
+  const rows = await res.json();
+  const seen = new Set();
+  const courses = [];
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (row.type !== 'golf_course') continue;
+    const lat = +row.lat, lng = +row.lon;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    const key = lat.toFixed(4) + '|' + lng.toFixed(4);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    courses.push({
+      name: row.name || (row.display_name || '').split(',')[0] || 'Unnamed golf course',
+      lat,
+      lng,
+      dist: hav(center, { lat, lng })
+    });
+  }
+  return courses;
+}
+
+async function findGolfCourses(center, radiusKm){
+  const box = golfBox(center, radiusKm);
+  const bbox = [box.minLng, box.minLat, box.maxLng, box.maxLat].map(n => n.toFixed(4)).join(',');
 
   // The tag filter only matches names that contain the search term, so ask a few
   // ways a course is usually named and merge the answers.
@@ -2802,8 +2840,10 @@ async function findGolfCourses(center, radiusKm){
 
   const seen = new Set();
   const courses = [];
+  let answered = 0;
   for (const answer of answers) {
     if (answer.status !== 'fulfilled' || !answer.value) continue;
+    answered++;
     for (const feature of answer.value.features || []) {
       const p = feature.properties || {};
       if (p.osm_value !== 'golf_course') continue;
@@ -2814,6 +2854,16 @@ async function findGolfCourses(center, radiusKm){
       if (seen.has(key)) continue;
       seen.add(key);
       courses.push({ name: p.name || 'Unnamed golf course', lat, lng, dist: hav(center, { lat, lng }) });
+    }
+  }
+  // Nothing back is not the same as nothing there: a throttled or unreachable
+  // answer used to read as "no courses found". Ask the other index before saying
+  // so, and say the index is busy rather than empty if that fails too.
+  if (!courses.length) {
+    try {
+      courses.push(...await findGolfNominatim(center, radiusKm));
+    } catch (err) {
+      if (!answered) throw new Error('The course index is busy right now — try again in a moment.');
     }
   }
   courses.sort((a, b) => a.dist - b.dist);
