@@ -673,6 +673,17 @@ async function boot() {
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-query]');
-  if (b) { e.preventDefault(); capture(b.dataset.query); }
+  if (b) { e.preventDefault(); openPreview(b.dataset.query); }
 });
-document.addEventListener('DOMContentLoaded', boot);
+function openPreview(title) {
+  const root = document.getElementById('modal-root');
+  if (!root) return;
+  const url = 'https://en.wikipedia.org/wiki/' + encodeURIComponent(title.replace(/ /g, '_'));
+  root.innerHTML = `<div class="modal-wrap"><div class="modal" role="dialog" aria-label="Preview" style="max-width:900px;width:95vw;height:80vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h3 style="margin:0">${esc(title)}</h3><button class="btn ghost small" id="pv-close">Close</button></div>
+    <iframe src="${esc(url)}" style="flex:1;border:1px solid var(--line);border-radius:8px" loading="lazy"></iframe>
+    <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end"><button class="btn primary small" id="pv-add">Add to library</button></div>
+  </div></div>`;
+  document.getElementById('pv-close').onclick = () => (root.innerHTML = '');
+  document.getElementById('pv-add').onclick = () => { root.innerHTML = ''; capture(title); };
+}
