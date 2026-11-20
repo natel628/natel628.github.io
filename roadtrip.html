@@ -736,10 +736,8 @@
     <div class="row" style="margin-top:10px">
       <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
       <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
-      <label class="muted" for="planDepart" style="align-self:center">default leave</label>
-      <input id="planDepart" type="time" value="08:00" style="max-width:130px;flex:none" aria-label="Default time you leave each morning" />
     </div>
-    <p class="muted" style="margin:6px 0 0;font-size:.8rem">Trip start, trip days and the default leave time feed these estimates and how the nights split.</p>
+    <p class="muted" style="margin:6px 0 0;font-size:.8rem">Trip start and trip days feed these estimates and how the nights split.</p>
     <div id="practical"></div>
   </section>
 
@@ -1788,7 +1786,6 @@ function renderPlan(){
   const daysRaw = (daysField && document.activeElement === daysField) ? daysField.value : state.plan.days;
   const days = Math.min(60, Math.max(1, +daysRaw || 1));
   const d0 = state.plan.start ? new Date(state.plan.start + 'T12:00:00') : null;
-  const depart = (extra && extra.depart) || ($('planDepart') && $('planDepart').value) || '08:00';
   const dates = d0
     ? fmtDate(d0) + ' – ' + fmtDate(new Date(d0.getTime() + (days - 1) * 864e5))
     : 'no trip start date set';
@@ -1796,7 +1793,7 @@ function renderPlan(){
   // here even before the shared plan finishes saving.
   const foot = '<p class="muted prac-when" style="margin:10px 0 0">' + esc(dates)
     + ' · ' + days + ' day' + (days === 1 ? '' : 's') + ' · ' + Math.max(0, days - 1) + ' night' + (days - 1 === 1 ? '' : 's')
-    + ' · leaves ' + esc(depart) + '</p>';
+    + '</p>';
 
   if (state.stops.length > 1) {
     const total = segMiles(0, state.stops.length - 1);
@@ -3757,10 +3754,11 @@ function renderBudget(){
   const total = entries.reduce((s, e) => s + (+e.amt || 0), 0);
   if (head) head.innerHTML = '<strong>' + money(total) + '</strong> total · ' + money(total / TRAVELERS) + ' each';
   lines.innerHTML = entries.length
-    ? '<table class="bud-table"><thead><tr><th>Category</th><th>Note</th><th class="amt">Amount</th><th class="amt">Each</th><th></th></tr></thead><tbody>'
+    ? '<table class="bud-table"><thead><tr><th>Category</th><th>Note</th><th class="amt">Added</th><th class="amt">Amount</th><th class="amt">Each</th><th></th></tr></thead><tbody>'
       + entries.map((e, i) => '<tr>'
         + '<td>' + esc(e.cat || 'Other') + '</td>'
         + '<td>' + esc(e.note || '') + '</td>'
+        + '<td class="amt">' + esc(dateCell(e.at)) + '</td>'
         + '<td class="amt">' + money(e.amt) + '</td>'
         + '<td class="amt">' + money((+e.amt || 0) / TRAVELERS) + '</td>'
         + '<td class="amt"><button type="button" class="bud-del" data-bud-del="' + i + '" aria-label="Remove the ' + esc(e.cat || 'budget') + ' line">✕</button></td>'
@@ -3777,7 +3775,7 @@ function addBudgetEntry(){
   const value = Math.round((+amt.value || 0) * 100) / 100;
   if (!value) { amt.focus(); return; }
   const list = budgetEntries();
-  list.push({ cat, note: ((note && note.value) || '').trim(), amt: value });
+  list.push({ cat, note: ((note && note.value) || '').trim(), amt: value, at: Date.now() });
   saveBudgetEntries(list);
   if (note) note.value = '';
   if (custom) custom.value = '';
@@ -3895,9 +3893,6 @@ function syncExtraInputs(){
     const v = map[id] ? extra[map[id][0]][map[id][1]] : extra.travelers;
     if (v !== undefined && el.value !== String(v)) el.value = v;
   });
-  const pd = $('planDepart');
-  const dv = extra.depart || '08:00';
-  if (pd && pd !== document.activeElement && pd.value !== dv) pd.value = dv;
   const bg = $('budGas');
   if (bg && bg !== document.activeElement && $('fuelPrice') && bg.value !== $('fuelPrice').value) bg.value = $('fuelPrice').value;
   const dd = (extra && extra.drive) || {};
@@ -3963,15 +3958,6 @@ if ($('budMpg')) $('budMpg').addEventListener('input', e => {
   renderGlance(); renderBudget(); renderRV();
 });
 $('rvMpg').addEventListener('input', () => syncMpgInputs($('rvMpg').value));
-// input as well as change: a phone time picker commits on input, and desktop
-// typing only fires change on blur.
-['input', 'change'].forEach(evt => $('planDepart').addEventListener(evt, () => {
-  const v = $('planDepart').value;
-  if (!/^\d{1,2}:\d{2}$/.test(v || '')) return;
-  extra.depart = v;
-  queueExtraSave();
-  renderPlan();
-}));
 /* ---------- display settings: nav style + hidden sections (this device) ---------- */
 const NAV_LINKS = [...document.querySelectorAll('.secnav-inner a[href^="#sec-"]')]
   .filter(a => a.getAttribute('href') !== '#sec-settings');
@@ -4414,7 +4400,7 @@ function betPeople(){ return Object.keys(extra.players); }
 function flat(v){ return '$' + (Math.round(Math.abs(+v || 0) * 100) / 100).toFixed(2).replace(/\.00$/, ''); }
 function hcpText(v){ const n = +v; return Number.isFinite(n) ? n.toFixed(1) : '—'; }
 
-function betDate(ts){
+function dateCell(ts){
   const d = new Date(+ts || 0);
   return (ts && !isNaN(d)) ? d.toLocaleDateString() : '—';
 }
@@ -4477,7 +4463,7 @@ function renderBets(){
   $('betList').innerHTML = open.length ? open.map(b =>
     '<div class="bet-row"><span>' + esc(b.from) + ' → ' + esc(b.to) + ' <b>' + flat(b.amount) + '</b>'
     + (b.note ? ' <span class="muted">· ' + esc(b.note) + '</span>' : '')
-    + ' <span class="muted" title="When the bet was made">· ' + esc(betDate(b.at)) + '</span></span>'
+    + ' <span class="muted" title="When the bet was made">· ' + esc(dateCell(b.at)) + '</span></span>'
     + '<span class="row" style="gap:6px;flex:none">'
     + '<button type="button" class="small ghost" data-settle="' + esc(b.id) + '">Settled</button>'
     + '<button type="button" class="small ghost" data-betdel="' + esc(b.id) + '" aria-label="Delete this bet">✕</button></span></div>'
@@ -4499,8 +4485,8 @@ function renderBets(){
         + '<td>' + esc(b.from) + ' → ' + esc(b.to) + '</td>'
         + '<td>' + esc(b.note || '') + '</td>'
         + '<td class="amt">' + flat(b.amount) + '</td>'
-        + '<td class="amt">' + esc(betDate(b.at)) + '</td>'
-        + '<td class="amt">' + esc(betDate(b.settledAt)) + '</td>'
+        + '<td class="amt">' + esc(dateCell(b.at)) + '</td>'
+        + '<td class="amt">' + esc(dateCell(b.settledAt)) + '</td>'
         + '<td class="amt"><button type="button" class="bud-del" data-betdel="' + esc(b.id) + '" aria-label="Delete this settled bet">✕</button></td>'
         + '</tr>').join('');
     }
