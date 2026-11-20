@@ -210,6 +210,19 @@
   .wx-tile .wx-rain { color:#93c5fd; font-size:.72rem; }
   .wx-tile-now { border-color:#7c5a13; }
   .wx-tile-now b { color:var(--accent); font-size:1rem; }
+  /* Day tiles open that day's hours, so they are buttons with a pressed state. */
+  button.wx-tile { font:inherit; color:inherit; cursor:pointer; transition:border-color .15s, background .15s; }
+  button.wx-tile:hover { border-color:#64748b; }
+  button.wx-tile.is-open { border-color:var(--accent); background:#1b2a44; }
+  .wx-hours { margin:8px 0 0; border:1px solid #334155; border-radius:10px; background:#0f172a; padding:8px 10px 6px; }
+  .wx-hours-head { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin:0 0 4px; }
+  .wx-hours-head b { font-size:.88rem; }
+  .wx-hours-head .small { margin-left:auto; }
+  .wx-hour-strip { display:flex; gap:6px; overflow-x:auto; padding:2px 0 4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+  .wx-hour { flex:0 0 58px; scroll-snap-align:start; display:flex; flex-direction:column; align-items:center; gap:1px; background:#16233a; border:1px solid #24354d; border-radius:8px; padding:5px 3px; font-size:.72rem; text-align:center; }
+  .wx-hour b { font-size:.82rem; font-variant-numeric:tabular-nums; }
+  .wx-hour .wx-hlab { color:var(--muted); font-size:.68rem; white-space:nowrap; }
+  .wx-hour .wx-rain { color:#93c5fd; font-size:.68rem; }
   @media (max-width:430px){ .wx-tile { flex-basis:76px; } }
   #settingsBackdrop, #tourBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
   #settingsBackdrop.open, #tourBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
@@ -1628,10 +1641,60 @@ const WX_LAST = 'rt-wx-last';
 function wxMsg(t){ const m = $('wxMsg'); if (m) m.textContent = t; }
 function wxBody(html){ const b = $('wxNow'); if (b) b.innerHTML = html; return b; }
 // Small tiles read better than a row per day: the eye scans the strip left to
-// right instead of reading a table.
+// right instead of reading a table. The date is on the tile because "Thu" alone
+// does not say which Thursday.
 function wxDayShort(day){
   const d = new Date(day + 'T12:00:00');
-  return isNaN(d.getTime()) ? String(day) : d.toLocaleDateString([], { weekday: 'short' });
+  return isNaN(d.getTime()) ? String(day)
+    : d.toLocaleDateString([], { weekday: 'short' }) + ' ' + d.getDate();
+}
+function wxDayLong(day){
+  const d = new Date(day + 'T12:00:00');
+  return isNaN(d.getTime()) ? String(day)
+    : d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
+/* Clicking a day opens that day hour by hour. The hourly numbers arrive with the
+   same request as the tiles, so opening one costs no extra call. */
+var wxLastRender = null;
+var wxHoursOpen = -1;
+
+function wxHoursHtml(data, i){
+  const day = ((data.daily || {}).time || [])[i];
+  const hourly = (data && data.hourly) || {};
+  const times = hourly.time || [];
+  if (!day || !times.length) {
+    return '<p class="muted" style="margin:6px 0">Hour-by-hour detail is not available for that day.</p>';
+  }
+  const cells = [];
+  times.forEach((t, k) => {
+    if (t.slice(0, 10) !== day) return;
+    const temp = hourly.temperature_2m ? hourly.temperature_2m[k] : null;
+    const pop = hourly.precipitation_probability ? hourly.precipitation_probability[k] : null;
+    const code = hourly.weather_code ? hourly.weather_code[k] : null;
+    cells.push('<div class="wx-hour"><span class="wx-hlab">' + esc(clock(+t.slice(11, 13) * 60)) + '</span>'
+      + '<span class="wx-ico" aria-hidden="true">' + esc(wxIcon(code)) + '</span>'
+      + '<b>' + (Number.isFinite(temp) ? Math.round(temp) + '°' : '—') + '</b>'
+      + '<span class="wx-rain">' + (pop == null ? '—' : pop + '%') + '</span></div>');
+  });
+  return '<div class="wx-hours-head"><b>' + esc(wxDayLong(day)) + '</b>'
+    + '<span class="muted" style="font-size:.78rem">hour by hour</span>'
+    + '<button type="button" class="small ghost" id="wxHoursClose" aria-label="Close the hourly forecast">✕</button></div>'
+    + '<div class="wx-hour-strip">' + cells.join('') + '</div>';
+}
+
+function wxToggleHours(i){
+  const box = $('wxHours');
+  if (!box || !wxLastRender) return;
+  const same = wxHoursOpen === i && !box.hidden;
+  wxHoursOpen = same ? -1 : i;
+  box.hidden = same;
+  box.innerHTML = same ? '' : wxHoursHtml(wxLastRender, i);
+  document.querySelectorAll('[data-wxday]').forEach(b => {
+    const on = !same && +b.dataset.wxday === i;
+    b.classList.toggle('is-open', on);
+    b.setAttribute('aria-expanded', String(on));
+  });
 }
 function wxIcon(code){
   const label = WMO[code];
@@ -1647,6 +1710,8 @@ function wxRender(place, data){
     + (feels == null ? '' : ' · feels like ' + Math.round(feels) + '°')
     + (wet == null ? '' : ' · ' + (wet > 0 ? wet + ' mm falling now' : 'no rain now'))
     + (cloud == null ? '' : ' · ' + Math.round(cloud) + '% cloud') + '</span></div>';
+  wxLastRender = data;
+  wxHoursOpen = -1;
   html += '<div class="wx-days">'
     + '<div class="wx-tile wx-tile-now"><span class="wx-lab">Now</span>'
     + '<span class="wx-ico" aria-hidden="true">' + esc(wxIcon(cur.weather_code)) + '</span>'
@@ -1656,14 +1721,23 @@ function wxRender(place, data){
     const hi = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[i]) : null;
     const lo = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[i]) : null;
     const pop = pops[i];
-    html += '<div class="wx-tile"><span class="wx-lab">' + esc(wxDayShort(day)) + '</span>'
+    html += '<button type="button" class="wx-tile" data-wxday="' + i + '" aria-expanded="false"'
+      + ' aria-label="' + esc(wxDayLong(day)) + ': show the hourly forecast">'
+      + '<span class="wx-lab">' + esc(wxDayShort(day)) + '</span>'
       + '<span class="wx-ico" aria-hidden="true">' + esc(wxIcon((daily.weather_code || [])[i])) + '</span>'
       + '<b>' + (hi == null || lo == null ? '—' : hi + '°/' + lo + '°') + '</b>'
-      + '<span class="wx-rain">' + (pop == null ? '—' : pop + '%') + '</span></div>';
+      + '<span class="wx-rain">' + (pop == null ? '—' : pop + '%') + '</span></button>';
   });
-  html += '</div>';
+  html += '</div><div id="wxHours" class="wx-hours" hidden></div>';
   wxBody(html);
 }
+
+// One listener on the card covers tiles that are rebuilt on every load.
+$('wxNow').addEventListener('click', e => {
+  const day = e.target.closest('[data-wxday]');
+  if (day) { wxToggleHours(+day.dataset.wxday); return; }
+  if (e.target.closest('#wxHoursClose')) wxToggleHours(wxHoursOpen);
+});
 async function wxLoad(lat, lng, place, btn){
   wxBody('<p class="muted">Loading the forecast for ' + esc(place) + '…</p>');
   wxMsg('');
@@ -1673,6 +1747,8 @@ async function wxLoad(lat, lng, place, btn){
       latitude: (+lat).toFixed(4), longitude: (+lng).toFixed(4),
       current: 'temperature_2m,apparent_temperature,precipitation,weather_code,cloud_cover',
       daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum',
+      // Brought along with the daily rows so opening a day costs no extra call.
+      hourly: 'weather_code,temperature_2m,precipitation_probability',
       temperature_unit: 'fahrenheit', timezone: 'auto', forecast_days: '7'
     });
     const res = await timedFetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
