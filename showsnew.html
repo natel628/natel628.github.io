@@ -2869,6 +2869,7 @@
     <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="9" r="1.2"/><circle cx="9" cy="15" r="1.2"/><circle cx="15" cy="15" r="1.2"/></symbol>
     <symbol id="i-tv" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 20.5h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-podcast" viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-new" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   </defs>
 </svg>
 
@@ -2878,6 +2879,7 @@
     <button type="button" class="nav-tab active" data-view="home" data-section="home" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</button>
     <button type="button" class="nav-tab" data-view="discoveries" data-section="discover"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg>Discover</button>
     <button type="button" class="nav-tab" data-view="calendar" data-section="calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</button>
+    <button type="button" class="nav-tab" data-view="newreleases" data-section="discover"><svg class="icon" aria-hidden="true"><use href="#i-new"/></svg>New Releases</button>
     <button type="button" class="nav-tab" data-view="catchup" data-section="catchup"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>New Episodes</button>
     <button type="button" class="nav-tab" data-view="podcasts" data-section="podcasts"><svg class="icon" aria-hidden="true"><use href="#i-podcast"/></svg>Podcasts</button>
     <button type="button" class="nav-tab" data-view="watchlist" data-section="list"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>My List</button>
@@ -3168,6 +3170,7 @@
   <h2>More</h2>
   <div class="more-grid">
     <button type="button" class="more-item" data-view="calendar" data-section="calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</button>
+    <button type="button" class="more-item" data-view="newreleases" data-section="discover"><svg class="icon" aria-hidden="true"><use href="#i-new"/></svg>New Releases</button>
     <button type="button" class="more-item" data-view="catchup" data-section="catchup"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>New Episodes</button>
     <button type="button" class="more-item" data-view="podcasts" data-section="podcasts"><svg class="icon" aria-hidden="true"><use href="#i-podcast"/></svg>Podcasts</button>
     <button type="button" class="more-item" data-view="stats" data-section="stats"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Stats</button>
@@ -3233,20 +3236,20 @@ const REGIONS = [
    control can never be shown while silently doing nothing. */
 const FILTER_VIEWS = {
   type:          ['trending', 'upcoming'],
-  genre:         ['trending', 'upcoming', 'recommended', 'discoveries'],
-  sort:          ['trending', 'upcoming'],
-  provider:      ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard'],
-  region:        ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard', 'wheretowatch'],
+  genre:         ['trending', 'upcoming', 'recommended', 'discoveries', 'newreleases'],
+  sort:          ['trending', 'upcoming', 'newreleases'],
+  provider:      ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard', 'newreleases'],
+  region:        ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard', 'wheretowatch', 'newreleases'],
   contentRating: ['trending', 'upcoming'],
-  year:          ['trending', 'upcoming', 'discoveries'],
-  language:      ['trending', 'upcoming', 'recommended', 'discoveries'],
+  year:          ['trending', 'upcoming', 'discoveries', 'newreleases'],
+  language:      ['trending', 'upcoming', 'recommended', 'discoveries', 'newreleases'],
   hideRated:     ['upcoming'],
   /* Era and mood are client-side only, so they belong exactly on the views
      whose pipeline runs them — nowhere else. */
   era:           ['trending', 'upcoming', 'recommended'],
-  mood:          ['trending', 'upcoming', 'recommended', 'discoveries'],
-  underseen:     ['trending', 'upcoming', 'recommended', 'discoveries'],
-  deepCuts:      ['trending', 'upcoming', 'recommended', 'discoveries'],
+  mood:          ['trending', 'upcoming', 'recommended', 'discoveries', 'newreleases'],
+  underseen:     ['trending', 'upcoming', 'recommended', 'discoveries', 'newreleases'],
+  deepCuts:      ['trending', 'upcoming', 'recommended', 'discoveries', 'newreleases'],
 };
 
 /* ─── AI Director: LLM connection ───────────────────────────────────────
@@ -7704,6 +7707,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'q') go('quickrate');
   else if (e.key === 'x') go('stats');
   else if (e.key === 'd') { e.preventDefault(); toggleTheme(); }
+  else if (e.key === 'e') { e.preventDefault(); navigateTo('newreleases'); }
   else if (e.key === 'v') { e.preventDefault(); navigateTo('discoveries'); }
   else if (e.key === 'n') { e.preventDefault(); whatsOnTonight(); }
   else if (e.key === 'p') { e.preventDefault(); navigateTo('discoveries'); }
@@ -7790,7 +7794,7 @@ function removeFromWatchlist(type, id) {
 const VIEW_SECTION = {
   home: 'home', trending: 'home', recommended: 'home', search: 'home',
   discover: 'discover', discoveries: 'discover', moodboard: 'discover', upcoming: 'discover',
-  wheretowatch: 'discover',
+  wheretowatch: 'discover', newreleases: 'discover',
   list: 'list', watchlist: 'list', quickrate: 'list', stats: 'list',
   lists: 'lists',
   calendar: 'calendar', settings: 'settings', catchup: 'catchup',
@@ -7801,11 +7805,11 @@ const ICON = id => `<svg class="icon" aria-hidden="true"><use href="#${id}"/></s
 
 const SECTION_VIEWS = {
   home:     [['recommended', ICON('i-sparkles') + 'For You'], ['trending', ICON('i-flame') + 'Trending']],
-  discover: [['discoveries', ICON('i-search') + 'Discoveries'], ['moodboard', ICON('i-palette') + 'Mood Board'], ['upcoming', ICON('i-film') + 'Upcoming']],
+  discover: [['discoveries', ICON('i-search') + 'Discoveries'], ['newreleases', ICON('i-new') + 'New Releases'], ['moodboard', ICON('i-palette') + 'Mood Board'], ['upcoming', ICON('i-film') + 'Upcoming']],
   list:     [['watchlist', ICON('i-star') + 'My List'], ['quickrate', ICON('i-bolt') + 'Quick Rate'], ['stats', ICON('i-chart') + 'Stats']],
   podcasts: [['dailycatchup', ICON('i-podcast') + 'Daily Catch-Up'], ['podcasts', ICON('i-search') + 'Browse']],
 };
-const PRIMARY_SECTIONS = new Set(['home', 'discover', 'calendar', 'list', 'lists', 'settings', 'catchup', 'podcasts']);
+const PRIMARY_SECTIONS = new Set(['home', 'discover', 'calendar', 'list', 'lists', 'settings', 'catchup', 'podcasts', 'newreleases']);
 
 function sectionOf(view) { return VIEW_SECTION[view] || 'home'; }
 
@@ -7842,7 +7846,7 @@ const VIEW_LABEL = {
   trending: 'Trending', recommended: 'For You', discoveries: 'Discoveries', moodboard: 'Mood Board',
   upcoming: 'Upcoming', watchlist: 'My List', quickrate: 'Quick Rate', stats: 'Stats',
   calendar: 'Calendar', settings: 'Settings', lists: 'Lists', search: 'Search', catchup: 'New Episodes',
-  podcasts: 'Browse podcasts', dailycatchup: 'Daily Catch-Up',
+  podcasts: 'Browse podcasts', dailycatchup: 'Daily Catch-Up', newreleases: 'New Releases',
 };
 
 function renderBreadcrumb(section) {
@@ -7944,6 +7948,7 @@ async function renderView() {
       case 'podcasts':    renderPodcasts(main, token);          break;
       case 'dailycatchup': renderDailyCatchUp(main, token);     break;
       case 'discoveries': await renderDiscoveries(main, token);break;
+      case 'newreleases': await renderNewReleases(main, token); break;
       case 'moodboard':   await renderMoodBoard(main, token);   break;
       case 'wheretowatch': await renderWhereToWatch(main, token); break;
     }
@@ -8940,6 +8945,67 @@ async function renderUpcoming(main, token) {
     main.innerHTML = emptyStateHTML('⚠️', 'Could not load upcoming releases', esc(friendlyError(e)), 'retry');
   }
 }
+
+/* ── NEW RELEASES ───────────────────────────────────────────────────── */
+/* Movies in theaters, new to streaming, and TV shows currently airing. */
+async function renderNewReleases(main, token) {
+  main.innerHTML = '';
+  addSkeletonRow(main, 'In Theaters 🎬');
+  addSkeletonRow(main, 'New to Streaming 📺');
+  addSkeletonRow(main, 'On TV Now 📺');
+
+  try {
+    const todayStr = todayISO();
+    const thirtyDaysAgo = shiftDaysISO(new Date(), -30);
+    const gp = state.genre ? { with_genres: state.genre } : {};
+    const langP = langParams();
+
+    /* Fetch: now playing movies, on the air TV, recent movie releases, recent TV premieres */
+    const [nowPlayingRes, onAirRes, recentMovieRes, recentTVRes] = await Promise.all([
+      tmdb('/movie/now_playing', { sort_by: 'popularity.desc', ...gp, ...langP }),
+      tmdb('/tv/on_the_air', { sort_by: 'popularity.desc', ...gp, ...langP }),
+      discoverSafe('/discover/movie', {
+        'primary_release_date.gte': thirtyDaysAgo,
+        'primary_release_date.lte': todayStr,
+        sort_by: 'popularity.desc',
+        'vote_count.gte': 50,
+        ...gp,
+        ...langP,
+      }),
+      discoverSafe('/discover/tv', {
+        'first_air_date.gte': thirtyDaysAgo,
+        'first_air_date.lte': todayStr,
+        sort_by: 'popularity.desc',
+        'vote_count.gte': 20,
+        ...gp,
+        ...langP,
+      }),
+    ]);
+    if (token !== renderToken) return;
+
+    const nowPlaying = await filterResults(nowPlayingRes.results?.map(m => ({ ...m, media_type: 'movie' })) || []);
+    const onAir = await filterResults(onAirRes.results?.map(t => ({ ...t, media_type: 'tv' })) || []);
+    const recentMovies = await filterResults(recentMovieRes.items.map(m => ({ ...m, media_type: 'movie' })));
+    const recentTV = await filterResults(recentTVRes.items.map(t => ({ ...t, media_type: 'tv' })));
+    if (token !== renderToken) return;
+
+    main.innerHTML = '';
+
+    if (nowPlaying.length) renderRow(main, 'In Theaters 🎬', nowPlaying);
+    if (recentMovies.length) renderRow(main, 'New to Streaming 🎬', recentMovies);
+    if (onAir.length) renderRow(main, 'On TV Now 📺', onAir);
+    if (recentTV.length) renderRow(main, 'Recent Premieres 📺', recentTV);
+
+    if (!nowPlaying.length && !recentMovies.length && !onAir.length && !recentTV.length) {
+      main.innerHTML = emptyStateHTML('🎬', 'No new releases found', 'Try adjusting your filters or check back later.', 'retry');
+    }
+  } catch (e) {
+    if (token !== renderToken) return;
+    console.warn('renderNewReleases error:', e);
+    main.innerHTML = emptyStateHTML('⚠️', 'Could not load new releases', esc(friendlyError(e)), 'retry');
+  }
+}
+
 function debounce(fn, ms = 250) {
   let timer;
   return (...args) => {
