@@ -561,6 +561,13 @@
     <p id="betMsg" class="muted" role="status" aria-live="polite"></p>
     <div id="betList" style="display:grid;gap:8px;margin-top:10px"></div>
     <p id="betSettled" class="muted" style="font-size:.8rem"></p>
+    <div id="betHistoryWrap" hidden style="margin-top:8px">
+      <h3 style="font-size:.95rem;margin:0 0 2px">Settled bets</h3>
+      <table class="bud-table">
+        <thead><tr><th>Who owed who</th><th>What for</th><th class="amt">Amount</th><th class="amt">Settled</th><th></th></tr></thead>
+        <tbody id="betHistory"></tbody>
+      </table>
+    </div>
     <details style="margin-top:10px">
       <summary class="muted" style="cursor:pointer;font-size:.85rem">Edit handicaps</summary>
       <div id="betHcp" class="rv-grid" style="margin-top:8px"></div>
@@ -4376,8 +4383,28 @@ function renderBets(){
     + '<button type="button" class="small ghost" data-betdel="' + esc(b.id) + '" aria-label="Delete this bet">✕</button></span></div>'
   ).join('') : '<p class="muted">No open bets. Add one above when a hole is lost.</p>';
 
-  const settled = (extra.bets || []).filter(b => b.settled).length;
-  $('betSettled').textContent = settled ? settled + ' settled bet' + (settled === 1 ? '' : 's') + ' kept in the history.' : '';
+  // Settled bets stay visible as a table under the open ones, each deletable —
+  // they used to vanish behind a "kept in the history" line with no history.
+  const settled = (extra.bets || [])
+    .filter(b => b.settled)
+    .sort((a, b) => (+b.settledAt || +b.at || 0) - (+a.settledAt || +a.at || 0));
+  const histWrap = $('betHistoryWrap'), hist = $('betHistory');
+  if (histWrap && hist) {
+    if (!settled.length) {
+      histWrap.hidden = true;
+      hist.innerHTML = '';
+    } else {
+      histWrap.hidden = false;
+      hist.innerHTML = settled.map(b => '<tr>'
+        + '<td>' + esc(b.from) + ' → ' + esc(b.to) + '</td>'
+        + '<td>' + esc(b.note || '') + '</td>'
+        + '<td class="amt">' + flat(b.amount) + '</td>'
+        + '<td class="amt">' + esc(b.settledAt ? new Date(b.settledAt).toLocaleDateString() : '—') + '</td>'
+        + '<td class="amt"><button type="button" class="bud-del" data-betdel="' + esc(b.id) + '" aria-label="Delete this settled bet">✕</button></td>'
+        + '</tr>').join('');
+    }
+  }
+  $('betSettled').textContent = settled.length ? settled.length + ' settled bet' + (settled.length === 1 ? '' : 's') + ' below.' : '';
 
   // Fewest handovers that square everyone up.
   const net = netBalances();
@@ -4418,13 +4445,14 @@ $('betAdd').onclick = () => {
   betMsg('Added — ' + from + ' owes ' + to + ' ' + flat(amount) + '.');
 };
 
-$('betList').addEventListener('click', e => {
+function onBetListClick(e){
   const settle = e.target.closest('[data-settle]');
   if (settle) {
     const bet = (extra.bets || []).find(b => b.id === settle.dataset.settle);
     if (!bet) return;
     if (!confirm('Mark “' + bet.from + ' owes ' + bet.to + ' ' + flat(bet.amount) + '” as settled?\n\nIt leaves the running total for everyone.')) return;
     bet.settled = true;
+    bet.settledAt = Date.now();
     queueExtraSave();
     renderBets();
     return;
@@ -4435,7 +4463,9 @@ $('betList').addEventListener('click', e => {
   extra.bets = (extra.bets || []).filter(b => b.id !== del.dataset.betdel);
   queueExtraSave();
   renderBets();
-});
+}
+$('betList').addEventListener('click', onBetListClick);
+if ($('betHistory')) $('betHistory').addEventListener('click', onBetListClick);
 
 $('betHcp').addEventListener('input', e => {
   const inp = e.target.closest('[data-hcp]');
