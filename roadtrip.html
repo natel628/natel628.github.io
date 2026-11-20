@@ -326,6 +326,11 @@
   .night-door > summary .muted { color:var(--muted); font-weight:400; }
   .night-door p { margin:2px 0 8px; font-size:.82rem; }
   .night-door label { display:inline-flex; align-items:center; gap:6px; margin:0 14px 10px 0; font-size:.88rem; }
+  /* EIA weekly fuel prices: one card per state on the route. */
+  .gas-table { display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:8px; margin-top:10px; }
+  .gas-card { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:8px 10px; font-size:.84rem; }
+  .gas-card b { display:block; font-size:1.02rem; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .gas-card span { color:var(--muted); font-size:.74rem; display:block; line-height:1.3; }
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%230f172a'/%3E%3Cpath%20d='M10%2023V9l12%2014V9'%20fill='none'%20stroke='%23f59e0b'%20stroke-width='3.4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E" />
 </head>
@@ -795,6 +800,12 @@
       <input id="fuelPrice" type="number" min="0" max="20" step="0.05" value="3.60" style="max-width:110px;flex:none" aria-label="Fuel price per gallon" />
     </div>
 
+    <div class="row" style="margin-top:8px">
+      <button type="button" id="gasStates" class="small">⛽ This week's price by state</button>
+      <span id="gasMsg" class="muted" role="status" aria-live="polite" style="font-size:.84rem"></span>
+    </div>
+    <div id="gasTable" class="gas-table" hidden></div>
+
     <div class="row" style="margin-top:10px">
       <input id="planStart" type="date" style="max-width:200px;flex:none" aria-label="Trip start date" />
       <input id="planDays" type="number" min="1" max="60" style="max-width:130px;flex:none" aria-label="Trip days" />
@@ -826,7 +837,10 @@ const API_BASE = /(^|\.)github\.io$/.test(location.hostname)
   : '';
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const CIRC = 1.28, MPH = 55, MPG = 25;
-const SEATGEEK_ID = 'NjIzNDI3OTV8MTc5NDc4NTM0Ni40NTk2OTI3';
+const SEATGEEK_ID = '__SEATGEEK_CLIENT_ID__';
+// Until the deploy step swaps the placeholder for the real client id this is
+// off, and the events search quietly leans on Ticketmaster alone.
+function seatGeekId(){ return SEATGEEK_ID.indexOf('__') === 0 ? '' : SEATGEEK_ID; }
 
 /* ---------- shared state ---------- */
 let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [], notes: [], photos: [] };
@@ -1839,6 +1853,175 @@ function fuelChanged(withGlance){
   $('fuelPrice').addEventListener(evt, () => fuelChanged(true));
 });
 
+/* ---------- weekly fuel prices by state (EIA) ---------- */
+const EIA_KEY = '__EIA_API_KEY__';
+function eiaReady(){ return EIA_KEY.indexOf('__') !== 0 && EIA_KEY.length > 8; }
+function gasMsg(t){ const m = $('gasMsg'); if (m) m.textContent = t; }
+
+// EIA publishes a weekly retail average for ten states and for the PADDs that
+// cover the rest, so each state lists the areas to try in order: its own series
+// first, then its region, then the national figure.
+const US_STATES = {
+  AL: ['Alabama', 'R30'], AK: ['Alaska', 'R50'], AZ: ['Arizona', 'R50'], AR: ['Arkansas', 'R30'],
+  CA: ['California', 'SCA', 'R50'], CO: ['Colorado', 'SCO', 'R40'], CT: ['Connecticut', 'R1X', 'R10'],
+  DE: ['Delaware', 'R1B', 'R10'], DC: ['District of Columbia', 'R1B', 'R10'], FL: ['Florida', 'SFL', 'R1C', 'R10'],
+  GA: ['Georgia', 'R1C', 'R10'], HI: ['Hawaii', 'R50'], ID: ['Idaho', 'R40'], IL: ['Illinois', 'R20'],
+  IN: ['Indiana', 'R20'], IA: ['Iowa', 'R20'], KS: ['Kansas', 'R20'], KY: ['Kentucky', 'R20'],
+  LA: ['Louisiana', 'R30'], ME: ['Maine', 'R1X', 'R10'], MD: ['Maryland', 'R1B', 'R10'],
+  MA: ['Massachusetts', 'SMA', 'R1X', 'R10'], MI: ['Michigan', 'R20'], MN: ['Minnesota', 'SMN', 'R20'],
+  MS: ['Mississippi', 'R30'], MO: ['Missouri', 'R20'], MT: ['Montana', 'R40'], NE: ['Nebraska', 'R20'],
+  NV: ['Nevada', 'R50'], NH: ['New Hampshire', 'R1X', 'R10'], NJ: ['New Jersey', 'R1B', 'R10'],
+  NM: ['New Mexico', 'R30'], NY: ['New York', 'SNY', 'R1B', 'R10'], NC: ['North Carolina', 'R1C', 'R10'],
+  ND: ['North Dakota', 'R20'], OH: ['Ohio', 'SOH', 'R20'], OK: ['Oklahoma', 'R20'], OR: ['Oregon', 'R50'],
+  PA: ['Pennsylvania', 'R1B', 'R10'], RI: ['Rhode Island', 'R1X', 'R10'], SC: ['South Carolina', 'R1C', 'R10'],
+  SD: ['South Dakota', 'R20'], TN: ['Tennessee', 'R20'], TX: ['Texas', 'STX', 'R30'], UT: ['Utah', 'R40'],
+  VT: ['Vermont', 'R1X', 'R10'], VA: ['Virginia', 'R1C', 'R10'], WA: ['Washington', 'SWA', 'R50'],
+  WV: ['West Virginia', 'R1C', 'R10'], WI: ['Wisconsin', 'R20'], WY: ['Wyoming', 'R40']
+};
+const STATE_BY_NAME = {};
+Object.keys(US_STATES).forEach(code => { STATE_BY_NAME[US_STATES[code][0].toLowerCase()] = code; });
+const EIA_AREAS = ['NUS', 'R10', 'R1X', 'R1Y', 'R1Z', 'R20', 'R30', 'R40', 'R50', 'R5XCA',
+  'SCA', 'SCO', 'SFL', 'SMA', 'SMN', 'SNY', 'SOH', 'STX', 'SWA'];
+
+let gasAreas = null;       // duoarea -> { price, period, area }
+let stopStates = [];       // state code per stop, '' when unknown
+let gasAutoTried = false;
+const stopStateCache = new Map();
+
+// Photon reverse geocoding names the state; EIA only needs the code.
+async function stateCodeFor(stop){
+  const key = (+stop.lat).toFixed(3) + ',' + (+stop.lng).toFixed(3);
+  if (stopStateCache.has(key)) return stopStateCache.get(key);
+  let code = '';
+  try {
+    const res = await timedFetch('https://photon.komoot.io/reverse?limit=1&lat=' + (+stop.lat).toFixed(5) + '&lon=' + (+stop.lng).toFixed(5));
+    if (res.ok) {
+      const data = await res.json();
+      const props = data && data.features && data.features[0] && data.features[0].properties;
+      const name = String((props && props.state) || '').trim().toLowerCase();
+      code = STATE_BY_NAME[name] || '';
+    }
+  } catch (e) { /* an unnamed state just falls back to the national average */ }
+  stopStateCache.set(key, code);
+  return code;
+}
+
+async function eiaWeekly(){
+  const url = 'https://api.eia.gov/v2/petroleum/pri/gnd/data/?api_key=' + encodeURIComponent(EIA_KEY)
+    + '&frequency=weekly&data[0]=value&facets[product][]=EPMR&facets[process][]=PTE'
+    + EIA_AREAS.map(a => '&facets[duoarea][]=' + a).join('')
+    + '&sort[0][column]=period&sort[0][direction]=desc&length=200';
+  const res = await timedFetch(url);
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data) throw new Error('EIA would not answer (' + res.status + ').');
+  const rows = (data.response && data.response.data) || [];
+  const out = {};
+  rows.forEach(r => {
+    const area = r.duoarea, value = +r.value;
+    if (!area || !Number.isFinite(value) || value <= 0) return;
+    const period = String(r.period || '');
+    if (!out[area] || period > out[area].period) out[area] = { price: value, period: period, area: r['area-name'] || area };
+  });
+  if (!Object.keys(out).length) throw new Error('EIA had no prices for this week yet.');
+  return out;
+}
+
+// The price to use for a state: its own series, else its PADD, else the U.S.
+function priceForState(code){
+  if (!gasAreas) return null;
+  const keys = (US_STATES[code] || []).slice(1).concat(['NUS']);
+  for (const k of keys) if (gasAreas[k]) return gasAreas[k];
+  return gasAreas.NUS || null;
+}
+
+// Fuel cost leg by leg, each priced where that leg ends.
+function fuelCostByState(mpg){
+  if (!gasAreas || stopStates.length < 2 || state.stops.length < 2) return null;
+  let gal = 0, cost = 0;
+  const used = [];
+  for (let i = 0; i < state.stops.length - 1; i++) {
+    const mi = legInfo[i] ? legInfo[i].mi : legMi(state.stops[i], state.stops[i + 1]);
+    if (!Number.isFinite(mi)) return null;
+    const code = stopStates[i + 1] || stopStates[i] || '';
+    const row = priceForState(code);
+    if (!row) return null;
+    const g = mi / mpg;
+    gal += g; cost += g * row.price;
+    const label = code && US_STATES[code] ? US_STATES[code][0] : 'U.S. average';
+    if (used.indexOf(label) < 0) used.push(label);
+  }
+  if (!gal) return null;
+  return {
+    gal: gal, cost: cost,
+    note: 'Fuel priced leg by leg with this week\u2019s EIA averages for ' + used.join(', ')
+      + ' \u2014 $' + (cost / gal).toFixed(2) + '/gal on average.'
+  };
+}
+
+function gasWeek(period){
+  const d = new Date(period + 'T12:00:00');
+  return isNaN(d.getTime()) ? String(period)
+    : d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
+function renderGasTable(){
+  const box = $('gasTable');
+  if (!box) return;
+  if (!gasAreas || !stopStates.length) { box.hidden = true; box.innerHTML = ''; return; }
+  const codes = [];
+  stopStates.forEach(c => { if (c && codes.indexOf(c) < 0) codes.push(c); });
+  if (!codes.length) { box.hidden = true; box.innerHTML = ''; return; }
+  box.hidden = false;
+  box.innerHTML = codes.map(code => {
+    const row = priceForState(code);
+    if (!row) return '';
+    const where = US_STATES[code] ? US_STATES[code][0] : code;
+    // EIA names the area it answered for; when that is the state itself there is
+    // nothing to explain, and when it is a PADD the card says so.
+    const ownState = String(row.area || '').toLowerCase() === where.toLowerCase();
+    const from = ownState ? '' : String(row.area || '');
+    return '<div class="gas-card"><span>' + esc(where) + '</span>'
+      + '<b>$' + row.price.toFixed(2) + '</b>'
+      + '<span>' + (from ? esc(from) + ' \u00b7 ' : '') + 'week of ' + esc(gasWeek(row.period)) + '</span></div>';
+  }).join('');
+}
+
+async function fetchGasPrices(quiet){
+  const btn = $('gasStates');
+  const stops = state.stops.filter(s => Number.isFinite(+s.lat) && Number.isFinite(+s.lng));
+  if (stops.length < 2) { if (!quiet) gasMsg('Add at least two stops \u2014 prices follow the route.'); return; }
+  if (!eiaReady()) { if (!quiet) gasMsg('Weekly prices need an EIA key set at deploy time.'); return; }
+  if (btn) btn.disabled = true;
+  gasMsg('Finding the state for each stop\u2026');
+  try {
+    const codes = await Promise.all(stops.map(stateCodeFor));
+    gasMsg('Fetching this week\u2019s EIA averages\u2026');
+    const areas = await eiaWeekly();
+    gasAreas = areas;
+    stopStates = codes;
+    renderGasTable();
+    renderPlan();
+    const named = codes.filter(Boolean);
+    gasMsg(named.length
+      ? 'Priced for ' + [...new Set(named)].map(c => US_STATES[c] ? US_STATES[c][0] : c).join(', ') + '.'
+      : 'No state matched those stops \u2014 the U.S. average is used instead.');
+  } catch (err) {
+    gasMsg((err && err.message) || 'Could not reach EIA right now.');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+$('gasStates').onclick = () => fetchGasPrices(false);
+// One quiet attempt per page load, so the fuel number is priced by state without
+// anyone having to press anything. Stops load after this script runs, so the
+// attempt is made from renderPlan instead, guarded to happen once.
+function gasAuto(){
+  if (gasAutoTried || !eiaReady() || state.stops.length < 2) return;
+  gasAutoTried = true;
+  fetchGasPrices(true);
+}
+
 /* ---------- 2 & 3. itinerary + practical estimates ---------- */
 function renderPlan(){
   const pr = $('practical');
@@ -1862,12 +2045,19 @@ function renderPlan(){
     const mpg = Math.min(40, Math.max(4, +$('fuelMpg').value || 25));
     const price = Math.max(0, +$('fuelPrice').value || 0);
     const gallons = total.mi / mpg;
+    // Where this week's EIA averages are loaded, each leg is priced where it
+    // ends instead of at one flat dollars-per-gallon.
+    const byState = fuelCostByState(mpg);
+    const fuelCost = byState ? byState.cost : gallons * price;
+    if (gasAreas) renderGasTable();
+    gasAuto();
     pr.innerHTML = '<div class="prac-grid"><div><b>' + Math.round(total.mi).toLocaleString() + ' mi</b><span>' + (total.real ? 'driving' : 'est. driving') + '</span></div>'
       + '<div><b>' + (total.real ? minsText(total.mins) : (total.mi / MPH).toFixed(1) + ' h') + '</b><span>behind the wheel</span></div>'
       + '<div><b>' + state.stops.length + '</b><span>stops</span></div>'
       + '<div><b>' + days + '</b><span>days</span></div>'
       + '<div><b>' + Math.round(gallons) + ' gal</b><span>fuel @ ' + mpg + ' mpg</span></div>'
-      + '<div><b>$' + Math.round(gallons * price).toLocaleString() + '</b><span>fuel cost</span></div></div>'
+      + '<div><b>$' + Math.round(fuelCost).toLocaleString() + '</b><span>' + (byState ? 'fuel \u00b7 state prices' : 'fuel cost') + '</span></div></div>'
+      + (byState ? '<p class="muted" style="margin:8px 0 0;font-size:.82rem">' + esc(byState.note) + '</p>' : '')
       + foot;
   } else {
     pr.innerHTML = '<p class="muted">Estimates appear once your route has 2+ stops.</p>' + foot;
@@ -3814,7 +4004,9 @@ function eventLinks(area, date){
     + '</div>';
 }
 async function seatGeekEvents(place, date, miles){
-  const url = 'https://api.seatgeek.com/2/events?client_id=' + SEATGEEK_ID + '&lat=' + place.lat + '&lon=' + place.lng + '&range=' + miles + 'mi&datetime_local.gte=' + date + 'T00:00:00&datetime_local.lte=' + date + 'T23:59:59&taxonomies.name=sports&per_page=50&sort=datetime_local.asc';
+  const client = seatGeekId();
+  if (!client) return [];
+  const url = 'https://api.seatgeek.com/2/events?client_id=' + encodeURIComponent(client) + '&lat=' + place.lat + '&lon=' + place.lng + '&range=' + miles + 'mi&datetime_local.gte=' + date + 'T00:00:00&datetime_local.lte=' + date + 'T23:59:59&taxonomies.name=sports&per_page=50&sort=datetime_local.asc';
   const res = await timedFetch(url);
   const data = await res.json();
   if (!res.ok) throw new Error('SeatGeek failed');
@@ -3927,7 +4119,7 @@ $('eventFind').onclick = async () => {
     const sg = results[1].status === 'fulfilled' ? results[1].value : [];
     const seen = new Set();
     const merged = [];
-    (tm.events || []).forEach(ev => { ev.source = ev.source || 'TM'; const k = (ev.name + '|' + ev.venue + '|' + ev.time).toLowerCase(); if (!seen.has(k)) { seen.add(k); merged.push(ev); } });
+    (tm.events || []).forEach(ev => { ev.source = ev.source || 'Ticketmaster'; const k = (ev.name + '|' + ev.venue + '|' + ev.time).toLowerCase(); if (!seen.has(k)) { seen.add(k); merged.push(ev); } });
     sg.forEach(ev => { const k = (ev.name + '|' + ev.venue + '|' + ev.time).toLowerCase(); if (!seen.has(k)) { seen.add(k); merged.push(ev); } });
     merged.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
     eventsMsg('');
