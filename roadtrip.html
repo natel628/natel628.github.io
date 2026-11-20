@@ -4463,9 +4463,14 @@ loadRadii();
 loadFuel();
   applyState(state);
   setSync('ok', 'Shared · synced');
-  loadState().then(() => { finishOwnerReturn(); wxDefault(); });
-  setTimeout(loadState, 1500);
-  window.addEventListener('load', () => setTimeout(loadState, 500));
+  (async () => {
+    for (let i = 0; i < 5; i++) {
+      await loadState();
+      if ((state.stops && state.stops.length) || (state.notes && state.notes.length)) break;
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    finishOwnerReturn(); wxDefault();
+  })();
 
 // One request per tick, straight to the plan. /api/rev only saved bytes, and it
 // was a second thing that could fail on its own: a browser whose /api/rev kept
