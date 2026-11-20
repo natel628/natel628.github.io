@@ -26,8 +26,25 @@
   button.ghost { background:transparent; color:var(--text); border:1px solid #475569; }
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
-  #stopsWrap.stops-preview, #budgetWrap.stops-preview{position:relative;max-height:120px;overflow:hidden;}
+  /* Both lists preview a couple of rows behind a fade and expand from a toggle. */
+  #stopsWrap.stops-preview, #budgetWrap.stops-preview{position:relative;overflow:hidden;}
+  #stopsWrap.stops-preview{max-height:136px;}
+  #budgetWrap.stops-preview{max-height:176px;}
+  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom, rgba(30,41,59,0), var(--card));pointer-events:none;}
   #stopsWrap.expanded, #budgetWrap.expanded{max-height:none;overflow:visible;}
+  #stopsWrap.expanded::after, #budgetWrap.expanded::after{display:none;}
+  .stops-toggle{display:block;margin-top:8px;}
+  /* Budget line items */
+  .bud-table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:4px;}
+  .bud-table th{text-align:left;color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;border-bottom:1px solid #334155;white-space:nowrap;}
+  .bud-table td{padding:7px 8px;border-bottom:1px solid #24354d;vertical-align:top;overflow-wrap:anywhere;}
+  .bud-table tr:last-child td{border-bottom:none;}
+  .bud-table .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .bud-del{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:2px 6px;font-size:.95rem;}
+  .bud-del:hover,.bud-del:focus-visible{color:#f87171;}
+  .bud-empty{color:var(--muted);font-size:.9rem;padding:12px 2px 4px;}
+  #budgetTotal{font-size:.9rem;font-weight:400;margin-left:10px;color:var(--muted);}
+  #budgetTotal strong{color:var(--accent);font-variant-numeric:tabular-nums;}
   #stops li { position:relative; display:flex; flex-wrap:wrap; align-items:flex-start; gap:8px; background:#0f172a; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
   /* The name gets its own room and the buttons can never sit on top of it. */
   #stops .stop-info { flex:1 1 150px; min-width:0; overflow-wrap:anywhere; }
@@ -363,9 +380,11 @@
       <button type="button" id="openMaps" class="small ghost" title="Open the whole route in a map app" hidden>Open whole route ↗</button>
     </div>
     <p class="muted" id="tripHint" role="status" aria-live="polite"></p>
-    <button type="button" id="toggleStops" class="small ghost" style="margin-top:8px">Show all stops ▾</button>
     <p class="muted" id="stopsEmpty">No stops yet — set a start and an end above, or click the map.</p>
-    <ul id="stops"></ul>
+    <div id="stopsWrap" class="stops-preview">
+      <ul id="stops"></ul>
+    </div>
+    <button type="button" id="toggleStops" class="small ghost stops-toggle" hidden aria-controls="stopsWrap" aria-expanded="false">Show all stops ▾</button>
     <div id="stopPanel" hidden style="margin-top:14px;border-top:1px solid #334155;padding-top:12px">
       <h3 style="margin:0 0 4px;font-size:1rem">📎 <span id="stopPanelTitle"></span></h3>
       <p class="muted" style="margin:0 0 8px">Anything saved here is filed under this stop — the note goes to Notes and the media to Photos &amp; videos, both tagged with the place.</p>
@@ -632,23 +651,21 @@
 </div>
 
   <section class="card" id="sec-budget">
-    <h2>💵 Budget <span id="budgetTotal" style="font-size:.9rem;font-weight:400;margin-left:12px"></span></h2>
-    <p class="muted">Gas comes from your route and the towing MPG below, priced at the gas figure — the same number as $ per gallon in Practical estimates, so set either in either place. Fill in the rest; the total splits by traveler count.</p>
-    <div class="rv-grid">
-      <label>Travelers<input id="budTravelers" type="number" min="1" max="12" step="1" value="4" readonly /></label>
-    </div>
+    <h2>💵 Budget <span id="budgetTotal" role="status" aria-live="polite"></span></h2>
+    <p class="muted">Add each cost as its own line — food, gas, a campsite, anything that comes up. The total splits four ways, so every line shows what it costs each of you.</p>
+    <p class="muted" style="margin:8px 0 0">Travelers: <strong>4</strong></p>
     <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap">
       <select id="budCat" aria-label="Budget category" style="max-width:160px;flex:none">
         <option>Food</option><option>Tolls</option><option>Items</option><option>Gas</option><option>Lodging</option><option>Activities</option><option>Other</option>
       </select>
-      <input id="budCustomCat" placeholder="Custom category (if Other)" style="max-width:180px;flex:none;display:none" />
-      <input id="budNote" placeholder="Note (e.g. towels)" style="flex:1 1 160px" />
-      <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" style="max-width:100px;flex:none" />
+      <input id="budCustomCat" placeholder="Custom category (if Other)" aria-label="Custom budget category" style="max-width:180px;flex:none;display:none" />
+      <input id="budNote" placeholder="Note (e.g. towels)" aria-label="Budget line note" style="flex:1 1 160px" />
+      <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" aria-label="Budget line amount" style="max-width:100px;flex:none" />
       <button type="button" id="budAdd">Add</button>
     </div>
-    <button type="button" id="toggleBudget" class="small ghost" style="margin-top:6px">Show entries ▾</button>
+    <button type="button" id="toggleBudget" class="small ghost stops-toggle" aria-controls="budgetWrap" aria-expanded="false">Show entries ▾</button>
     <div id="budgetWrap" class="stops-preview">
-      <div id="budgetLines" class="budget-lines"></div>
+      <div id="budgetLines"></div>
     </div>
   </section>
 
@@ -1354,6 +1371,7 @@ function renderStops(){
   $('openMaps').hidden = state.stops.length < 2;
   paintLegs();
   refreshLegs();
+  applyStopsCollapse();
 }
 
 $('stops').addEventListener('click', e => {
@@ -3589,35 +3607,114 @@ function money(n){
   const v = Math.round((+n || 0) * 100) / 100;
   return Number.isInteger(v) ? '$' + v.toLocaleString() : '$' + v.toFixed(2);
 }
+/* The trip is always split four ways; there is no traveler input any more. */
+const TRAVELERS = 4;
+const BUDGET_KEY = 'budgetEntries';
+
+function budgetEntries(){
+  try {
+    const raw = JSON.parse(localStorage.getItem(BUDGET_KEY) || '[]');
+    return Array.isArray(raw) ? raw : [];
+  } catch (e) { return []; }
+}
+function saveBudgetEntries(list){
+  try { localStorage.setItem(BUDGET_KEY, JSON.stringify(list)); } catch (e) {}
+}
+function budgetTotal(){
+  return budgetEntries().reduce((s, e) => s + (+e.amt || 0), 0);
+}
 function totals(){
   const miles = state.stops.length > 1 ? segMiles(0, state.stops.length - 1).mi : 0;
   const mpg = Math.max(3, +extra.rv.mpg || 8);
   const price = Math.max(0, +$('fuelPrice').value || 0);
   const gallons = miles / mpg;
-  const fuel = gallons * price;
-  const b = extra.budget;
-  const lodging = +b.lodging || 0;
-  const other = (+b.food || 0) + (+b.tolls || 0) + (+b.propane || 0) + (+b.fun || 0) + (+b.misc || 0);
-  const people = Math.max(1, +extra.travelers || 1);
-  return { lodging, miles, gallons, fuel, other, total: lodging + fuel + other, people, price, mpg };
+  return { miles, gallons, fuel: gallons * price, total: budgetTotal(), people: TRAVELERS, price, mpg };
+}
+
+/* Stops and budget entries both preview a couple of rows behind a fade and
+   expand from a toggle. The toggle only appears when something is actually
+   clipped, so a short list shows in full with no dead button. */
+function collapseSection(wrapId, btnId, count, limit, openLabel, closeLabel){
+  const wrap = $(wrapId), btn = $(btnId);
+  if (!wrap || !btn) return;
+  if (count <= limit) {
+    wrap.classList.remove('stops-preview', 'expanded');
+    btn.hidden = true;
+    btn.setAttribute('aria-expanded', 'true');
+    return;
+  }
+  const open = wrap.dataset.open === '1';
+  btn.hidden = false;
+  wrap.classList.toggle('expanded', open);
+  wrap.classList.toggle('stops-preview', !open);
+  btn.textContent = open ? closeLabel : openLabel;
+  btn.setAttribute('aria-expanded', String(open));
+}
+function applyStopsCollapse(){ collapseSection('stopsWrap', 'toggleStops', state.stops.length, 2, 'Show all stops ▾', 'Hide stops ▴'); }
+function applyBudgetCollapse(){ collapseSection('budgetWrap', 'toggleBudget', budgetEntries().length, 3, 'Show entries ▾', 'Hide entries ▴'); }
+/* The open/closed choice survives re-renders of the same list. */
+function toggleCollapse(wrapId){
+  const wrap = $(wrapId);
+  if (!wrap) return;
+  wrap.dataset.open = wrap.classList.contains('expanded') ? '0' : '1';
+  if (wrapId === 'stopsWrap') applyStopsCollapse(); else applyBudgetCollapse();
 }
 function renderBudget(){
-  const t = totals();
-  const rows = [
-    ['Lodging', t.lodging, ''],
-    ['Gas', t.fuel, Math.round(t.gallons) + ' gal at $' + t.price.toFixed(2) + '/gal · ' + t.mpg + ' MPG'],
-    ['Food', +extra.budget.food || 0, ''],
-    ['Tolls and bridges', +extra.budget.tolls || 0, ''],
-    ['Propane refills', +extra.budget.propane || 0, ''],
-    ['Golf and activities', +extra.budget.fun || 0, ''],
-    ['Misc and repairs', +extra.budget.misc || 0, '']
-  ];
-  $('budgetLines').innerHTML = rows.map(r =>
-    '<div class="budget-row"><span>' + esc(r[0]) + (r[2] ? ' <span class="muted">· ' + esc(r[2]) + '</span>' : '') + '</span><b>' + money(r[1]) + '</b></div>'
-  ).join('')
-    + '<div class="budget-row total"><span>Total for the trip</span><b>' + money(t.total) + '</b></div>'
-    + '<div class="budget-row"><span>Per person, ' + t.people + ' traveling</span><b>' + money(t.total / t.people) + '</b></div>';
+  const lines = $('budgetLines'), head = $('budgetTotal');
+  if (!lines) return;
+  const entries = budgetEntries();
+  const total = entries.reduce((s, e) => s + (+e.amt || 0), 0);
+  if (head) head.innerHTML = '<strong>' + money(total) + '</strong> total · ' + money(total / TRAVELERS) + ' each';
+  lines.innerHTML = entries.length
+    ? '<table class="bud-table"><thead><tr><th>Category</th><th>Note</th><th class="num">Amount</th><th class="num">Each</th><th></th></tr></thead><tbody>'
+      + entries.map((e, i) => '<tr>'
+        + '<td>' + esc(e.cat || 'Other') + '</td>'
+        + '<td>' + esc(e.note || '') + '</td>'
+        + '<td class="num">' + money(e.amt) + '</td>'
+        + '<td class="num">' + money((+e.amt || 0) / TRAVELERS) + '</td>'
+        + '<td class="num"><button type="button" class="bud-del" data-bud-del="' + i + '" aria-label="Remove the ' + esc(e.cat || 'budget') + ' line">✕</button></td>'
+        + '</tr>').join('')
+      + '</tbody></table>'
+    : '<p class="bud-empty">No line items yet — add the first one above.</p>';
+  applyBudgetCollapse();
 }
+function addBudgetEntry(){
+  const catSel = $('budCat'), custom = $('budCustomCat'), note = $('budNote'), amt = $('budAmt');
+  if (!catSel || !amt) return;
+  let cat = catSel.value;
+  if (cat === 'Other') { const c = ((custom && custom.value) || '').trim(); if (c) cat = c; }
+  const value = Math.round((+amt.value || 0) * 100) / 100;
+  if (!value) { amt.focus(); return; }
+  const list = budgetEntries();
+  list.push({ cat, note: ((note && note.value) || '').trim(), amt: value });
+  saveBudgetEntries(list);
+  if (note) note.value = '';
+  if (custom) custom.value = '';
+  amt.value = '';
+  catSel.focus();
+  renderBudget();
+  renderGlance();
+}
+if ($('budAdd')) $('budAdd').addEventListener('click', addBudgetEntry);
+if ($('budAmt')) $('budAmt').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addBudgetEntry(); } });
+if ($('budgetLines')) $('budgetLines').addEventListener('click', e => {
+  const btn = e.target.closest('[data-bud-del]');
+  if (!btn) return;
+  const list = budgetEntries();
+  list.splice(Number(btn.dataset.budDel), 1);
+  saveBudgetEntries(list);
+  renderBudget();
+  renderGlance();
+});
+if ($('toggleBudget')) $('toggleBudget').addEventListener('click', () => toggleCollapse('budgetWrap'));
+if ($('toggleStops')) $('toggleStops').addEventListener('click', () => toggleCollapse('stopsWrap'));
+function syncCustomCat(){
+  const sel = $('budCat'), input = $('budCustomCat');
+  if (!input) return;
+  input.style.display = (sel && sel.value === 'Other') ? '' : 'none';
+}
+if ($('budCat')) $('budCat').addEventListener('change', syncCustomCat);
+syncCustomCat();
 
 /* ---------- RV profile & cautions ---------- */
 var CAUTIONS = [
@@ -3698,11 +3795,6 @@ try { const saved = sessionStorage.getItem('rt_uploader'); if (saved) $('photoPa
 /* ---------- extras inputs ---------- */
 function syncExtraInputs(){
   const map = {
-    budTravelers: null,
-    budLodging: ['budget', 'lodging'],
-    budMpg: ['rv', 'mpg'],
-    budFood: ['budget', 'food'], budTolls: ['budget', 'tolls'], budPropane: ['budget', 'propane'],
-    budFun: ['budget', 'fun'], budMisc: ['budget', 'misc'],
     rvHeight: ['rv', 'height'], rvLength: ['rv', 'length'], rvWeight: ['rv', 'weight'],
     rvMpg: ['rv', 'mpg'], rvWater: ['rv', 'water'], rvPropane: ['rv', 'propane']
   };
@@ -3743,13 +3835,7 @@ function bindExtra(id, path, parse){
     renderGlance(); renderBudget(); renderRV();
   });
 }
-bindExtra('budTravelers', ['travelers'], v => Math.max(1, Math.round(+v || 1)));
-bindExtra('budLodging', ['budget', 'lodging'], v => +v || 0);
-bindExtra('budFood', ['budget', 'food'], v => +v || 0);
-bindExtra('budTolls', ['budget', 'tolls'], v => +v || 0);
-bindExtra('budPropane', ['budget', 'propane'], v => +v || 0);
-bindExtra('budFun', ['budget', 'fun'], v => +v || 0);
-bindExtra('budMisc', ['budget', 'misc'], v => +v || 0);
+/* Budget lines are added through the form in the Budget card, not bindExtra. */
 bindExtra('rvHeight', ['rv', 'height'], v => +v || 0);
 bindExtra('rvLength', ['rv', 'length'], v => +v || 0);
 bindExtra('rvWeight', ['rv', 'weight'], v => +v || 0);
@@ -4545,56 +4631,6 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   });
 });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded',function(){
-  var b=document.getElementById('toggleStops');
-  var w=document.getElementById('stopsWrap');
-  if(b&&w){b.addEventListener('click',function(){w.classList.toggle('expanded');b.textContent=w.classList.contains('expanded')?'Hide stops ▴':'Show all stops ▾';});}
-});
-</script>
-<script>
-(function(){
-  var KEY='budgetEntries';
-  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return[];}}
-  function save(x){localStorage.setItem(KEY,JSON.stringify(x));}
-  function render(){
-    var el=document.getElementById('budgetLines');
-    var tot=document.getElementById('budgetTotal');
-    var entries=load();
-    if(!el) return;
-    el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.9rem"><thead><tr><th style="text-align:left;padding:4px">Category</th><th style="text-align:left;padding:4px">Note</th><th style="text-align:right;padding:4px">Amount</th><th style="text-align:right;padding:4px">Per person</th><th></th></tr></thead><tbody>'+entries.map(function(e,i){
-      return '<tr><td style="padding:4px">'+e.cat+'</td><td style="padding:4px">'+(e.note||'')+'</td><td style="padding:4px;text-align:right">$'+Number(e.amt).toFixed(2)+'</td><td style="padding:4px;text-align:right">$'+(Number(e.amt)/4).toFixed(2)+'</td><td style="padding:4px"><button type="button" data-del="'+i+'" class="small ghost">✕</button></td></tr>';
-    }).join('')+'</tbody></table>';
-    var total=entries.reduce(function(s,e){return s+Number(e.amt||0);},0);
-    var travelers=Number((document.getElementById('budTravelers')||{}).value)||4;
-    if(tot) tot.innerHTML='<strong>Total: $'+total.toFixed(2)+'</strong> · Per person (4): $'+(total/4).toFixed(2);
-    el.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var a=load();a.splice(+b.dataset.del,1);save(a);render();};});
-  }
-  document.addEventListener('DOMContentLoaded',function(){
-    var b=document.getElementById('budAdd');
-    if(b){b.onclick=function(){
-      var cat=document.getElementById('budCat').value;
-      var custom=document.getElementById('budCustomCat').value.trim();
-      if(cat==='Other' && custom) cat=custom;
-      var note=document.getElementById('budNote').value.trim();
-      var amt=document.getElementById('budAmt').value;
-      if(!amt) return;
-      var a=load(); a.push({cat:cat,note:note,amt:amt}); save(a);
-      document.getElementById('budNote').value='';
-      document.getElementById('budAmt').value='';
-      document.getElementById('budCustomCat').value='';
-      render();
-    };}
-    var catSel=document.getElementById('budCat');
-    var customInp=document.getElementById('budCustomCat');
-    function toggleCustom(){ if(customInp) customInp.style.display = (catSel.value==='Other')?'':'none'; }
-    if(catSel){ catSel.onchange=toggleCustom; toggleCustom(); }
-    var tg=document.getElementById('toggleBudget'); var w=document.getElementById('budgetWrap');
-    if(tg&&w){tg.onclick=function(){w.classList.toggle('expanded');tg.textContent=w.classList.contains('expanded')?'Hide entries ▴':'Show entries ▾';};}
-    render();
-  });
-})();
 </script>
 </body>
 </html>
