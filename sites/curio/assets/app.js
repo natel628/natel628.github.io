@@ -671,4 +671,7 @@ async function boot() {
   await refreshDiscover();
   render();
 }
-document.addEventListener('DOMContentLoaded', boot);
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-query]');
+  if (b) { e.preventDefault(); capture(b.dataset.query); }
+});
