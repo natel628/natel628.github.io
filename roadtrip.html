@@ -27,11 +27,15 @@
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   /* Both lists preview a couple of rows behind a fade and expand from a toggle. */
-  #stopsWrap.stops-preview, #budgetWrap.stops-preview, #brewWrap.stops-preview{position:relative;overflow:hidden;}
+  #stopsWrap.stops-preview, #budgetWrap.stops-preview, #brewWrap.stops-preview, #foodWrap.stops-preview, #barWrap.stops-preview{position:relative;overflow:hidden;}
   #stopsWrap.stops-preview{max-height:136px;}
   #budgetWrap.stops-preview{max-height:176px;}
   #brewWrap.stops-preview{max-height:176px;}
-  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after, #brewWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom, rgba(30,41,59,0), var(--card));pointer-events:none;}
+  #foodWrap.stops-preview, #barWrap.stops-preview{max-height:208px;}
+  .bud-settle{margin:14px 0 0;}
+  .bud-settle .bud-up{color:#86efac;}
+  .bud-settle .bud-down{color:#fca5a5;}
+  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after, #brewWrap.stops-preview::after, #foodWrap.stops-preview::after, #barWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom, rgba(30,41,59,0), var(--card));pointer-events:none;}
   #stopsWrap.expanded, #budgetWrap.expanded, #brewWrap.expanded{max-height:none;overflow:visible;}
   #stopsWrap.expanded::after, #budgetWrap.expanded::after, #brewWrap.expanded::after{display:none;}
   .stops-toggle{display:block;margin-top:8px;}
@@ -552,7 +556,10 @@
       <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
       <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
       <div id="foodMap"></div>
-      <div id="foodList"></div>
+      <div id="foodWrap" class="stops-preview">
+        <div id="foodList"></div>
+      </div>
+      <button type="button" id="toggleFood" class="small ghost stops-toggle" hidden aria-controls="foodWrap" aria-expanded="false">Show all places ▾</button>
     </div>
     <div class="explore-panel" id="panel-bar" hidden>
       <p class="muted">Bars, pubs, clubs, live-music venues and casinos around a town or a map pin — real road distance and drive time from the search point. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear.</p>
@@ -577,7 +584,10 @@
         <label><input type="checkbox" data-night="casino" /> Casinos</label>
       </details>
       <div id="barMap"></div>
-      <div id="barList"></div>
+      <div id="barWrap" class="stops-preview">
+        <div id="barList"></div>
+      </div>
+      <button type="button" id="toggleBar" class="small ghost stops-toggle" hidden aria-controls="barWrap" aria-expanded="false">Show all bars ▾</button>
     </div>
     <div class="explore-panel" id="panel-brew" hidden>
       <p class="muted">Breweries, brewpubs and taprooms around a town or a map pin, from Open Brewery DB (keyless). Distances and drive times are real roads from the search point.</p>
@@ -3096,6 +3106,7 @@ function renderFood(){
 
   if (!foodPlaces.length) {
     el.innerHTML = '<p class="muted">No places found — try a wider radius, or search a place by name.</p>';
+    applyFoodCollapse();
     return;
   }
 
@@ -3118,6 +3129,7 @@ function renderFood(){
 
   fitMap(foodMap, foodPlaces.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(foodMap, 'foodMap');
+  applyFoodCollapse();
 }
 
 $('foodList').addEventListener('click', async e => {
@@ -3404,11 +3416,13 @@ function renderBars(){
   barLayer.clearLayers();
   if (!barPlaces.length) {
     el.innerHTML = '<p class="muted">No bars found — try a wider radius, or search a bigger town.</p>';
+    applyBarCollapse();
     return;
   }
   const rows = visibleBars();
   if (!rows.length) {
     el.innerHTML = '<p class="muted">Only 18+ places matched — open “18+ after dark” above to see them.</p>';
+    applyBarCollapse();
     return;
   }
 
@@ -3433,6 +3447,7 @@ function renderBars(){
 
   fitMap(barMap, rows.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(barMap, 'barMap');
+  applyBarCollapse();
 }
 
 $('barList').addEventListener('click', async e => {
@@ -4341,6 +4356,7 @@ function extraDefaults(){
     depart: '08:00',
     dayDepart: {},
     budget: { lodging: 0, food: 0, tolls: 0, propane: 0, fun: 0, misc: 0 },
+    budgetLines: [],
     players: { Nate: 17.3, Kyle: 24.0, Chuck: 31, Justin: 10.4 },
     bets: [],
     drive: { clientId: '', folderId: '', clientSecret: '', ownerRefresh: '', ownerEmail: '', auto: false },
@@ -4362,20 +4378,44 @@ function readExtras(){
   let data = {};
   if (note) { try { data = JSON.parse(note.body.slice(META_PREFIX.length)) || {}; } catch (e) { data = {}; } }
   const d = extraDefaults();
+  // A migration that has not reached the server yet must not be overwritten by
+  // the copy that is still missing it.
+  const carry = (budgetPending && extra) ? extra.budgetLines : null;
   extra = {
     rv: Object.assign(d.rv, data.rv || {}),
     travelers: +data.travelers > 0 ? +data.travelers : 2,
     depart: /^\d{1,2}:\d{2}$/.test(data.depart || '') ? data.depart : '08:00',
     dayDepart: (data.dayDepart && typeof data.dayDepart === 'object' && !Array.isArray(data.dayDepart)) ? data.dayDepart : {},
     budget: Object.assign(d.budget, data.budget || {}),
+    budgetLines: Array.isArray(data.budgetLines) ? data.budgetLines : [],
     players: Object.assign(d.players, data.players || {}),
     bets: Array.isArray(data.bets) ? data.bets : [],
     drive: Object.assign(d.drive, data.drive || {}),
     driveFiles: (data.driveFiles && typeof data.driveFiles === 'object') ? data.driveFiles : {}
   };
+  /* Budget lines used to live only on the device that typed them. The first time
+     a browser sees an empty shared copy it promotes what it has locally, so
+     nobody loses the lines already entered. The flag stops a later deletion
+     from being undone by an old local cache. */
+  if (carry && carry.length && !extra.budgetLines.length) extra.budgetLines = carry;
+  let seen = false;
+  try { seen = localStorage.getItem(BUDGET_MIGRATED) === '1'; } catch (e) {}
+  if (extra.budgetLines.length) {
+    budgetPending = false;
+    if (!seen) { try { localStorage.setItem(BUDGET_MIGRATED, '1'); } catch (e) {} }
+  } else if (!seen) {
+    let local = [];
+    try { local = JSON.parse(localStorage.getItem(BUDGET_KEY) || '[]'); } catch (e) { local = []; }
+    if (Array.isArray(local) && local.length) {
+      extra.budgetLines = local;
+      budgetPending = true;
+      queueExtraSave();
+    }
+  }
 }
 
 let extraSaveTimer = null;
+var budgetPending = false;
 function queueExtraSave(){ clearTimeout(extraSaveTimer); extraSaveTimer = setTimeout(saveExtras, 650); }
 
 async function saveExtras(){
@@ -4449,8 +4489,12 @@ function money(n){
 /* The trip is always split four ways; there is no traveler input any more. */
 const TRAVELERS = 4;
 const BUDGET_KEY = 'budgetEntries';
+const BUDGET_MIGRATED = 'budgetEntriesShared';
 
+/* The lines ride in the same shared note as the RV profile, so every phone shows
+   the same ledger. localStorage stays as an offline cache for the first paint. */
 function budgetEntries(){
+  if (extra && Array.isArray(extra.budgetLines)) return extra.budgetLines;
   try {
     const raw = JSON.parse(localStorage.getItem(BUDGET_KEY) || '[]');
     return Array.isArray(raw) ? raw : [];
@@ -4458,6 +4502,12 @@ function budgetEntries(){
 }
 function saveBudgetEntries(list){
   try { localStorage.setItem(BUDGET_KEY, JSON.stringify(list)); } catch (e) {}
+  if (extra) {
+    extra.budgetLines = list;
+    budgetPending = false;
+    try { localStorage.setItem(BUDGET_MIGRATED, '1'); } catch (e) {}
+    queueExtraSave();
+  }
 }
 function budgetTotal(){
   return budgetEntries().reduce((s, e) => s + (+e.amt || 0), 0);
@@ -4491,6 +4541,14 @@ function collapseSection(wrapId, btnId, count, limit, openLabel, closeLabel){
 }
 function applyStopsCollapse(){ collapseSection('stopsWrap', 'toggleStops', state.stops.length, 2, 'Show all stops ▾', 'Hide stops ▴'); }
 function applyBudgetCollapse(){ collapseSection('budgetWrap', 'toggleBudget', budgetEntries().length, 3, 'Show entries ▾', 'Hide entries ▴'); }
+function applyFoodCollapse(){
+  const n = foodPlaces.length;
+  collapseSection('foodWrap', 'toggleFood', n, 3, 'Show all ' + n + ' places ▾', 'Hide places ▴');
+}
+function applyBarCollapse(){
+  const n = visibleBars().length;
+  collapseSection('barWrap', 'toggleBar', n, 3, 'Show all ' + n + ' bars ▾', 'Hide bars ▴');
+}
 function applyBrewCollapse(){
   const n = brewPlaces.length;
   collapseSection('brewWrap', 'toggleBrew', n, 3, 'Show all ' + n + ' breweries ▾', 'Hide breweries ▴');
@@ -4502,8 +4560,36 @@ function toggleCollapse(wrapId){
   wrap.dataset.open = wrap.classList.contains('expanded') ? '0' : '1';
   if (wrapId === 'stopsWrap') applyStopsCollapse();
   else if (wrapId === 'brewWrap') applyBrewCollapse();
+  else if (wrapId === 'foodWrap') applyFoodCollapse();
+  else if (wrapId === 'barWrap') applyBarCollapse();
   else applyBudgetCollapse();
 }
+/* Four people, four equal shares: this is who has fronted what so far, so the
+   van can settle up without anyone doing the arithmetic at a fuel stop. */
+function budSettle(entries){
+  const total = entries.reduce((s, e) => s + (+e.amt || 0), 0);
+  if (!total) return '';
+  const paid = {};
+  entries.forEach(e => {
+    const who = (e.who || 'Someone').trim() || 'Someone';
+    paid[who] = (paid[who] || 0) + (+e.amt || 0);
+  });
+  if (extra && extra.players) Object.keys(extra.players).forEach(n => { if (!(n in paid)) paid[n] = 0; });
+  const share = total / TRAVELERS;
+  const names = Object.keys(paid);
+  return '<div class="bud-settle">'
+    + '<p class="muted">Everyone\u2019s share is ' + money(share) + ' of ' + money(total) + ' \u2014 this is who fronted what.</p>'
+    + '<table class="bud-table"><thead><tr><th>Who</th><th class="amt">Paid</th><th class="amt">Balance</th></tr></thead><tbody>'
+    + names.map(n => {
+      const diff = paid[n] - share;
+      const bal = Math.abs(diff) < 0.01 ? '<span class="muted">settled</span>'
+        : (diff > 0 ? '<span class="bud-up">is owed ' + money(diff) + '</span>'
+                    : '<span class="bud-down">owes ' + money(-diff) + '</span>');
+      return '<tr><td>' + esc(n) + '</td><td class="amt">' + money(paid[n]) + '</td><td class="amt">' + bal + '</td></tr>';
+    }).join('')
+    + '</tbody></table></div>';
+}
+
 function renderBudget(){
   const lines = $('budgetLines'), head = $('budgetTotal');
   if (!lines) return;
@@ -4523,6 +4609,7 @@ function renderBudget(){
         + '</tr>').join('')
       + '</tbody></table>'
     : '<p class="bud-empty">No line items yet — add the first one above.</p>';
+  if (entries.length) lines.innerHTML += budSettle(entries);
   applyBudgetCollapse();
 }
 function addBudgetEntry(){
@@ -4558,6 +4645,8 @@ if ($('budgetLines')) $('budgetLines').addEventListener('click', e => {
 if ($('toggleBudget')) $('toggleBudget').addEventListener('click', () => toggleCollapse('budgetWrap'));
 if ($('toggleStops')) $('toggleStops').addEventListener('click', () => toggleCollapse('stopsWrap'));
 if ($('toggleBrew')) $('toggleBrew').addEventListener('click', () => toggleCollapse('brewWrap'));
+if ($('toggleFood')) $('toggleFood').addEventListener('click', () => toggleCollapse('foodWrap'));
+if ($('toggleBar')) $('toggleBar').addEventListener('click', () => toggleCollapse('barWrap'));
 function syncCustomCat(){
   const sel = $('budCat'), input = $('budCustomCat');
   if (!input) return;
