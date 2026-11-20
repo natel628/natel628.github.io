@@ -563,6 +563,10 @@
           <option value="10" selected>Within 10 mi</option>
           <option value="30">Within 30 mi</option>
         </select>
+        <select id="foodSort" style="max-width:180px;flex:none" aria-label="Sort places to eat" hidden>
+          <option value="distance" selected>Nearest first</option>
+          <option value="rating">Best rated first</option>
+        </select>
         <button type="button" id="foodFind">Find places to eat</button>
         <button type="button" id="foodClearPin" class="ghost">Clear pin</button>
       </div>
@@ -587,6 +591,10 @@
           <option value="8" selected>Within 8 mi</option>
           <option value="25">Within 25 mi</option>
           <option value="50">Within 50 mi</option>
+        </select>
+        <select id="barSort" style="max-width:180px;flex:none" aria-label="Sort bars" hidden>
+          <option value="distance" selected>Nearest first</option>
+          <option value="rating">Best rated first</option>
         </select>
         <button type="button" id="barFind">Find bars</button>
         <button type="button" id="barClearPin" class="ghost">Clear pin</button>
@@ -3031,52 +3039,49 @@ $('golfFindName').onclick = async () => {
 $('golfName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFindName').click(); } });
 
 /* ---------- 6b. star ratings & list highlighting ---------- */
-// OpenStreetMap has no ratings, so the star figure comes from Google Places when
-// a key was injected at build time. With no key the lists simply carry no stars.
-const PLACES_KEY = '__GOOGLE_PLACES_KEY__';
-function placesKey(){ return PLACES_KEY.indexOf('__') === 0 ? '' : PLACES_KEY; }
+// OpenStreetMap has no ratings, so the star figure and the review count come
+// from Yelp when a key was injected at build time. With no key the lists simply
+// carry no stars.
+const YELP_KEY = '__YELP_API_KEY__';
+function yelpKey(){ return YELP_KEY.indexOf('__') === 0 ? '' : YELP_KEY; }
 const ratingCache = new Map();
 const ratingName = n => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
-async function ratingsNear(center, radiusKm, types){
-  const key = placesKey();
+async function ratingsNear(center, radiusKm){
+  const key = yelpKey();
   if (!key || !center) return [];
-  const cacheKey = [center.lat.toFixed(3), center.lng.toFixed(3), Math.round(radiusKm / 5), types.join('+')].join('|');
+  const cacheKey = [center.lat.toFixed(3), center.lng.toFixed(3), Math.round(radiusKm / 5)].join('|');
   const cached = ratingCache.get(cacheKey);
   if (cached) return cached;
-  const radius = Math.min(Math.max(Math.round(radiusKm * 1000), 500), 50000);
+  // Yelp takes at most a 40 km radius and returns fifty businesses, which are the
+  // nearest fifty because the search is sorted by distance.
+  const radius = Math.min(Math.max(Math.round(radiusKm * 1000), 100), 40000);
+  const params = new URLSearchParams({
+    latitude: center.lat.toFixed(5),
+    longitude: center.lng.toFixed(5),
+    radius: String(radius),
+    limit: '50',
+    sort_by: 'distance'
+  });
   const out = [];
-  for (const type of types) {
-    try {
-      const res = await timedFetch('https://places.googleapis.com/v1/places:searchNearby', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Goog-Api-Key': key,
-          'X-Goog-FieldMask': 'places.displayName,places.rating,places.userRatingCount,places.location'
-        },
-        body: JSON.stringify({
-          includedTypes: [type],
-          maxResultCount: 20,
-          rankPreference: 'DISTANCE',
-          locationRestriction: { circle: { center: { latitude: center.lat, longitude: center.lng }, radius } }
-        })
-      });
-      if (!res.ok) continue;
+  try {
+    const res = await timedFetch('https://api.yelp.com/v3/businesses/search?' + params.toString(),
+      { headers: { Authorization: 'Bearer ' + key, Accept: 'application/json' } });
+    if (res.ok) {
       const data = await res.json();
-      for (const p of data.places || []) {
-        const name = (p.displayName && p.displayName.text) || '';
-        if (!name || !(p.rating > 0)) continue;
+      for (const b of data.businesses || []) {
+        const name = b.name || '';
+        if (!name || !(b.rating > 0)) continue;
         out.push({
           name,
-          rating: +p.rating,
-          count: +p.userRatingCount || 0,
-          lat: p.location ? +p.location.latitude : NaN,
-          lng: p.location ? +p.location.longitude : NaN
+          rating: +b.rating,
+          count: +b.review_count || 0,
+          lat: b.coordinates ? +b.coordinates.latitude : NaN,
+          lng: b.coordinates ? +b.coordinates.longitude : NaN
         });
       }
-    } catch (e) { /* no quota, no signal or no key: the list just has no stars */ }
-  }
+    }
+  } catch (e) { /* no key, no quota or no signal: the list just has no stars */ }
   if (out.length) ratingCache.set(cacheKey, out);
   return out;
 }
@@ -3109,6 +3114,29 @@ function ratingChip(place){
   if (!place || !(place.rating > 0)) return '';
   const count = place.ratingCount ? ' (' + place.ratingCount.toLocaleString() + ')' : '';
   return '<span class="rating-chip">★ ' + (+place.rating).toFixed(1) + count + '</span> · ';
+}
+
+const placeByDistance = (a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist);
+const placeByRating = (a, b) => (b.rating || 0) - (a.rating || 0)
+  || (b.ratingCount || 0) - (a.ratingCount || 0)
+  || placeByDistance(a, b);
+
+// The rating sort only appears once there are stars to sort by, so the control is
+// never sitting there doing nothing.
+function syncSortChoice(id, places){
+  const sel = $(id);
+  if (!sel) return;
+  const rated = places.some(p => p.rating > 0);
+  sel.hidden = !rated;
+  if (!rated) sel.value = 'distance';
+}
+function sortFoodByChoice(){
+  foodPlaces.sort($('foodSort').value === 'rating' ? placeByRating : placeByDistance);
+  renderFood();
+}
+function sortBarsByChoice(){
+  barPlaces.sort($('barSort').value === 'rating' ? placeByRating : placeByDistance);
+  renderBars();
 }
 
 // A pin on the map should be findable in the list under it: mark that row and
@@ -3232,9 +3260,9 @@ async function findFoodNear(center, radiusKm){
   merged.sort((a, b) => a.dist - b.dist);
   const nearest = merged.slice(0, 60);
   await attachDriving(center, nearest);
-  try { attachRatings(nearest, await ratingsNear(center, radiusKm, ['restaurant', 'cafe', 'bar'])); }
+  try { attachRatings(nearest, await ratingsNear(center, radiusKm)); }
   catch (e) { /* stars are a bonus, never a reason to fail the search */ }
-  nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  nearest.sort(placeByDistance);
   return nearest;
 }
 
@@ -3272,6 +3300,7 @@ function renderFood(){
 
   if (!foodPlaces.length) {
     el.innerHTML = '<p class="muted">No places found — try a wider radius, or search a place by name.</p>';
+    syncSortChoice('foodSort', foodPlaces);
     applyFoodCollapse();
     return;
   }
@@ -3295,6 +3324,7 @@ function renderFood(){
 
   fitMap(foodMap, foodPlaces.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(foodMap, 'foodMap');
+  syncSortChoice('foodSort', foodPlaces);
   applyFoodCollapse();
 }
 
@@ -3374,6 +3404,8 @@ $('foodQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.pre
 
 $('foodRadius').addEventListener('change', saveRadii);
 $('golfRadius').addEventListener('change', saveRadii);
+if ($('foodSort')) $('foodSort').addEventListener('change', sortFoodByChoice);
+if ($('barSort')) $('barSort').addEventListener('change', sortBarsByChoice);
 
 $('foodFindName').onclick = async () => {
   const btn = $('foodFindName');
@@ -3532,8 +3564,8 @@ async function upgradeBarsInBackground(center, radiusKm, hadCount){
     full.sort((a, b) => a.dist - b.dist);
     const nearest = full.slice(0, 60);
     await attachDriving(center, nearest);
-    nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
-    try { attachRatings(nearest, await ratingsNear(center, radiusKm, ['bar', 'restaurant'])); }
+    nearest.sort(placeByDistance);
+    try { attachRatings(nearest, await ratingsNear(center, radiusKm)); }
     catch (e) { /* stars are a bonus, never a reason to fail the search */ }
     if (!barPlaces.length) return; // they have moved on to another search
     barPlaces = nearest;
@@ -3598,7 +3630,7 @@ async function findBarsNear(center, radiusKm, progress){
   await attachDriving(center, nearest);
   nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
   nearest.partial = partial;
-  try { attachRatings(nearest, await ratingsNear(center, radiusKm, ['bar', 'restaurant'])); }
+  try { attachRatings(nearest, await ratingsNear(center, radiusKm)); }
   catch (e) { /* stars are a bonus, never a reason to fail the search */ }
   return nearest;
 }
@@ -3669,6 +3701,7 @@ function renderBars(){
 
   fitMap(barMap, rows.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(barMap, 'barMap');
+  syncSortChoice('barSort', rows);
   applyBarCollapse();
 }
 
