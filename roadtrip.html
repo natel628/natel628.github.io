@@ -647,9 +647,7 @@
       <button type="button" id="budAdd">Add</button>
     </div>
     <button type="button" id="toggleBudget" class="small ghost" style="margin-top:6px">Show entries ▾</button>
-    <div id="budgetWrap" class="stops-preview">
-      <div id="budgetLines" class="budget-lines"></div>
-    </div>
+    <div id="budgetLines" class="budget-lines"></div>
   </section>
 
   <section class="card" id="sec-rv">
@@ -4590,8 +4588,8 @@ document.addEventListener('DOMContentLoaded',function(){
     var customInp=document.getElementById('budCustomCat');
     function toggleCustom(){ if(customInp) customInp.style.display = (catSel.value==='Other')?'':'none'; }
     if(catSel){ catSel.onchange=toggleCustom; toggleCustom(); }
-    var tg=document.getElementById('toggleBudget'); var w=document.getElementById('budgetWrap');
-    if(tg&&w){tg.onclick=function(){w.classList.toggle('expanded');tg.textContent=w.classList.contains('expanded')?'Hide entries ▴':'Show entries ▾';};}
+    var tg=document.getElementById('toggleBudget'); var w=document.getElementById('budgetLines');
+    if(tg&&w){w.style.display='none';tg.onclick=function(){var show=w.style.display==='none';w.style.display=show?'':'none';tg.textContent=show?'Hide entries ▴':'Show entries ▾';};}
     render();
   });
 })();
