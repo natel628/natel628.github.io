@@ -4465,6 +4465,7 @@ loadFuel();
   setSync('ok', 'Shared · synced');
   loadState().then(() => { finishOwnerReturn(); wxDefault(); });
   setTimeout(loadState, 1500);
+  window.addEventListener('load', () => setTimeout(loadState, 500));
 
 // One request per tick, straight to the plan. /api/rev only saved bytes, and it
 // was a second thing that could fail on its own: a browser whose /api/rev kept
