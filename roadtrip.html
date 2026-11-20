@@ -36,9 +36,14 @@
   .bud-settle .bud-up{color:#86efac;}
   .bud-settle .bud-down{color:#fca5a5;}
   #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after, #brewWrap.stops-preview::after, #foodWrap.stops-preview::after, #barWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom, rgba(30,41,59,0), var(--card));pointer-events:none;}
-  #stopsWrap.expanded, #budgetWrap.expanded, #brewWrap.expanded{max-height:none;overflow:visible;}
-  #stopsWrap.expanded::after, #budgetWrap.expanded::after, #brewWrap.expanded::after{display:none;}
+  #stopsWrap.expanded, #budgetWrap.expanded, #brewWrap.expanded, #foodWrap.expanded, #barWrap.expanded{max-height:none;overflow:visible;}
+  #stopsWrap.expanded::after, #budgetWrap.expanded::after, #brewWrap.expanded::after, #foodWrap.expanded::after, #barWrap.expanded::after{display:none;}
   .stops-toggle{display:block;margin-top:8px;}
+  /* An author display rule beats the UA [hidden] rule, which used to leave the
+     toggle on screen (and inert) when nothing was clipped. */
+  .stops-toggle[hidden]{display:none;}
+  .stop-wx{margin-top:5px;padding:2px 9px;border-radius:999px;border:1px solid #334155;background:#0f172a;font-size:.78rem;line-height:1.5;}
+  .stop-wx[hidden]{display:none;}
   /* Budget line items */
   .bud-table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:4px;}
   .bud-table th{text-align:left;color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;border-bottom:1px solid #334155;white-space:nowrap;}
@@ -434,6 +439,7 @@
       <ul id="stops"></ul>
     </div>
     <button type="button" id="toggleStops" class="small ghost stops-toggle" hidden aria-controls="stopsWrap" aria-expanded="false">Show all stops ▾</button>
+    <p id="wxNightNote" class="muted" style="margin:6px 0 0;font-size:.8rem" hidden></p>
     <div id="stopPanel" hidden style="margin-top:14px;border-top:1px solid #334155;padding-top:12px">
       <h3 style="margin:0 0 4px;font-size:1rem">📎 <span id="stopPanelTitle"></span></h3>
       <p class="muted" style="margin:0 0 8px">Anything saved here is filed under this stop — the note goes to Notes and the media to Photos &amp; videos, both tagged with the place.</p>
@@ -1458,7 +1464,8 @@ function renderStops(){
       + (isStart ? ' <span class="tag">start</span>' : '')
       + (isEnd ? ' <span class="tag">end</span>' : '')
       + '<br><span class="muted">' + s.lat.toFixed(3) + ', ' + s.lng.toFixed(3) + '</span>'
-      + attBadge(s.name) + '</span>';
+      + attBadge(s.name)
+      + '<br><span class="stop-wx muted" data-wx="' + i + '" hidden></span></span>';
     const actions = document.createElement('div');
     actions.className = 'stop-actions';
     actions.append(
@@ -1493,6 +1500,7 @@ function renderStops(){
   paintLegs();
   refreshLegs();
   applyStopsCollapse();
+  wxNights();
 }
 
 $('stops').addEventListener('click', e => {
@@ -1755,6 +1763,83 @@ try {
   const last = JSON.parse(localStorage.getItem(WX_LAST) || 'null');
   if (last && last.place) $('wxPlace').value = last.place;
 } catch (e) {}
+
+/* ---------- night forecast, one chip on the stop you sleep at ----------
+   The weather card answers "what is it like right now"; this answers "what will
+   the night we sleep here be like". The trip start plus the day each night falls
+   on comes from planSpans, and one Open-Meteo call covers every stop. */
+var wxNightCache = {};   // 'lat,lng' -> that place's daily block
+var wxNightSig = '';
+
+function wxNightKey(stop){ return (+stop.lat).toFixed(3) + ',' + (+stop.lng).toFixed(3); }
+
+function wxNightsList(){
+  const plan = state.plan || {};
+  const start = plan.start ? new Date(plan.start + 'T12:00:00') : null;
+  if (!start || isNaN(start.getTime()) || state.stops.length < 2) return [];
+  const days = Math.min(60, Math.max(1, +plan.days || 1));
+  const nights = [];
+  planSpans(days).spans.forEach((sp, d) => {
+    const stop = state.stops[sp.to];
+    if (!stop || !Number.isFinite(+stop.lat) || !Number.isFinite(+stop.lng)) return;
+    const date = new Date(start.getTime() + d * 864e5);
+    nights.push({ day: d + 1, stop, date, iso: date.toISOString().slice(0, 10) });
+  });
+  return nights;
+}
+
+function wxNightPaint(){
+  const nights = wxNightsList();
+  const byStop = {};
+  nights.forEach(n => { byStop[state.stops.indexOf(n.stop)] = n; });
+  let shown = 0;
+  document.querySelectorAll('[data-wx]').forEach(el => {
+    const n = byStop[+el.dataset.wx];
+    const block = n ? wxNightCache[wxNightKey(n.stop)] : null;
+    const i = block && block.time ? block.time.indexOf(n.iso) : -1;
+    const lo = i < 0 ? null : block.temperature_2m_min[i];
+    const hi = i < 0 ? null : block.temperature_2m_max[i];
+    if (!n || i < 0 || !Number.isFinite(lo)) { el.hidden = true; el.textContent = ''; return; }
+    const pop = block.precipitation_probability_max ? block.precipitation_probability_max[i] : null;
+    el.textContent = '🌙 Night ' + n.day + ' · ' + fmtDate(n.date) + ' · ' + wxIcon((block.weather_code || [])[i])
+      + ' ' + (Number.isFinite(hi) ? Math.round(hi) + '°/' : '') + Math.round(lo) + '°'
+      + (pop == null ? '' : ' · ' + pop + '% rain');
+    el.hidden = false;
+    shown++;
+  });
+  const note = $('wxNightNote');
+  if (!note) return;
+  note.hidden = shown > 0 || !nights.length;
+  note.textContent = note.hidden ? ''
+    : 'Night forecasts appear once each date is inside Open-Meteo’s 16-day window — this trip is further out than that.';
+}
+
+async function wxNights(){
+  const nights = wxNightsList();
+  if (!nights.length) { wxNightPaint(); return; }
+  const sig = nights.map(n => wxNightKey(n.stop) + '@' + n.iso).join('|');
+  if (sig === wxNightSig) { wxNightPaint(); return; }
+  wxNightSig = sig;
+  const coords = [...new Set(nights.map(n => wxNightKey(n.stop)))].map(k => k.split(','));
+  const isos = nights.map(n => n.iso).sort();
+  const params = new URLSearchParams({
+    latitude: coords.map(c => c[0]).join(','),
+    longitude: coords.map(c => c[1]).join(','),
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
+    temperature_unit: 'fahrenheit', timezone: 'auto',
+    start_date: isos[0], end_date: isos[isos.length - 1]
+  });
+  try {
+    const res = await timedFetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
+    if (!res.ok) throw new Error('forecast unavailable');
+    const data = await res.json();
+    const blocks = Array.isArray(data) ? data : [data];
+    coords.forEach((c, i) => { if (blocks[i] && blocks[i].daily) wxNightCache[c.join(',')] = blocks[i].daily; });
+  } catch (e) {
+    // Too far out is the normal miss; the note under the stops says so.
+  }
+  wxNightPaint();
+}
 
 // Maps stay hidden until they have something to show, which keeps the page short.
 // Leaflet measures the box when it fits, and a map that is still display:none
@@ -4377,17 +4462,15 @@ function readExtras(){
   metaNoteId = note ? note.id : null;
   let data = {};
   if (note) { try { data = JSON.parse(note.body.slice(META_PREFIX.length)) || {}; } catch (e) { data = {}; } }
+  budgetShared = Array.isArray(data.budgetLines);
   const d = extraDefaults();
-  // A migration that has not reached the server yet must not be overwritten by
-  // the copy that is still missing it.
-  const carry = (budgetPending && extra) ? extra.budgetLines : null;
   extra = {
     rv: Object.assign(d.rv, data.rv || {}),
     travelers: +data.travelers > 0 ? +data.travelers : 2,
     depart: /^\d{1,2}:\d{2}$/.test(data.depart || '') ? data.depart : '08:00',
     dayDepart: (data.dayDepart && typeof data.dayDepart === 'object' && !Array.isArray(data.dayDepart)) ? data.dayDepart : {},
     budget: Object.assign(d.budget, data.budget || {}),
-    budgetLines: Array.isArray(data.budgetLines) ? data.budgetLines : [],
+    budgetLines: budgetShared ? data.budgetLines : [],
     players: Object.assign(d.players, data.players || {}),
     bets: Array.isArray(data.bets) ? data.bets : [],
     drive: Object.assign(d.drive, data.drive || {}),
@@ -4397,25 +4480,20 @@ function readExtras(){
      a browser sees an empty shared copy it promotes what it has locally, so
      nobody loses the lines already entered. The flag stops a later deletion
      from being undone by an old local cache. */
-  if (carry && carry.length && !extra.budgetLines.length) extra.budgetLines = carry;
-  let seen = false;
-  try { seen = localStorage.getItem(BUDGET_MIGRATED) === '1'; } catch (e) {}
-  if (extra.budgetLines.length) {
-    budgetPending = false;
-    if (!seen) { try { localStorage.setItem(BUDGET_MIGRATED, '1'); } catch (e) {} }
-  } else if (!seen) {
-    let local = [];
-    try { local = JSON.parse(localStorage.getItem(BUDGET_KEY) || '[]'); } catch (e) { local = []; }
-    if (Array.isArray(local) && local.length) {
+  /* Shared lines always win. A copy written before the ledger was shared has no
+     budgetLines key at all, so only that older shape falls back to the local
+     copy, and it pushes those lines up once. After that the note is the owner. */
+  if (!budgetShared) {
+    const local = localBudget();
+    if (local.length) {
       extra.budgetLines = local;
-      budgetPending = true;
       queueExtraSave();
     }
   }
 }
 
 let extraSaveTimer = null;
-var budgetPending = false;
+var budgetShared = false;
 function queueExtraSave(){ clearTimeout(extraSaveTimer); extraSaveTimer = setTimeout(saveExtras, 650); }
 
 async function saveExtras(){
@@ -4489,23 +4567,25 @@ function money(n){
 /* The trip is always split four ways; there is no traveler input any more. */
 const TRAVELERS = 4;
 const BUDGET_KEY = 'budgetEntries';
-const BUDGET_MIGRATED = 'budgetEntriesShared';
 
 /* The lines ride in the same shared note as the RV profile, so every phone shows
-   the same ledger. localStorage stays as an offline cache for the first paint. */
-function budgetEntries(){
-  if (extra && Array.isArray(extra.budgetLines)) return extra.budgetLines;
+   the same ledger. The note wins whenever it carries the key; localStorage is
+   only the fallback for an older note and the cache for the first paint. */
+function localBudget(){
   try {
     const raw = JSON.parse(localStorage.getItem(BUDGET_KEY) || '[]');
     return Array.isArray(raw) ? raw : [];
   } catch (e) { return []; }
 }
+function budgetEntries(){
+  if (extra && budgetShared) return extra.budgetLines;
+  return localBudget();
+}
 function saveBudgetEntries(list){
   try { localStorage.setItem(BUDGET_KEY, JSON.stringify(list)); } catch (e) {}
   if (extra) {
     extra.budgetLines = list;
-    budgetPending = false;
-    try { localStorage.setItem(BUDGET_MIGRATED, '1'); } catch (e) {}
+    budgetShared = true;
     queueExtraSave();
   }
 }
