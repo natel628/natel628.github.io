@@ -185,6 +185,7 @@
   #sideList { overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:2px; }
   #sideList a { color:var(--text); text-decoration:none; padding:10px 12px; border-radius:8px; font-size:.92rem; }
   #sideList a:hover { background:#1e293b; }
+  #sideList a[aria-current="true"] { background:var(--accent); color:#111; font-weight:700; }
   .side-foot { margin-top:auto; padding:14px 16px; border-top:1px solid #334155; color:var(--muted); text-decoration:none; font-size:.9rem; }
   #setOpen { position:fixed; right:12px; bottom:12px; z-index:1500; width:48px; height:48px; border-radius:50%; background:#0f172a; border:1px solid #475569; color:var(--text); font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.5); }
 
@@ -3511,19 +3512,26 @@ acSetup($('eventArea'), { cityFirst: true });
   let hold = 0; // while a jump is animating, the clicked link wins
   const bar = document.querySelector('.secnav');
 
+  const sideLinks = () => [...document.querySelectorAll('#sideList a')];
   const setCurrent = (id) => {
     links.forEach(a => a.removeAttribute('aria-current'));
-    const group = byIdAll.get(id) || [];
+    sideLinks().forEach(a => a.removeAttribute('aria-current'));
+    const group = (byIdAll.get(id) || [])
+      .concat(sideLinks().filter(a => a.getAttribute('href') === '#' + id));
     if (!group.length) return;
     const tabbed = group.filter(a => a.dataset.exploreTab);
-    let link = group[0];
+    let mark = group;
     if (tabbed.length === group.length) {
+      // One section, four chips: highlight the chip for the tab that is open.
       const active = document.querySelector('.explore-tab.active');
       const tab = active ? active.dataset.tab : '';
-      link = tabbed.find(a => a.dataset.exploreTab === tab) || tabbed[0];
+      const match = tabbed.filter(a => a.dataset.exploreTab === tab);
+      mark = match.length ? match : [tabbed[0]];
     }
-    link.setAttribute('aria-current', 'true');
+    mark.forEach(a => a.setAttribute('aria-current', 'true'));
   };
+  // The sidebar preselects what you clicked, the same way the top bar does.
+  window.markNavCurrent = setCurrent;
 
   // Whichever section sits above the bottom of the sticky bar is the one you are in.
   const mark = () => {
@@ -4008,7 +4016,20 @@ function applyPrefs(){
   }
   document.querySelectorAll('input[name="navmode"]').forEach(r => { r.checked = r.value === p.nav; });
   const names = {};
-  NAV_LINKS.forEach(a => { names[a.getAttribute('href').slice(1)] = a.textContent.trim().replace(/\s+/g, ' '); });
+  NAV_LINKS.forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    if (!names[id]) names[id] = a.textContent.trim().replace(/\s+/g, ' ');
+  });
+  // The heading is the honest name for a section, which matters for Explore:
+  // its four chips (Golf/Food/Camping/Events) all point at that one card.
+  const sectionName = (id) => {
+    const sec = document.getElementById(id);
+    const h2 = sec && sec.querySelector('h2');
+    const text = h2
+      ? [...h2.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('').trim()
+      : '';
+    return text || names[id] || id;
+  };
   // The docked sidebar folds to an icon rail; the choice sticks per device.
   document.body.classList.toggle('nav-side-collapsed', p.nav === 'side' && p.navCollapsed === true);
   const foldBtn = $('sideCollapse');
@@ -4021,10 +4042,11 @@ function applyPrefs(){
   }
   const list = $('sideList');
   if (list && !list.children.length) {
+    // Each chip keeps its own label: using the shared href would make all four
+    // Explore entries read the same, i.e. 'Events' four times.
     list.innerHTML = NAV_LINKS.map(a => {
       const href = a.getAttribute('href');
-      const id = href.slice(1);
-      const label = names[id] || id;
+      const label = a.textContent.trim().replace(/\s+/g, ' ');
       const parts = label.match(/^(\S+)\s+(.+)$/);
       const ico = parts ? parts[1] : '';
       const txt = parts ? parts[2] : label;
@@ -4042,7 +4064,7 @@ function applyPrefs(){
       if (seenIds.indexOf(id) >= 0) return false;
       seenIds.push(id);
       return true;
-    }).map(id => '<label style="display:block;margin:4px 0"><input type="checkbox" data-hide-sec="' + id + '" /> ' + esc(names[id]) + '</label>').join('');
+    }).map(id => '<label style="display:block;margin:4px 0"><input type="checkbox" data-hide-sec="' + id + '" /> ' + esc(sectionName(id)) + '</label>').join('');
   }
   const hidden = new Set(p.hidden.filter(id => names[id]));
   NAV_LINKS.forEach(a => {
@@ -4054,7 +4076,7 @@ function applyPrefs(){
     const cb = box && box.querySelector('[data-hide-sec="' + id + '"]');
     if (cb) cb.checked = hide;
   });
-  const gone = [...hidden].map(id => names[id]);
+  const gone = [...hidden].map(id => sectionName(id));
   const hn = $('hiddenNow');
   if (hn) hn.textContent = gone.length
     ? 'Hidden right now: ' + gone.join(', ') + ' — untick above to bring them back.'
@@ -4142,7 +4164,13 @@ if ($('sideCollapse')) $('sideCollapse').onclick = () => {
 $('navToggle').onclick = openSidebar;
 $('sideClose').onclick = closeSidebar;
 $('sideBackdrop').onclick = closeSidebar;
-$('sideList').addEventListener('click', e => { if (e.target.closest('a')) closeSidebar(); });
+$('sideList').addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  const href = a.getAttribute('href') || '';
+  if (window.markNavCurrent && href.charAt(0) === '#') window.markNavCurrent(href.slice(1));
+  closeSidebar();
+});
 $('sidebar').querySelector('.side-foot').addEventListener('click', closeSidebar);
 document.querySelectorAll('input[name="navmode"]').forEach(r => r.addEventListener('change', () => {
   const checked = document.querySelector('input[name="navmode"]:checked');
