@@ -675,6 +675,7 @@ document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-query]');
   if (b) { e.preventDefault(); openPreview(b.dataset.query); }
 });
+document.addEventListener('DOMContentLoaded', boot);
 function openPreview(title) {
   const root = document.getElementById('modal-root');
   if (!root) return;
