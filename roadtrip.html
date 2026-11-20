@@ -3137,17 +3137,21 @@ const foodKind = type => ({ restaurant: 'restaurant', cafe: 'café', fast_food: 
 
 // Nominatim understands category searches ("restaurant") inside a viewbox, which
 // lists a whole area rather than only names containing the word.
+// A plain category search inside a box ranks by global importance, which buries
+// the small local places. The "near" form ranks by distance instead, so the
+// nearest cafés and diners come back first and the radius is applied here.
 async function nominatim(query, center, radiusKm){
-  const params = new URLSearchParams({ format: 'jsonv2', limit: '40', q: query });
-  if (center) {
-    const dLat = radiusKm / 111;
-    const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
-    params.set('viewbox', [center.lng - dLon, center.lat + dLat, center.lng + dLon, center.lat - dLat].join(','));
-    params.set('bounded', '1');
-  }
+  const near = center ? ' near ' + center.lat.toFixed(4) + ',' + center.lng.toFixed(4) : '';
+  const params = new URLSearchParams({ format: 'jsonv2', limit: '40', q: query + near });
   const res = await timedFetch('https://nominatim.openstreetmap.org/search?' + params.toString());
   if (!res.ok) throw new Error('The restaurant index is busy right now — try again in a moment.');
-  return res.json();
+  const rows = await res.json();
+  if (!center || !Array.isArray(rows)) return rows;
+  const maxMi = radiusKm / 1.609344;
+  return rows.filter(r => {
+    const lat = +r.lat, lng = +r.lon;
+    return Number.isFinite(lat) && Number.isFinite(lng) && hav(center, { lat, lng }) <= maxMi;
+  });
 }
 
 function foodFromNominatim(rows, center){
@@ -3177,14 +3181,10 @@ function foodFromNominatim(rows, center){
 async function nominatimPages(query, center, radiusKm, pages){
   const all = [];
   const ids = [];
+  const near = center ? ' near ' + center.lat.toFixed(4) + ',' + center.lng.toFixed(4) : '';
+  const maxMi = center ? radiusKm / 1.609344 : 0;
   for (let page = 0; page < pages; page++) {
-    const params = new URLSearchParams({ format: 'jsonv2', limit: '50', q: query });
-    if (center) {
-      const dLat = radiusKm / 111;
-      const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
-      params.set('viewbox', [center.lng - dLon, center.lat + dLat, center.lng + dLon, center.lat - dLat].join(','));
-      params.set('bounded', '1');
-    }
+    const params = new URLSearchParams({ format: 'jsonv2', limit: '50', q: query + near });
     if (ids.length) params.set('exclude_place_ids', ids.join(','));
     const res = await timedFetch('https://nominatim.openstreetmap.org/search?' + params.toString());
     if (!res.ok) {
@@ -3193,7 +3193,13 @@ async function nominatimPages(query, center, radiusKm, pages){
     }
     const rows = await res.json();
     if (!Array.isArray(rows) || !rows.length) break;
-    all.push(...rows);
+    // Distance-ranked answers keep coming, so anything past the chosen radius is
+    // dropped here rather than crowding out the places that are in range.
+    const inRange = center ? rows.filter(r => {
+      const lat = +r.lat, lng = +r.lon;
+      return Number.isFinite(lat) && Number.isFinite(lng) && hav(center, { lat, lng }) <= maxMi;
+    }) : rows;
+    all.push(...inRange);
     rows.forEach(r => { if (r.place_id) ids.push(r.place_id); });
     if (rows.length < 50) break;
     // Nominatim asks for one request a second; the next page waits its turn.
@@ -3207,7 +3213,7 @@ async function findFoodNear(center, radiusKm){
   // the town's actual list rather than the fifty names that rank highest.
   let places = [];
   try {
-    places = foodFromNominatim(await nominatimPages('restaurant', center, radiusKm, 3), center);
+    places = foodFromNominatim(await nominatimPages('restaurant', center, radiusKm, 2), center);
   } catch (e) { places = []; }
   for (const term of ['cafe', 'fast_food']) {
     try {
