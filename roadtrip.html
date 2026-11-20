@@ -27,12 +27,13 @@
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   /* Both lists preview a couple of rows behind a fade and expand from a toggle. */
-  #stopsWrap.stops-preview, #budgetWrap.stops-preview{position:relative;overflow:hidden;}
+  #stopsWrap.stops-preview, #budgetWrap.stops-preview, #brewWrap.stops-preview{position:relative;overflow:hidden;}
   #stopsWrap.stops-preview{max-height:136px;}
   #budgetWrap.stops-preview{max-height:176px;}
-  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom, rgba(30,41,59,0), var(--card));pointer-events:none;}
-  #stopsWrap.expanded, #budgetWrap.expanded{max-height:none;overflow:visible;}
-  #stopsWrap.expanded::after, #budgetWrap.expanded::after{display:none;}
+  #brewWrap.stops-preview{max-height:176px;}
+  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after, #brewWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom, rgba(30,41,59,0), var(--card));pointer-events:none;}
+  #stopsWrap.expanded, #budgetWrap.expanded, #brewWrap.expanded{max-height:none;overflow:visible;}
+  #stopsWrap.expanded::after, #budgetWrap.expanded::after, #brewWrap.expanded::after{display:none;}
   .stops-toggle{display:block;margin-top:8px;}
   /* Budget line items */
   .bud-table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:4px;}
@@ -592,7 +593,10 @@
       <p class="muted" id="brewPinState" style="margin:8px 0 0"></p>
       <p id="brewMsg" class="muted" role="status" aria-live="polite"></p>
       <div id="brewMap"></div>
-      <div id="brewList"></div>
+      <div id="brewWrap" class="stops-preview">
+        <div id="brewList"></div>
+      </div>
+      <button type="button" id="toggleBrew" class="small ghost stops-toggle" hidden aria-controls="brewWrap" aria-expanded="false">Show all breweries ▾</button>
     </div>
     <div class="explore-panel" id="panel-camp" hidden>
       <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
@@ -3517,6 +3521,7 @@ function renderBrews(){
   brewLayer.clearLayers();
   if (!brewPlaces.length) {
     el.innerHTML = '<p class="muted">No breweries found — try a wider radius, or search a bigger town.</p>';
+    applyBrewCollapse();
     return;
   }
 
@@ -3539,6 +3544,7 @@ function renderBrews(){
 
   fitMap(brewMap, brewPlaces.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(brewMap, 'brewMap');
+  applyBrewCollapse();
 }
 
 $('brewList').addEventListener('click', async e => {
@@ -4405,12 +4411,18 @@ function collapseSection(wrapId, btnId, count, limit, openLabel, closeLabel){
 }
 function applyStopsCollapse(){ collapseSection('stopsWrap', 'toggleStops', state.stops.length, 2, 'Show all stops ▾', 'Hide stops ▴'); }
 function applyBudgetCollapse(){ collapseSection('budgetWrap', 'toggleBudget', budgetEntries().length, 3, 'Show entries ▾', 'Hide entries ▴'); }
+function applyBrewCollapse(){
+  const n = brewPlaces.length;
+  collapseSection('brewWrap', 'toggleBrew', n, 3, 'Show all ' + n + ' breweries ▾', 'Hide breweries ▴');
+}
 /* The open/closed choice survives re-renders of the same list. */
 function toggleCollapse(wrapId){
   const wrap = $(wrapId);
   if (!wrap) return;
   wrap.dataset.open = wrap.classList.contains('expanded') ? '0' : '1';
-  if (wrapId === 'stopsWrap') applyStopsCollapse(); else applyBudgetCollapse();
+  if (wrapId === 'stopsWrap') applyStopsCollapse();
+  else if (wrapId === 'brewWrap') applyBrewCollapse();
+  else applyBudgetCollapse();
 }
 function renderBudget(){
   const lines = $('budgetLines'), head = $('budgetTotal');
@@ -4465,6 +4477,7 @@ if ($('budgetLines')) $('budgetLines').addEventListener('click', e => {
 });
 if ($('toggleBudget')) $('toggleBudget').addEventListener('click', () => toggleCollapse('budgetWrap'));
 if ($('toggleStops')) $('toggleStops').addEventListener('click', () => toggleCollapse('stopsWrap'));
+if ($('toggleBrew')) $('toggleBrew').addEventListener('click', () => toggleCollapse('brewWrap'));
 function syncCustomCat(){
   const sel = $('budCat'), input = $('budCustomCat');
   if (!input) return;
