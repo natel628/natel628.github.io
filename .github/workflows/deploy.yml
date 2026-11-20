@@ -251,6 +251,59 @@ jobs:
           fi
           echo "OK: whats-happening is encrypted ($(wc -c < sites/whats-happening/index.html) bytes)."
 
+      # roadtrip.html ships unencrypted, so these two values are readable in the
+      # page source. Both are free, rate-limited public-data keys, and the page
+      # works without them: SeatGeek just drops out and the fuel estimate keeps
+      # the flat dollars-per-gallon you typed.
+      - name: Inject SeatGeek client id
+        env:
+          SEATGEEK_CLIENT_ID: ${{ secrets.SEATGEEK_CLIENT_ID }}
+        run: |
+          if [ -z "$SEATGEEK_CLIENT_ID" ]; then
+            echo "::warning::SEATGEEK_CLIENT_ID secret is not set - the event search will use Ticketmaster only."
+            exit 0
+          fi
+          if ! grep -q '__SEATGEEK_CLIENT_ID__' roadtrip.html; then
+            echo "::error::Placeholder __SEATGEEK_CLIENT_ID__ not found in roadtrip.html."
+            exit 1
+          fi
+          python3 - "$SEATGEEK_CLIENT_ID" <<'PY'
+          import sys, pathlib
+          value = sys.argv[1]
+          path = pathlib.Path('roadtrip.html')
+          text = path.read_text(encoding='utf-8')
+          path.write_text(text.replace('__SEATGEEK_CLIENT_ID__', value), encoding='utf-8')
+          if '__SEATGEEK_CLIENT_ID__' in path.read_text(encoding='utf-8'):
+              sys.exit('::error::SeatGeek placeholder survived injection.')
+          print('OK: SeatGeek client id injected.')
+          PY
+
+      # Optional: diner and bar star ratings and review counts come from Yelp.
+      # Without the key those lists simply carry no stars, so a missing secret is
+      # a warning rather than a failed build.
+      - name: Inject Yelp API key
+        env:
+          YELP_API_KEY: ${{ secrets.YELP_API_KEY }}
+        run: |
+          if [ -z "$YELP_API_KEY" ]; then
+            echo "::warning::YELP_API_KEY secret is not set - food and bar star ratings stay off."
+            exit 0
+          fi
+          if ! grep -q '__YELP_API_KEY__' roadtrip.html; then
+            echo "::error::Placeholder __YELP_API_KEY__ not found in roadtrip.html."
+            exit 1
+          fi
+          python3 - "$YELP_API_KEY" <<'PY'
+          import sys, pathlib
+          value = sys.argv[1]
+          path = pathlib.Path('roadtrip.html')
+          text = path.read_text(encoding='utf-8')
+          path.write_text(text.replace('__YELP_API_KEY__', value), encoding='utf-8')
+          if '__YELP_API_KEY__' in path.read_text(encoding='utf-8'):
+              sys.exit('::error::Yelp placeholder survived injection.')
+          print('OK: Yelp API key injected.')
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

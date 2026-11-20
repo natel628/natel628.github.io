@@ -27,13 +27,23 @@
   button.small { padding:6px 10px; font-size:.85rem; }
   #map { height:420px; border-radius:12px; border:1px solid #334155; }
   /* Both lists preview a couple of rows behind a fade and expand from a toggle. */
-  #stopsWrap.stops-preview, #budgetWrap.stops-preview{position:relative;overflow:hidden;}
+  #stopsWrap.stops-preview, #budgetWrap.stops-preview, #brewWrap.stops-preview, #foodWrap.stops-preview, #barWrap.stops-preview{position:relative;overflow:hidden;}
   #stopsWrap.stops-preview{max-height:136px;}
   #budgetWrap.stops-preview{max-height:176px;}
-  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom, rgba(30,41,59,0), var(--card));pointer-events:none;}
-  #stopsWrap.expanded, #budgetWrap.expanded{max-height:none;overflow:visible;}
-  #stopsWrap.expanded::after, #budgetWrap.expanded::after{display:none;}
+  #brewWrap.stops-preview{max-height:176px;}
+  #foodWrap.stops-preview, #barWrap.stops-preview{max-height:208px;}
+  .bud-settle{margin:14px 0 0;}
+  .bud-settle .bud-up{color:#86efac;}
+  .bud-settle .bud-down{color:#fca5a5;}
+  #stopsWrap.stops-preview::after, #budgetWrap.stops-preview::after, #brewWrap.stops-preview::after, #foodWrap.stops-preview::after, #barWrap.stops-preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom, rgba(30,41,59,0), var(--card));pointer-events:none;}
+  #stopsWrap.expanded, #budgetWrap.expanded, #brewWrap.expanded, #foodWrap.expanded, #barWrap.expanded{max-height:none;overflow:visible;}
+  #stopsWrap.expanded::after, #budgetWrap.expanded::after, #brewWrap.expanded::after, #foodWrap.expanded::after, #barWrap.expanded::after{display:none;}
   .stops-toggle{display:block;margin-top:8px;}
+  /* An author display rule beats the UA [hidden] rule, which used to leave the
+     toggle on screen (and inert) when nothing was clipped. */
+  .stops-toggle[hidden]{display:none;}
+  .stop-wx{margin-top:5px;padding:2px 9px;border-radius:999px;border:1px solid #334155;background:#0f172a;font-size:.78rem;line-height:1.5;}
+  .stop-wx[hidden]{display:none;}
   /* Budget line items */
   .bud-table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:4px;}
   .bud-table th{text-align:left;color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;border-bottom:1px solid #334155;white-space:nowrap;}
@@ -107,23 +117,26 @@
   .progress-row { display:flex; gap:12px; align-items:center; margin-top:6px; font-size:.8rem; color:var(--muted); flex-wrap:wrap; }
   .progress-row #photoPct { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
   @media (prefers-reduced-motion: reduce) { .progress-fill { transition:none; } }
-  #golfMap, #foodMap, #campMap, #hotelMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
+  #golfMap, #foodMap, #barMap, #brewMap, #campMap, #hotelMap { height:340px; border-radius:12px; border:1px solid #334155; margin-top:10px; }
   #golfList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .golf-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
-  .golf-item.sel { border-color:var(--green); }
+  .golf-item.sel { border-color:var(--green); background:#12261b; }
   .golf-pick { flex:1; text-align:left; background:transparent; color:var(--text); border:none; padding:0; display:grid; gap:2px; cursor:pointer; font-weight:600; }
   .golf-dist { color:var(--muted); font-size:.78rem; font-weight:400; }
   #golfMsg:empty { display:none; }
   #golfMsg { font-size:.85rem; margin-top:8px; }
-  #golfMap, #foodMap, #campMap, #hotelMap { display:none; }
-  #golfMap.show, #foodMap.show, #campMap.show, #hotelMap.show { display:block; }
+  #golfMap, #foodMap, #barMap, #brewMap, #campMap, #hotelMap { display:none; }
+  #golfMap.show, #foodMap.show, #barMap.show, #brewMap.show, #campMap.show, #hotelMap.show { display:block; }
   .day.long { border-left-color:#f59e0b; }
   .day-weather { font-size:.8rem; font-weight:600; color:var(--muted); margin-left:6px; }
   .warn-text { color:#f59e0b; font-size:.8rem; margin-top:6px; }
   #foodList { display:grid; gap:8px; margin-top:12px; max-height:320px; overflow:auto; }
   .food-item { display:flex; gap:10px; align-items:center; justify-content:space-between; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px 12px; }
   .food-item, .golf-item { position:relative; }
-  .food-item.sel { border-color:var(--green); }
+  .food-item.sel { border-color:var(--green); background:#12261b; box-shadow:0 0 0 1px var(--green) inset; }
+  .rating-chip { color:#fbbf24; font-weight:600; }
+  .msg-warn { color:#f87171; }
+  .field-warn { border-color:#ef4444 !important; box-shadow:0 0 0 1px #ef4444 inset; }
   .food-pick { flex:1; text-align:left; background:transparent; color:var(--text); border:none; padding:0; display:grid; gap:2px; cursor:pointer; font-weight:600; }
   .food-sub { color:var(--muted); font-size:.78rem; font-weight:400; }
   #foodMsg:empty { display:none; }
@@ -200,6 +213,19 @@
   .wx-tile .wx-rain { color:#93c5fd; font-size:.72rem; }
   .wx-tile-now { border-color:#7c5a13; }
   .wx-tile-now b { color:var(--accent); font-size:1rem; }
+  /* Day tiles open that day's hours, so they are buttons with a pressed state. */
+  button.wx-tile { font:inherit; color:inherit; cursor:pointer; transition:border-color .15s, background .15s; }
+  button.wx-tile:hover { border-color:#64748b; }
+  button.wx-tile.is-open { border-color:var(--accent); background:#1b2a44; }
+  .wx-hours { margin:8px 0 0; border:1px solid #334155; border-radius:10px; background:#0f172a; padding:8px 10px 6px; }
+  .wx-hours-head { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin:0 0 4px; }
+  .wx-hours-head b { font-size:.88rem; }
+  .wx-hours-head .small { margin-left:auto; }
+  .wx-hour-strip { display:flex; gap:6px; overflow-x:auto; padding:2px 0 4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+  .wx-hour { flex:0 0 58px; scroll-snap-align:start; display:flex; flex-direction:column; align-items:center; gap:1px; background:#16233a; border:1px solid #24354d; border-radius:8px; padding:5px 3px; font-size:.72rem; text-align:center; }
+  .wx-hour b { font-size:.82rem; font-variant-numeric:tabular-nums; }
+  .wx-hour .wx-hlab { color:var(--muted); font-size:.68rem; white-space:nowrap; }
+  .wx-hour .wx-rain { color:#93c5fd; font-size:.68rem; }
   @media (max-width:430px){ .wx-tile { flex-basis:76px; } }
   #settingsBackdrop, #tourBackdrop { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1700; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s; }
   #settingsBackdrop.open, #tourBackdrop.open { opacity:1; visibility:visible; pointer-events:auto; }
@@ -214,6 +240,11 @@
   body.ts-s { font-size:14.5px; }
   body.ts-l { font-size:18px; }
   main > section { scroll-margin-top:72px; }
+  @media (min-width: 900px) {
+    /* With the sidebar docked there is no sticky top bar, so a jump should land
+       at the top of the card instead of 72px below it. */
+    body.nav-side main > section { scroll-margin-top:16px; }
+  }
   /* --- trip overview + planning sections --- */
   .glance { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
   .glance > div { background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 12px; }
@@ -315,6 +346,12 @@
   .explore-tab { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:8px 14px; border-radius:var(--radius-md); cursor:pointer; font:inherit; }
   .explore-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
   .explore-panel[hidden] { display:none; }
+  /* The 18+ categories stay folded away until someone opens this. */
+  .night-door { margin:10px 0 4px; border:1px solid #334155; border-radius:10px; background:#0f172a; padding:0 12px; }
+  .night-door > summary { cursor:pointer; padding:9px 0; font-size:.86rem; color:var(--accent); }
+  .night-door > summary .muted { color:var(--muted); font-weight:400; }
+  .night-door p { margin:2px 0 8px; font-size:.82rem; }
+  .night-door label { display:inline-flex; align-items:center; gap:6px; margin:0 14px 10px 0; font-size:.88rem; }
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%230f172a'/%3E%3Cpath%20d='M10%2023V9l12%2014V9'%20fill='none'%20stroke='%23f59e0b'%20stroke-width='3.4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E" />
 </head>
@@ -322,12 +359,15 @@
 <nav class="secnav" aria-label="Jump to a section">
   <div class="secnav-inner">
     <a href="#sec-glance" aria-label="Overview">📊 <span>Overview</span></a>
+    <a href="#sec-weather" aria-label="Weather">🌤️ <span>Weather</span></a>
     <a href="#sec-notes" aria-label="Notes">📝 <span>Notes</span></a>
     <a href="#sec-route" aria-label="Route map">🗺️ <span>Map</span></a>
     <a href="#sec-photos" aria-label="Photos and videos">📸 <span>Photos</span></a>
     <a href="#sec-explore" data-explore-tab="golf" aria-label="Golf courses">⛳ <span>Golf</span></a>
-    <a href="#sec-explore" data-explore-tab="food" aria-label="Places to eat">🍽️ <span>Food</span></a>
-    <a href="#sec-explore" data-explore-tab="camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
+          <a href="#sec-explore" data-explore-tab="food" aria-label="Places to eat">🍽️ <span>Food</span></a>
+      <a href="#sec-explore" data-explore-tab="bar" aria-label="Bars and nightlife">🍸 <span>Bars</span></a>
+      <a href="#sec-explore" data-explore-tab="brew" aria-label="Breweries">🍺 <span>Breweries</span></a>
+      <a href="#sec-explore" data-explore-tab="camp" aria-label="Campgrounds">🏕️ <span>Camping</span></a>
     <a href="#sec-explore" data-explore-tab="events" aria-label="Sporting events">🏟️ <span>Events</span></a>
     <a href="#sec-bets" aria-label="Bets">🏆 <span>Bets</span></a>
     <a href="#sec-budget" aria-label="Budget">💵 <span>Budget</span></a>
@@ -410,6 +450,7 @@
       <ul id="stops"></ul>
     </div>
     <button type="button" id="toggleStops" class="small ghost stops-toggle" hidden aria-controls="stopsWrap" aria-expanded="false">Show all stops ▾</button>
+    <p id="wxNightNote" class="muted" style="margin:6px 0 0;font-size:.8rem" hidden></p>
     <div id="stopPanel" hidden style="margin-top:14px;border-top:1px solid #334155;padding-top:12px">
       <h3 style="margin:0 0 4px;font-size:1rem">📎 <span id="stopPanelTitle"></span></h3>
       <p class="muted" style="margin:0 0 8px">Anything saved here is filed under this stop — the note goes to Notes and the media to Photos &amp; videos, both tagged with the place.</p>
@@ -487,6 +528,8 @@
     <div class="explore-tabs" role="tablist">
       <button type="button" class="explore-tab active" data-tab="golf" role="tab" aria-selected="true">⛳ Golf</button>
       <button type="button" class="explore-tab" data-tab="food" role="tab" aria-selected="false">🍽️ Food</button>
+      <button type="button" class="explore-tab" data-tab="bar" role="tab" aria-selected="false">🍸 Bars</button>
+      <button type="button" class="explore-tab" data-tab="brew" role="tab" aria-selected="false">🍺 Breweries</button>
       <button type="button" class="explore-tab" data-tab="camp" role="tab" aria-selected="false">🏕️ Camp</button>
       <button type="button" class="explore-tab" data-tab="events" role="tab" aria-selected="false">🏟️ Events</button>
     </div>
@@ -520,6 +563,10 @@
           <option value="10" selected>Within 10 mi</option>
           <option value="30">Within 30 mi</option>
         </select>
+        <select id="foodSort" style="max-width:180px;flex:none" aria-label="Sort places to eat" hidden>
+          <option value="distance" selected>Nearest first</option>
+          <option value="rating">Best rated first</option>
+        </select>
         <button type="button" id="foodFind">Find places to eat</button>
         <button type="button" id="foodClearPin" class="ghost">Clear pin</button>
       </div>
@@ -530,7 +577,64 @@
       <p class="muted" id="foodPinState" style="margin:8px 0 0"></p>
       <p id="foodMsg" class="muted" role="status" aria-live="polite"></p>
       <div id="foodMap"></div>
-      <div id="foodList"></div>
+      <div id="foodWrap" class="stops-preview">
+        <div id="foodList"></div>
+      </div>
+      <p id="foodCredit" class="muted" style="font-size:.75rem;margin:6px 0 0" hidden>Ratings and review counts from Yelp.</p>
+      <button type="button" id="toggleFood" class="small ghost stops-toggle" hidden aria-controls="foodWrap" aria-expanded="false">Show all places ▾</button>
+    </div>
+    <div class="explore-panel" id="panel-bar" hidden>
+      <p class="muted">Bars, pubs, clubs, live-music venues and casinos around a town or a map pin — real road distance and drive time from the search point. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear.</p>
+      <div class="row">
+        <input id="barQuery" placeholder="Search near — e.g. Nashville, TN" aria-label="Search bars near" />
+        <select id="barRadius" style="max-width:170px;flex:none" aria-label="Bar search radius">
+          <option value="2">Within 2 mi</option>
+          <option value="8" selected>Within 8 mi</option>
+          <option value="25">Within 25 mi</option>
+          <option value="50">Within 50 mi</option>
+        </select>
+        <select id="barSort" style="max-width:180px;flex:none" aria-label="Sort bars" hidden>
+          <option value="distance" selected>Nearest first</option>
+          <option value="rating">Best rated first</option>
+        </select>
+        <button type="button" id="barFind">Find bars</button>
+        <button type="button" id="barClearPin" class="ghost">Clear pin</button>
+      </div>
+      <p class="muted" id="barPinState" style="margin:8px 0 0"></p>
+      <p id="barMsg" class="muted" role="status" aria-live="polite"></p>
+      <details class="night-door" id="nightDoor">
+        <summary>🔞 18+ after dark <span class="muted">— strip clubs, adult shops, casinos</span></summary>
+        <p class="muted">Those categories are left out of every result until you tick one here. Nothing goes on the shared plan unless you add it to the route.</p>
+        <label><input type="checkbox" data-night="strip club" /> Strip clubs</label>
+        <label><input type="checkbox" data-night="adult shop" /> Adult shops</label>
+        <label><input type="checkbox" data-night="casino" /> Casinos</label>
+      </details>
+      <div id="barMap"></div>
+      <div id="barWrap" class="stops-preview">
+        <div id="barList"></div>
+      </div>
+      <p id="barCredit" class="muted" style="font-size:.75rem;margin:6px 0 0" hidden>Ratings and review counts from Yelp.</p>
+      <button type="button" id="toggleBar" class="small ghost stops-toggle" hidden aria-controls="barWrap" aria-expanded="false">Show all bars ▾</button>
+    </div>
+    <div class="explore-panel" id="panel-brew" hidden>
+      <p class="muted">Breweries, brewpubs and taprooms around a town or a map pin, from Open Brewery DB (keyless). Distances and drive times are real roads from the search point.</p>
+      <div class="row">
+        <input id="brewQuery" placeholder="Search near — e.g. Asheville, NC" aria-label="Search breweries near" />
+        <select id="brewRadius" style="max-width:170px;flex:none" aria-label="Brewery search radius">
+          <option value="10">Within 10 mi</option>
+          <option value="25" selected>Within 25 mi</option>
+          <option value="60">Within 60 mi</option>
+        </select>
+        <button type="button" id="brewFind">Find breweries</button>
+        <button type="button" id="brewClearPin" class="ghost">Clear pin</button>
+      </div>
+      <p class="muted" id="brewPinState" style="margin:8px 0 0"></p>
+      <p id="brewMsg" class="muted" role="status" aria-live="polite"></p>
+      <div id="brewMap"></div>
+      <div id="brewWrap" class="stops-preview">
+        <div id="brewList"></div>
+      </div>
+      <button type="button" id="toggleBrew" class="small ghost stops-toggle" hidden aria-controls="brewWrap" aria-expanded="false">Show all breweries ▾</button>
     </div>
     <div class="explore-panel" id="panel-camp" hidden>
       <p class="muted">Campsites, RV parks and highway rest areas near every stop on your route — or around a town you name. Pulled from OpenStreetMap, so a place nobody has mapped there yet will not appear; add it by hand if you know it.</p>
@@ -700,6 +804,7 @@
       <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" aria-label="Budget line amount" style="max-width:100px;flex:none" />
       <button type="button" id="budAdd">Add</button>
     </div>
+    <p id="budMsg" class="muted" role="status" aria-live="polite" style="font-size:.85rem"></p>
     <button type="button" id="toggleBudget" class="small ghost stops-toggle" aria-controls="budgetWrap" aria-expanded="false">Show entries ▾</button>
     <div id="budgetWrap" class="stops-preview">
       <div id="budgetLines"></div>
@@ -769,7 +874,10 @@ const API_BASE = /(^|\.)github\.io$/.test(location.hostname)
   : '';
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const CIRC = 1.28, MPH = 55, MPG = 25;
-const SEATGEEK_ID = 'NjIzNDI3OTV8MTc5NDc4NTM0Ni40NTk2OTI3';
+const SEATGEEK_ID = '__SEATGEEK_CLIENT_ID__';
+// Until the deploy step swaps the placeholder for the real client id this is
+// off, and the events search quietly leans on Ticketmaster alone.
+function seatGeekId(){ return SEATGEEK_ID.indexOf('__') === 0 ? '' : SEATGEEK_ID; }
 
 /* ---------- shared state ---------- */
 let state = { rev: 0, stops: [], plan: { start: '', days: 3 }, watch: [], notes: [], photos: [] };
@@ -1372,7 +1480,8 @@ function renderStops(){
       + (isStart ? ' <span class="tag">start</span>' : '')
       + (isEnd ? ' <span class="tag">end</span>' : '')
       + '<br><span class="muted">' + s.lat.toFixed(3) + ', ' + s.lng.toFixed(3) + '</span>'
-      + attBadge(s.name) + '</span>';
+      + attBadge(s.name)
+      + '<br><span class="stop-wx muted" data-wx="' + i + '" hidden></span></span>';
     const actions = document.createElement('div');
     actions.className = 'stop-actions';
     actions.append(
@@ -1407,6 +1516,7 @@ function renderStops(){
   paintLegs();
   refreshLegs();
   applyStopsCollapse();
+  wxNights();
 }
 
 $('stops').addEventListener('click', e => {
@@ -1545,10 +1655,60 @@ const WX_LAST = 'rt-wx-last';
 function wxMsg(t){ const m = $('wxMsg'); if (m) m.textContent = t; }
 function wxBody(html){ const b = $('wxNow'); if (b) b.innerHTML = html; return b; }
 // Small tiles read better than a row per day: the eye scans the strip left to
-// right instead of reading a table.
+// right instead of reading a table. The date is on the tile because "Thu" alone
+// does not say which Thursday.
 function wxDayShort(day){
   const d = new Date(day + 'T12:00:00');
-  return isNaN(d.getTime()) ? String(day) : d.toLocaleDateString([], { weekday: 'short' });
+  return isNaN(d.getTime()) ? String(day)
+    : d.toLocaleDateString([], { weekday: 'short' }) + ' ' + d.getDate();
+}
+function wxDayLong(day){
+  const d = new Date(day + 'T12:00:00');
+  return isNaN(d.getTime()) ? String(day)
+    : d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
+/* Clicking a day opens that day hour by hour. The hourly numbers arrive with the
+   same request as the tiles, so opening one costs no extra call. */
+var wxLastRender = null;
+var wxHoursOpen = -1;
+
+function wxHoursHtml(data, i){
+  const day = ((data.daily || {}).time || [])[i];
+  const hourly = (data && data.hourly) || {};
+  const times = hourly.time || [];
+  if (!day || !times.length) {
+    return '<p class="muted" style="margin:6px 0">Hour-by-hour detail is not available for that day.</p>';
+  }
+  const cells = [];
+  times.forEach((t, k) => {
+    if (t.slice(0, 10) !== day) return;
+    const temp = hourly.temperature_2m ? hourly.temperature_2m[k] : null;
+    const pop = hourly.precipitation_probability ? hourly.precipitation_probability[k] : null;
+    const code = hourly.weather_code ? hourly.weather_code[k] : null;
+    cells.push('<div class="wx-hour"><span class="wx-hlab">' + esc(clock(+t.slice(11, 13) * 60)) + '</span>'
+      + '<span class="wx-ico" aria-hidden="true">' + esc(wxIcon(code)) + '</span>'
+      + '<b>' + (Number.isFinite(temp) ? Math.round(temp) + '°' : '—') + '</b>'
+      + '<span class="wx-rain">' + (pop == null ? '—' : pop + '%') + '</span></div>');
+  });
+  return '<div class="wx-hours-head"><b>' + esc(wxDayLong(day)) + '</b>'
+    + '<span class="muted" style="font-size:.78rem">hour by hour</span>'
+    + '<button type="button" class="small ghost" id="wxHoursClose" aria-label="Close the hourly forecast">✕</button></div>'
+    + '<div class="wx-hour-strip">' + cells.join('') + '</div>';
+}
+
+function wxToggleHours(i){
+  const box = $('wxHours');
+  if (!box || !wxLastRender) return;
+  const same = wxHoursOpen === i && !box.hidden;
+  wxHoursOpen = same ? -1 : i;
+  box.hidden = same;
+  box.innerHTML = same ? '' : wxHoursHtml(wxLastRender, i);
+  document.querySelectorAll('[data-wxday]').forEach(b => {
+    const on = !same && +b.dataset.wxday === i;
+    b.classList.toggle('is-open', on);
+    b.setAttribute('aria-expanded', String(on));
+  });
 }
 function wxIcon(code){
   const label = WMO[code];
@@ -1564,6 +1724,8 @@ function wxRender(place, data){
     + (feels == null ? '' : ' · feels like ' + Math.round(feels) + '°')
     + (wet == null ? '' : ' · ' + (wet > 0 ? wet + ' mm falling now' : 'no rain now'))
     + (cloud == null ? '' : ' · ' + Math.round(cloud) + '% cloud') + '</span></div>';
+  wxLastRender = data;
+  wxHoursOpen = -1;
   html += '<div class="wx-days">'
     + '<div class="wx-tile wx-tile-now"><span class="wx-lab">Now</span>'
     + '<span class="wx-ico" aria-hidden="true">' + esc(wxIcon(cur.weather_code)) + '</span>'
@@ -1573,14 +1735,23 @@ function wxRender(place, data){
     const hi = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[i]) : null;
     const lo = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[i]) : null;
     const pop = pops[i];
-    html += '<div class="wx-tile"><span class="wx-lab">' + esc(wxDayShort(day)) + '</span>'
+    html += '<button type="button" class="wx-tile" data-wxday="' + i + '" aria-expanded="false"'
+      + ' aria-label="' + esc(wxDayLong(day)) + ': show the hourly forecast">'
+      + '<span class="wx-lab">' + esc(wxDayShort(day)) + '</span>'
       + '<span class="wx-ico" aria-hidden="true">' + esc(wxIcon((daily.weather_code || [])[i])) + '</span>'
       + '<b>' + (hi == null || lo == null ? '—' : hi + '°/' + lo + '°') + '</b>'
-      + '<span class="wx-rain">' + (pop == null ? '—' : pop + '%') + '</span></div>';
+      + '<span class="wx-rain">' + (pop == null ? '—' : pop + '%') + '</span></button>';
   });
-  html += '</div>';
+  html += '</div><div id="wxHours" class="wx-hours" hidden></div>';
   wxBody(html);
 }
+
+// One listener on the card covers tiles that are rebuilt on every load.
+$('wxNow').addEventListener('click', e => {
+  const day = e.target.closest('[data-wxday]');
+  if (day) { wxToggleHours(+day.dataset.wxday); return; }
+  if (e.target.closest('#wxHoursClose')) wxToggleHours(wxHoursOpen);
+});
 async function wxLoad(lat, lng, place, btn){
   wxBody('<p class="muted">Loading the forecast for ' + esc(place) + '…</p>');
   wxMsg('');
@@ -1590,6 +1761,8 @@ async function wxLoad(lat, lng, place, btn){
       latitude: (+lat).toFixed(4), longitude: (+lng).toFixed(4),
       current: 'temperature_2m,apparent_temperature,precipitation,weather_code,cloud_cover',
       daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum',
+      // Brought along with the daily rows so opening a day costs no extra call.
+      hourly: 'weather_code,temperature_2m,precipitation_probability',
       temperature_unit: 'fahrenheit', timezone: 'auto', forecast_days: '7'
     });
     const res = await timedFetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
@@ -1669,6 +1842,83 @@ try {
   const last = JSON.parse(localStorage.getItem(WX_LAST) || 'null');
   if (last && last.place) $('wxPlace').value = last.place;
 } catch (e) {}
+
+/* ---------- night forecast, one chip on the stop you sleep at ----------
+   The weather card answers "what is it like right now"; this answers "what will
+   the night we sleep here be like". The trip start plus the day each night falls
+   on comes from planSpans, and one Open-Meteo call covers every stop. */
+var wxNightCache = {};   // 'lat,lng' -> that place's daily block
+var wxNightSig = '';
+
+function wxNightKey(stop){ return (+stop.lat).toFixed(3) + ',' + (+stop.lng).toFixed(3); }
+
+function wxNightsList(){
+  const plan = state.plan || {};
+  const start = plan.start ? new Date(plan.start + 'T12:00:00') : null;
+  if (!start || isNaN(start.getTime()) || state.stops.length < 2) return [];
+  const days = Math.min(60, Math.max(1, +plan.days || 1));
+  const nights = [];
+  planSpans(days).spans.forEach((sp, d) => {
+    const stop = state.stops[sp.to];
+    if (!stop || !Number.isFinite(+stop.lat) || !Number.isFinite(+stop.lng)) return;
+    const date = new Date(start.getTime() + d * 864e5);
+    nights.push({ day: d + 1, stop, date, iso: date.toISOString().slice(0, 10) });
+  });
+  return nights;
+}
+
+function wxNightPaint(){
+  const nights = wxNightsList();
+  const byStop = {};
+  nights.forEach(n => { byStop[state.stops.indexOf(n.stop)] = n; });
+  let shown = 0;
+  document.querySelectorAll('[data-wx]').forEach(el => {
+    const n = byStop[+el.dataset.wx];
+    const block = n ? wxNightCache[wxNightKey(n.stop)] : null;
+    const i = block && block.time ? block.time.indexOf(n.iso) : -1;
+    const lo = i < 0 ? null : block.temperature_2m_min[i];
+    const hi = i < 0 ? null : block.temperature_2m_max[i];
+    if (!n || i < 0 || !Number.isFinite(lo)) { el.hidden = true; el.textContent = ''; return; }
+    const pop = block.precipitation_probability_max ? block.precipitation_probability_max[i] : null;
+    el.textContent = '🌙 Night ' + n.day + ' · ' + fmtDate(n.date) + ' · ' + wxIcon((block.weather_code || [])[i])
+      + ' ' + (Number.isFinite(hi) ? Math.round(hi) + '°/' : '') + Math.round(lo) + '°'
+      + (pop == null ? '' : ' · ' + pop + '% rain');
+    el.hidden = false;
+    shown++;
+  });
+  const note = $('wxNightNote');
+  if (!note) return;
+  note.hidden = shown > 0 || !nights.length;
+  note.textContent = note.hidden ? ''
+    : 'Night forecasts appear once each date is inside Open-Meteo’s 16-day window — this trip is further out than that.';
+}
+
+async function wxNights(){
+  const nights = wxNightsList();
+  if (!nights.length) { wxNightPaint(); return; }
+  const sig = nights.map(n => wxNightKey(n.stop) + '@' + n.iso).join('|');
+  if (sig === wxNightSig) { wxNightPaint(); return; }
+  wxNightSig = sig;
+  const coords = [...new Set(nights.map(n => wxNightKey(n.stop)))].map(k => k.split(','));
+  const isos = nights.map(n => n.iso).sort();
+  const params = new URLSearchParams({
+    latitude: coords.map(c => c[0]).join(','),
+    longitude: coords.map(c => c[1]).join(','),
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
+    temperature_unit: 'fahrenheit', timezone: 'auto',
+    start_date: isos[0], end_date: isos[isos.length - 1]
+  });
+  try {
+    const res = await timedFetch('https://api.open-meteo.com/v1/forecast?' + params.toString());
+    if (!res.ok) throw new Error('forecast unavailable');
+    const data = await res.json();
+    const blocks = Array.isArray(data) ? data : [data];
+    coords.forEach((c, i) => { if (blocks[i] && blocks[i].daily) wxNightCache[c.join(',')] = blocks[i].daily; });
+  } catch (e) {
+    // Too far out is the normal miss; the note under the stops says so.
+  }
+  wxNightPaint();
+}
 
 // Maps stay hidden until they have something to show, which keeps the page short.
 // Leaflet measures the box when it fits, and a map that is still display:none
@@ -1805,12 +2055,13 @@ function renderPlan(){
     const mpg = Math.min(40, Math.max(4, +$('fuelMpg').value || 25));
     const price = Math.max(0, +$('fuelPrice').value || 0);
     const gallons = total.mi / mpg;
+    const fuelCost = gallons * price;
     pr.innerHTML = '<div class="prac-grid"><div><b>' + Math.round(total.mi).toLocaleString() + ' mi</b><span>' + (total.real ? 'driving' : 'est. driving') + '</span></div>'
       + '<div><b>' + (total.real ? minsText(total.mins) : (total.mi / MPH).toFixed(1) + ' h') + '</b><span>behind the wheel</span></div>'
       + '<div><b>' + state.stops.length + '</b><span>stops</span></div>'
       + '<div><b>' + days + '</b><span>days</span></div>'
       + '<div><b>' + Math.round(gallons) + ' gal</b><span>fuel @ ' + mpg + ' mpg</span></div>'
-      + '<div><b>$' + Math.round(gallons * price).toLocaleString() + '</b><span>fuel cost</span></div></div>'
+      + '<div><b>$' + Math.round(fuelCost).toLocaleString() + '</b><span>fuel cost</span></div></div>'
       + foot;
   } else {
     pr.innerHTML = '<p class="muted">Estimates appear once your route has 2+ stops.</p>' + foot;
@@ -1892,10 +2143,11 @@ $('noteList').addEventListener('click', e => {
 });
 
 /* ---------- 6. shared photos ---------- */
-function photoMsg(t){
+function photoMsg(t, warn){
   const m = $('photoMsg');
   m.textContent = t;
-  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
+  m.classList.toggle('msg-warn', !!warn);
+  setTimeout(() => { if (m.textContent === t) { m.textContent = ''; m.classList.remove('msg-warn'); } }, 6000);
 }
 function photoSize(n){ return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
 let activeUpload = null;
@@ -2549,11 +2801,49 @@ function saveRadii(){
   } catch (e) { /* private mode or full storage: the radius just is not remembered */ }
 }
 
-async function findGolfCourses(center, radiusKm){
+// Both course lookups box the same circle; Nominatim wants that box as two
+// lon,lat corners.
+function golfBox(center, radiusKm){
   const dLat = radiusKm / 111;
   const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
-  const bbox = [center.lng - dLon, center.lat - dLat, center.lng + dLon, center.lat + dLat]
-    .map(n => n.toFixed(4)).join(',');
+  return {
+    minLng: center.lng - dLon, minLat: center.lat - dLat,
+    maxLng: center.lng + dLon, maxLat: center.lat + dLat
+  };
+}
+
+// The tag search above only matches names containing the asked-for term, and the
+// public Photon server throttles bursts, so an empty or unreachable answer gets a
+// second opinion from Nominatim, which lists every course inside the same box.
+async function findGolfNominatim(center, radiusKm){
+  const box = golfBox(center, radiusKm);
+  const viewbox = [box.minLng, box.minLat, box.maxLng, box.maxLat].map(n => n.toFixed(4)).join(',');
+  const res = await timedFetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=50&q='
+    + encodeURIComponent('golf course') + '&viewbox=' + viewbox + '&bounded=1');
+  if (!res.ok) throw new Error('The course index is busy right now — try again in a moment.');
+  const rows = await res.json();
+  const seen = new Set();
+  const courses = [];
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (row.type !== 'golf_course') continue;
+    const lat = +row.lat, lng = +row.lon;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    const key = lat.toFixed(4) + '|' + lng.toFixed(4);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    courses.push({
+      name: row.name || (row.display_name || '').split(',')[0] || 'Unnamed golf course',
+      lat,
+      lng,
+      dist: hav(center, { lat, lng })
+    });
+  }
+  return courses;
+}
+
+async function findGolfCourses(center, radiusKm){
+  const box = golfBox(center, radiusKm);
+  const bbox = [box.minLng, box.minLat, box.maxLng, box.maxLat].map(n => n.toFixed(4)).join(',');
 
   // The tag filter only matches names that contain the search term, so ask a few
   // ways a course is usually named and merge the answers.
@@ -2565,8 +2855,10 @@ async function findGolfCourses(center, radiusKm){
 
   const seen = new Set();
   const courses = [];
+  let answered = 0;
   for (const answer of answers) {
     if (answer.status !== 'fulfilled' || !answer.value) continue;
+    answered++;
     for (const feature of answer.value.features || []) {
       const p = feature.properties || {};
       if (p.osm_value !== 'golf_course') continue;
@@ -2579,6 +2871,16 @@ async function findGolfCourses(center, radiusKm){
       courses.push({ name: p.name || 'Unnamed golf course', lat, lng, dist: hav(center, { lat, lng }) });
     }
   }
+  // Nothing back is not the same as nothing there: a throttled or unreachable
+  // answer used to read as "no courses found". Ask the other index before saying
+  // so, and say the index is busy rather than empty if that fails too.
+  if (!courses.length) {
+    try {
+      courses.push(...await findGolfNominatim(center, radiusKm));
+    } catch (err) {
+      if (!answered) throw new Error('The course index is busy right now — try again in a moment.');
+    }
+  }
   courses.sort((a, b) => a.dist - b.dist);
   const nearest = courses.slice(0, 40);
   await attachDriving(center, nearest);
@@ -2588,7 +2890,7 @@ async function findGolfCourses(center, radiusKm){
 
 function selectGolf(i, pan){
   golfSelected = i;
-  [...document.querySelectorAll('#golfList .golf-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  highlightRow('#golfList .golf-item', i);
   const course = golfCourses[i];
   if (!course) return;
   const marker = golfLayer.getLayers()[i];
@@ -2738,6 +3040,121 @@ $('golfFindName').onclick = async () => {
 };
 $('golfName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('golfFindName').click(); } });
 
+/* ---------- 6b. star ratings & list highlighting ---------- */
+// OpenStreetMap has no ratings, so the star figure and the review count come
+// from Yelp when a key was injected at build time. With no key the lists simply
+// carry no stars.
+const YELP_KEY = '__YELP_API_KEY__';
+function yelpKey(){ return YELP_KEY.indexOf('__') === 0 ? '' : YELP_KEY; }
+const ratingCache = new Map();
+const ratingName = n => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+async function ratingsNear(center, radiusKm){
+  const key = yelpKey();
+  if (!key || !center) return [];
+  const cacheKey = [center.lat.toFixed(3), center.lng.toFixed(3), Math.round(radiusKm / 5)].join('|');
+  const cached = ratingCache.get(cacheKey);
+  if (cached) return cached;
+  // Yelp takes at most a 40 km radius and returns fifty businesses, which are the
+  // nearest fifty because the search is sorted by distance.
+  const radius = Math.min(Math.max(Math.round(radiusKm * 1000), 100), 40000);
+  const params = new URLSearchParams({
+    latitude: center.lat.toFixed(5),
+    longitude: center.lng.toFixed(5),
+    radius: String(radius),
+    limit: '50',
+    sort_by: 'distance'
+  });
+  const out = [];
+  try {
+    const res = await timedFetch('https://api.yelp.com/v3/businesses/search?' + params.toString(),
+      { headers: { Authorization: 'Bearer ' + key, Accept: 'application/json' } });
+    if (res.ok) {
+      const data = await res.json();
+      for (const b of data.businesses || []) {
+        const name = b.name || '';
+        if (!name || !(b.rating > 0)) continue;
+        out.push({
+          name,
+          rating: +b.rating,
+          count: +b.review_count || 0,
+          lat: b.coordinates ? +b.coordinates.latitude : NaN,
+          lng: b.coordinates ? +b.coordinates.longitude : NaN
+        });
+      }
+    }
+  } catch (e) { /* no key, no quota or no signal: the list just has no stars */ }
+  if (out.length) ratingCache.set(cacheKey, out);
+  return out;
+}
+
+// A name is not enough to go on (every town has its own Main Street Grill), so a
+// rating is only used when the rated place sits within a couple of hundred yards.
+function attachRatings(places, ratings){
+  if (!places.length || !ratings.length) return;
+  const byName = new Map();
+  ratings.forEach(r => {
+    const k = ratingName(r.name);
+    if (!k) return;
+    if (!byName.has(k)) byName.set(k, []);
+    byName.get(k).push(r);
+  });
+  places.forEach(p => {
+    const list = byName.get(ratingName(p.name));
+    if (!list) return;
+    let best = null, bestMi = Infinity;
+    list.forEach(r => {
+      if (!Number.isFinite(r.lat) || !Number.isFinite(r.lng)) return;
+      const mi = hav(p, { lat: r.lat, lng: r.lng });
+      if (mi < bestMi) { bestMi = mi; best = r; }
+    });
+    if (best && bestMi <= 0.25) { p.rating = best.rating; p.ratingCount = best.count; }
+  });
+}
+
+function ratingChip(place){
+  if (!place || !(place.rating > 0)) return '';
+  const count = place.ratingCount ? ' (' + place.ratingCount.toLocaleString() + ')' : '';
+  return '<span class="rating-chip">★ ' + (+place.rating).toFixed(1) + count + '</span> · ';
+}
+
+const placeByDistance = (a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist);
+const placeByRating = (a, b) => (b.rating || 0) - (a.rating || 0)
+  || (b.ratingCount || 0) - (a.ratingCount || 0)
+  || placeByDistance(a, b);
+
+// The rating sort only appears once there are stars to sort by, so the control is
+// never sitting there doing nothing.
+function syncSortChoice(id, places, creditId){
+  const rated = places.some(p => p.rating > 0);
+  const sel = $(id);
+  if (sel) {
+    sel.hidden = !rated;
+    if (!rated) sel.value = 'distance';
+  }
+  // Yelp's terms ask for the credit wherever their numbers are shown.
+  const credit = creditId ? $(creditId) : null;
+  if (credit) credit.hidden = !rated;
+}
+function sortFoodByChoice(){
+  foodPlaces.sort($('foodSort').value === 'rating' ? placeByRating : placeByDistance);
+  renderFood();
+}
+function sortBarsByChoice(){
+  barPlaces.sort($('barSort').value === 'rating' ? placeByRating : placeByDistance);
+  renderBars();
+}
+
+// A pin on the map should be findable in the list under it: mark that row and
+// bring it into view, so the Add to trip button is right there.
+function highlightRow(selector, i){
+  const rows = [...document.querySelectorAll(selector)];
+  rows.forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  const row = i >= 0 ? rows[i] : null;
+  if (!row || typeof row.scrollIntoView !== 'function') return;
+  try { row.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) { try { row.scrollIntoView(false); } catch (e2) {} }
+}
+
 /* ---------- 7. places to eat ---------- */
 const foodMap = L.map('foodMap').setView([39.5, -98.35], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(foodMap);
@@ -2754,17 +3171,21 @@ const foodKind = type => ({ restaurant: 'restaurant', cafe: 'café', fast_food: 
 
 // Nominatim understands category searches ("restaurant") inside a viewbox, which
 // lists a whole area rather than only names containing the word.
+// A plain category search inside a box ranks by global importance, which buries
+// the small local places. The "near" form ranks by distance instead, so the
+// nearest cafés and diners come back first and the radius is applied here.
 async function nominatim(query, center, radiusKm){
-  const params = new URLSearchParams({ format: 'jsonv2', limit: '40', q: query });
-  if (center) {
-    const dLat = radiusKm / 111;
-    const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
-    params.set('viewbox', [center.lng - dLon, center.lat + dLat, center.lng + dLon, center.lat - dLat].join(','));
-    params.set('bounded', '1');
-  }
+  const near = center ? ' near ' + center.lat.toFixed(4) + ',' + center.lng.toFixed(4) : '';
+  const params = new URLSearchParams({ format: 'jsonv2', limit: '40', q: query + near });
   const res = await timedFetch('https://nominatim.openstreetmap.org/search?' + params.toString());
   if (!res.ok) throw new Error('The restaurant index is busy right now — try again in a moment.');
-  return res.json();
+  const rows = await res.json();
+  if (!center || !Array.isArray(rows)) return rows;
+  const maxMi = radiusKm / 1.609344;
+  return rows.filter(r => {
+    const lat = +r.lat, lng = +r.lon;
+    return Number.isFinite(lat) && Number.isFinite(lng) && hav(center, { lat, lng }) <= maxMi;
+  });
 }
 
 function foodFromNominatim(rows, center){
@@ -2788,14 +3209,53 @@ function foodFromNominatim(rows, center){
   return places;
 }
 
+// One Nominatim answer is capped at fifty places and its ranking buries plenty
+// of real ones, which is why a town's Main Street looked half-empty. The same
+// search is repeated with the ids already seen excluded until it runs dry.
+async function nominatimPages(query, center, radiusKm, pages){
+  const all = [];
+  const ids = [];
+  const near = center ? ' near ' + center.lat.toFixed(4) + ',' + center.lng.toFixed(4) : '';
+  const maxMi = center ? radiusKm / 1.609344 : 0;
+  for (let page = 0; page < pages; page++) {
+    const params = new URLSearchParams({ format: 'jsonv2', limit: '50', q: query + near });
+    if (ids.length) params.set('exclude_place_ids', ids.join(','));
+    const res = await timedFetch('https://nominatim.openstreetmap.org/search?' + params.toString());
+    if (!res.ok) {
+      if (!all.length) throw new Error('The restaurant index is busy right now — try again in a moment.');
+      break;
+    }
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) break;
+    // Distance-ranked answers keep coming, so anything past the chosen radius is
+    // dropped here rather than crowding out the places that are in range.
+    const inRange = center ? rows.filter(r => {
+      const lat = +r.lat, lng = +r.lon;
+      return Number.isFinite(lat) && Number.isFinite(lng) && hav(center, { lat, lng }) <= maxMi;
+    }) : rows;
+    all.push(...inRange);
+    rows.forEach(r => { if (r.place_id) ids.push(r.place_id); });
+    if (rows.length < 50) break;
+    // Nominatim asks for one request a second; the next page waits its turn.
+    await new Promise(r => setTimeout(r, 1100));
+  }
+  return all;
+}
+
 async function findFoodNear(center, radiusKm){
-  // Nominatim asks for one request a second, so the café pass waits its turn
-  // instead of firing alongside the restaurant pass.
-  const places = foodFromNominatim(await nominatim('restaurant', center, radiusKm), center);
-  await new Promise(r => setTimeout(r, 1100));
+  // Walk every page of restaurants, then the cafés and takeaways, so the list is
+  // the town's actual list rather than the fifty names that rank highest.
+  let places = [];
   try {
-    places.push(...foodFromNominatim(await nominatim('cafe', center, radiusKm), center));
-  } catch (e) { /* a café lookup failing should not hide the restaurants */ }
+    places = foodFromNominatim(await nominatimPages('restaurant', center, radiusKm, 2), center);
+  } catch (e) { places = []; }
+  for (const term of ['cafe', 'fast_food']) {
+    try {
+      await new Promise(r => setTimeout(r, 1100));
+      places.push(...foodFromNominatim(await nominatimPages(term, center, radiusKm, 1), center));
+    } catch (e) { /* one category failing should not hide the rest */ }
+  }
+  if (!places.length) places = foodFromNominatim(await nominatim('restaurant', center, radiusKm), center);
   const seen = new Set();
   const merged = places.filter(p => {
     const key = p.name.toLowerCase() + '|' + p.lat.toFixed(4) + '|' + p.lng.toFixed(4);
@@ -2804,9 +3264,11 @@ async function findFoodNear(center, radiusKm){
     return true;
   });
   merged.sort((a, b) => a.dist - b.dist);
-  const nearest = merged.slice(0, 40);
+  const nearest = merged.slice(0, 60);
   await attachDriving(center, nearest);
-  nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  try { attachRatings(nearest, await ratingsNear(center, radiusKm)); }
+  catch (e) { /* stars are a bonus, never a reason to fail the search */ }
+  nearest.sort(placeByDistance);
   return nearest;
 }
 
@@ -2828,7 +3290,7 @@ function foodSubText(place){
 
 function selectFood(i, pan){
   foodSelected = i;
-  [...document.querySelectorAll('#foodList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  highlightRow('#foodList .food-item', i);
   const place = foodPlaces[i];
   if (!place) return;
   const marker = foodLayer.getLayers()[i];
@@ -2844,6 +3306,8 @@ function renderFood(){
 
   if (!foodPlaces.length) {
     el.innerHTML = '<p class="muted">No places found — try a wider radius, or search a place by name.</p>';
+    syncSortChoice('foodSort', foodPlaces, 'foodCredit');
+    applyFoodCollapse();
     return;
   }
 
@@ -2851,7 +3315,7 @@ function renderFood(){
     '<div class="food-item">'
     + '<button type="button" class="food-pick" data-pick="' + i + '">'
     + '<span class="food-name">' + esc(p.name) + '</span>'
-    + '<span class="food-sub">' + esc(foodSubText(p)) + '</span>'
+    + '<span class="food-sub">' + ratingChip(p) + esc(foodSubText(p)) + '</span>'
     + '</button>'
     + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(p.name) + '">🗺️</button>'
     + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(p.name) + ' to the trip">Add to trip</button>'
@@ -2866,6 +3330,8 @@ function renderFood(){
 
   fitMap(foodMap, foodPlaces.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
   revealMap(foodMap, 'foodMap');
+  syncSortChoice('foodSort', foodPlaces, 'foodCredit');
+  applyFoodCollapse();
 }
 
 $('foodList').addEventListener('click', async e => {
@@ -2923,7 +3389,7 @@ async function findFoodPlaces(){
     const center = foodPin
       ? { name: 'the map pin', lat: foodPin.lat, lng: foodPin.lng }
       : await geocode(place);
-    foodMsg('Looking for places to eat near ' + center.name + '…');
+    foodMsg('Listing every place to eat near ' + center.name + ' — a few seconds…');
     // The options read miles but the lookup takes kilometres — without this,
     // "within 10 mi" only searched about 6 miles.
     const found = await findFoodNear(center, +$('foodRadius').value * 1.609344);
@@ -2944,6 +3410,8 @@ $('foodQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.pre
 
 $('foodRadius').addEventListener('change', saveRadii);
 $('golfRadius').addEventListener('change', saveRadii);
+if ($('foodSort')) $('foodSort').addEventListener('change', sortFoodByChoice);
+if ($('barSort')) $('barSort').addEventListener('change', sortBarsByChoice);
 
 $('foodFindName').onclick = async () => {
   const btn = $('foodFindName');
@@ -2967,6 +3435,545 @@ $('foodFindName').onclick = async () => {
   }
 };
 $('foodName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('foodFindName').click(); } });
+
+/* ---------- 7b. bars, clubs & after dark ---------- */
+const barMap = L.map('barMap').setView([39.5, -98.35], 4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(barMap);
+const barLayer = L.layerGroup().addTo(barMap);
+let barPlaces = [], barAnchor = null, barPin = null, barPinMarker = null;
+
+let barMsgTimer = 0;
+// Progress has to stay on screen: the old version blanked its own "looking…"
+// line after nine seconds, which is exactly when a queued venue index looks
+// like nothing is happening.
+function barMsg(t, sticky){
+  const m = $('barMsg');
+  m.textContent = t;
+  clearTimeout(barMsgTimer);
+  if (sticky) return;
+  barMsgTimer = setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 9000);
+}
+
+// Three kinds sit behind the 18+ disclosure in the panel. The search asks for
+// them in the same request, but the list and the map leave them out until one
+// of the boxes is ticked, so they never appear by accident.
+const BAR_ADULT = ['strip club', 'adult shop', 'casino'];
+function nightChecked(){
+  const on = new Set();
+  document.querySelectorAll('[data-night]').forEach(cb => { if (cb.checked) on.add(cb.dataset.night); });
+  return on;
+}
+function nightKindOf(tags){
+  const shop = tags.shop || '', a = tags.amenity || '';
+  if (shop === 'erotic' || shop === 'sex_shop' || a === 'adult_gaming_centre') return 'adult shop';
+  // Restaurants only reach this list when their name carries "Bar" or
+  // "Tavern", so they are bars as far as the crew is concerned.
+  return ({ bar: 'bar', pub: 'pub', nightclub: 'club', music_venue: 'live music', strip_club: 'strip club', casino: 'casino', restaurant: 'bar' })[a]
+    || (a || shop || 'venue').replace(/_/g, ' ');
+}
+
+// Overpass lists everything of a kind in an area, which Nominatim's category
+// search cannot do. It also has busy days, so the mirrors get a turn.
+const OVERPASS_HOSTS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter'
+];
+// Exact tag matches use the index; a regex on amenity makes the server scan the
+// area, which is most of why this search used to sit and spin.
+const OVERPASS_TAGS = ['amenity=bar', 'amenity=pub', 'amenity=nightclub', 'amenity=music_venue',
+  'amenity=strip_club', 'amenity=casino', 'shop=erotic', 'shop=sex_shop',
+  // Plenty of bars are tagged as a restaurant that happens to have "Bar" in the
+  // name (Kai Restaurant and Bar), so those are asked for by name as well.
+  '["amenity"="restaurant"]["name"~"(^| )(bar|tavern)( |$)",i]'];
+async function overpassSearch(center, radiusKm, progress, startAt, tries){
+  const around = Math.round(radiusKm * 1000) + ',' + center.lat.toFixed(5) + ',' + center.lng.toFixed(5);
+  const q = '[out:json][timeout:20];('
+    + OVERPASS_TAGS.map(tag => {
+      // A clause starting with "[" carries its own filters, e.g. a name match.
+      if (tag.charAt(0) === '[') return 'nwr' + tag + '(around:' + around + ');';
+      const [key, value] = tag.split('=');
+      return 'nwr["' + key + '"="' + value + '"](around:' + around + ');';
+    }).join('')
+    + ');out tags center 150;';
+  const from = startAt || 0;
+  const end = Math.min(OVERPASS_HOSTS.length, from + (tries || OVERPASS_HOSTS.length));
+  for (let i = from; i < end; i++) {
+    if (progress) progress(i + 1, OVERPASS_HOSTS.length);
+    // Overpass queues requests and can take longer than a normal lookup, so it
+    // gets its own deadline instead of the page-wide 12 s one.
+    const signal = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function')
+      ? AbortSignal.timeout(12000) : undefined;
+    try {
+      const res = await fetch(OVERPASS_HOSTS[i], {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'Accept': 'application/json' },
+        body: 'data=' + encodeURIComponent(q),
+        signal: signal
+      });
+      if (res.ok) return await res.json();
+    } catch (e) { /* a mirror that is down or slow hands over to the next one */ }
+  }
+  throw new Error('busy');
+}
+
+function barsFromOverpass(data, center){
+  const seen = new Set();
+  const out = [];
+  for (const el of (data && data.elements) || []) {
+    const tags = el.tags || {};
+    const name = (tags.name || '').trim();
+    if (!name) continue;
+    const lat = Number.isFinite(el.lat) ? el.lat : (el.center && el.center.lat);
+    const lng = Number.isFinite(el.lon) ? el.lon : (el.center && el.center.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    const key = name.toLowerCase() + '|' + lat.toFixed(4) + '|' + lng.toFixed(4);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const kind = nightKindOf(tags);
+    out.push({
+      name, kind,
+      adult: BAR_ADULT.indexOf(kind) >= 0,
+      lat, lng,
+      dist: center ? hav(center, { lat, lng }) : null,
+      where: [tags['addr:housenumber'], tags['addr:street'], tags['addr:city']].filter(Boolean).join(' ')
+    });
+  }
+  return out;
+}
+
+// Overpass is the only list that carries clubs and strip clubs, but it has busy
+// days. Nominatim's category search always answers, so a failed Overpass still
+// returns bars rather than an empty screen.
+async function barsFromNominatim(center, radiusKm){
+  const out = [];
+  const seen = new Set();
+  for (const [term, kind, adult] of [['bar', 'bar', false], ['casino', 'casino', true]]) {
+    try {
+      foodFromNominatim(await nominatim(term, center, radiusKm), center).forEach(p => {
+        const key = p.name.toLowerCase() + '|' + p.lat.toFixed(4) + '|' + p.lng.toFixed(4);
+        if (seen.has(key)) return;
+        seen.add(key);
+        out.push({ name: p.name, kind: kind, adult: adult, lat: p.lat, lng: p.lng, dist: p.dist, where: p.where });
+      });
+    } catch (e) { /* one category failing should not hide the other */ }
+    await new Promise(r => setTimeout(r, 1100));
+  }
+  return out;
+}
+
+// The fallback list is bars only. If the venue index answers a moment later, its
+// fuller list quietly replaces the basic one without anyone pressing anything.
+async function upgradeBarsInBackground(center, radiusKm, hadCount){
+  try {
+    const full = barsFromOverpass(await overpassSearch(center, radiusKm, null, 1, 1), center);
+    if (full.length <= hadCount) return;
+    full.sort((a, b) => a.dist - b.dist);
+    const nearest = full.slice(0, 60);
+    await attachDriving(center, nearest);
+    nearest.sort(placeByDistance);
+    try { attachRatings(nearest, await ratingsNear(center, radiusKm)); }
+    catch (e) { /* stars are a bonus, never a reason to fail the search */ }
+    if (!barPlaces.length) return; // they have moved on to another search
+    barPlaces = nearest;
+    renderBars();
+    const shown = visibleBars().length;
+    barMsg('The full venue list arrived: ' + shown + ' place' + (shown === 1 ? '' : 's')
+      + ' within ' + Math.round(radiusKm / 1.609344) + ' mi' + (shown < nearest.length ? ' (18+ still hidden).' : '.'));
+  } catch (e) { /* the basic list simply stays */ }
+}
+
+// A bar with a kitchen is usually tagged as a restaurant, so the venue index
+// never lists it as a bar. One name search over restaurants inside the same box
+// catches those (Kai Restaurant and Bar among them).
+async function barsFromPhoton(center, radiusKm){
+  const box = golfBox(center, radiusKm);
+  const bbox = [box.minLng, box.minLat, box.maxLng, box.maxLat].map(n => n.toFixed(4)).join(',');
+  const out = [];
+  try {
+    const res = await timedFetch('https://photon.komoot.io/api/?limit=30&lang=en&osm_tag=amenity:restaurant&bbox=' + bbox + '&q=' + encodeURIComponent('bar'));
+    if (!res.ok) return out;
+    const data = await res.json();
+    for (const feature of data.features || []) {
+      const p = feature.properties || {};
+      const name = (p.name || '').trim();
+      if (!name || !/\b(bar|tavern)\b/i.test(name)) continue;
+      const coords = (feature.geometry && feature.geometry.coordinates) || [];
+      const lat = +coords[1], lng = +coords[0];
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+      out.push({
+        name, kind: 'bar', adult: false, lat, lng,
+        dist: hav(center, { lat, lng }),
+        where: [p.street, p.city, p.state].filter(Boolean).join(', ')
+      });
+    }
+  } catch (e) { /* one source failing should not empty the list */ }
+  return out;
+}
+
+async function findBarsNear(center, radiusKm, progress){
+  let found = null, partial = false;
+  try {
+    // One mirror in the foreground: a second one is tried behind the fallback
+    // list rather than making everyone wait for both.
+    found = barsFromOverpass(await overpassSearch(center, radiusKm, progress, 0, 1), center);
+  } catch (e) {
+    if (progress) progress('fallback');
+    found = await barsFromNominatim(center, radiusKm);
+    partial = true;
+    upgradeBarsInBackground(center, radiusKm, found.length);
+  }
+  // Restaurant-bars are asked for either way, so they show up even on a day the
+  // venue index is unreachable.
+  const seen = new Set(found.map(b => b.name.toLowerCase() + '|' + b.lat.toFixed(3) + '|' + b.lng.toFixed(3)));
+  for (const extra of await barsFromPhoton(center, radiusKm)) {
+    const key = extra.name.toLowerCase() + '|' + extra.lat.toFixed(3) + '|' + extra.lng.toFixed(3);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    found.push(extra);
+  }
+  found.sort((a, b) => a.dist - b.dist);
+  const nearest = found.slice(0, 60);
+  await attachDriving(center, nearest);
+  nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  nearest.partial = partial;
+  try { attachRatings(nearest, await ratingsNear(center, radiusKm)); }
+  catch (e) { /* stars are a bonus, never a reason to fail the search */ }
+  return nearest;
+}
+
+function barSubText(place){
+  const bits = [place.kind];
+  if (place.dist === null || place.dist === undefined) {
+    if (place.where) bits.push(place.where);
+  } else {
+    bits.push(distanceLabel(place, barAnchor || 'search'));
+  }
+  return bits.join(' · ');
+}
+
+function visibleBars(){
+  const on = nightChecked();
+  return barPlaces.filter(p => !p.adult || on.has(p.kind));
+}
+
+function selectBar(place){
+  if (!place || !place._marker) return;
+  // The list hides filtered venues, so find the row by the place's own index
+  // instead of by its position in the visible rows.
+  const rows = [...document.querySelectorAll('#barList .food-item')];
+  const idx = rows.findIndex(row => {
+    const pick = row.querySelector('[data-pick]');
+    return pick && +pick.dataset.pick === barPlaces.indexOf(place);
+  });
+  highlightRow('#barList .food-item', idx);
+  barMap._rtFit = null;
+  barMap.setView([place.lat, place.lng], Math.max(barMap.getZoom(), 14));
+  place._marker.openPopup();
+}
+
+function renderBars(){
+  const el = $('barList');
+  barLayer.clearLayers();
+  if (!barPlaces.length) {
+    el.innerHTML = '<p class="muted">No bars found — try a wider radius, or search a bigger town.</p>';
+    applyBarCollapse();
+    return;
+  }
+  const rows = visibleBars();
+  if (!rows.length) {
+    el.innerHTML = '<p class="muted">Only 18+ places matched — open “18+ after dark” above to see them.</p>';
+    applyBarCollapse();
+    return;
+  }
+
+  el.innerHTML = rows.map(p => {
+    const i = barPlaces.indexOf(p);
+    return '<div class="food-item">'
+      + '<button type="button" class="food-pick" data-pick="' + i + '">'
+      + '<span class="food-name">' + esc(p.name) + '</span>'
+      + '<span class="food-sub">' + ratingChip(p) + esc(barSubText(p)) + '</span>'
+      + '</button>'
+      + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(p.name) + '">🗺️</button>'
+      + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(p.name) + ' to the trip">Add to trip</button>'
+      + '</div>';
+  }).join('');
+
+  rows.forEach(p => {
+    p._marker = L.circleMarker([p.lat, p.lng], { radius: 7, color: '#a78bfa', weight: 2, fillColor: '#a78bfa', fillOpacity: 0.55 })
+      .addTo(barLayer)
+      .bindPopup('<b>' + esc(p.name) + '</b><br><span class="muted">' + esc(barSubText(p)) + '</span>')
+      .on('click', () => selectBar(p));
+  });
+
+  fitMap(barMap, rows.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
+  revealMap(barMap, 'barMap');
+  syncSortChoice('barSort', rows, 'barCredit');
+  applyBarCollapse();
+}
+
+$('barList').addEventListener('click', async e => {
+  if (handleMapMenuClick(e)) return;
+  const trig = e.target.closest('[data-maptrig]');
+  if (trig) { openMapMenu(trig, barPlaces[+trig.dataset.maptrig]); return; }
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { selectBar(barPlaces[+pick.dataset.pick]); return; }
+  const add = e.target.closest('[data-add]');
+  if (!add) return;
+  const place = barPlaces[+add.dataset.add];
+  if (!place) return;
+  add.disabled = true;
+  const ok = await write('POST', '/api/stops', { name: place.name, lat: place.lat, lng: place.lng });
+  add.disabled = false;
+  barMsg(ok ? place.name + ' added to your route.' : 'Could not add that place.');
+});
+
+function clearBarPin(){
+  barPin = null;
+  if (barPinMarker) { barMap.removeLayer(barPinMarker); barPinMarker = null; }
+  $('barPinState').textContent = '';
+}
+
+function setBarPin(lat, lng){
+  barPin = { lat, lng };
+  if (barPinMarker) barMap.removeLayer(barPinMarker);
+  $('barPinState').textContent = 'Search pin at ' + lat.toFixed(3) + ', ' + lng.toFixed(3) + ' — press Find bars to search around it.';
+  barPinMarker = L.marker([lat, lng], { draggable: true }).addTo(barMap)
+    .bindPopup('Search pin — drag to move, then press Find bars.');
+  barPinMarker.on('dragend', ev => {
+    const moved = ev.target.getLatLng();
+    barPin = { lat: moved.lat, lng: moved.lng };
+    $('barPinState').textContent = 'Search pin at ' + barPin.lat.toFixed(3) + ', ' + barPin.lng.toFixed(3) + ' — press Find bars to search around it.';
+    barMsg('Pin moved — press Find bars to search here.');
+  });
+  barPinMarker.openPopup();
+  barMsg('Pin set — press Find bars to search around it.');
+}
+
+barMap.on('click', e => setBarPin(e.latlng.lat, e.latlng.lng));
+$('barClearPin').onclick = () => {
+  if (!barPin) { barMsg('No pin set — click the map to drop one.'); return; }
+  clearBarPin();
+  barMsg('Pin cleared — search uses the typed area again.');
+};
+$('barQuery').addEventListener('input', () => { if (barPin) clearBarPin(); });
+
+$('barFind').onclick = async () => {
+  const btn = $('barFind');
+  const place = $('barQuery').value.trim();
+  if (!barPin && !place) { barMsg('Type a town or area, or click the map to drop a search pin.'); return; }
+  const label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Searching…';
+  try {
+    const center = barPin
+      ? { name: 'the map pin', lat: barPin.lat, lng: barPin.lng }
+      : await geocode(place);
+    const miles = +$('barRadius').value;
+    barMsg('Looking for bars within ' + miles + ' mi of ' + center.name + '…', true);
+    // The options read miles and the lookup takes kilometres.
+    const found = await findBarsNear(center, miles * 1.609344, step => {
+      if (step === 'fallback') barMsg('The venue index is busy — falling back to a simpler bar list…', true);
+      else barMsg('Asking the venue index (mirror ' + step + ' of ' + OVERPASS_HOSTS.length + ')…', true);
+    });
+    barAnchor = center.name;
+    barPlaces = found;
+    renderBars();
+    const shown = visibleBars().length;
+    barMsg(!found.length
+      ? 'Nothing found within ' + miles + ' mi of ' + center.name + ' — try a wider radius.'
+      : shown + ' place' + (shown === 1 ? '' : 's') + ' within ' + miles + ' mi of ' + center.name + '.'
+        + (shown < found.length ? ' Some 18+ places are hidden until you tick them above.' : '')
+        + (found.partial ? ' The full venue index was busy, so this is the basic bar list — clubs and strip clubs need it, and a retry in a minute usually gets them.' : ''));
+  } catch (err) {
+    barMsg(err && err.message && err.message !== 'busy'
+      ? err.message
+      : 'Could not reach the venue index — check your signal and try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = label;
+  }
+};
+$('barQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('barFind').click(); } });
+
+document.querySelectorAll('[data-night]').forEach(cb => cb.addEventListener('change', () => {
+  if (!barPlaces.length) return;
+  renderBars();
+  barMsg('Showing ' + visibleBars().length + ' place' + (visibleBars().length === 1 ? '' : 's') + ' at this radius.');
+}));
+
+/* ---------- 7c. breweries (Open Brewery DB) ---------- */
+const brewMap = L.map('brewMap').setView([39.5, -98.35], 4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(brewMap);
+const brewLayer = L.layerGroup().addTo(brewMap);
+let brewPlaces = [], brewAnchor = null, brewPin = null, brewPinMarker = null;
+
+function brewMsg(t){
+  const m = $('brewMsg');
+  m.textContent = t;
+  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 9000);
+}
+
+const BREW_KIND = {
+  micro: 'microbrewery', nano: 'nanobrewery', regional: 'regional brewery', brewpub: 'brewpub',
+  large: 'large brewery', planning: 'planned', bar: 'brewery bar', contract: 'contract brewer',
+  proprietor: 'no taproom', taproom: 'taproom'
+};
+
+// The API is keyless and answers nearest-first from a point, but it no longer
+// takes a radius (asking for one redirects to the docs), so the radius is
+// applied here against a page of the 50 closest.
+async function findBreweriesNear(center, radiusMi){
+  const url = 'https://api.openbrewerydb.org/v1/breweries?by_dist='
+    + center.lat.toFixed(5) + ',' + center.lng.toFixed(5) + '&per_page=50';
+  const res = await timedFetch(url);
+  if (!res.ok) throw new Error('The brewery list is busy right now — try again in a moment.');
+  const rows = await res.json();
+  if (!Array.isArray(rows)) throw new Error('The brewery list answered with something unexpected.');
+  const seen = new Set();
+  const out = [];
+  for (const r of rows) {
+    const lat = +r.latitude, lng = +r.longitude;
+    if (!r.name || !Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    // Closed breweries stay in the dataset; nobody wants to drive to one.
+    if (String(r.brewery_type || '').toLowerCase() === 'closed') continue;
+    const key = r.name.toLowerCase() + '|' + lat.toFixed(4) + '|' + lng.toFixed(4);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const dist = hav(center, { lat, lng });
+    if (dist > radiusMi) continue;
+    out.push({
+      name: r.name,
+      kind: BREW_KIND[r.brewery_type] || String(r.brewery_type || 'brewery').replace(/_/g, ' '),
+      lat, lng, dist,
+      where: [r.address_1, r.city, r.state_province].filter(Boolean).join(', ')
+    });
+  }
+  out.sort((a, b) => a.dist - b.dist);
+  await attachDriving(center, out);
+  out.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  return out;
+}
+
+function brewSubText(place){
+  const bits = [place.kind];
+  if (place.dist === null || place.dist === undefined) {
+    if (place.where) bits.push(place.where);
+  } else {
+    bits.push(distanceLabel(place, brewAnchor || 'search'));
+    if (place.where) bits.push(place.where);
+  }
+  return bits.join(' · ');
+}
+
+function selectBrew(place){
+  if (!place || !place._marker) return;
+  brewMap._rtFit = null;
+  brewMap.setView([place.lat, place.lng], Math.max(brewMap.getZoom(), 14));
+  place._marker.openPopup();
+}
+
+function renderBrews(){
+  const el = $('brewList');
+  brewLayer.clearLayers();
+  if (!brewPlaces.length) {
+    el.innerHTML = '<p class="muted">No breweries found — try a wider radius, or search a bigger town.</p>';
+    applyBrewCollapse();
+    return;
+  }
+
+  el.innerHTML = brewPlaces.map((p, i) =>
+    '<div class="food-item">'
+    + '<button type="button" class="food-pick" data-pick="' + i + '">'
+    + '<span class="food-name">' + esc(p.name) + '</span>'
+    + '<span class="food-sub">' + esc(brewSubText(p)) + '</span>'
+    + '</button>'
+    + '<button type="button" class="small ghost" data-maptrig="' + i + '" aria-label="Map options for ' + esc(p.name) + '">🗺️</button>'
+    + '<button type="button" class="small" data-add="' + i + '" aria-label="Add ' + esc(p.name) + ' to the trip">Add to trip</button>'
+    + '</div>').join('');
+
+  brewPlaces.forEach((p, i) => {
+    p._marker = L.circleMarker([p.lat, p.lng], { radius: 7, color: '#fbbf24', weight: 2, fillColor: '#fbbf24', fillOpacity: 0.55 })
+      .addTo(brewLayer)
+      .bindPopup('<b>' + esc(p.name) + '</b><br><span class="muted">' + esc(brewSubText(p)) + '</span>')
+      .on('click', () => selectBrew(brewPlaces[i]));
+  });
+
+  fitMap(brewMap, brewPlaces.map(p => [p.lat, p.lng]), { maxSpread: 400, maxZoom: 14 });
+  revealMap(brewMap, 'brewMap');
+  applyBrewCollapse();
+}
+
+$('brewList').addEventListener('click', async e => {
+  if (handleMapMenuClick(e)) return;
+  const trig = e.target.closest('[data-maptrig]');
+  if (trig) { openMapMenu(trig, brewPlaces[+trig.dataset.maptrig]); return; }
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { selectBrew(brewPlaces[+pick.dataset.pick]); return; }
+  const add = e.target.closest('[data-add]');
+  if (!add) return;
+  const place = brewPlaces[+add.dataset.add];
+  if (!place) return;
+  add.disabled = true;
+  const ok = await write('POST', '/api/stops', { name: place.name, lat: place.lat, lng: place.lng });
+  add.disabled = false;
+  brewMsg(ok ? place.name + ' added to your route.' : 'Could not add that place.');
+});
+
+function clearBrewPin(){
+  brewPin = null;
+  if (brewPinMarker) { brewMap.removeLayer(brewPinMarker); brewPinMarker = null; }
+  $('brewPinState').textContent = '';
+}
+
+function setBrewPin(lat, lng){
+  brewPin = { lat, lng };
+  if (brewPinMarker) brewMap.removeLayer(brewPinMarker);
+  $('brewPinState').textContent = 'Search pin at ' + lat.toFixed(3) + ', ' + lng.toFixed(3) + ' — press Find breweries to search around it.';
+  brewPinMarker = L.marker([lat, lng], { draggable: true }).addTo(brewMap)
+    .bindPopup('Search pin — drag to move, then press Find breweries.');
+  brewPinMarker.on('dragend', ev => {
+    const moved = ev.target.getLatLng();
+    brewPin = { lat: moved.lat, lng: moved.lng };
+    $('brewPinState').textContent = 'Search pin at ' + brewPin.lat.toFixed(3) + ', ' + brewPin.lng.toFixed(3) + ' — press Find breweries to search around it.';
+    brewMsg('Pin moved — press Find breweries to search here.');
+  });
+  brewPinMarker.openPopup();
+  brewMsg('Pin set — press Find breweries to search around it.');
+}
+
+brewMap.on('click', e => setBrewPin(e.latlng.lat, e.latlng.lng));
+$('brewClearPin').onclick = () => {
+  if (!brewPin) { brewMsg('No pin set — click the map to drop one.'); return; }
+  clearBrewPin();
+  brewMsg('Pin cleared — search uses the typed area again.');
+};
+$('brewQuery').addEventListener('input', () => { if (brewPin) clearBrewPin(); });
+
+$('brewFind').onclick = async () => {
+  const btn = $('brewFind');
+  const place = $('brewQuery').value.trim();
+  if (!brewPin && !place) { brewMsg('Type a town or area, or click the map to drop a search pin.'); return; }
+  btn.disabled = true;
+  try {
+    const center = brewPin
+      ? { name: 'the map pin', lat: brewPin.lat, lng: brewPin.lng }
+      : await geocode(place);
+    const radius = +$('brewRadius').value;
+    brewMsg('Looking for breweries near ' + center.name + '…');
+    const found = await findBreweriesNear(center, radius);
+    brewAnchor = center.name;
+    brewPlaces = found;
+    renderBrews();
+    brewMsg(found.length
+      ? found.length + ' brewer' + (found.length === 1 ? 'y' : 'ies') + ' within ' + radius + ' mi of ' + center.name + '.'
+      : 'No breweries within ' + radius + ' mi of ' + center.name + ' — try a wider radius.');
+  } catch (err) {
+    brewMsg(err && err.message ? err.message : 'Could not search for breweries right now.');
+  } finally {
+    btn.disabled = false;
+  }
+};
+$('brewQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('brewFind').click(); } });
 
 /* ---------- 8. campgrounds & rest areas ---------- */
 const campMap = L.map('campMap').setView([39.5, -98.35], 4);
@@ -3055,7 +4062,7 @@ async function campsNear(anchor, radiusKm){
 let campSelected = -1;
 function selectCamp(i, pan){
   campSelected = i;
-  [...document.querySelectorAll('#campList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  highlightRow('#campList .food-item', i);
   const site = campSites[i];
   if (!site) return;
   const marker = campLayer.getLayers()[i];
@@ -3213,7 +4220,7 @@ const hotelLayer = L.layerGroup().addTo(hotelMap);
 
 function selectHotel(i, pan){
   hotelSelected = i;
-  [...document.querySelectorAll('#hotelList .food-item')].forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  highlightRow('#hotelList .food-item', i);
   const hotel = hotelResults[i];
   if (!hotel) return;
   const marker = hotelLayer.getLayers()[i];
@@ -3359,7 +4366,9 @@ function eventLinks(area, date){
     + '</div>';
 }
 async function seatGeekEvents(place, date, miles){
-  const url = 'https://api.seatgeek.com/2/events?client_id=' + SEATGEEK_ID + '&lat=' + place.lat + '&lon=' + place.lng + '&range=' + miles + 'mi&datetime_local.gte=' + date + 'T00:00:00&datetime_local.lte=' + date + 'T23:59:59&taxonomies.name=sports&per_page=50&sort=datetime_local.asc';
+  const client = seatGeekId();
+  if (!client) return [];
+  const url = 'https://api.seatgeek.com/2/events?client_id=' + encodeURIComponent(client) + '&lat=' + place.lat + '&lon=' + place.lng + '&range=' + miles + 'mi&datetime_local.gte=' + date + 'T00:00:00&datetime_local.lte=' + date + 'T23:59:59&taxonomies.name=sports&per_page=50&sort=datetime_local.asc';
   const res = await timedFetch(url);
   const data = await res.json();
   if (!res.ok) throw new Error('SeatGeek failed');
@@ -3472,7 +4481,7 @@ $('eventFind').onclick = async () => {
     const sg = results[1].status === 'fulfilled' ? results[1].value : [];
     const seen = new Set();
     const merged = [];
-    (tm.events || []).forEach(ev => { ev.source = ev.source || 'TM'; const k = (ev.name + '|' + ev.venue + '|' + ev.time).toLowerCase(); if (!seen.has(k)) { seen.add(k); merged.push(ev); } });
+    (tm.events || []).forEach(ev => { ev.source = ev.source || 'Ticketmaster'; const k = (ev.name + '|' + ev.venue + '|' + ev.time).toLowerCase(); if (!seen.has(k)) { seen.add(k); merged.push(ev); } });
     sg.forEach(ev => { const k = (ev.name + '|' + ev.venue + '|' + ev.time).toLowerCase(); if (!seen.has(k)) { seen.add(k); merged.push(ev); } });
     merged.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
     eventsMsg('');
@@ -3531,15 +4540,21 @@ acSetup($('eventArea'), { cityFirst: true });
     }
     mark.forEach(a => a.setAttribute('aria-current', 'true'));
   };
-  // The sidebar preselects what you clicked, the same way the top bar does.
-  window.markNavCurrent = setCurrent;
+  // The sidebar preselects what you clicked, the same way the top bar does, and
+  // holds it while the smooth scroll settles so the scroll tracker cannot put
+  // the previous section back.
+  window.markNavCurrent = (id) => { setCurrent(id); hold = Date.now() + 1600; };
 
   // Whichever section sits above the bottom of the sticky bar is the one you are in.
   const mark = () => {
     queued = false;
     // A section counts as current once it has landed near the bar, which is
-    // where scroll-margin-top puts it after a jump.
-    const line = (bar ? bar.getBoundingClientRect().bottom : 0) + 60;
+    // where scroll-margin-top puts it after a jump. In sidebar mode the top bar
+    // is display:none, so its edge is the top of the page and the 72px scroll
+    // margin left the target just below the line — the previous section stayed
+    // marked (Estimates, then Food, lit up Photos).
+    const barBottom = (bar && bar.offsetParent !== null) ? bar.getBoundingClientRect().bottom : 0;
+    const line = barBottom + 80;
     let current = sections[0];
     for (const section of sections) {
       if (section.getBoundingClientRect().top <= line) current = section;
@@ -3602,6 +4617,7 @@ function extraDefaults(){
     depart: '08:00',
     dayDepart: {},
     budget: { lodging: 0, food: 0, tolls: 0, propane: 0, fun: 0, misc: 0 },
+    budgetLines: [],
     players: { Nate: 17.3, Kyle: 24.0, Chuck: 31, Justin: 10.4 },
     bets: [],
     drive: { clientId: '', folderId: '', clientSecret: '', ownerRefresh: '', ownerEmail: '', auto: false },
@@ -3622,6 +4638,7 @@ function readExtras(){
   metaNoteId = note ? note.id : null;
   let data = {};
   if (note) { try { data = JSON.parse(note.body.slice(META_PREFIX.length)) || {}; } catch (e) { data = {}; } }
+  budgetShared = Array.isArray(data.budgetLines);
   const d = extraDefaults();
   extra = {
     rv: Object.assign(d.rv, data.rv || {}),
@@ -3629,14 +4646,30 @@ function readExtras(){
     depart: /^\d{1,2}:\d{2}$/.test(data.depart || '') ? data.depart : '08:00',
     dayDepart: (data.dayDepart && typeof data.dayDepart === 'object' && !Array.isArray(data.dayDepart)) ? data.dayDepart : {},
     budget: Object.assign(d.budget, data.budget || {}),
+    budgetLines: budgetShared ? data.budgetLines : [],
     players: Object.assign(d.players, data.players || {}),
     bets: Array.isArray(data.bets) ? data.bets : [],
     drive: Object.assign(d.drive, data.drive || {}),
     driveFiles: (data.driveFiles && typeof data.driveFiles === 'object') ? data.driveFiles : {}
   };
+  /* Budget lines used to live only on the device that typed them. The first time
+     a browser sees an empty shared copy it promotes what it has locally, so
+     nobody loses the lines already entered. The flag stops a later deletion
+     from being undone by an old local cache. */
+  /* Shared lines always win. A copy written before the ledger was shared has no
+     budgetLines key at all, so only that older shape falls back to the local
+     copy, and it pushes those lines up once. After that the note is the owner. */
+  if (!budgetShared) {
+    const local = localBudget();
+    if (local.length) {
+      extra.budgetLines = local;
+      queueExtraSave();
+    }
+  }
 }
 
 let extraSaveTimer = null;
+var budgetShared = false;
 function queueExtraSave(){ clearTimeout(extraSaveTimer); extraSaveTimer = setTimeout(saveExtras, 650); }
 
 async function saveExtras(){
@@ -3711,14 +4744,26 @@ function money(n){
 const TRAVELERS = 4;
 const BUDGET_KEY = 'budgetEntries';
 
-function budgetEntries(){
+/* The lines ride in the same shared note as the RV profile, so every phone shows
+   the same ledger. The note wins whenever it carries the key; localStorage is
+   only the fallback for an older note and the cache for the first paint. */
+function localBudget(){
   try {
     const raw = JSON.parse(localStorage.getItem(BUDGET_KEY) || '[]');
     return Array.isArray(raw) ? raw : [];
   } catch (e) { return []; }
 }
+function budgetEntries(){
+  if (extra && budgetShared) return extra.budgetLines;
+  return localBudget();
+}
 function saveBudgetEntries(list){
   try { localStorage.setItem(BUDGET_KEY, JSON.stringify(list)); } catch (e) {}
+  if (extra) {
+    extra.budgetLines = list;
+    budgetShared = true;
+    queueExtraSave();
+  }
 }
 function budgetTotal(){
   return budgetEntries().reduce((s, e) => s + (+e.amt || 0), 0);
@@ -3752,13 +4797,55 @@ function collapseSection(wrapId, btnId, count, limit, openLabel, closeLabel){
 }
 function applyStopsCollapse(){ collapseSection('stopsWrap', 'toggleStops', state.stops.length, 2, 'Show all stops ▾', 'Hide stops ▴'); }
 function applyBudgetCollapse(){ collapseSection('budgetWrap', 'toggleBudget', budgetEntries().length, 3, 'Show entries ▾', 'Hide entries ▴'); }
+function applyFoodCollapse(){
+  const n = foodPlaces.length;
+  collapseSection('foodWrap', 'toggleFood', n, 3, 'Show all ' + n + ' places ▾', 'Hide places ▴');
+}
+function applyBarCollapse(){
+  const n = visibleBars().length;
+  collapseSection('barWrap', 'toggleBar', n, 3, 'Show all ' + n + ' bars ▾', 'Hide bars ▴');
+}
+function applyBrewCollapse(){
+  const n = brewPlaces.length;
+  collapseSection('brewWrap', 'toggleBrew', n, 3, 'Show all ' + n + ' breweries ▾', 'Hide breweries ▴');
+}
 /* The open/closed choice survives re-renders of the same list. */
 function toggleCollapse(wrapId){
   const wrap = $(wrapId);
   if (!wrap) return;
   wrap.dataset.open = wrap.classList.contains('expanded') ? '0' : '1';
-  if (wrapId === 'stopsWrap') applyStopsCollapse(); else applyBudgetCollapse();
+  if (wrapId === 'stopsWrap') applyStopsCollapse();
+  else if (wrapId === 'brewWrap') applyBrewCollapse();
+  else if (wrapId === 'foodWrap') applyFoodCollapse();
+  else if (wrapId === 'barWrap') applyBarCollapse();
+  else applyBudgetCollapse();
 }
+/* Four people, four equal shares: this is who has fronted what so far, so the
+   van can settle up without anyone doing the arithmetic at a fuel stop. */
+function budSettle(entries){
+  const total = entries.reduce((s, e) => s + (+e.amt || 0), 0);
+  if (!total) return '';
+  const paid = {};
+  entries.forEach(e => {
+    const who = (e.who || 'Someone').trim() || 'Someone';
+    paid[who] = (paid[who] || 0) + (+e.amt || 0);
+  });
+  if (extra && extra.players) Object.keys(extra.players).forEach(n => { if (!(n in paid)) paid[n] = 0; });
+  const share = total / TRAVELERS;
+  const names = Object.keys(paid);
+  return '<div class="bud-settle">'
+    + '<p class="muted">Everyone\u2019s share is ' + money(share) + ' of ' + money(total) + ' \u2014 this is who fronted what.</p>'
+    + '<table class="bud-table"><thead><tr><th>Who</th><th class="amt">Paid</th><th class="amt">Balance</th></tr></thead><tbody>'
+    + names.map(n => {
+      const diff = paid[n] - share;
+      const bal = Math.abs(diff) < 0.01 ? '<span class="muted">settled</span>'
+        : (diff > 0 ? '<span class="bud-up">is owed ' + money(diff) + '</span>'
+                    : '<span class="bud-down">owes ' + money(-diff) + '</span>');
+      return '<tr><td>' + esc(n) + '</td><td class="amt">' + money(paid[n]) + '</td><td class="amt">' + bal + '</td></tr>';
+    }).join('')
+    + '</tbody></table></div>';
+}
+
 function renderBudget(){
   const lines = $('budgetLines'), head = $('budgetTotal');
   if (!lines) return;
@@ -3778,7 +4865,29 @@ function renderBudget(){
         + '</tr>').join('')
       + '</tbody></table>'
     : '<p class="bud-empty">No line items yet — add the first one above.</p>';
+  if (entries.length) lines.innerHTML += budSettle(entries);
   applyBudgetCollapse();
+}
+// Every "pick a name" field answers the same way: a red edge on the control and
+// a red line of text, both cleared the moment a choice is made.
+function fieldWarn(el, on){
+  if (!el) return;
+  el.classList.toggle('field-warn', !!on);
+  if (!on) return;
+  const clear = () => {
+    el.classList.remove('field-warn');
+    el.removeEventListener('change', clear);
+    el.removeEventListener('input', clear);
+  };
+  el.addEventListener('change', clear);
+  el.addEventListener('input', clear);
+}
+function budMsg(t, warn){
+  const m = $('budMsg');
+  if (!m) return;
+  m.textContent = t;
+  m.classList.toggle('msg-warn', !!warn);
+  setTimeout(() => { if (m.textContent === t) { m.textContent = ''; m.classList.remove('msg-warn'); } }, 6000);
 }
 function addBudgetEntry(){
   const catSel = $('budCat'), custom = $('budCustomCat'), note = $('budNote'), amt = $('budAmt');
@@ -3786,9 +4895,16 @@ function addBudgetEntry(){
   let cat = catSel.value;
   if (cat === 'Other') { const c = ((custom && custom.value) || '').trim(); if (c) cat = c; }
   const value = Math.round((+amt.value || 0) * 100) / 100;
-  if (!value) { amt.focus(); return; }
+  if (!value) { fieldWarn(amt, true); budMsg('Enter an amount first.', true); amt.focus(); return; }
   const whoSel = $('budWho');
-  if (!whoSel || !whoSel.value) { if (whoSel) whoSel.focus(); return; }
+  if (!whoSel || !whoSel.value) {
+    fieldWarn(whoSel, true);
+    budMsg('Pick a name first — a line is saved under whoever added it.', true);
+    if (whoSel) whoSel.focus();
+    return;
+  }
+  fieldWarn(whoSel, false);
+  fieldWarn(amt, false);
   const list = budgetEntries();
   list.push({ who: whoSel.value, cat, note: ((note && note.value) || '').trim(), amt: value, at: Date.now() });
   saveBudgetEntries(list);
@@ -3812,6 +4928,9 @@ if ($('budgetLines')) $('budgetLines').addEventListener('click', e => {
 });
 if ($('toggleBudget')) $('toggleBudget').addEventListener('click', () => toggleCollapse('budgetWrap'));
 if ($('toggleStops')) $('toggleStops').addEventListener('click', () => toggleCollapse('stopsWrap'));
+if ($('toggleBrew')) $('toggleBrew').addEventListener('click', () => toggleCollapse('brewWrap'));
+if ($('toggleFood')) $('toggleFood').addEventListener('click', () => toggleCollapse('foodWrap'));
+if ($('toggleBar')) $('toggleBar').addEventListener('click', () => toggleCollapse('barWrap'));
 function syncCustomCat(){
   const sel = $('budCat'), input = $('budCustomCat');
   if (!input) return;
@@ -3885,12 +5004,14 @@ function uploadAllowed(){
   const input = $('photoPass');
   try { const remembered = devicePrefs().uploadName; if (remembered) { input.value = remembered; return true; } } catch (e) {}
   const v = (input.value || '').trim().toLowerCase();
-  if (!v) { photoMsg('Enter your name to upload.'); input.focus(); return false; }
+  if (!v) { fieldWarn(input, true); photoMsg('Enter your name to upload.', true); input.focus(); return false; }
   if (UPLOAD_NAMES.indexOf(v) < 0) {
-    photoMsg('“' + input.value.trim() + '” is not on the upload list.');
+    fieldWarn(input, true);
+    photoMsg('“' + input.value.trim() + '” is not on the upload list.', true);
     input.select();
     return false;
   }
+  fieldWarn(input, false);
   try { sessionStorage.setItem('rt_uploader', v); } catch (e) {}
   return true;
 }
@@ -4454,10 +5575,11 @@ function netBalances(settled){
   return net;
 }
 
-function betMsg(t){
+function betMsg(t, warn){
   const m = $('betMsg');
   m.textContent = t;
-  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 6000);
+  m.classList.toggle('msg-warn', !!warn);
+  setTimeout(() => { if (m.textContent === t) { m.textContent = ''; m.classList.remove('msg-warn'); } }, 6000);
 }
 
 // The title board: handicaps decide the pecking order, then two cash figures
@@ -4484,13 +5606,16 @@ function renderBoard(){
 
 function renderBets(){
   const people = betPeople();
+  // Nobody is preselected: "Select name" is where both sides start, so a bet can
+  // never be filed against whoever happens to sort first.
   ['betFrom', 'betTo'].forEach(id => {
     const sel = $(id);
     const cur = sel.value;
-    sel.innerHTML = people.map(p => '<option>' + esc(p) + '</option>').join('');
+    sel.innerHTML = '<option value="">Select name</option>'
+      + people.map(p => '<option value="' + esc(p) + '">' + esc(p) + '</option>').join('');
     if (people.indexOf(cur) >= 0) sel.value = cur;
   });
-  if (people.length > 1 && $('betTo').value === $('betFrom').value) $('betTo').value = people[1];
+  if ($('betFrom').value && $('betFrom').value === $('betTo').value) $('betTo').value = '';
 
   renderBoard();
 
@@ -4556,8 +5681,19 @@ function renderBets(){
 $('betAdd').onclick = () => {
   const from = $('betFrom').value, to = $('betTo').value;
   const amount = Math.round((+$('betAmount').value || 0) * 100) / 100;
-  if (from === to) { betMsg('Pick two different people.'); return; }
-  if (!(amount > 0)) { betMsg('Enter an amount first.'); return; }
+  if (!from || !to) {
+    fieldWarn($('betFrom'), !from);
+    fieldWarn($('betTo'), !to);
+    betMsg(!from && !to ? 'Pick who owes and who is owed first.'
+      : (!from ? 'Pick who owes first.' : 'Pick who is owed first.'), true);
+    (!from ? $('betFrom') : $('betTo')).focus();
+    return;
+  }
+  fieldWarn($('betFrom'), false);
+  fieldWarn($('betTo'), false);
+  if (from === to) { betMsg('Pick two different people.', true); return; }
+  if (!(amount > 0)) { fieldWarn($('betAmount'), true); betMsg('Enter an amount first.', true); return; }
+  fieldWarn($('betAmount'), false);
   extra.bets = extra.bets || [];
   extra.bets.push({ id: 'b' + Date.now() + Math.floor(Math.random() * 1000), at: Date.now(), from, to, amount, note: $('betNote').value.trim(), settled: false });
   $('betAmount').value = '';
@@ -4599,9 +5735,10 @@ $('betHcp').addEventListener('input', e => {
 
 /* ---------- per-stop note & media panel ---------- */
 var panelStop = null;
-function stopPanelMsg(t){
+function stopPanelMsg(t, warn){
   const m = $('stopPanelMsg');
   m.textContent = t;
+  m.classList.toggle('msg-warn', !!warn);
 }
 function savedUploader(){
   try { const remembered = devicePrefs().uploadName; if (remembered) return remembered; } catch (e) {}
@@ -4657,10 +5794,12 @@ $('stopUpload').onclick = async () => {
   const who = panelUploader();
   if (!who.ok) {
     $('stopName').hidden = false;
+    fieldWarn($('stopName'), true);
     $('stopName').focus();
-    stopPanelMsg(who.msg);
+    stopPanelMsg(who.msg, true);
     return;
   }
+  fieldWarn($('stopName'), false);
   for (const f of files) {
     const fh = f.name || 'one file';
     const isV = /^video\//.test(f.type);
@@ -4819,11 +5958,9 @@ document.addEventListener('DOMContentLoaded',function(){
       document.querySelectorAll('.explore-panel').forEach(function(p){p.hidden=true;});
       var panel=document.getElementById('panel-'+btn.dataset.tab);
       if(panel) panel.hidden=false;
-      // leaflet maps need resize after reveal
-      ['golfMap','foodMap','campMap'].forEach(function(id){
-        var el=document.getElementById(id);
-        if(el && window.L && el._leaflet_id){ var m=L.Util?null:null; }
-      });
+      // Leaflet measures a map when it is built; a panel revealed later needs
+      // every map to measure itself again or the tiles come up half-drawn.
+      if (window.L) window.dispatchEvent(new Event('resize'));
     });
   });
 });
