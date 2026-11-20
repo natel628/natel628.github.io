@@ -687,11 +687,14 @@
     <p class="muted">Add each cost as its own line — food, gas, a campsite, anything that comes up. The total splits four ways, so every line shows what it costs each of you.</p>
     <p class="muted" style="margin:8px 0 0">Travelers: <strong>4</strong></p>
     <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap">
+      <select id="budWho" aria-label="Who is adding this line" style="max-width:130px;flex:none">
+        <option>Nate</option><option>Kyle</option><option>Chuck</option><option>Justin</option>
+      </select>
       <select id="budCat" aria-label="Budget category" style="max-width:160px;flex:none">
         <option>Food</option><option>Tolls</option><option>Items</option><option>Gas</option><option>Lodging</option><option>Activities</option><option>Other</option>
       </select>
       <input id="budCustomCat" placeholder="Custom category (if Other)" aria-label="Custom budget category" style="max-width:180px;flex:none;display:none" />
-      <input id="budNote" placeholder="Note (e.g. towels)" aria-label="Budget line note" style="flex:1 1 160px" />
+      <input id="budNote" placeholder="any details add here" aria-label="Any details for this budget line" style="flex:1 1 160px" />
       <input id="budAmt" type="number" min="0" step="0.01" placeholder="$" aria-label="Budget line amount" style="max-width:100px;flex:none" />
       <button type="button" id="budAdd">Add</button>
     </div>
@@ -3754,8 +3757,9 @@ function renderBudget(){
   const total = entries.reduce((s, e) => s + (+e.amt || 0), 0);
   if (head) head.innerHTML = '<strong>' + money(total) + '</strong> total · ' + money(total / TRAVELERS) + ' each';
   lines.innerHTML = entries.length
-    ? '<table class="bud-table"><thead><tr><th>Category</th><th>Note</th><th class="amt">Added</th><th class="amt">Amount</th><th class="amt">Each</th><th></th></tr></thead><tbody>'
+    ? '<table class="bud-table"><thead><tr><th>Who</th><th>Category</th><th>Note</th><th class="amt">Added</th><th class="amt">Amount</th><th class="amt">Each</th><th></th></tr></thead><tbody>'
       + entries.map((e, i) => '<tr>'
+        + '<td>' + esc(e.who || '—') + '</td>'
         + '<td>' + esc(e.cat || 'Other') + '</td>'
         + '<td>' + esc(e.note || '') + '</td>'
         + '<td class="amt">' + esc(dateCell(e.at)) + '</td>'
@@ -3774,8 +3778,9 @@ function addBudgetEntry(){
   if (cat === 'Other') { const c = ((custom && custom.value) || '').trim(); if (c) cat = c; }
   const value = Math.round((+amt.value || 0) * 100) / 100;
   if (!value) { amt.focus(); return; }
+  const whoSel = $('budWho');
   const list = budgetEntries();
-  list.push({ cat, note: ((note && note.value) || '').trim(), amt: value, at: Date.now() });
+  list.push({ who: whoSel ? whoSel.value : '', cat, note: ((note && note.value) || '').trim(), amt: value, at: Date.now() });
   saveBudgetEntries(list);
   if (note) note.value = '';
   if (custom) custom.value = '';
@@ -3995,6 +4000,12 @@ function applyPrefs(){
   const sc = $('prefStartCollapsed'); if (sc) sc.checked = p.startCollapsed;
   const un = $('prefUploadName'); if (un) un.value = p.uploadName;
   const pp = $('photoPass'); if (pp && p.uploadName && !pp.value) pp.value = p.uploadName;
+  // Default the budget "who" box to the name this device remembers.
+  const bw = $('budWho');
+  if (bw && p.uploadName) {
+    const mine = [...bw.options].find(o => o.value.toLowerCase() === p.uploadName);
+    if (mine) bw.value = mine.value;
+  }
   document.querySelectorAll('input[name="navmode"]').forEach(r => { r.checked = r.value === p.nav; });
   const names = {};
   NAV_LINKS.forEach(a => { names[a.getAttribute('href').slice(1)] = a.textContent.trim().replace(/\s+/g, ' '); });
