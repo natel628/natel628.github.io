@@ -675,3 +675,4 @@ document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-query]');
   if (b) { e.preventDefault(); capture(b.dataset.query); }
 });
+document.addEventListener('DOMContentLoaded', boot);
