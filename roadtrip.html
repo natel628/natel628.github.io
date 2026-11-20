@@ -3171,50 +3171,51 @@ function foodFromNominatim(rows, center){
   return places;
 }
 
-const FOOD_TAGS = ['amenity=restaurant', 'amenity=cafe', 'amenity=fast_food', 'amenity=pub',
-  'amenity=ice_cream', 'amenity=food_court'];
-
-function foodFromOverpass(data, center){
-  const seen = new Set();
-  const places = [];
-  for (const el of (data && data.elements) || []) {
-    const tags = el.tags || {};
-    const name = (tags.name || '').trim();
-    if (!name) continue;
-    const lat = Number.isFinite(el.lat) ? el.lat : (el.center && el.center.lat);
-    const lng = Number.isFinite(el.lon) ? el.lon : (el.center && el.center.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
-    const key = name.toLowerCase() + '|' + lat.toFixed(4) + '|' + lng.toFixed(4);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    places.push({
-      name,
-      kind: tags.amenity || '',
-      cuisine: (tags.cuisine || '').replace(/;/g, ', '),
-      lat, lng,
-      dist: center ? hav(center, { lat, lng }) : null,
-      where: [tags['addr:housenumber'], tags['addr:street'], tags['addr:city']].filter(Boolean).join(' ')
-    });
+// One Nominatim answer is capped at fifty places and its ranking buries plenty
+// of real ones, which is why a town's Main Street looked half-empty. The same
+// search is repeated with the ids already seen excluded until it runs dry.
+async function nominatimPages(query, center, radiusKm, pages){
+  const all = [];
+  const ids = [];
+  for (let page = 0; page < pages; page++) {
+    const params = new URLSearchParams({ format: 'jsonv2', limit: '50', q: query });
+    if (center) {
+      const dLat = radiusKm / 111;
+      const dLon = radiusKm / (111 * Math.max(Math.cos(center.lat * Math.PI / 180), 0.2));
+      params.set('viewbox', [center.lng - dLon, center.lat + dLat, center.lng + dLon, center.lat - dLat].join(','));
+      params.set('bounded', '1');
+    }
+    if (ids.length) params.set('exclude_place_ids', ids.join(','));
+    const res = await timedFetch('https://nominatim.openstreetmap.org/search?' + params.toString());
+    if (!res.ok) {
+      if (!all.length) throw new Error('The restaurant index is busy right now — try again in a moment.');
+      break;
+    }
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) break;
+    all.push(...rows);
+    rows.forEach(r => { if (r.place_id) ids.push(r.place_id); });
+    if (rows.length < 50) break;
+    // Nominatim asks for one request a second; the next page waits its turn.
+    await new Promise(r => setTimeout(r, 1100));
   }
-  return places;
+  return all;
 }
 
 async function findFoodNear(center, radiusKm){
-  // The venue index lists every place of a kind in the area. Nominatim's
-  // category search only ranks a handful (which is why one Main Street looked
-  // half-empty), so it is the fallback now instead of the primary lookup.
+  // Walk every page of restaurants, then the cafés and takeaways, so the list is
+  // the town's actual list rather than the fifty names that rank highest.
   let places = [];
   try {
-    places = foodFromOverpass(await overpassSearch(center, radiusKm, null, 0, 1, FOOD_TAGS, 250), center);
-  } catch (e) { /* the index has busy days */ }
-  if (!places.length) {
-    // Nominatim asks for one request a second, so the café pass waits its turn.
-    places = foodFromNominatim(await nominatim('restaurant', center, radiusKm), center);
-    await new Promise(r => setTimeout(r, 1100));
+    places = foodFromNominatim(await nominatimPages('restaurant', center, radiusKm, 3), center);
+  } catch (e) { places = []; }
+  for (const term of ['cafe', 'fast_food']) {
     try {
-      places.push(...foodFromNominatim(await nominatim('cafe', center, radiusKm), center));
-    } catch (e) { /* a café lookup failing should not hide the restaurants */ }
+      await new Promise(r => setTimeout(r, 1100));
+      places.push(...foodFromNominatim(await nominatimPages(term, center, radiusKm, 1), center));
+    } catch (e) { /* one category failing should not hide the rest */ }
   }
+  if (!places.length) places = foodFromNominatim(await nominatim('restaurant', center, radiusKm), center);
   const seen = new Set();
   const merged = places.filter(p => {
     const key = p.name.toLowerCase() + '|' + p.lat.toFixed(4) + '|' + p.lng.toFixed(4);
@@ -3223,7 +3224,7 @@ async function findFoodNear(center, radiusKm){
     return true;
   });
   merged.sort((a, b) => a.dist - b.dist);
-  const nearest = merged.slice(0, 40);
+  const nearest = merged.slice(0, 60);
   await attachDriving(center, nearest);
   try { attachRatings(nearest, await ratingsNear(center, radiusKm, ['restaurant', 'cafe', 'bar'])); }
   catch (e) { /* stars are a bonus, never a reason to fail the search */ }
@@ -3346,7 +3347,7 @@ async function findFoodPlaces(){
     const center = foodPin
       ? { name: 'the map pin', lat: foodPin.lat, lng: foodPin.lng }
       : await geocode(place);
-    foodMsg('Looking for places to eat near ' + center.name + '…');
+    foodMsg('Listing every place to eat near ' + center.name + ' — a few seconds…');
     // The options read miles but the lookup takes kilometres — without this,
     // "within 10 mi" only searched about 6 miles.
     const found = await findFoodNear(center, +$('foodRadius').value * 1.609344);
@@ -3440,17 +3441,16 @@ const OVERPASS_TAGS = ['amenity=bar', 'amenity=pub', 'amenity=nightclub', 'ameni
   // Plenty of bars are tagged as a restaurant that happens to have "Bar" in the
   // name (Kai Restaurant and Bar), so those are asked for by name as well.
   '["amenity"="restaurant"]["name"~"(^| )(bar|tavern)( |$)",i]'];
-async function overpassSearch(center, radiusKm, progress, startAt, tries, tags, limit){
+async function overpassSearch(center, radiusKm, progress, startAt, tries){
   const around = Math.round(radiusKm * 1000) + ',' + center.lat.toFixed(5) + ',' + center.lng.toFixed(5);
-  const wanted = tags || OVERPASS_TAGS;
   const q = '[out:json][timeout:20];('
-    + wanted.map(tag => {
+    + OVERPASS_TAGS.map(tag => {
       // A clause starting with "[" carries its own filters, e.g. a name match.
       if (tag.charAt(0) === '[') return 'nwr' + tag + '(around:' + around + ');';
       const [key, value] = tag.split('=');
       return 'nwr["' + key + '"="' + value + '"](around:' + around + ');';
     }).join('')
-    + ');out tags center ' + (limit || 150) + ';';
+    + ');out tags center 150;';
   const from = startAt || 0;
   const end = Math.min(OVERPASS_HOSTS.length, from + (tries || OVERPASS_HOSTS.length));
   for (let i = from; i < end; i++) {
@@ -3538,6 +3538,34 @@ async function upgradeBarsInBackground(center, radiusKm, hadCount){
   } catch (e) { /* the basic list simply stays */ }
 }
 
+// A bar with a kitchen is usually tagged as a restaurant, so the venue index
+// never lists it as a bar. One name search over restaurants inside the same box
+// catches those (Kai Restaurant and Bar among them).
+async function barsFromPhoton(center, radiusKm){
+  const box = golfBox(center, radiusKm);
+  const bbox = [box.minLng, box.minLat, box.maxLng, box.maxLat].map(n => n.toFixed(4)).join(',');
+  const out = [];
+  try {
+    const res = await timedFetch('https://photon.komoot.io/api/?limit=30&lang=en&osm_tag=amenity:restaurant&bbox=' + bbox + '&q=' + encodeURIComponent('bar'));
+    if (!res.ok) return out;
+    const data = await res.json();
+    for (const feature of data.features || []) {
+      const p = feature.properties || {};
+      const name = (p.name || '').trim();
+      if (!name || !/\b(bar|tavern)\b/i.test(name)) continue;
+      const coords = (feature.geometry && feature.geometry.coordinates) || [];
+      const lat = +coords[1], lng = +coords[0];
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+      out.push({
+        name, kind: 'bar', adult: false, lat, lng,
+        dist: hav(center, { lat, lng }),
+        where: [p.street, p.city, p.state].filter(Boolean).join(', ')
+      });
+    }
+  } catch (e) { /* one source failing should not empty the list */ }
+  return out;
+}
+
 async function findBarsNear(center, radiusKm, progress){
   let found = null, partial = false;
   try {
@@ -3549,6 +3577,15 @@ async function findBarsNear(center, radiusKm, progress){
     found = await barsFromNominatim(center, radiusKm);
     partial = true;
     upgradeBarsInBackground(center, radiusKm, found.length);
+  }
+  // Restaurant-bars are asked for either way, so they show up even on a day the
+  // venue index is unreachable.
+  const seen = new Set(found.map(b => b.name.toLowerCase() + '|' + b.lat.toFixed(3) + '|' + b.lng.toFixed(3)));
+  for (const extra of await barsFromPhoton(center, radiusKm)) {
+    const key = extra.name.toLowerCase() + '|' + extra.lat.toFixed(3) + '|' + extra.lng.toFixed(3);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    found.push(extra);
   }
   found.sort((a, b) => a.dist - b.dist);
   const nearest = found.slice(0, 60);
