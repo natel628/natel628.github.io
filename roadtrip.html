@@ -561,7 +561,8 @@
         <select id="barRadius" style="max-width:170px;flex:none" aria-label="Bar search radius">
           <option value="2">Within 2 mi</option>
           <option value="8" selected>Within 8 mi</option>
-          <option value="20">Within 20 mi</option>
+          <option value="25">Within 25 mi</option>
+          <option value="50">Within 50 mi</option>
         </select>
         <button type="button" id="barFind">Find bars</button>
         <button type="button" id="barClearPin" class="ghost">Clear pin</button>
@@ -3225,10 +3226,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19,
 const barLayer = L.layerGroup().addTo(barMap);
 let barPlaces = [], barAnchor = null, barPin = null, barPinMarker = null;
 
-function barMsg(t){
+let barMsgTimer = 0;
+// Progress has to stay on screen: the old version blanked its own "looking…"
+// line after nine seconds, which is exactly when a queued venue index looks
+// like nothing is happening.
+function barMsg(t, sticky){
   const m = $('barMsg');
   m.textContent = t;
-  setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 9000);
+  clearTimeout(barMsgTimer);
+  if (sticky) return;
+  barMsgTimer = setTimeout(() => { if (m.textContent === t) m.textContent = ''; }, 9000);
 }
 
 // Three kinds sit behind the 18+ disclosure in the panel. The search asks for
@@ -3251,26 +3258,39 @@ function nightKindOf(tags){
 // search cannot do. It also has busy days, so the mirrors get a turn.
 const OVERPASS_HOSTS = [
   'https://overpass-api.de/api/interpreter',
-  'https://overpass.private.coffee/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter'
 ];
-async function overpassSearch(center, radiusKm){
+// Exact tag matches use the index; a regex on amenity makes the server scan the
+// area, which is most of why this search used to sit and spin.
+const OVERPASS_TAGS = ['amenity=bar', 'amenity=pub', 'amenity=nightclub', 'amenity=music_venue',
+  'amenity=strip_club', 'amenity=casino', 'shop=erotic', 'shop=sex_shop'];
+async function overpassSearch(center, radiusKm, progress, startAt, tries){
   const around = Math.round(radiusKm * 1000) + ',' + center.lat.toFixed(5) + ',' + center.lng.toFixed(5);
-  const q = '[out:json][timeout:25];('
-    + 'nwr["amenity"~"^(bar|pub|nightclub|music_venue|strip_club|casino)$"](around:' + around + ');'
-    + 'nwr["shop"~"^(erotic|sex_shop)$"](around:' + around + ');'
+  const q = '[out:json][timeout:20];('
+    + OVERPASS_TAGS.map(tag => {
+      const [key, value] = tag.split('=');
+      return 'nwr["' + key + '"="' + value + '"](around:' + around + ');';
+    }).join('')
     + ');out tags center 150;';
-  for (const host of OVERPASS_HOSTS) {
+  const from = startAt || 0;
+  const end = Math.min(OVERPASS_HOSTS.length, from + (tries || OVERPASS_HOSTS.length));
+  for (let i = from; i < end; i++) {
+    if (progress) progress(i + 1, OVERPASS_HOSTS.length);
+    // Overpass queues requests and can take longer than a normal lookup, so it
+    // gets its own deadline instead of the page-wide 12 s one.
+    const signal = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function')
+      ? AbortSignal.timeout(12000) : undefined;
     try {
-      const res = await timedFetch(host, {
+      const res = await fetch(OVERPASS_HOSTS[i], {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'Accept': 'application/json' },
-        body: 'data=' + encodeURIComponent(q)
+        body: 'data=' + encodeURIComponent(q),
+        signal: signal
       });
       if (res.ok) return await res.json();
-    } catch (e) { /* a mirror that is down or slow just hands over to the next */ }
+    } catch (e) { /* a mirror that is down or slow hands over to the next one */ }
   }
-  throw new Error('The venue index is busy right now — try again in a minute.');
+  throw new Error('busy');
 }
 
 function barsFromOverpass(data, center){
@@ -3298,12 +3318,62 @@ function barsFromOverpass(data, center){
   return out;
 }
 
-async function findBarsNear(center, radiusKm){
-  const found = barsFromOverpass(await overpassSearch(center, radiusKm), center);
+// Overpass is the only list that carries clubs and strip clubs, but it has busy
+// days. Nominatim's category search always answers, so a failed Overpass still
+// returns bars rather than an empty screen.
+async function barsFromNominatim(center, radiusKm){
+  const out = [];
+  const seen = new Set();
+  for (const [term, kind, adult] of [['bar', 'bar', false], ['casino', 'casino', true]]) {
+    try {
+      foodFromNominatim(await nominatim(term, center, radiusKm), center).forEach(p => {
+        const key = p.name.toLowerCase() + '|' + p.lat.toFixed(4) + '|' + p.lng.toFixed(4);
+        if (seen.has(key)) return;
+        seen.add(key);
+        out.push({ name: p.name, kind: kind, adult: adult, lat: p.lat, lng: p.lng, dist: p.dist, where: p.where });
+      });
+    } catch (e) { /* one category failing should not hide the other */ }
+    await new Promise(r => setTimeout(r, 1100));
+  }
+  return out;
+}
+
+// The fallback list is bars only. If the venue index answers a moment later, its
+// fuller list quietly replaces the basic one without anyone pressing anything.
+async function upgradeBarsInBackground(center, radiusKm, hadCount){
+  try {
+    const full = barsFromOverpass(await overpassSearch(center, radiusKm, null, 1, 1), center);
+    if (full.length <= hadCount) return;
+    full.sort((a, b) => a.dist - b.dist);
+    const nearest = full.slice(0, 60);
+    await attachDriving(center, nearest);
+    nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+    if (!barPlaces.length) return; // they have moved on to another search
+    barPlaces = nearest;
+    renderBars();
+    const shown = visibleBars().length;
+    barMsg('The full venue list arrived: ' + shown + ' place' + (shown === 1 ? '' : 's')
+      + ' within ' + Math.round(radiusKm / 1.609344) + ' mi' + (shown < nearest.length ? ' (18+ still hidden).' : '.'));
+  } catch (e) { /* the basic list simply stays */ }
+}
+
+async function findBarsNear(center, radiusKm, progress){
+  let found = null, partial = false;
+  try {
+    // One mirror in the foreground: a second one is tried behind the fallback
+    // list rather than making everyone wait for both.
+    found = barsFromOverpass(await overpassSearch(center, radiusKm, progress, 0, 1), center);
+  } catch (e) {
+    if (progress) progress('fallback');
+    found = await barsFromNominatim(center, radiusKm);
+    partial = true;
+    upgradeBarsInBackground(center, radiusKm, found.length);
+  }
   found.sort((a, b) => a.dist - b.dist);
   const nearest = found.slice(0, 60);
   await attachDriving(center, nearest);
   nearest.sort((a, b) => (a.drive ? a.drive.mi : a.dist) - (b.drive ? b.drive.mi : b.dist));
+  nearest.partial = partial;
   return nearest;
 }
 
@@ -3415,26 +3485,36 @@ $('barFind').onclick = async () => {
   const btn = $('barFind');
   const place = $('barQuery').value.trim();
   if (!barPin && !place) { barMsg('Type a town or area, or click the map to drop a search pin.'); return; }
+  const label = btn.textContent;
   btn.disabled = true;
+  btn.textContent = 'Searching…';
   try {
     const center = barPin
       ? { name: 'the map pin', lat: barPin.lat, lng: barPin.lng }
       : await geocode(place);
-    barMsg('Looking for bars near ' + center.name + '…');
+    const miles = +$('barRadius').value;
+    barMsg('Looking for bars within ' + miles + ' mi of ' + center.name + '…', true);
     // The options read miles and the lookup takes kilometres.
-    const found = await findBarsNear(center, +$('barRadius').value * 1.609344);
+    const found = await findBarsNear(center, miles * 1.609344, step => {
+      if (step === 'fallback') barMsg('The venue index is busy — falling back to a simpler bar list…', true);
+      else barMsg('Asking the venue index (mirror ' + step + ' of ' + OVERPASS_HOSTS.length + ')…', true);
+    });
     barAnchor = center.name;
     barPlaces = found;
     renderBars();
     const shown = visibleBars().length;
     barMsg(!found.length
-      ? 'Nothing found near ' + center.name + ' — try a wider radius.'
-      : shown + ' place' + (shown === 1 ? '' : 's') + ' near ' + center.name + '.'
-        + (shown < found.length ? ' Some 18+ places are hidden until you tick them above.' : ''));
+      ? 'Nothing found within ' + miles + ' mi of ' + center.name + ' — try a wider radius.'
+      : shown + ' place' + (shown === 1 ? '' : 's') + ' within ' + miles + ' mi of ' + center.name + '.'
+        + (shown < found.length ? ' Some 18+ places are hidden until you tick them above.' : '')
+        + (found.partial ? ' The full venue index was busy, so this is the basic bar list — clubs and strip clubs need it, and a retry in a minute usually gets them.' : ''));
   } catch (err) {
-    barMsg(err && err.message ? err.message : 'Could not search for bars right now.');
+    barMsg(err && err.message && err.message !== 'busy'
+      ? err.message
+      : 'Could not reach the venue index — check your signal and try again.');
   } finally {
     btn.disabled = false;
+    btn.textContent = label;
   }
 };
 $('barQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('barFind').click(); } });
