@@ -6,279 +6,263 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Denver\, CO
 X-WR-CALDESC:Upcoming events within 100 miles of Denver\, CO.
 BEGIN:VEVENT
-UID:tm-G5vzZ_19koCIM@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T180000
-DTEND:20261120T203000
-SUMMARY:Saosin: 20 Years of Self-Titled
-DESCRIPTION:DOORS: 6PM SHOW: 7PM THIS SHOW IS: ALL AGES All support acts a
- re subject to change without notice.\\n\\nhttps://www.ticketmaster.com/sa
- osin-20-years-of-selftitled-denver-colorado-11-20-2026/event/1E0064A5C644
- EA37\\n\\nRefreshed daily from live listings.
-LOCATION:Summit Music Hall\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/saosin-20-years-of-selftitled-denver-colo
- rado-11-20-2026/event/1E0064A5C644EA37
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_2QDTig-@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T183000
-DTEND:20261120T210000
-SUMMARY:TYLA - THE A*POP WORLD TOUR
-DESCRIPTION:ALL AGES WELCOME BAG POLICY: Bags up to 12" X 6" x 12" are all
- owed in the venue. All bags will be searched prior to entry. Bags that ar
- e not clear will be subject to additional search. DOORS: 6:30PM SHOW: 7:3
- 0PM *ALL SUPPORT ACTS & SET TIMES ARE SUBJECT TO CHANGE WITHOUT NOTICE\\n
- \\nhttps://www.ticketmaster.com/tyla-the-apop-world-tour-denver-colorado-
- 11-20-2026/event/1E0064F6BBFECD61\\n\\nRefreshed daily from live listings
- .
-LOCATION:Fillmore Auditorium (Denver)\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/tyla-the-apop-world-tour-denver-colorado-
- 11-20-2026/event/1E0064F6BBFECD61
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA70a_@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T183000
-DTEND:20261120T210000
-SUMMARY:Colorado State University Rams Womens Basketball vs. Harvard Crims
- on Womens Basketball
+UID:tm-Z7r9jZ1AAZwZ_@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T130000
+DTEND:20261121T153000
+SUMMARY:Denver Pioneers Womens Volleyball vs. Portland Pilots Womens Volle
+ yball
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA70a_\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZwZ_\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Moby Arena\, Fort Collins
+LOCATION:University of Denver - Hamilton Gymnasium\, Denver CO
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70a_
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZwZ_
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfZUG0@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
-SUMMARY:Ladies Night & Noche Sonidera
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/ladies-night-noche-sonidera-la-rum
- ba-tickets/14036324\\n\\nRefreshed daily from live listings.
-LOCATION:La Rumba\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/ladies-night-noche-sonidera-la-rumba-t
- ickets/14036324
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_akJhBWm@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
-SUMMARY:Oct (On Company Time)
-DESCRIPTION:It?s finally here! OCT?s show in Denver. OCT's live performanc
- e of THE PTO TOUR is on Friday\, November 20th\, at Marquis located at 20
- 09 Larimer St\, Denver\, CO 80205. Doors open at 7 PM\, so make sure you 
- don?t miss a moment! We can?t wait to see you! Show: 8PM This show is: AL
- L AGES All acts subject \\n\\nhttps://www.ticketmaster.com/oct-on-company
- -time-denver-colorado-11-20-2026/event/1E006491A66FAF6E\\n\\nRefreshed da
- ily from live listings.
-LOCATION:Marquis\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/oct-on-company-time-denver-colorado-11-20
- -2026/event/1E006491A66FAF6E
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70Aqp@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
-SUMMARY:AVELLO (16 and Over)
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70Aqp\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Ogden Theatre\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Aqp
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7x_CA@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
-SUMMARY:Denver Pioneers Hockey vs. St. Thomas Tommies Hockey
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7x_CA\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Magness Arena\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7x_CA
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfoK3f@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
-SUMMARY:Brandi Denise 
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- . Seating: All seating is first come\, first served at Management's discr
- etion. All tables\, in\\n\\nhttps://www.ticketweb.com/event/brandi-denise
- -denver-improv-tickets/14453494\\n\\nRefreshed daily from live listings.
-LOCATION:Denver Improv\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/brandi-denise-denver-improv-tickets/14
- 453494
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvA8F@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
-SUMMARY:Havok (16 and Over)
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvA8F\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Gothic Theatre\, Englewood
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvA8F
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZz8f@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
+UID:tm-Z7r9jZ1AAZVaA@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T130000
+DTEND:20261121T153000
 SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZz8f\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZVaA\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Arvada Center\, Arvada
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8f
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZVaA
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZ0fM@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
+UID:tm-Z7r9jZ1A70tPo@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T133000
+DTEND:20261121T160000
+SUMMARY:Bluey's Big Play - The Stage Show (Recommended for Ages 2 and Over
+ . A ticket is required for each patron in attendance)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70tPo\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Buell Theatre\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70tPo
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAv3j_@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T140000
+DTEND:20261121T163000
+SUMMARY:What a Glorious Feeling
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAv3j_\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Galleria Theatre\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3j_
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZ04e@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T140000
+DTEND:20261121T163000
 SUMMARY:Private Lives
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZ0fM\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZ04e\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Ent Center for the Arts\, Colorado Springs
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ0fM
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ04e
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5vzZ_o3HnmQT@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190000
-DTEND:20261120T213000
+UID:tm-G5vzZ_o66YlJp@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T150000
+DTEND:20261121T173000
+SUMMARY:Trans-Siberian Orchestra - The Ghosts Of Christmas Eve
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/transsiberian-orchestra-the-ghosts-of-christma
+ s-denver-colorado-11-21-2026/event/1E006511C7C2B996\\n\\nRefreshed daily 
+ from live listings.
+LOCATION:Ball Arena\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/transsiberian-orchestra-the-ghosts-of-chr
+ istmas-denver-colorado-11-21-2026/event/1E006511C7C2B996
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7PY18@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T170000
+DTEND:20261121T193000
+SUMMARY:Bluey's Big Play - The Stage Show (Recommended for Ages 2 and Over
+ . A ticket is required for each patron in attendance)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PY18\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Buell Theatre\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PY18
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5vzZ_G3prJzF@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T173000
+DTEND:20261121T200000
+SUMMARY:Underoath - Define the Great Line 20th Anniversary Tour
+DESCRIPTION:ALL AGES WELCOME BAG POLICY: Bags up to 12" X 6" x 12" are all
+ owed in the venue. All bags will be searched prior to entry. Bags that ar
+ e not clear will be subject to additional search. DOORS: 5:30PM SHOW: 6:3
+ 0PM *ALL SUPPORT ACTS & SET TIMES ARE SUBJECT TO CHANGE WITHOUT NOTICE\\n
+ \\nhttps://www.ticketmaster.com/underoath-define-the-great-line-20th-denv
+ er-colorado-11-21-2026/event/1E0064C4967A6E08\\n\\nRefreshed daily from l
+ ive listings.
+LOCATION:Fillmore Auditorium (Denver)\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/underoath-define-the-great-line-20th-denv
+ er-colorado-11-21-2026/event/1E0064C4967A6E08
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5vzZ_GRvTun7@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T180000
+DTEND:20261121T203000
+SUMMARY:STATE CHAMPS - 10 YEARS OF 'AROUND THE WORLD AND BACK'
+DESCRIPTION:DOORS: 6PM SHOW: 7PM THIS SHOW IS: ALL AGES All support acts a
+ re subject to change without notice.\\n\\nhttps://www.ticketmaster.com/st
+ ate-champs-10-years-of-around-denver-colorado-11-21-2026/event/1E0064CBC1
+ FCDA84\\n\\nRefreshed daily from live listings.
+LOCATION:Summit Music Hall\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/state-champs-10-years-of-around-denver-co
+ lorado-11-21-2026/event/1E0064CBC1FCDA84
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7x_Ck@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T180000
+DTEND:20261121T203000
+SUMMARY:Denver Pioneers Hockey vs. St. Thomas Tommies Hockey
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7x_Ck\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Magness Arena\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7x_Ck
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5vzZ_o3HlCh6@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T180000
+DTEND:20261121T203000
 SUMMARY:Colorado College Tigers Hockey vs. Miami
 DESCRIPTION:If accessible seating is needed and not available\, please con
  tact hvarnum2023@coloradocollege.edu. Ed Robson Arena has a CLEAR BAG POL
  ICY. Guests attending events are advised that laptops\, tablets\, bags\, 
  backpacks\, luggage\, coolers\, parcels\, briefcases and like articles wi
  ll be strictly prohibited f\\n\\nhttps://www.ticketmaster.com/colorado-co
- llege-tigers-hockey-vs-miami-colorado-springs-colorado-11-20-2026/event/1
- E006514BCAAE6BF\\n\\nRefreshed daily from live listings.
+ llege-tigers-hockey-vs-miami-colorado-springs-colorado-11-21-2026/event/1
+ E006514BCACE6C7\\n\\nRefreshed daily from live listings.
 LOCATION:Ed Robson Arena\, Colorado Springs
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/colorado-college-tigers-hockey-vs-miami-c
- olorado-springs-colorado-11-20-2026/event/1E006514BCAAE6BF
+ olorado-springs-colorado-11-21-2026/event/1E006514BCACE6C7
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7J6GF@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T190500
-DTEND:20261120T213500
+UID:tm-Z7r9jZ1A7-tQ4@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T180000
+DTEND:20261121T203000
+SUMMARY:Air Force Academy Falcons Football vs. UTEP Miners Football
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7-tQ4\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Falcon Stadium\, Colorado Springs
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-tQ4
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7J61p@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T180500
+DTEND:20261121T203500
 SUMMARY:Colorado Eagles vs. Grand Rapids Griffins
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7J6GF\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7J61p\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Blue Arena at The Ranch Events Complex\, Loveland
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J6GF
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J61p
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70z4d@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T191500
-DTEND:20261120T214500
+UID:tm-rZ7HnEZ1AfoKff@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T183000
+DTEND:20261121T210000
+SUMMARY:Brandi Denise 
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . Seating: All seating is first come\, first served at Management's discr
+ etion. All tables\, in\\n\\nhttps://www.ticketweb.com/event/brandi-denise
+ -denver-improv-tickets/14453514\\n\\nRefreshed daily from live listings.
+LOCATION:Denver Improv\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/brandi-denise-denver-improv-tickets/14
+ 453514
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfZg_7@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T190000
+DTEND:20261121T213000
+SUMMARY:Sabados Sabrosos!
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/sabados-sabrosos-la-rumba-tickets/
+ 14035644\\n\\nRefreshed daily from live listings.
+LOCATION:La Rumba\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/sabados-sabrosos-la-rumba-tickets/1403
+ 5644
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70z4k@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T190000
+DTEND:20261121T213000
 SUMMARY:Mo Amer
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70z4d\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70z4k\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Comedy Works\, Denver
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70z4d
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70z4k
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5vzZ_3CisBJ_@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T193000
-DTEND:20261120T220000
-SUMMARY:Warren Miller's "Days Off" - Ft. Katie Burrell Live
-DESCRIPTION:All seating is Reserved\\n\\nhttps://www.ticketmaster.com/warr
- en-millers-days-off-ft-katie-denver-colorado-11-20-2026/event/1E006523ACC
- 7A999\\n\\nRefreshed daily from live listings.
-LOCATION:Paramount Theatre\, Denver
+UID:tm-G5vzZ_G2YXKwn@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T190000
+DTEND:20261121T213000
+SUMMARY:Stephen Day Presents: The Self Titled Tour
+DESCRIPTION:Doors: 7PM Show: 8PM This show is: ALL AGES All acts subject t
+ o change without notice\\n\\nhttps://www.ticketmaster.com/stephen-day-pre
+ sents-the-self-titled-denver-colorado-11-21-2026/event/1E0064C3F0F93CAA\\
+ n\\nRefreshed daily from live listings.
+LOCATION:Marquis\, Denver
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/warren-millers-days-off-ft-katie-denver-c
- olorado-11-20-2026/event/1E006523ACC7A999
+URL:https://www.ticketmaster.com/stephen-day-presents-the-self-titled-denv
+ er-colorado-11-21-2026/event/1E0064C3F0F93CAA
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5vzZ_4UH1JTf@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T193000
-DTEND:20261120T220000
-SUMMARY:Paramount Theatre Club Seating: Warren Miller
+UID:tm-Z7r9jZ1A7--ke@whats-happening.natel628.github.io
+DTSTAMP:20261121T144745Z
+DTSTART:20261121T190000
+DTEND:20261121T213000
+SUMMARY:Foy Vance (16 and Over)
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/paramount-theatre-club-seating-warren-miller-d
- enver-colorado-11-20-2026/event/1E00655DBC2A6FD4\\n\\nRefreshed daily fro
- m live listings.
-LOCATION:Paramount Theatre\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/paramount-theatre-club-seating-warren-mil
- ler-denver-colorado-11-20-2026/event/1E00655DBC2A6FD4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70JG-@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T193000
-DTEND:20261120T220000
-SUMMARY:Colorado Symphony Orchestra presents Elgar Cello Concerto & Dvor??
- k Symphony No. 7 with Peter Oundjian
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70JG-\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7--ke\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Boettcher Hall\, Denver
+LOCATION:Gothic Theatre\, Englewood
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70JG-
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAv3bA@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T193000
-DTEND:20261120T220000
-SUMMARY:What a Glorious Feeling
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAv3bA\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Galleria Theatre\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3bA
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZtFM@whats-happening.natel628.github.io
-DTSTAMP:20261120T153737Z
-DTSTART:20261120T193000
-DTEND:20261120T220000
-SUMMARY:Samantha Bee
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZtFM\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Boulder Theater\, Boulder
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZtFM
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7--ke
 END:VEVENT
 END:VCALENDAR
