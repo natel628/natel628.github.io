@@ -6,10 +6,10 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Chicago\, IL
 X-WR-CALDESC:Upcoming events within 100 miles of Chicago\, IL.
 BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwnMh2O75H8Yk@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T123000
-DTEND:20261121T150000
+UID:tm-LvZ18Qt6lwnMh2O75H8Yu@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T121500
+DTEND:20261122T144500
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -21,23 +21,10 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70bea@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T124500
-DTEND:20261121T151500
-SUMMARY:Symphonic Superheroes
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70bea\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Symphony Center-IL\, Chicago
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70bea
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwnMh2O75H8Y6@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T124500
-DTEND:20261121T151500
+UID:tm-LvZ18Qt6lwnMh2O75H8YC@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T123000
+DTEND:20261122T150000
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -49,23 +36,28 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A700bp@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
-SUMMARY:A Midsummer Night's Dream
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A700bp\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Chicago Shakespeare Theater\, Chicago
+UID:tm-vvG18Z_CEFhWEg@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T123000
+DTEND:20261122T150000
+SUMMARY:World Famous Gospel Brunch at House of Blues (CHI)
+DESCRIPTION:This is a reserved seating show. If you have any children unde
+ r 5\, please call the box office @ 312-923-2000\, to purchase your ticket
+ s. Opera boxes are only available through the box office\, and are limite
+ d in quantity. The brunch does tend to sell out so we request purchasing 
+ a week in advance. The\\n\\nhttps://www.ticketmaster.com/world-famous-gos
+ pel-brunch-at-house-chicago-illinois-11-22-2026/event/040064E9C86FD9F5\\n
+ \\nRefreshed daily from live listings.
+LOCATION:House of Blues Chicago\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A700bp
+URL:https://www.ticketmaster.com/world-famous-gospel-brunch-at-house-chica
+ go-illinois-11-22-2026/event/040064E9C86FD9F5
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3lf@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
+UID:tm-LvZ18Qt6lwnMh2O75H8Y2@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T124500
+DTEND:20261122T151500
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -77,67 +69,69 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-sZV@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
-SUMMARY:Valparaiso Beacons Football vs. St. Thomas Tommies Football
+UID:tm-LvZ18Qt6lwLx2C_m0H3lt@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T130000
+DTEND:20261122T153000
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-sZV\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Brown Field - Valparasio\, Valparaiso
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-sZV
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70_J_@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
+UID:tm-Z7r9jZ1A7-Mfb@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T130000
+DTEND:20261122T153000
+SUMMARY:Disney's Frozen the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7-Mfb\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Marriott Theater - Lincolnshire IL\, Lincolnshire
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Mfb
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70_J6@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T130000
+DTEND:20261122T153000
 SUMMARY:How the Grinch Stole Christmas
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70_J_\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70_J6\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Todd Wehr Theater at Marcus Center\, Milwaukee
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70_J_
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70_J6
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vv178Z_4GkmE2ACL@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
-SUMMARY:Northwestern Wildcats Women's Basketball vs. Northern Illinois Hus
- kies Womens Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/northwestern-wildcats-womens-basketball-vs-nor
- thern-evanston-illinois-11-21-2026/event/0400655BA73C539F\\n\\nRefreshed 
- daily from live listings.
-LOCATION:Welsh-Ryan Arena/McGaw Hall\, Evanston
+UID:tm-vvG1jZ_26KvILU@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T130000
+DTEND:20261122T153000
+SUMMARY:Jersey Boys (Chicago)
+DESCRIPTION:Add Suite Service to make your theatre experience unforgettabl
+ e. Add Suite Service to your theatre ticket: ($49 + TM fees) incl: Access
+  to private suite 45 minutes prior to showtime and at intermission\, comp
+ limentary light snacks sweet and savory\, private full service bar\, priv
+ ate restrooms\, and coa\\n\\nhttps://www.ticketmaster.com/jersey-boys-chi
+ cago-chicago-illinois-11-22-2026/event/070064F1D30687F6\\n\\nRefreshed da
+ ily from live listings.
+LOCATION:CIBC Theatre\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/northwestern-wildcats-womens-basketball-v
- s-northern-evanston-illinois-11-21-2026/event/0400655BA73C539F
+URL:https://www.ticketmaster.com/jersey-boys-chicago-chicago-illinois-11-2
+ 2-2026/event/070064F1D30687F6
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vv1A7Zk4AGkeTwB0y@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
-SUMMARY:UIC Flames Women's Basketball v Ball State
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/uic-flames-womens-basketball-v-ball-chicago-il
- linois-11-21-2026/event/04006545BFCBA939\\n\\nRefreshed daily from live l
- istings.
-LOCATION:Credit Union 1 Arena at UIC\, Chicago
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/uic-flames-womens-basketball-v-ball-chica
- go-illinois-11-21-2026/event/04006545BFCBA939
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3l4@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T131500
-DTEND:20261121T154500
+UID:tm-LvZ18Qt6lwLx2C_m0H3ln@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T131500
+DTEND:20261122T154500
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -149,10 +143,10 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3lp@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T133000
-DTEND:20261121T160000
+UID:tm-LvZ18Qt6lwLx2C_m0H3ll@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T133000
+DTEND:20261122T160000
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -164,10 +158,10 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3l9@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T134500
-DTEND:20261121T161500
+UID:tm-LvZ18Qt6lwLx2C_m0H3li@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T134500
+DTEND:20261122T161500
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -179,26 +173,10 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfCkvf@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T134500
-DTEND:20261121T161500
-SUMMARY:Cocktail Class - Savory Cocktails
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/cocktail-class-savory-space-ticket
- s/14386054\\n\\nRefreshed daily from live listings.
-LOCATION:SPACE\, Evanston
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/cocktail-class-savory-space-tickets/14
- 386054
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3lb@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
+UID:tm-LvZ18Qt6lwLx2C_m0H3lc@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -210,16 +188,108 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PVPV@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
+UID:tm-Z7r9jZ1A700pk@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:The Winter's Tale
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A700pk\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Chicago Shakespeare Theater\, Chicago
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A700pk
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7JF3p@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:Are You Ready For It? - A Taylor Experience
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7JF3p\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Arcada Theatre\, Saint Charles
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JF3p
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7PVPz@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
 SUMMARY:A Christmas Carol
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PVPV\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PVPz\\n\\nRefreshed daily from 
  live listings.
 LOCATION:McAninch Arts Center\, Glen Ellyn
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PVPV
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PVPz
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7qwq8@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:Annie
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7qwq8\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Drury Lane Theatre Oakbrook Terrace\, Villa Park
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qwq8
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAAF1F@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:Theatre 121's Annie
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAF1F\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Woodstock Opera House\, Woodstock
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAF1F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZ_aw@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:The Winter's Tale
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZ_aw\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The Yard at Chicago Shakespeare\, Chicago
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ_aw
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZvZO@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:A Christmas Carol (Children under 5 are not permitted in the theat
+ er)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZvZO\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Goodman Theatre - Albert\, Chicago
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZvZO
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAva0E@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:Wagner: Myth & Music
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAva0E\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Civic Opera House\, Chicago
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAva0E
 END:VEVENT
 END:VCALENDAR

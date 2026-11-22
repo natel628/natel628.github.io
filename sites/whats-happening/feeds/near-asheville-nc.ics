@@ -6,416 +6,390 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Asheville\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Asheville\, NC.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-YPN@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
-SUMMARY:Presbyterian Blue Hose Football vs. Dayton Flyers Football
+UID:tm-G5eVZ_FNx7rCh@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T130000
+DTEND:20261122T153000
+SUMMARY:Registix Reserve Access (Not A Game Ticket) - Ravens at Panthers
+DESCRIPTION:THIS IS NOT A GAME TICKET. A separate game ticket is required 
+ to enter the stadium before entering The Registix Reserve. Enjoy an all-i
+ nclusive bar with craft cocktails\, beer\, and wine\, plus numerous culin
+ ary options\, including premium entrees\, snacks\, and desserts. Get as c
+ lose to the action as pos\\n\\nhttps://www.ticketmaster.com/registix-rese
+ rve-access-not-a-game-charlotte-north-carolina-11-22-2026/event/2D006488E
+ 211E39B\\n\\nRefreshed daily from live listings.
+LOCATION:Bank of America Stadium\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/registix-reserve-access-not-a-game-charlo
+ tte-north-carolina-11-22-2026/event/2D006488E211E39B
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_kmgHm-g@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T130000
+DTEND:20261122T153000
+SUMMARY:Carolina Panthers v Baltimore Ravens
+DESCRIPTION:Flex Schedule: Please be aware that there are certain games th
+ at are subject to flexible scheduling and the date and time of those game
+ s may be changed from what is currently reflected on the schedule and wha
+ t may appear on the ticket. For more detailed information about NFL flexi
+ ble scheduling proc\\n\\nhttps://www.ticketmaster.com/carolina-panthers-v
+ -baltimore-ravens-charlotte-north-carolina-11-22-2026/event/2D00646BB5F2E
+ 875\\n\\nRefreshed daily from live listings.
+LOCATION:Bank of America Stadium\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/carolina-panthers-v-baltimore-ravens-char
+ lotte-north-carolina-11-22-2026/event/2D00646BB5F2E875
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_KLAPwpX@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:Southern Conference Volleyball Championship
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-YPN\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Bailey Memorial Stadium\, Clinton
+ tps://www.ticketmaster.com/southern-conference-volleyball-championship-as
+ heville-north-carolina-11-22-2026/event/2D006537C59725BE\\n\\nRefreshed d
+ aily from live listings.
+LOCATION:Harrah's Cherokee Center - Asheville\, Asheville
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-YPN
+URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
+ ip-asheville-north-carolina-11-22-2026/event/2D006537C59725BE
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7OoQp@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
-SUMMARY:Western Carolina Catamounts Football vs. Citadel Bulldogs Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7OoQp\\n\\nRefreshed daily from 
- live listings.
-LOCATION:E.J. Whitmire Stadium\, Cullowhee
+UID:tm-G5viZ_5KZRCQS@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:A Christmas Carol (CBT)
+DESCRIPTION:Children under the age of 4 are not permitted in the auditoriu
+ m. A ticket is required for each person entering the performance. Only re
+ gistered service animals are permitted\, please call the CBT Box Office f
+ or seating arrangements. Additional accessible seating options may be ava
+ ilable through the C\\n\\nhttps://www.ticketmaster.com/a-christmas-carol-
+ cbt-knoxville-tennessee-11-22-2026/event/1B0064B4C0BCE6B3\\n\\nRefreshed 
+ daily from live listings.
+LOCATION:Clarence Brown Theatre\, Univ of Tennessee\, Knoxville
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7OoQp
+URL:https://www.ticketmaster.com/a-christmas-carol-cbt-knoxville-tennessee
+ -11-22-2026/event/1B0064B4C0BCE6B3
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-Yo6@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
-SUMMARY:Davidson College Wildcats Football vs. Marist Red Foxes Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-Yo6\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Davidson College Stadium\, Davidson
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Yo6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7ONZU@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T133000
-DTEND:20261121T160000
-SUMMARY:Gardner Webb Bulldogs Football vs. Tennessee State Tigers Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7ONZU\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Spangler Stadium\, Shelby
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7ONZU
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_8lbmf2t@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
-SUMMARY:Be Like Blippi Photo Experience
-DESCRIPTION:Meet Blippi ON STAGE and have the opportunity to take your pho
- to with Blippi in this one-of-a-kind Photo Experience! You'll also receiv
- e a souvenir tour lanyard with a Be Like Blippi Tour Pass to commemorate 
- the day. Don't miss your chance to create unforgettable\, treasured memor
- ies with your childr\\n\\nhttps://www.ticketmaster.com/be-like-blippi-pho
- to-experience-spartanburg-south-carolina-11-21-2026/event/2D00650AD8B943E
- 9\\n\\nRefreshed daily from live listings.
-LOCATION:Spartanburg Memorial Auditorium\, Spartanburg
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/be-like-blippi-photo-experience-spartanbu
- rg-south-carolina-11-21-2026/event/2D00650AD8B943E9
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_8wtJnTG@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
-SUMMARY:Be Like Blippi Tour!
-DESCRIPTION:This show contains Flashing Lights\, Haze (Fog)\, and Confetti
- \\n\\nhttps://www.ticketmaster.com/be-like-blippi-tour-spartanburg-south-
- carolina-11-21-2026/event/2D00650CA99AAFCC\\n\\nRefreshed daily from live
-  listings.
-LOCATION:Spartanburg Memorial Auditorium\, Spartanburg
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/be-like-blippi-tour-spartanburg-south-car
- olina-11-21-2026/event/2D00650CA99AAFCC
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70UbE@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70UbE\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbE
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-IAE@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T143000
-DTEND:20261121T170000
-SUMMARY:Appalachian State Mountaineers Football vs. Louisiana Monroe Warha
- wks Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-IAE\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Kidd Brewer Stadium\, Boone
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-IAE
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5viZ_ol2E70O@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T143000
-DTEND:20261121T170000
+UID:tm-G5viZ_ol2tV0y@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T143000
+DTEND:20261122T170000
 SUMMARY:UT Opera Theatre presents "The Crucible"
 DESCRIPTION:Please note that balcony-level seating is accessible only by s
  tairs\; there is no elevator access to the balcony level. THIS IS A GENER
  AL ADMISSION EVENT. We reserve the right to revoke tickets sold through b
  rokers or unauthorized third parties. If your ticket is revoked\, you wil
  l not be admitted and\\n\\nhttps://www.ticketmaster.com/ut-opera-theatre-
- presents-the-crucible-knoxville-tennessee-11-21-2026/event/1B00651ACF9C49
- 20\\n\\nRefreshed daily from live listings.
+ presents-the-crucible-knoxville-tennessee-11-22-2026/event/1B00651ACFA749
+ 39\\n\\nRefreshed daily from live listings.
 LOCATION:Bijou Theatre\, Knoxville
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/ut-opera-theatre-presents-the-crucible-kn
- oxville-tennessee-11-21-2026/event/1B00651ACF9C4920
+ oxville-tennessee-11-22-2026/event/1B00651ACFA74939
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5viZ_1UppaHH@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T150000
-DTEND:20261121T173000
+UID:tm-G5viZ_8QXBaMh@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T143000
+DTEND:20261122T170000
+SUMMARY:Classical Christmas: Handel's Messiah
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/classical-christmas-handels-messiah-knoxville-
+ tennessee-11-22-2026/event/1B006506BEE89DDB\\n\\nRefreshed daily from liv
+ e listings.
+LOCATION:Tennessee Theatre\, Knoxville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/classical-christmas-handels-messiah-knoxv
+ ille-tennessee-11-22-2026/event/1B006506BEE89DDB
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70UbI@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T150000
+DTEND:20261122T173000
+SUMMARY:Elf the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70UbI\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barter Theatre\, Abingdon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbI
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_2Tb_jzE@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T150500
+DTEND:20261122T173500
+SUMMARY:Greenville Swamp Rabbits vs. Greensboro Gargoyles
+DESCRIPTION:Military discounts are offered at the box office for any milit
+ ary members that provide a valid Military ID.\\n\\nhttps://www.ticketmast
+ er.com/greenville-swamp-rabbits-vs-greensboro-gargoyles-greenville-south-
+ carolina-11-22-2026/event/2D0064FFD865CE27\\n\\nRefreshed daily from live
+  listings.
+LOCATION:Bon Secours Wellness Arena \, Greenville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/greenville-swamp-rabbits-vs-greensboro-ga
+ rgoyles-greenville-south-carolina-11-22-2026/event/2D0064FFD865CE27
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70P8k@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T150500
+DTEND:20261122T173500
+SUMMARY:Greenville Swamp Rabbits vs. Greensboro Gargoyles
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70P8k\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Bon Secours Wellness Arena\, Greenville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70P8k
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5viZ_1UpjaWD@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T160000
+DTEND:20261122T183000
 SUMMARY:Disney On Ice presents Spotlight Magic!
 DESCRIPTION:All guest age 2 & older are required to have a ticket. Note: N
  o Costumes for guests 14 & older. Monitor the venue website for venue pol
  icies\, including health and safety protocols\, which are subject to chan
  ge. All ticket are subject to availability. Prices are subject to change.
   Visit DisneyOnIce.co\\n\\nhttps://www.ticketmaster.com/disney-on-ice-pre
- sents-spotlight-magic-knoxville-tennessee-11-21-2026/event/1B0064AD96589F
- 3C\\n\\nRefreshed daily from live listings.
+ sents-spotlight-magic-knoxville-tennessee-11-22-2026/event/1B0064AD96709F
+ 7B\\n\\nRefreshed daily from live listings.
 LOCATION:Knoxville Civic Coliseum\, Knoxville
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-kn
- oxville-tennessee-11-21-2026/event/1B0064AD96589F3C
+ oxville-tennessee-11-22-2026/event/1B0064AD96709F7B
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5viZ_6xcQrOs@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T153000
-DTEND:20261121T180000
-SUMMARY:Tennessee Volunteers Football vs. Louisiana State University Footb
- all
+UID:tm-rZ7HnEZ1AfGKf0@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T170000
+DTEND:20261122T193000
+SUMMARY:Gratitude for Carolina Caring
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketweb.com/event/gratitude-for-carolina-caring-the-premier-t
+ ickets/14313524\\n\\nRefreshed daily from live listings.
+LOCATION:The Premier\, Hickory
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/gratitude-for-carolina-caring-the-prem
+ ier-tickets/14313524
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5viZ_o2jNgo7@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T173000
+DTEND:20261122T200000
+SUMMARY:Tennessee Lady Volunteers Women's Basketball vs. UCLA Bruins Women
+ 's Basketball
 DESCRIPTION:All tickets for Tennessee Athletics events are digital tickets
  . Fans should add each ticket to Apple Wallet or Google Pay to allow for 
  easier entry into the venue. NOTE: SCREENSHOTS OF TICKETS WILL NOT SCAN A
  T THE GATE & WILL NOT GRANT ENTRY! University policies and state & federa
- l laws will be in e\\n\\nhttps://www.ticketmaster.com/tennessee-volunteer
- s-football-vs-louisiana-state-knoxville-tennessee-11-21-2026/event/1B0064
- 78AD69E831\\n\\nRefreshed daily from live listings.
-LOCATION:Neyland Stadium\, Knoxville
+ l laws will be in e\\n\\nhttps://www.ticketmaster.com/tennessee-lady-volu
+ nteers-womens-basketball-vs-knoxville-tennessee-11-22-2026/event/1B006513
+ DC8F5444\\n\\nRefreshed daily from live listings.
+LOCATION:Food City Center\, Knoxville
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/tennessee-volunteers-football-vs-louisian
- a-state-knoxville-tennessee-11-21-2026/event/1B006478AD69E831
+URL:https://www.ticketmaster.com/tennessee-lady-volunteers-womens-basketba
+ ll-vs-knoxville-tennessee-11-22-2026/event/1B006513DC8F5444
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5eVZ_KLAP3pR@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T160000
-DTEND:20261121T183000
-SUMMARY:Southern Conference Volleyball Championship: Semifinals
+UID:tm-G5eVZ_9eHtQDV@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T180000
+DTEND:20261122T203000
+SUMMARY:2026 NCAA D1 M Soccer Championship - Second Rd - Clemson vs Vermon
+ t
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/southern-conference-volleyball-championship-se
- mifinals-asheville-north-carolina-11-21-2026/event/2D006537C59525AF\\n\\n
- Refreshed daily from live listings.
-LOCATION:Harrah's Cherokee Center - Asheville\, Asheville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/southern-conference-volleyball-championsh
- ip-semifinals-asheville-north-carolina-11-21-2026/event/2D006537C59525AF
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA70Q8@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T160000
-DTEND:20261121T183000
-SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Longwood Lance
- rs Mens Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA70Q8\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Freedom Hall Civic Center-TN\, Johnson City
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70Q8
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_2TbbHzL@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T160500
-DTEND:20261121T183500
-SUMMARY:Greenville Swamp Rabbits vs. Greensboro Gargoyles
-DESCRIPTION:Military discounts are offered at the box office for any milit
- ary members that provide a valid Military ID.\\n\\nhttps://www.ticketmast
- er.com/greenville-swamp-rabbits-vs-greensboro-gargoyles-greenville-south-
- carolina-11-21-2026/event/2D0064FFD863CE1F\\n\\nRefreshed daily from live
-  listings.
-LOCATION:Bon Secours Wellness Arena \, Greenville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/greenville-swamp-rabbits-vs-greensboro-ga
- rgoyles-greenville-south-carolina-11-21-2026/event/2D0064FFD863CE1F
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_9dPXoSx@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T170000
-DTEND:20261121T193000
-SUMMARY:2026 NCAA D1 Women's Soccer Championship - First Rd - Clemson vs B
- rown
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/2026-ncaa-d1-womens-soccer-championship-clemso
- n-south-carolina-11-21-2026/event/2D006570E5F91CE2\\n\\nRefreshed daily f
- rom live listings.
+ tps://www.ticketmaster.com/2026-ncaa-d1-m-soccer-championship-clemson-sou
+ th-carolina-11-22-2026/event/2D006570BCA5AEF4\\n\\nRefreshed daily from l
+ ive listings.
 LOCATION:Historic Riggs Field\, Clemson
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/2026-ncaa-d1-womens-soccer-championship-c
- lemson-south-carolina-11-21-2026/event/2D006570E5F91CE2
+URL:https://www.ticketmaster.com/2026-ncaa-d1-m-soccer-championship-clemso
+ n-south-carolina-11-22-2026/event/2D006570BCA5AEF4
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZpF8@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T180000
-DTEND:20261121T203000
-SUMMARY:Peter Cincotti
+UID:tm-G5eVZ_5R3hWMv@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Kristin Key
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZpF8\\n\\nRefreshed daily from 
+ tps://www.etix.com/ticket/p/92566794/kristin-key-asheville-the-orange-pee
+ l\\n\\nRefreshed daily from live listings.
+LOCATION:The Orange Peel\, Asheville
+STATUS:CONFIRMED
+URL:https://www.etix.com/ticket/p/92566794/kristin-key-asheville-the-orang
+ e-peel
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70MoY@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Kristin Key
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70MoY\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Middle C Jazz\, Charlotte
+LOCATION:The Orange Peel\, Asheville
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZpF8
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70MoY
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A704kk@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Gabby Bryan
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A704kk\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Comedy Zone - Greenville\, Greenville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A704kk
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af16b7@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Sidewinder w/ Doobie Wah
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketweb.com/event/sidewinder-w-doobie-wah-the-premier-tickets
- /14287604\\n\\nRefreshed daily from live listings.
-LOCATION:The Premier\, Hickory
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/sidewinder-w-doobie-wah-the-premier-ti
- ckets/14287604
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAA_0@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Emo Night Live
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAA_0\\n\\nRefreshed daily from 
- live listings.
-LOCATION:The Music Yard at SouthBound\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAA_0
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfFpb7@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Megan Woods: The Truth Tour - Morristown\, TN
-DESCRIPTION:This ticket is a revocable license and may be taken up and adm
- ission refused upon refunding the purchase price appearing hereon and is 
- grounds for seizure and cancellation without compensation. Holder of this
-  ticket voluntarily assumes all risks and danger incidental to the game o
- r event for which t\\n\\nhttps://www.ticketweb.com/event/megan-woods-the-
- truth-tour-manley-baptist-church-tickets/14216604\\n\\nRefreshed daily fr
- om live listings.
-LOCATION:Manley Baptist Church\, Morristown
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/megan-woods-the-truth-tour-manley-bapt
- ist-church-tickets/14216604
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70P8b@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190500
-DTEND:20261121T213500
-SUMMARY:Greenville Swamp Rabbits vs. Greensboro Gargoyles
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70P8b\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Bon Secours Wellness Arena\, Greenville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70P8b
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_2mDNTIN@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T193000
-DTEND:20261121T220000
-SUMMARY:Night Ranger
-DESCRIPTION:AGE 21+ ADMISSION ONLY. The venue reserves the right to implem
- ent security procedures designed to protect the experience for all of our
-  guests. All guests must be 21 or older to attend this event. Tickets can
- not be presented as a screenshot\, as new ticket security measures are in
-  place. Saving your \\n\\nhttps://www.ticketmaster.com/night-ranger-chero
- kee-north-carolina-11-21-2026/event/2D0064FBBB8FFA23\\n\\nRefreshed daily
-  from live listings.
-LOCATION:Harrah's Cherokee Resort Event Center\, Cherokee
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/night-ranger-cherokee-north-carolina-11-2
- 1-2026/event/2D0064FBBB8FFA23
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_oSnADNj@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T193000
-DTEND:20261121T220000
-SUMMARY:Night Ranger | Official Caesars Ticket + Hotel Packages
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://travel.ticketmaster.com/en-US/event/166095971/pf?_uid=01e06df2-8b31
- -4246-b25c-04d738f89509&utm_source=Caesars_TM&utm_medium=TM_ADP_NightRang
- er1121\\n\\nRefreshed daily from live listings.
-LOCATION:Harrah's Cherokee Resort Event Center\, Cherokee
-STATUS:CONFIRMED
-URL:https://travel.ticketmaster.com/en-US/event/166095971/pf?_uid=01e06df2
- -8b31-4246-b25c-04d738f89509&utm_source=Caesars_TM&utm_medium=TM_ADP_Nigh
- tRanger1121
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70UbJ@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T193000
-DTEND:20261121T220000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70UbJ\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbJ
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_5QJbqdX@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T200000
-DTEND:20261121T223000
-SUMMARY:10 Years of 6LACK Tour
-DESCRIPTION:Unfortunately\, the Event Organizer has had to cancel your eve
- nt. You don't need to do a thing. We'll issue a refund to the [original m
- ethod of payment](https://help.ticketmaster.com/hc/en-us/articles/9614074
- 869009) used at time of purchase\, as soon as funds are received from the
-  Event Organizer. It \\n\\nhttps://www.ticketmaster.com/10-years-of-6lack
- -tour-charlotte-north-carolina-11-21-2026/event/2D0064B6A661D0FE\\n\\nRef
- reshed daily from live listings.
+UID:tm-G5eVZ_5nKcIMX@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Alex Edelman: What Are You Going To Do
+DESCRIPTION:13+ Doors: 6:00PM Show: 7:00PM Ticket prices will increase the
+  day of the show. All dates\, acts\, and ticket prices subject to change 
+ without notice. All tickets are subject to applicable service fees via al
+ l points of purchase.\\n\\nhttps://www.ticketmaster.com/alex-edelman-what
+ -are-you-going-charlotte-north-carolina-11-22-2026/event/2D0064BA93B68DFE
+ \\n\\nRefreshed daily from live listings.
 LOCATION:The Fillmore Charlotte\, Charlotte
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/10-years-of-6lack-tour-charlotte-north-ca
- rolina-11-21-2026/event/2D0064B6A661D0FE
+URL:https://www.ticketmaster.com/alex-edelman-what-are-you-going-charlotte
+ -north-carolina-11-22-2026/event/2D0064BA93B68DFE
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5viZ_2rwbcJ4@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T200000
-DTEND:20261121T223000
-SUMMARY:Deal Or No Deal
-DESCRIPTION:MUST BE 21+ WITH VALID PHOTO ID. All sales final\; no refunds.
-  Doors open at 7PM. Reserved seating only - no standing room. Any floor s
- eat is ADA accessible\; contact box office for accommodations. Venue is s
- moke-free\, no vaping. Located inside Hard Rock Hotel & Casino Bristol. B
- ox Office: NW corner o\\n\\nhttps://www.ticketmaster.com/deal-or-no-deal-
- bristol-virginia-11-21-2026/event/1B0064F7B262D995\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Hard Rock Live Bristol\, Bristol
+UID:tm-G5eVZbgQ1U0m8@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T193000
+DTEND:20261122T220000
+SUMMARY:RUSH: Fifty Something
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/rush-fifty-something-charlotte-north-carolina-
+ 11-22-2026/event/2D0063568ADA4B90\\n\\nRefreshed daily from live listings
+ .
+LOCATION:Spectrum Center\, Charlotte
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/deal-or-no-deal-bristol-virginia-11-21-20
- 26/event/1B0064F7B262D995
+URL:https://www.ticketmaster.com/rush-fifty-something-charlotte-north-caro
+ lina-11-22-2026/event/2D0063568ADA4B90
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5eVZ_ok_gboT@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T200000
-DTEND:20261121T223000
-SUMMARY:bleood - Kill Your Idols Tour
+UID:tm-G5eVZ_a9SixWB@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T193000
+DTEND:20261122T220000
+SUMMARY:Stewart Copeland - Have I Said Too Much
+DESCRIPTION:ACCESSIBILITY - Accessible seating is available online through
+  Ticketmaster by filtering on the ADA Icon and selecting Accessible Seats
+ . Note: the Carolina Theatre has the original\, historic stairs in the ba
+ lcony. Please take that into consideration when buying balcony tickets. C
+ ASHLESS VENUE - the \\n\\nhttps://www.ticketmaster.com/stewart-copeland-h
+ ave-i-said-too-charlotte-north-carolina-11-22-2026/event/2D006495F3B22F7A
+ \\n\\nRefreshed daily from live listings.
+LOCATION:The Carolina\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/stewart-copeland-have-i-said-too-charlott
+ e-north-carolina-11-22-2026/event/2D006495F3B22F7A
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvMfk@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T200000
+DTEND:20261122T223000
+SUMMARY:Claudio Simonetti's Goblin
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvMfk\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Radio Room\, Greenville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvMfk
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_CkQwETt@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T200000
+DTEND:20261122T223000
+SUMMARY:INAYAH - Therapy Wasn't Enough North America Tour 2026
 DESCRIPTION:The Underground Is A General Admission Standing Room Only Venu
  e Unless Otherwise Noted. All Ages Welcome Doors: 7:00pm Show: 8:00pm Tic
  ket prices will increase the day of the show. All dates\, acts\, and tick
  et prices subject to change without notice. All tickets are subject to ap
- plicable service fees\\n\\nhttps://www.ticketmaster.com/bleood-kill-your-
- idols-tour-charlotte-north-carolina-11-21-2026/event/2D00651199D5847F\\n\
- \nRefreshed daily from live listings.
+ plicable service fees\\n\\nhttps://www.ticketmaster.com/inayah-therapy-wa
+ snt-enough-north-america-charlotte-north-carolina-11-22-2026/event/2D0064
+ E19ACA7FE9\\n\\nRefreshed daily from live listings.
 LOCATION:The Underground\, Charlotte
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/bleood-kill-your-idols-tour-charlotte-nor
- th-carolina-11-21-2026/event/2D00651199D5847F
+URL:https://www.ticketmaster.com/inayah-therapy-wasnt-enough-north-america
+ -charlotte-north-carolina-11-22-2026/event/2D0064E19ACA7FE9
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_2pXcs9c@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
+SUMMARY:Charlotte Hornets vs. Memphis Grizzlies
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/charlotte-hornets-vs-memphis-grizzlies-charlot
+ te-north-carolina-11-23-2026/event/2D0064F5BEB715ED\\n\\nRefreshed daily 
+ from live listings.
+LOCATION:Spectrum Center\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/charlotte-hornets-vs-memphis-grizzlies-ch
+ arlotte-north-carolina-11-23-2026/event/2D0064F5BEB715ED
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA70Q6@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
+SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Kentucky State
+  Thorobreds Mens Basketball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA70Q6\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Freedom Hall Civic Center-TN\, Johnson City
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70Q6
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAAoA-@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
+SUMMARY:NUTCRACKER! Magical Christmas Ballet
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAoA-\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:ETSU Martin Center for the Arts\, Johnson City
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAoA-
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70Ubt@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261124T140000
+DTEND:20261124T163000
+SUMMARY:Elf the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70Ubt\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barter Theatre\, Abingdon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubt
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAAFFf@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261124T190000
+DTEND:20261124T213000
+SUMMARY:World Ballet Company presents The Nutcracker
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAFFf\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:J.E. Broyhill Civic Center\, Lenoir
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAFFf
 END:VEVENT
 END:VCALENDAR

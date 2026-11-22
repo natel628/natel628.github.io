@@ -6,269 +6,297 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Atlanta\, GA
 X-WR-CALDESC:Upcoming events within 100 miles of Atlanta\, GA.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-tZ9@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T130000
-DTEND:20261121T153000
-SUMMARY:Jacksonville State Gamecocks Football vs. Missouri State Bears Foo
- tball
+UID:tm-Z7r9jZ1AA77bO@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T130000
+DTEND:20261122T153000
+SUMMARY:Georgia Bulldogs Womens Basketball vs. Louisiana Tech Bulldogs Wom
+ ens Basketball
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-tZ9\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA77bO\\n\\nRefreshed daily from 
  live listings.
-LOCATION:AmFirst Stadium\, Jacksonville
+LOCATION:Stegeman Coliseum\, Athens
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-tZ9
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA77bO
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7OSZA@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
+UID:tm-Z7r9jZ1A7OSZo@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T130000
+DTEND:20261122T153000
 SUMMARY:Death Becomes Her (Touring)
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7OSZA\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7OSZo\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Fox Theatre - Atlanta\, Atlanta
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7OSZA
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7OSZo
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70guw@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
+UID:tm-Z7r9jZ1A70guV@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
 SUMMARY:A Christmas Carol
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70guw\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70guV\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Alliance Theatre - Coca-Cola Stage\, Atlanta
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70guw
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70guV
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1zZ_4CfJ4u0@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
+UID:tm-vvG1zZ_oRbbFSd@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:College Park Skyhawks vs. Delaware Blue Coats
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/college-park-skyhawks-vs-delaware-blue-college
+ -park-georgia-11-22-2026/event/0E00651BD8608CC3\\n\\nRefreshed daily from
+  live listings.
+LOCATION:Gateway Center Arena\, College Park
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/college-park-skyhawks-vs-delaware-blue-co
+ llege-park-georgia-11-22-2026/event/0E00651BD8608CC3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_4CfJgut@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
 SUMMARY:Star of Wonder Matinee - (Buford School of Ballet)
 DESCRIPTION:Ages 3 and older require a ticket. No Refunds. No Exchanges. P
  ricing\, lineup\, and production setup may change without notice. Ticket 
  purchases exceeding the posted ticket limit\, either within a single orde
  r or across multiple orders\, may be subject to order(s) being voided wit
  hout notice. Las edades\\n\\nhttps://www.ticketmaster.com/star-of-wonder-
- matinee-buford-school-duluth-georgia-11-21-2026/event/0E00655394995364\\n
+ matinee-buford-school-duluth-georgia-11-22-2026/event/0E006553949B5369\\n
  \\nRefreshed daily from live listings.
 LOCATION:Gas South Theater\, Duluth
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/star-of-wonder-matinee-buford-school-dulu
- th-georgia-11-21-2026/event/0E00655394995364
+ th-georgia-11-22-2026/event/0E006553949B5369
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7x3GM@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T140000
-DTEND:20261121T163000
-SUMMARY:West Georgia Wolves Football vs. West Florida Argonauts Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7x3GM\\n\\nRefreshed daily from 
- live listings.
-LOCATION:University of West Georgia Stadium\, Carrollton
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7x3GM
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7xaq0@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T150000
-DTEND:20261121T173000
+UID:tm-Z7r9jZ1A7xaqJ@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T150000
+DTEND:20261122T173000
 SUMMARY:It's A Wonderful Life - A Live Radio Play
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7xaq0\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7xaqJ\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Strand Theatre - GA\, Marietta
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7xaq0
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7xaqJ
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-Ixe@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T150000
-DTEND:20261121T173000
-SUMMARY:Kennesaw State Owls Football vs. Florida International Panthers Fo
- otball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-Ixe\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Fifth Third Bank Stadium\, Kennesaw
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Ixe
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-KJ6@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T150000
-DTEND:20261121T173000
-SUMMARY:Mercer Bears Football vs. East Tennessee State Buccaneers Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-KJ6\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Five Star Stadium at Moye Complex\, Macon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-KJ6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_4Cfb45t@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T180000
-DTEND:20261121T203000
-SUMMARY:Star of Wonder 2026 - (Buford School of Ballet)
-DESCRIPTION:Ages 3 and older require a ticket. No Refunds. No Exchanges. P
- ricing\, lineup\, and production setup may change without notice. Ticket 
- purchases exceeding the posted ticket limit\, either within a single orde
- r or across multiple orders\, may be subject to order(s) being voided wit
- hout notice. Las edades\\n\\nhttps://www.ticketmaster.com/star-of-wonder-
- 2026-buford-school-duluth-georgia-11-21-2026/event/0E006553946152E9\\n\\n
- Refreshed daily from live listings.
-LOCATION:Gas South Theater\, Duluth
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/star-of-wonder-2026-buford-school-duluth-
- georgia-11-21-2026/event/0E006553946152E9
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_2wwat8V@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T180000
-DTEND:20261121T203000
-SUMMARY:Macon Mayhem vs. Roanoke Rail Yard Dawgs
-DESCRIPTION:CLEAR BAG POLICY ENFORCED & MOBILE TICKET REQUIRED (printed ti
- ckets purchased at the Macon Coliseum Box Office are accepted). For more 
- information on specific policies and procedures\, please visit: https://w
- ww.maconcentreplex.org/coliseum/plan-your-visit/a-z-guide/.\\n\\nhttps://
- www.ticketmaster.com/macon-mayhem-vs-roanoke-rail-yard-macon-georgia-11-2
- 1-2026/event/0E0064FCB2269434\\n\\nRefreshed daily from live listings.
-LOCATION:Macon Coliseum\, Macon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/macon-mayhem-vs-roanoke-rail-yard-macon-g
- eorgia-11-21-2026/event/0E0064FCB2269434
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZ6xK@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T183000
-DTEND:20261121T210000
-SUMMARY:Musiq Soulchild
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZ6xK\\n\\nRefreshed daily from 
- live listings.
-LOCATION:City Winery - Atlanta\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ6xK
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvevF@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Heavens to Betsy - Under 18 with parent or legal guardian
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvevF\\n\\nRefreshed daily from 
- live listings.
-LOCATION:40 Watt Club\, Athens
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvevF
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_8rzuIVy@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Waterparks - NIGHT 2
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/waterparks-night-2-atlanta-georgia-11-21-2026/
- event/0E006507B8368D39\\n\\nRefreshed daily from live listings.
-LOCATION:The Masquerade - Hell\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/waterparks-night-2-atlanta-georgia-11-21-
- 2026/event/0E006507B8368D39
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_oCD0hUb@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Manchester Orchestra - The Stuffing XVI
-DESCRIPTION:This is a fully reserved seating performance. All ages welcome
- . Box Office Open at 5:00pm. Doors at 6pm. Show at 7pm. Please be aware o
- ur balconies are not ADA accessible. All accommodations are located on th
- e main floor level. There is no elevator in the building. Please ask even
- t staff for any ADA\\n\\nhttps://www.ticketmaster.com/manchester-orchestr
- a-the-stuffing-xvi-atlanta-georgia-11-21-2026/event/0E006513BB91BD98\\n\\
- nRefreshed daily from live listings.
-LOCATION:Tabernacle Presented by iTHINK Financial\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/manchester-orchestra-the-stuffing-xvi-atl
- anta-georgia-11-21-2026/event/0E006513BB91BD98
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_6CbEF0b@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Jonathan Van Ness
-DESCRIPTION:Unfortunately\, the Event Organizer has had to cancel your eve
- nt. You don't need to do a thing. We'll issue a refund to the [original m
- ethod of payment](https://help.ticketmaster.com/hc/en-us/articles/9614074
- 869009) used at time of purchase\, as soon as funds are received from the
-  Event Organizer. It \\n\\nhttps://www.ticketmaster.com/jonathan-van-ness
- -atlanta-georgia-11-21-2026/event/0E006473989C8918\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Center Stage Theater\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/jonathan-van-ness-atlanta-georgia-11-21-2
- 026/event/0E006473989C8918
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70guS@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:A Christmas Carol
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70guS\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Alliance Theatre - Coca-Cola Stage\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70guS
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_G2Q23fQ@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
+UID:tm-vvG1zZ_G2Q8efR@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T150000
+DTEND:20261122T173000
 SUMMARY:Atlanta Gladiators vs. Indy Fuel
 DESCRIPTION:Ages 2 and older require a ticket. No Refunds . No Exchanges. 
  Pricing\, line up\, and production setup may change without notice. Ticke
  t purchases exceeding the posted ticket limit\, either within a single or
  der or across multiple orders\, may be subject to order(s) being voided w
  ithout notice. Las edad\\n\\nhttps://www.ticketmaster.com/atlanta-gladiat
- ors-vs-indy-fuel-duluth-georgia-11-21-2026/event/0E0064C3DA3D251A\\n\\nRe
+ ors-vs-indy-fuel-duluth-georgia-11-22-2026/event/0E0064C3DA40252F\\n\\nRe
  freshed daily from live listings.
 LOCATION:Gas South Arena\, Duluth
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/atlanta-gladiators-vs-indy-fuel-duluth-ge
- orgia-11-21-2026/event/0E0064C3DA3D251A
+ orgia-11-22-2026/event/0E0064C3DA40252F
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7-Qf@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190500
-DTEND:20261121T213500
-SUMMARY:Athens Rock Lobsters vs. Pensacola Ice Flyers
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7-Qf\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Akins Arena at The Classic Center\, Athens
+UID:tm-vvG1zZ_2ww1a8T@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T150000
+DTEND:20261122T173000
+SUMMARY:Macon Mayhem vs. Athens Rock Lobsters
+DESCRIPTION:CLEAR BAG POLICY ENFORCED & MOBILE TICKET REQUIRED (printed ti
+ ckets purchased at the Macon Coliseum Box Office are accepted). For more 
+ information on specific policies and procedures\, please visit: https://w
+ ww.maconcentreplex.org/coliseum/plan-your-visit/a-z-guide/.\\n\\nhttps://
+ www.ticketmaster.com/macon-mayhem-vs-athens-rock-lobsters-macon-georgia-1
+ 1-22-2026/event/0E0064FCB228943F\\n\\nRefreshed daily from live listings.
+LOCATION:Macon Coliseum\, Macon
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7-Qf
+URL:https://www.ticketmaster.com/macon-mayhem-vs-athens-rock-lobsters-maco
+ n-georgia-11-22-2026/event/0E0064FCB228943F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_8p34Aau@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T153000
+DTEND:20261122T180000
+SUMMARY:Atlanta Hawks vs. Detroit Pistons
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/atlanta-hawks-vs-detroit-pistons-atlanta-georg
+ ia-11-22-2026/event/0E0065059254524D\\n\\nRefreshed daily from live listi
+ ngs.
+LOCATION:State Farm Arena\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/atlanta-hawks-vs-detroit-pistons-atlanta-
+ georgia-11-22-2026/event/0E0065059254524D
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_aQnj5YI@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T160000
+DTEND:20261122T183000
+SUMMARY:Art Space Production Presents Swan Lake: Symphony of Lights
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/art-space-production-presents-swan-lake-atlant
+ a-georgia-11-22-2026/event/0E006496AA70BC28\\n\\nRefreshed daily from liv
+ e listings.
+LOCATION:Atlanta Symphony Hall\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/art-space-production-presents-swan-lake-a
+ tlanta-georgia-11-22-2026/event/0E006496AA70BC28
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_fNL7AyI@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T180000
+DTEND:20261122T203000
+SUMMARY:Cousin Curtiss
+DESCRIPTION:The Purchaser/ ticket holder must bring a photo ID to will-cal
+ l to check-in for the show. If you transfer your tickets to another patro
+ n\, we request that they bring their photo ID. Check-in begins at 4 PM.\\
+ n\\nhttps://www.ticketmaster.com/cousin-curtiss-decatur-georgia-11-22-202
+ 6/event/0E006548DF105E68\\n\\nRefreshed daily from live listings.
+LOCATION:Eddie's Attic\, Decatur
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/cousin-curtiss-decatur-georgia-11-22-2026
+ /event/0E006548DF105E68
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_4Cfbg5s@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T180000
+DTEND:20261122T203000
+SUMMARY:Star of Wonder 2026 - (Buford School of Ballet)
+DESCRIPTION:Ages 3 and older require a ticket. No Refunds. No Exchanges. P
+ ricing\, lineup\, and production setup may change without notice. Ticket 
+ purchases exceeding the posted ticket limit\, either within a single orde
+ r or across multiple orders\, may be subject to order(s) being voided wit
+ hout notice. Las edades\\n\\nhttps://www.ticketmaster.com/star-of-wonder-
+ 2026-buford-school-duluth-georgia-11-22-2026/event/0E006553946352F1\\n\\n
+ Refreshed daily from live listings.
+LOCATION:Gas South Theater\, Duluth
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/star-of-wonder-2026-buford-school-duluth-
+ georgia-11-22-2026/event/0E006553946352F1
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_53XrXD7@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T183000
+DTEND:20261122T210000
+SUMMARY:DragonForce: Inhuman Rampage 20th Anniversary
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/dragonforce-inhuman-rampage-20th-anniversary-a
+ tlanta-georgia-11-22-2026/event/0E0064B4BE7BEEC4\\n\\nRefreshed daily fro
+ m live listings.
+LOCATION:The Masquerade - Heaven\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/dragonforce-inhuman-rampage-20th-annivers
+ ary-atlanta-georgia-11-22-2026/event/0E0064B4BE7BEEC4
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7OSZa@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T183000
+DTEND:20261122T210000
+SUMMARY:Death Becomes Her (Touring)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7OSZa\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Fox Theatre - Atlanta\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7OSZa
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_8rB2bXp@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Waterparks - NIGHT 3
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/waterparks-night-3-atlanta-georgia-11-22-2026/
+ event/0E006507BA3D8F96\\n\\nRefreshed daily from live listings.
+LOCATION:The Masquerade - Hell\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/waterparks-night-3-atlanta-georgia-11-22-
+ 2026/event/0E006507BA3D8F96
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_C6OvWwZ@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Ho99o9 & N8NOFACE - Sincerely___ The Void
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/ho99o9-n8noface-sincerely-the-void-atlanta-geo
+ rgia-11-22-2026/event/0E0064E1E007DC80\\n\\nRefreshed daily from live lis
+ tings.
+LOCATION:The Masquerade - Purgatory\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/ho99o9-n8noface-sincerely-the-void-atlant
+ a-georgia-11-22-2026/event/0E0064E1E007DC80
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1Af-SqN@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:I’ve Got A Fire Tour with Pat Barrett - Atlanta\, GA
+DESCRIPTION:This ticket is a revocable license and may be taken up and adm
+ ission refused upon refunding the purchase price appearing hereon and is 
+ grounds for seizure and cancellation without compensation. Holder of this
+  ticket voluntarily assumes all risks and danger incidental to the game o
+ r event for which t\\n\\nhttps://www.ticketweb.com/event/ive-got-a-fire-t
+ our-grace-midtown-church-tickets/14873763\\n\\nRefreshed daily from live 
+ listings.
+LOCATION:Grace Midtown Church\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/ive-got-a-fire-tour-grace-midtown-chur
+ ch-tickets/14873763
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_825JDfR@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Moral
+DESCRIPTION:The price you see is the price you pay! All fees are included 
+ in the price you see on Ticketmaster (excluding taxes). All sales are fin
+ al/non-refundable for this event. For ADA Accommodations\, email info@riv
+ alentertainment.com. For parking information and an FAQ\, visit us at cen
+ terstage-atlanta.com.\\n\\nhttps://www.ticketmaster.com/moral-atlanta-geo
+ rgia-11-22-2026/event/0E006503CB9BB52F\\n\\nRefreshed daily from live lis
+ tings.
+LOCATION:Vinyl\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/moral-atlanta-georgia-11-22-2026/event/0E
+ 006503CB9BB52F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_uk4DzF4@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Phillip Phillips
+DESCRIPTION:All sales are final/non-refundable for this event. For ADA Acc
+ ommodations\, email info@rivalentertainment.com. For parking information 
+ and an FAQ\, visit us at centerstage-atlanta.com.\\n\\nhttps://www.ticket
+ master.com/phillip-phillips-atlanta-georgia-11-22-2026/event/0E0064D195EF
+ 8215\\n\\nRefreshed daily from live listings.
+LOCATION:Center Stage Theater\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/phillip-phillips-atlanta-georgia-11-22-20
+ 26/event/0E0064D195EF8215
 END:VEVENT
 END:VCALENDAR

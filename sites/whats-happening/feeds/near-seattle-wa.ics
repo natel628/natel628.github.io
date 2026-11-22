@@ -6,23 +6,28 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Seattle\, WA
 X-WR-CALDESC:Upcoming events within 100 miles of Seattle\, WA.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-dJZ@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T123000
-DTEND:20261121T150000
-SUMMARY:Washington Huskies Football vs. Indiana Hoosiers Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-dJZ\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Husky Stadium-WA\, Seattle
+UID:tm-vvG1HZ_2m_mM3S@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T131500
+DTEND:20261122T154500
+SUMMARY:Sip\, Snip & String: Build Your Own Fresh 10 Foot Holiday Garland!
+DESCRIPTION:Unfortunately\, the Event Organizer has had to cancel your eve
+ nt. You don't need to do a thing. We'll issue a refund to the [original m
+ ethod of payment](https://help.ticketmaster.com/hc/en-us/articles/9614074
+ 869009) used at time of purchase\, as soon as funds are received from the
+  Event Organizer. It \\n\\nhttps://www.ticketmaster.com/sip-snip-string-b
+ uild-your-own-poulsbo-washington-11-22-2026/event/0F0064FB99BB74B3\\n\\nR
+ efreshed daily from live listings.
+LOCATION:Kiana Lodge\, Poulsbo
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-dJZ
+URL:https://www.ticketmaster.com/sip-snip-string-build-your-own-poulsbo-wa
+ shington-11-22-2026/event/0F0064FB99BB74B3
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QE3VKLpfTSspj9GQ@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T160000
-DTEND:20261121T183000
+UID:tm-LvZ18QN9WuQZ6zOZviKCQ@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T133000
+DTEND:20261122T160000
 SUMMARY:Sumo + Sushi - Seattle [Bellevue]
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/sumo-sushi-seattle-bellevue-tickets-ZL3X0R?
@@ -33,295 +38,295 @@ URL:https://www.universe.com/events/sumo-sushi-seattle-bellevue-tickets-ZL
  3X0R?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-1AoZkfbGkdIbYH-@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T170000
-DTEND:20261121T193000
-SUMMARY:Abbotsford Canucks vs. Tucson Roadrunners
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.ca/abbotsford-canucks-vs-tucson-roadrunners-abbots
- ford-british-columbia-11-21-2026/event/11006518E8630F21\\n\\nRefreshed da
- ily from live listings.
-LOCATION:Rogers Forum\, Abbotsford
+UID:tm-vvG1HZ_6REjx1C@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:NUTCRACKER! Magical Christmas Ballet
+DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
+ . www.stgpresents.org/about/safety When purchasing ADA accessible seating
+ \, please feel free to contact us by email if assistance is needed with a
+ ccommodations or companion seating\; you may reach us at accessibility@st
+ gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/nutcracker-magica
+ l-christmas-ballet-seattle-washington-11-22-2026/event/0F00647BE772228E\\
+ n\\nRefreshed daily from live listings.
+LOCATION:Moore Theatre\, Seattle
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.ca/abbotsford-canucks-vs-tucson-roadrunners-a
- bbotsford-british-columbia-11-21-2026/event/11006518E8630F21
+URL:https://www.ticketmaster.com/nutcracker-magical-christmas-ballet-seatt
+ le-washington-11-22-2026/event/0F00647BE772228E
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1HZ_AmlUlA1@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T170000
-DTEND:20261121T193000
+UID:tm-Z7r9jZ1AA7duE@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T140000
+DTEND:20261122T163000
+SUMMARY:Washington Huskies Womens Basketball vs. Cal Poly Mustangs Womens 
+ Basketball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7duE\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Alaska Airlines Arena at Hec Edmundson Pavilion\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7duE
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1HZ_5mcjDK1@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T170000
+DTEND:20261122T193000
 SUMMARY:JOSH JOHNSON'S COMEDY BAND CAMP
 DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
  . www.stgpresents.org/about/safety When purchasing ADA accessible seating
  \, please feel free to contact us by email if assistance is needed with a
  ccommodations or companion seating\; you may reach us at accessibility@st
  gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/josh-johnsons-com
- edy-band-camp-seattle-washington-11-21-2026/event/0F00645BABDAB14A\\n\\nR
+ edy-band-camp-seattle-washington-11-22-2026/event/0F0064BBAD73B4CA\\n\\nR
  efreshed daily from live listings.
 LOCATION:Paramount Theatre\, Seattle
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/josh-johnsons-comedy-band-camp-seattle-wa
- shington-11-21-2026/event/0F00645BABDAB14A
+ shington-11-22-2026/event/0F0064BBAD73B4CA
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1HZ_FbrwX8g@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T170000
-DTEND:20261121T193000
-SUMMARY:COMEDY BAND CAMP ESSENTIALS UPGRADE
+UID:tm-LvZ18QIqAdZvA10s5yCc0@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T170000
+DTEND:20261122T193000
+SUMMARY:Sumo + Sushi - Seattle [Bellevue]
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/comedy-band-camp-essentials-upgrade-seattle-wa
- shington-11-21-2026/event/0F0064861ECBE435\\n\\nRefreshed daily from live
-  listings.
-LOCATION:Paramount Theatre\, Seattle
+ tps://www.universe.com/events/sumo-sushi-seattle-bellevue-tickets-ZL3X0R?
+ ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Meydenbauer Center\, Bellevue
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/comedy-band-camp-essentials-upgrade-seatt
- le-washington-11-21-2026/event/0F0064861ECBE435
+URL:https://www.universe.com/events/sumo-sushi-seattle-bellevue-tickets-ZL
+ 3X0R?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1HZ_2Q0VD21@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T180500
-DTEND:20261121T203500
-SUMMARY:Everett Silvertips vs. Seattle Thunderbirds
-DESCRIPTION:No re-entries & no outside food or drinks. Fans ages 3 and up 
- require a ticket. Clear Bag Policy In Effect: All personal items must be 
- contained in a clear bag for entry to the venue. No Refunds or Exchanges.
- \\n\\nhttps://www.ticketmaster.com/everett-silvertips-vs-seattle-thunderb
- irds-everett-washington-11-21-2026/event/0F0064F6A4D3B3CA\\n\\nRefreshed 
- daily from live listings.
-LOCATION:Angel Of The Winds Arena\, Everett
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/everett-silvertips-vs-seattle-thunderbird
- s-everett-washington-11-21-2026/event/0F0064F6A4D3B3CA
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1HZ_uexJ_CS@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T183000
-DTEND:20261121T210000
-SUMMARY:Emily Catalano
+UID:tm-vvG1HZ_6REh3aR@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T180000
+DTEND:20261122T203000
+SUMMARY:NUTCRACKER! Magical Christmas Ballet
 DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
  . www.stgpresents.org/about/safety When purchasing ADA accessible seating
  \, please feel free to contact us by email if assistance is needed with a
  ccommodations or companion seating\; you may reach us at accessibility@st
- gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/emily-catalano-se
- attle-washington-11-21-2026/event/0F0064D0A29993B3\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Neptune Theatre\, Seattle
+ gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/nutcracker-magica
+ l-christmas-ballet-seattle-washington-11-22-2026/event/0F00647BE76D226F\\
+ n\\nRefreshed daily from live listings.
+LOCATION:Moore Theatre\, Seattle
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/emily-catalano-seattle-washington-11-21-2
- 026/event/0F0064D0A29993B3
+URL:https://www.ticketmaster.com/nutcracker-magical-christmas-ballet-seatt
+ le-washington-11-22-2026/event/0F00647BE76D226F
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70sow@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
-SUMMARY:Aries Spears
+UID:tm-rZ7HnEZ1AfGMZ0@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T180000
+DTEND:20261122T203000
+SUMMARY:Jim Lauderdale w/ guests (partially seated)
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . This ticket is for admission to a live music venue. It provides the hol
+ der to observe a mus\\n\\nhttps://www.ticketweb.com/event/jim-lauderdale-
+ w-guests-partially-tractor-tickets/14337024\\n\\nRefreshed daily from liv
+ e listings.
+LOCATION:Tractor\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/jim-lauderdale-w-guests-partially-trac
+ tor-tickets/14337024
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZp7I@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T183000
+DTEND:20261122T210000
+SUMMARY:Dead Poet Society w/ Honey Revenge
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70sow\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZp7I\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Tacoma Comedy Club\, Tacoma
+LOCATION:The Showbox\, Seattle
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70sow
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZp7I
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfFkbf@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T190000
-DTEND:20261121T213000
+UID:tm-Z7r9jZ1AAAou6@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Persephone Darke - Ages 21+
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAou6\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Nectar Lounge\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAou6
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfFkb7@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
 SUMMARY:Reg Thomas
 DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
   valid identification indicating that they are at least 21 years of age w
  ill not be admitted to this event\, and will not be eligible for a refund
  . TERMS OF USE Nate Jackson's Super Funny Comedy Club By purchasing ticke
  ts\, entering our ven\\n\\nhttps://www.ticketweb.com/event/reg-thomas-nat
- e-jacksons-super-funny-comedy-tickets/14206614\\n\\nRefreshed daily from 
+ e-jacksons-super-funny-comedy-tickets/14206604\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Nate Jackson's Super Funny Comedy Club\, Tacoma
 STATUS:CONFIRMED
 URL:https://www.ticketweb.com/event/reg-thomas-nate-jacksons-super-funny-c
- omedy-tickets/14206614
+ omedy-tickets/14206604
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1HZ_3xv_ffj@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T193000
-DTEND:20261121T220000
-SUMMARY:Warren Miller "Days Off" - ft. Katie Burrell LIVE
-DESCRIPTION:This is a reserve seated event. Purchase VIP to enjoy the best
-  seats in the house\, an exclusive gift bag worth $225\, and the chance t
- o see Katie Burrell and the team live!\\n\\nhttps://www.ticketmaster.com/
- warren-miller-days-off-ft-katie-seattle-washington-11-21-2026/event/0F006
- 5288165451C\\n\\nRefreshed daily from live listings.
-LOCATION:McCaw Hall\, Seattle
+UID:tm-rZ7HnEZ1Af-guS@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:John Muirhead: The Never Ending Road Tour w/ Sarah Vanderzon
+DESCRIPTION:This event is 19 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 19 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . By clicking 'Agree and Check Out'.\, you agree that Modo Live or one of
+  its partners may con\\n\\nhttps://www.ticketweb.ca/event/john-muirhead-t
+ he-never-ending-lucky-bar-tickets/14875373\\n\\nRefreshed daily from live
+  listings.
+LOCATION:Lucky Bar\, Victoria
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/warren-miller-days-off-ft-katie-seattle-w
- ashington-11-21-2026/event/0F0065288165451C
+URL:https://www.ticketweb.ca/event/john-muirhead-the-never-ending-lucky-ba
+ r-tickets/14875373
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAv3Zx@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T193000
-DTEND:20261121T220000
-SUMMARY:Psycroptic
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAv3Zx\\n\\nRefreshed daily from 
- live listings.
-LOCATION:El Corazon\, Seattle
+UID:tm-vvG1HZ_f1e9dnZ@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T190000
+DTEND:20261122T213000
+SUMMARY:Lumen Field Stadium Tours
+DESCRIPTION:General Admission Only Tours depart promptly at their schedule
+ d time. Please arrive early to facilitate security screening. If you arri
+ ve late\, there are no guarantees tour guides will wait for you or your p
+ arty. Tour guests will enter doors inside the Pro - Shop off Occidental A
+ ve. Signs will direc\\n\\nhttps://www.ticketmaster.com/lumen-field-stadiu
+ m-tours-seattle-washington-11-22-2026/event/0F006542825C3A80\\n\\nRefresh
+ ed daily from live listings.
+LOCATION:Lumen Field Stadium Tours\, Seattle
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3Zx
+URL:https://www.ticketmaster.com/lumen-field-stadium-tours-seattle-washing
+ ton-11-22-2026/event/0F006542825C3A80
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QE3VKLpfTSspj9Gh@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T193000
-DTEND:20261121T220000
-SUMMARY:Sumo + Sushi - Seattle [Bellevue]
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/sumo-sushi-seattle-bellevue-tickets-ZL3X0R?
- ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Meydenbauer Center\, Bellevue
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/sumo-sushi-seattle-bellevue-tickets-ZL
- 3X0R?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1HZ_olpM9Xy@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T193000
-DTEND:20261121T220000
-SUMMARY:Symphony Tacoma: Symphony on the Screen
-DESCRIPTION:To ensure a seamless experience for all\, we require a ticket 
- for every event attendee\, regardless of age. While all sales are final\,
-  your peace of mind is our priority\, please buy exclusively from TacomaC
- ityTheaters.org or Ticketmaster.com to guarantee you hold an authentic\, 
- authorized ticket for th\\n\\nhttps://www.ticketmaster.com/symphony-tacom
- a-symphony-on-the-screen-tacoma-washington-11-21-2026/event/0F00651AD6DD7
- FB9\\n\\nRefreshed daily from live listings.
-LOCATION:Pantages Theater\, Tacoma
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/symphony-tacoma-symphony-on-the-screen-ta
- coma-washington-11-21-2026/event/0F00651AD6DD7FB9
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1HZ_1he5Tgp@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T200000
-DTEND:20261121T223000
-SUMMARY:Switchfoot with special guest Anberlin - Forever Now Tour
+UID:tm-vvG1HZ_o6_T5BB@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T200000
+DTEND:20261122T223000
+SUMMARY:The Music of Hey Arnold! Live!
 DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
  . www.stgpresents.org/about/safety When purchasing ADA accessible seating
  \, please feel free to contact us by email if assistance is needed with a
  ccommodations or companion seating\; you may reach us at accessibility@st
- gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/switchfoot-with-s
- pecial-guest-anberlin-forever-seattle-washington-11-21-2026/event/0F0064A
- 6C22FFD56\\n\\nRefreshed daily from live listings.
-LOCATION:Moore Theatre\, Seattle
+ gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/the-music-of-hey-
+ arnold-live-seattle-washington-11-22-2026/event/0F006511D9FCBEBA\\n\\nRef
+ reshed daily from live listings.
+LOCATION:Neptune Theatre\, Seattle
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/switchfoot-with-special-guest-anberlin-fo
- rever-seattle-washington-11-21-2026/event/0F0064A6C22FFD56
+URL:https://www.ticketmaster.com/the-music-of-hey-arnold-live-seattle-wash
+ ington-11-22-2026/event/0F006511D9FCBEBA
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZe7f@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T200000
-DTEND:20261121T223000
-SUMMARY:POLYRHYTHMICS - Ages 21+
+UID:tm-Z7r9jZ1AAZ3Fa@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T200000
+DTEND:20261122T223000
+SUMMARY:The California Honeydrops (21+ Event)
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZe7f\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZ3Fa\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Nectar Lounge\, Seattle
+LOCATION:Wild Buffalo House of Music\, Bellingham
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZe7f
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ3Fa
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1HZ_AmlghAd@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T203000
-DTEND:20261121T230000
+UID:tm-vvG1HZ_Amlz5A3@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T203000
+DTEND:20261122T230000
 SUMMARY:JOSH JOHNSON'S COMEDY BAND CAMP
 DESCRIPTION:Metal detectors & bag search at door. Arrive early. No weapons
  . www.stgpresents.org/about/safety When purchasing ADA accessible seating
  \, please feel free to contact us by email if assistance is needed with a
  ccommodations or companion seating\; you may reach us at accessibility@st
  gpresents.org. Each a\\n\\nhttps://www.ticketmaster.com/josh-johnsons-com
- edy-band-camp-seattle-washington-11-21-2026/event/0F00645BABD5B143\\n\\nR
+ edy-band-camp-seattle-washington-11-22-2026/event/0F00645BABE0B152\\n\\nR
  efreshed daily from live listings.
 LOCATION:Paramount Theatre\, Seattle
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/josh-johnsons-comedy-band-camp-seattle-wa
- shington-11-21-2026/event/0F00645BABD5B143
+ shington-11-22-2026/event/0F00645BABE0B152
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1HZ_Fbrsm8m@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T203000
-DTEND:20261121T230000
+UID:tm-vvG1HZ_FbrVCoZ@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T203000
+DTEND:20261122T230000
 SUMMARY:COMEDY BAND CAMP ESSENTIALS UPGRADE
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.ticketmaster.com/comedy-band-camp-essentials-upgrade-seattle-wa
- shington-11-21-2026/event/0F0064861EC6E42E\\n\\nRefreshed daily from live
+ shington-11-22-2026/event/0F0064861ED0E440\\n\\nRefreshed daily from live
   listings.
 LOCATION:Paramount Theatre\, Seattle
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/comedy-band-camp-essentials-upgrade-seatt
- le-washington-11-21-2026/event/0F0064861EC6E42E
+ le-washington-11-22-2026/event/0F0064861ED0E440
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afu9ef@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T203000
-DTEND:20261121T230000
-SUMMARY:OUTLAND Presents: A Bloody Bloody Disco w/ MOBIIUS\, KOTA KIRA\, S
- OPHIXI\, & KEYPR
+UID:tm-rZ7HnEZ1AfZe17@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261122T220000
+DTEND:20261123T003000
+SUMMARY:Flammable
 DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
   valid identification indicating that they are at least 21 years of age w
  ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/outland-presents-a-bloody-bloody-c
- lock-out-lounge-tickets/14357094\\n\\nRefreshed daily from live listings.
-LOCATION:Clock-Out Lounge\, Seattle
+ .\\n\\nhttps://www.ticketweb.com/event/flammable-chop-suey-tickets/140022
+ 84\\n\\nRefreshed daily from live listings.
+LOCATION:Chop Suey\, Seattle
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/outland-presents-a-bloody-bloody-clock
- -out-lounge-tickets/14357094
+URL:https://www.ticketweb.com/event/flammable-chop-suey-tickets/14002284
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfFs_7@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T203000
-DTEND:20261121T230000
-SUMMARY:KEXP Presents! The Cactus Blossoms w/ Devin Champlin (NIGHT TWO)
+UID:tm-rZ7HnEZ1A4Zffd@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261123T183000
+DTEND:20261123T210000
+SUMMARY:Tractor Square Dance! Wonderland w/ Amy Carroll calling
 DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
   valid identification indicating that they are at least 21 years of age w
  ill not be admitted to this event\, and will not be eligible for a refund
  . This ticket is for admission to a live music venue. It provides the hol
- der to observe a mus\\n\\nhttps://www.ticketweb.com/event/kexp-presents-t
- he-cactus-blossoms-tractor-tickets/14231644\\n\\nRefreshed daily from liv
+ der to observe a mus\\n\\nhttps://www.ticketweb.com/event/tractor-square-
+ dance-wonderland-w-tractor-tickets/15014503\\n\\nRefreshed daily from liv
  e listings.
 LOCATION:Tractor\, Seattle
 STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/kexp-presents-the-cactus-blossoms-trac
- tor-tickets/14231644
+URL:https://www.ticketweb.com/event/tractor-square-dance-wonderland-w-trac
+ tor-tickets/15014503
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1HZ_3CBgDmF@whats-happening.natel628.github.io
-DTSTAMP:20261121T144745Z
-DTSTART:20261121T203000
-DTEND:20261121T230000
-SUMMARY:Evo Floyd - Pink Floyd Tribute
-DESCRIPTION:21+ No outside food or beverages. General Admission Seating\, 
- First Come\, First Served. This is a non smoking lounge. Ticketmaster is 
- Clearwater Casino's only authorized ticketing agent. Tickets purchased fr
- om unauthorized sources may result in denied admission. Refunds or disput
- es must be directed t\\n\\nhttps://www.ticketmaster.com/evo-floyd-pink-fl
- oyd-tribute-suquamish-washington-11-21-2026/event/0F006523BAD7BB88\\n\\nR
- efreshed daily from live listings.
-LOCATION:Suquamish Clearwater Beach Rock Music & Sports Lounge\, Suquamish
+UID:tm-vvG1HZ_G3OQB10@whats-happening.natel628.github.io
+DTSTAMP:20261122T144402Z
+DTSTART:20261123T184000
+DTEND:20261123T211000
+SUMMARY:Seattle Kraken vs. Anaheim Ducks
+DESCRIPTION:https://www.climatepledgearena.com/arena-guide/#bag-policy\\n\
+ \nhttps://www.ticketmaster.com/seattle-kraken-vs-anaheim-ducks-seattle-wa
+ shington-11-23-2026/event/0F0064C4A06BA2A4\\n\\nRefreshed daily from live
+  listings.
+LOCATION:Climate Pledge Arena\, Seattle
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/evo-floyd-pink-floyd-tribute-suquamish-wa
- shington-11-21-2026/event/0F006523BAD7BB88
+URL:https://www.ticketmaster.com/seattle-kraken-vs-anaheim-ducks-seattle-w
+ ashington-11-23-2026/event/0F0064C4A06BA2A4
 END:VEVENT
 END:VCALENDAR
