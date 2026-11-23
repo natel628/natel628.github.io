@@ -3241,7 +3241,7 @@ const FILTER_VIEWS = {
   provider:      ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard', 'newreleases'],
   region:        ['trending', 'upcoming', 'recommended', 'discoveries', 'moodboard', 'wheretowatch', 'newreleases'],
   contentRating: ['trending', 'upcoming'],
-  year:          ['trending', 'upcoming', 'discoveries', 'newreleases'],
+  year:          ['trending', 'upcoming', 'discoveries'],
   language:      ['trending', 'upcoming', 'recommended', 'discoveries', 'newreleases'],
   hideRated:     ['upcoming'],
   /* Era and mood are client-side only, so they belong exactly on the views
@@ -8014,8 +8014,8 @@ async function renderTrending(main, token) {
     const row1IsTV = state.provider && !wantMovie;
     const row1 = state.provider
       ? (row1IsTV
-          ? discoverSafe('/discover/tv',    { sort_by: 'popularity.desc', 'vote_count.gte': 50,  ...gp, ...yearParams('tv') })
-          : discoverSafe('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, ...gp, ...yearParams('movie') }))
+          ? discoverSafe('/discover/tv',    { sort_by: 'popularity.desc', 'vote_count.gte': 25,  ...gp, ...yearParams('tv') })
+          : discoverSafe('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 25, ...gp, ...yearParams('movie') }))
           .then(async res => {
             /* Nothing provider-scoped came back, or only a handful did: top the
                row up from the weekly trending list, keeping just the titles the
@@ -8050,8 +8050,8 @@ async function renderTrending(main, token) {
       if (r1Page > 5) return [];
       if (state.provider) {
         const r = row1IsTV
-          ? await discoverSafe('/discover/tv',    { sort_by: 'popularity.desc', 'vote_count.gte': 50,  page: r1Page, ...gp, ...yearParams('tv') })
-          : await discoverSafe('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100, page: r1Page, ...gp, ...yearParams('movie') });
+          ? await discoverSafe('/discover/tv',    { sort_by: 'popularity.desc', 'vote_count.gte': 25, page: r1Page, ...gp, ...yearParams('tv') })
+          : await discoverSafe('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 25, page: r1Page, ...gp, ...yearParams('movie') });
         return filterResults(r.items.map(i => ({ ...i, media_type: row1IsTV ? 'tv' : 'movie' })), { yearServerSide: true });
       }
       const r = await tmdb('/trending/all/week', { page: r1Page });
@@ -8070,10 +8070,10 @@ async function renderTrending(main, token) {
     const [trendingRes, popMovieRes, popTVRes, onAirRes, weekRes, monthRes] = await Promise.all([
       row1,
       wantMovie
-        ? discoverSafe('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 100, ...gp, ...yearParams('movie') })
+        ? discoverSafe('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 25, ...gp, ...yearParams('movie') })
         : Promise.resolve({ items: [] }),
       wantTV
-        ? discoverSafe('/discover/tv', { sort_by: sortFor('tv'), 'vote_count.gte': 50, ...gp, ...yearParams('tv') })
+        ? discoverSafe('/discover/tv', { sort_by: sortFor('tv'), 'vote_count.gte': 25, ...gp, ...yearParams('tv') })
         : Promise.resolve({ items: [] }),
       wantTV
         ? (state.provider
@@ -8087,10 +8087,10 @@ async function renderTrending(main, token) {
             : tmdb('/tv/on_the_air').then(r => ({ items: r.results || [], providerApplied: false })))
         : Promise.resolve({ items: [] }),
       wantRecent
-        ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 150, ...recent7, ...gp })
+        ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 20, ...recent7, ...gp })
         : Promise.resolve({ items: [] }),
       wantRecent
-        ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 100, ...recent30, ...gp })
+        ? discoverSafe('/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 40, ...recent30, ...gp })
         : Promise.resolve({ items: [] }),
     ]);
     if (token !== renderToken) return;
@@ -8104,12 +8104,12 @@ async function renderTrending(main, token) {
     let mPage = 1, tPage = 1;
     const movieMore = async () => {
       mPage++;
-      const r = await discoverSafe('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 100, page: mPage, ...gp, ...yearParams('movie') });
+      const r = await discoverSafe('/discover/movie', { sort_by: sortFor('movie'), 'vote_count.gte': 25, page: mPage, ...gp, ...yearParams('movie') });
       return filterResults(r.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true });
     };
     const tvMore = async () => {
       tPage++;
-      const r = await discoverSafe('/discover/tv', { sort_by: sortFor('tv'), 'vote_count.gte': 50, page: tPage, ...gp, ...yearParams('tv') });
+      const r = await discoverSafe('/discover/tv', { sort_by: sortFor('tv'), 'vote_count.gte': 25, page: tPage, ...gp, ...yearParams('tv') });
       return filterResults(r.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: true });
     };
 
@@ -8135,13 +8135,14 @@ async function renderTrending(main, token) {
           .sort((a, b) => weightedRating(b) - weightedRating(a));
         const monthTop = (await filterResults(monthRes.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: false }))
           .sort((a, b) => weightedRating(b) - weightedRating(a));
+        if (weekTop.length)  rows.push([trophy + ' Best Rated This Week',  weekTop,  null, true]);
         if (monthTop.length) rows.push([trophy + ' Best Rated This Month', monthTop, null, true]);
       }
 
       /* Hidden gems: acclaimed titles the crowd hasn't found yet. */
       const gems = await discoverSafe('/discover/movie', {
         sort_by: 'vote_average.desc', 'vote_average.gte': 7.5,
-        'vote_count.gte': 150, 'vote_count.lte': 1500, ...gp, ...yearParams('movie'),
+        'vote_count.gte': 50, 'vote_count.lte': 1500, ...gp, ...yearParams('movie'),
       });
       const gemItems = await filterResults(gems.items.map(m => ({ ...m, media_type: 'movie' })), { yearServerSide: true });
       if (gemItems.length) rows.push(['💎 Hidden Gem Movies — Acclaimed & Underseen', gemItems]);
@@ -8153,7 +8154,7 @@ async function renderTrending(main, token) {
         await filterResults(onAirRes.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: false })]);
       const tvGems = await discoverSafe('/discover/tv', {
         sort_by: 'vote_average.desc', 'vote_average.gte': 7.8,
-        'vote_count.gte': 100, 'vote_count.lte': 1000, ...gp, ...yearParams('tv'),
+        'vote_count.gte': 50, 'vote_count.lte': 1000, ...gp, ...yearParams('tv'),
       });
       const tvGemItems = await filterResults(tvGems.items.map(t => ({ ...t, media_type: 'tv' })), { yearServerSide: true });
       if (tvGemItems.length) rows.push(['💎 Hidden Gem Shows — Acclaimed & Underseen', tvGemItems]);
@@ -8668,7 +8669,7 @@ async function populateCalendar() {
 
   if (!state.calMyOnly) {
     try {
-      const [pg1, pg2] = await Promise.all([1, 2].map(page => tmdb('/discover/movie', mergeRuleParams({
+      const [pg1, pg2, pg3] = await Promise.all([1, 2, 3].map(page => tmdb('/discover/movie', mergeRuleParams({
         'primary_release_date.gte': dateFrom,
         'primary_release_date.lte': dateTo,
         sort_by: 'popularity.desc',
@@ -8676,7 +8677,7 @@ async function populateCalendar() {
         page,
       }))));
       if (stale()) return;
-      [...(pg1.results||[]), ...(pg2.results||[])].filter(keep).forEach(m => {
+      [...(pg1.results||[]), ...(pg2.results||[]), ...(pg3.results||[])].filter(keep).forEach(m => {
         if (!inRange(m.release_date)) return;
         const mine = ['plantowatch', 'watching'].includes(getWlStatus('movie', m.id));
         add(m.release_date, m.title, mine ? 'movie my-show' : 'movie',
@@ -8685,14 +8686,14 @@ async function populateCalendar() {
     } catch(e) { console.warn('TMDB movies error:', e); toast('Failed to load movie releases'); }
 
     try {
-      const tvDiscover = await tmdb('/discover/tv', mergeRuleParams({
+      const [tvPg1, tvPg2] = await Promise.all([1, 2].map(page => tmdb('/discover/tv', mergeRuleParams({
         'first_air_date.gte': dateFrom,
         'first_air_date.lte': dateTo,
         sort_by: 'popularity.desc',
-        page: 1,
-      }));
+        page,
+      }))));
       if (stale()) return;
-      (tvDiscover.results || []).filter(keep).forEach(show => {
+      [...(tvPg1.results||[]), ...(tvPg2.results||[])].filter(keep).forEach(show => {
         if (!inRange(show.first_air_date)) return;
         add(show.first_air_date, show.name, 'tv', `📺 ${show.name} (premiere)`,
           () => openModal('tv', show.id, show), { pk: `tvprem_${show.id}` });
@@ -8952,23 +8953,31 @@ async function renderNewReleases(main, token) {
   main.innerHTML = '';
   addSkeletonRow(main, 'In Theaters 🎬');
   addSkeletonRow(main, 'New to Streaming 📺');
+  addSkeletonRow(main, 'New TV 📺');
   addSkeletonRow(main, 'On TV Now 📺');
 
   try {
     const todayStr = todayISO();
-    const thirtyDaysAgo = shiftDaysISO(new Date(), -30);
+    const fourteenDaysAgo = shiftDaysISO(new Date(), -14);
+    const thirtyDaysAgo   = shiftDaysISO(new Date(), -30);
+    const regionP = state.region ? { region: state.region } : {};
     const gp = state.genre ? { with_genres: state.genre } : {};
     const langP = langParams();
 
-    /* Fetch: now playing movies, on the air TV, recent movie releases, recent TV premieres */
-    const [nowPlayingRes, onAirRes, recentMovieRes, recentTVRes] = await Promise.all([
-      tmdb('/movie/now_playing', { sort_by: 'popularity.desc', ...gp, ...langP }),
-      tmdb('/tv/on_the_air', { sort_by: 'popularity.desc', ...gp, ...langP }),
+    /* Fetch:
+       1. now_playing  — theatrical, respects region
+       2. Digital/VOD  — release_type 4 (digital) | 5 (physical), last 14 days, almost no vote floor
+       3. New TV        — first_air_date last 30 days (premiere), no vote floor so quiet shows appear
+       4. on_the_air   — currently broadcasting */
+    const [nowPlayingRes, onAirRes, digitalMovieRes, newTVRes] = await Promise.all([
+      tmdb('/movie/now_playing', { sort_by: 'popularity.desc', ...regionP, ...gp, ...langP }),
+      tmdb('/tv/on_the_air',     { sort_by: 'popularity.desc', ...gp, ...langP }),
       discoverSafe('/discover/movie', {
-        'primary_release_date.gte': thirtyDaysAgo,
-        'primary_release_date.lte': todayStr,
+        'release_date.gte': fourteenDaysAgo,
+        'release_date.lte': todayStr,
+        with_release_type: '4|5',   // 4 = digital, 5 = physical — both mean "home viewing"
         sort_by: 'popularity.desc',
-        'vote_count.gte': 50,
+        'vote_count.gte': 10,       // low floor so quiet openers appear
         ...gp,
         ...langP,
       }),
@@ -8976,27 +8985,31 @@ async function renderNewReleases(main, token) {
         'first_air_date.gte': thirtyDaysAgo,
         'first_air_date.lte': todayStr,
         sort_by: 'popularity.desc',
-        'vote_count.gte': 20,
+        'vote_count.gte': 5,        // very low — new shows often have few votes on day 1
         ...gp,
         ...langP,
       }),
     ]);
     if (token !== renderToken) return;
 
-    const nowPlaying = await filterResults(nowPlayingRes.results?.map(m => ({ ...m, media_type: 'movie' })) || []);
-    const onAir = await filterResults(onAirRes.results?.map(t => ({ ...t, media_type: 'tv' })) || []);
-    const recentMovies = await filterResults(recentMovieRes.items.map(m => ({ ...m, media_type: 'movie' })));
-    const recentTV = await filterResults(recentTVRes.items.map(t => ({ ...t, media_type: 'tv' })));
+    /* filterResults runs the user's genre/mood/deepCuts pipeline. For this view
+       we intentionally skip deepCuts and underseen so they don't silently hide
+       current releases the user would want to know about. */
+    const filterOpts = { skipDeepCuts: true, skipUnderseen: true };
+    const nowPlaying    = await filterResults(nowPlayingRes.results?.map(m => ({ ...m, media_type: 'movie' })) || [], filterOpts);
+    const onAir         = await filterResults(onAirRes.results?.map(t => ({ ...t, media_type: 'tv' })) || [], filterOpts);
+    const digitalMovies = await filterResults(digitalMovieRes.items.map(m => ({ ...m, media_type: 'movie' })), filterOpts);
+    const newTV         = await filterResults(newTVRes.items.map(t => ({ ...t, media_type: 'tv' })), filterOpts);
     if (token !== renderToken) return;
 
     main.innerHTML = '';
 
-    if (nowPlaying.length) renderRow(main, 'In Theaters 🎬', nowPlaying);
-    if (recentMovies.length) renderRow(main, 'New to Streaming 🎬', recentMovies);
-    if (onAir.length) renderRow(main, 'On TV Now 📺', onAir);
-    if (recentTV.length) renderRow(main, 'Recent Premieres 📺', recentTV);
+    if (nowPlaying.length)    renderRow(main, 'In Theaters 🎬', nowPlaying);
+    if (digitalMovies.length) renderRow(main, 'New to Streaming / Digital 🎬', digitalMovies);
+    if (newTV.length)         renderRow(main, 'New TV 📺', newTV);
+    if (onAir.length)         renderRow(main, 'On TV Now 📡', onAir);
 
-    if (!nowPlaying.length && !recentMovies.length && !onAir.length && !recentTV.length) {
+    if (!nowPlaying.length && !digitalMovies.length && !newTV.length && !onAir.length) {
       main.innerHTML = emptyStateHTML('🎬', 'No new releases found', 'Try adjusting your filters or check back later.', 'retry');
     }
   } catch (e) {
@@ -9495,10 +9508,12 @@ async function renderCatchUp(main, token) {
     return;
   }
 
-  const followed = Object.entries(state.watchlist)
+  const allFollowed = Object.entries(state.watchlist)
     .filter(([k, s]) => k.startsWith('tv_') && (s === 'watching' || s === 'plantowatch'))
-    .sort((a, b) => (state.wlAdded[b[0]] || 0) - (state.wlAdded[a[0]] || 0))
-    .slice(0, 20);
+    .sort((a, b) => (state.wlAdded[b[0]] || 0) - (state.wlAdded[a[0]] || 0));
+  const CAP = 50;
+  const followed = allFollowed.slice(0, CAP);
+  const hiddenCount = allFollowed.length - followed.length;
 
   if (!followed.length) {
     main.innerHTML = emptyStateHTML('🆕', 'No shows to follow yet',
@@ -9517,6 +9532,7 @@ async function renderCatchUp(main, token) {
     <p style="font-size: var(--text-sm);color:var(--text-muted);margin:-4px 0 14px">
       Every aired episode from the shows on your list. Open a show to tick episodes off one by one.
     </p>
+    ${hiddenCount > 0 ? `<p style="font-size: var(--text-xs);color:var(--text-muted);margin:-4px 0 10px">Showing ${CAP} of ${allFollowed.length} followed shows — add more by raising the cap or archiving completed shows.</p>` : ''}
     <div class="catchup-list" id="catchup-list">
       ${followed.map(() => '<div class="catchup-row skeleton" style="height:84px"></div>').join('')}
     </div>
@@ -9645,7 +9661,7 @@ async function renderRecommended(main, token) {
   const fetchRec = async (mediaType, label) => {
     const params = {
       sort_by: 'vote_average.desc',
-      'vote_count.gte': 200,
+      'vote_count.gte': 25,
       page: 1,
     };
     // The genre control is visible on this view, so it must do something:
@@ -9672,7 +9688,7 @@ async function renderRecommended(main, token) {
     if (inferred && !pages.some(p => (p.items || []).length)) {
       const relaxed = { ...params };
       delete relaxed.with_genres;
-      relaxed['vote_count.gte'] = 50;
+      relaxed['vote_count.gte'] = 10;
       pages = await pull(relaxed);
       if (pages.some(p => p.fellBack)) fellBack = true;
     }
@@ -12509,7 +12525,7 @@ function importData(input) {
    HELPER UTILITIES: RENDER & FILTER PIPELINES
    ───────────────────────────────────────────────────────────────────── */
 async function filterResults(items, opts = {}) {
-  const { yearServerSide = false } = opts;
+  const { yearServerSide = false, skipDeepCuts = false, skipUnderseen = false } = opts;
   const rawList = items || [];
 
   /* AI Director rules run first: they are global and view-independent, and
@@ -12541,7 +12557,7 @@ async function filterResults(items, opts = {}) {
   });
 
   /* Anti-popularity ceiling: hide anything with too many votes. */
-  if (filterVisible('underseen') && state.underseenOnly) {
+  if (!skipUnderseen && filterVisible('underseen') && state.underseenOnly) {
     out = out.filter(i => {
       const v = i.vote_count || 0;
       return v === 0 || v <= state.underseenCeiling;
@@ -12552,7 +12568,7 @@ async function filterResults(items, opts = {}) {
     out = out.filter(i => moodMatches(i, state.moodFilter));
   }
   /* Deep cuts only: keep only titles with obscurity score >= 50. */
-  if (filterVisible('deepCuts') && state.deepCutsOnly) {
+  if (!skipDeepCuts && filterVisible('deepCuts') && state.deepCutsOnly) {
     out = out.filter(i => obscurityScore(i) >= 50);
   }
 
@@ -14392,7 +14408,7 @@ async function checkNewEpisodes() {
     const followed = Object.entries(state.watchlist || {})
       .filter(([k, s]) => k.startsWith('tv_') && (s === 'watching' || s === 'plantowatch'))
       .sort((a, b) => ((state.wlAdded || {})[b[0]] || 0) - ((state.wlAdded || {})[a[0]] || 0))
-      .slice(0, 10);
+      .slice(0, 30);
     if (!followed.length) return;
     const TTL = 12 * 3600 * 1000;
     let cache = LS.get('new_ep_cache');
@@ -14411,13 +14427,57 @@ async function checkNewEpisodes() {
     }
     const items = cache.items || [];
     if (!items.length) return;
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayISO();
     if (LS.get('new_ep_seen_day') === today) return;
     LS.set('new_ep_seen_day', today);
     const one = items.length === 1 ? ` — ${items[0].title} S${items[0].season} E${items[0].episode}` : '';
     setTimeout(() => toast(`🆕 ${items.length} new episode${items.length === 1 ? '' : 's'} from your list this week${one}`,
       { duration: 8000, actionLabel: 'New episodes', onAction: () => navigateTo('catchup') }), 2500);
   } catch (e) { console.warn('New-episode check error:', e); }
+}
+
+async function checkWatchlistStreamingArrivals() {
+  try {
+    const ptw = Object.entries(state.watchlist || {})
+      .filter(([k, s]) => s === 'plantowatch')
+      .slice(0, 30);
+    if (!ptw.length) return;
+    const known = LS.get('wl_stream_known') || {};
+    const newlyAvailable = [];
+    const updatedKnown = { ...known };
+
+    await promiseAllChunked(ptw, async ([key]) => {
+      const [type, idStr] = key.split('_');
+      const id = parseInt(idStr, 10);
+      if (!id) return;
+      const prov = await getProviders(type, id);
+      const flats = (prov && prov.flatrate) || [];
+      const currentIds = flats.map(p => String(p.provider_id)).sort().join(',');
+      const prevIds = known[key];
+      if (prevIds !== undefined && currentIds && currentIds !== prevIds) {
+        const d = state.mediaDetails[key] || {};
+        const title = d.title || (type === 'movie' ? 'A movie on your list' : 'A show on your list');
+        const names = flats.slice(0, 2).map(p => p.provider_name).join(', ');
+        newlyAvailable.push({ key, title, names, type, id });
+      }
+      updatedKnown[key] = currentIds;
+    }, 4);
+
+    LS.set('wl_stream_known', updatedKnown);
+
+    if (newlyAvailable.length) {
+      const today = todayISO();
+      if (LS.get('wl_stream_seen_day') === today) return;
+      LS.set('wl_stream_seen_day', today);
+      const first = newlyAvailable[0];
+      const msg = newlyAvailable.length === 1
+        ? `🎬 "${first.title}" is now streaming on ${first.names}!`
+        : `🎬 ${newlyAvailable.length} titles on your watchlist are now streaming! (${first.title} + more)`;
+      setTimeout(() => toast(msg, { duration: 9000, actionLabel: 'View', onAction: () => openModal(first.type, first.id) }), 3500);
+    }
+  } catch (e) {
+    console.warn('Watchlist streaming arrival check error:', e);
+  }
 }
 window.__selftest = () => runSelfTest(true);
 
@@ -14651,6 +14711,7 @@ function renderOnboarding() {
   }
 
   checkNewEpisodes();
+  checkWatchlistStreamingArrivals();
   renderView();
 
   handleSharedListHash();
