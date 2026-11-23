@@ -6,10 +6,10 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Chicago\, IL
 X-WR-CALDESC:Upcoming events within 100 miles of Chicago\, IL.
 BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwnMh2O75H8Yu@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T121500
-DTEND:20261122T144500
+UID:tm-LvZ18Qt6lwLx2C_m0H3i1@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T160000
+DTEND:20261123T183000
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -21,10 +21,10 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwnMh2O75H8YC@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T123000
-DTEND:20261122T150000
+UID:tm-LvZ18Qt6lwLx2C_m0H3i5@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T161500
+DTEND:20261123T184500
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -36,28 +36,194 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG18Z_CEFhWEg@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T123000
-DTEND:20261122T150000
-SUMMARY:World Famous Gospel Brunch at House of Blues (CHI)
-DESCRIPTION:This is a reserved seating show. If you have any children unde
- r 5\, please call the box office @ 312-923-2000\, to purchase your ticket
- s. Opera boxes are only available through the box office\, and are limite
- d in quantity. The brunch does tend to sell out so we request purchasing 
- a week in advance. The\\n\\nhttps://www.ticketmaster.com/world-famous-gos
- pel-brunch-at-house-chicago-illinois-11-22-2026/event/040064E9C86FD9F5\\n
- \\nRefreshed daily from live listings.
+UID:tm-LvZ18Qt6lwLx2C_m0H3iG@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T163000
+DTEND:20261123T190000
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Qt6lwLx2C_m0H3iu@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T164500
+DTEND:20261123T191500
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Qt6lwLx2C_m0H3iC@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T170000
+DTEND:20261123T193000
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Qt6lwLx2C_m0H3i2@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T171500
+DTEND:20261123T194500
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Qt6lwLx2C_m0H3i8@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T173000
+DTEND:20261123T200000
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Qt6lwLx2C_m0H3io@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T174500
+DTEND:20261123T201500
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Qt6lwLx2C_m0H3i3@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T180000
+DTEND:20261123T203000
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv178Z_4GkmE84CN@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T180000
+DTEND:20261123T203000
+SUMMARY:Northwestern Wildcats Women's Basketball vs. Oakland University Go
+ lden Grizzlies Womens Basketball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/northwestern-wildcats-womens-basketball-vs-oak
+ land-evanston-illinois-11-23-2026/event/0400655BA74153A3\\n\\nRefreshed d
+ aily from live listings.
+LOCATION:Welsh-Ryan Arena/McGaw Hall\, Evanston
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/northwestern-wildcats-womens-basketball-v
+ s-oakland-evanston-illinois-11-23-2026/event/0400655BA74153A3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Qt6VsdBtOmdAQmEo@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T181500
+DTEND:20261123T204500
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1Ae0Z_fGkMK8Z-k@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T183000
+DTEND:20261123T210000
+SUMMARY:Rotting Out\, Fuerza Bruta\, Home Invasion\, Majesty\, Lifetrial
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketweb.com/event/rotting-out-fuerza-bruta-reggies-rock-club-
+ tickets/14377704?REFERRAL_ID=tmfeed\\n\\nRefreshed daily from live listin
+ gs.
+LOCATION:Reggies Rock Club\, Chicago
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/rotting-out-fuerza-bruta-reggies-rock-
+ club-tickets/14377704?REFERRAL_ID=tmfeed
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Qt6VsdBtOmdAQmE3@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T183000
+DTEND:20261123T210000
+SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
+ chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:The Fields Studios\, Chicago
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
+ feel-chicago-tickets-XZFMJ7?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv1A7ZkfbGkdshZEq@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T183000
+DTEND:20261123T210000
+SUMMARY:Amorphis & Insomnium
+DESCRIPTION:Performance begins at 7:30PM. This show is for AGES 17 AND OLD
+ ER. Valid Photo ID is required for age restricted shows. Individuals unde
+ r 17 are allowed to attend if accompanied by their parent or legal guardi
+ an The Music Hall is General Admission Standing Room Only. We are built f
+ or dancing and rock\\n\\nhttps://www.ticketmaster.com/amorphis-insomnium-
+ chicago-illinois-11-23-2026/event/04006518F16C09DD\\n\\nRefreshed daily f
+ rom live listings.
 LOCATION:House of Blues Chicago\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/world-famous-gospel-brunch-at-house-chica
- go-illinois-11-22-2026/event/040064E9C86FD9F5
+URL:https://www.ticketmaster.com/amorphis-insomnium-chicago-illinois-11-23
+ -2026/event/04006518F16C09DD
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwnMh2O75H8Y2@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T124500
-DTEND:20261122T151500
+UID:tm-LvZ18Qt6VsdBtOmdAQmEK@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T184500
+DTEND:20261123T211500
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -69,10 +235,10 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3lt@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T130000
-DTEND:20261122T153000
+UID:tm-LvZ18Qt6VsdBtOmdAQmEf@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
 SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
@@ -84,212 +250,113 @@ URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
  feel-chicago-tickets-XZFMJ7?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-Mfb@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T130000
-DTEND:20261122T153000
-SUMMARY:Disney's Frozen the Musical
+UID:tm-Z7r9jZ1A7PO1f@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
+SUMMARY:Drunk Shakespeare: A Drunk Christmas Carol (21+ Event)
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-Mfb\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PO1f\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Marriott Theater - Lincolnshire IL\, Lincolnshire
+LOCATION:The Lion Theatre\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Mfb
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PO1f
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70_J6@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T130000
-DTEND:20261122T153000
-SUMMARY:How the Grinch Stole Christmas
+UID:tm-Z7r9jZ1A7qyGd@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
+SUMMARY:The Best of The Second City
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70_J6\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7qyGd\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Todd Wehr Theater at Marcus Center\, Milwaukee
+LOCATION:Second City-Chicago: Mainstage\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70_J6
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qyGd
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1jZ_26KvILU@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T130000
-DTEND:20261122T153000
-SUMMARY:Jersey Boys (Chicago)
-DESCRIPTION:Add Suite Service to make your theatre experience unforgettabl
- e. Add Suite Service to your theatre ticket: ($49 + TM fees) incl: Access
-  to private suite 45 minutes prior to showtime and at intermission\, comp
- limentary light snacks sweet and savory\, private full service bar\, priv
- ate restrooms\, and coa\\n\\nhttps://www.ticketmaster.com/jersey-boys-chi
- cago-chicago-illinois-11-22-2026/event/070064F1D30687F6\\n\\nRefreshed da
- ily from live listings.
-LOCATION:CIBC Theatre\, Chicago
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/jersey-boys-chicago-chicago-illinois-11-2
- 2-2026/event/070064F1D30687F6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3ln@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T131500
-DTEND:20261122T154500
-SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
+UID:tm-Z7r9jZ1AAev1k@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
+SUMMARY:The Mainliners
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
- chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
- stings.
-LOCATION:The Fields Studios\, Chicago
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
- feel-chicago-tickets-XZFMJ7?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3ll@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T133000
-DTEND:20261122T160000
-SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
- chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
- stings.
-LOCATION:The Fields Studios\, Chicago
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
- feel-chicago-tickets-XZFMJ7?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3li@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T134500
-DTEND:20261122T161500
-SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
- chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
- stings.
-LOCATION:The Fields Studios\, Chicago
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
- feel-chicago-tickets-XZFMJ7?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qt6lwLx2C_m0H3lc@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:Balloon Museum | EmotionAir - Art You Can Feel - Chicago
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/balloon-museum-emotionair-art-you-can-feel-
- chicago-tickets-XZFMJ7?ref=ticketmaster\\n\\nRefreshed daily from live li
- stings.
-LOCATION:The Fields Studios\, Chicago
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/balloon-museum-emotionair-art-you-can-
- feel-chicago-tickets-XZFMJ7?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A700pk@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:The Winter's Tale
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A700pk\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAev1k\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Chicago Shakespeare Theater\, Chicago
+LOCATION:X-Ray Arcade\, Cudahy
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A700pk
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAev1k
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7JF3p@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:Are You Ready For It? - A Taylor Experience
+UID:tm-Z7r9jZ1AAvbGw@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
+SUMMARY:SOLO by Ira Antelis
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7JF3p\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvbGw\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Arcada Theatre\, Saint Charles
+LOCATION:Harris Theater\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JF3p
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvbGw
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PVPz@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:A Christmas Carol
+UID:tm-vv178Z_8GkDIJxY1@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T190000
+DTEND:20261123T213000
+SUMMARY:Chicago Bulls vs. Cleveland Cavaliers
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PVPz\\n\\nRefreshed daily from 
- live listings.
-LOCATION:McAninch Arts Center\, Glen Ellyn
+ tps://www.ticketmaster.com/chicago-bulls-vs-cleveland-cavaliers-chicago-i
+ llinois-11-23-2026/event/0400650EE89A2C0A\\n\\nRefreshed daily from live 
+ listings.
+LOCATION:United Center\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PVPz
+URL:https://www.ticketmaster.com/chicago-bulls-vs-cleveland-cavaliers-chic
+ ago-illinois-11-23-2026/event/0400650EE89A2C0A
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7qwq8@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:Annie
+UID:tm-Z7r9jZ1AAA4x4@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T193000
+DTEND:20261123T220000
+SUMMARY:Bach???s Mass in B Minor
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7qwq8\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAA4x4\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Drury Lane Theatre Oakbrook Terrace\, Villa Park
+LOCATION:Symphony Center-IL\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qwq8
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAA4x4
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAF1F@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:Theatre 121's Annie
+UID:tm-Z7r9jZ1AAZ_Zb@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T200000
+DTEND:20261123T223000
+SUMMARY:Jorja Smith - Ages 18+
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAF1F\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZ_Zb\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Woodstock Opera House\, Woodstock
+LOCATION:Riviera Theatre- IL\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAF1F
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ_Zb
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZ_aw@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:The Winter's Tale
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZ_aw\\n\\nRefreshed daily from 
- live listings.
-LOCATION:The Yard at Chicago Shakespeare\, Chicago
+UID:tm-rZ7HnEZ1AfOV7S@whats-happening.natel628.github.io
+DTSTAMP:20261123T182906Z
+DTSTART:20261123T200000
+DTEND:20261123T223000
+SUMMARY:*SOLD OUT* Kyle Kinane
+DESCRIPTION:This event is 17 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 17 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ . Ticket Fee includes 1% City Amusement Tax.\\n\\nhttps://www.ticketweb.c
+ om/event/sold-out-kyle-kinane-thalia-hall-tickets/14834133\\n\\nRefreshed
+  daily from live listings.
+LOCATION:Thalia Hall\, Chicago
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ_aw
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZvZO@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:A Christmas Carol (Children under 5 are not permitted in the theat
- er)
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZvZO\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Goodman Theatre - Albert\, Chicago
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZvZO
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAva0E@whats-happening.natel628.github.io
-DTSTAMP:20261122T144402Z
-DTSTART:20261122T140000
-DTEND:20261122T163000
-SUMMARY:Wagner: Myth & Music
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAva0E\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Civic Opera House\, Chicago
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAva0E
+URL:https://www.ticketweb.com/event/sold-out-kyle-kinane-thalia-hall-ticke
+ ts/14834133
 END:VEVENT
 END:VCALENDAR
