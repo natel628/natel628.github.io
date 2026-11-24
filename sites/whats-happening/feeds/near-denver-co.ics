@@ -6,24 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Denver\, CO
 X-WR-CALDESC:Upcoming events within 100 miles of Denver\, CO.
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4va0N@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T180000
-DTEND:20261123T203000
-SUMMARY:Modern Swing Mondays
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/modern-swing-mondays-stampede-tick
- ets/15049923\\n\\nRefreshed daily from live listings.
-LOCATION:Stampede\, Aurora
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/modern-swing-mondays-stampede-tickets/
- 15049923
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZz8p@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T190000
 DTEND:20261124T213000
 SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
@@ -36,7 +20,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8p
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_890iVPs@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:Prayers
@@ -49,7 +33,7 @@ URL:https://tickets.meowwolf.com/events/denver/prayers/
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZO8t@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:Prayers
@@ -62,7 +46,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZO8t
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv3bF@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:What a Glorious Feeling
@@ -75,7 +59,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3bF
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_8mM3DO7@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T200000
 DTEND:20261124T223000
 SUMMARY:Denver Nuggets v Dallas Mavericks
@@ -93,7 +77,7 @@ URL:https://www.ticketmaster.com/denver-nuggets-v-dallas-mavericks-denver-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18Qlg7NNARYE_bau3H@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T130000
 DTEND:20261125T153000
 SUMMARY:KSE Venue Ball Arena Tours
@@ -107,7 +91,7 @@ URL:https://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36C
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZz8b@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T130000
 DTEND:20261125T153000
 SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
@@ -120,7 +104,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8b
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfA3Jf@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T180000
 DTEND:20261125T203000
 SUMMARY:Ladies Night 2026
@@ -136,7 +120,7 @@ URL:https://www.ticketweb.com/event/ladies-night-2026-stampede-tickets/141
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70v-7@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T180000
 DTEND:20261125T203000
 SUMMARY:Ladies Night at Stampede
@@ -149,7 +133,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70v-7
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_33Wiek4@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:22nd Annual Last Waltz Revisited - feat. Polytoxic
@@ -167,7 +151,7 @@ URL:https://www.ticketmaster.com/22nd-annual-last-waltz-revisited-feat-den
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_oKOhAO4@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:Yung Gravy: The Joyrider Tour
@@ -182,7 +166,7 @@ URL:https://www.ticketmaster.com/yung-gravy-the-joyrider-tour-denver-color
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZ_f6@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:A Christmas Carol
@@ -195,7 +179,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ_f6
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZz8-@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
@@ -208,7 +192,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_CBwVtHf@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:Colorado Avalanche v Montreal Canadiens
@@ -226,7 +210,7 @@ URL:https://www.ticketmaster.com/colorado-avalanche-v-montreal-canadiens-d
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv3ba@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:What a Glorious Feeling
@@ -239,7 +223,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3ba
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7JK_F@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:A Celtic Christmas w/ A Taste Of Ireland
@@ -252,7 +236,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JK_F
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7Ps-g@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:MADVKTM (16 and Over)
@@ -265,7 +249,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Ps-g
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvKGd@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Josh Baker - Ages 16+
@@ -275,5 +259,34 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:Mission Ballroom\, Denver
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvKGd
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfxA7K@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T200000
+DTEND:20261125T223000
+SUMMARY:Goth Night hosted by Gotica Nouveau
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/goth-night-hosted-by-gotica-vultur
+ es-tickets/14885113\\n\\nRefreshed daily from live listings.
+LOCATION:Vultures\, Colorado Springs
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/goth-night-hosted-by-gotica-vultures-t
+ ickets/14885113
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7J3Jd@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T201500
+DTEND:20261125T224500
+SUMMARY:SHIFT Wednesday Ft. Mindset - Ages 16+
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7J3Jd\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Cervantes Other Side\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J3Jd
 END:VEVENT
 END:VCALENDAR

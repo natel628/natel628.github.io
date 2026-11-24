@@ -6,68 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Greenville\, SC
 X-WR-CALDESC:Upcoming events within 100 miles of Greenville\, SC.
 BEGIN:VEVENT
-UID:tm-G5eVZ_2pXcs9c@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T190000
-DTEND:20261123T213000
-SUMMARY:Charlotte Hornets vs. Memphis Grizzlies
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/charlotte-hornets-vs-memphis-grizzlies-charlot
- te-north-carolina-11-23-2026/event/2D0064F5BEB715ED\\n\\nRefreshed daily 
- from live listings.
-LOCATION:Spectrum Center\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/charlotte-hornets-vs-memphis-grizzlies-ch
- arlotte-north-carolina-11-23-2026/event/2D0064F5BEB715ED
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA70Q6@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T190000
-DTEND:20261123T213000
-SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Kentucky State
-  Thorobreds Mens Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA70Q6\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Freedom Hall Civic Center-TN\, Johnson City
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70Q6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7P4oa@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T193000
-DTEND:20261123T220000
-SUMMARY:Mannheim Steamroller Christmas
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7P4oa\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Koger Center for the Arts\, Columbia
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P4oa
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_4nR49Tp@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261124T100000
-DTEND:20261124T123000
-SUMMARY:Ann Brodie's Carolina Ballet Presents The Nutcracker Ballet
-DESCRIPTION:A clear bag policy is in effect for all events at The Township
-  Auditorium. For more information on this policy\, including size guideli
- nes\, please visit our website at www.thetownship.org. An inherent risk o
- f exposure to COVID-19 (corona virus) exists in any public place where pe
- ople are present. COV\\n\\nhttps://www.ticketmaster.com/ann-brodies-carol
- ina-ballet-presents-the-columbia-south-carolina-11-24-2026/event/2D00655A
- AF557FD6\\n\\nRefreshed daily from live listings.
-LOCATION:Township Auditorium\, Columbia
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/ann-brodies-carolina-ballet-presents-the-
- columbia-south-carolina-11-24-2026/event/2D00655AAF557FD6
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAAFFf@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T190000
 DTEND:20261124T213000
 SUMMARY:World Ballet Company presents The Nutcracker
@@ -80,7 +20,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAFFf
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZebV@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:Momix: Botanica
@@ -93,7 +33,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZebV
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_53XDjj3@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:DragonForce: Inhuman Rampage 20th Anniversary
@@ -111,7 +51,7 @@ URL:https://www.ticketmaster.com/dragonforce-inhuman-rampage-20th-annivers
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1zZ_1Uw6eZG@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:Jersey Boys
@@ -129,7 +69,7 @@ URL:https://www.ticketmaster.com/jersey-boys-evans-georgia-11-24-2026/even
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_4ns-F22@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T100000
 DTEND:20261125T123000
 SUMMARY:Ann Brodie's Carolina Ballet Presents The Nutcracker Ballet
@@ -147,7 +87,7 @@ URL:https://www.ticketmaster.com/ann-brodies-carolina-ballet-presents-the-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_zriu@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T180000
 DTEND:20261125T203000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -165,7 +105,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfuOqf@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T180000
 DTEND:20261125T203000
 SUMMARY:Moose & Friends Annual Thanksgiving Show - Benefitting Hickory Sou
@@ -180,7 +120,7 @@ URL:https://www.ticketweb.com/event/moose-friends-annual-thanksgiving-the-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_G2HDTC3@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T183000
 DTEND:20261125T210000
 SUMMARY:WAGE WAR - EMERGENCY BROADCAST TOUR
@@ -198,7 +138,7 @@ URL:https://www.ticketmaster.com/wage-war-emergency-broadcast-tour-charlot
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2pXRo9X@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:Charlotte Hornets vs. Chicago Bulls(Emirates NBA Cup Group Game)
@@ -213,7 +153,7 @@ URL:https://www.ticketmaster.com/charlotte-hornets-vs-chicago-bullsemirate
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7-Q4@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T190500
 DTEND:20261125T213500
 SUMMARY:Athens Rock Lobsters vs. Birmingham Bulls
@@ -226,7 +166,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7-Q4
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_uM7VWnZ@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:Mannheim Steamroller Christmas
@@ -240,7 +180,7 @@ URL:https://www.ticketmaster.com/mannheim-steamroller-christmas-spartanbur
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_fU3d5p0@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Pi'erre Bourne
@@ -258,7 +198,7 @@ URL:https://www.ticketmaster.com/pierre-bourne-charlotte-north-carolina-11
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_3KekUWu@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Deante' Hitchcock
@@ -274,7 +214,7 @@ URL:https://www.ticketmaster.com/deante-hitchcock-charlotte-north-carolina
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_yXic@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T103000
 DTEND:20261127T130000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -292,7 +232,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_Dmcv@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T143000
 DTEND:20261127T170000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -310,7 +250,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oC3Rbam@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T160000
 DTEND:20261127T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -327,22 +267,21 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
  otte-north-carolina-11-27-2026/event/2D00651392BD826E
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA70QK@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+UID:tm-Z7r9jZ1A7P419@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
-SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Charleston Sou
- thern Buccaneers Mens Basketball
+SUMMARY:Diva Royale Drag Queen Show (18+ Event)
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA70QK\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7P419\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Freedom Hall Civic Center-TN\, Johnson City
+LOCATION:The Scorpio\, Charlotte
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70QK
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P419
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oIZXcZt@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Dick Vitale Invitational: West Virginia vs North Carolina
@@ -356,16 +295,48 @@ URL:https://www.ticketmaster.com/dick-vitale-invitational-west-virginia-vs
  -charlotte-north-carolina-11-27-2026/event/2D00651A00FAD029
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7P419@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+UID:tm-Z7r9jZ1AA70QK@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
-SUMMARY:Diva Royale Drag Queen Show (18+ Event)
+SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Charleston Sou
+ thern Buccaneers Mens Basketball
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7P419\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA70QK\\n\\nRefreshed daily from 
  live listings.
-LOCATION:The Scorpio\, Charlotte
+LOCATION:Freedom Hall Civic Center-TN\, Johnson City
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P419
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70QK
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA7sfE@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261127T193000
+DTEND:20261127T220000
+SUMMARY:WWE Road to Survivor Series: War Games Tour
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7sfE\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Akins Arena at The Classic Center\, Athens
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7sfE
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_G3-TxWO@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261127T193000
+DTEND:20261127T220000
+SUMMARY:Dr. Seuss's How The Grinch Stole Christmas in Concert
+DESCRIPTION:BAG POLICY: Any non-clear bag larger than 4.5" x 6.5" is not p
+ ermitted. All purchase transactions will be cashless. Purchases can be ma
+ de with a debit card or credit card\; matching ID required. All dates\, a
+ cts\, & ticket prices subject to change without notice. All tickets are s
+ ubject to applicable s\\n\\nhttps://www.ticketmaster.com/dr-seusss-how-th
+ e-grinch-stole-charlotte-north-carolina-11-27-2026/event/2D0064C4A1FE2F60
+ \\n\\nRefreshed daily from live listings.
+LOCATION:Ovens Auditorium\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/dr-seusss-how-the-grinch-stole-charlotte-
+ north-carolina-11-27-2026/event/2D0064C4A1FE2F60
 END:VEVENT
 END:VCALENDAR

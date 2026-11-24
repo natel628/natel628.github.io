@@ -6,123 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Austin\, TX
 X-WR-CALDESC:Upcoming events within 100 miles of Austin\, TX.
 BEGIN:VEVENT
-UID:tm-LvZ18QnGqQOPIBqio5H2Z@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T160000
-DTEND:20261123T183000
-SUMMARY:Holidays at The Rock Skating Rink
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
- B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:The Rock at La Cantera\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
- ets-8B9V0M?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QnGqQOPIBqio5H2v@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T170000
-DTEND:20261123T193000
-SUMMARY:Holidays at The Rock Skating Rink
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
- B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:The Rock at La Cantera\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
- ets-8B9V0M?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QnGqQOPIBqio5H2e@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T180000
-DTEND:20261123T203000
-SUMMARY:Holidays at The Rock Skating Rink
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
- B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:The Rock at La Cantera\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
- ets-8B9V0M?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dIZ_4SGecuM@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T190000
-DTEND:20261123T213000
-SUMMARY:Blue Monday w/ Soul Man Sam & Brad Stivers
-DESCRIPTION:Please Note: SEATING Your Antones ticket grants you General Ad
- mission entry with standing room. Limited seating may be available on a f
- irst-come\, first-served basis\, but is subject to change show to show. I
- f you have an ADA request\, please reach out and we will do our best to a
- ccommodate you. PARKIN\\n\\nhttps://www.ticketmaster.com/blue-monday-w-so
- ul-man-sam-austin-texas-11-23-2026/event/3A00655CCC0AD377\\n\\nRefreshed 
- daily from live listings.
-LOCATION:Antone's Nightclub\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/blue-monday-w-soul-man-sam-austin-texas-1
- 1-23-2026/event/3A00655CCC0AD377
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QnGqQOPIBqio5H2d@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T190000
-DTEND:20261123T213000
-SUMMARY:Holidays at The Rock Skating Rink
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
- B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:The Rock at La Cantera\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
- ets-8B9V0M?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA7vf-@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T200000
-DTEND:20261123T223000
-SUMMARY:Adrianne Lenker w/ Staci Foster
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA7vf-\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Austin City Limits Live at The Moody Theater\, Austin
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7vf-
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QnGqQOPIBqio5H27@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T200000
-DTEND:20261123T223000
-SUMMARY:Holidays at The Rock Skating Rink
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
- B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:The Rock at La Cantera\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
- ets-8B9V0M?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QnGqQOPIBqio5H2A@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T210000
-DTEND:20261123T233000
-SUMMARY:Holidays at The Rock Skating Rink
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
- B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:The Rock at La Cantera\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
- ets-8B9V0M?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H2k@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T160000
 DTEND:20261124T183000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -136,7 +21,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H26@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T170000
 DTEND:20261124T193000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -150,7 +35,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H2F@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T180000
 DTEND:20261124T203000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -164,7 +49,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_o24se6Q@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T190000
 DTEND:20261124T213000
 SUMMARY:Texas Stars vs Tucson Roadrunners
@@ -180,7 +65,7 @@ URL:https://www.ticketmaster.com/texas-stars-vs-tucson-roadrunners-cedar-p
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H2a@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T190000
 DTEND:20261124T213000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -194,7 +79,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAeAA9@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T190000
 DTEND:20261124T213000
 SUMMARY:Leanna Firestone w/ Sydney Sprague
@@ -207,7 +92,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAeAA9
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-1k18vPbxGA1Pva2@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:Satx Open Mic
@@ -222,7 +107,7 @@ URL:https://www.ticketweb.com/event/satx-open-mic-laugh-out-loud-comedy-cl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAA48a@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:Buena Vista Social Club (Touring)
@@ -235,7 +120,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAA48a
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_353zz8X@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T200000
 DTEND:20261124T223000
 SUMMARY:So Called Underground w/ Greyson Turner & Jeska
@@ -253,7 +138,7 @@ URL:https://www.ticketmaster.com/so-called-underground-w-greyson-turner-au
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H21@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T200000
 DTEND:20261124T223000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -267,7 +152,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H25@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T210000
 DTEND:20261124T233000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -281,7 +166,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H2G@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T160000
 DTEND:20261125T183000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -292,5 +177,117 @@ LOCATION:The Rock at La Cantera\, San Antonio
 STATUS:CONFIRMED
 URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
  ets-8B9V0M?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QnGqQOPIBqio5H2u@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T170000
+DTEND:20261125T193000
+SUMMARY:Holidays at The Rock Skating Rink
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
+ B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:The Rock at La Cantera\, San Antonio
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
+ ets-8B9V0M?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5dIZ_GnckGEf@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T180000
+DTEND:20261125T203000
+SUMMARY:Imminence - Axis Mundi Tour: North America 2026
+DESCRIPTION:All Ages Welcome! Doors: 6:00pm Show: 7:00pm\\n\\nhttps://www.
+ ticketmaster.com/imminence-axis-mundi-tour-north-america-austin-texas-11-
+ 25-2026/event/3A0064CAAD18C9D4\\n\\nRefreshed daily from live listings.
+LOCATION:Stubb's Waller Creek Amphitheater\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/imminence-axis-mundi-tour-north-america-a
+ ustin-texas-11-25-2026/event/3A0064CAAD18C9D4
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAeAre@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T180000
+DTEND:20261125T203000
+SUMMARY:Texas Longhorns Womens Basketball vs. Southeastern Louisiana Lions
+  Womens Basketball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAeAre\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Moody Center ATX\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAeAre
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QnGqQOPIBqio5H2C@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T180000
+DTEND:20261125T203000
+SUMMARY:Holidays at The Rock Skating Rink
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
+ B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:The Rock at La Cantera\, San Antonio
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
+ ets-8B9V0M?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7J7Fx@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T190000
+DTEND:20261125T213000
+SUMMARY:Ho99o9 w/ N8NOFACE
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7J7Fx\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Come and Take It Live\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J7Fx
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5dIZ_o24W3Fc@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T190000
+DTEND:20261125T213000
+SUMMARY:Texas Stars vs Tucson Roadrunners
+DESCRIPTION:Limited Mobility seats are NOT wheelchair accessible. H-E-B Ce
+ nter at Cedar Park is a cashless venue. Children who have had their 2nd b
+ irthday require a ticket for admission.\\n\\nhttps://www.ticketmaster.com
+ /texas-stars-vs-tucson-roadrunners-cedar-park-texas-11-25-2026/event/3A00
+ 6513D5F5222D\\n\\nRefreshed daily from live listings.
+LOCATION:H-E-B Center at Cedar Park\, Cedar Park
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/texas-stars-vs-tucson-roadrunners-cedar-p
+ ark-texas-11-25-2026/event/3A006513D5F5222D
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QnGqQOPIBqio5H22@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T190000
+DTEND:20261125T213000
+SUMMARY:Holidays at The Rock Skating Rink
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
+ B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:The Rock at La Cantera\, San Antonio
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
+ ets-8B9V0M?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAe8fY@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261125T193000
+DTEND:20261125T220000
+SUMMARY:Alfred Robles
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAe8fY\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Cap City Comedy Club\, Austin
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAe8fY
 END:VEVENT
 END:VCALENDAR

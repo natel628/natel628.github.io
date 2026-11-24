@@ -6,63 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Boone\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Boone\, NC.
 BEGIN:VEVENT
-UID:tm-G5eVZ_2pXcs9c@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T190000
-DTEND:20261123T213000
-SUMMARY:Charlotte Hornets vs. Memphis Grizzlies
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/charlotte-hornets-vs-memphis-grizzlies-charlot
- te-north-carolina-11-23-2026/event/2D0064F5BEB715ED\\n\\nRefreshed daily 
- from live listings.
-LOCATION:Spectrum Center\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/charlotte-hornets-vs-memphis-grizzlies-ch
- arlotte-north-carolina-11-23-2026/event/2D0064F5BEB715ED
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA70Q6@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T190000
-DTEND:20261123T213000
-SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Kentucky State
-  Thorobreds Mens Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA70Q6\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Freedom Hall Civic Center-TN\, Johnson City
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70Q6
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAoA-@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261123T190000
-DTEND:20261123T213000
-SUMMARY:NUTCRACKER! Magical Christmas Ballet
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAoA-\\n\\nRefreshed daily from 
- live listings.
-LOCATION:ETSU Martin Center for the Arts\, Johnson City
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAoA-
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70Ubt@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
-DTSTART:20261124T140000
-DTEND:20261124T163000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70Ubt\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubt
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAAFFf@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T190000
 DTEND:20261124T213000
 SUMMARY:World Ballet Company presents The Nutcracker
@@ -75,7 +20,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAFFf
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_53XDjj3@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:DragonForce: Inhuman Rampage 20th Anniversary
@@ -93,7 +38,7 @@ URL:https://www.ticketmaster.com/dragonforce-inhuman-rampage-20th-annivers
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70UbY@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261124T193000
 DTEND:20261124T220000
 SUMMARY:Elf the Musical
@@ -106,7 +51,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbY
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ubs@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T140000
 DTEND:20261125T163000
 SUMMARY:Elf the Musical
@@ -119,7 +64,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfuOqf@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T180000
 DTEND:20261125T203000
 SUMMARY:Moose & Friends Annual Thanksgiving Show - Benefitting Hickory Sou
@@ -134,7 +79,7 @@ URL:https://www.ticketweb.com/event/moose-friends-annual-thanksgiving-the-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_G2HDTC3@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T183000
 DTEND:20261125T210000
 SUMMARY:WAGE WAR - EMERGENCY BROADCAST TOUR
@@ -152,7 +97,7 @@ URL:https://www.ticketmaster.com/wage-war-emergency-broadcast-tour-charlot
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2pXRo9X@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:Charlotte Hornets vs. Chicago Bulls(Emirates NBA Cup Group Game)
@@ -167,7 +112,7 @@ URL:https://www.ticketmaster.com/charlotte-hornets-vs-chicago-bullsemirate
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_uM7VWnZ@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:Mannheim Steamroller Christmas
@@ -181,7 +126,7 @@ URL:https://www.ticketmaster.com/mannheim-steamroller-christmas-spartanbur
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_fU3d5p0@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Pi'erre Bourne
@@ -199,7 +144,7 @@ URL:https://www.ticketmaster.com/pierre-bourne-charlotte-north-carolina-11
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_3KekUWu@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Deante' Hitchcock
@@ -215,7 +160,7 @@ URL:https://www.ticketmaster.com/deante-hitchcock-charlotte-north-carolina
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ubw@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T140000
 DTEND:20261127T163000
 SUMMARY:Elf the Musical
@@ -228,7 +173,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubw
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oC3Rbam@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T160000
 DTEND:20261127T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -246,7 +191,7 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZMod@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T170000
 DTEND:20261127T193000
 SUMMARY:Virginia Tech Hokies Mens Basketball vs. Old Dominion Monarchs Men
@@ -259,22 +204,21 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZMod
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AA70QK@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+UID:tm-Z7r9jZ1A7P419@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
-SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Charleston Sou
- thern Buccaneers Mens Basketball
+SUMMARY:Diva Royale Drag Queen Show (18+ Event)
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AA70QK\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7P419\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Freedom Hall Civic Center-TN\, Johnson City
+LOCATION:The Scorpio\, Charlotte
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70QK
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P419
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oIZXcZt@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Dick Vitale Invitational: West Virginia vs North Carolina
@@ -288,16 +232,63 @@ URL:https://www.ticketmaster.com/dick-vitale-invitational-west-virginia-vs
  -charlotte-north-carolina-11-27-2026/event/2D00651A00FAD029
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7P419@whats-happening.natel628.github.io
-DTSTAMP:20261123T182906Z
+UID:tm-Z7r9jZ1AA70QK@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
-SUMMARY:Diva Royale Drag Queen Show (18+ Event)
+SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Charleston Sou
+ thern Buccaneers Mens Basketball
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7P419\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA70QK\\n\\nRefreshed daily from 
  live listings.
-LOCATION:The Scorpio\, Charlotte
+LOCATION:Freedom Hall Civic Center-TN\, Johnson City
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P419
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70QK
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70UbS@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261127T193000
+DTEND:20261127T220000
+SUMMARY:Elf the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70UbS\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barter Theatre\, Abingdon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbS
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_G3-TxWO@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261127T193000
+DTEND:20261127T220000
+SUMMARY:Dr. Seuss's How The Grinch Stole Christmas in Concert
+DESCRIPTION:BAG POLICY: Any non-clear bag larger than 4.5" x 6.5" is not p
+ ermitted. All purchase transactions will be cashless. Purchases can be ma
+ de with a debit card or credit card\; matching ID required. All dates\, a
+ cts\, & ticket prices subject to change without notice. All tickets are s
+ ubject to applicable s\\n\\nhttps://www.ticketmaster.com/dr-seusss-how-th
+ e-grinch-stole-charlotte-north-carolina-11-27-2026/event/2D0064C4A1FE2F60
+ \\n\\nRefreshed daily from live listings.
+LOCATION:Ovens Auditorium\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/dr-seusss-how-the-grinch-stole-charlotte-
+ north-carolina-11-27-2026/event/2D0064C4A1FE2F60
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_ol5Dwer@whats-happening.natel628.github.io
+DTSTAMP:20261124T175658Z
+DTSTART:20261127T193500
+DTEND:20261127T220500
+SUMMARY:Twin City Thunderbirds Vs Blue Ridge Bobcats
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/twin-city-thunderbirds-vs-blue-ridge-winston-s
+ alem-north-carolina-11-27-2026/event/2D00651ACBEF209E\\n\\nRefreshed dail
+ y from live listings.
+LOCATION:Winston-Salem Fairgrounds\, Winston Salem
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/twin-city-thunderbirds-vs-blue-ridge-wins
+ ton-salem-north-carolina-11-27-2026/event/2D00651ACBEF209E
 END:VEVENT
 END:VCALENDAR
