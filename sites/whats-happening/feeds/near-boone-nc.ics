@@ -6,65 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Boone\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Boone\, NC.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAAFFf@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261124T190000
-DTEND:20261124T213000
-SUMMARY:World Ballet Company presents The Nutcracker
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAAFFf\\n\\nRefreshed daily from 
- live listings.
-LOCATION:J.E. Broyhill Civic Center\, Lenoir
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAFFf
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_53XDjj3@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261124T193000
-DTEND:20261124T220000
-SUMMARY:DragonForce: Inhuman Rampage 20th Anniversary
-DESCRIPTION:The Fillmore Is A General Admission Standing Room Only Venue U
- nless Otherwise Noted. All Ages Welcome Doors: 6:30PM Show: 7:30PM Ticket
-  prices will increase the day of the show. All dates\, acts\, and ticket 
- prices subject to change without notice. All tickets are subject to appli
- cable service fees vi\\n\\nhttps://www.ticketmaster.com/dragonforce-inhum
- an-rampage-20th-anniversary-charlotte-north-carolina-11-24-2026/event/2D0
- 064B4BEEDC712\\n\\nRefreshed daily from live listings.
-LOCATION:The Fillmore Charlotte\, Charlotte
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/dragonforce-inhuman-rampage-20th-annivers
- ary-charlotte-north-carolina-11-24-2026/event/2D0064B4BEEDC712
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70UbY@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261124T193000
-DTEND:20261124T220000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70UbY\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbY
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70Ubs@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261125T140000
-DTEND:20261125T163000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70Ubs\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubs
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfuOqf@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T180000
 DTEND:20261125T203000
 SUMMARY:Moose & Friends Annual Thanksgiving Show - Benefitting Hickory Sou
@@ -79,7 +22,7 @@ URL:https://www.ticketweb.com/event/moose-friends-annual-thanksgiving-the-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_G2HDTC3@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T183000
 DTEND:20261125T210000
 SUMMARY:WAGE WAR - EMERGENCY BROADCAST TOUR
@@ -97,7 +40,7 @@ URL:https://www.ticketmaster.com/wage-war-emergency-broadcast-tour-charlot
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2pXRo9X@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:Charlotte Hornets vs. Chicago Bulls(Emirates NBA Cup Group Game)
@@ -112,7 +55,7 @@ URL:https://www.ticketmaster.com/charlotte-hornets-vs-chicago-bullsemirate
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_uM7VWnZ@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:Mannheim Steamroller Christmas
@@ -126,7 +69,7 @@ URL:https://www.ticketmaster.com/mannheim-steamroller-christmas-spartanbur
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_fU3d5p0@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Pi'erre Bourne
@@ -144,7 +87,7 @@ URL:https://www.ticketmaster.com/pierre-bourne-charlotte-north-carolina-11
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_3KekUWu@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Deante' Hitchcock
@@ -160,7 +103,7 @@ URL:https://www.ticketmaster.com/deante-hitchcock-charlotte-north-carolina
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ubw@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261127T140000
 DTEND:20261127T163000
 SUMMARY:Elf the Musical
@@ -173,7 +116,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubw
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oC3Rbam@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261127T160000
 DTEND:20261127T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -191,7 +134,7 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZMod@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261127T170000
 DTEND:20261127T193000
 SUMMARY:Virginia Tech Hokies Mens Basketball vs. Old Dominion Monarchs Men
@@ -205,7 +148,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZMod
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P419@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -218,7 +161,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P419
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oIZXcZt@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Dick Vitale Invitational: West Virginia vs North Carolina
@@ -233,7 +176,7 @@ URL:https://www.ticketmaster.com/dick-vitale-invitational-west-virginia-vs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA70QK@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Charleston Sou
@@ -246,21 +189,8 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70QK
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70UbS@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261127T193000
-DTEND:20261127T220000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70UbS\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbS
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-G5eVZ_G3-TxWO@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Dr. Seuss's How The Grinch Stole Christmas in Concert
@@ -277,8 +207,21 @@ URL:https://www.ticketmaster.com/dr-seusss-how-the-grinch-stole-charlotte-
  north-carolina-11-27-2026/event/2D0064C4A1FE2F60
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70UbS@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261127T193000
+DTEND:20261127T220000
+SUMMARY:Elf the Musical
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70UbS\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Barter Theatre\, Abingdon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbS
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-G5eVZ_ol5Dwer@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261127T193500
 DTEND:20261127T220500
 SUMMARY:Twin City Thunderbirds Vs Blue Ridge Bobcats
@@ -290,5 +233,69 @@ LOCATION:Winston-Salem Fairgrounds\, Winston Salem
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/twin-city-thunderbirds-vs-blue-ridge-wins
  ton-salem-north-carolina-11-27-2026/event/2D00651ACBEF209E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_Gxw90bD@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261127T200000
+DTEND:20261127T223000
+SUMMARY:Pouya: The Foreverglades Tour
+DESCRIPTION:The Fillmore Is A General Admission Standing Room Only Venue U
+ nless Otherwise Noted. All Ages Welcome Doors: 7:00PM Show: 8:00PM Ticket
+  prices will increase the day of the show. All dates\, acts\, and ticket 
+ prices subject to change without notice. All tickets are subject to appli
+ cable service fees vi\\n\\nhttps://www.ticketmaster.com/pouya-the-forever
+ glades-tour-charlotte-north-carolina-11-27-2026/event/2D0064C8B25E463B\\n
+ \\nRefreshed daily from live listings.
+LOCATION:The Fillmore Charlotte\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/pouya-the-foreverglades-tour-charlotte-no
+ rth-carolina-11-27-2026/event/2D0064C8B25E463B
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_4M7oWPv@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261127T200000
+DTEND:20261127T223000
+SUMMARY:Noodah05
+DESCRIPTION:The Underground Is A General Admission Standing Room Only Venu
+ e Unless Otherwise Noted. All Ages Welcome Doors: 7:00pm Show: 8:00pm Tic
+ ket prices will increase the day of the show. All dates\, acts\, and tick
+ et prices subject to change without notice. All tickets are subject to ap
+ plicable service fees\\n\\nhttps://www.ticketmaster.com/noodah05-charlott
+ e-north-carolina-11-27-2026/event/2D00655DC447D941\\n\\nRefreshed daily f
+ rom live listings.
+LOCATION:The Underground\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/noodah05-charlotte-north-carolina-11-27-2
+ 026/event/2D00655DC447D941
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7-Nb3@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261128T120000
+DTEND:20261128T143000
+SUMMARY:UNC Charlotte 49ers Football vs. Navy Midshipmen Football
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7-Nb3\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Jerry Richardson Stadium\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Nb3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5eVZ_f9pmpR1@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261128T123000
+DTEND:20261128T150000
+SUMMARY:2026 MLS Playoffs Round 1 Game 2: Charlotte FC v Chicago Fire FC
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/2026-mls-playoffs-round-1-game-charlotte-north
+ -carolina-11-28-2026/event/2D006545D6B96BCA\\n\\nRefreshed daily from liv
+ e listings.
+LOCATION:Bank of America Stadium\, Charlotte
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/2026-mls-playoffs-round-1-game-charlotte-
+ north-carolina-11-28-2026/event/2D006545D6B96BCA
 END:VEVENT
 END:VCALENDAR

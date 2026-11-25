@@ -6,105 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Denver\, CO
 X-WR-CALDESC:Upcoming events within 100 miles of Denver\, CO.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZz8p@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261124T190000
-DTEND:20261124T213000
-SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZz8p\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Arvada Center\, Arvada
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8p
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_890iVPs@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261124T193000
-DTEND:20261124T220000
-SUMMARY:Prayers
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://tickets.meowwolf.com/events/denver/prayers/\\n\\nRefreshed daily fr
- om live listings.
-LOCATION:Meow Wolf Denver\, Denver
-STATUS:CONFIRMED
-URL:https://tickets.meowwolf.com/events/denver/prayers/
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZO8t@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261124T193000
-DTEND:20261124T220000
-SUMMARY:Prayers
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZO8t\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Meow Wolf  Denver Convergence Station\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZO8t
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAv3bF@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261124T193000
-DTEND:20261124T220000
-SUMMARY:What a Glorious Feeling
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAv3bF\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Galleria Theatre\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3bF
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vzZ_8mM3DO7@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261124T200000
-DTEND:20261124T223000
-SUMMARY:Denver Nuggets v Dallas Mavericks
-DESCRIPTION:By purchasing\, you share your contact details and ticket sale
- s data with the NBA Family including the Denver Nuggets. For example\, th
- e NBA Family may use this data to better understand fan engagement\, cust
- omize services\, and for advertising. For more information\, see https://
- www.nba.com/privacy-poli\\n\\nhttps://www.ticketmaster.com/denver-nuggets
- -v-dallas-mavericks-denver-colorado-11-24-2026/event/1E00650BB74BB804\\n\
- \nRefreshed daily from live listings.
-LOCATION:Ball Arena\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/denver-nuggets-v-dallas-mavericks-denver-
- colorado-11-24-2026/event/1E00650BB74BB804
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Qlg7NNARYE_bau3H@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261125T130000
-DTEND:20261125T153000
-SUMMARY:KSE Venue Ball Arena Tours
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36CFQ4?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Ball Arena\, Denver
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/kse-venue-ball-arena-tours-tickets-36C
- FQ4?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZz8b@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
-DTSTART:20261125T130000
-DTEND:20261125T153000
-SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZz8b\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Arvada Center\, Arvada
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8b
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfA3Jf@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T180000
 DTEND:20261125T203000
 SUMMARY:Ladies Night 2026
@@ -120,7 +23,7 @@ URL:https://www.ticketweb.com/event/ladies-night-2026-stampede-tickets/141
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70v-7@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T180000
 DTEND:20261125T203000
 SUMMARY:Ladies Night at Stampede
@@ -133,7 +36,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70v-7
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_33Wiek4@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:22nd Annual Last Waltz Revisited - feat. Polytoxic
@@ -151,7 +54,7 @@ URL:https://www.ticketmaster.com/22nd-annual-last-waltz-revisited-feat-den
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_oKOhAO4@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:Yung Gravy: The Joyrider Tour
@@ -166,7 +69,7 @@ URL:https://www.ticketmaster.com/yung-gravy-the-joyrider-tour-denver-color
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZ_f6@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:A Christmas Carol
@@ -179,7 +82,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZ_f6
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZz8-@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T190000
 DTEND:20261125T213000
 SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
@@ -192,7 +95,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_CBwVtHf@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:Colorado Avalanche v Montreal Canadiens
@@ -210,7 +113,7 @@ URL:https://www.ticketmaster.com/colorado-avalanche-v-montreal-canadiens-d
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv3ba@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:What a Glorious Feeling
@@ -223,7 +126,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3ba
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7JK_F@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T193000
 DTEND:20261125T220000
 SUMMARY:A Celtic Christmas w/ A Taste Of Ireland
@@ -236,7 +139,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JK_F
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7Ps-g@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:MADVKTM (16 and Over)
@@ -249,7 +152,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Ps-g
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvKGd@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Josh Baker - Ages 16+
@@ -262,7 +165,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvKGd
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfxA7K@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T200000
 DTEND:20261125T223000
 SUMMARY:Goth Night hosted by Gotica Nouveau
@@ -278,7 +181,7 @@ URL:https://www.ticketweb.com/event/goth-night-hosted-by-gotica-vultures-t
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7J3Jd@whats-happening.natel628.github.io
-DTSTAMP:20261124T175658Z
+DTSTAMP:20261125T172502Z
 DTSTART:20261125T201500
 DTEND:20261125T224500
 SUMMARY:SHIFT Wednesday Ft. Mindset - Ages 16+
@@ -288,5 +191,76 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:Cervantes Other Side\, Denver
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J3Jd
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAv3Zy@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261125T203000
+DTEND:20261125T230000
+SUMMARY:SHIFT Wednesday Ft. Ghengar w/ special guest All The Reason - Ages
+  16+
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAv3Zy\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Cervantes Masterpiece Ballroom\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3Zy
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA7_rd@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261125T210000
+DTEND:20261125T233000
+SUMMARY:Costa B2B Lucky (16+ Event)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7_rd\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Bluebird Theatre\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7_rd
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1Af8Ipf@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261125T220000
+DTEND:20261126T003000
+SUMMARY:Time Machine 80s\, 90s\, 2000s
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/time-machine-80s-90s-2000s-the-chu
+ rch-nightclub-tickets/14428594\\n\\nRefreshed daily from live listings.
+LOCATION:The Church Nightclub\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/time-machine-80s-90s-2000s-the-church-
+ nightclub-tickets/14428594
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfZUq0@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261126T200000
+DTEND:20261126T223000
+SUMMARY:$5 Thursdays!
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/5-thursdays-la-rumba-tickets/14036
+ 764\\n\\nRefreshed daily from live listings.
+LOCATION:La Rumba\, Denver
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/5-thursdays-la-rumba-tickets/14036764
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZz8x@whats-happening.natel628.github.io
+DTSTAMP:20261125T172502Z
+DTSTART:20261127T130000
+DTEND:20261127T153000
+SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZz8x\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Arvada Center\, Arvada
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8x
 END:VEVENT
 END:VCALENDAR
