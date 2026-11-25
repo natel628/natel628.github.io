@@ -449,17 +449,18 @@ h1 {
 .roads .fill .toll { stroke: #9fd8cf; stroke-width: 3; stroke-dasharray: 10 7; opacity: .8; }
 .roads .fill .arterial { stroke: #cbb98a; stroke-width: 2.2; opacity: .8; }
 .roads .fill .causeway { stroke: #dfe8f5; stroke-width: 2.4; opacity: .9; }
-.roads .minor path { fill: none; stroke: rgba(226,236,250,.55); stroke-width: 1.1; opacity: 0; transition: opacity .25s ease; }
+.roads .minor path { fill: none; stroke: rgba(226,236,250,.55); stroke-width: 1.1; opacity: .35; transition: opacity .25s ease; }
 .roads .minor path.named { stroke: #f0a35e; stroke-width: 1.6; opacity: .9; }
 .roads .minor path.trail { stroke-dasharray: 5 5; stroke: rgba(160,200,150,.6); }
-.map.z1 .roads .minor path { opacity: .28; }
-.map.z2 .roads .minor path { opacity: .6; }
+.map.z1 .roads .minor path { opacity: .5; }
+.map.z2 .roads .minor path { opacity: .75; }
 .map.z3 .roads .minor path { opacity: .95; }
 .map.hide-streets .roads { display: none; }
 .airfield rect { fill: #3a3f47; stroke: #8b93a1; stroke-width: 1.4; }
 .airfield .centerline { stroke: #e8e8e8; stroke-width: 1.2; stroke-dasharray: 6 5; fill: none; opacity: .8; }
-.streetlabels text { font-size: 11px; font-weight: 600; fill: rgba(232,240,252,.0); paint-order: stroke; stroke: rgba(8,13,20,.9); stroke-width: 3; transition: fill .25s ease; }
-.map.z2 .streetlabels text, .map.z3 .streetlabels text { fill: rgba(232,240,252,.85); }
+.streetlabels text { font-size: 11px; font-weight: 600; fill: rgba(232,240,252,.38); paint-order: stroke; stroke: rgba(8,13,20,.9); stroke-width: 3; transition: fill .25s ease; }
+.map.z1 .streetlabels text { fill: rgba(232,240,252,.6); }
+.map.z2 .streetlabels text, .map.z3 .streetlabels text { fill: rgba(232,240,252,.9); }
 .map.hide-labels .streetlabels, .map.hide-labels .townlabels { display: none; }
 .roadlabels text {
   font-size: 12px;
