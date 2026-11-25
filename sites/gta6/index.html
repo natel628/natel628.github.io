@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="gta6.css?v=3">
+<link rel="stylesheet" href="gta6.css?v=4">
 <style>
   /* SVG paint servers in an external stylesheet resolve against the CSS file,
      where #land does not exist, so those four fills are declared here instead. */
@@ -59,6 +59,14 @@
         <input type="checkbox" id="gridToggle" checked>
         <span>Show grid squares</span>
       </label>
+      <label class="toggle">
+        <input type="checkbox" id="streetToggle" checked>
+        <span>Show streets</span>
+      </label>
+      <label class="toggle">
+        <input type="checkbox" id="labelToggle" checked>
+        <span>Show place labels</span>
+      </label>
     </section>
 
     <div class="detail" id="detail" hidden></div>
@@ -88,11 +96,13 @@
   <main class="mapwrap" id="mapWrap" aria-label="Map of Leonida">
     <div class="map-toolbar">
       <div class="tb-group">
-        <button type="button" class="btn btn-icon" id="zoomIn" aria-label="Zoom in">+</button>
         <button type="button" class="btn btn-icon" id="zoomOut" aria-label="Zoom out">−</button>
+        <span class="zoomlevel" id="zoomLevel" aria-live="polite">100%</span>
+        <button type="button" class="btn btn-icon" id="zoomIn" aria-label="Zoom in">+</button>
         <button type="button" class="btn btn-sm" id="zoomReset">Reset</button>
+        <button type="button" class="btn btn-sm" id="fullBtn" aria-label="Fullscreen map">⛶</button>
       </div>
-      <p class="hint" id="hint">Drag to pan · scroll to zoom</p>
+      <p class="hint" id="hint">Drag to pan · scroll to zoom toward cursor · double-click to zoom in</p>
       <div class="tb-group">
         <button type="button" class="btn btn-sm btn-toggle" id="panelToggle" aria-expanded="true">Filters</button>
       </div>
@@ -217,13 +227,76 @@
             <ellipse cx="156" cy="1044" rx="22" ry="10" transform="rotate(-6 156 1044)"/>
           </g>
 
-          <!-- ===== roads ===== -->
+          <!-- ===== roads: casing underneath, fill on top, dense local grids ===== -->
           <g class="roads">
-            <path class="road interstate" d="M226,470 C320,506 420,516 505,530 C590,540 660,570 690,614"/>
-            <path class="road interstate" d="M486,160 C500,300 520,420 520,520 C520,640 540,760 556,860 C566,930 552,975 528,1000"/>
-            <path class="road interstate" d="M400,300 C500,318 600,330 662,360"/>
-            <path class="road interstate" d="M612,232 C640,320 642,420 640,520"/>
-            <path class="road toll" d="M528,1000 C500,1040 470,1090 430,1140 C370,1170 300,1160 250,1150 C210,1130 180,1082 160,1048"/>
+            <g class="casing interstate-casing">
+              <path d="M226,470 C320,506 420,516 505,530 C590,540 660,570 690,614"/>
+              <path d="M486,160 C500,300 520,420 520,520 C520,640 540,760 556,860 C566,930 552,975 528,1000"/>
+              <path d="M400,300 C500,318 600,330 662,360"/>
+              <path d="M612,232 C640,320 642,420 640,520"/>
+              <path d="M528,1000 C500,1040 470,1090 430,1140 C370,1170 300,1160 250,1150 C210,1130 180,1082 160,1048"/>
+              <path d="M240,452 C236,550 232,610 236,654"/>
+              <path d="M268,492 C360,520 440,540 520,560M556,860 C560,900 548,950 528,1000"/>
+              <path d="M690,614 C720,640 760,660 800,672"/>
+              <path d="M556,860 C600,880 630,920 650,972M528,1000 C540,1020 545,1038 548,1054"/>
+            </g>
+            <g class="fill">
+              <path class="interstate" d="M226,470 C320,506 420,516 505,530 C590,540 660,570 690,614"/>
+              <path class="interstate" d="M486,160 C500,300 520,420 520,520 C520,640 540,760 556,860 C566,930 552,975 528,1000"/>
+              <path class="interstate" d="M400,300 C500,318 600,330 662,360"/>
+              <path class="interstate" d="M612,232 C640,320 642,420 640,520"/>
+              <path class="toll" d="M528,1000 C500,1040 470,1090 430,1140 C370,1170 300,1160 250,1150 C210,1130 180,1082 160,1048"/>
+              <path class="arterial" d="M240,452 C236,550 232,610 236,654"/>
+              <path class="arterial" d="M268,492 C360,520 440,540 520,560"/>
+              <path class="arterial" d="M556,860 C560,900 548,950 528,1000"/>
+              <path class="arterial" d="M690,614 C720,640 760,660 800,672"/>
+              <path class="arterial" d="M556,860 C600,880 630,920 650,972"/>
+              <path class="arterial" d="M528,1000 C540,1020 545,1038 548,1054"/>
+              <!-- causeways into Vice City -->
+              <path class="causeway" d="M540,700 C580,692 620,686 662,682"/>
+              <path class="causeway" d="M596,622 C636,604 676,592 716,586"/>
+              <path class="causeway" d="M578,782 C620,776 662,771 702,769"/>
+              <!-- US-9 through Port Gellhorn -->
+              <path class="arterial us9" d="M222,420 C228,452 232,480 236,510 C240,560 238,610 236,654"/>
+              <!-- Sunbelt Hwy through Key Lento -->
+              <path class="arterial sunbelt" d="M506,1052 C528,1058 552,1062 576,1062 C600,1062 620,1056 640,1046"/>
+            </g>
+            <g class="minor" id="minorStreets">
+              <!-- Vice City downtown grid -->
+              <path d="M610,615V815M630,612V816M650,610V817M670,608V818M690,607V819M710,606V818M730,607V817M750,608V815M770,611V812M790,616V806"/>
+              <path d="M600,630H810M598,648H811M598,666H812M600,684H812M602,702H811M604,720H810M606,738H809M608,756H808M612,774H806M616,792H800"/>
+              <path d="M620,640 L790,632M614,704 L808,696M624,768 L792,760"/>
+              <!-- Ocean Beach strip -->
+              <path d="M796,626V800M804,628V798"/>
+              <path d="M792,650H810M792,690H810M792,730H810M792,770H810"/>
+              <!-- Port Gellhorn grid -->
+              <path d="M222,425V490M240,422V492M258,424V490M276,428V486"/>
+              <path d="M214,442H282M214,460H282M214,476H280"/>
+              <!-- Tanglewood Ln -->
+              <path class="named" d="M232,438 C250,444 262,452 272,464"/>
+              <!-- Hamlet grid -->
+              <path d="M522,828V874M542,826V876M562,824V878M582,826V876"/>
+              <path d="M516,840H592M516,854H592M516,868H590"/>
+              <!-- Ambrosia + Belville -->
+              <path d="M508,428V486M532,426V488M556,424V488M580,426V486"/>
+              <path d="M610,524V568M632,522V570M654,520V572M616,540H668M616,554H668"/>
+              <!-- Waning Sands / Vinewood -->
+              <path d="M616,436V476M638,434V478M660,436V476M612,452H666"/>
+              <!-- Southside / VCIA -->
+              <path d="M560,820V860M580,818V862M600,820V860M540,836H610"/>
+              <!-- Watson Bay / Big Pine -->
+              <path d="M360,912V950M390,910V952M418,912V950M366,928H424"/>
+              <!-- Keys local -->
+              <path d="M520,1050H600M524,1062H596M540,1048V1076M560,1048V1076M580,1048V1074"/>
+              <!-- Kalaga backcountry -->
+              <path class="trail" d="M380,220 C420,240 460,250 500,260 C540,270 570,290 590,310"/>
+              <path class="trail" d="M420,260 C430,300 440,340 450,380"/>
+            </g>
+            <!-- airport runway + port -->
+            <g class="airfield">
+              <rect x="516" y="730" width="86" height="11" rx="2" transform="rotate(-18 516 730)"/>
+              <path class="centerline" d="M524,737 L594,721"/>
+            </g>
           </g>
           <g class="roadlabels">
             <text x="596" y="536">I-404</text>
@@ -231,6 +304,22 @@
             <text x="470" y="316">I-297</text>
             <text x="648" y="330">I-397</text>
             <text x="392" y="1160">Toll 1A</text>
+            <text class="arterial-label" x="248" y="560">US-9</text>
+            <text class="arterial-label" x="470" y="560">SR-63</text>
+            <text class="arterial-label" x="560" y="893">Cottonmouth Rd</text>
+          </g>
+          <g class="streetlabels" id="streetlabels">
+            <text x="700" y="640">Downtown</text>
+            <text x="700" y="712">Little Havana grid</text>
+            <text x="803" y="710">Ocean Dr</text>
+            <text x="620" y="676">W Causeway</text>
+            <text x="656" y="600">N Causeway</text>
+            <text x="640" y="783">S Causeway</text>
+            <text x="252" y="448">Tanglewood Ln</text>
+            <text x="556" y="742">VCIA runway</text>
+            <text x="574" y="1070">Sunbelt Hwy</text>
+            <text x="552" y="848">Hamlet grid</text>
+            <text x="706" y="788">Port VC</text>
           </g>
 
           <!-- ===== grid ===== -->
@@ -337,6 +426,6 @@
 
 <noscript><p class="noscript">This map needs JavaScript for the pins, filters and progress tracking.</p></noscript>
 
-<script src="gta6.js?v=3"></script>
+<script src="gta6.js?v=4"></script>
 </body>
 </html>

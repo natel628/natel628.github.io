@@ -511,25 +511,47 @@
     el.stage.style.top = Math.round((h - sh) / 2) + 'px';
   }
 
+  var ZMIN = 1;
+  var ZMAX = 8;
+
   function applyView() {
     el.stage.style.transform = 'translate(' + state.pan.x + 'px, ' + state.pan.y + 'px) scale(' + state.zoom + ')';
-    el.pins.style.setProperty('--inv', String(1 / state.zoom));
+    el.pins.style.setProperty('--inv', String(1 / Math.sqrt(state.zoom)));
+    var svg = document.getElementById('mapSvg');
+    if (svg) {
+      svg.classList.toggle('z1', state.zoom >= 1.6);
+      svg.classList.toggle('z2', state.zoom >= 2.4);
+      svg.classList.toggle('z3', state.zoom >= 4);
+    }
+    if (el.zoomLevel) el.zoomLevel.textContent = Math.round(state.zoom * 100) + '%';
   }
 
   function clampPan() {
     var rect = el.frame.getBoundingClientRect();
-    var maxX = (rect.width * (state.zoom - 1)) / 2;
-    var maxY = (rect.height * (state.zoom - 1)) / 2;
-    state.pan.x = Math.max(-maxX, Math.min(maxX, state.pan.x));
-    state.pan.y = Math.max(-maxY, Math.min(maxY, state.pan.y));
+    var stageRect = el.stage.getBoundingClientRect();
+    var overX = Math.max(0, (stageRect.width - rect.width) / 2 + 80);
+    var overY = Math.max(0, (stageRect.height - rect.height) / 2 + 80);
+    state.pan.x = Math.max(-overX, Math.min(overX, state.pan.x));
+    state.pan.y = Math.max(-overY, Math.min(overY, state.pan.y));
   }
 
-  function setZoom(next) {
-    state.zoom = Math.min(3, Math.max(1, Math.round(next * 100) / 100));
+  function setZoom(next, cx, cy) {
+    var clamped = Math.min(ZMAX, Math.max(ZMIN, Math.round(next * 100) / 100));
+    if (typeof cx === 'number' && typeof cy === 'number') {
+      var rect = el.frame.getBoundingClientRect();
+      var fx = cx - rect.left - rect.width / 2;
+      var fy = cy - rect.top - rect.height / 2;
+      var s = clamped / state.zoom;
+      state.pan.x = fx - (fx - state.pan.x) * s;
+      state.pan.y = fy - (fy - state.pan.y) * s;
+    }
+    state.zoom = clamped;
     if (state.zoom === 1) state.pan = { x: 0, y: 0 };
     clampPan();
     applyView();
   }
+
+  function zoomStep(mult, cx, cy) { setZoom(state.zoom * mult, cx, cy); }
 
   /* ---------- interaction ---------- */
 
@@ -537,9 +559,21 @@
     var dragging = false;
     var moved = false;
     var start = null;
+    var pointers = {};
+    var pinchStart = null;
 
     el.frame.addEventListener('pointerdown', function (ev) {
-      if (ev.button !== 0) return;
+      el.frame.setPointerCapture && ev.pointerId !== undefined && el.frame.hasPointerCapture && (function () { try { el.frame.setPointerCapture(ev.pointerId); } catch (e) {} })();
+      pointers[ev.pointerId] = { x: ev.clientX, y: ev.clientY };
+      var ids = Object.keys(pointers);
+      if (ids.length === 2) {
+        var a = pointers[ids[0]];
+        var b = pointers[ids[1]];
+        pinchStart = { dist: Math.hypot(a.x - b.x, a.y - b.y), zoom: state.zoom, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 };
+        dragging = false;
+        return;
+      }
+      if (ev.button !== 0 && ev.pointerType === 'mouse') return;
       if (ev.target.closest('.pin')) return;
       dragging = true;
       moved = false;
@@ -547,7 +581,17 @@
       el.frame.classList.add('is-dragging');
     });
 
-    window.addEventListener('pointermove', function (ev) {
+    el.frame.addEventListener('pointermove', function (ev) {
+      if (pointers[ev.pointerId]) pointers[ev.pointerId] = { x: ev.clientX, y: ev.clientY };
+      var ids = Object.keys(pointers);
+      if (ids.length === 2 && pinchStart) {
+        var a = pointers[ids[0]];
+        var b = pointers[ids[1]];
+        var dist = Math.hypot(a.x - b.x, a.y - b.y);
+        if (dist > 0) setZoom(pinchStart.zoom * (dist / pinchStart.dist), pinchStart.cx, pinchStart.cy);
+        moved = true;
+        return;
+      }
       if (!dragging) return;
       var dx = ev.clientX - start.x;
       var dy = ev.clientY - start.y;
@@ -559,22 +603,29 @@
       applyView();
     });
 
-    window.addEventListener('pointerup', function (ev) {
+    function endPointer(ev) {
+      delete pointers[ev.pointerId];
+      if (Object.keys(pointers).length < 2) pinchStart = null;
       if (!dragging) return;
       dragging = false;
       el.frame.classList.remove('is-dragging');
       if (!moved && state.addMode) startAddPin(ev.clientX, ev.clientY);
-    });
-
-    window.addEventListener('pointercancel', function () {
-      dragging = false;
-      el.frame.classList.remove('is-dragging');
-    });
+    }
+    el.frame.addEventListener('pointerup', endPointer);
+    el.frame.addEventListener('pointercancel', endPointer);
 
     el.frame.addEventListener('wheel', function (ev) {
       ev.preventDefault();
-      setZoom(state.zoom + (ev.deltaY < 0 ? 0.3 : -0.3));
+      var factor = ev.deltaY < 0 ? 1.18 : 1 / 1.18;
+      if (ev.ctrlKey) factor = ev.deltaY < 0 ? 1.08 : 1 / 1.08;
+      zoomStep(factor, ev.clientX, ev.clientY);
     }, { passive: false });
+
+    el.frame.addEventListener('dblclick', function (ev) {
+      ev.preventDefault();
+      if (ev.target.closest('.pin')) return;
+      zoomStep(ev.shiftKey ? 1 / 1.7 : 1.7, ev.clientX, ev.clientY);
+    });
   }
 
   function startAddPin(clientX, clientY) {
@@ -594,7 +645,7 @@
     state.addMode = on;
     el.addToggle.setAttribute('aria-pressed', String(on));
     el.frame.classList.toggle('is-adding', on);
-    el.hint.textContent = on ? 'Click the map to place your pin' : 'Drag to pan · scroll to zoom';
+    el.hint.textContent = on ? 'Click the map to place your pin' : 'Drag to pan · scroll to zoom toward cursor · double-click to zoom in';
     if (on) el.addForm.hidden = true;
   }
 
@@ -675,12 +726,19 @@
     el.exportBtn = document.getElementById('exportBtn');
     el.hint = document.getElementById('hint');
     el.gridlines = document.getElementById('gridlines');
+    el.zoomLevel = document.getElementById('zoomLevel');
+    el.mapSvg = document.getElementById('mapSvg');
   }
 
   function wireControls() {
-    document.getElementById('zoomIn').addEventListener('click', function () { setZoom(state.zoom + 0.4); });
-    document.getElementById('zoomOut').addEventListener('click', function () { setZoom(state.zoom - 0.4); });
+    document.getElementById('zoomIn').addEventListener('click', function () { zoomStep(1.4); });
+    document.getElementById('zoomOut').addEventListener('click', function () { zoomStep(1 / 1.4); });
     document.getElementById('zoomReset').addEventListener('click', function () { setZoom(1); });
+    document.getElementById('fullBtn').addEventListener('click', function () {
+      var wrap = document.querySelector('.mapwrap');
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else if (wrap && wrap.requestFullscreen) { wrap.requestFullscreen(); }
+    });
 
     document.getElementById('allOn').addEventListener('click', function () {
       state.cats = Object.keys(CATS);
@@ -696,6 +754,12 @@
 
     document.getElementById('gridToggle').addEventListener('change', function (ev) {
       el.gridlines.classList.toggle('is-hidden', !ev.target.checked);
+    });
+    document.getElementById('streetToggle').addEventListener('change', function (ev) {
+      el.mapSvg.classList.toggle('hide-streets', !ev.target.checked);
+    });
+    document.getElementById('labelToggle').addEventListener('change', function (ev) {
+      el.mapSvg.classList.toggle('hide-labels', !ev.target.checked);
     });
 
     document.getElementById('hideCleared').addEventListener('change', function (ev) {
@@ -741,8 +805,8 @@
         return;
       }
       if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
-      if (ev.key === '+' || ev.key === '=') setZoom(state.zoom + 0.3);
-      if (ev.key === '-') setZoom(state.zoom - 0.3);
+      if (ev.key === '+' || ev.key === '=') zoomStep(1.25);
+      if (ev.key === '-') zoomStep(1 / 1.25);
       if (ev.key === '0') setZoom(1);
     });
 
