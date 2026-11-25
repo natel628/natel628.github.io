@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="gta6.css?v=5">
+<link rel="stylesheet" href="gta6.css?v=6">
 <style>
   /* SVG paint servers in an external stylesheet resolve against the CSS file,
      where #land does not exist, so those four fills are declared here instead. */
@@ -256,41 +256,79 @@
               <path class="causeway" d="M540,700 C580,692 620,686 662,682"/>
               <path class="causeway" d="M596,622 C636,604 676,592 716,586"/>
               <path class="causeway" d="M578,782 C620,776 662,771 702,769"/>
-              <!-- US-9 through Port Gellhorn -->
+              <!-- US-9 through Port Gellhorn + rural connectors -->
               <path class="arterial us9" d="M222,420 C228,452 232,480 236,510 C240,560 238,610 236,654"/>
               <!-- Sunbelt Hwy through Key Lento -->
               <path class="arterial sunbelt" d="M506,1052 C528,1058 552,1062 576,1062 C600,1062 620,1056 640,1046"/>
+              <path class="arterial" d="M400,300 C380,420 360,540 340,650 C325,730 300,800 268,854"/>
+              <path class="arterial" d="M662,360 C680,450 690,540 690,614"/>
+              <path class="arterial" d="M505,530 C470,600 440,680 420,760 C405,830 380,890 352,940"/>
+              <path class="arterial" d="M240,654 C260,720 300,780 352,830 C420,870 480,870 556,860"/>
+              <path class="arterial" d="M486,160 C440,200 400,250 380,300"/>
+              <path class="arterial" d="M650,972 C620,1000 590,1020 560,1032"/>
+              <path class="causeway" d="M640,1046 C620,1070 600,1090 580,1110"/>
+              <path class="causeway" d="M580,1110 C560,1125 540,1135 520,1142"/>
+            </g>
+            <g class="rail"><path d="M486,160 C500,300 520,420 520,520 C520,640 540,760 556,860 C566,930 552,975 528,1000"/>
             </g>
             <g class="minor" id="minorStreets">
-              <!-- Vice City downtown grid -->
-              <path d="M610,615V815M630,612V816M650,610V817M670,608V818M690,607V819M710,606V818M730,607V817M750,608V815M770,611V812M790,616V806"/>
-              <path d="M600,630H810M598,648H811M598,666H812M600,684H812M602,702H811M604,720H810M606,738H809M608,756H808M612,774H806M616,792H800"/>
+              <!-- Vice City downtown grid: dense blocks, alleys, diagonals -->
+              <path d="M602,618V812M614,614V814M626,612V815M638,610V816M650,609V817M662,608V818M674,607V819M686,606V819M698,606V819M710,606V819M722,606V818M734,607V817M746,608V816M758,609V815M770,611V813M782,614V810M793,617V806"/>
+              <path d="M596,624H812M595,636H812M594,648H813M594,660H813M596,672H813M598,684H813M600,696H812M601,708H812M602,720H811M604,732H810M606,744H809M608,756H808M611,768H807M614,780H805M617,792H802M620,804H796"/>
+              <path class="alley" d="M608,630V800M644,618V810M680,614V812M716,612V812M752,614V810M776,616V806"/>
+              <path class="alley" d="M600,642H808M600,678H810M602,714H810M606,750H808M612,786H802"/>
               <path d="M620,640 L790,632M614,704 L808,696M624,768 L792,760"/>
-              <!-- Ocean Beach strip -->
-              <path d="M796,626V800M804,628V798"/>
-              <path d="M792,650H810M792,690H810M792,730H810M792,770H810"/>
-              <!-- Port Gellhorn grid -->
-              <path d="M222,425V490M240,422V492M258,424V490M276,428V486"/>
-              <path d="M214,442H282M214,460H282M214,476H280"/>
+              <path d="M596,622 L716,586M540,700 L662,682M578,782 L702,769"/>
+              <!-- Ocean Beach strip: Collins-style avenues + promenade -->
+              <path d="M794,624V802M800,626V800M806,628V798M811,632V792"/>
+              <path d="M790,642H812M790,656H812M790,670H812M790,684H812M790,698H812M790,712H812M790,726H812M790,740H812M790,754H812M790,768H812M790,782H810"/>
+              <path class="named" d="M795,624 C800,670 802,730 800,800"/>
+              <!-- Port Gellhorn: dense waterfront grid + old town -->
+              <path d="M212,420V494M226,418V494M240,417V494M254,418V493M268,421V490M282,425V486M296,430V480"/>
+              <path d="M208,434H300M208,448H302M208,462H300M208,476H296M210,488H290"/>
+              <path class="alley" d="M219,424V490M247,422V490M275,425V488"/>
+              <path class="named" d="M214,440 C240,436 270,438 298,446"/>
               <!-- Tanglewood Ln -->
               <path class="named" d="M232,438 C250,444 262,452 272,464"/>
-              <!-- Hamlet grid -->
-              <path d="M522,828V874M542,826V876M562,824V878M582,826V876"/>
-              <path d="M516,840H592M516,854H592M516,868H590"/>
-              <!-- Ambrosia + Belville -->
-              <path d="M508,428V486M532,426V488M556,424V488M580,426V486"/>
-              <path d="M610,524V568M632,522V570M654,520V572M616,540H668M616,554H668"/>
-              <!-- Waning Sands / Vinewood -->
-              <path d="M616,436V476M638,434V478M660,436V476M612,452H666"/>
-              <!-- Southside / VCIA -->
-              <path d="M560,820V860M580,818V862M600,820V860M540,836H610"/>
-              <!-- Watson Bay / Big Pine -->
-              <path d="M360,912V950M390,910V952M418,912V950M366,928H424"/>
-              <!-- Keys local -->
-              <path d="M520,1050H600M524,1062H596M540,1048V1076M560,1048V1076M580,1048V1074"/>
-              <!-- Kalaga backcountry -->
+              <path d="M228,470 C240,500 244,540 246,580 C247,610 244,636 240,654"/>
+              <!-- Hamlet grid: full town blocks -->
+              <path d="M512,826V880M526,824V880M540,823V881M554,823V881M568,823V880M582,824V878M594,826V874"/>
+              <path d="M508,838H598M508,850H598M508,862H596M508,874H594"/>
+              <path class="alley" d="M519,830V876M561,828V878"/>
+              <!-- Ambrosia + Belville: industrial blocks -->
+              <path d="M500,424V490M514,423V490M528,422V490M542,422V490M556,422V490M570,423V489M584,424V488"/>
+              <path d="M496,438H588M496,452H588M496,466H588M496,480H586"/>
+              <path d="M604,518V576M618,517V576M632,516V577M646,516V576M660,517V574M672,518V572"/>
+              <path d="M600,532H676M600,546H676M600,560H674"/>
+              <path class="alley" d="M521,428V486M549,427V488M611,522V572M639,521V573"/>
+              <!-- Waning Sands / Vinewood: hillside streets -->
+              <path d="M608,432V480M622,431V481M636,430V482M650,431V481M664,433V479"/>
+              <path d="M604,444H668M604,458H668M606,472H666"/>
+              <path class="named" d="M600,446 C624,442 648,442 670,448"/>
+              <!-- Southside / VCIA: airport service roads -->
+              <path d="M548,816V866M562,815V866M576,814V866M590,815V865M604,817V863"/>
+              <path d="M544,830H608M544,844H608M546,858H606"/>
+              <path d="M512,724 C540,728 570,728 600,724M512,752 C544,756 576,756 606,750"/>
+              <!-- Watson Bay / Big Pine / Paradise RV -->
+              <path d="M352,906V956M368,905V956M384,904V957M400,905V956M416,906V954"/>
+              <path d="M348,920H420M348,934H420M350,948H418"/>
+              <path class="named" d="M344,936 C380,932 410,934 440,944"/>
+              <!-- Mariana farm grid + levee roads -->
+              <path d="M330,800V900M360,798V902M390,796V904M420,794V906M450,792V908"/>
+              <path d="M322,824H458M322,848H458M322,872H456"/>
+              <path class="trail" d="M404,812 C440,830 480,860 520,900 C540,922 556,946 560,962"/>
+              <!-- Grassrivers airboat trails -->
+              <path class="trail" d="M470,830 C490,860 505,890 512,920M440,840 C455,870 465,900 468,930"/>
+              <!-- Keys local: Lento + perimeter -->
+              <path d="M512,1046H608M510,1058H606M514,1070H600"/>
+              <path d="M532,1042V1078M550,1042V1078M568,1042V1078M586,1044V1076"/>
+              <path class="named" d="M506,1052 C536,1058 570,1060 604,1054"/>
+              <path d="M340,1120 C360,1130 380,1140 400,1150M240,1140 C260,1146 280,1150 300,1152"/>
+              <!-- Kalaga backcountry: logging switchbacks -->
               <path class="trail" d="M380,220 C420,240 460,250 500,260 C540,270 570,290 590,310"/>
               <path class="trail" d="M420,260 C430,300 440,340 450,380"/>
+              <path class="trail" d="M360,240 C390,252 420,258 450,262M350,270 C390,280 430,286 470,290M470,290 C490,310 505,330 515,350"/>
+              <path class="trail" d="M560,180 C580,200 595,225 605,250M600,200 C615,220 625,245 630,270"/>
             </g>
             <!-- airport runway + port -->
             <g class="airfield">
@@ -320,6 +358,14 @@
             <text x="574" y="1070">Sunbelt Hwy</text>
             <text x="552" y="848">Hamlet grid</text>
             <text x="706" y="788">Port VC</text>
+            <text x="640" y="700">Collins Ave</text>
+            <text x="740" y="660">Ocean Dr N</text>
+            <text x="660" y="730">Flagler St</text>
+            <text x="620" y="800">Rail Spur</text>
+            <text x="300" y="420">Gellhorn Ave</text>
+            <text x="560" y="440">Emerald Pkwy</text>
+            <text x="400" y="850">Levee Rd</text>
+            <text x="470" y="250">Kalaga Loop</text>
           </g>
 
           <!-- ===== grid ===== -->

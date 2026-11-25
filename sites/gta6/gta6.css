@@ -443,18 +443,20 @@ h1 {
 .marina { fill: #123a52; stroke: #3f7f9e; stroke-width: 1.4; }
 
 .zoomlevel { font-size: 11px; font-variant-numeric: tabular-nums; color: var(--muted); min-width: 44px; text-align: center; background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 7px; padding: 5px 6px; }
-.roads .casing path { fill: none; stroke: #0b0f16; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
+.roads .casing path { fill: none; stroke: #05080e; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
 .roads .fill path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.roads .fill .interstate { stroke: #e8c96a; stroke-width: 3.4; opacity: .95; }
-.roads .fill .toll { stroke: #9fd8cf; stroke-width: 3; stroke-dasharray: 10 7; opacity: .8; }
-.roads .fill .arterial { stroke: #cbb98a; stroke-width: 2.2; opacity: .8; }
-.roads .fill .causeway { stroke: #dfe8f5; stroke-width: 2.4; opacity: .9; }
-.roads .minor path { fill: none; stroke: rgba(226,236,250,.55); stroke-width: 1.1; opacity: .35; transition: opacity .25s ease; }
-.roads .minor path.named { stroke: #f0a35e; stroke-width: 1.6; opacity: .9; }
-.roads .minor path.trail { stroke-dasharray: 5 5; stroke: rgba(160,200,150,.6); }
-.map.z1 .roads .minor path { opacity: .5; }
-.map.z2 .roads .minor path { opacity: .75; }
-.map.z3 .roads .minor path { opacity: .95; }
+.roads .fill .interstate { stroke: #ffd75e; stroke-width: 4.6; opacity: 1; }
+.roads .fill .toll { stroke: #7df0dd; stroke-width: 3.8; stroke-dasharray: 10 7; opacity: .95; }
+.roads .fill .arterial { stroke: #f2d38b; stroke-width: 3; opacity: .95; }
+.roads .fill .causeway { stroke: #ffffff; stroke-width: 3.2; opacity: 1; }
+.roads .minor path { fill: none; stroke: rgba(238,244,255,.9); stroke-width: 1.7; opacity: .8; transition: opacity .25s ease; }
+.roads .minor path.named { stroke: #ffa54d; stroke-width: 2.4; opacity: 1; }
+.roads .minor path.trail { stroke-dasharray: 6 5; stroke: rgba(170,220,160,.85); stroke-width: 1.6; }
+.roads .minor path.alley { stroke: rgba(200,212,230,.55); stroke-width: 1; }
+.roads .rail path { fill: none; stroke: #c9ccd4; stroke-width: 2; stroke-dasharray: 8 5; opacity: .7; }
+.map.z1 .roads .minor path { opacity: .9; }
+.map.z2 .roads .minor path { opacity: 1; }
+.map.z3 .roads .minor path { opacity: 1; }
 .map.hide-streets .roads { display: none; }
 .airfield rect { fill: #3a3f47; stroke: #8b93a1; stroke-width: 1.4; }
 .airfield .centerline { stroke: #e8e8e8; stroke-width: 1.2; stroke-dasharray: 6 5; fill: none; opacity: .8; }
