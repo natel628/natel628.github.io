@@ -524,6 +524,74 @@
       svg.classList.toggle('z3', state.zoom >= 4);
     }
     if (el.zoomLevel) el.zoomLevel.textContent = Math.round(state.zoom * 100) + '%';
+    scheduleLabels();
+  }
+
+  /* Keep town/street/road labels a constant screen size (counter-scale the
+     stage zoom) and hide lower-priority labels that would overlap or clip,
+     so text stays readable from 100% to 400%. */
+  var labelQueued = false;
+  function scheduleLabels() {
+    if (labelQueued) return;
+    labelQueued = true;
+    var run = function () {
+      labelQueued = false;
+      layoutLabels();
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run);
+    else setTimeout(run, 0);
+  }
+
+  function layoutLabels() {
+    var svg = el.mapSvg || document.getElementById('mapSvg');
+    if (!svg || !el.frame) return;
+    if (svg.classList.contains('hide-labels')) return;
+    var inv = 1 / state.zoom;
+    var labels = Array.prototype.slice.call(
+      svg.querySelectorAll('.townlabels text, .streetlabels text, .roadlabels text')
+    );
+    if (!labels.length) return;
+    // Constant screen size: undo the stage scale around each label's own box.
+    labels.forEach(function (lbl) {
+      lbl.classList.remove('is-collided');
+      lbl.style.display = '';
+      lbl.style.transform = 'scale(' + inv + ')';
+    });
+    // Tier visibility is CSS-driven (d1/d2); skip anything CSS already hid.
+    var candidates = labels.filter(function (lbl) {
+      return lbl.getBoundingClientRect().width > 0;
+    });
+    candidates.sort(function (a, b) {
+      var pa = parseInt(a.getAttribute('data-p') || '5', 10);
+      var pb = parseInt(b.getAttribute('data-p') || '5', 10);
+      return pa - pb;
+    });
+    var frameRect = el.frame.getBoundingClientRect();
+    var placed = [];
+    var PAD = 3;
+    candidates.forEach(function (lbl) {
+      var r = lbl.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      // Hide labels whose anchor is far outside the viewport: they would
+      // render fully clipped or as a cut-off fragment at the frame edge.
+      var MARGIN = 8;
+      if (r.right < frameRect.left + MARGIN || r.left > frameRect.right - MARGIN ||
+          r.bottom < frameRect.top + MARGIN || r.top > frameRect.bottom - MARGIN) {
+        lbl.classList.add('is-collided');
+        lbl.style.display = 'none';
+        return;
+      }
+      for (var i = 0; i < placed.length; i++) {
+        var o = placed[i];
+        if (r.left < o.right + PAD && r.right > o.left - PAD &&
+            r.top < o.bottom + PAD && r.bottom > o.top - PAD) {
+          lbl.classList.add('is-collided');
+          lbl.style.display = 'none';
+          return;
+        }
+      }
+      placed.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+    });
   }
 
   function clampPan() {

@@ -460,9 +460,18 @@ h1 {
 .map.hide-streets .roads { display: none; }
 .airfield rect { fill: #3a3f47; stroke: #8b93a1; stroke-width: 1.4; }
 .airfield .centerline { stroke: #e8e8e8; stroke-width: 1.2; stroke-dasharray: 6 5; fill: none; opacity: .8; }
-.streetlabels text { font-size: 11px; font-weight: 600; fill: rgba(232,240,252,.38); paint-order: stroke; stroke: rgba(8,13,20,.9); stroke-width: 3; transition: fill .25s ease; }
+.streetlabels text, .townlabels text, .roadlabels text { transform-box: fill-box; transform-origin: center; }
+.streetlabels text { font-size: 10.5px; font-weight: 600; fill: rgba(232,240,252,.38); paint-order: stroke; stroke: rgba(8,13,20,.9); stroke-width: 3; stroke-linejoin: round; transition: fill .25s ease; }
 .map.z1 .streetlabels text { fill: rgba(232,240,252,.6); }
 .map.z2 .streetlabels text, .map.z3 .streetlabels text { fill: rgba(232,240,252,.9); }
+/* Progressive disclosure: detail streets appear only when zoomed in, so the
+   base and mid-zoom views stay legible instead of stacking labels. */
+.streetlabels text.d1, .streetlabels text.d2 { display: none; }
+.map.z1 .streetlabels text.d1 { display: inline; }
+.map.z2 .streetlabels text.d1, .map.z2 .streetlabels text.d2 { display: inline; }
+.map.z3 .streetlabels text.d1, .map.z3 .streetlabels text.d2 { display: inline; }
+/* JS collision manager hides these when they would overlap or clip. */
+.streetlabels text.is-collided, .townlabels text.is-collided, .roadlabels text.is-collided { display: none; }
 .map.hide-labels .streetlabels, .map.hide-labels .townlabels { display: none; }
 .roadlabels text {
   font-size: 12px;
@@ -511,7 +520,7 @@ h1 {
 }
 
 .townlabels text {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   fill: rgba(238, 245, 255, 0.92);
   paint-order: stroke;
@@ -519,6 +528,9 @@ h1 {
   stroke-width: 4;
   stroke-linejoin: round;
 }
+.townlabels text.major { font-size: 15px; font-weight: 700; }
+.townlabels text.minor { font-size: 12.5px; font-weight: 600; fill: rgba(238, 245, 255, 0.88); }
+.map.z1 .townlabels text.minor, .map.z2 .townlabels text.minor, .map.z3 .townlabels text.minor { fill: rgba(238, 245, 255, 0.95); }
 
 /* ----- pins ----- */
 
