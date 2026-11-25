@@ -15,11 +15,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  # The artifact is uploaded here and deployed in the separate `deploy` job
+  # below. Both in one job used to work, but actions/deploy-pages looks the
+  # artifact up by name within the current run, and it does that a fraction of
+  # a second after upload-pages-artifact finishes. Since the repo grew past
+  # that window every run died with "Found 0 artifact(s)" / "No artifacts
+  # named github-pages were found" even though the upload step was green.
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
@@ -322,6 +325,18 @@ jobs:
           fi
           echo "Pages artifact uploaded successfully."
 
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
