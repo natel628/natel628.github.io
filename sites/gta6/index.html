@@ -4,199 +4,329 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GTA 6 Loot Map — hidden weapons, cash stashes and safe codes in Leonida</title>
-<meta name="description" content="A field guide to Leonida: hidden weapon pickups, cash stashes, keypad safes and rare collectibles in GTA 6, with codes and directions.">
+<meta name="description" content="Interactive Leonida map for GTA 6: hidden weapon variants, cash stashes, keypad safe codes and collectibles, placed on Rockstar's A–M / 1–9 grid squares.">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#060915">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23060915'/%3E%3Cpath%20d='M16%206c5%200%208%204%208%209%200%205-3%2011-8%2011S8%2020%208%2015c0-5%203-9%208-9z'%20fill='none'%20stroke='%23ff3b6b'%20stroke-width='2.6'/%3E%3Ccircle%20cx='16'%20cy='14'%20r='3'%20fill='%2335e0d0'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#070b12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23070b12'/%3E%3Cpath%20d='M4%2022l6-9%205%206%204-8%209%2011z'%20fill='%23f0a35e'/%3E%3Ccircle%20cx='24'%20cy='9'%20r='3'%20fill='%23e8536b'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gta6.css">
 </head>
-<body>
-<div class="bg" aria-hidden="true"></div>
-
-<header class="hero">
-  <div class="hero-text">
-    <p class="eyebrow">Leonida · free loot field guide</p>
-    <h1>GTA 6 loot map</h1>
-    <p class="lede">Hidden weapon pickups, cash stashes, keypad safes and the odd alien bunker — the stuff that actually moves you forward, without a single mission marker in sight.</p>
-  </div>
-  <div class="hero-stats">
-    <p class="stat"><strong id="statTotal">—</strong><span>spots logged</span></p>
-    <p class="stat"><strong id="statFound">0</strong><span>you've cleared</span></p>
-    <p class="stat"><strong id="statCodes">—</strong><span>safe codes</span></p>
-  </div>
-</header>
-
-<noscript><p class="noscript">This page needs JavaScript for the map pins, filters and found-tracking.</p></noscript>
-
+<body class="is-booting">
 <div class="app">
-  <section class="map-panel" id="mapPanel" aria-label="Map of Leonida">
+
+  <aside class="panel" id="panel" aria-label="Filters and spots">
+    <header class="panel-head">
+      <p class="eyebrow">Leonida · free loot</p>
+      <h1>GTA 6 loot map</h1>
+      <p class="sub">Hidden weapons, cash stashes and keypad safes, placed on the same A–M / 1–9 grid Rockstar printed on the official map.</p>
+    </header>
+
+    <div class="searchbox">
+      <input id="search" type="search" placeholder="Search a place, code, item…" autocomplete="off" aria-label="Search spots">
+      <select id="regionSelect" aria-label="Filter by region"></select>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar"><span id="progressFill"></span></div>
+      <p class="progress-text"><strong id="statFound">0</strong> of <strong id="statTotal">—</strong> cleared · <span id="statCodes">—</span> safe codes</p>
+    </div>
+
+    <section class="filters" aria-label="Categories">
+      <div class="filters-head">
+        <h2>Filter</h2>
+        <div class="filters-actions">
+          <button type="button" class="linkbtn" id="allOn">All</button>
+          <button type="button" class="linkbtn" id="allOff">None</button>
+        </div>
+      </div>
+      <ul class="catlist" id="catList"></ul>
+      <label class="toggle">
+        <input type="checkbox" id="hideCleared">
+        <span>Hide cleared spots</span>
+      </label>
+      <label class="toggle">
+        <input type="checkbox" id="gridToggle" checked>
+        <span>Show grid squares</span>
+      </label>
+    </section>
+
+    <div class="detail" id="detail" hidden></div>
+
+    <section class="listwrap">
+      <div class="list-head">
+        <h2 id="listTitle">All spots</h2>
+        <span class="count" id="listCount" aria-live="polite"></span>
+      </div>
+      <ul class="list" id="list"></ul>
+      <p class="empty" id="empty" hidden>Nothing matches those filters.</p>
+    </section>
+
+    <details class="about">
+      <summary>About these positions</summary>
+      <p>The coastline, roads and town footprints are my own schematic drawn against the official poster's A–M / 1–9 grid — not a copy of Rockstar's artwork, and not the game's map tiles.</p>
+      <p>Every pin sits inside the grid square its guide puts it in, then is nudged within that square by the direction given ("SE of Hamlet", "northern waterfront"). That is square-level accuracy, not street-level. Where a spot only has a parent label, the square is the label's square.</p>
+      <p>Each entry links the guide it came from. Disputed details — code digits, payout ranges, one source per camp — are called out instead of smoothed over.</p>
+    </details>
+
+    <footer class="panel-foot">
+      <button type="button" class="btn btn-ghost" id="addToggle" aria-pressed="false">Drop a pin</button>
+      <button type="button" class="btn btn-ghost" id="exportBtn" hidden>Export mine</button>
+    </footer>
+  </aside>
+
+  <main class="mapwrap" id="mapWrap" aria-label="Map of Leonida">
     <div class="map-toolbar">
-      <div class="tool-group">
+      <div class="tb-group">
         <button type="button" class="btn btn-icon" id="zoomIn" aria-label="Zoom in">+</button>
         <button type="button" class="btn btn-icon" id="zoomOut" aria-label="Zoom out">−</button>
-        <button type="button" class="btn btn-ghost btn-sm" id="zoomReset">Reset view</button>
+        <button type="button" class="btn btn-sm" id="zoomReset">Reset</button>
       </div>
-      <div class="tool-group">
-        <button type="button" class="btn btn-ghost btn-sm" id="addToggle" aria-pressed="false">Drop a pin</button>
-        <button type="button" class="btn btn-ghost btn-sm" id="exportBtn" hidden>Export mine</button>
+      <p class="hint" id="hint">Drag to pan · scroll to zoom</p>
+      <div class="tb-group">
+        <button type="button" class="btn btn-sm btn-toggle" id="panelToggle" aria-expanded="true">Filters</button>
       </div>
     </div>
 
-    <div class="map-frame" id="mapFrame">
+    <div class="mapframe" id="mapFrame">
       <div class="stage" id="stage">
-        <svg class="map-svg" viewBox="0 0 1000 1200" role="img" aria-label="Stylised map of the state of Leonida, with Vice City on the south-east coast, Port Gellhorn on the west coast, Mount Kalaga in the north and the Keys trailing south-west.">
+        <svg class="map" id="mapSvg" viewBox="0 0 900 1300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Schematic map of the state of Leonida on a nine column by thirteen row grid">
           <defs>
-            <linearGradient id="seaGrad" x1="0" y1="0" x2="0.4" y2="1">
-              <stop offset="0" stop-color="#0b1430"/>
-              <stop offset="1" stop-color="#060b1c"/>
+            <linearGradient id="sea" x1="0" y1="0" x2="0.5" y2="1">
+              <stop offset="0" stop-color="#0a1626"/>
+              <stop offset="1" stop-color="#050a14"/>
             </linearGradient>
-            <linearGradient id="landGrad" x1="0" y1="0" x2="0.6" y2="1">
-              <stop offset="0" stop-color="#1e3054"/>
-              <stop offset="1" stop-color="#132039"/>
+            <linearGradient id="land" x1="0" y1="0" x2="0.4" y2="1">
+              <stop offset="0" stop-color="#22301f"/>
+              <stop offset="0.45" stop-color="#2a3a24"/>
+              <stop offset="1" stop-color="#1d2a1c"/>
             </linearGradient>
-            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-              <path d="M50 0H0V50" fill="none" stroke="#22325a" stroke-width="1" stroke-opacity="0.45"/>
+            <linearGradient id="urban" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#4a4a52"/>
+              <stop offset="1" stop-color="#33333b"/>
+            </linearGradient>
+            <pattern id="swamp" width="18" height="18" patternUnits="userSpaceOnUse">
+              <path d="M0 9h6M12 4h6M9 14h6" stroke="#274a44" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
             </pattern>
-            <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="10" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
+            <pattern id="gridpat" width="100" height="100" patternUnits="userSpaceOnUse">
+              <path d="M100 0H0V100" fill="none" stroke="#7e8fa8" stroke-width="0.7" stroke-opacity="0.18"/>
+            </pattern>
+            <pattern id="contours" width="26" height="26" patternUnits="userSpaceOnUse">
+              <path d="M0 20q7-8 13-2t13-4" fill="none" stroke="#3c4a30" stroke-width="1.2" opacity="0.8"/>
+            </pattern>
           </defs>
 
-          <rect width="1000" height="1200" fill="url(#seaGrad)"/>
-          <rect width="1000" height="1200" fill="url(#grid)"/>
+          <rect width="900" height="1300" fill="url(#sea)"/>
+          <rect width="900" height="1300" fill="url(#gridpat)"/>
 
-          <!-- mainland -->
-          <path class="land" d="M150,70 L830,70 C850,110 840,150 850,180 C862,215 845,250 858,285 C872,320 855,355 868,395 C880,430 895,470 900,510 C906,545 890,575 902,610 C914,645 900,675 908,705 C912,740 880,775 845,795 C810,818 770,835 730,845 C690,858 640,880 590,878 C545,876 500,862 465,835 C430,808 405,775 380,748 C355,722 335,695 318,665 C300,635 285,600 272,565 C258,528 250,490 240,455 C228,415 212,375 205,335 C196,292 190,245 180,200 C170,158 158,115 150,70 Z"/>
+          <!-- ===== mainland ===== -->
+          <path id="landmass" class="land" d="M330,250 L352,205 L390,158 L430,132 L470,124 L506,136 L545,150 L580,174 L616,196
+            L656,206 L700,214 L734,244 L754,290 L760,340 L746,390 L762,440 L780,480 L770,522 L786,560 L800,600 L796,642
+            L812,672 L836,702 L841,742 L830,782 L846,812 L806,836 L766,850 L726,864 L686,878 L650,896 L610,912 L570,930
+            L548,960 L528,992 L504,1018 L472,1034 L438,1030 L404,1012 L378,986 L356,944 L338,916 L318,884 L300,848 L286,810
+            L268,770 L250,730 L232,690 L214,640 L208,600 L222,530 L206,500 L198,470 L205,436 L250,424 L300,420 L330,414
+            L352,400 L340,378 L306,352 L302,320 L316,290 Z"/>
 
-          <!-- Lake Leonida -->
-          <ellipse class="lake" cx="470" cy="420" rx="105" ry="88" transform="rotate(-14 470 420)"/>
-          <!-- Cottonmouth Lake -->
-          <ellipse class="lake lake-sm" cx="415" cy="675" rx="30" ry="18" transform="rotate(-20 415 675)"/>
+          <path class="highland" d="M344,214 C420,160 520,158 604,196 C660,222 700,262 726,300 L700,332 C640,282 520,252 430,268 C394,276 366,286 344,296 Z"/>
+          <path class="wetland" d="M404,812 L520,798 L566,846 L560,912 L520,980 L470,1020 L432,978 L416,900 Z"/>
 
-          <!-- Leonida Keys -->
-          <g class="keys">
-            <ellipse cx="430" cy="905" rx="26" ry="12" transform="rotate(-32 430 905)"/>
-            <ellipse cx="395" cy="955" rx="38" ry="15" transform="rotate(-32 395 955)"/>
-            <ellipse cx="350" cy="1000" rx="26" ry="12" transform="rotate(-32 350 1000)"/>
-            <ellipse cx="310" cy="1040" rx="22" ry="11" transform="rotate(-32 310 1040)"/>
-            <ellipse cx="270" cy="1078" rx="30" ry="13" transform="rotate(-32 270 1078)"/>
-            <ellipse cx="232" cy="1108" rx="18" ry="9" transform="rotate(-32 232 1108)"/>
+          <ellipse class="lake" cx="556" cy="462" rx="58" ry="44" transform="rotate(-8 556 462)"/>
+          <ellipse class="lake" cx="520" cy="972" rx="32" ry="18" transform="rotate(-16 520 972)"/>
+          <ellipse class="lake lake-sm" cx="470" cy="300" rx="18" ry="11"/>
+
+          <path class="river" d="M552,506 C540,600 512,690 486,772 C464,842 446,908 434,962"/>
+          <path class="river" d="M600,470 C650,506 690,540 716,590"/>
+
+          <!-- urban footprints -->
+          <path class="urban" d="M596,616 L700,606 L760,632 L806,676 L812,742 L786,800 L730,824 L664,812 L616,780 L596,720 Z"/>
+          <g class="blocks">
+            <path d="M620,640 L790,632M614,672 L800,664M610,704 L808,696M614,736 L804,728M624,768 L792,760"/>
+            <path d="M640,620 L636,806M676,614 L672,812M712,610 L708,816M748,614 L744,812M782,624 L778,804"/>
+          </g>
+          <path class="marina" d="M786,700 L812,706 L804,748 L778,742 Z"/>
+          <path class="urban urban-sm" d="M215,425 L262,420 L280,452 L268,492 L222,494 L206,458 Z"/>
+          <path class="urban urban-sm" d="M520,424 L578,420 L596,452 L586,486 L532,490 L514,458 Z"/>
+          <path class="urban urban-sm" d="M514,824 L580,818 L594,852 L578,878 L522,878 L506,852 Z"/>
+          <path class="urban urban-sm" d="M612,520 L664,516 L676,548 L662,572 L618,570 L606,544 Z"/>
+          <path class="urban urban-sm" d="M610,436 L662,432 L672,458 L660,480 L616,478 L604,456 Z"/>
+          <path class="urban urban-sm" d="M500,1008 L566,1004 L578,1038 L562,1064 L508,1062 L492,1034 Z"/>
+          <path class="urban urban-sm" d="M222,632 L258,628 L266,652 L254,672 L226,670 L214,650 Z"/>
+          <path class="urban urban-sm" d="M420,432 L464,428 L474,452 L462,472 L426,470 L412,450 Z"/>
+          <path class="urban urban-sm" d="M372,908 L418,904 L428,930 L416,952 L378,950 L364,928 Z"/>
+          <path class="urban urban-sm" d="M646,308 L690,304 L700,326 L690,346 L654,344 L640,326 Z"/>
+          <path class="urban urban-sm" d="M344,238 L378,234 L386,254 L376,272 L348,270 L336,252 Z"/>
+          <path class="urban urban-sm" d="M440,132 L474,128 L484,148 L474,166 L446,164 L434,148 Z"/>
+
+          <path class="beach" d="M812,626 L828,630 L832,686 L816,692 L804,684 L806,648 Z"/>
+
+          <!-- ===== islands ===== -->
+          <g class="isles">
+            <ellipse cx="352" cy="178" rx="30" ry="13" transform="rotate(-12 352 178)"/>
+            <ellipse cx="455" cy="170" rx="24" ry="11" transform="rotate(-8 455 170)"/>
+            <ellipse cx="515" cy="140" rx="20" ry="9"/>
+            <ellipse cx="566" cy="164" rx="22" ry="10" transform="rotate(6 566 164)"/>
+            <ellipse cx="624" cy="150" rx="18" ry="9" transform="rotate(10 624 150)"/>
+
+            <ellipse cx="246" cy="336" rx="22" ry="12" transform="rotate(-20 246 336)"/>
+            <ellipse cx="276" cy="364" rx="13" ry="8"/>
+            <ellipse cx="232" cy="372" rx="34" ry="18" transform="rotate(-10 232 372)"/>
+
+            <ellipse cx="764" cy="352" rx="26" ry="13" transform="rotate(8 764 352)"/>
+            <ellipse cx="788" cy="452" rx="20" ry="40" transform="rotate(4 788 452)"/>
+            <ellipse cx="752" cy="548" rx="20" ry="14"/>
+            <ellipse cx="792" cy="562" rx="18" ry="26" transform="rotate(-6 792 562)"/>
+            <ellipse cx="808" cy="600" rx="11" ry="20"/>
+            <ellipse cx="736" cy="516" rx="14" ry="9"/>
+            <ellipse cx="766" cy="504" rx="12" ry="8"/>
+            <ellipse cx="772" cy="646" rx="16" ry="10"/>
+            <ellipse cx="802" cy="668" rx="14" ry="9"/>
+            <ellipse cx="826" cy="700" rx="16" ry="10" transform="rotate(-12 826 700)"/>
+            <ellipse cx="770" cy="702" rx="15" ry="9"/>
+            <ellipse cx="742" cy="714" rx="13" ry="8"/>
+            <ellipse cx="796" cy="732" rx="13" ry="8"/>
+            <ellipse cx="816" cy="662" rx="9" ry="17"/>
+            <ellipse cx="778" cy="766" rx="22" ry="12"/>
+            <ellipse cx="810" cy="786" rx="16" ry="10"/>
+            <ellipse cx="722" cy="768" rx="14" ry="9"/>
+            <ellipse cx="748" cy="844" rx="16" ry="9" transform="rotate(-8 748 844)"/>
+            <ellipse cx="686" cy="848" rx="13" ry="8"/>
+
+            <ellipse cx="576" cy="1000" rx="15" ry="8" transform="rotate(-14 576 1000)"/>
+            <ellipse cx="650" cy="972" rx="22" ry="11" transform="rotate(-18 650 972)"/>
+            <ellipse cx="252" cy="854" rx="34" ry="17" transform="rotate(-24 252 854)"/>
+            <ellipse cx="268" cy="826" rx="13" ry="7" transform="rotate(-20 268 826)"/>
+            <ellipse cx="432" cy="1030" rx="14" ry="8" transform="rotate(-10 432 1030)"/>
+
+            <ellipse cx="548" cy="1054" rx="34" ry="15" transform="rotate(-28 548 1054)"/>
+            <ellipse cx="346" cy="1140" rx="26" ry="12" transform="rotate(-22 346 1140)"/>
+            <ellipse cx="320" cy="1168" rx="14" ry="8" transform="rotate(-18 320 1168)"/>
+            <ellipse cx="438" cy="1158" rx="20" ry="10" transform="rotate(-6 438 1158)"/>
+            <ellipse cx="476" cy="1172" rx="16" ry="8" transform="rotate(-4 476 1172)"/>
+            <ellipse cx="248" cy="1152" rx="30" ry="13" transform="rotate(-14 248 1152)"/>
+            <ellipse cx="206" cy="1128" rx="18" ry="9" transform="rotate(-10 206 1128)"/>
+            <ellipse cx="156" cy="1044" rx="22" ry="10" transform="rotate(-6 156 1044)"/>
           </g>
 
-          <!-- Vice Beach barrier island -->
-          <ellipse class="beach" cx="922" cy="682" rx="15" ry="48" transform="rotate(6 922 682)"/>
-
-          <!-- roads -->
+          <!-- ===== roads ===== -->
           <g class="roads">
-            <path class="road" d="M886,540 C790,506 690,472 600,462 C520,454 470,432 420,470 C360,508 300,474 252,432"/>
-            <path class="road" d="M838,726 C760,768 690,796 620,820 C560,842 500,848 452,832"/>
-            <path class="road" d="M612,818 C606,760 630,700 660,650 C690,600 690,520 676,450 C664,392 678,340 682,300"/>
-            <path class="road road-keys" d="M452,838 C438,880 408,918 394,952 C370,990 330,1024 288,1066"/>
+            <path class="road interstate" d="M226,470 C320,506 420,516 505,530 C590,540 660,570 690,614"/>
+            <path class="road interstate" d="M486,160 C500,300 520,420 520,520 C520,640 540,760 556,860 C566,930 552,975 528,1000"/>
+            <path class="road interstate" d="M400,300 C500,318 600,330 662,360"/>
+            <path class="road interstate" d="M612,232 C640,320 642,420 640,520"/>
+            <path class="road toll" d="M528,1000 C500,1040 470,1090 430,1140 C370,1170 300,1160 250,1150 C210,1130 180,1082 160,1048"/>
+          </g>
+          <g class="roadlabels">
+            <text x="596" y="536">I-404</text>
+            <text x="526" y="700">I-97</text>
+            <text x="470" y="316">I-297</text>
+            <text x="648" y="330">I-397</text>
+            <text x="392" y="1160">Toll 1A</text>
           </g>
 
-          <!-- county + region labels -->
-          <g class="labels">
-            <text class="county" x="400" y="108" text-anchor="middle">LUMMOX</text>
-            <text class="county" x="296" y="404" text-anchor="middle">KELLY</text>
-            <text class="county" x="690" y="238" text-anchor="middle">LEONARD</text>
-            <text class="county" x="762" y="792" text-anchor="middle">VICE-DALE</text>
-            <text class="county" x="452" y="800" text-anchor="middle">MARIANA</text>
-
-            <text class="region" x="470" y="150" text-anchor="middle">MOUNT KALAGA</text>
-            <text class="region" x="640" y="392" text-anchor="middle">LAKE LEONIDA</text>
-            <text class="region" x="810" y="672" text-anchor="middle">VICE CITY</text>
-            <text class="region" x="352" y="580" text-anchor="middle">GRASSRIVERS</text>
-            <text class="region" x="332" y="1058" text-anchor="middle">LEONIDA KEYS</text>
-
-            <text class="town" x="222" y="352">Port Gellhorn</text>
-            <text class="town" x="414" y="470">Ambrosia</text>
-            <text class="town" x="622" y="826">Hamlet</text>
-            <text class="town" x="342" y="712">Watson Bay</text>
-            <text class="town" x="360" y="632">Pelican Valley</text>
-            <text class="town" x="586" y="196">Dawson Dam</text>
-            <text class="town" x="686" y="304">Belville</text>
-            <text class="town" x="330" y="286">Emerald Springs</text>
-            <text class="town" x="406" y="948">Key Lento</text>
-            <text class="town" x="286" y="1104">Mile Zero</text>
-            <text class="town town-sm" x="936" y="700">Vice Beach</text>
-            <text class="town town-sm" x="284" y="1070">Bobcat Key</text>
-            <text class="town town-sm" x="318" y="1024">Permit Keys</text>
+          <!-- ===== grid ===== -->
+          <g class="gridlines" id="gridlines">
+            <path d="M100,0V1300M200,0V1300M300,0V1300M400,0V1300M500,0V1300M600,0V1300M700,0V1300M800,0V1300"/>
+            <path d="M0,100H900M0,200H900M0,300H900M0,400H900M0,500H900M0,600H900M0,700H900M0,800H900M0,900H900M0,1000H900M0,1100H900M0,1200H900"/>
+            <g class="gridletters">
+              <text x="12" y="58">A</text><text x="12" y="158">B</text><text x="12" y="258">C</text>
+              <text x="12" y="358">D</text><text x="12" y="458">E</text><text x="12" y="558">F</text>
+              <text x="12" y="658">G</text><text x="12" y="758">H</text><text x="12" y="858">I</text>
+              <text x="12" y="958">J</text><text x="12" y="1058">K</text><text x="12" y="1158">L</text>
+              <text x="12" y="1258">M</text>
+            </g>
+            <g class="gridnumbers">
+              <text x="50" y="1292">1</text><text x="150" y="1292">2</text><text x="250" y="1292">3</text>
+              <text x="350" y="1292">4</text><text x="450" y="1292">5</text><text x="550" y="1292">6</text>
+              <text x="650" y="1292">7</text><text x="750" y="1292">8</text><text x="850" y="1292">9</text>
+            </g>
           </g>
 
-          <g class="dots">
-            <circle cx="216" cy="336" r="5"/>
-            <circle cx="404" cy="462" r="5"/>
-            <circle cx="614" cy="818" r="5"/>
-            <circle cx="330" cy="700" r="5"/>
-            <circle cx="348" cy="622" r="5"/>
-            <circle cx="578" cy="188" r="4"/>
-            <circle cx="680" cy="296" r="4"/>
-            <circle cx="820" cy="700" r="7" class="dot-city"/>
+          <!-- ===== labels ===== -->
+          <g class="countylabels">
+            <text x="450" y="246">LUMMOX</text>
+            <text x="548" y="356">KELLY</text>
+            <text x="656" y="458">LEONARD</text>
+            <text x="700" y="748">VICE-DALE</text>
+            <text x="400" y="946">MARIANA</text>
           </g>
 
-          <g class="compass" aria-hidden="true">
-            <path d="M74,142 L86,186 L74,176 L62,186 Z"/>
-            <text x="74" y="126" text-anchor="middle">N</text>
+          <g class="regionlabels">
+            <text x="450" y="196">MOUNT KALAGA</text>
+            <text x="556" y="400">LAKE LEONIDA</text>
+            <text x="700" y="618">VICE CITY</text>
+            <text x="455" y="786">GRASSRIVERS</text>
+            <text x="400" y="1116">LEONIDA KEYS</text>
+          </g>
+
+          <g class="waterlabels">
+            <text x="110" y="620" transform="rotate(-90 110 620)">GULF OF LEONIDA</text>
+            <text x="866" y="520" transform="rotate(90 866 520)">ATLANTIC OCEAN</text>
+            <text x="600" y="1244">LEONIDA STRAITS</text>
+            <text x="700" y="1064">GAMBIT BAY</text>
+            <text x="196" y="900" transform="rotate(-90 196 900)">LEONIDA BAY</text>
+          </g>
+
+          <g class="townlabels">
+            <text x="450" y="156">Bonanza</text>
+            <text x="350" y="256">Grayson</text>
+            <text x="652" y="256">Millport</text>
+            <text x="404" y="276">Moreau</text>
+            <text x="240" y="452">Port Gellhorn</text>
+            <text x="300" y="486">Gellhorn</text>
+            <text x="444" y="454">Emerald Springs</text>
+            <text x="236" y="654">Capri</text>
+            <text x="452" y="660">Buckskin Swamp</text>
+            <text x="502" y="500">Ambrosia</text>
+            <text x="642" y="552">Belville</text>
+            <text x="640" y="452">Waning Sands</text>
+            <text x="758" y="446">Vinewood Beach</text>
+            <text x="666" y="660">Vice City</text>
+            <text x="804" y="676">Ocean Beach</text>
+            <text x="774" y="788">Port Vice City</text>
+            <text x="656" y="756">Tequesta</text>
+            <text x="534" y="866">Hamlet</text>
+            <text x="592" y="838">Southside</text>
+            <text x="552" y="746">VCIA</text>
+            <text x="378" y="952">Watson Bay</text>
+            <text x="430" y="930">Pelican Valley</text>
+            <text x="520" y="1000">Cottonmouth L.</text>
+            <text x="494" y="948">Boone Speedway</text>
+            <text x="648" y="996">Corsair Key</text>
+            <text x="600" y="1014">Shoeless Keys</text>
+            <text x="548" y="1076">Key Lento</text>
+            <text x="344" y="1132">Permit Keys</text>
+            <text x="240" y="1152">Southwind</text>
+            <text x="204" y="1122">Mile Zero Air Station</text>
+            <text x="252" y="878">Bobcat Key</text>
+            <text x="158" y="1040">Riquezas Keys</text>
+            <text x="430" y="824">Paradise RV Park</text>
+            <text x="352" y="846">Big Pine</text>
           </g>
         </svg>
 
         <div class="pins" id="pins"></div>
       </div>
-      <p class="map-hint" id="mapHint">Drag to pan · +/− to zoom</p>
     </div>
-
-    <div class="legend" id="legend" aria-label="Legend"></div>
-  </section>
-
-  <aside class="side" aria-label="Spots and filters">
-    <div class="filters">
-      <div class="chips" id="catChips" role="group" aria-label="Filter by type"></div>
-      <div class="filter-row">
-        <label class="field">
-          <span>Region</span>
-          <select id="regionSelect"></select>
-        </label>
-        <label class="field field-grow">
-          <span>Search</span>
-          <input id="search" type="search" placeholder="safe, shotgun, Hamlet…" autocomplete="off">
-        </label>
-      </div>
-    </div>
-
-    <div class="detail" id="detail" hidden></div>
 
     <form class="addform" id="addForm" hidden>
-      <p class="addform-head">New pin at <strong id="addCoords">—</strong></p>
-      <label class="field"><span>Name</span><input id="addName" required maxlength="80" placeholder="Warehouse off the highway"></label>
-      <div class="filter-row">
-        <label class="field"><span>Type</span><select id="addCat"></select></label>
-        <label class="field"><span>Region</span><select id="addRegion"></select></label>
+      <p class="addform-head">Pin at grid <strong id="addSquare">—</strong></p>
+      <input id="addName" required maxlength="80" placeholder="Name of the spot" aria-label="Name">
+      <div class="addform-row">
+        <select id="addCat" aria-label="Type"></select>
+        <select id="addRegion" aria-label="Region"></select>
       </div>
-      <label class="field"><span>What's there</span><input id="addLoot" maxlength="160" placeholder="cash, shotgun, card"></label>
-      <label class="field"><span>How to find it</span><input id="addHow" maxlength="240" placeholder="gravel lot behind the silos"></label>
-      <div class="addform-actions">
-        <button type="submit" class="btn btn-primary btn-sm">Save pin</button>
-        <button type="button" class="btn btn-ghost btn-sm" id="addCancel">Cancel</button>
+      <input id="addLoot" maxlength="160" placeholder="What's there (cash, shotgun…)" aria-label="Loot">
+      <input id="addHow" maxlength="240" placeholder="How to find it" aria-label="Directions">
+      <div class="addform-row">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-ghost" id="addCancel">Cancel</button>
       </div>
     </form>
-
-    <div class="list-head">
-      <h2 id="listTitle">All spots</h2>
-      <span class="count" id="listCount" aria-live="polite"></span>
-    </div>
-    <ul class="list" id="list"></ul>
-    <p class="empty" id="empty" hidden>Nothing matches those filters.</p>
-  </aside>
+  </main>
 </div>
 
-<footer class="foot">
-  <p><strong>Read this first.</strong> Positions are approximate, plotted by region and landmark on a hand-drawn map — not Rockstar's poster and not in-game coordinates. Every entry is community-reported as of November 2026 and linked to the guide it came from, so nobody is pretending this is official. Directions and safe codes are the reliable part; the dot is just there to get you in the neighbourhood.</p>
-  <p class="foot-fine">Spot something wrong, or clear a stash that isn't listed? Drop a pin and hit “Export mine” to get JSON you can paste back into <code>data/locations.json</code>.</p>
-</footer>
+<noscript><p class="noscript">This map needs JavaScript for the pins, filters and progress tracking.</p></noscript>
 
 <script src="gta6.js"></script>
 </body>
