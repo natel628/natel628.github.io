@@ -1,0 +1,74 @@
+:root {
+  /* Surfaces */
+  --g6-bg:        #080a0f;
+  --g6-surface:   #0f131b;
+  --g6-surface-2: #161c27;
+  --g6-surface-3: #1e2535;
+  --g6-line:      rgba(150,170,200,.14);
+  --g6-line-strong: rgba(160,182,210,.30);
+
+  /* Ink */
+  --g6-text:   #e9eef8;
+  --g6-muted:  #93a1b8;
+  --g6-dim:    #6c7b92;
+
+  /* Brand */
+  --g6-accent:   #ff3d7f;
+  --g6-accent-2: #28e0cb;
+
+  /* Category colours */
+  --cat-stash:       #f0a35e;
+  --cat-collectible: #b18cf0;
+  --cat-easter-egg:  #ff5c8a;
+  --cat-weapon:      #e8536b;
+  --cat-landmark:    #7fd1ff;
+  --cat-safehouse:   #5ad48a;
+  --cat-activity:    #ffd166;
+  --cat-shop:        #8fb3d9;
+
+  /* Verification tiers */
+  --tier-official:   #d4af37;
+  --tier-community:  rgba(255,255,255,.35);
+  --tier-estimate:   rgba(255,195,100,.6);
+  --tier-estimate-bg: #c97a2a;
+
+  /* Spacing scale */
+  --sp-1: .25rem;
+  --sp-2: .5rem;
+  --sp-3: .75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+
+  /* Radius */
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   18px;
+  --r-pill: 999px;
+
+  /* Layout */
+  --rail-w:          clamp(280px, 22vw, 360px);
+  --rail-collapsed-w: 48px;
+  --detail-panel-w:  320px;
+  --sheet-peek:      72px;
+  --toolbar-h:       48px;
+
+  /* Motion */
+  --ease:  cubic-bezier(.22,.61,.36,1);
+  --dur-1: .14s;
+  --dur-2: .24s;
+  --dur-3: .40s;
+
+  /* Z-index stack */
+  --z-map:     0;
+  --z-map-ui:  800;
+  --z-toolbar: 900;
+  --z-rail:    1000;
+  --z-detail:  1100;
+  --z-sheet:   1150;
+  --z-modal:   1200;
+  --z-toast:   1300;
+
+  /* Sheet snap tracking (updated by JS) */
+  --sheet-h: var(--sheet-peek);
+}

@@ -1,491 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>GTA 6 Loot Map — Leonida Collectible &amp; Treasure Tracker</title>
-<meta name="description" content="Interactive Leonida map for GTA 6: hidden weapons, cash stashes, safe codes, easter eggs and collectibles with progress tracking.">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0d0f14">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%230d0f14'/%3E%3Cpath%20d='M4%2022l6-9%205%206%204-8%209%2011z'%20fill='%23ff6b35'/%3E%3Ccircle%20cx='24'%20cy='9'%20r='3'%20fill='%23ff2d78'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="gta6.css?v=9">
-<style>
-  .land { fill: url(#land); }
-  .highland { fill: url(#contours); }
-  .wetland { fill: url(#swamp); }
-  .urban { fill: url(#urban); }
-  .marina { fill: #123a52; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Interactive Leonida map for Grand Theft Auto VI. Find stashes, weapons, collectibles, easter eggs and more. Unofficial fan project.">
+  <title>GTA VI — Leonida Interactive Map</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="css/tokens.css?v=1">
+  <link rel="stylesheet" href="css/base.css?v=1">
+  <link rel="stylesheet" href="css/layout.css?v=1">
+  <link rel="stylesheet" href="css/map.css?v=1">
+  <link rel="stylesheet" href="css/components.css?v=1">
 </head>
-<body class="is-booting">
-<div class="app">
+<body>
 
-  <!-- ═══════════════ SIDEBAR ═══════════════ -->
-  <aside class="panel" id="panel" aria-label="Filters and spots">
-    <header class="panel-head">
-      <p class="eyebrow">Leonida · free roam</p>
-      <h1>GTA 6 Loot Map</h1>
-      <p class="sub">Hidden weapons, cash stashes, safe codes &amp; collectibles across the State of Leonida.</p>
-    </header>
+<a href="#map" class="skip-link">Skip to map</a>
 
-    <!-- Search -->
-    <div class="searchbox">
-      <input id="search" type="search" placeholder="Search name, region, hint…" autocomplete="off" aria-label="Search spots">
-      <select id="regionSelect" aria-label="Filter by region"></select>
-    </div>
-
-    <!-- Overall progress -->
-    <div class="progress">
-      <div class="progress-bar"><span id="progressFill"></span></div>
-      <p class="progress-text"><strong id="statFound">0</strong> / <strong id="statTotal">—</strong> cleared · <span id="statPct">0%</span></p>
-      <div class="cat-progress" id="catProgress"></div>
-    </div>
-
-    <!-- Category filters -->
-    <section class="filters" aria-label="Categories">
-      <div class="filters-head">
-        <h2>Categories</h2>
-        <div class="filters-actions">
-          <button type="button" class="linkbtn" id="allOn">Show All</button>
-          <button type="button" class="linkbtn" id="allOff">Hide All</button>
-        </div>
-      </div>
-      <ul class="catlist" id="catList"></ul>
-      <div class="filter-toggles">
-        <label class="toggle">
-          <input type="checkbox" id="hideCleared">
-          <span>Hide found</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="gridToggle" checked>
-          <span>Grid overlay</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="streetToggle" checked>
-          <span>Streets</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="labelToggle" checked>
-          <span>Labels</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="coordToggle">
-          <span>Copy coords (dev)</span>
-        </label>
-      </div>
-    </section>
-
-    <!-- Detail popup (inline on desktop) -->
-    <div class="detail" id="detail" hidden></div>
-
-    <!-- Spot list -->
-    <section class="listwrap">
-      <div class="list-head">
-        <h2 id="listTitle">All Spots</h2>
-        <span class="count" id="listCount" aria-live="polite"></span>
-      </div>
-      <ul class="list" id="list"></ul>
-      <p class="empty" id="empty" hidden>Nothing matches those filters.</p>
-    </section>
-
-    <footer class="panel-foot">
-      <button type="button" class="btn btn-ghost" id="addToggle" aria-pressed="false">Drop Pin</button>
-      <button type="button" class="btn btn-ghost" id="settingsBtn">⚙ Save Data</button>
-    </footer>
-  </aside>
-
-  <!-- ═══════════════ MAP ═══════════════ -->
-  <main class="mapwrap" id="mapWrap" aria-label="Map of Leonida">
-    <div class="map-toolbar">
-      <div class="tb-group">
-        <button type="button" class="btn btn-icon" id="zoomOut" aria-label="Zoom out">−</button>
-        <span class="zoomlevel" id="zoomLevel" aria-live="polite">100%</span>
-        <button type="button" class="btn btn-icon" id="zoomIn" aria-label="Zoom in">+</button>
-        <button type="button" class="btn btn-sm" id="zoomReset">Reset</button>
-        <button type="button" class="btn btn-sm" id="fullBtn" aria-label="Fullscreen">⛶</button>
-      </div>
-      <p class="hint" id="hint">Drag to pan · scroll to zoom · double-click to zoom in</p>
-      <div class="tb-group">
-        <span class="coord-readout" id="coordReadout" aria-live="off">—</span>
-        <button type="button" class="btn btn-sm btn-toggle" id="panelToggle" aria-expanded="true">☰</button>
-      </div>
-    </div>
-
-    <div class="mapframe" id="mapFrame">
-      <div class="stage" id="stage">
-        <svg class="map" id="mapSvg" viewBox="0 0 900 1300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Schematic map of the state of Leonida on a nine column by thirteen row grid">
-          <defs>
-            <linearGradient id="sea" x1="0" y1="0" x2="0.5" y2="1">
-              <stop offset="0" stop-color="#0a1626"/>
-              <stop offset="1" stop-color="#050a14"/>
-            </linearGradient>
-            <linearGradient id="land" x1="0" y1="0" x2="0.4" y2="1">
-              <stop offset="0" stop-color="#22301f"/>
-              <stop offset="0.45" stop-color="#2a3a24"/>
-              <stop offset="1" stop-color="#1d2a1c"/>
-            </linearGradient>
-            <linearGradient id="urban" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#4a4a52"/>
-              <stop offset="1" stop-color="#33333b"/>
-            </linearGradient>
-            <pattern id="swamp" width="18" height="18" patternUnits="userSpaceOnUse">
-              <path d="M0 9h6M12 4h6M9 14h6" stroke="#274a44" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
-            </pattern>
-            <pattern id="gridpat" width="100" height="100" patternUnits="userSpaceOnUse">
-              <path d="M100 0H0V100" fill="none" stroke="#7e8fa8" stroke-width="0.7" stroke-opacity="0.18"/>
-            </pattern>
-            <pattern id="contours" width="26" height="26" patternUnits="userSpaceOnUse">
-              <path d="M0 20q7-8 13-2t13-4" fill="none" stroke="#3c4a30" stroke-width="1.2" opacity="0.8"/>
-            </pattern>
-          </defs>
-
-          <rect width="900" height="1300" fill="url(#sea)"/>
-          <rect width="900" height="1300" fill="url(#gridpat)"/>
-
-          <!-- ===== mainland ===== -->
-          <path id="landmass" class="land" d="M330,250 L352,205 L390,158 L430,132 L470,124 L506,136 L545,150 L580,174 L616,196
-            L656,206 L700,214 L734,244 L754,290 L760,340 L746,390 L762,440 L780,480 L770,522 L786,560 L800,600 L796,642
-            L812,672 L836,702 L841,742 L830,782 L846,812 L806,836 L766,850 L726,864 L686,878 L650,896 L610,912 L570,930
-            L548,960 L528,992 L504,1018 L472,1034 L438,1030 L404,1012 L378,986 L356,944 L338,916 L318,884 L300,848 L286,810
-            L268,770 L250,730 L232,690 L214,640 L208,600 L222,530 L206,500 L198,470 L205,436 L250,424 L300,420 L330,414
-            L352,400 L340,378 L306,352 L302,320 L316,290 Z"/>
-
-          <path class="highland" d="M344,214 C420,160 520,158 604,196 C660,222 700,262 726,300 L700,332 C640,282 520,252 430,268 C394,276 366,286 344,296 Z"/>
-          <path class="wetland" d="M404,812 L520,798 L566,846 L560,912 L520,980 L470,1020 L432,978 L416,900 Z"/>
-
-          <ellipse class="lake" cx="556" cy="462" rx="58" ry="44" transform="rotate(-8 556 462)"/>
-          <ellipse class="lake" cx="520" cy="972" rx="32" ry="18" transform="rotate(-16 520 972)"/>
-          <ellipse class="lake lake-sm" cx="470" cy="300" rx="18" ry="11"/>
-
-          <path class="river" d="M552,506 C540,600 512,690 486,772 C464,842 446,908 434,962"/>
-          <path class="river" d="M600,470 C650,506 690,540 716,590"/>
-
-          <!-- urban footprints -->
-          <path class="urban" d="M596,616 L700,606 L760,632 L806,676 L812,742 L786,800 L730,824 L664,812 L616,780 L596,720 Z"/>
-          <g class="blocks">
-            <path d="M620,640 L790,632M614,672 L800,664M610,704 L808,696M614,736 L804,728M624,768 L792,760"/>
-            <path d="M640,620 L636,806M676,614 L672,812M712,610 L708,816M748,614 L744,812M782,624 L778,804"/>
-          </g>
-          <path class="marina" d="M786,700 L812,706 L804,748 L778,742 Z"/>
-          <path class="urban urban-sm" d="M215,425 L262,420 L280,452 L268,492 L222,494 L206,458 Z"/>
-          <path class="urban urban-sm" d="M520,424 L578,420 L596,452 L586,486 L532,490 L514,458 Z"/>
-          <path class="urban urban-sm" d="M514,824 L580,818 L594,852 L578,878 L522,878 L506,852 Z"/>
-          <path class="urban urban-sm" d="M612,520 L664,516 L676,548 L662,572 L618,570 L606,544 Z"/>
-          <path class="urban urban-sm" d="M610,436 L662,432 L672,458 L660,480 L616,478 L604,456 Z"/>
-          <path class="urban urban-sm" d="M500,1008 L566,1004 L578,1038 L562,1064 L508,1062 L492,1034 Z"/>
-          <path class="urban urban-sm" d="M222,632 L258,628 L266,652 L254,672 L226,670 L214,650 Z"/>
-          <path class="urban urban-sm" d="M420,432 L464,428 L474,452 L462,472 L426,470 L412,450 Z"/>
-          <path class="urban urban-sm" d="M372,908 L418,904 L428,930 L416,952 L378,950 L364,928 Z"/>
-          <path class="urban urban-sm" d="M646,308 L690,304 L700,326 L690,346 L654,344 L640,326 Z"/>
-          <path class="urban urban-sm" d="M344,238 L378,234 L386,254 L376,272 L348,270 L336,252 Z"/>
-          <path class="urban urban-sm" d="M440,132 L474,128 L484,148 L474,166 L446,164 L434,148 Z"/>
-
-          <path class="beach" d="M812,626 L828,630 L832,686 L816,692 L804,684 L806,648 Z"/>
-
-          <!-- ===== islands ===== -->
-          <g class="isles">
-            <ellipse cx="352" cy="178" rx="30" ry="13" transform="rotate(-12 352 178)"/>
-            <ellipse cx="455" cy="170" rx="24" ry="11" transform="rotate(-8 455 170)"/>
-            <ellipse cx="515" cy="140" rx="20" ry="9"/>
-            <ellipse cx="566" cy="164" rx="22" ry="10" transform="rotate(6 566 164)"/>
-            <ellipse cx="624" cy="150" rx="18" ry="9" transform="rotate(10 624 150)"/>
-
-            <ellipse cx="246" cy="336" rx="22" ry="12" transform="rotate(-20 246 336)"/>
-            <ellipse cx="276" cy="364" rx="13" ry="8"/>
-            <ellipse cx="232" cy="372" rx="34" ry="18" transform="rotate(-10 232 372)"/>
-
-            <ellipse cx="764" cy="352" rx="26" ry="13" transform="rotate(8 764 352)"/>
-            <ellipse cx="788" cy="452" rx="20" ry="40" transform="rotate(4 788 452)"/>
-            <ellipse cx="752" cy="548" rx="20" ry="14"/>
-            <ellipse cx="792" cy="562" rx="18" ry="26" transform="rotate(-6 792 562)"/>
-            <ellipse cx="808" cy="600" rx="11" ry="20"/>
-            <ellipse cx="736" cy="516" rx="14" ry="9"/>
-            <ellipse cx="766" cy="504" rx="12" ry="8"/>
-            <ellipse cx="772" cy="646" rx="16" ry="10"/>
-            <ellipse cx="802" cy="668" rx="14" ry="9"/>
-            <ellipse cx="826" cy="700" rx="16" ry="10" transform="rotate(-12 826 700)"/>
-            <ellipse cx="770" cy="702" rx="15" ry="9"/>
-            <ellipse cx="742" cy="714" rx="13" ry="8"/>
-            <ellipse cx="796" cy="732" rx="13" ry="8"/>
-            <ellipse cx="816" cy="662" rx="9" ry="17"/>
-            <ellipse cx="778" cy="766" rx="22" ry="12"/>
-            <ellipse cx="810" cy="786" rx="16" ry="10"/>
-            <ellipse cx="722" cy="768" rx="14" ry="9"/>
-            <ellipse cx="748" cy="844" rx="16" ry="9" transform="rotate(-8 748 844)"/>
-            <ellipse cx="686" cy="848" rx="13" ry="8"/>
-
-            <ellipse cx="576" cy="1000" rx="15" ry="8" transform="rotate(-14 576 1000)"/>
-            <ellipse cx="650" cy="972" rx="22" ry="11" transform="rotate(-18 650 972)"/>
-            <ellipse cx="252" cy="854" rx="34" ry="17" transform="rotate(-24 252 854)"/>
-            <ellipse cx="268" cy="826" rx="13" ry="7" transform="rotate(-20 268 826)"/>
-            <ellipse cx="432" cy="1030" rx="14" ry="8" transform="rotate(-10 432 1030)"/>
-
-            <ellipse cx="548" cy="1054" rx="34" ry="15" transform="rotate(-28 548 1054)"/>
-            <ellipse cx="346" cy="1140" rx="26" ry="12" transform="rotate(-22 346 1140)"/>
-            <ellipse cx="320" cy="1168" rx="14" ry="8" transform="rotate(-18 320 1168)"/>
-            <ellipse cx="438" cy="1158" rx="20" ry="10" transform="rotate(-6 438 1158)"/>
-            <ellipse cx="476" cy="1172" rx="16" ry="8" transform="rotate(-4 476 1172)"/>
-            <ellipse cx="248" cy="1152" rx="30" ry="13" transform="rotate(-14 248 1152)"/>
-            <ellipse cx="206" cy="1128" rx="18" ry="9" transform="rotate(-10 206 1128)"/>
-            <ellipse cx="156" cy="1044" rx="22" ry="10" transform="rotate(-6 156 1044)"/>
-          </g>
-
-          <!-- ===== roads ===== -->
-          <g class="roads">
-            <g class="casing interstate-casing">
-              <path d="M224,468 C290,488 360,502 430,512 C480,519 520,524 552,534 C600,548 652,568 690,612"/>
-              <path d="M484,158 C492,230 498,300 506,368 C512,430 518,470 520,520 C522,600 530,680 540,752 C548,808 554,842 556,866 C560,912 554,954 540,982 C534,992 530,998 528,1002"/>
-              <path d="M398,298 C450,306 520,314 580,322 C610,326 640,336 664,358"/>
-              <path d="M610,230 C622,290 632,360 637,420 C640,460 641,492 640,522"/>
-              <path d="M528,1000 C512,1024 494,1052 472,1080 C450,1106 432,1128 418,1146 C380,1168 330,1166 288,1158 C250,1151 214,1132 188,1100 C172,1080 162,1064 156,1050"/>
-              <path d="M238,450 C236,510 234,570 235,624 C235,640 235,648 236,656"/>
-              <path d="M268,492 C330,510 400,528 470,544 C490,549 508,554 522,560M556,860 C560,892 554,926 542,956 C536,972 532,986 528,1000"/>
-              <path d="M690,614 C716,632 744,648 772,660 C782,664 792,668 800,672"/>
-              <path d="M556,860 C582,872 604,888 622,908 C634,921 644,940 650,958 C654,966 656,972 658,978M528,1000 C536,1014 542,1030 546,1044 C547,1048 548,1051 548,1054"/>
-            </g>
-            <g class="fill">
-              <path class="interstate" d="M224,468 C290,488 360,502 430,512 C480,519 520,524 552,534 C600,548 652,568 690,612"/>
-              <path class="interstate" d="M484,158 C492,230 498,300 506,368 C512,430 518,470 520,520 C522,600 530,680 540,752 C548,808 554,842 556,866 C560,912 554,954 540,982 C534,992 530,998 528,1002"/>
-              <path class="interstate" d="M398,298 C450,306 520,314 580,322 C610,326 640,336 664,358"/>
-              <path class="interstate" d="M610,230 C622,290 632,360 637,420 C640,460 641,492 640,522"/>
-              <path class="toll" d="M528,1000 C512,1024 494,1052 472,1080 C450,1106 432,1128 418,1146 C380,1168 330,1166 288,1158 C250,1151 214,1132 188,1100 C172,1080 162,1064 156,1050"/>
-              <path class="arterial" d="M238,450 C236,510 234,570 235,624 C235,640 235,648 236,656"/>
-              <path class="arterial" d="M268,492 C330,510 400,528 470,544 C490,549 508,554 522,560"/>
-              <path class="arterial" d="M556,860 C560,892 554,926 542,956 C536,972 532,986 528,1000"/>
-              <path class="arterial" d="M690,614 C716,632 744,648 772,660 C782,664 792,668 800,672"/>
-              <path class="arterial" d="M556,860 C582,872 604,888 622,908 C634,921 644,940 650,958 C654,966 656,972 658,978"/>
-              <path class="arterial" d="M528,1000 C536,1014 542,1030 546,1044 C547,1048 548,1051 548,1054"/>
-              <path class="causeway" d="M538,702 C570,698 600,692 628,688 C642,686 654,684 666,682"/>
-              <path class="causeway" d="M594,624 C624,612 654,602 684,594 C696,591 708,588 718,586"/>
-              <path class="causeway" d="M576,784 C610,779 644,774 678,772 C688,771 696,770 704,769"/>
-              <path class="arterial us9" d="M220,418 C226,450 231,482 234,512 C237,556 236,606 236,654"/>
-              <path class="arterial sunbelt" d="M504,1050 C528,1057 552,1061 576,1061 C600,1061 620,1055 642,1045"/>
-              <path class="arterial" d="M398,298 C388,380 376,460 364,540 C352,620 340,690 322,748 C308,790 290,824 270,852"/>
-              <path class="arterial" d="M664,358 C674,420 682,490 686,556 C688,580 689,598 690,614"/>
-              <path class="arterial" d="M505,530 C482,590 460,656 442,718 C428,768 414,816 396,858 C382,890 368,916 352,940"/>
-              <path class="arterial" d="M240,654 C252,700 272,742 300,776 C328,808 364,832 408,844 C450,854 502,860 556,860"/>
-              <path class="arterial" d="M484,158 C458,190 428,226 406,260 C394,278 386,290 380,300"/>
-              <path class="arterial" d="M650,972 C628,994 604,1012 580,1024 C572,1028 564,1030 560,1032"/>
-              <path class="causeway" d="M640,1046 C622,1066 604,1086 588,1102 C584,1106 581,1108 580,1110"/>
-              <path class="causeway" d="M580,1110 C562,1122 542,1132 524,1140 C522,1141 521,1141 520,1142"/>
-            </g>
-            <g class="rail"><path d="M484,158 C492,230 498,300 506,368 C512,430 518,470 520,520 C522,600 530,680 540,752 C548,808 554,842 556,866 C560,912 554,954 540,982"/>
-            </g>
-            <g class="minor" id="minorStreets">
-              <path d="M602,620V810M614,616V812M626,614V813M638,612V814M650,610V815M662,609V816M674,608V817M686,607V818M698,607V818M710,607V818M722,607V817M734,608V816M746,609V815M758,610V814"/>
-              <path d="M596,626H782M595,638H786M594,650H790M594,662H794M596,674H796M598,686H798M600,698H800M601,710H800M602,722H800M604,734H800M606,746H798M608,758H798M611,770H796M614,782H794M617,794H792M620,804H788"/>
-              <path class="alley" d="M608,630V800M644,618V810M680,614V812M716,612V812M752,614V810M776,616V806"/>
-              <path class="alley" d="M600,642H808M600,678H810M602,714H810M606,750H808M612,786H802"/>
-              <path d="M620,640 L790,632M614,704 L808,696M624,768 L792,760"/>
-              <path d="M596,622 L716,586M540,700 L662,682M578,782 L702,769"/>
-              <path d="M794,624V802M800,626V800M806,628V798M811,632V792"/>
-              <path d="M790,642H812M790,656H812M790,670H812M790,684H812M790,698H812M790,712H812M790,726H812M790,740H812M790,754H812M790,768H812M790,782H810"/>
-              <path class="named" d="M795,624 C800,670 802,730 800,800"/>
-              <path d="M212,420V494M226,418V494M240,417V494M254,418V493M268,421V490M282,425V486M296,430V480"/>
-              <path d="M208,434H300M208,448H302M208,462H300M208,476H296M210,488H290"/>
-              <path class="alley" d="M219,424V490M247,422V490M275,425V488"/>
-              <path class="named" d="M214,440 C240,436 270,438 298,446"/>
-              <path class="named" d="M232,438 C250,444 262,452 272,464"/>
-              <path d="M228,470 C240,500 244,540 246,580 C247,610 244,636 240,654"/>
-              <path d="M512,826V880M526,824V880M540,823V881M554,823V881M568,823V880M582,824V878M594,826V874"/>
-              <path d="M508,838H598M508,850H598M508,862H596M508,874H594"/>
-              <path class="alley" d="M519,830V876M561,828V878"/>
-              <path d="M500,424V490M514,423V490M528,422V490M542,422V490M556,422V490M570,423V489M584,424V488"/>
-              <path d="M496,438H588M496,452H588M496,466H588M496,480H586"/>
-              <path d="M604,518V576M618,517V576M632,516V577M646,516V576M660,517V574M672,518V572"/>
-              <path d="M600,532H676M600,546H676M600,560H674"/>
-              <path class="alley" d="M521,428V486M549,427V488M611,522V572M639,521V573"/>
-              <path d="M608,432V480M622,431V481M636,430V482M650,431V481M664,433V479"/>
-              <path d="M604,444H668M604,458H668M606,472H666"/>
-              <path class="named" d="M600,446 C624,442 648,442 670,448"/>
-              <path d="M548,816V866M562,815V866M576,814V866M590,815V865M604,817V863"/>
-              <path d="M544,830H608M544,844H608M546,858H606"/>
-              <path d="M512,724 C540,728 570,728 600,724M512,752 C544,756 576,756 606,750"/>
-              <path d="M352,906V956M368,905V956M384,904V957M400,905V956M416,906V954"/>
-              <path d="M348,920H420M348,934H420M350,948H418"/>
-              <path class="named" d="M344,936 C380,932 410,934 440,944"/>
-              <path d="M330,800V900M360,798V902M390,796V904M420,794V906M450,792V908"/>
-              <path d="M322,824H458M322,848H458M322,872H456"/>
-              <path class="trail" d="M404,812 C440,830 480,860 520,900 C540,922 556,946 560,962"/>
-              <path class="trail" d="M470,830 C490,860 505,890 512,920M440,840 C455,870 465,900 468,930"/>
-              <path d="M512,1046H608M510,1058H606M514,1070H600"/>
-              <path d="M532,1042V1078M550,1042V1078M568,1042V1078M586,1044V1076"/>
-              <path class="named" d="M506,1052 C536,1058 570,1060 604,1054"/>
-              <path d="M340,1120 C360,1130 380,1140 400,1150M240,1140 C260,1146 280,1150 300,1152"/>
-              <path class="trail" d="M380,220 C420,240 460,250 500,260 C540,270 570,290 590,310"/>
-              <path class="trail" d="M420,260 C430,300 440,340 450,380"/>
-              <path class="trail" d="M360,240 C390,252 420,258 450,262M350,270 C390,280 430,286 470,290M470,290 C490,310 505,330 515,350"/>
-              <path class="trail" d="M560,180 C580,200 595,225 605,250M600,200 C615,220 625,245 630,270"/>
-            </g>
-            <g class="airfield">
-              <rect x="516" y="730" width="86" height="11" rx="2" transform="rotate(-18 516 730)"/>
-              <path class="centerline" d="M524,737 L594,721"/>
-            </g>
-          </g>
-          <g class="roadlabels">
-            <text x="596" y="536">I-404</text>
-            <text x="526" y="700">I-97</text>
-            <text x="470" y="316">I-297</text>
-            <text x="648" y="330">I-397</text>
-            <text x="392" y="1160">Toll 1A</text>
-            <text class="arterial-label" x="248" y="560">US-9</text>
-            <text class="arterial-label" x="470" y="560">SR-63</text>
-            <text class="arterial-label" x="560" y="893">Cottonmouth Rd</text>
-          </g>
-          <g class="streetlabels" id="streetlabels">
-            <text class="major" data-p="3" x="700" y="640">Downtown</text>
-            <text class="major" data-p="3" x="620" y="676">W Causeway</text>
-            <text class="major" data-p="3" x="656" y="600">N Causeway</text>
-            <text class="major" data-p="3" x="640" y="790">S Causeway</text>
-            <text class="major" data-p="3" x="556" y="742">VCIA runway</text>
-            <text class="major" data-p="3" x="800" y="706">Ocean Dr</text>
-            <text class="major" data-p="3" x="606" y="1048">Sunbelt Hwy</text>
-            <text class="d1" data-p="4" x="262" y="428">Tanglewood Ln</text>
-            <text class="d1" data-p="4" x="700" y="718">Little Havana grid</text>
-            <text class="d1" data-p="4" x="564" y="842">Hamlet grid</text>
-            <text class="d1" data-p="4" x="712" y="794">Port VC</text>
-            <text class="d1" data-p="4" x="628" y="694">Collins Ave</text>
-            <text class="d1" data-p="4" x="748" y="652">Ocean Dr N</text>
-            <text class="d1" data-p="4" x="306" y="408">Gellhorn Ave</text>
-            <text class="d1" data-p="4" x="566" y="428">Emerald Pkwy</text>
-            <text class="d1" data-p="4" x="396" y="862">Levee Rd</text>
-            <text class="d1" data-p="4" x="476" y="242">Kalaga Loop</text>
-            <text class="d2" data-p="5" x="648" y="736">Flagler St</text>
-            <text class="d2" data-p="5" x="612" y="808">Rail Spur</text>
-          </g>
-
-          <!-- ===== grid ===== -->
-          <g class="gridlines" id="gridlines">
-            <path d="M100,0V1300M200,0V1300M300,0V1300M400,0V1300M500,0V1300M600,0V1300M700,0V1300M800,0V1300"/>
-            <path d="M0,100H900M0,200H900M0,300H900M0,400H900M0,500H900M0,600H900M0,700H900M0,800H900M0,900H900M0,1000H900M0,1100H900M0,1200H900"/>
-            <g class="gridletters">
-              <text x="12" y="58">A</text><text x="12" y="158">B</text><text x="12" y="258">C</text>
-              <text x="12" y="358">D</text><text x="12" y="458">E</text><text x="12" y="558">F</text>
-              <text x="12" y="658">G</text><text x="12" y="758">H</text><text x="12" y="858">I</text>
-              <text x="12" y="958">J</text><text x="12" y="1058">K</text><text x="12" y="1158">L</text>
-              <text x="12" y="1258">M</text>
-            </g>
-            <g class="gridnumbers">
-              <text x="50" y="1292">1</text><text x="150" y="1292">2</text><text x="250" y="1292">3</text>
-              <text x="350" y="1292">4</text><text x="450" y="1292">5</text><text x="550" y="1292">6</text>
-              <text x="650" y="1292">7</text><text x="750" y="1292">8</text><text x="850" y="1292">9</text>
-            </g>
-          </g>
-
-          <!-- ===== labels ===== -->
-          <g class="countylabels">
-            <text x="450" y="246">LUMMOX</text>
-            <text x="548" y="356">KELLY</text>
-            <text x="656" y="458">LEONARD</text>
-            <text x="700" y="748">VICE-DALE</text>
-            <text x="400" y="946">MARIANA</text>
-          </g>
-
-          <g class="regionlabels">
-            <text x="450" y="196">MOUNT KALAGA</text>
-            <text x="556" y="400">LAKE LEONIDA</text>
-            <text x="700" y="618">VICE CITY</text>
-            <text x="455" y="786">GRASSRIVERS</text>
-            <text x="400" y="1116">LEONIDA KEYS</text>
-          </g>
-
-          <g class="waterlabels">
-            <text x="110" y="620" transform="rotate(-90 110 620)">GULF OF LEONIDA</text>
-            <text x="866" y="520" transform="rotate(90 866 520)">ATLANTIC OCEAN</text>
-            <text x="600" y="1244">LEONIDA STRAITS</text>
-            <text x="700" y="1064">GAMBIT BAY</text>
-            <text x="196" y="900" transform="rotate(-90 196 900)">LEONIDA BAY</text>
-          </g>
-
-          <g class="townlabels" id="townlabels">
-            <text class="major" data-p="1" x="450" y="156" text-anchor="middle">Bonanza</text>
-            <text class="minor" data-p="2" x="350" y="256" text-anchor="middle">Grayson</text>
-            <text class="minor" data-p="2" x="652" y="256" text-anchor="middle">Millport</text>
-            <text class="minor" data-p="2" x="404" y="276" text-anchor="middle">Moreau</text>
-            <text class="major" data-p="1" x="240" y="452">Port Gellhorn</text>
-            <text class="minor" data-p="2" x="308" y="492">Gellhorn</text>
-            <text class="minor" data-p="2" x="440" y="458">Emerald Springs</text>
-            <text class="minor" data-p="2" x="236" y="654">Capri</text>
-            <text class="minor" data-p="2" x="452" y="660" text-anchor="middle">Buckskin Swamp</text>
-            <text class="major" data-p="1" x="502" y="500">Ambrosia</text>
-            <text class="major" data-p="1" x="642" y="552">Belville</text>
-            <text class="minor" data-p="2" x="640" y="452" text-anchor="middle">Waning Sands</text>
-            <text class="minor" data-p="2" x="756" y="438" text-anchor="middle">Vinewood Beach</text>
-            <text class="major" data-p="1" x="672" y="668">Vice City</text>
-            <text class="major" data-p="1" x="786" y="672">Ocean Beach</text>
-            <text class="minor" data-p="2" x="770" y="798">Port Vice City</text>
-            <text class="minor" data-p="2" x="650" y="762">Tequesta</text>
-            <text class="major" data-p="1" x="520" y="880">Hamlet</text>
-            <text class="minor" data-p="2" x="604" y="832">Southside</text>
-            <text class="major" data-p="1" x="534" y="758">VCIA</text>
-            <text class="minor" data-p="2" x="372" y="958">Watson Bay</text>
-            <text class="minor" data-p="2" x="436" y="924">Pelican Valley</text>
-            <text class="minor" data-p="2" x="514" y="1006">Cottonmouth L.</text>
-            <text class="minor" data-p="2" x="500" y="942">Boone Speedway</text>
-            <text class="minor" data-p="2" x="652" y="990">Corsair Key</text>
-            <text class="minor" data-p="2" x="600" y="1014">Shoeless Keys</text>
-            <text class="major" data-p="1" x="540" y="1090">Key Lento</text>
-            <text class="minor" data-p="2" x="344" y="1132" text-anchor="middle">Permit Keys</text>
-            <text class="minor" data-p="2" x="240" y="1152" text-anchor="middle">Southwind</text>
-            <text class="minor" data-p="2" x="210" y="1116">Mile Zero Air Station</text>
-            <text class="minor" data-p="2" x="246" y="884">Bobcat Key</text>
-            <text class="minor" data-p="2" x="158" y="1040">Riquezas Keys</text>
-            <text class="minor" data-p="2" x="424" y="818">Paradise RV Park</text>
-            <text class="minor" data-p="2" x="346" y="852">Big Pine</text>
-          </g>
-        </svg>
-
-        <div class="pins" id="pins"></div>
-      </div>
-    </div>
-
-    <!-- Add pin form -->
-    <form class="addform" id="addForm" hidden>
-      <p class="addform-head">Pin at grid <strong id="addSquare">—</strong> <button type="button" class="close-inline" id="addCancel" aria-label="Cancel">×</button></p>
-      <input id="addName" required maxlength="80" placeholder="Name of the spot" aria-label="Name">
-      <div class="addform-row">
-        <select id="addCat" aria-label="Type"></select>
-        <select id="addRegion" aria-label="Region"></select>
-      </div>
-      <input id="addLoot" maxlength="160" placeholder="What's there (cash, shotgun…)" aria-label="Loot">
-      <input id="addHow" maxlength="240" placeholder="How to find it" aria-label="Directions">
-      <div class="addform-row">
-        <button type="submit" class="btn btn-primary">Save</button>
-      </div>
-    </form>
-  </main>
+<!-- ── Loading overlay ──────────────────────────────────── -->
+<div id="loading" role="status" aria-live="polite">
+  <div class="loading-logo">GTA VI <span>Leonida Map</span></div>
+  <div class="loading-spinner" aria-hidden="true"></div>
+  <p style="font-size:.78rem;color:var(--g6-muted)">Loading map data…</p>
 </div>
 
-<!-- ═══════════════ SETTINGS MODAL ═══════════════ -->
-<div class="modal-overlay" id="settingsModal" hidden>
-  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="modal-head">
-      <h2 id="settingsTitle">Save Data</h2>
-      <button type="button" class="close" id="settingsClose" aria-label="Close">×</button>
+<!-- ── Boot error ────────────────────────────────────────── -->
+<div id="bootError" hidden role="alert">
+  <div class="error-title">Map failed to load</div>
+  <p class="error-msg"></p>
+  <button class="error-retry">Retry</button>
+</div>
+
+<!-- ── Toast host ────────────────────────────────────────── -->
+<div id="toastHost" class="toast-host" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ── Mobile toolbar ────────────────────────────────────── -->
+<div class="mobile-toolbar" role="toolbar" aria-label="Map toolbar">
+  <button id="menuBtn" class="icon-btn" aria-label="Open categories" aria-expanded="false">☰</button>
+  <div class="search-wrap" style="flex:1;padding:0">
+    <span class="search-icon" aria-hidden="true">⌕</span>
+    <input id="sheetSearchInput" type="search" class="search-input" placeholder="Search locations…" aria-label="Search locations">
+  </div>
+  <button id="fullscreenBtnMob" class="icon-btn" aria-label="Toggle fullscreen">⛶</button>
+  <span id="mobileCount" style="font-size:.72rem;color:var(--g6-muted);white-space:nowrap" aria-live="polite">0 / 0</span>
+</div>
+
+<!-- ── App shell ─────────────────────────────────────────── -->
+<div class="app" role="application">
+
+  <!-- Rail overlay (tablet) -->
+  <div class="rail-overlay" role="presentation" aria-hidden="true"></div>
+
+  <!-- ── Rail (sidebar) ───────────────────────────────────── -->
+  <aside class="rail" aria-label="Location filters and list">
+
+    <!-- Brand -->
+    <div class="rail-brand">
+      <span class="rail-logo rail-text">GTA VI <span>Map</span></span>
     </div>
-    <div class="modal-body">
-      <p class="modal-desc">Your progress is saved automatically in this browser. Export a backup to transfer it or import a previous save.</p>
-      <div class="modal-section">
-        <h3>Export Progress</h3>
-        <p>Download your found spots and custom pins as JSON.</p>
-        <button type="button" class="btn btn-primary" id="exportProgress">↓ Export JSON</button>
+
+    <!-- Rail body -->
+    <div class="rail-body">
+
+      <!-- Search -->
+      <div class="rail-section" style="padding-bottom:0;border-bottom:none">
+        <div class="search-wrap">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" class="search-input"
+                 placeholder="Search locations…"
+                 aria-label="Search locations"
+                 autocomplete="off" spellcheck="false">
+          <button id="searchClear" class="search-clear" aria-label="Clear search">×</button>
+        </div>
       </div>
-      <div class="modal-section">
-        <h3>Import Progress</h3>
-        <p>Load a previously exported JSON file. This merges with your current data.</p>
-        <input type="file" id="importFile" accept=".json,application/json" class="file-input">
-        <label class="btn btn-ghost file-label" for="importFile">↑ Choose File</label>
-        <p class="import-status" id="importStatus" aria-live="polite"></p>
+
+      <!-- Progress -->
+      <div class="rail-section">
+        <div class="progress-block">
+          <div class="progress-ring-wrap" aria-hidden="true">
+            <svg class="progress-ring" viewBox="0 0 44 44">
+              <circle class="progress-ring-bg"   cx="22" cy="22" r="18"/>
+              <circle class="progress-ring-fill" id="progressRingFill" cx="22" cy="22" r="18"/>
+            </svg>
+            <div class="progress-pct" id="progressPct">0%</div>
+          </div>
+          <div class="progress-label rail-text">
+            <div class="progress-label-title">Progress</div>
+            <div class="progress-label-sub" id="progressSub">0 / 0 found</div>
+          </div>
+        </div>
+        <div class="progress-actions rail-text">
+          <button id="hideFoundBtn" class="filter-pill" aria-pressed="false">Hide Found</button>
+          <button id="resetProgressBtn" class="filter-pill">Reset</button>
+          <button id="exportBtn" class="filter-pill">Export</button>
+          <button id="importBtn" class="filter-pill">Import</button>
+          <input id="importInput" type="file" accept=".json" hidden aria-hidden="true">
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="rail-section">
+        <div class="rail-section-header rail-text">
+          <span>Categories</span>
+          <button id="clearFiltersBtn" class="filter-pill" style="font-size:.65rem;padding:2px 6px">Clear all</button>
+        </div>
+        <div id="catFilters" role="group" aria-label="Category filters"></div>
+      </div>
+
+      <!-- Verification -->
+      <div class="rail-section">
+        <div class="rail-section-header rail-text"><span>Verification</span></div>
+        <div id="verifyToggleGroup" class="verify-toggle-group" role="group" aria-label="Verification tier filters"></div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="rail-section">
+        <div class="rail-section-header rail-text"><span>Navigation</span></div>
+        <div class="nav-section">
+          <button id="setPosBtn" class="nav-btn rail-text" title="Click the map to set your current position">
+            ⊕ Set My Position
+          </button>
+          <div id="posInfo" class="position-info rail-text" hidden></div>
+          <button id="clearPosBtn" class="nav-btn rail-text" hidden>✕ Clear Position</button>
+          <button id="clearDestBtn" class="nav-btn rail-text" hidden>✕ Clear Destination</button>
+          <button id="dropPinBtn" class="nav-btn rail-text">📍 Drop Custom Pin</button>
+        </div>
+      </div>
+
+      <!-- Visible count + list -->
+      <div class="rail-section" style="border-bottom:none;flex:1;display:flex;flex-direction:column;min-height:0;padding:0">
+        <div class="count-bar rail-text">
+          <span>Visible: <strong id="markerCount" aria-live="polite" aria-atomic="true">0 of 0</strong></span>
+        </div>
+        <ul id="locList" class="loc-list" role="listbox" aria-label="Location list" style="flex:1;overflow-y:auto;min-height:0"></ul>
+      </div>
+
+    </div><!-- /rail-body -->
+
+    <!-- Collapse toggle -->
+    <div class="rail-footer">
+      <button id="railCollapseBtn" class="icon-btn" aria-label="Collapse sidebar" title="Collapse sidebar">◀</button>
+    </div>
+
+  </aside>
+
+  <!-- ── Map column ─────────────────────────────────────────── -->
+  <main class="map-col" aria-label="Interactive map of Leonida">
+    <div id="map" aria-label="Leaflet map of Leonida" tabindex="0"></div>
+
+    <!-- Floating zoom/fit toolbar -->
+    <div class="map-toolbar" role="toolbar" aria-label="Map controls">
+      <div class="zoom-controls">
+        <button id="zoomInBtn"  class="icon-btn" aria-label="Zoom in"  title="Zoom in">+</button>
+        <button id="zoomOutBtn" class="icon-btn" aria-label="Zoom out" title="Zoom out">−</button>
+      </div>
+      <button id="fitBtn"        class="icon-btn" aria-label="Fit map to screen" title="Fit map">⤢</button>
+      <button id="fullscreenBtn" class="icon-btn" aria-label="Toggle fullscreen" title="Fullscreen">⛶</button>
+    </div>
+
+    <!-- Verification legend -->
+    <div class="verify-legend" role="img" aria-label="Verification tier legend">
+      <div class="verify-legend-item">
+        <span class="verify-legend-dot official"></span>
+        <span>Official</span>
+      </div>
+      <div class="verify-legend-item">
+        <span class="verify-legend-dot community"></span>
+        <span>Community</span>
+      </div>
+      <div class="verify-legend-item">
+        <span class="verify-legend-dot estimate"></span>
+        <span>Unverified</span>
       </div>
     </div>
+
+    <!-- Credits strip -->
+    <div class="credits-strip" role="contentinfo">
+      <span>Map: <a href="https://map.gtadb.org" target="_blank" rel="noopener noreferrer">YANIS V17 · gtadb.org</a> CC&nbsp;BY&nbsp;4.0 · Unofficial fan project</span>
+      <button id="creditsBtn" style="pointer-events:auto;font-size:.6rem;color:var(--g6-dim);text-decoration:underline;cursor:pointer;background:none;border:none" aria-label="Open credits and licences">Credits &amp; Licences</button>
+    </div>
+  </main>
+
+  <!-- ── Detail panel (desktop) ─────────────────────────────── -->
+  <section class="detail-panel" aria-label="Location detail" id="desktopDetailPanel">
+    <div id="desktopDetailHost"></div>
+  </section>
+
+</div><!-- /app -->
+
+<!-- ── Bottom sheet (mobile) ──────────────────────────────── -->
+<div class="bottom-sheet" data-snap="peek" role="complementary" aria-label="Location filters and list">
+  <div class="sheet-handle" aria-label="Drag to expand or collapse">
+    <div class="sheet-handle-bar" aria-hidden="true"></div>
+    <button class="sheet-dismiss" aria-label="Hide panel">×</button>
+  </div>
+  <div class="sheet-peek-row">
+    <span>Locations: <strong id="mobileCount2" aria-live="polite"></strong></span>
+    <span style="font-size:.7rem;color:var(--g6-dim)">Swipe up for more</span>
+  </div>
+  <!-- Search (shown when sheet is full) -->
+  <div class="sheet-search-row">
+    <div class="search-wrap" style="flex:1;padding:0">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input type="search" class="search-input" placeholder="Search…" aria-label="Search locations">
+    </div>
+  </div>
+  <!-- Category chips -->
+  <div class="sheet-chips-wrap">
+    <div id="sheetChips" class="sheet-chips" role="group" aria-label="Category quick filters"></div>
+  </div>
+  <!-- Sheet body: list or detail -->
+  <div class="sheet-body">
+    <!-- Detail host (mobile) -->
+    <div id="sheetDetailHost"></div>
+    <!-- Location list (mobile) — same list element reused -->
   </div>
 </div>
 
-<noscript><p class="noscript">This map needs JavaScript for pins, filters and progress tracking.</p></noscript>
+<!-- ── Credits modal ──────────────────────────────────────── -->
+<div id="creditsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="creditsModalTitle">
+  <div class="modal">
+    <h2 id="creditsModalTitle" class="modal-title">Credits &amp; Licences</h2>
+    <button class="modal-close" aria-label="Close credits">×</button>
+    <div id="creditsList"></div>
+    <p style="margin-top:1.5rem;font-size:.68rem;color:var(--g6-dim)">
+      This is an unofficial fan project and is not affiliated with, endorsed by, or sponsored by Rockstar Games or Take-Two Interactive. No game assets are redistributed.
+    </p>
+  </div>
+</div>
 
-<script src="gta6.js?v=9"></script>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLs=" crossorigin="anonymous"></script>
+
+<!-- App JS (load order matters) -->
+<script src="js/core/dom.js?v=1"></script>
+<script src="js/core/geo.js?v=1"></script>
+<script src="js/core/state.js?v=1"></script>
+<script src="js/core/storage.js?v=1"></script>
+<script src="js/data.js?v=1"></script>
+<script src="js/map.js?v=1"></script>
+<script src="js/markers.js?v=1"></script>
+<script src="js/filters.js?v=1"></script>
+<script src="js/detail.js?v=1"></script>
+<script src="js/navigation.js?v=1"></script>
+<script src="js/app.js?v=1"></script>
+
 </body>
 </html>

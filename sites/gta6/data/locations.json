@@ -1,313 +1,295 @@
-[
-  {
-    "id": "apollo-aggregates",
-    "name": "Apollo Aggregates warehouse",
-    "cat": "cash",
-    "region": "Vice-Dale",
-    "county": "Vice-Dale County",
-    "square": "I6",
-    "dx": 0.72,
-    "dy": 0.62,
-    "loot": [
-      "About $10,000 in marked bills",
-      "Two or three weapons on the floor",
-      "Leroy Rook collectible card",
-      "Sunglasses in the yellow toolbox outside"
-    ],
-    "how": "East / south-east of Hamlet. Landmark: three large rectangular pools beside the highway, with the long red warehouse just past them at the bend in the access road. Gravel yard with a striped barrier and excavators; grey door beside the Apollo trailer.",
-    "risk": "Medium: guards inside, and not all of the haul is instant cash.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "GTA BOOM walkthrough", "url": "https://www.gtaboom.com/gta-6-apollo-aggregates-warehouse-stash-5820" },
-      { "label": "GTA Vice Guides (east vs north dispute)", "url": "https://gtaviceguides.com/guides/gta-6-red-warehouse-money-glitch/" }
-    ]
-  },
-  {
-    "id": "manatee-motel",
-    "name": "Manatee Motel",
-    "cat": "weapons",
-    "region": "Mariana",
-    "county": "Mariana County",
-    "square": "J5",
-    "dx": 0.55,
-    "dy": 0.28,
-    "loot": [
-      "Laird 350 sniper rifle",
-      "Cash in a safe (reported anywhere from about $937 to $1,066)",
-      "Loose product to sell"
-    ],
-    "how": "South-west of Hamlet on the eastern edge of the Gullet Marsh, north-east of Cottonmouth Lake — the easternmost of the three Kingfishers sites. Top-floor room holds the variant.",
-    "risk": "High: guides warn about a big cat in the area.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Manatee_Motel" },
-      { "label": "Found in Leonida", "url": "https://foundinleonida.com/en/location/motel-del-tigre-gullet-marsh" }
-    ]
-  },
-  {
-    "id": "three-sheets-liquor",
-    "name": "Three Sheets Liquor — parrot stash",
-    "cat": "cash",
-    "region": "Leonida Keys",
-    "county": "Mariana County",
-    "square": "K6",
-    "dx": 0.45,
-    "dy": 0.55,
-    "loot": [
-      "Cash hidden in an air vent",
-      "Backroom safe",
-      "A parrot clue to the stash"
-    ],
-    "how": "Key Lento, just north of the Pay 'n' Spray. Go down the alley on the right of the storefront, through the broken chain-link into the exotic-pet yard. The macaw's cage marks the spot; the vent is beside the generator in the back corner. No code needed.",
-    "risk": "Low once the guards are down.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "GTA BOOM", "url": "https://www.gtaboom.com/gta-6-early-money-the-three-sheets-liquor-parrot-stash-555d" },
-      { "label": "GTA Xtreme money guide", "url": "https://www.gta-xtreme.com/en/gta-6-where-to-find-money" }
-    ]
-  },
-  {
-    "id": "strachan-georgia-card",
-    "name": "Steven Strachan Construction",
-    "cat": "collect",
-    "region": "Leonida Keys",
-    "county": "Mariana County",
-    "square": "K6",
-    "dx": 0.62,
-    "dy": 0.62,
-    "loot": ["Georgia collectible card (NINE1NINE Dancers set)"],
-    "how": "Sunbelt Hwy in central Key Lento, across from Sunset Dr. Use the rear entrance; the card sits on boxes next to a green container in the back room.",
-    "risk": "None.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "Push Square card guide", "url": "https://www.pushsquare.com/guides/gta-6-nine1nine-dancers-card-locations" },
-      { "label": "Keengamer card checklist", "url": "https://www.keengamer.com/articles/guides/all-collectible-cards-in-gta-6-locations-sets-prices-and-rewards/" }
-    ]
-  },
-  {
-    "id": "palmer-fishing-warehouse",
-    "name": "Palmer Fishing Warehouse",
-    "cat": "code",
-    "region": "Mariana",
-    "county": "Mariana County",
-    "square": "I3",
-    "dx": 0.48,
-    "dy": 0.45,
-    "loot": ["Safe with roughly $3,000", "Gold KZ-59", "Safe code written on the ground-floor computer"],
-    "code": "1886",
-    "how": "Bobcat Key, off Watson Bay — south end of the key. The safe is upstairs in the lounge corner; read the code off the computer downstairs before you go up.",
-    "risk": "Very high: a full fight, best left until after Chapter 1.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "GTA6 Heists", "url": "https://www.gta6heists.com/robberies/palmer-fishing-warehouse" },
-      { "label": "itemlevel (code disputed 1886 / 1887)", "url": "https://itemlevel.net/gta-6-how-to-clear-palmer-fishing-warehouse-all-key-valuables-locations-safe-code" }
-    ]
-  },
-  {
-    "id": "permit-keys-boats",
-    "name": "Permit Keys wrecks",
-    "cat": "weapons",
-    "region": "Leonida Keys",
-    "county": "Mariana County",
-    "square": "L4",
-    "dx": 0.46,
-    "dy": 0.34,
-    "loot": ["Assassin Nipper .38 (suppressed pistol)", "Smuggler Gorse 425 shotgun"],
-    "how": "Two different islands. The suppressed pistol is in a deck hatch on the Derelict Spy Vessel wreck at the southern tip of the south-eastern Permit Keys island; the shotgun lies on the sand beside a tilted boat on the northernmost island. A boat or jet ski is required.",
-    "risk": "Low, but the swim is the hard part.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "GTA BOOM legendary weapons", "url": "https://www.gtaboom.com/gta-6-chapter-1-legendary-weapon-locations-2ea1" },
-      { "label": "games.gg weapon locations", "url": "https://games.gg/grand-theft-auto-vi/guides/grand-theft-auto-6-assassin-pistol-smuggler-shotgun-locations/" }
-    ]
-  },
-  {
-    "id": "wetman-bay-shacks",
-    "name": "Wetman Bay fishing shacks",
-    "cat": "weapons",
-    "region": "Grassrivers",
-    "county": "Mariana County",
-    "square": "K5",
-    "dx": 0.34,
-    "dy": 0.26,
-    "loot": ["Kingfishers W-22 in a case", "Cash in the shacks"],
-    "how": "The middle island in Wetman Bay — west of Pelican Valley and north-west of Key Lento. The W-22 sits in a case on the kitchen counter of the salmon-red main house over the dock.",
-    "risk": "High: armed gang holdout.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Fishing_Shacks" },
-      { "label": "Keengamer walkthrough", "url": "https://www.keengamer.com/articles/guides/gta-6-fishing-shacks-walkthrough-all-valuables" }
-    ]
-  },
-  {
-    "id": "crab-outpost-pelican-valley",
-    "name": "Pelican Valley research outpost",
-    "cat": "code",
-    "region": "Mariana",
-    "county": "Mariana County",
-    "square": "J5",
-    "dx": 0.3,
-    "dy": 0.72,
-    "loot": [
-      "Safe with about $1,021–1,107",
-      "$10,000 in marked bills in the boathouse",
-      "Crabshack VF5 SMG",
-      "PC password (reported as CLEAVES)"
-    ],
-    "code": "0072 / 0212",
-    "how": "A medium island in the south-west Pelican Valley swamps, just north of the Keys and south-west of the Pelican Valley label. Boat only. 0072 is the safe; 0212 is the boathouse keypad.",
-    "risk": "Low.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "Polygon", "url": "https://www.polygon.com/gta-6-giant-crab-safe-code-crabshack-vf5-smg-how-to-get-pelican-valley-outpost" },
-      { "label": "Game Rant", "url": "https://gamerant.com/gta-6-pelican-valley-outpost-safe-code-how-get-crabshack-vf5-smg" }
-    ]
-  },
-  {
-    "id": "alien-bunker-cottonmouth",
-    "name": "Abandoned site north of the airstrip",
-    "cat": "collect",
-    "region": "Mariana",
-    "county": "Mariana County",
-    "square": "J5",
-    "dx": 0.76,
-    "dy": 0.2,
-    "loot": ["Alien bunker", "UFO encounter / ending content"],
-    "how": "North-east of Cottonmouth Lake and south of Hamlet, at the north end of the long airstrip between the lake and town (one guide calls it South Point Airfield, east of the Manatee Motel). The keypad code is dream-derived and can differ per save — 2314 is the commonly reported one.",
-    "risk": "Unknown.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "GTA Vice Guides", "url": "https://gtaviceguides.com/guides/gta-6-alien-easter-egg/" },
-      { "label": "gameta.gg", "url": "https://gameta.gg/gta6/guides/aliens-and-ufo-easter-egg/" }
-    ]
-  },
-  {
-    "id": "kingpin-bowling",
-    "name": "Kingpin Bowling safe",
-    "cat": "code",
-    "region": "Port Gellhorn",
-    "county": "Kelly County",
-    "square": "E3",
-    "dx": 0.55,
-    "dy": 0.72,
-    "loot": ["Cash safe", "Gutterball Moreland 850 shotgun (Kolt & Associates robbery)"],
-    "code": "0300",
-    "how": "Southern Port Gellhorn on US-9, just south of the Pawn & Gun. Safe is in the back office; the three Port Gellhorn codes are all written on the wall map at Brooks Boatworks.",
-    "risk": "Low.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Kingpin_Bowling" },
-      { "label": "Rock Paper Shotgun (0300 vs 0330 dispute)", "url": "https://www.rockpapershotgun.com/gta-6-bowling-alley-safe-code" }
-    ]
-  },
-  {
-    "id": "brooks-boatworks",
-    "name": "Brooks Boatworks",
-    "cat": "code",
-    "region": "Port Gellhorn",
-    "county": "Kelly County",
-    "square": "E3",
-    "dx": 0.36,
-    "dy": 0.3,
-    "loot": ["Clunker 556 carbine", "Safe upstairs in the main warehouse", "The wall map listing all three Port Gellhorn codes"],
-    "code": "6823",
-    "how": "Northern Port Gellhorn waterfront, the docks near the bridge to Draper Island. Enter through the hole in the east fence, climb the grey building's outside stairs to the room with the wall map — that map gives you 6823, 6969 and 0300 in one go.",
-    "risk": "Low.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "Keengamer robbery guide", "url": "https://www.keengamer.com/articles/guides/gta-6-port-gellhorn-robberies-all-locations-and-safe-codes/" },
-      { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Brooks_Boatworks" }
-    ]
-  },
-  {
-    "id": "la-cascara-motel",
-    "name": "La Cascara Motel",
-    "cat": "weapons",
-    "region": "Port Gellhorn",
-    "county": "Kelly County",
-    "square": "E3",
-    "dx": 0.18,
-    "dy": 0.55,
-    "loot": ["Scrapper VF5C SMG", "$15,000", "Safe (code 6969)"],
-    "code": "6969",
-    "how": "Western Port Gellhorn shoreline on Draper Bay, just south of the rail bridge to Draper Island and south-west of Brooks Boatworks, near Wild Hog Point. The gated top-floor room is the point of the visit.",
-    "risk": "Medium.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "AlcastHQ", "url": "https://alcasthq.com/gta-6-scrapper-vf5c/" },
-      { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/La_Cascara_Motel" }
-    ]
-  },
-  {
-    "id": "tanglewood-couch",
-    "name": "The couch in the tree",
-    "cat": "weapons",
-    "region": "Port Gellhorn",
-    "county": "Kelly County",
-    "square": "E3",
-    "dx": 0.68,
-    "dy": 0.42,
-    "loot": ["Couch Potato Mustang .357 revolver"],
-    "how": "Tanglewood Ln in Port Gellhorn, outside a mobile home. A couch is hanging from a tree — shoot the ropes to drop it, then search it. Pure free-roam pickup: no mission, no robbery, no cash.",
-    "risk": "None.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "MetaForge unique weapons", "url": "https://metaforge.app/gta-6/gta-6-unique-weapons-locations" },
-      { "label": "Keengamer legendary weapons", "url": "https://www.keengamer.com/articles/guides/gta-6-all-8-legendary-weapon-locations-in-port-gellhorn/" }
-    ]
-  },
-  {
-    "id": "meteorite-hillside-campsite",
-    "name": "Meteorite at Hillside Campsite",
-    "cat": "collect",
-    "region": "Mount Kalaga",
-    "county": "Lummox County",
-    "square": "C5",
-    "dx": 0.78,
-    "dy": 0.6,
-    "loot": ["Meteorite item (use unknown)", "Shallow crater between the tents"],
-    "how": "Eastern side of Mount Kalaga National Park, near Hillside Campsite south-west of Dawson Dam. Purple smoke marks the spot, roughly halfway up the trail. Backcountry roads only — take something with clearance.",
-    "risk": "Low, but it is a long walk out if you wreck a vehicle.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "GTA Vice Guides easter eggs", "url": "https://gtaviceguides.com/guides/gta-6-easter-eggs/" },
-      { "label": "Duuro", "url": "https://duuro.net/blog/gta-6-mount-kalaga-meteorite" }
-    ]
-  },
-  {
-    "id": "dog-island-wallet",
-    "name": "Dog Island — jet-ski dog",
-    "cat": "cash",
-    "region": "Mariana",
-    "county": "Mariana County",
-    "square": "I3",
-    "dx": 0.35,
-    "dy": 0.62,
-    "loot": ["$1,218 wallet"],
-    "how": "Ride Cool Dog's jet ski and stay on it — the dog leads you to the island south of Bobcat Key. An upturned boat marks the landing. (Not the same place as the SOS islet far west in Leonida Bay, which is still unconfirmed on the map.)",
-    "risk": "None beyond the ride.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "GTA Vice Guides jet-ski dog", "url": "https://gtaviceguides.com/guides/gta-6-jet-ski-dog/" },
-      { "label": "TheGamer", "url": "https://www.thegamer.com/grand-theft-auto-6-gta-dog-island-location-cool-where-to-find-ocean-guide" }
-    ]
-  },
-  {
-    "id": "glider-tree-bobcat-bight",
-    "name": "Glider in the treeline",
-    "cat": "weapons",
-    "region": "Mariana",
-    "county": "Mariana County",
-    "square": "I3",
-    "dx": 0.7,
-    "dy": 0.28,
-    "loot": ["Turnt Nipper .38 pistol"],
-    "how": "Bobcat Bight, the northern tip of the Mariana coast, in the treeline by the water. A powered paratrike is hung in a pine — shoot the lines to bring it down, then take the pistol off the seat.",
-    "risk": "None.",
-    "confidence": "community-reported",
-    "sources": [
-      { "label": "IGN unique weapon variants", "url": "https://www.ign.com/wikis/gta-6/Unique_Weapon_Variants" },
-      { "label": "gta6bugs", "url": "http://gta6bugs.com/easter-eggs/turnt-nipper-glider" }
-    ]
-  }
-]
+{
+  "schema": "gta6.locations/1",
+  "updated": "2025-01-01",
+  "coordinateSpace": "leonida-v17-meters",
+  "locations": [
+    {
+      "id": "apollo-aggregates",
+      "name": "Apollo Aggregates warehouse",
+      "category": "stash",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -800, "y": -3200, "method": "estimated", "accuracy": 400 },
+      "verification": "community",
+      "summary": "About $10,000 in marked bills, two or three weapons, and a Leroy Rook collectible card.",
+      "hint": "East / south-east of Hamlet. Three large rectangular pools beside the highway, long red warehouse at the bend. Grey door beside the Apollo trailer.",
+      "rewards": ["~$10,000 in marked bills (reported)", "Two or three weapons", "Leroy Rook collectible card", "Sunglasses in yellow toolbox outside"],
+      "code": null,
+      "risk": "medium",
+      "sources": [
+        { "label": "GTA BOOM walkthrough", "url": "https://www.gtaboom.com/gta-6-apollo-aggregates-warehouse-stash-5820" },
+        { "label": "GTA Vice Guides", "url": "https://gtaviceguides.com/guides/gta-6-red-warehouse-money-glitch/" }
+      ]
+    },
+    {
+      "id": "manatee-motel",
+      "name": "Manatee Motel",
+      "category": "weapon",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -2100, "y": -4800, "method": "estimated", "accuracy": 400 },
+      "verification": "community",
+      "summary": "Laird 350 sniper rifle and a cash safe on the top floor.",
+      "hint": "South-west of Hamlet on the eastern edge of the Gullet Marsh, north-east of Cottonmouth Lake. Top-floor room holds the weapon.",
+      "rewards": ["Laird 350 sniper rifle", "Cash in safe (~$937–$1,066 reported)", "Loose product to sell"],
+      "code": null,
+      "risk": "high",
+      "sources": [
+        { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Manatee_Motel" },
+        { "label": "Found in Leonida", "url": "https://foundinleonida.com/en/location/motel-del-tigre-gullet-marsh" }
+      ]
+    },
+    {
+      "id": "three-sheets-liquor",
+      "name": "Three Sheets Liquor — parrot stash",
+      "category": "stash",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -2500, "y": -5600, "method": "estimated", "accuracy": 300 },
+      "verification": "community",
+      "summary": "Cash hidden in an air vent behind the exotic-pet yard. The macaw marks the spot.",
+      "hint": "Key Lento, just north of the Pay 'n' Spray. Down the alley right of the storefront, through the broken chain-link. Vent beside the generator in the back corner.",
+      "rewards": ["Cash in air vent (reported)", "Backroom safe"],
+      "code": null,
+      "risk": "low",
+      "sources": [
+        { "label": "GTA BOOM", "url": "https://www.gtaboom.com/gta-6-early-money-the-three-sheets-liquor-parrot-stash-555d" },
+        { "label": "GTA Xtreme money guide", "url": "https://www.gta-xtreme.com/en/gta-6-where-to-find-money" }
+      ]
+    },
+    {
+      "id": "strachan-georgia-card",
+      "name": "Steven Strachan Construction",
+      "category": "collectible",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -2450, "y": -5700, "method": "estimated", "accuracy": 300 },
+      "verification": "community",
+      "summary": "Georgia collectible card (NINE1NINE Dancers set) on boxes in the back room.",
+      "hint": "Sunbelt Hwy in central Key Lento, across from Sunset Dr. Use the rear entrance; card sits on boxes next to a green container.",
+      "rewards": ["Georgia collectible card (NINE1NINE Dancers set)"],
+      "code": null,
+      "risk": "none",
+      "sources": [
+        { "label": "Push Square card guide", "url": "https://www.pushsquare.com/guides/gta-6-nine1nine-dancers-card-locations" },
+        { "label": "Keengamer card checklist", "url": "https://www.keengamer.com/articles/guides/all-collectible-cards-in-gta-6-locations-sets-prices-and-rewards/" }
+      ]
+    },
+    {
+      "id": "palmer-fishing-warehouse",
+      "name": "Palmer Fishing Warehouse",
+      "category": "stash",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -2900, "y": -6400, "method": "estimated", "accuracy": 400 },
+      "verification": "community",
+      "summary": "Safe with ~$3,000, a Gold KZ-59, and the safe code on the ground-floor computer.",
+      "hint": "Bobcat Key, off Watson Bay — south end of the key. Safe is upstairs in the lounge corner; read the code off the computer downstairs first.",
+      "rewards": ["~$3,000 in safe (reported)", "Gold KZ-59"],
+      "code": "1886 (1886 / 1887 disputed between sources)",
+      "risk": "high",
+      "sources": [
+        { "label": "GTA6 Heists", "url": "https://www.gta6heists.com/robberies/palmer-fishing-warehouse" },
+        { "label": "itemlevel (code disputed)", "url": "https://itemlevel.net/gta-6-how-to-clear-palmer-fishing-warehouse-all-key-valuables-locations-safe-code" }
+      ]
+    },
+    {
+      "id": "permit-keys-boats",
+      "name": "Permit Keys wrecks",
+      "category": "weapon",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -3100, "y": -7200, "method": "estimated", "accuracy": 500 },
+      "verification": "community",
+      "summary": "Suppressed Assassin Nipper .38 and a Smuggler Gorse 425 shotgun on two separate islands.",
+      "hint": "Two islands. Suppressed pistol in deck hatch on the Derelict Spy Vessel wreck at the south-east Permit Keys tip. Shotgun on the sand beside a tilted boat on the northernmost island. Boat or jet ski required.",
+      "rewards": ["Assassin Nipper .38 (suppressed pistol)", "Smuggler Gorse 425 shotgun"],
+      "code": null,
+      "risk": "low",
+      "sources": [
+        { "label": "GTA BOOM legendary weapons", "url": "https://www.gtaboom.com/gta-6-chapter-1-legendary-weapon-locations-2ea1" },
+        { "label": "games.gg weapon locations", "url": "https://games.gg/grand-theft-auto-vi/guides/grand-theft-auto-6-assassin-pistol-smuggler-shotgun-locations/" }
+      ]
+    },
+    {
+      "id": "wetman-bay-shacks",
+      "name": "Wetman Bay fishing shacks",
+      "category": "weapon",
+      "region": "grassrivers",
+      "county": "mariana",
+      "position": { "x": -2800, "y": -5100, "method": "estimated", "accuracy": 400 },
+      "verification": "community",
+      "summary": "Kingfishers W-22 in a case on the kitchen counter of the main shack.",
+      "hint": "Middle island in Wetman Bay, west of Pelican Valley and north-west of Key Lento. The W-22 sits in a case on the kitchen counter of the salmon-red main house over the dock.",
+      "rewards": ["Kingfishers W-22", "Cash in the shacks"],
+      "code": null,
+      "risk": "high",
+      "sources": [
+        { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Fishing_Shacks" },
+        { "label": "Keengamer walkthrough", "url": "https://www.keengamer.com/articles/guides/gta-6-fishing-shacks-walkthrough-all-valuables" }
+      ]
+    },
+    {
+      "id": "crab-outpost-pelican-valley",
+      "name": "Pelican Valley research outpost",
+      "category": "stash",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -2600, "y": -5200, "method": "estimated", "accuracy": 400 },
+      "verification": "community",
+      "summary": "Safe (~$1,000–$1,100), $10,000 in marked bills in the boathouse, and a Crabshack VF5 SMG.",
+      "hint": "Medium island in south-west Pelican Valley, north of the Keys. Boat only. 0072 is the safe code; 0212 is the boathouse keypad. PC password reported as CLEAVES.",
+      "rewards": ["~$1,021–1,107 in safe (reported)", "$10,000 in marked bills in boathouse (reported)", "Crabshack VF5 SMG"],
+      "code": "0072 (safe) / 0212 (boathouse)",
+      "risk": "low",
+      "sources": [
+        { "label": "Polygon", "url": "https://www.polygon.com/gta-6-giant-crab-safe-code-crabshack-vf5-smg-how-to-get-pelican-valley-outpost" },
+        { "label": "Game Rant", "url": "https://gamerant.com/gta-6-pelican-valley-outpost-safe-code-how-get-crabshack-vf5-smg" }
+      ]
+    },
+    {
+      "id": "alien-bunker-cottonmouth",
+      "name": "Abandoned site north of the airstrip",
+      "category": "easter-egg",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -2000, "y": -4600, "method": "estimated", "accuracy": 500 },
+      "verification": "community",
+      "summary": "Alien bunker and UFO encounter content. Keypad code is dream-derived and may differ per save.",
+      "hint": "North-east of Cottonmouth Lake and south of Hamlet, at the north end of the long airstrip. Keypad code 2314 is commonly reported but can vary.",
+      "rewards": ["Alien bunker access", "UFO encounter / ending content"],
+      "code": "2314 (commonly reported — may vary per save)",
+      "risk": "unknown",
+      "sources": [
+        { "label": "GTA Vice Guides", "url": "https://gtaviceguides.com/guides/gta-6-alien-easter-egg/" },
+        { "label": "gameta.gg", "url": "https://gameta.gg/gta6/guides/aliens-and-ufo-easter-egg/" }
+      ]
+    },
+    {
+      "id": "kingpin-bowling",
+      "name": "Kingpin Bowling safe",
+      "category": "stash",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": 350, "y": 1100, "method": "estimated", "accuracy": 300 },
+      "verification": "community",
+      "summary": "Cash safe and a Gutterball Moreland 850 shotgun via the Kolt & Associates robbery.",
+      "hint": "Southern Port Gellhorn on US-9, just south of the Pawn & Gun. Safe is in the back office. All three Port Gellhorn codes are written on the wall map at Brooks Boatworks.",
+      "rewards": ["Cash safe", "Gutterball Moreland 850 shotgun (via Kolt & Associates robbery)"],
+      "code": "0300 (0300 / 0330 disputed between sources)",
+      "risk": "low",
+      "sources": [
+        { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Kingpin_Bowling" },
+        { "label": "Rock Paper Shotgun", "url": "https://www.rockpapershotgun.com/gta-6-bowling-alley-safe-code" }
+      ]
+    },
+    {
+      "id": "brooks-boatworks",
+      "name": "Brooks Boatworks",
+      "category": "stash",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": 200, "y": 1600, "method": "estimated", "accuracy": 300 },
+      "verification": "community",
+      "summary": "Clunker 556 carbine, an upstairs safe, and a wall map listing all three Port Gellhorn codes.",
+      "hint": "Northern Port Gellhorn waterfront near the bridge to Draper Island. Enter through the east fence hole, climb the grey building's outside stairs to the room with the wall map (codes: 6823, 6969, 0300).",
+      "rewards": ["Clunker 556 carbine", "Safe upstairs"],
+      "code": "6823",
+      "risk": "low",
+      "sources": [
+        { "label": "Keengamer robbery guide", "url": "https://www.keengamer.com/articles/guides/gta-6-port-gellhorn-robberies-all-locations-and-safe-codes/" },
+        { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Brooks_Boatworks" }
+      ]
+    },
+    {
+      "id": "la-cascara-motel",
+      "name": "La Cascara Motel",
+      "category": "weapon",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": -50, "y": 1300, "method": "estimated", "accuracy": 300 },
+      "verification": "community",
+      "summary": "Scrapper VF5C SMG, $15,000, and a safe (code 6969) in the gated top-floor room.",
+      "hint": "Western Port Gellhorn shoreline on Draper Bay, south of the rail bridge to Draper Island, near Wild Hog Point.",
+      "rewards": ["Scrapper VF5C SMG", "$15,000 (reported)", "Safe (code 6969)"],
+      "code": "6969",
+      "risk": "medium",
+      "sources": [
+        { "label": "AlcastHQ", "url": "https://alcasthq.com/gta-6-scrapper-vf5c/" },
+        { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/La_Cascara_Motel" }
+      ]
+    },
+    {
+      "id": "tanglewood-couch",
+      "name": "The couch in the tree",
+      "category": "weapon",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": 450, "y": 1200, "method": "estimated", "accuracy": 300 },
+      "verification": "community",
+      "summary": "Couch Potato Mustang .357 revolver. Shoot the ropes to drop the couch from the tree.",
+      "hint": "Tanglewood Ln in Port Gellhorn, outside a mobile home. A couch hangs from a tree — shoot the ropes to drop it, then search it.",
+      "rewards": ["Couch Potato Mustang .357 revolver"],
+      "code": null,
+      "risk": "none",
+      "sources": [
+        { "label": "MetaForge unique weapons", "url": "https://metaforge.app/gta-6/gta-6-unique-weapons-locations" },
+        { "label": "Keengamer legendary weapons", "url": "https://www.keengamer.com/articles/guides/gta-6-all-8-legendary-weapon-locations-in-port-gellhorn/" }
+      ]
+    },
+    {
+      "id": "meteorite-hillside-campsite",
+      "name": "Meteorite at Hillside Campsite",
+      "category": "collectible",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -4200, "y": 5800, "method": "estimated", "accuracy": 500 },
+      "verification": "community",
+      "summary": "Meteorite item in a shallow crater between the tents. Purple smoke marks the spot.",
+      "hint": "Eastern side of Mount Kalaga National Park, near Hillside Campsite south-west of Dawson Dam. Purple smoke marks the spot, roughly halfway up the trail.",
+      "rewards": ["Meteorite item (use unknown)"],
+      "code": null,
+      "risk": "low",
+      "sources": [
+        { "label": "GTA Vice Guides easter eggs", "url": "https://gtaviceguides.com/guides/gta-6-easter-eggs/" },
+        { "label": "Duuro", "url": "https://duuro.net/blog/gta-6-mount-kalaga-meteorite" }
+      ]
+    },
+    {
+      "id": "dog-island-wallet",
+      "name": "Dog Island — jet-ski dog",
+      "category": "stash",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -2700, "y": -6500, "method": "estimated", "accuracy": 400 },
+      "verification": "community",
+      "summary": "$1,218 wallet found after following Cool Dog's jet ski to Dog Island.",
+      "hint": "Ride Cool Dog's jet ski and stay on it — the dog leads you to the island south of Bobcat Key. An upturned boat marks the landing.",
+      "rewards": ["$1,218 wallet (reported)"],
+      "code": null,
+      "risk": "none",
+      "sources": [
+        { "label": "GTA Vice Guides jet-ski dog", "url": "https://gtaviceguides.com/guides/gta-6-jet-ski-dog/" },
+        { "label": "TheGamer", "url": "https://www.thegamer.com/grand-theft-auto-6-gta-dog-island-location-cool-where-to-find-ocean-guide" }
+      ]
+    },
+    {
+      "id": "glider-tree-bobcat-bight",
+      "name": "Glider in the treeline",
+      "category": "weapon",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -2200, "y": -5900, "method": "estimated", "accuracy": 400 },
+      "verification": "community",
+      "summary": "Turnt Nipper .38 pistol on a powered paratrike hung in the pines.",
+      "hint": "Bobcat Bight, northern tip of the Mariana coast. A powered paratrike is hung in a pine — shoot the lines to bring it down, then take the pistol off the seat.",
+      "rewards": ["Turnt Nipper .38 pistol"],
+      "code": null,
+      "risk": "none",
+      "sources": [
+        { "label": "IGN unique weapon variants", "url": "https://www.ign.com/wikis/gta-6/Unique_Weapon_Variants" },
+        { "label": "gta6bugs", "url": "http://gta6bugs.com/easter-eggs/turnt-nipper-glider" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "gta6.regions/1",
+  "regions": [
+    { "id": "vice-city",    "label": "Vice City",                       "type": "area", "county": "vice-dale", "focus": { "x": 1200,  "y": 2200,  "zoom": -1 } },
+    { "id": "port-gellhorn","label": "Port Gellhorn",                   "type": "area", "county": "kelly",     "focus": { "x": 300,   "y": 1300,  "zoom": -1 } },
+    { "id": "leonida-keys", "label": "Leonida Keys",                    "type": "area", "county": "mariana",   "focus": { "x": -2600, "y": -5800, "zoom": -1 } },
+    { "id": "grassrivers",  "label": "Grassrivers",                     "type": "area", "county": "mariana",   "focus": { "x": -2800, "y": -4800, "zoom": -1 } },
+    { "id": "mariana",      "label": "Mariana County",                  "type": "area", "county": "mariana",   "focus": { "x": -2200, "y": -5000, "zoom": -2 } },
+    { "id": "mount-kalaga", "label": "Mount Kalaga National Park",      "type": "area", "county": "lummox",    "focus": { "x": -4000, "y": 6000,  "zoom": -2 } },
+    { "id": "ambrosia",     "label": "Ambrosia",                        "type": "area", "county": "leonard",   "focus": { "x": -1500, "y": 4000,  "zoom": -2 } }
+  ],
+  "counties": [
+    { "id": "vice-dale", "label": "Vice-Dale County" },
+    { "id": "mariana",   "label": "Mariana County" },
+    { "id": "kelly",     "label": "Kelly County" },
+    { "id": "leonard",   "label": "Leonard County" },
+    { "id": "lummox",    "label": "Lummox County" }
+  ]
+}

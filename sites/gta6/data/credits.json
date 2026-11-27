@@ -1,0 +1,40 @@
+{
+  "schema": "gta6.credits/1",
+  "entries": [
+    {
+      "asset": "Map artwork",
+      "work": "YANIS V17 (dark, no-camera variant)",
+      "author": "Yanis and the GTA VI Mapping Community",
+      "via": "GTADB.ORG",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://map.gtadb.org",
+      "changes": "Displayed via community tile server. Markers, filters, and interface are original.",
+      "requiredAttribution": "YANIS V17 \u00b7 gtadb.org and all contributors \u00b7 CC BY 4.0"
+    },
+    {
+      "asset": "Place positions (reference)",
+      "work": "GTA VI Landmarks Data",
+      "author": "GTADB.ORG and contributors",
+      "via": "gtadb.org",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://map.gtadb.org",
+      "requiredAttribution": "GTA VI Landmarks Data (CC BY 4.0) \u2014 https://map.gtadb.org"
+    },
+    {
+      "asset": "Map engine",
+      "work": "Leaflet 1.9.4",
+      "author": "Volodymyr Agafonkin",
+      "license": "BSD-2-Clause",
+      "sourceUrl": "https://leafletjs.com"
+    },
+    {
+      "asset": "Trademarks",
+      "work": "Grand Theft Auto VI",
+      "author": "Rockstar Games / Take-Two Interactive",
+      "license": "All rights reserved",
+      "notes": "Unofficial fan project. Not affiliated with, endorsed by, or sponsored by Rockstar Games or Take-Two Interactive. Game imagery is not redistributed."
+    }
+  ]
+}

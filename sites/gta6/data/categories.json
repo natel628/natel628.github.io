@@ -1,0 +1,13 @@
+{
+  "schema": "gta6.categories/1",
+  "categories": [
+    { "id": "stash",       "label": "Stashes & Treasure",    "short": "Stashes",    "color": "#f0a35e", "glyph": "stash",       "order": 10 },
+    { "id": "collectible", "label": "Collectibles",          "short": "Collect.",   "color": "#b18cf0", "glyph": "collectible", "order": 20 },
+    { "id": "easter-egg",  "label": "Easter Eggs & Secrets", "short": "Secrets",    "color": "#ff5c8a", "glyph": "easter-egg",  "order": 30 },
+    { "id": "weapon",      "label": "Unique Weapons",        "short": "Weapons",    "color": "#e8536b", "glyph": "weapon",      "order": 40 },
+    { "id": "landmark",    "label": "Landmarks",             "short": "Landmarks",  "color": "#7fd1ff", "glyph": "landmark",    "order": 50 },
+    { "id": "safehouse",   "label": "Safehouses",            "short": "Safehouses", "color": "#5ad48a", "glyph": "safehouse",   "order": 60 },
+    { "id": "activity",    "label": "Activities",            "short": "Activities", "color": "#ffd166", "glyph": "activity",    "order": 70 },
+    { "id": "shop",        "label": "Shops & Services",      "short": "Shops",      "color": "#8fb3d9", "glyph": "shop",        "order": 80 }
+  ]
+}
