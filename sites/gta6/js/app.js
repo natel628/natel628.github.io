@@ -528,8 +528,8 @@
     var fsBtnMob = document.getElementById('fullscreenBtnMob');
     var menuBtn = document.getElementById('menuBtn');
 
-    if (zoomIn)  zoomIn.addEventListener('click',  function () { G6.map.getMap().zoomIn(0.5); });
-    if (zoomOut) zoomOut.addEventListener('click', function () { G6.map.getMap().zoomOut(0.5); });
+    if (zoomIn)  zoomIn.addEventListener('click',  function () { G6.map.getMap().zoomIn(); });
+    if (zoomOut) zoomOut.addEventListener('click', function () { G6.map.getMap().zoomOut(); });
     if (fitBtn)  fitBtn.addEventListener('click',  function () { G6.map.fitAll(); });
 
     function toggleFullscreen() {

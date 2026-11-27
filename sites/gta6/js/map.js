@@ -66,8 +66,10 @@ G6.map = (function () {
       crs:               L.CRS.Simple,
       minZoom:           -5,   // lowest level the published tile pyramid covers (32 m/px)
       maxZoom:            1,
-      zoomSnap:           0.25,
-      zoomDelta:          0.5,
+      // Whole zoom levels only: fractional zooms make Leaflet scale the tile
+      // layer, which opens hairline seams between the raster tiles.
+      zoomSnap:           1,
+      zoomDelta:          1,
       wheelPxPerZoomLevel: 90,
       maxBoundsViscosity:  0.9,
       zoomControl:         false,

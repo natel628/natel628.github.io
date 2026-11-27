@@ -61,7 +61,8 @@ Verified: toggling swaps `/yanis,18/` ⇄ `/day/`, `aria-checked` follows, the c
 
 ## 5. Known limitations
 
-- The default desktop overview is upscaled: the widest view needs level ~1.4 and the pyramid jumps z1 → z2, so the overview is slightly soft. Zooming in reaches native 1 px/m.
+- The default desktop overview is upscaled: the widest view needs level ~1.4 and the pyramid jumps z1 → z2, so the overview is slightly soft. Zooming in reaches native 1 px/m (community) or 2 px/m (in-game).
+- Zoom is whole-level only (`zoomSnap: 1`). Fractional zooms made Leaflet scale the tile layer and open hairline seams between raster tiles; discrete levels are the norm for a tiled map, but wheel zoom is coarser than before.
 - Tiles come from a third-party CDN mirror of the gtadb.org repository. If it is unavailable the map falls back to the dark grid and the pins still work.
 - All 16 records are `position.method: "estimated"` with 300–500 m accuracy; the UI does not yet surface `position.accuracy` (handoff Task 12), so the pin imprecision is not shown in the detail panel.
 - Routes are straight-line estimates, labelled as such in the tooltip.
