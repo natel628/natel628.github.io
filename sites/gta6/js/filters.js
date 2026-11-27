@@ -38,9 +38,11 @@ G6.filters = (function () {
       el.textContent = visible + ' of ' + total;
       el.setAttribute('aria-label', visible + ' of ' + total + ' locations visible');
     }
-    // also update mobile count chip
+    // also update mobile count chips (toolbar + bottom-sheet peek row)
     var mob = document.getElementById('mobileCount');
     if (mob) mob.textContent = visible + ' / ' + total;
+    var mob2 = document.getElementById('mobileCount2');
+    if (mob2) mob2.textContent = visible + ' / ' + total;
   }
 
   window.G6 = G6;

@@ -9,7 +9,7 @@ G6.map = (function () {
   function init() {
     _map = L.map('map', {
       crs:               L.CRS.Simple,
-      minZoom:           -4,
+      minZoom:           -6,   // low enough for fitBounds to show all of Leonida on a phone
       maxZoom:            1,
       zoomSnap:           0.25,
       zoomDelta:          0.5,
@@ -21,23 +21,13 @@ G6.map = (function () {
 
     _map.setMaxBounds(BOUNDS);
 
-    // ── Tile layer ─────────────────────────────────────────
-    // GTADB public tile endpoint (CC BY 4.0, YANIS V17 nocams/dark).
-    // zoomOffset maps Leaflet zoom -4…1 onto GTADB zoom 0…5.
-    // TMS is false here because GTADB uses XYZ (top-down) ordering.
-    var tileUrl = 'https://map.gtadb.org/tiles/YANIS/v17/nocams/dark/{z}/{x}/{y}.png';
-
-    L.tileLayer(tileUrl, {
-      tileSize:     256,
-      noWrap:       true,
-      minZoom:      -4,
-      maxZoom:       1,
-      zoomOffset:    4,          // Leaflet z -4 → tile z 0, Leaflet z 0 → tile z 4
-      bounds:        BOUNDS,
-      keepBuffer:    2,
-      crossOrigin:   'anonymous',
-      errorTileUrl:  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
-    }).addTo(_map);
+    // ── Base map ───────────────────────────────────────────
+    // No remote tile layer. The GTADB endpoint referenced by HANDOFF.md
+    // (map.gtadb.org/tiles/YANIS/v17/nocams/dark/{z}/{x}/{y}.png) returns 404
+    // for every tile, and the live service (maps.gtadb.org/tiles/<v>/<path>/
+    // <z>/<z>,<y>,<x>.jpg) uses a proprietary per-zoom tile pyramid that can
+    // not be re-pointed at CRS.Simple without data we do not have. Markers
+    // therefore plot on the dark grid background (see css/map.css).
 
     _map.fitBounds(BOUNDS, { padding: [8, 8] });
 

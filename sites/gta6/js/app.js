@@ -241,6 +241,7 @@
     data.categories.forEach(function (cat) {
       var row = document.createElement('div');
       row.className = 'cat-row' + (activeCats && activeCats.indexOf(cat.id) === -1 ? ' disabled' : '');
+      row.setAttribute('data-cat-id', cat.id);
       row.setAttribute('role', 'checkbox');
       row.setAttribute('aria-checked', String(!activeCats || activeCats.indexOf(cat.id) !== -1));
       row.setAttribute('tabindex', '0');
@@ -293,18 +294,9 @@
 
   function _syncCategoryUI(categories, activeCats) {
     categories.forEach(function (cat) {
-      var row = document.querySelector('[aria-checked][id="catRow-' + cat.id + '"]');
-      // We stored rows in catFilters without IDs — find by content is fragile; rebuild instead
-    });
-    // Rebuild is simplest and correct
-    var container = document.getElementById('catFilters');
-    if (!container) return;
-    // Apply active/disabled class to each row
-    var rows = container.querySelectorAll('.cat-row');
-    rows.forEach(function (row, i) {
-      var catId = categories[i] ? categories[i].id : null;
-      if (!catId) return;
-      var active = !activeCats || activeCats.indexOf(catId) !== -1;
+      var row = document.querySelector('[data-cat-id="' + cat.id + '"]');
+      if (!row) return;
+      var active = !activeCats || activeCats.indexOf(cat.id) !== -1;
       row.classList.toggle('disabled', !active);
       row.setAttribute('aria-checked', String(active));
     });
@@ -365,8 +357,13 @@
   }
 
   // ── Build location list ────────────────────────────────────
+  // The rail list and the mobile bottom-sheet list share one row builder.
   function buildLocationList(data) {
-    var container = document.getElementById('locList');
+    _buildRows(document.getElementById('locList'), data);
+    _buildRows(document.getElementById('mobileLocList'), data);
+  }
+
+  function _buildRows(container, data) {
     if (!container) return;
 
     var s          = G6.state.get();
@@ -472,24 +469,29 @@
     var zoomOut = document.getElementById('zoomOutBtn');
     var fitBtn  = document.getElementById('fitBtn');
     var fsBtn   = document.getElementById('fullscreenBtn');
+    var fsBtnMob = document.getElementById('fullscreenBtnMob');
     var menuBtn = document.getElementById('menuBtn');
 
     if (zoomIn)  zoomIn.addEventListener('click',  function () { G6.map.getMap().zoomIn(0.5); });
     if (zoomOut) zoomOut.addEventListener('click', function () { G6.map.getMap().zoomOut(0.5); });
     if (fitBtn)  fitBtn.addEventListener('click',  function () { G6.map.fitAll(); });
 
+    function toggleFullscreen() {
+      var el = document.documentElement;
+      if (!document.fullscreenElement) {
+        (el.requestFullscreen || el.webkitRequestFullscreen || function () {}).call(el);
+      } else {
+        (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document);
+      }
+    }
+
     if (fsBtn) {
-      fsBtn.addEventListener('click', function () {
-        var el = document.documentElement;
-        if (!document.fullscreenElement) {
-          (el.requestFullscreen || el.webkitRequestFullscreen || function () {}).call(el);
-        } else {
-          (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document);
-        }
-      });
+      fsBtn.addEventListener('click', toggleFullscreen);
       document.addEventListener('fullscreenchange', function () { G6.map.invalidate(); });
       document.addEventListener('webkitfullscreenchange', function () { G6.map.invalidate(); });
     }
+
+    if (fsBtnMob) fsBtnMob.addEventListener('click', toggleFullscreen);
 
     // Hamburger menu (tablet/mobile)
     if (menuBtn) {
@@ -893,7 +895,7 @@
     var loading = document.getElementById('loading');
     if (loading) loading.hidden = true;
 
-    G6.dom.toast('Map loaded \u2014 16 locations', 'success');
+    G6.dom.toast('Map loaded \u2014 ' + appData.locations.length + ' locations', 'success');
 
   }).catch(function (err) {
     var loading = document.getElementById('loading');

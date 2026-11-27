@@ -266,6 +266,13 @@ body[data-sheet-snap="full"] #map { pointer-events: none; }
   .rail-overlay.visible { display: block; }
 }
 
+/* ── Tablet toolbar (760–1099px) ────────────────────────── */
+/* The rail is a drawer here, so it needs the hamburger toolbar too. */
+@media (min-width: 760px) and (max-width: 1099px) {
+  .mobile-toolbar { display: flex !important; }
+  .map-toolbar    { top: calc(var(--toolbar-h, 56px) + var(--sp-3)); }
+}
+
 /* ── Mobile (<760px) ────────────────────────────────────── */
 @media (max-width: 759px) {
   .rail {
@@ -399,6 +406,9 @@ body[data-sheet-snap="full"] #map { pointer-events: none; }
   min-height: 0;
   overscroll-behavior: contain;
 }
+
+/* A selected location's detail replaces the sheet's location list */
+.bottom-sheet.has-detail #mobileLocList { display: none; }
 
 /* Mobile floating toolbar */
 .mobile-toolbar {

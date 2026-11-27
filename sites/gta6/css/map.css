@@ -1,6 +1,12 @@
 /* ── Leaflet overrides ───────────────────────────────────── */
 .leaflet-container {
-  background: var(--g6-bg) !important;
+  /* No remote tiles (see js/map.js): a faint grid keeps the empty canvas
+     readable while panning and zooming. */
+  background-color: var(--g6-bg) !important;
+  background-image:
+    linear-gradient(var(--g6-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--g6-line) 1px, transparent 1px) !important;
+  background-size: 48px 48px !important;
   font-family: inherit;
 }
 

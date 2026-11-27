@@ -282,9 +282,12 @@ G6.detail = (function () {
 
     if (isMobile) {
       _renderInto(document.getElementById('sheetDetailHost'), loc, s, s.categories);
-      // Snap sheet to half
+      // Detail replaces the sheet's location list, and the sheet opens to half
       var sheet = document.querySelector('.bottom-sheet');
-      if (sheet) _snapSheet(sheet, 'half');
+      if (sheet) {
+        sheet.classList.add('has-detail');
+        _snapSheet(sheet, 'half');
+      }
     } else {
       var host = document.getElementById('desktopDetailHost');
       if (host) {
@@ -315,9 +318,14 @@ G6.detail = (function () {
     if (app) app.classList.remove('detail-open');
     var host = document.getElementById('desktopDetailHost');
     if (host) while (host.firstChild) host.removeChild(host.firstChild);
-    // Mobile — snap sheet to peek
+    // Mobile — clear the sheet's detail and snap back to peek
+    var sheetHost = document.getElementById('sheetDetailHost');
+    if (sheetHost) while (sheetHost.firstChild) sheetHost.removeChild(sheetHost.firstChild);
     var sheet = document.querySelector('.bottom-sheet');
-    if (sheet && sheet.dataset.snap !== 'peek') _snapSheet(sheet, 'peek');
+    if (sheet) {
+      sheet.classList.remove('has-detail');
+      if (sheet.dataset.snap !== 'peek') _snapSheet(sheet, 'peek');
+    }
     // Clear hash
     history.replaceState(null, '', location.pathname);
     G6.map.invalidate();
