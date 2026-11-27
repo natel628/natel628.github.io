@@ -62,13 +62,19 @@ G6.data = (function () {
     return results;
   }
 
+  // Bump DATA_V whenever the JSON in data/ changes. GitHub Pages caches files for
+  // ten minutes, so without this returning visitors keep seeing the old dataset
+  // long after a deploy.
+  var DATA_V = '3';
+
   function load(basePath) {
     var base = (basePath || '.').replace(/\/$/, '');
+    var v    = '?v=' + DATA_V;
     return Promise.all([
-      fetchJSON(base + '/data/locations.json'),
-      fetchJSON(base + '/data/categories.json'),
-      fetchJSON(base + '/data/regions.json'),
-      fetchJSON(base + '/data/credits.json')
+      fetchJSON(base + '/data/locations.json' + v),
+      fetchJSON(base + '/data/categories.json' + v),
+      fetchJSON(base + '/data/regions.json' + v),
+      fetchJSON(base + '/data/credits.json' + v)
     ]).then(function (results) {
       var rawLocs   = results[0];
       var catsData  = results[1];
