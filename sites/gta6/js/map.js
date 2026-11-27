@@ -6,10 +6,54 @@ G6.map = (function () {
   var _map    = null;
   var BOUNDS  = [[-9000, -11000], [11000, 4000]];
 
+  // ── Base map tiles ───────────────────────────────────────
+  // YANIS V18 artwork (CC BY 4.0) mirrored from the gtadb.org repository.
+  // The pyramid spans -16384…16384 m on both axes with 256 px tiles; at level
+  // z there are 2^(z+2) tiles per side and z5 is exactly 1 px per metre, so a
+  // world point (x, y) sits at pixel ((x+16384)·2^(z-5), (16384-y)·2^(z-5)).
+  // Files are named <z>/<z>,<y>,<x>.jpg — not the standard XYZ order.
+  var TILE_BASE = 'https://cdn.jsdelivr.net/gh/rolux/gtadb.org@main/maps/tiles/6/yanis,18';
+  var GRID_HALF = 16384;
+  var GRID_TILE = 256;
+  var MAX_LEVEL = 5;        // the published pyramid stops at z5 (1 px/m)
+
+  var BaseTiles = L.GridLayer.extend({
+
+    createTile: function (coords) {
+      var tile = document.createElement('div');
+      tile.className = 'g6-tile';
+
+      // Metres covered by this Leaflet tile, and the pyramid level that best fits.
+      var span = GRID_TILE / Math.pow(2, coords.z);
+      var level = Math.min(Math.max(coords.z + 5, 0), MAX_LEVEL);
+      var ppm  = Math.pow(2, level - 5);          // gtadb pixels per metre
+
+      // This tile's corner, converted into pyramid pixels.
+      var gx = (coords.x * span + GRID_HALF) * ppm;
+      var gy = (GRID_HALF + coords.y * span) * ppm;
+      var side = span * ppm;                      // pyramid pixels this tile needs
+
+      var n  = Math.pow(2, level + 2);
+      var tx = Math.floor((gx + side / 2) / GRID_TILE);
+      var ty = Math.floor((gy + side / 2) / GRID_TILE);
+      if (tx < 0 || ty < 0 || tx >= n || ty >= n) return tile;
+
+      // Crop the covering tile to this slot, so any zoom level (including the
+      // upscaled top of the pyramid) still lands in the right place.
+      var scale = GRID_TILE / side;
+      tile.style.backgroundImage    = 'url(' + TILE_BASE + '/' + level + '/' + level +
+                                      ',' + ty + ',' + tx + '.jpg)';
+      tile.style.backgroundSize     = (GRID_TILE * scale) + 'px ' + (GRID_TILE * scale) + 'px';
+      tile.style.backgroundPosition = (-(tx * GRID_TILE - gx) * scale) + 'px ' +
+                                      (-(ty * GRID_TILE - gy) * scale) + 'px';
+      return tile;
+    }
+  });
+
   function init() {
     _map = L.map('map', {
       crs:               L.CRS.Simple,
-      minZoom:           -6,   // low enough for fitBounds to show all of Leonida on a phone
+      minZoom:           -5,   // lowest level the published tile pyramid covers (32 m/px)
       maxZoom:            1,
       zoomSnap:           0.25,
       zoomDelta:          0.5,
@@ -22,12 +66,13 @@ G6.map = (function () {
     _map.setMaxBounds(BOUNDS);
 
     // ── Base map ───────────────────────────────────────────
-    // No remote tile layer. The GTADB endpoint referenced by HANDOFF.md
-    // (map.gtadb.org/tiles/YANIS/v17/nocams/dark/{z}/{x}/{y}.png) returns 404
-    // for every tile, and the live service (maps.gtadb.org/tiles/<v>/<path>/
-    // <z>/<z>,<y>,<x>.jpg) uses a proprietary per-zoom tile pyramid that can
-    // not be re-pointed at CRS.Simple without data we do not have. Markers
-    // therefore plot on the dark grid background (see css/map.css).
+    new BaseTiles({
+      tileSize: GRID_TILE,
+      minZoom:  -5,
+      maxZoom:   1,
+      noWrap:   true,
+      bounds:   BOUNDS
+    }).addTo(_map);
 
     _map.fitBounds(BOUNDS, { padding: [8, 8] });
 

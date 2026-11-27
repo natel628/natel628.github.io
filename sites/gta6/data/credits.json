@@ -2,15 +2,15 @@
   "schema": "gta6.credits/1",
   "entries": [
     {
-      "asset": "Map artwork",
-      "work": "YANIS V17 (dark, no-camera variant)",
+      "asset": "Map tiles",
+      "work": "YANIS V18 community map",
       "author": "Yanis and the GTA VI Mapping Community",
-      "via": "GTADB.ORG",
+      "via": "gtadb.org tile repository (github.com/rolux/gtadb.org)",
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
-      "sourceUrl": "https://map.gtadb.org",
-      "changes": "Displayed via community tile server. Markers, filters, and interface are original.",
-      "requiredAttribution": "YANIS V17 \u00b7 gtadb.org and all contributors \u00b7 CC BY 4.0"
+      "sourceUrl": "https://gtadb.org",
+      "changes": "Tile images are served unmodified from the published repository pyramid and cropped by the client to the viewport. Markers, filters and interface are original.",
+      "requiredAttribution": "YANIS V18 \u00b7 gtadb.org and all contributors \u00b7 CC BY 4.0"
     },
     {
       "asset": "Place positions (reference)",

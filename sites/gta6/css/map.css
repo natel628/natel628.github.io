@@ -10,7 +10,13 @@
   font-family: inherit;
 }
 
-.leaflet-tile-pane { opacity: .92; }
+.leaflet-tile-pane { opacity: 1; }
+
+/* Base map tiles are divs cropped from the published pyramid tiles */
+.g6-tile {
+  background-repeat: no-repeat;
+  background-color: var(--g6-bg);
+}
 
 .leaflet-control-scale-line {
   background: rgba(8,10,15,.78);
