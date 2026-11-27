@@ -88,10 +88,16 @@ G6.detail = (function () {
     metaRow.appendChild(catChip);
 
     if (loc.region) {
+      // Show the region's label, not its id.
+      var regionLabel = loc.region;
+      var regions = state.regions || [];
+      for (var r = 0; r < regions.length; r++) {
+        if (regions[r].id === loc.region) { regionLabel = regions[r].label; break; }
+      }
       var regionSpan = _el('span', '');
       regionSpan.style.fontSize = '.72rem';
       regionSpan.style.color    = 'var(--g6-muted)';
-      regionSpan.textContent    = loc.region;
+      regionSpan.textContent    = regionLabel;
       metaRow.appendChild(regionSpan);
     }
     body.appendChild(metaRow);
@@ -104,6 +110,29 @@ G6.detail = (function () {
     if (loc.hint && loc.hint !== loc.summary) {
       var hintField = _field('How to find', loc.hint);
       body.appendChild(hintField);
+    }
+
+    // Extra pointers: what to bring, when to go, what trips people up.
+    if (loc.tips && loc.tips.length) {
+      var tipsField = _el('div', 'detail-field');
+      tipsField.appendChild(_label('Tips'));
+      var tipsList = _el('ul', 'detail-rewards');
+      loc.tips.forEach(function (tip) {
+        var li = _el('li', '');
+        li.textContent = tip;
+        tipsList.appendChild(li);
+      });
+      tipsField.appendChild(tipsList);
+      body.appendChild(tipsField);
+    }
+
+    // Coordinates here are estimates; say so instead of implying GPS precision.
+    if (loc.position && loc.position.method === 'estimated') {
+      var accNote = _el('p', '');
+      accNote.style.cssText = 'font-size:.68rem;color:var(--g6-muted);margin-top:var(--sp-1)';
+      accNote.textContent = 'Pin is approximate (\u00b1' + (loc.position.accuracy || 500) +
+                            '\u202fm). Use the written directions to find the exact spot.';
+      body.appendChild(accNote);
     }
 
     // Rewards

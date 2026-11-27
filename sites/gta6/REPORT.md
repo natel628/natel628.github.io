@@ -68,3 +68,23 @@ Verified: toggling swaps `/yanis,18/` ⇄ `/day/`, `aria-checked` follows, the c
 - Routes are straight-line estimates, labelled as such in the tooltip.
 - iOS < 15 does not support external SVG `<use href="…sprite.svg#id">`; the sprite is still external (handoff Task 1, item 2).
 - Not tested on a physical phone, Safari, or Firefox. Bottom-sheet drag gestures were not exercised with real touch input.
+
+## 6. Location data expansion
+
+`data/locations.json` went from 16 to **31 entries**: 14 new records plus the original set, now with `tips` on 20 of them and `code` on 13. New coverage: four safes with published codes (Janjak's Garage `4444`, Cottonmouth Lake trailer `44017`, Watson Bay safehouse `1819`, Nova Auto Junkyard `7777`, Delights Cabaret `2008`), two keypad doors (Black Eagle `789987` door / `031462` safe, Red Apple Orchard `360782`), and unique-weapon or secret finds (Black Eagle Kalinga .50, Dino Golf Brontasaurus Bat, Kingfishers' RV Park Akulus, Ambrosia KVGA-12 'Final Chapter', Gullet Marsh hut with the Akulus revolver + SM-69 sniper). Added a **Secret Missions** category (id `secret-mission`, gold-green pin, new `pin-secret-mission` sprite symbol) with the Skunk Ape side mission and the crab-lab Karkinos storyline.
+
+### Honesty rules applied to this data
+
+- **No invented codes.** Every code comes from a named published guide, and conflicts are recorded in the value rather than resolved by preference: Kingpin Bowling stays `0300 (0300 / 0330 disputed between sources)` and the Palmer warehouse `1886 (1886 / 1887 disputed between sources)`. Tips tell the reader which one to try first.
+- **No invented precision.** New records are `position.method: "estimated"` with `accuracy` 700–1500 m, and where a guide names a place but no coordinates the tip says so outright ("Pin is a region-level estimate; the guide names La Perle, not coordinates").
+- **Verification tiers reflect the source, not the coordinates.** 30 records are `community` (multiple guides report them); only the player-reported UFO encounter is `estimate`, and its summary says nobody has published a trigger.
+- The detail panel now prints the accuracy band under the fields — "Pin is approximate (±1200 m). Use the written directions to find the exact spot." — so a pin never implies GPS precision it does not have.
+- Every record carries at least one `sources` entry; the detail panel renders them as links.
+
+### Supporting changes
+
+- `js/data.js` normalisation was silently dropping unknown fields, so `tips` never reached the UI; added `tips` to the normalised shape.
+- `js/detail.js` renders a **Tips** list (between "How to find" and rewards), the accuracy note, and now shows the region *label* rather than its id.
+- `data/categories.json` gained `secret-mission`; `assets/icons/sprite.svg` gained `pin-secret-mission` (teardrop with an exclamation), so the new category has its own marker instead of falling back to a landmark pin.
+
+Validated: 31 records, no duplicate ids, no unknown category or region references, all records sourced. In the browser: 31 pins and 31 rows, 9 category rows, a coded entry renders its keypad code and 3 tips, a secret mission renders 4 tips and snapshots to the right sheet position.

@@ -4,6 +4,7 @@
     { "id": "stash",       "label": "Stashes & Treasure",    "short": "Stashes",    "color": "#f0a35e", "glyph": "stash",       "order": 10 },
     { "id": "collectible", "label": "Collectibles",          "short": "Collect.",   "color": "#b18cf0", "glyph": "collectible", "order": 20 },
     { "id": "easter-egg",  "label": "Easter Eggs & Secrets", "short": "Secrets",    "color": "#ff5c8a", "glyph": "easter-egg",  "order": 30 },
+    { "id": "secret-mission", "label": "Secret Missions",       "short": "Missions",   "color": "#8fd14f", "glyph": "secret-mission", "order": 35 },
     { "id": "weapon",      "label": "Unique Weapons",        "short": "Weapons",    "color": "#e8536b", "glyph": "weapon",      "order": 40 },
     { "id": "landmark",    "label": "Landmarks",             "short": "Landmarks",  "color": "#7fd1ff", "glyph": "landmark",    "order": 50 },
     { "id": "safehouse",   "label": "Safehouses",            "short": "Safehouses", "color": "#5ad48a", "glyph": "safehouse",   "order": 60 },

@@ -33,6 +33,7 @@ G6.data = (function () {
         verification: verif,
         summary:      loc.summary || loc.how || '',
         hint:         loc.hint   || loc.how || '',
+        tips:         loc.tips   || [],
         rewards:      loc.rewards || loc.loot || [],
         code:         loc.code   || null,
         risk:         loc.risk   || null,

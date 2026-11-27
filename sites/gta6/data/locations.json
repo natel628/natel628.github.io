@@ -1,6 +1,6 @@
 {
   "schema": "gta6.locations/1",
-  "updated": "2025-01-01",
+  "updated": "2026-11-27",
   "coordinateSpace": "leonida-v17-meters",
   "locations": [
     {
@@ -86,6 +86,11 @@
       "summary": "Safe with ~$3,000, a Gold KZ-59, and the safe code on the ground-floor computer.",
       "hint": "Bobcat Key, off Watson Bay — south end of the key. Safe is upstairs in the lounge corner; read the code off the computer downstairs first.",
       "rewards": ["~$3,000 in safe (reported)", "Gold KZ-59"],
+      "tips": [
+        "Read the code off the ground-floor computer before going upstairs — the safe will not open otherwise.",
+        "Sources disagree between 1886 and 1887; try 1886 first, then 1887.",
+        "Arrive by boat; the key has no road in."
+      ],
       "code": "1886 (1886 / 1887 disputed between sources)",
       "risk": "high",
       "sources": [
@@ -140,6 +145,11 @@
       "summary": "Safe (~$1,000–$1,100), $10,000 in marked bills in the boathouse, and a Crabshack VF5 SMG.",
       "hint": "Medium island in south-west Pelican Valley, north of the Keys. Boat only. 0072 is the safe code; 0212 is the boathouse keypad. PC password reported as CLEAVES.",
       "rewards": ["~$1,021–1,107 in safe (reported)", "$10,000 in marked bills in boathouse (reported)", "Crabshack VF5 SMG"],
+      "tips": [
+        "Two different codes: 0072 is the safe, 0212 is the boathouse keypad. Do not mix them up.",
+        "The PC password (CLEAVES) is reported separately from both codes.",
+        "Boat only — the outpost island has no road access."
+      ],
       "code": "0072 (safe) / 0212 (boathouse)",
       "risk": "low",
       "sources": [
@@ -158,6 +168,11 @@
       "summary": "Alien bunker and UFO encounter content. Keypad code is dream-derived and may differ per save.",
       "hint": "North-east of Cottonmouth Lake and south of Hamlet, at the north end of the long airstrip. Keypad code 2314 is commonly reported but can vary.",
       "rewards": ["Alien bunker access", "UFO encounter / ending content"],
+      "tips": [
+        "2314 is the commonly reported code but it may differ per save — if it fails, the code is dream-derived, not found in the world.",
+        "Anchor on the north end of the airstrip, then walk north-east toward the bunker.",
+        "No firm confirmation of what the bunker leads to; treat the outcome as unverified."
+      ],
       "code": "2314 (commonly reported — may vary per save)",
       "risk": "unknown",
       "sources": [
@@ -176,6 +191,11 @@
       "summary": "Cash safe and a Gutterball Moreland 850 shotgun via the Kolt & Associates robbery.",
       "hint": "Southern Port Gellhorn on US-9, just south of the Pawn & Gun. Safe is in the back office. All three Port Gellhorn codes are written on the wall map at Brooks Boatworks.",
       "rewards": ["Cash safe", "Gutterball Moreland 850 shotgun (via Kolt & Associates robbery)"],
+      "tips": [
+        "Most guides say 0300; one says 0330. Try 0300 first.",
+        "All three Port Gellhorn codes are written on the wall map at Brooks Boatworks — read them there instead of guessing.",
+        "The Gutterball shotgun is elsewhere in the building, not inside the safe."
+      ],
       "code": "0300 (0300 / 0330 disputed between sources)",
       "risk": "low",
       "sources": [
@@ -194,6 +214,10 @@
       "summary": "Clunker 556 carbine, an upstairs safe, and a wall map listing all three Port Gellhorn codes.",
       "hint": "Northern Port Gellhorn waterfront near the bridge to Draper Island. Enter through the east fence hole, climb the grey building's outside stairs to the room with the wall map (codes: 6823, 6969, 0300).",
       "rewards": ["Clunker 556 carbine", "Safe upstairs"],
+      "tips": [
+        "The outside stairs are the way in — the front is sealed.",
+        "Read the wall map while you are here: it lists 6823, 6969 and 0300 for the whole Port Gellhorn set."
+      ],
       "code": "6823",
       "risk": "low",
       "sources": [
@@ -212,6 +236,10 @@
       "summary": "Scrapper VF5C SMG, $15,000, and a safe (code 6969) in the gated top-floor room.",
       "hint": "Western Port Gellhorn shoreline on Draper Bay, south of the rail bridge to Draper Island, near Wild Hog Point.",
       "rewards": ["Scrapper VF5C SMG", "$15,000 (reported)", "Safe (code 6969)"],
+      "tips": [
+        "The room is gated and guarded; clear the floor before opening the safe.",
+        "Approach from the Draper Bay shoreline, south of the rail bridge."
+      ],
       "code": "6969",
       "risk": "medium",
       "sources": [
@@ -289,6 +317,333 @@
       "sources": [
         { "label": "IGN unique weapon variants", "url": "https://www.ign.com/wikis/gta-6/Unique_Weapon_Variants" },
         { "label": "gta6bugs", "url": "http://gta6bugs.com/easter-eggs/turnt-nipper-glider" }
+      ]
+    },
+    {
+      "id": "janjak-garage",
+      "name": "Janjak's Garage — office safe",
+      "category": "stash",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1400, "y": 2400, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "San4San weed garage in La Perle. Office safe (code 4444) plus a pink Declasse Gin Tulip and the San4San KZ-59 rifle in the building.",
+      "hint": "La Perle, Vice City. The safe is in the office of the San4San garage. The code is written on a note stuck to the office fridge — read it before you open anything.",
+      "rewards": ["Cash in office safe", "Pink Declasse Gin Tulip", "San4San KZ-59 rifle"],
+      "code": "4444",
+      "risk": "medium",
+      "tips": [
+        "The code is on the office fridge — you can read it without triggering the robbery.",
+        "The Gin Tulip and the KZ-59 are elsewhere in the garage, not in the safe.",
+        "Pin is a region-level estimate; the guide names La Perle, not coordinates."
+      ],
+      "sources": [
+        { "label": "Output Lag — safe & garage codes", "url": "https://outputlag.com/guides/gta-6-safe-garage-codes" }
+      ]
+    },
+    {
+      "id": "black-eagle-warehouse",
+      "name": "Black Eagle warehouse — door & safe",
+      "category": "weapon",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 900, "y": 1800, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Six-digit door and safe codes, and a Kalinga .50 pistol in the safe.",
+      "hint": "The door keypad takes 789987 and the safe inside takes 031462. Two different six-digit codes — do not swap them.",
+      "rewards": ["Kalinga .50 pistol"],
+      "code": "789987 (door) / 031462 (safe)",
+      "risk": "high",
+      "tips": [
+        "Both codes are six digits; the door one is the one that looks like a pattern.",
+        "Pin is a region-level estimate — the guide does not give a street address."
+      ],
+      "sources": [
+        { "label": "Output Lag — safe & garage codes", "url": "https://outputlag.com/guides/gta-6-safe-garage-codes" }
+      ]
+    },
+    {
+      "id": "red-apple-orchard",
+      "name": "Red Apple Orchard garage",
+      "category": "activity",
+      "region": "grassrivers",
+      "county": "mariana",
+      "position": { "x": -2600, "y": -4600, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Garage keypad hides the Applesauce Bobcat vehicle.",
+      "hint": "The garage door runs on keypad code 360782. Punch it in and drive the Bobcat out.",
+      "rewards": ["Applesauce Bobcat (vehicle)"],
+      "code": "360782",
+      "risk": "low",
+      "tips": [
+        "Six digits — the only six-digit code at this location.",
+        "Pin is a region-level estimate; verify before driving out."
+      ],
+      "sources": [
+        { "label": "Output Lag — safe & garage codes", "url": "https://outputlag.com/guides/gta-6-safe-garage-codes" }
+      ]
+    },
+    {
+      "id": "cottonmouth-lake-trailer",
+      "name": "Cottonmouth Lake trailer",
+      "category": "stash",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -2300, "y": -4700, "method": "estimated", "accuracy": 900 },
+      "verification": "community",
+      "summary": "Free-roam safe on the sandbar island south of the lake.",
+      "hint": "Trailer on the sandbar island just south of Cottonmouth Lake. The code is a five-digit one shown on the postcards beside the bed.",
+      "rewards": ["Cash in safe (amount not published)"],
+      "code": "44017",
+      "risk": "low",
+      "tips": [
+        "Five digits, which is unusual — do not pad it with a leading zero.",
+        "Read the postcards by the bed if the safe rejects the code.",
+        "Anchor: use the Cottonmouth Lake label on the map, then look south to the sandbar."
+      ],
+      "sources": [
+        { "label": "RaidDex — safe codes", "url": "https://raiddex.com/en/gta-6/guides/safe-codes" }
+      ]
+    },
+    {
+      "id": "watson-bay-safehouse",
+      "name": "Watson Bay safehouse",
+      "category": "stash",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -2950, "y": -6500, "method": "estimated", "accuracy": 800 },
+      "verification": "community",
+      "summary": "Security-compound safe tucked under the microwave.",
+      "hint": "Watson Bay, near Bobcat Key. The safe is under the microwave in the kitchen. The code is the last line of an email on the kitchen PC.",
+      "rewards": ["Cash and valuables in safe"],
+      "code": "1819",
+      "risk": "high",
+      "tips": [
+        "The compound is guarded — clear it before you start reading the PC.",
+        "Turn the microwave over; the safe is underneath it, not behind it."
+      ],
+      "sources": [
+        { "label": "RaidDex — safe codes", "url": "https://raiddex.com/en/gta-6/guides/safe-codes" }
+      ]
+    },
+    {
+      "id": "nova-auto-junkyard",
+      "name": "Nova Auto Junkyard safe",
+      "category": "stash",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -1500, "y": -3400, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Junkyard safe outside Hamlet. Code is memorable, which is the hint.",
+      "hint": "Nova Auto Junkyard, Hamlet. Four repeated digits — the most memorable code in the game, easy to overlook because it looks too obvious.",
+      "rewards": ["Cash and valuables in safe"],
+      "code": "7777",
+      "risk": "low",
+      "tips": [
+        "Four identical digits; if a code does not stick, look for the safe rather than the clue.",
+        "Hamlet is the anchor label on the map — the yard sits on its edge."
+      ],
+      "sources": [
+        { "label": "Rock Paper Shotgun — all safe codes", "url": "https://www.rockpapershotgun.com/gta-all-6-safe-codes" }
+      ]
+    },
+    {
+      "id": "delights-cabaret",
+      "name": "Delights Cabaret office safe",
+      "category": "stash",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": 250, "y": 1450, "method": "estimated", "accuracy": 700 },
+      "verification": "community",
+      "summary": "Office safe in the Port Gellhorn club. The code arrives by text, not by note.",
+      "hint": "Delights Cabaret, Port Gellhorn. You do not find this code in the world — Vicki texts it to you during the 'Afternoon Delight' mission. If you skipped the mission, the safe stays shut.",
+      "rewards": ["Cash in office safe"],
+      "code": "2008",
+      "risk": "medium",
+      "tips": [
+        "Mission-gated: check your phone messages if the keypad ignores you.",
+        "The code is also the year the club was founded, per in-game signage."
+      ],
+      "sources": [
+        { "label": "Rock Paper Shotgun — all safe codes", "url": "https://www.rockpapershotgun.com/gta-all-6-safe-codes" },
+        { "label": "RaidDex — safe codes", "url": "https://raiddex.com/en/gta-6/guides/safe-codes" }
+      ]
+    },
+    {
+      "id": "dino-golf-brontasaurus-bat",
+      "name": "Dino Golf — Brontasaurus Bat",
+      "category": "weapon",
+      "region": "grassrivers",
+      "county": "mariana",
+      "position": { "x": -2450, "y": -4400, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Batting-cage melee weapon at the abandoned mini-golf on SR-32.",
+      "hint": "Dino Golf at Frogswater, off SR-32. Walk into the batting cage on the right-hand side of the abandoned attraction; the bat is propped inside.",
+      "rewards": ["Brontasaurus Bat (unique melee)"],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "There is no code and no fight — it is a walk-up pickup, easy to miss because the cage looks closed.",
+        "Pin is a region-level estimate; guides name Frogswater and SR-32 without coordinates."
+      ],
+      "sources": [
+        { "label": "space4games — unique weapons", "url": "https://space4games.com/en/games-en/gta-6-unique-weapons-locations-stats" }
+      ]
+    },
+    {
+      "id": "kingfishers-rv-park",
+      "name": "Kingfishers' Sunrise RV Park",
+      "category": "weapon",
+      "region": "grassrivers",
+      "county": "mariana",
+      "position": { "x": -2400, "y": -4300, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Akulus 'Kingfishers' heavy revolver inside a trailer during the raid on the illegal operation.",
+      "hint": "The trailer in the RV park. It appears during the Chapter 3 raid on the Kingfishers' illegal operation — the game shows 'Valuables found' when you are next to it.",
+      "rewards": ["Akulus 'Kingfishers' (heavy revolver)"],
+      "code": null,
+      "risk": "high",
+      "tips": [
+        "Chapter 3 raid only; in free roam the trailer is empty.",
+        "Search the trailers in order — the revolver is in the one that triggers the 'Valuables found' prompt."
+      ],
+      "sources": [
+        { "label": "space4games — unique weapons", "url": "https://space4games.com/en/games-en/gta-6-unique-weapons-locations-stats" }
+      ]
+    },
+    {
+      "id": "final-chapter-ambrosia",
+      "name": "Final Chapter compound — KVGA-12",
+      "category": "weapon",
+      "region": "ambrosia",
+      "county": "leonard",
+      "position": { "x": -1600, "y": 4100, "method": "estimated", "accuracy": 1000 },
+      "verification": "community",
+      "summary": "KVGA-12 'Final Chapter' automatic shotgun in the Final Chapter gang's Ambrosia territory.",
+      "hint": "Ambrosia, in the Final Chapter's area. Go in heavy — the compound is defended, and the shotgun sits inside rather than on a rack outside.",
+      "rewards": ["KVGA-12 'Final Chapter' (automatic shotgun)"],
+      "code": null,
+      "risk": "high",
+      "tips": [
+        "Treat it as an assault, not a pickup: bring armour and a rifle.",
+        "Ambrosia is a named region on the map, so use the region filter to frame the search."
+      ],
+      "sources": [
+        { "label": "space4games — unique weapons", "url": "https://space4games.com/en/games-en/gta-6-unique-weapons-locations-stats" }
+      ]
+    },
+    {
+      "id": "gullet-marsh-hut",
+      "name": "Gullet Marsh hut — Akulus & SM-69",
+      "category": "weapon",
+      "region": "grassrivers",
+      "county": "mariana",
+      "position": { "x": -2500, "y": -5150, "method": "estimated", "accuracy": 700 },
+      "verification": "community",
+      "summary": "Two unique weapons in one spot: an Akulus revolver inside the hut and an SM-69 sniper on the planks outside.",
+      "hint": "Wooden hut east of the abandoned crab lab in Gullet Marsh. The Akulus revolver is next to a body inside, with a phone playing a video. The SM-69 sniper is on the planks in front of the same hut, ammunition included.",
+      "rewards": ["Akulus revolver (unique variant)", "SM-69 sniper rifle (unique variant)"],
+      "code": null,
+      "risk": "medium",
+      "tips": [
+        "Two pickups, one building — check the planks outside before you leave.",
+        "Use the crab lab outpost as the anchor; this hut is immediately east of it.",
+        "The phone by the body plays a short video; it is part of the find, not a clue."
+      ],
+      "sources": [
+        { "label": "space4games — unique weapons", "url": "https://space4games.com/en/games-en/gta-6-unique-weapons-locations-stats" }
+      ]
+    },
+    {
+      "id": "easter-egg-nest-tower",
+      "name": "The literal Easter egg nest",
+      "category": "easter-egg",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1500, "y": 2600, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "A bird's nest full of painted eggs at the top of the tallest TV tower, plus a parachute one level up.",
+      "hint": "Tallest TV tower in Vice-Dale County, south Vice City. Find the ladder at the foot of the tower and keep climbing — expect six to fifteen minutes. Take an egg from the nest and throw it off the ledge at full power for a cutscene.",
+      "rewards": ["Short comedy cutscene", "Free parachute one level above the nest", "Backyard Wrestling card on the way up (reported)"],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Budget real time for the climb — guides clock it at six to fifteen minutes of ladders.",
+        "Throw the egg at full power off the edge, or nothing happens.",
+        "There is a base jump from the platform above, and a free parachute to go with it.",
+        "Pin is a region-level estimate; guides place the tower in Vice-Dale County without coordinates."
+      ],
+      "sources": [
+        { "label": "TheGTA6Map — easter eggs", "url": "https://thegta6map.com/easter-eggs" },
+        { "label": "NovusTools — easter egg tracker", "url": "https://novustools.com/gta-6-easter-eggs/" }
+      ]
+    },
+    {
+      "id": "ufo-abduction-port-gellhorn",
+      "name": "UFO abduction on the back road",
+      "category": "easter-egg",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": 600, "y": 1500, "method": "estimated", "accuracy": 1500 },
+      "verification": "estimate",
+      "summary": "Player-reported night abduction east of Port Gellhorn, near the Starlet Motel. No published trigger.",
+      "hint": "Back road east of Port Gellhorn, near the Starlet Motel. Reported after Chapter 2, around 2 a.m. in-game time: follow the trail from the abandoned car into the woods.",
+      "rewards": ["UFO encounter (unconfirmed)"],
+      "code": null,
+      "risk": "unknown",
+      "tips": [
+        "Player reports only — nobody has published a reliable trigger, so treat it as a rumour.",
+        "If you go looking, set the in-game clock to about 02:00 and drive the back road slowly.",
+        "Pin is a region-level estimate and the encounter is unconfirmed."
+      ],
+      "sources": [
+        { "label": "NovusTools — easter egg tracker (player report)", "url": "https://novustools.com/gta-6-easter-eggs/" }
+      ]
+    },
+    {
+      "id": "skunk-ape-search",
+      "name": "Search for the Skunk Ape",
+      "category": "secret-mission",
+      "region": "grassrivers",
+      "county": "mariana",
+      "position": { "x": -2900, "y": -4900, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Hidden side mission: find Kirk's flyers, follow his drone through the swamp at night, then hunt the effigies.",
+      "hint": "Look for Kirk's flyers around Leonida — they add him to your contacts. Meet him at Pelican River at night, follow his drone into the swamp (Gullet Marsh / south of Cottonmouth Lake), then search Pelican Valley for the dolls carved into trees.",
+      "rewards": ["Skunk Ape side story with a choice at the end"],
+      "code": null,
+      "risk": "medium",
+      "tips": [
+        "Night only — the meeting will not start in daylight.",
+        "Use Focus Mode in the mangroves; you lose the creature on purpose the first time.",
+        "The dolls carved into trees come after the chase, not during it.",
+        "Guides disagree on the exact marsh, so the pin is an area, not a spot."
+      ],
+      "sources": [
+        { "label": "GTAside — easter eggs", "url": "https://gtaside.com/tips/gta6/easter-eggs" },
+        { "label": "space4games — easter eggs & secrets", "url": "https://space4games.com/en/games-en/gta-6-easter-eggs-secrets-guide/" }
+      ]
+    },
+    {
+      "id": "crab-lab-karkinos",
+      "name": "The crab lab — Karkinos",
+      "category": "secret-mission",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -2600, "y": -5200, "method": "estimated", "accuracy": 400 },
+      "verification": "community",
+      "summary": "Abandoned research outpost in the middle of Gullet Marsh where someone experimented on crabs. A diary names Karkinos.",
+      "hint": "Middle of Gullet Marsh, the research outpost on the medium island in south-west Pelican Valley. Read the diary on the PC — it tells of a giant crab called Karkinos — then work the safe and the boathouse. This is the same outpost as the Pelican Valley stash entry; that pin covers the loot, this one covers the story.",
+      "rewards": ["Karkinos story", "Free-roam access to the outpost safe and boathouse"],
+      "tips": [
+        "Read the PC diary before you touch the safe — the password and both codes come from the same trail.",
+        "Boat only; there is no road onto the island.",
+        "Chapter 3 is when most players reach it, though the island is reachable earlier."
+      ],
+      "code": "0072 (safe) / 0212 (boathouse)",
+      "risk": "low",
+      "sources": [
+        { "label": "space4games — easter eggs & secrets", "url": "https://space4games.com/en/games-en/gta-6-easter-eggs-secrets-guide/" }
       ]
     }
   ]

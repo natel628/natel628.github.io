@@ -19,6 +19,12 @@
     <text x="15" y="19" text-anchor="middle" font-size="13" font-weight="700" font-family="sans-serif" fill="rgba(0,0,0,.5)">?</text>
   </symbol>
 
+  <!-- secret-mission: teardrop with exclamation -->
+  <symbol id="pin-secret-mission" viewBox="0 0 30 38">
+    <path d="M15 2C9 2 4 7 4 13C4 22 15 36 15 36C15 36 26 22 26 13C26 7 21 2 15 2Z" fill="var(--pin-color,#8fd14f)" stroke="var(--pin-border,rgba(0,0,0,.4))" stroke-width="1.5"/>
+    <text x="15" y="19" text-anchor="middle" font-size="14" font-weight="700" font-family="sans-serif" fill="rgba(0,0,0,.5)">!</text>
+  </symbol>
+
   <!-- weapon: diamond with crosshair -->
   <symbol id="pin-weapon" viewBox="0 0 30 38">
     <path d="M15 2L28 15L15 28L2 15Z" fill="var(--pin-color,#e8536b)" stroke="var(--pin-border,rgba(0,0,0,.4))" stroke-width="1.5"/>
