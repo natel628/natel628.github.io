@@ -36,11 +36,24 @@ G6.map = (function () {
 
   // One artwork tile per slot, loaded as an <img> so a failure is visible to the
   // code and can be retried. The old version used a CSS background, which fails
-  // silently: a throttled request left that cell permanently black with nothing
-  // in the console, which is what "the map has holes when you zoom" was.
+  // silently: a refused request left that cell black with nothing in the console,
+  // which is what "the map has holes when you zoom" was.
   //
-  // Two extra attempts are made before giving up: the same file with a cache
-  // busting query, then the same repository served by GitHub.
+  // Why requests fail here at all, measured on the live host: jsDelivr refuses a
+  // share of tile requests with 403 even though the file exists — 43 of 441
+  // sampled in-game level-6 tiles, and 3 of 40 in a single burst — and the same
+  // URL serves 200 seconds later. It is edge rate limiting, not a missing file.
+  // A cache-busting query string does not help (it hits the same bucket and got
+  // 403 on a tile the plain URL served 200), but raw.githubusercontent.com did
+  // serve every one of them.
+  //
+  // So each slot walks a chain and only gives up after all of it:
+  //   1. jsDelivr, 2. GitHub raw, 3. jsDelivr again with a cache buster,
+  // then the same three at the next pyramid level up (half resolution, drawn
+  // larger) so a hole in the deepest level still shows artwork rather than a
+  // gap, and only then a visible placeholder. A slot that ends up on the
+  // placeholder asks once more after a few seconds, which is what the 403s need:
+  // they are transient.
   var BaseTiles = L.GridLayer.extend({
 
     createTile: function (coords, done) {
@@ -50,30 +63,46 @@ G6.map = (function () {
       var set = TILE_SETS[_baseSet] || TILE_SETS.community;
 
       // Metres covered by this Leaflet tile, and the pyramid level that best fits.
-      var span = GRID_TILE / Math.pow(2, coords.z);
+      var span  = GRID_TILE / Math.pow(2, coords.z);
       var level = Math.min(Math.max(coords.z + 5, 0), set.maxLevel);
-      var ppm  = Math.pow(2, level - 5);          // gtadb pixels per metre
 
-      // This tile's corner, converted into pyramid pixels.
-      var gx = (coords.x * span + GRID_HALF) * ppm;
-      var gy = (GRID_HALF + coords.y * span) * ppm;
-      var side = span * ppm;                      // pyramid pixels this tile needs
+      // This slot is a crop of one published tile. Resolve that crop for a given
+      // pyramid level, or null when the artwork does not reach this slot.
+      function cropAt(lv) {
+        var ppm  = Math.pow(2, lv - 5);           // gtadb pixels per metre
+        var gx   = (coords.x * span + GRID_HALF) * ppm;
+        var gy   = (GRID_HALF + coords.y * span) * ppm;
+        var side = span * ppm;                    // pyramid pixels this tile needs
+        var n    = Math.pow(2, lv + 2);
+        var tx   = Math.floor((gx + side / 2) / GRID_TILE);
+        var ty   = Math.floor((gy + side / 2) / GRID_TILE);
+        if (tx < 0 || ty < 0 || tx >= n || ty >= n) return null;
+        var scale = GRID_TILE / side;             // 1 at the native level
+        return {
+          rel:  set.path + '/' + lv + '/' + lv + ',' + ty + ',' + tx + '.jpg',
+          w:    GRID_TILE * scale,
+          h:    GRID_TILE * scale,
+          left: (tx * GRID_TILE - gx) * scale,
+          top:  (ty * GRID_TILE - gy) * scale
+        };
+      }
 
-      var n  = Math.pow(2, level + 2);
-      var tx = Math.floor((gx + side / 2) / GRID_TILE);
-      var ty = Math.floor((gy + side / 2) / GRID_TILE);
-      if (tx < 0 || ty < 0 || tx >= n || ty >= n) {
+      // Native level first, then one and two levels coarser: a hole in the
+      // deepest level still shows the same place at half or quarter resolution
+      // instead of a gap.
+      var candidates = [];
+      [level, level - 1, level - 2].forEach(function (lv) {
+        if (lv < 0 || candidates.length >= 3) return;
+        var c = cropAt(lv);
+        if (c) candidates.push(c);
+      });
+      if (!candidates.length) {
         // Outside the artwork entirely (the legend sheet, the map edge): say so
         // with a neutral edge tile rather than an empty one.
         tile.className = 'g6-tile is-edge';
         done(null, tile);
         return tile;
       }
-
-      // Crop the covering tile to this slot, so any zoom level (including the
-      // upscaled top of the pyramid) still lands in the right place.
-      var scale = GRID_TILE / side;
-      var rel   = set.path + '/' + level + '/' + level + ',' + ty + ',' + tx + '.jpg';
 
       var img = document.createElement('img');
       img.className  = 'g6-tile-img';
@@ -87,38 +116,80 @@ G6.map = (function () {
       // looked correct, but at zoom 1 (community, 2x upscale) every second slot
       // got +128*2 px and pushed its image out of the box — the black bands
       // down the map.
-      img.style.width  = (GRID_TILE * scale) + 'px';
-      img.style.height = (GRID_TILE * scale) + 'px';
-      img.style.left   = ((tx * GRID_TILE - gx) * scale) + 'px';
-      img.style.top    = ((ty * GRID_TILE - gy) * scale) + 'px';
       tile.appendChild(img);
 
-      var attempt = 0;
-      function load(src) {
-        img.onerror = function () {
-          attempt++;
-          if (attempt === 1) {
-            // Usually a throttled burst: ask again, bypassing the cached miss.
-            load(TILE_BASE + rel + (rel.indexOf('?') === -1 ? '?' : '&') + 'retry=1');
-          } else if (attempt === 2) {
-            // Second failure: the same repository from a different host.
-            load(TILE_FALLBACK + rel);
-          } else {
-            // Detach first: a request still in flight can finish after we have
-            // given up, and its onload would clear the hatch we just set.
-            img.onload = img.onerror = null;
-            img.remove();
-            tile.className = 'g6-tile is-missing';
-            done(null, tile);
-          }
-        };
-        img.onload = function () {
-          tile.classList.remove('is-missing');
-          done(null, tile);
-        };
-        img.src = src;
+      // jsDelivr, GitHub raw, then jsDelivr again with a cache buster — per
+      // candidate level. Distinct URLs, because the browser will not re-request
+      // one it already has, and a refused slot would then never retry.
+      var steps = [];
+      candidates.forEach(function (c) {
+        steps.push({ c: c, url: TILE_BASE + c.rel });
+        steps.push({ c: c, url: TILE_FALLBACK + c.rel });
+        steps.push({ c: c, url: TILE_BASE + c.rel + '?r=' + Date.now() });
+      });
+
+      var next     = 0;
+      var finished = false;   // Leaflet has been told this slot is resolved
+      // A slot that ran the whole chain and still has nothing asks again later.
+      // The 403s are transient: they clear on their own, so this recovers without
+      // the user touching anything, and stops as soon as the slot leaves the map.
+      var heals    = [4000, 15000, 45000];
+      var watchdog = null;
+
+      function stopWatchdog() {
+        if (watchdog) { clearTimeout(watchdog); watchdog = null; }
       }
-      load(TILE_BASE + rel);
+
+      // A refused request answers instantly; a stalled one never answers, and
+      // must not pin the slot to a blank tile forever.
+      function armWatchdog() {
+        stopWatchdog();
+        watchdog = setTimeout(function () { watchdog = null; advance(); }, 12000);
+      }
+
+      function advance() {
+        stopWatchdog();
+        if (next >= steps.length) { giveUp(); return; }
+        var s = steps[next++];
+        img.style.width  = s.c.w + 'px';
+        img.style.height = s.c.h + 'px';
+        img.style.left   = s.c.left + 'px';
+        img.style.top    = s.c.top + 'px';
+        img.onload = function () {
+          stopWatchdog();
+          img.onload = img.onerror = null;
+          tile.classList.remove('is-missing');
+          if (!tile.contains(img)) tile.appendChild(img);
+          if (!finished) { finished = true; done(null, tile); }
+        };
+        img.onerror = function () {
+          stopWatchdog();
+          img.onload = img.onerror = null;
+          advance();
+        };
+        img.src = s.url;
+        armWatchdog();
+      }
+
+      function giveUp() {
+        stopWatchdog();
+        img.onload = img.onerror = null;
+        img.remove();
+        tile.classList.add('is-missing');
+        if (!finished) { finished = true; done(null, tile); }
+        var wait = heals.shift();
+        if (wait) {
+          setTimeout(function () {
+            if (!tile.isConnected) return;   // Leaflet dropped the slot; nothing to fix
+            next = 0;
+            tile.classList.remove('is-missing');
+            tile.appendChild(img);
+            advance();
+          }, wait);
+        }
+      }
+
+      advance();
 
       return tile;
     }

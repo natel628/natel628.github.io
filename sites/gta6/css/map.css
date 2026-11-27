@@ -31,12 +31,15 @@
   -webkit-user-select: none;
 }
 
-.g6-tile.is-edge { background-color: var(--g6-surface-2); }
+/* Placeholders. Deliberately LIGHTER than the map's night surfaces: a slot with
+   no artwork must read as "no map here", not as a hole punched through the map,
+   which is what a near-black fill looked like once the tiles around it loaded. */
+.g6-tile.is-edge { background-color: #33414d; }
 
 .g6-tile.is-missing {
-  background-color: var(--g6-surface);
+  background-color: #3b4a57;
   background-image: repeating-linear-gradient(45deg,
-    rgba(255,255,255,.05) 0 6px, transparent 6px 12px);
+    rgba(255,255,255,.11) 0 6px, transparent 6px 14px);
 }
 
 .leaflet-control-scale-line {

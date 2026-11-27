@@ -1102,6 +1102,35 @@ over the airfield on a 1440×900 desktop: 65 pins, 20 tiles, 0 broken. On a 390�
 overview, 28 pins at zoom 0, no horizontal overflow. Filtering Shops off drops 5,089 → 3,777 (exactly its
 1,312); searching "alien" returns 12 records including the airstrip record.
 
+**The remaining gaps were real refusals, and they are timed, not missing.** After the crop fix the
+bands were gone but a reader still saw holes at max zoom, so the tile host was measured directly instead
+of trusted:
+
+- in-game level 6, sampled across the map: **43 of 441 tiles got 403** (jsDelivr), the rest 200;
+- community level 5: **2 of 266 got 403**;
+- a burst of 40 simultaneous requests: **37 × 206, 3 × 403**;
+- the same refused URL served **200** seconds later, and `raw.githubusercontent.com` served **200** for
+  every refused tile. Nothing is missing from the repository: jsDelivr's edge refuses a share of
+  requests, and the share grows with the burst.
+
+The old retry is what turned a transient refusal into a hole: it asked jsDelivr again with `?retry=1`,
+which lands in the same rate bucket — the retry itself 403'd on a tile the plain URL had just served 200 —
+and after that it gave up with a near-black fill, which reads as a hole punched in the map.
+
+Each slot now walks a chain and only gives up after all of it: jsDelivr → GitHub raw → jsDelivr with a
+cache buster, at the native level first and then one and two levels coarser, so an incomplete deepest
+level still shows the same place at half resolution rather than a gap. A slot that exhausts the chain gets a
+**visible slate placeholder** (not black) and asks again after 4 s, 15 s and 45 s, stopping if Leaflet has
+already dropped it; a watchdog moves a slot on after 12 s so a stalled connection cannot pin it blank.
+
+Tested by refusing requests at the browser with Playwright, then measuring the slots:
+
+| Scenario | Requests refused | Result |
+| --- | --- | --- |
+| jsDelivr refuses every tile | all 32 | 20/20 slots rendered, all from GitHub raw, 0 holes |
+| both hosts refuse | 236 | 20 placeholders, `rgb(59,74,87)` with a hatch, none black |
+| refusals lift afterwards | — | all 20 filled in within 11–17 s, 0 placeholders left |
+
 **Max zoom now depends on the artwork.** The community pyramid is 1 px/m and the in-game one 2 px/m, but
 both basemaps were allowed to zoom to 1 — which drew the community art at 2× for no extra detail, the
 reason its labels looked oversized and soft. `TILE_SETS` now carries the deepest honest zoom (community 0,
