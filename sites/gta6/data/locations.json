@@ -720,9 +720,9 @@
       "id": "banshee-sweetbay-inn",
       "name": "Bravado Banshee — Sweetbay Inn",
       "category": "vehicle",
-      "region": "vice-city",
-      "county": "vice-dale",
-      "position": { "x": 1600, "y": 2500, "method": "estimated", "accuracy": 1500 },
+      "region": "capri",
+      "county": "mariana",
+      "position": { "x": -6680, "y": 120, "method": "estimated", "accuracy": 600 },
       "verification": "community",
       "summary": "Sports car parked outside the Sweetbay Inn on East Buckley Dr, Capri.",
       "hint": "Capri, East Buckley Drive, in front of the Sweetbay Inn. Shows up between 3 and 4 a.m.",
@@ -732,7 +732,8 @@
       "tips": [
         "3–4 a.m. only — sleep or wait out the clock.",
         "Key Cloner needed to keep it.",
-        "Pin is a region-level estimate; Capri is east of Vice City."
+        "Capri is a Gulf-coast town in Mariana County, south of Port Gellhorn where I-404 meets US-183 — not a Vice City suburb.",
+        "Pin marks central Capri: no published landmark for the Sweetbay Inn or East Buckley Drive, so the 3–4 a.m. spawn and the inn frontage are the identifier."
       ],
       "sources": [
         { "label": "Flamenco Neon — special vehicles", "url": "https://flamenconeon.com/en/guides/gta-6-special-vehicles-rare-cars-locations" },
@@ -1094,9 +1095,9 @@
       "id": "ghosts-exposed-parkland",
       "name": "Declasse Ghosts Exposed Parkland — Halloween house",
       "category": "vehicle",
-      "region": "vice-city",
-      "county": "vice-dale",
-      "position": { "x": 1650, "y": 2620, "method": "estimated", "accuracy": 1500 },
+      "region": "capri",
+      "county": "mariana",
+      "position": { "x": -6508, "y": 190, "method": "estimated", "accuracy": 300 },
       "verification": "community",
       "summary": "Black-and-turquoise '71 station wagon covered in ghosts and pumpkins, parked in the driveway of a Halloween house in Capri — the Ghostbusters nod, with Let's Haunt across the back.",
       "hint": "Capri, Mariana County: Fortuna Street at Viola Street, just south of Tortoise Lake. Look for the house with a giant skeleton sprawled across the roof, pumpkins filling the yard and yellow tape on the lawn; the wagon is in the driveway in front of the garage door.",
@@ -1113,7 +1114,7 @@
         "Registering it with Moses or at a Pay 'n' Spray strips the livery; take it back to Vice Vinyl afterwards to reapply it.",
         "Four trunk storage slots, so it doubles as a hauler.",
         "Grab the Book Swap at the house while you are there.",
-        "Pin is a region-level estimate: the guides give the street corner in Capri, east of Vice City, and no coordinates."
+        "Pin is anchored on Tortoise Lake, the named landmark: guides give the Fortuna/Viola corner and no coordinates, so the dot marks the ground just south of the lake."
       ],
       "sources": [
         { "label": "Hold To Reset — Ghostbusters car", "url": "https://holdtoreset.com/how-to-get-the-ghostbusters-car-in-gta-6/" },
@@ -1125,9 +1126,9 @@
       "id": "pixel-elegy-capri-yard",
       "name": "Annis Pixel Elegy — Capri Construction Yard",
       "category": "vehicle",
-      "region": "vice-city",
-      "county": "vice-dale",
-      "position": { "x": 1750, "y": 2540, "method": "estimated", "accuracy": 1200 },
+      "region": "capri",
+      "county": "mariana",
+      "position": { "x": -7184, "y": -157, "method": "estimated", "accuracy": 400 },
       "verification": "community",
       "summary": "Custom '90 Annis Elegy street racer with a unique design, locked in a yellow SCOOP container at the back of the Capri construction yard by the pier.",
       "hint": "Capri construction yard, by the pier. The container is at the back of the site — shove the portable toilet and the crate out of the way with a vehicle, then cut the padlock with the Cut-Off Tool.",
@@ -1140,7 +1141,8 @@
         "gtabase lists its security as modern and warns a Key Cloner may be needed; other guides treat it as a plain container. Bring the cloner if you have it.",
         "Register it to keep it, but note that the respray registration forces will cost you the unique design.",
         "No alarm and no mission gate reported — it is a free pickup once the container is open.",
-        "Pin is a region-level estimate: guides place the yard by the pier in Capri, east of Vice City, and give no coordinates."
+        "Pin is anchored on the Capri pier, which the yard sits beside; guides give the yard and no coordinates.",
+        "Capri is on the Gulf coast in Mariana County, south of Port Gellhorn — the yard is at the town's seaward edge, not in Vice City."
       ],
       "sources": [
         { "label": "gtabase — Pixel Elegy location", "url": "https://www.gtabase.com/gta-6/vehicles/pixel-elegy" },

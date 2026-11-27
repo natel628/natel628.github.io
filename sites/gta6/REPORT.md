@@ -178,3 +178,50 @@ Not added. The only primary source is a single reader comment on gtabase ("row 2
 - JSON parses; 53 records; no duplicate ids; no unknown category, region or county; every record hinted and sourced; both new records carry 6 tips.
 - `node --check` clean on `js/data.js`.
 - Not checked: rendered pins and detail panels were not opened in a browser; only the data and its references were validated.
+
+## 10. Capri is in Mariana County, and now it sits there
+
+Three records — the Banshee at the Sweetbay Inn, the Ghosts Exposed Parkland and the Pixel Elegy — were filed under `vice-city` / `vice-dale`. That was wrong. Every place list puts Capri on the Gulf coast in **Mariana County**, south of Port Gellhorn where I-404 meets US-183, and their pins sat in Vice City, roughly 8 km from the town.
+
+### Where the coordinates came from
+
+The basemap this project draws (YANIS, gtadb.org) publishes its own landmark dataset: `map/data/6/landmarks.json` in the gtadb.org repository, 4,642 landmarks with **world-metre positions in the same grid the tile pyramid uses**. That is the only coordinate source used here; nothing was eyeballed.
+
+The grid was verified before it was trusted, against anchors this dataset already had:
+
+| Anchor | Landmark dataset | Our existing pins |
+|---|---|---|
+| Key Lento | −2354, −5532 | −2450, −5600 (≈150 m apart) |
+| Vice City (Vice Regal, Washington Beach) | 1409, 2803 | 1200–1600, 2200–2800 |
+| Mount Kalaga | −3430, 6371 | −4000, 5800 region focus |
+
+Inside Capri the dataset gives Tortoise Lake at **−6508, 341**, the pier at **−7184, −157**, and a dense street cluster through −6650…−6750, 0…300 for the town centre.
+
+### What changed
+
+- **New region `capri`** in `data/regions.json`: label "Capri", county `mariana`, focus −6680/120 (the town-centre cluster), zoom −2. Regions are only used for the detail panel's label and as jump targets, so adding one needs no code change.
+- **Banshee** → `capri`/`mariana`, −6680/120, ±600 m. The dataset has no landmark for the Sweetbay Inn or East Buckley Drive, so the pin is the town centre and the tip says the 3–4 a.m. spawn is the identifier.
+- **Ghosts Exposed Parkland** → `capri`/`mariana`, −6508/190, ±300 m, anchored on Tortoise Lake, which the guides name ("just south of Tortoise Lake").
+- **Pixel Elegy** → `capri`/`mariana`, −7184/−157, ±400 m, anchored on the Capri pier the yard sits beside.
+- The three tips that claimed "Capri is east of Vice City" now say what the place lists say: a Gulf-coast town in Mariana County, south of Port Gellhorn.
+
+### Found while checking: other regions are misplaced too
+
+Matching our pins against the same landmark dataset turned up errors well beyond Capri. These are **not fixed here** — each needs its own landmark-by-landmark pass — but they are recorded so the next pass starts from facts:
+
+| Area | Landmark dataset | Where our pins sit |
+|---|---|---|
+| Port Gellhorn | ≈ −6350, 2735 (and −6860, 3970 for La Cascara) | 0…500, 1100…1600 — about 6.5 km east |
+| Watson Bay | ≈ −5255, −3390 | −2900, −6400 — about 3.5 km out |
+| Starfish Island | ≈ 800, 350 | 1100, 2500 — about 2 km north |
+| Hamlet | ≈ −2600, −3400 | −1100, −3300 — about 1.5 km east |
+| Key Lento, Vice City, Mount Kalaga | matches our pins within a few hundred metres | — |
+
+So the Capri pins now sit correctly relative to the artwork but far from the Port Gellhorn cluster, which is itself in the wrong place. Re-anchoring the Gulf coast, Watson Bay, Starfish and Hamlet records is the obvious follow-up job.
+
+### Checks
+
+- `regions.json` parses with 8 regions; `capri` is referenced by 3 records and every region reference resolves.
+- `locations.json` parses; 53 records; no duplicate ids; no unknown category, region or county.
+- `node --check` clean on `js/data.js`.
+- Not checked: the moved pins were not viewed in a browser this round.
