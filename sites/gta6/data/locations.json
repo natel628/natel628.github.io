@@ -1120,6 +1120,60 @@
         { "label": "FandomWire — location & registering", "url": "https://fandomwire.com/gta-6-ghostbusters-car-location-and-how-to-register/" },
         { "label": "GTA6Map — Ghosts Exposed Parkland", "url": "https://gta6map.city/secrets/ghosts-exposed-parkland-ghostbusters-car/" }
       ]
+    },
+    {
+      "id": "pixel-elegy-capri-yard",
+      "name": "Annis Pixel Elegy — Capri Construction Yard",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1750, "y": 2540, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Custom '90 Annis Elegy street racer with a unique design, locked in a yellow SCOOP container at the back of the Capri construction yard by the pier.",
+      "hint": "Capri construction yard, by the pier. The container is at the back of the site — shove the portable toilet and the crate out of the way with a vehicle, then cut the padlock with the Cut-Off Tool.",
+      "rewards": ["Annis Pixel Elegy (custom '90 street racer, Skyline GT-R-inspired)"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Cut-Off Tool required (Chapter 3, Meet the Heders).",
+        "The portaloo and the crate are what block the doors — push them with a car or truck, not on foot.",
+        "gtabase lists its security as modern and warns a Key Cloner may be needed; other guides treat it as a plain container. Bring the cloner if you have it.",
+        "Register it to keep it, but note that the respray registration forces will cost you the unique design.",
+        "No alarm and no mission gate reported — it is a free pickup once the container is open.",
+        "Pin is a region-level estimate: guides place the yard by the pier in Capri, east of Vice City, and give no coordinates."
+      ],
+      "sources": [
+        { "label": "gtabase — Pixel Elegy location", "url": "https://www.gtabase.com/gta-6/vehicles/pixel-elegy" },
+        { "label": "Sportskeeda — hidden container cars", "url": "https://www.sportskeeda.com/gta/all-hidden-cars-shipping-containers-gta-6-find" },
+        { "label": "Wikily — Pixel Elegy (in-game description)", "url": "https://wikily.gg/gta-6/cars/pixel-elegy" }
+      ]
+    },
+    {
+      "id": "reynolds-kit-car-wild-hog",
+      "name": "Reynolds Kit Car wreck 3 — Wild Hog Point beach",
+      "category": "vehicle",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": -350, "y": 1050, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Third of the five Reynolds Kit Car wrecks for Wyman's Classic Cars: an orange container on its own on the west beach of Wild Hog Point, southwest of Port Gellhorn. You scan it, you do not drive it.",
+      "hint": "West of Port Gellhorn on Wild Hog Point. Drive to the end of the airstrip, turn right onto the sand road, and when the beach is directly west of you leave the road towards the water — you will find a scatter of discarded containers. The lone orange one is the car: cut it open with the Cut-Off Tool and scan the wreck inside with WAiNK.",
+      "rewards": ["Reynolds Kit Car wreck 3 of 5 (WAiNK scan)", "Progress toward Wyman's Reynolds Kit Car"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "This is a scan, not a free car. Wyman builds the Reynolds Kit Car only after all five wrecks and a $1,500 mechanics fee paid through BuckMe.",
+        "Ultimate Edition only — Wyman's Classic Cars is the Ultimate Edition side quest that opens in Chapter 2.",
+        "Cut-Off Tool required (Chapter 3, Meet the Heders); guides also call it the angle grinder.",
+        "Track progress under Exploration > Find Cars for Wyman.",
+        "Register the finished car at a Pay 'n' Spray for $100, or park it in a garage you own, or it stays at his scrapyard.",
+        "Pin is a beach-level estimate; the airstrip and the lone orange container are the landmarks that matter."
+      ],
+      "sources": [
+        { "label": "IGN — Reynolds Kit Car locations", "url": "https://www.ign.com/wikis/gta-6/Reynolds_Kit_Car_Locations" },
+        { "label": "PC Gamer — kit car locations", "url": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-kit-car-locations" },
+        { "label": "Push Square — Wyman's classic cars", "url": "https://www.pushsquare.com/guides/gta-6-wymans-classic-car-locations" }
+      ]
     }
   ]
 }

@@ -152,3 +152,29 @@ The **Nutbuster**, the yellow Kill Bill Pussy Wagon parody pickup, has no fixed 
 - `node --check` clean on `js/data.js` and `js/detail.js`.
 - Category totals after the change: 16 vehicle, 12 stash, 11 weapon, 7 easter-egg, 2 collectible, 2 secret-mission, 1 activity.
 - Not checked: the rendered pins and detail panels were not opened in a browser this round — only the data files and references were validated.
+
+## 9. Two more container finds, and one rejected
+
+`data/locations.json` is now **53 entries**; `DATA_V` is `6`.
+
+### Added
+
+| Entry | Category | Region | Source strength |
+|---|---|---|---|
+| Annis Pixel Elegy — Capri Construction Yard | vehicle | Vice City | gtabase has a dedicated location page (container at the back of the site, move the portaloo and crate, Cut-Off Tool); Sportskeeda and Wikily's in-game description agree on Capri. |
+| Reynolds Kit Car wreck 3 — Wild Hog Point beach | vehicle | Port Gellhorn | IGN, PC Gamer and Push Square all describe the same lone orange container on the west beach, reached from the end of the airstrip. |
+
+Two things are called out in the data rather than glossed over:
+
+- The **Wild Hog Point entry is a scan, not a car**. It is one of the five Reynolds Kit Car wrecks for Wyman's Classic Cars, an **Ultimate Edition** side quest: the player scans the wreck with WAiNK, pays Wyman $1,500 through BuckMe after all five, and only then gets a car. Its summary says so in the first line.
+- gtabase marks the Pixel Elegy's security as "modern" and suggests a Key Cloner may be needed, while the other guides treat it as a plain container. The tip tells the reader to bring the cloner rather than asserting either answer.
+
+### Rejected: Vapid Cuban Hermes at "Port Galahad docks"
+
+Not added. The only primary source is a single reader comment on gtabase ("row 25 tier 1 is the clue in the Dock office on a pc … you'll need a telehandler"), which Sportskeeda then reproduces in its list. No guide, video or map has independently confirmed it, and **Port Galahad does not appear on any of the published place lists** — the official-map breakdowns name ten towns (Vice City, Port Gellhorn, Ambrosia, Hamlet, Capri, Belville, Waning Sands, Watson Bay, Key Lento, Southwind) and no Port Galahad, so the report may be a mishearing of Port Gellhorn. A pin would have needed both an unverified car and an invented location, so it stays out until a walkthrough covers it.
+
+### Checks
+
+- JSON parses; 53 records; no duplicate ids; no unknown category, region or county; every record hinted and sourced; both new records carry 6 tips.
+- `node --check` clean on `js/data.js`.
+- Not checked: rendered pins and detail panels were not opened in a browser; only the data and its references were validated.

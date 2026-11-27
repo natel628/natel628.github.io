@@ -65,7 +65,7 @@ G6.data = (function () {
   // Bump DATA_V whenever the JSON in data/ changes. GitHub Pages caches files for
   // ten minutes, so without this returning visitors keep seeing the old dataset
   // long after a deploy.
-  var DATA_V = '5';
+  var DATA_V = '6';
 
   function load(basePath) {
     var base = (basePath || '.').replace(/\/$/, '');
