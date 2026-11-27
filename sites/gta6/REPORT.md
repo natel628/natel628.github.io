@@ -115,3 +115,40 @@ Two other honesty points: the Emerald/Emerus and both Ambrosia Gauntlets come fr
 - JSON: 45 records, no duplicate ids, no unknown category or region, every record sourced, no missing sources.
 - Browser: 45 pins, 45 list rows, 10 category rows including "Rare Vehicles", 12 vehicle pins render with the new glyph and the mint colour, filtering to vehicles gives "12 of 45", the Hellfire detail renders 3 tips and its community badge, zero failed requests.
 - `node --check js/data.js` and `map.js` parse clean; sprite parses as valid XML with 13 symbols.
+
+## 8. Underwater labs, container cars, pet cemetery and the Halloween wagon
+
+`data/locations.json` went from 45 to **51 entries**: five secrets and vehicles that were missing, plus the five BURG labs folded into one record. `tips` now covers 41 records, `code` 15. `DATA_V` is `5`.
+
+### What was added
+
+| Entry | Category | Region | Why it is here |
+|---|---|---|---|
+| BURG underwater research labs (five) | easter-egg | Leonida Keys | Five seabed stations under unmarked yellow platforms, one safe, code `80085`, meteorite reward. Three outlets, one with gameplay video. |
+| Caliente Picador & Royal Sanchez — container field | vehicle | Grassrivers | Two free vehicles in a container yard north of Grassrivers; bulldozer needed. Two outlets. |
+| Blue Drake Penumbra — raceway container | vehicle | Port Gellhorn | Yellow SCOOP container by the raceway building; nitrous fitted; Cut-Off Tool. Two outlets. |
+| Muck Spreader Bandito — Hamlet containers | vehicle | Mariana | Dune buggy in the yellow containers on the south side of Hamlet. Two outlets. |
+| Pet Cemetery — Grayson | easter-egg | Mount Kalaga | WAiNK Curiosity 19/35 in the woods by SR-73; the `Ghost Trail` / `Turn back` signs are the route. Three outlets, one filmed on PS5. |
+| Declasse Ghosts Exposed Parkland — Halloween house | vehicle | Vice City | Ghostbusters-style wagon at Fortuna & Viola in Capri; `Spooked Out` livery. Three outlets. |
+
+### The "Millport" correction
+
+The lead arrived as "five underwater research labs at Millport". That is how one fan map files them, but its own text places the first lab east of Little Hardin Island in Leonard County and the rest off the Keys coast, and the two walkthroughs that list all five put them at Key Lento, Mile Zero Air Station, Little Hardin Island, Wild Hog Point and the Sandbars — none of them at Millport or Lake Tallaloko. The record says so in the tips rather than repeating the mislabel, and names the building each lab sits beside, because the guides do not agree on the facility numbers: one calls the meteorite lab "Facility 1", another numbers it fourth.
+
+### What was deliberately not added
+
+The **Nutbuster**, the yellow Kill Bill Pussy Wagon parody pickup, has no fixed location. The source that documents it files it as "anywhere in the game": it turns up as a random car while you are stealing vehicles for a job, and is then yours to take. A map pin would invent a spot that does not exist, so it is left out until someone publishes a spawn point.
+
+### Honesty notes
+
+- All six records are `position.method: "estimated"`. Four are 800–1500 m and are anchored on a named street, raceway or yard. The pet cemetery is **4000 m** and the tips say plainly that the pin is park-level, because Grayson sits on the Mount Kalaga park edge and no guide publishes coordinates — the written route is the useful part.
+- The BURG pin marks the Key Lento station only, because that is the station you must visit first; the tip list carries the other four. One pin for five scattered sites is a compromise, and the record says which site the dot is on.
+- Two guide disagreements are recorded instead of silently resolved: the Bandito is "Muck Spreader" to one outlet and "Muxbreeder" to another, and the Grassrivers yard's yellow container may or may not also need the Cut-Off Tool — the tip tells the reader to bring it.
+- The zombie-deer tattoo that one player report ties to a cat on the Ghost Trail is flagged as unconfirmed: the outlet that filmed the cemetery walked up in daylight and got neither cat nor tattoo.
+
+### Checks
+
+- JSON parses; 51 records; no duplicate ids; no unknown category, region or county; every record has a hint and at least one source; all six new records carry 4–7 tips.
+- `node --check` clean on `js/data.js` and `js/detail.js`.
+- Category totals after the change: 16 vehicle, 12 stash, 11 weapon, 7 easter-egg, 2 collectible, 2 secret-mission, 1 activity.
+- Not checked: the rendered pins and detail panels were not opened in a browser this round — only the data files and references were validated.

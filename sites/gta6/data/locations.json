@@ -956,6 +956,170 @@
       "sources": [
         { "label": "GTAside — easter eggs", "url": "https://gtaside.com/tips/gta6/easter-eggs" }
       ]
+    },
+    {
+      "id": "burg-underwater-labs",
+      "name": "BURG underwater research labs (five)",
+      "category": "easter-egg",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -2050, "y": -5750, "method": "estimated", "accuracy": 800 },
+      "verification": "community",
+      "summary": "Five abandoned BURG Industries research stations on the seabed, each under an unmarked yellow platform. Their laptops tell one story, and one lab's safe holds a meteorite.",
+      "hint": "Start in open water east of Key Lento: find the yellow platform, climb down its ladder, dive under the structure and swim up through the hatch in its underside. Read the laptop, then close it — the Locate Underwater Meteorite task starts and the messages give the safe code. The other four labs are listed in the tips.",
+      "rewards": [
+        "Meteorite Fragment (safe code 80085)",
+        "Locate Underwater Meteorite task",
+        "Five of the 33 Underwater Discoveries that count toward 100%"
+      ],
+      "code": "80085",
+      "risk": "low",
+      "tips": [
+        "The five are spread around the coast, not in one place: east of Key Lento, west of Mile Zero Air Station (south of the Riquezas Keys — this is the one with the meteorite safe), off Little Hardin Island in Leonard County, off Wild Hog Point in Kelly County, and beside the Sandbars.",
+        "This pin marks the Key Lento station because it is the one to visit first: it grants the objective and the code.",
+        "Every lab is entered the same way — yellow platform on the surface, ladder down, dive underneath, swim up through the hatch in the floor.",
+        "Bring scuba gear plus a boat, or a Sea Sparrow, which lands on water and saves a long trip between sites.",
+        "Guides disagree on the facility numbers (one calls the meteorite lab Facility 1, another numbers it fourth), so navigate by the landmark rather than the number.",
+        "A second meteorite lies on the seabed outside the meteorite lab and would not respond to interaction for the guide that tried it; the interior safe is the one that works.",
+        "The mystery is unfinished: the objective can stay active after the pickup, and one guide was able to take the meteorite twice."
+      ],
+      "sources": [
+        { "label": "gta6bugs — BURG facilities & safe code", "url": "https://gta6bugs.com/easter-eggs/burg-industries-underwater-facilities-meteorite" },
+        { "label": "itemlevel — all five facilities", "url": "https://itemlevel.net/gta-6-all-underwater-research-facilities-meteorite-locations/" },
+        { "label": "GTA6Map — five underwater labs", "url": "https://gta6map.city/secrets/underwater-research-facilities-meteorite-mystery/" }
+      ]
+    },
+    {
+      "id": "container-picador-grassrivers",
+      "name": "Caliente Picador & Royal Sanchez — container field",
+      "category": "vehicle",
+      "region": "grassrivers",
+      "county": "mariana",
+      "position": { "x": -2700, "y": -4350, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Two free vehicles in shipping containers in a field just above Grass Rivers: a yellow container holds the Caliente Picador, an orange one the Royal Sanchez motorcycle.",
+      "hint": "Container storage yard in the field a little above (north of) Grass Rivers, behind a broken building. Get into the broken building and push the stacked containers aside with a bulldozer until the yellow container has room to open.",
+      "rewards": ["Declasse Caliente Picador", "Royal Sanchez motorcycle"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Bulldozer first — the stacked containers in front of the yellow one block its doors.",
+        "Most guides only mention the bulldozer at this yard, but the yellow SCOOP containers at the other two spots need the Cut-Off Tool (Chapter 3, Meet the Heders). Bring it in case this yard's containers are locked too.",
+        "Sources describe the containers as having no alarm.",
+        "To keep either one, garage it before you switch character, then register it at a Pay 'n' Spray.",
+        "North Mariana County is the same yard to both guides; the pin is a yard-level estimate, not a container number."
+      ],
+      "sources": [
+        { "label": "Sportskeeda — hidden container cars", "url": "https://www.sportskeeda.com/gta/all-hidden-cars-shipping-containers-gta-6-find" },
+        { "label": "GTA6Map — three container cars", "url": "https://gta6map.city/secrets/container-cars-grassrivers-gellhorn-hamlet/" }
+      ]
+    },
+    {
+      "id": "container-penumbra-gellhorn",
+      "name": "Blue Drake Penumbra — raceway container",
+      "category": "vehicle",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": 560, "y": 1560, "method": "estimated", "accuracy": 800 },
+      "verification": "community",
+      "summary": "Blue Drake Penumbra with nitrous already fitted, in a yellow SCOOP container outside the raceway building, south Port Gellhorn.",
+      "hint": "South of Port Gellhorn by the race tracks — the yellow container next to the Port Gellhorn raceway building. Cut the padlock with the Cut-Off Tool.",
+      "rewards": ["Blue Drake Penumbra (nitrous fitted)"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Cut-Off Tool required; you get it in the Chapter 3 mission Meet the Heders and keep it for good.",
+        "Nitrous is already installed, so it is quick off the line.",
+        "Container has no alarm.",
+        "The Drifter Elegy entry points at the workshop behind the drag strip; this container sits by the raceway building itself."
+      ],
+      "sources": [
+        { "label": "Sportskeeda — hidden container cars", "url": "https://www.sportskeeda.com/gta/all-hidden-cars-shipping-containers-gta-6-find" },
+        { "label": "GTA6Map — three container cars", "url": "https://gta6map.city/secrets/container-cars-grassrivers-gellhorn-hamlet/" }
+      ]
+    },
+    {
+      "id": "container-bandito-hamlet",
+      "name": "Muck Spreader Bandito — Hamlet containers",
+      "category": "vehicle",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -1120, "y": -3180, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Dune buggy in one of the yellow containers on the south side of Hamlet, near Boone Speedway.",
+      "hint": "South side of Hamlet. Open the yellow container beside the building with the Cut-Off Tool.",
+      "rewards": ["Muck Spreader Bandito (dune buggy)"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Cut-Off Tool required (Chapter 3, Meet the Heders).",
+        "Sources spell it both Muck Spreader and Muxbreeder Bandito — same vehicle.",
+        "Container has no alarm.",
+        "Boone Speedway is the anchor; the containers are on the south side of Hamlet near it."
+      ],
+      "sources": [
+        { "label": "Sportskeeda — hidden container cars", "url": "https://www.sportskeeda.com/gta/all-hidden-cars-shipping-containers-gta-6-find" },
+        { "label": "GTA6Map — three container cars", "url": "https://gta6map.city/secrets/container-cars-grassrivers-gellhorn-hamlet/" }
+      ]
+    },
+    {
+      "id": "pet-cemetery-grayson",
+      "name": "Pet Cemetery — Grayson",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -3900, "y": 5600, "method": "estimated", "accuracy": 4000 },
+      "verification": "community",
+      "summary": "A clearing of tiny graves in the woods by SR-73 in southern Grayson — a Pet Sematary nod that scans as WAiNK Curiosity 19 of 35.",
+      "hint": "Grayson, south-west Lummox County on SR-45. Park at Hucks Pump n Go and read the missing-pet posters on the walls, then walk round the back past the green dumpsters to the breeze-block wall with 'Ghost Trail', 'Sightings in forest' and 'Turn back' signs nailed to it. The dirt path runs up the hill on the left of the wall — follow it into the trees to the clearing.",
+      "rewards": [
+        "WAiNK Curiosity 'Pet Cemetery' (19 of 35)",
+        "Lore: the names on the graves match the missing-pet posters in town"
+      ],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Second route: come down SR-73 into southern Grayson and use Focus to follow the strange animal noises to the graves.",
+        "Read the posters before you climb. Dempster, Scramps, Mr. Jiggles, Brendon, Geep and Bonzo are the joke, and their names are on the stones.",
+        "A player report says following a cat through the fog unlocks a zombie deer tattoo; the outlet that filmed the cemetery walked up in daylight, saw no cat, and got no tattoo. Treat the tattoo as unconfirmed.",
+        "Pin is park-level, not grave-level: Grayson sits at the south-west corner of Lummox County on the Mount Kalaga park edge, so the written directions are what will get you there."
+      ],
+      "sources": [
+        { "label": "Middle East Gamer — pet cemetery walkthrough", "url": "https://www.middleeastgamer.com/gta-6-pet-cemetery" },
+        { "label": "gta6bugs — Grayson & Pet Sematary", "url": "http://gta6bugs.com/easter-eggs/grayson-haunted-town-pet-cemetery" },
+        { "label": "GTA 6 Notebook — Pet Sematary egg", "url": "https://gta6notebook.com/collectibles/where-is-the-pet-sematary-easter-egg-in-gta-6/" }
+      ]
+    },
+    {
+      "id": "ghosts-exposed-parkland",
+      "name": "Declasse Ghosts Exposed Parkland — Halloween house",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1650, "y": 2620, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Black-and-turquoise '71 station wagon covered in ghosts and pumpkins, parked in the driveway of a Halloween house in Capri — the Ghostbusters nod, with Let's Haunt across the back.",
+      "hint": "Capri, Mariana County: Fortuna Street at Viola Street, just south of Tortoise Lake. Look for the house with a giant skeleton sprawled across the roof, pumpkins filling the yard and yellow tape on the lawn; the wagon is in the driveway in front of the garage door.",
+      "rewards": [
+        "Declasse Ghosts Exposed Parkland",
+        "'Spooked Out' livery unlocked at Vice Vinyl",
+        "Book Swap stand at the same house"
+      ],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "No lock, no alarm, no tracker and no window to break — walk up and get in.",
+        "Sitting in the driver's seat unlocks the 'Spooked Out' livery at Vice Vinyl.",
+        "Registering it with Moses or at a Pay 'n' Spray strips the livery; take it back to Vice Vinyl afterwards to reapply it.",
+        "Four trunk storage slots, so it doubles as a hauler.",
+        "Grab the Book Swap at the house while you are there.",
+        "Pin is a region-level estimate: the guides give the street corner in Capri, east of Vice City, and no coordinates."
+      ],
+      "sources": [
+        { "label": "Hold To Reset — Ghostbusters car", "url": "https://holdtoreset.com/how-to-get-the-ghostbusters-car-in-gta-6/" },
+        { "label": "FandomWire — location & registering", "url": "https://fandomwire.com/gta-6-ghostbusters-car-location-and-how-to-register/" },
+        { "label": "GTA6Map — Ghosts Exposed Parkland", "url": "https://gta6map.city/secrets/ghosts-exposed-parkland-ghostbusters-car/" }
+      ]
     }
   ]
 }
