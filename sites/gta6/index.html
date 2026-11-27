@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/base.css?v=2">
   <link rel="stylesheet" href="css/layout.css?v=2">
   <link rel="stylesheet" href="css/map.css?v=4">
-  <link rel="stylesheet" href="css/components.css?v=1">
+  <link rel="stylesheet" href="css/components.css?v=3">
 </head>
 <body>
 
@@ -71,8 +71,8 @@
         <div class="search-wrap">
           <span class="search-icon" aria-hidden="true">⌕</span>
           <input id="searchInput" type="search" class="search-input"
-                 placeholder="Search locations…"
-                 aria-label="Search locations"
+                 placeholder="Search names, codes, tips…"
+                 aria-label="Search locations, codes and tips"
                  autocomplete="off" spellcheck="false">
           <button id="searchClear" class="search-clear" aria-label="Clear search">×</button>
         </div>
@@ -135,6 +135,14 @@
           <button id="clearDestBtn" class="nav-btn rail-text" hidden>✕ Clear Destination</button>
           <button id="dropPinBtn" class="nav-btn rail-text">📍 Drop Custom Pin</button>
         </div>
+      </div>
+
+      <!-- Codes & keys -->
+      <div class="rail-section">
+        <div class="rail-section-header rail-text"><span>Reference</span></div>
+        <button id="codesBtn" class="nav-btn rail-text" aria-haspopup="dialog" aria-controls="codesModal">
+          Codes &amp; keys
+        </button>
       </div>
 
       <!-- Visible count + list -->
@@ -240,6 +248,19 @@
   </div>
 </div>
 
+<!-- ── Codes & keys modal ───────────────────────────────────── -->
+<div id="codesModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="codesModalTitle">
+  <div class="modal">
+    <h2 id="codesModalTitle" class="modal-title">Codes &amp; keys</h2>
+    <button class="modal-close" aria-label="Close codes and keys">×</button>
+    <p class="codes-intro" id="codesIntro">Every safe, keypad and door code on this map, with the place it opens. Click one to open its pin.</p>
+    <input id="codesSearch" type="search" class="search-input codes-search"
+           placeholder="Filter by code, place or region…" aria-label="Filter codes" autocomplete="off">
+    <div id="codesList" class="codes-list"></div>
+    <p id="codesEmpty" class="codes-empty" hidden>No codes match that filter.</p>
+  </div>
+</div>
+
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
@@ -252,10 +273,10 @@
 <script src="js/data.js?v=14"></script>
 <script src="js/map.js?v=7"></script>
 <script src="js/markers.js?v=4"></script>
-<script src="js/filters.js?v=2"></script>
+<script src="js/filters.js?v=3"></script>
 <script src="js/detail.js?v=5"></script>
 <script src="js/navigation.js?v=1"></script>
-<script src="js/app.js?v=4"></script>
+<script src="js/app.js?v=7"></script>
 
 </body>
 </html>

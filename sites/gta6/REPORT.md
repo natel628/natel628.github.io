@@ -760,3 +760,39 @@ Measured in the browser on the shipped build:
 - Filtering to meteorites only at a clustered zoom gave 8 discs + 118 pins for 135 meteorites, so filtering
   and bucketing compose; clearing the filter restored all 531.
 - `js/markers.js?v=4` and `css/map.css?v=4` in `index.html`. No JSON changed, so `DATA_V` stays 14.
+
+
+## 19. Search by code, and a list of every code
+
+Search only looked at name, summary, hint, region, category and rewards, so typing a code found nothing —
+exactly the question a player has when standing at a keypad (`4444`, `80085`, `031462`). `js/filters.js` now
+includes `code` and `tips` in the haystack, so a code, or a word from a tip (`bulldozer`), returns the record
+that carries it.
+
+That still assumes you know *which* pin the code belongs to. The rail now has a **Reference → Codes & keys**
+button (17 records) that opens a plain list ordered by the code itself:
+
+- Each row shows the code in mono type with any caveat demoted to grey — `1886` sized large,
+  "(1886 / 1887 disputed between sources)" small — so the number scans first and the doubt is still visible.
+- Paired codes keep their pairing: `0072 (safe) / 0212 (boathouse)` reads as one row rather than two
+  unlabelled numbers.
+- Under it: the record's name, region and category. Clicking a row selects that pin, flies to it and closes
+  the dialog.
+- A filter box inside the dialog searches code, name, hint, region and tips, so `0314` narrows to the Black
+  Eagle door/safe pair without leaving the list.
+- Rows carry an explicit `aria-label` (`«code» — «record», «region» · «category»`), because the visible text
+  is three stacked lines with no separators for a screen reader to read as one control.
+
+No confidence is invented in the list: disputed codes keep both numbers, `2314` keeps "commonly reported —
+may vary per save", `955214` keeps "(reported)". The list is a reading aid for the same data the pins show.
+
+### Checks
+
+- `node --check js/app.js`, `node --check js/filters.js` clean.
+- In the browser: rail search `80085` returns 3 pins (where the code is learned and where it is used),
+  `4444` returns only Janjak's Garage, a tip word (`bulldozer`) returns the Picador container record;
+  `031462` returns only the Black Eagle warehouse.
+- Codes dialog opens with 17 rows in numeric order (0072, 0300, 1819, 1886, 2008, 2314, 3612, 4444, 6823,
+  6969, 7777, 44017, 80085, 360782, 789987, 955214); its filter narrows to the right row; clicking the `1819`
+  row closed the dialog, selected Watson Bay safehouse and the detail panel opened on it.
+- `js/filters.js?v=3`, `js/app.js?v=7`, `css/components.css?v=3`. No JSON changed, so `DATA_V` stays 14.

@@ -848,6 +848,124 @@
     });
   }
 
+  // Codes like "789987 (door) / 031462 (safe)" keep their pairings, but the
+  // parenthetical part is demoted so the numbers still scan at a glance.
+  function _appendCodeText(el, raw) {
+    var text = String(raw || '');
+    var re   = /\(([^)]*)\)/g;
+    var last = 0;
+    var m;
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) el.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var note = document.createElement('span');
+      note.className = 'code-note';
+      note.textContent = '(' + m[1] + ')';
+      el.appendChild(note);
+      last = m.index + m[0].length;
+    }
+    if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+  }
+
+  // ── Codes & keys ───────────────────────────────────────────
+  // "What is the code for this door" should not require knowing which pin owns
+  // the code, so the list is ordered by the code itself and filters on its own.
+  function buildCodesDialog(appData) {
+    var modal = document.getElementById('codesModal');
+    var list  = document.getElementById('codesList');
+    var input = document.getElementById('codesSearch');
+    var empty = document.getElementById('codesEmpty');
+    var btn   = document.getElementById('codesBtn');
+    if (!modal || !list || !btn) return;
+
+    var regionLabel = {};
+    var catLabel    = {};
+    (appData.regions || []).forEach(function (r) { regionLabel[r.id] = r.label || r.name || r.id; });
+    (appData.categories || []).forEach(function (c) { catLabel[c.id] = c.label || c.id; });
+
+    var rows = (appData.locations || []).filter(function (l) { return l.code; })
+      .sort(function (a, b) {
+        var na = String(a.code).match(/\d+/);
+        var nb = String(b.code).match(/\d+/);
+        var va = na ? parseInt(na[0], 10) : Infinity;
+        var vb = nb ? parseInt(nb[0], 10) : Infinity;
+        if (va !== vb) return va - vb;
+        return a.name.localeCompare(b.name);
+      });
+
+    btn.textContent = 'Codes & keys \u00b7 ' + rows.length;
+
+    var entries = [];
+    list.textContent = '';
+
+    rows.forEach(function (loc) {
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'code-row';
+
+      var code = document.createElement('span');
+      code.className = 'code-value';
+      _appendCodeText(code, loc.code);
+
+      var name = document.createElement('span');
+      name.className = 'code-name';
+      name.textContent = loc.name;
+
+      var where = document.createElement('span');
+      where.className = 'code-where';
+      var whereText = (regionLabel[loc.region] || loc.region || '') + ' \u00b7 ' +
+                      (catLabel[loc.category] || loc.category || '');
+      where.textContent = whereText;
+
+      // The visible text is three stacked lines with no separators, so give the
+      // button one readable label for screen readers.
+      row.setAttribute('aria-label', loc.code + ' \u2014 ' + loc.name + ', ' + whereText);
+
+      row.appendChild(code);
+      row.appendChild(name);
+      row.appendChild(where);
+
+      row.addEventListener('click', function () {
+        G6.state.set({ selectedId: loc.id });
+        G6.map.flyTo(loc.position.x, loc.position.y, 1);
+        modal.classList.remove('open');
+      });
+
+      list.appendChild(row);
+
+      entries.push({
+        el:  row,
+        hay: [loc.code, loc.name, loc.hint, loc.region, regionLabel[loc.region] || '',
+              loc.category, catLabel[loc.category] || '', (loc.tips || []).join(' ')]
+               .join(' ').toLowerCase()
+      });
+    });
+
+    function applyFilter() {
+      var q     = (input && input.value ? input.value : '').trim().toLowerCase();
+      var shown = 0;
+      entries.forEach(function (e) {
+        var hit = !q || e.hay.indexOf(q) !== -1;
+        e.el.hidden = !hit;
+        if (hit) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+    }
+
+    if (input) input.addEventListener('input', G6.dom.debounce(applyFilter, 80));
+
+    btn.addEventListener('click', function () {
+      modal.classList.add('open');
+      if (input) {
+        input.value = '';
+        applyFilter();
+        input.focus();
+      } else {
+        var close = modal.querySelector('.modal-close');
+        if (close) close.focus();
+      }
+    });
+  }
+
   // ── State change handler ───────────────────────────────────
   function onStateChange(s) {
     // Re-render markers
@@ -923,6 +1041,7 @@
     buildToolbar();
     buildBottomSheet(appData);
     buildCreditsDialog(appData.credits);
+    buildCodesDialog(appData);
     buildLocationList(appData);
     updateProgressRing(found, appData.locations);
 

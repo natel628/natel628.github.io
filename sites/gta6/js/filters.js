@@ -16,7 +16,10 @@ G6.filters = (function () {
       if (activeVerif.indexOf(v) === -1)                           return;
       if (hideFound && found[loc.id])                               return;
       if (search) {
+        // Codes and tips are searchable too: the question is usually "what is
+        // 80085" or "is there a code here", not "what is this pin called".
         var haystack = [loc.name, loc.summary, loc.hint, loc.region, loc.category,
+                        loc.code || '', (loc.tips || []).join(' '),
                         (loc.rewards || []).join(' ')].join(' ').toLowerCase();
         if (haystack.indexOf(search) === -1)                       return;
       }

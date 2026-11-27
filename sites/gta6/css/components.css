@@ -71,6 +71,66 @@
 .search-clear.visible { display: flex; }
 .search-clear:hover { color: var(--g6-text); background: var(--g6-surface-3); }
 
+/* ── Codes & keys ──────────────────────────────────────── */
+.codes-intro {
+  margin: 0 0 var(--sp-3);
+  font-size: .72rem;
+  color: var(--g6-muted);
+}
+
+.codes-search { width: 100%; margin-bottom: var(--sp-3); }
+
+.codes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 55vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.code-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  width: 100%;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--g6-text);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-1), border-color var(--dur-1);
+}
+.code-row:hover { background: var(--g6-surface-2); }
+.code-row:focus-visible { border-color: var(--g6-accent); outline: none; }
+
+.code-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--g6-accent-2);
+  word-break: break-word;
+}
+
+.code-note {
+  font-size: .76em;
+  font-weight: 500;
+  color: var(--g6-muted);
+}
+
+.code-name { font-size: .8rem; }
+.code-where { font-size: .68rem; color: var(--g6-muted); }
+
+.codes-empty {
+  margin: var(--sp-3) 0 0;
+  font-size: .72rem;
+  color: var(--g6-dim);
+}
+
 /* ── Progress ring ───────────────────────────────────────── */
 .progress-block {
   display: flex;
