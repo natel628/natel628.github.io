@@ -90,3 +90,28 @@ Verified: toggling swaps `/yanis,18/` ⇄ `/day/`, `aria-checked` follows, the c
 Validated: 31 records, no duplicate ids, no unknown category or region references, all records sourced. In the browser: 31 pins and 31 rows, 9 category rows, a coded entry renders its keypad code and 3 tips, a secret mission renders 4 tips and snapshots to the right sheet position.
 
 One deployment wrinkle: GitHub Pages caches `data/*.json` for ten minutes, so returning visitors kept getting the old 16-record file after the expansion shipped. `js/data.js` now requests all four data files with `?v=<DATA_V>` — **bump `DATA_V` whenever the JSON changes**, or the cache will hide the edit for up to ten minutes.
+
+## 7. Rare vehicles and the legend mask
+
+`data/locations.json` went from 31 to **45 entries**: 12 vehicles and 2 more secrets, and a new **Rare Vehicles** category (`vehicle`, mint pin, new `pin-vehicle` sprite symbol with a car silhouette). `tips` now covers 35 records.
+
+### Vehicles, and what "agreement" means here
+
+The car data is weaker than the stash data, and the report should say so. Two independent guides (GTA Bay and Flamenco Neon / macetesgta6) agree on the Infernus in the Crosstown police garage, the Tempesta tow-truck event, the Vitello villa and the Banshee outside the Sweetbay Inn; those are the entries worth trusting. Everything else rests on one guide and is tiered `estimate`: the Hellfire at the M7 junkyard, the Drifter Elegy at the Gellhorn raceway, the Belville garage.
+
+Where guides conflict the conflict is preserved in the text instead of being resolved:
+- The green Vespucci Island tuner is a "Maibatsu Penumbra FF" to one guide and "a Fast & Furious Eclipse tribute" to another — the record says so and leans on the location, which they agree on.
+- The Starfish Island garage is reported as three cars (Vitello, Itali RSX, Dubsta) with a fourth (Furia) on the driveway; the record lists all four rather than picking one.
+
+Two other honesty points: the Emerald/Emerus and both Ambrosia Gauntlets come from a single guide, and every one of these pins is `position.method: "estimated"` at 1000–1500 m — the written directions are the useful part, not the dot. The pin accuracy note in the detail panel says exactly that.
+
+### Two bugs found while adding them
+
+1. **Missing colour tokens.** `css/tokens.css` never gained `--cat-secret-mission` or `--cat-vehicle`, so both categories fell back to the landmark blue (`#7fd1ff`) in the pin and category row. Added both; `tokens.css?v=2`.
+2. **The community artwork ships its own legend.** The YANIS tile set includes a full credits/legend poster ("follows, regions, echoes, terrain, bailings, credits, frames reference, interiors") east of the island at world x > 4100. At the widest zoom the viewport is wider than the map bounds, so it appeared as a poster sitting in the ocean. `js/map.js` now adds a non-interactive rectangle in a dedicated `g6mask` pane (z-index 250, above tiles, below markers) covering x 4050…16384, matching the app background. It is cosmetic: nothing in the data lives out there.
+
+### Checks
+
+- JSON: 45 records, no duplicate ids, no unknown category or region, every record sourced, no missing sources.
+- Browser: 45 pins, 45 list rows, 10 category rows including "Rare Vehicles", 12 vehicle pins render with the new glyph and the mint colour, filtering to vehicles gives "12 of 45", the Hellfire detail renders 3 tips and its community badge, zero failed requests.
+- `node --check js/data.js` and `map.js` parse clean; sprite parses as valid XML with 13 symbols.

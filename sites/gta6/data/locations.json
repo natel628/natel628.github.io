@@ -645,6 +645,317 @@
       "sources": [
         { "label": "space4games — easter eggs & secrets", "url": "https://space4games.com/en/games-en/gta-6-easter-eggs-secrets-guide/" }
       ]
+    },
+    {
+      "id": "infernus-crosstown-garage",
+      "name": "Pegassi Infernus '96 — police garage",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1300, "y": 2300, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Retro supercar on level 7 of the Crosstown Police Station car park.",
+      "hint": "Crosstown Police Station on NW 9th St, Vice City. The Infernus sits on level 7. Drive in behind a patrol car so the gate opens, then either leave by the top-floor stunt jump or drive back down past the desk.",
+      "rewards": ["Pegassi Infernus '96"],
+      "code": null,
+      "risk": "high",
+      "tips": [
+        "You need the Key Cloner to keep it.",
+        "Wait outside the gate for a patrol car to leave, then follow it in — the door will not open otherwise.",
+        "The top-floor stunt jump is the cleaner exit; driving down past the desk is the risky one.",
+        "Two separate guides place it on level 7. The pin is a region-level estimate."
+      ],
+      "sources": [
+        { "label": "GTA Bay — rare cars", "url": "https://gtabay.com/en/guides/gta-6-rare-cars-locations" },
+        { "label": "Flamenco Neon — special vehicles", "url": "https://flamenconeon.com/en/guides/gta-6-special-vehicles-rare-cars-locations" }
+      ]
+    },
+    {
+      "id": "vitello-waning-sands",
+      "name": "Pegassi Vitello — Waning Sands villa",
+      "category": "vehicle",
+      "region": "ambrosia",
+      "county": "leonard",
+      "position": { "x": -1200, "y": 3600, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Hypercar in the garage of a villa on Flamingo Pkwy, Waning Sands.",
+      "hint": "Waning Sands, Leonard County. Go over the fence, then take the garage beside the house — on your right as you face the entrance.",
+      "rewards": ["Pegassi Vitello"],
+      "code": null,
+      "risk": "medium",
+      "tips": [
+        "Key Cloner needed to keep it.",
+        "One guide plants charges on the gate coming in and blows them on the way out; the fence is quieter.",
+        "It is very fast and easy to wreck on the way home."
+      ],
+      "sources": [
+        { "label": "GTA Bay — rare cars", "url": "https://gtabay.com/en/guides/gta-6-rare-cars-locations" },
+        { "label": "6cheats — rare car locations", "url": "https://www.6cheats.com/en/guides/gta-6-rare-hidden-cars-locations" }
+      ]
+    },
+    {
+      "id": "tempesta-tow-truck-event",
+      "name": "Pegassi Tempesta — tow-truck argument",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1250, "y": 2150, "method": "estimated", "accuracy": 1000 },
+      "verification": "community",
+      "summary": "Random street event on NE 3rd St: the owner is arguing with a repo man and the car is on the tow truck.",
+      "hint": "NE 3rd St, Vice City, around 1 p.m. in-game time. Scare the owner off, drop the car off the tow truck and drive.",
+      "rewards": ["Pegassi Tempesta"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Timed event — if the street is quiet, come back around 13:00.",
+        "The car is on the truck, so you need to free it before you can drive it.",
+        "Three guides describe the same event, which makes this one of the more reliable car spawns."
+      ],
+      "sources": [
+        { "label": "GTA Bay — rare cars", "url": "https://gtabay.com/en/guides/gta-6-rare-cars-locations" },
+        { "label": "macetesgta6 — Randy's rare car list", "url": "https://macetesgta6.com.br/en/tip/gta-6-rare-car-locations-randy/" }
+      ]
+    },
+    {
+      "id": "banshee-sweetbay-inn",
+      "name": "Bravado Banshee — Sweetbay Inn",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1600, "y": 2500, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Sports car parked outside the Sweetbay Inn on East Buckley Dr, Capri.",
+      "hint": "Capri, East Buckley Drive, in front of the Sweetbay Inn. Shows up between 3 and 4 a.m.",
+      "rewards": ["Bravado Banshee"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "3–4 a.m. only — sleep or wait out the clock.",
+        "Key Cloner needed to keep it.",
+        "Pin is a region-level estimate; Capri is east of Vice City."
+      ],
+      "sources": [
+        { "label": "Flamenco Neon — special vehicles", "url": "https://flamenconeon.com/en/guides/gta-6-special-vehicles-rare-cars-locations" },
+        { "label": "macetesgta6 — Randy's rare car list", "url": "https://macetesgta6.com.br/en/tip/gta-6-rare-car-locations-randy/" }
+      ]
+    },
+    {
+      "id": "toros-tequesta-retreat",
+      "name": "Pegassi Toros — Pegassi Residences",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1450, "y": 2350, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "SUV parked at the Pegassi Residences entrance on Bayside Dr.",
+      "hint": "Tequesta Retreat, Bayside Drive, Vice City. Turn up around 6:30 p.m.; security is nearby.",
+      "rewards": ["Pegassi Toros"],
+      "code": null,
+      "risk": "medium",
+      "tips": [
+        "Security patrols the entrance — grab it and go rather than lingering.",
+        "Key Cloner needed to keep it."
+      ],
+      "sources": [
+        { "label": "Flamenco Neon — special vehicles", "url": "https://flamenconeon.com/en/guides/gta-6-special-vehicles-rare-cars-locations" }
+      ]
+    },
+    {
+      "id": "starfish-island-garage",
+      "name": "Starfish Island mansion garage — three cars",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1100, "y": 2500, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Three luxury cars in one garage, plus a fourth on the driveway.",
+      "hint": "Starfish Island, Vice Beach — the mansion at the end of the long central road. The garage holds a Pegassi Vitello, a Grotti Itali RSX and a Benefactor Dubsta. The Piccia Big Cat Furia sits outside on the driveway ring.",
+      "rewards": ["Pegassi Vitello", "Grotti Itali RSX", "Benefactor Dubsta", "Piccia Big Cat Furia (driveway)"],
+      "code": null,
+      "risk": "medium",
+      "tips": [
+        "Four vehicles in one visit — bring somewhere to store them or accept losing three.",
+        "Check the driveway before you leave; the Furia has its own spot outside.",
+        "Key Cloner (Chapter 3) needed to keep any of them."
+      ],
+      "sources": [
+        { "label": "gta6info — rare vehicles map", "url": "https://gta6info.app/map/rare-vehicles" },
+        { "label": "AlcastHQ — standout vehicles", "url": "https://alcasthq.com/gta-6-standout-vehicles/" }
+      ]
+    },
+    {
+      "id": "vespucci-movie-car",
+      "name": "Vespucci Island film-tribute tuner",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 900, "y": 2350, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Bright green tuner in a locked Vespucci Island garage — a Fast & Furious Eclipse nod. Keepable from the start.",
+      "hint": "One of the Rialto Islands, west of Vice Beach, on Vespucci Island. It is in a house garage; go in through the small side door and press the wall control to open the main garage door.",
+      "rewards": ["Green film-tribute tuner (keepable)"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "No Key Cloner needed — this one is free from the start.",
+        "Side door first; the main door is controlled from a wall panel inside.",
+        "Sources disagree on the model name (one calls it a Maibatsu Penumbra FF, others an Eclipse tribute) — the location is what they agree on."
+      ],
+      "sources": [
+        { "label": "6cheats — rare car locations", "url": "https://www.6cheats.com/en/guides/gta-6-rare-hidden-cars-locations" },
+        { "label": "GTA6CUT — easter eggs (location corroborated)", "url": "https://gta6cut.com/guides/gta-6-easter-eggs-secrets" }
+      ]
+    },
+    {
+      "id": "emerus-vespucci-mansion",
+      "name": "Royal Ruby Emerus — Vespucci Mansion",
+      "category": "vehicle",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 850, "y": 2400, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Red Progen Emerus hypercar in the small garage of Vespucci Mansion, guarded.",
+      "hint": "Vespucci Island. The small garage of the mansion. Armed guards patrol the estate — fight through or sneak in.",
+      "rewards": ["Royal Ruby Progen Emerus"],
+      "code": null,
+      "risk": "high",
+      "tips": [
+        "Armed guards; do not stroll up the drive.",
+        "It is in the small garage, not the main one.",
+        "Key Cloner needed to keep it."
+      ],
+      "sources": [
+        { "label": "6cheats — rare car locations", "url": "https://www.6cheats.com/en/guides/gta-6-rare-hidden-cars-locations" }
+      ]
+    },
+    {
+      "id": "gauntlet-ambrosia-reservoir",
+      "name": "Custom Bravado Gauntlet — Reservoir St",
+      "category": "vehicle",
+      "region": "ambrosia",
+      "county": "leonard",
+      "position": { "x": -1450, "y": 3900, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Blue-and-orange Gauntlet in a riverside house on Reservoir Street, north-east Ambrosia.",
+      "hint": "North-east Ambrosia. Look for the American flag and the basketball hoop above the garage, then crouch beside the door to force it open.",
+      "rewards": ["Custom Bravado Gauntlet", "Its livery unlocked at Vice Vinyl"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Force the door from crouch — there is no keypad and no open door.",
+        "Taking it also unlocks the livery at Vice Vinyl, so it is worth doing even if you sell the car.",
+        "The flag and hoop are the landmark; the house is easy to miss from the road."
+      ],
+      "sources": [
+        { "label": "6cheats — rare car locations", "url": "https://www.6cheats.com/en/guides/gta-6-rare-hidden-cars-locations" }
+      ]
+    },
+    {
+      "id": "devils-rope-gauntlet-hog-stars",
+      "name": "Devil's Rope Gauntlet — Hog Stars Garage",
+      "category": "vehicle",
+      "region": "ambrosia",
+      "county": "leonard",
+      "position": { "x": -1400, "y": 3850, "method": "estimated", "accuracy": 1200 },
+      "verification": "community",
+      "summary": "Gang-styled Gauntlet inside a biker compound on Acacia Street, Ambrosia.",
+      "hint": "Hog Stars Garage, Acacia Street, Ambrosia. Armed bikers and a guard dog inside. Skip the front: climb the ladder at the back and drop in through the roof hatch, then open the vehicle exit and drive out.",
+      "rewards": ["Devil's Rope Gauntlet"],
+      "code": null,
+      "risk": "high",
+      "tips": [
+        "Roof hatch is the whole plan — the front door is a firefight with a dog.",
+        "You need to open the vehicle exit from inside before you can drive out.",
+        "Bring a silenced weapon for the bikers if you go loud by accident."
+      ],
+      "sources": [
+        { "label": "6cheats — rare car locations", "url": "https://www.6cheats.com/en/guides/gta-6-rare-hidden-cars-locations" }
+      ]
+    },
+    {
+      "id": "hellfire-m7-junkyard",
+      "name": "Gauntlet Hellfire — M7 junkyard",
+      "category": "vehicle",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -1100, "y": -3300, "method": "estimated", "accuracy": 1500 },
+      "verification": "estimate",
+      "summary": "Muscle car at the M7 junkyard east of Boone Speedway, off Galena St near Hamlet.",
+      "hint": "M7 junkyard east of Boone Speedway, off Galena Street, Hamlet. Available at any time.",
+      "rewards": ["Bravado Gauntlet Hellfire"],
+      "code": null,
+      "risk": "medium",
+      "tips": [
+        "Single-source entry — treat the exact yard as approximate until you see it.",
+        "Anchor on Boone Speedway and head east along Galena St."
+      ],
+      "sources": [
+        { "label": "macetesgta6 — Randy's rare car list", "url": "https://macetesgta6.com.br/en/tip/gta-6-rare-car-locations-randy/" }
+      ]
+    },
+    {
+      "id": "drifter-elegy-gellhorn",
+      "name": "Annis Drifter Elegy — Qwick-Fix workshop",
+      "category": "vehicle",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": 500, "y": 1500, "method": "estimated", "accuracy": 1200 },
+      "verification": "estimate",
+      "summary": "Hidden drift car in the Qwick-Fix workshop behind the drag strip at Gellhorn International Raceway.",
+      "hint": "Port Gellhorn, Gellhorn International Raceway. The workshop sits behind the drag strip — go around the back of the strip rather than through the grandstand.",
+      "rewards": ["Annis Drifter Elegy (drift car)"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Single-source entry; the pin points at the raceway, not the workshop door.",
+        "It is a drift car, so expect it to handle loose on the way out."
+      ],
+      "sources": [
+        { "label": "gta6info — rare vehicles map", "url": "https://gta6info.app/map/rare-vehicles" }
+      ]
+    },
+    {
+      "id": "dexter-apartment",
+      "name": "Trinity Apartments — the Dexter nod",
+      "category": "easter-egg",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1350, "y": 2450, "method": "estimated", "accuracy": 1500 },
+      "verification": "community",
+      "summary": "Building modelled on Dexter Morgan's Miami apartment, on Washington Island between the Pay 'n' Spray and the Vice Beach Top Fun Drones icon.",
+      "hint": "Washington Island, Vice City — between the Pay 'n' Spray and the Vice Beach Top Fun Drones marker. Look at the building and the dock behind it; rooftop tools and a boat are also reported nearby.",
+      "rewards": ["Reference cameo (no confirmed loot)"],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Whether the unit can be entered is disputed — at least one guide says no.",
+        "Check the dock as well as the building; the boat is part of the nod."
+      ],
+      "sources": [
+        { "label": "GTA6CUT — easter eggs (location corroborated)", "url": "https://gta6cut.com/guides/gta-6-easter-eggs-secrets" },
+        { "label": "GTAside — easter eggs", "url": "https://gtaside.com/tips/gta6/easter-eggs" }
+      ]
+    },
+    {
+      "id": "belville-house-garage",
+      "name": "Belville house garage",
+      "category": "easter-egg",
+      "region": "ambrosia",
+      "county": "leonard",
+      "position": { "x": -1300, "y": 3700, "method": "estimated", "accuracy": 1500 },
+      "verification": "estimate",
+      "summary": "Break-in house in Belville, Leonard County, with a garage worth opening.",
+      "hint": "Belville, Leonard County. Break into the garage — the source does not spell out what is inside, only that players keep reporting it.",
+      "rewards": ["Reported, contents unconfirmed"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Single-source and vague: nobody has published exactly what is in the garage.",
+        "Try it only if you are already in Leonard County; it is not worth a detour on its own."
+      ],
+      "sources": [
+        { "label": "GTAside — easter eggs", "url": "https://gtaside.com/tips/gta6/easter-eggs" }
+      ]
     }
   ]
 }

@@ -19,6 +19,15 @@
     <text x="15" y="19" text-anchor="middle" font-size="13" font-weight="700" font-family="sans-serif" fill="rgba(0,0,0,.5)">?</text>
   </symbol>
 
+  <!-- vehicle: teardrop with a car silhouette -->
+  <symbol id="pin-vehicle" viewBox="0 0 30 38">
+    <path d="M15 2C9 2 4 7 4 13C4 22 15 36 15 36C15 36 26 22 26 13C26 7 21 2 15 2Z" fill="var(--pin-color,#5eead4)" stroke="var(--pin-border,rgba(0,0,0,.4))" stroke-width="1.5"/>
+    <path d="M10.5 15.5h9l1.5 3.5h-12z" fill="rgba(0,0,0,.45)"/>
+    <rect x="8.5" y="18.5" width="13" height="4" rx="1.2" fill="rgba(0,0,0,.45)"/>
+    <circle cx="11.6" cy="23" r="1.6" fill="rgba(0,0,0,.55)"/>
+    <circle cx="18.4" cy="23" r="1.6" fill="rgba(0,0,0,.55)"/>
+  </symbol>
+
   <!-- secret-mission: teardrop with exclamation -->
   <symbol id="pin-secret-mission" viewBox="0 0 30 38">
     <path d="M15 2C9 2 4 7 4 13C4 22 15 36 15 36C15 36 26 22 26 13C26 7 21 2 15 2Z" fill="var(--pin-color,#8fd14f)" stroke="var(--pin-border,rgba(0,0,0,.4))" stroke-width="1.5"/>

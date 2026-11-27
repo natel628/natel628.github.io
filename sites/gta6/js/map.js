@@ -81,6 +81,20 @@ G6.map = (function () {
     // ── Base map ───────────────────────────────────────────
     _baseLayer = createBaseLayer();
 
+    // The YANIS artwork carries its own legend sheet (follows/regions/credits/…)
+    // east of the island, outside every coordinate we use. Mask it rather than
+    // showing a poster inside the map.
+    var maskPane = _map.createPane('g6mask');
+    maskPane.style.zIndex = 250;            // above the tile pane, below markers
+    maskPane.style.pointerEvents = 'none';
+    L.rectangle([[-16384, 4050], [16384, 16384]], {
+      pane:        'g6mask',
+      interactive: false,
+      stroke:      false,
+      fillColor:   '#080a0f',
+      fillOpacity: 1
+    }).addTo(_map);
+
     _map.fitBounds(BOUNDS, { padding: [8, 8] });
 
     // ── Zoom tier class ────────────────────────────────────
