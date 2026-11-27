@@ -30,10 +30,14 @@
       "category": "weapon",
       "region": "grassrivers",
       "county": "mariana",
-      "position": { "x": -2100, "y": -4800, "method": "estimated", "accuracy": 400 },
+      "position": { "x": -3011, "y": -4117, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Laird 350 sniper rifle and a cash safe on the top floor.",
-      "hint": "South-west of Hamlet on the eastern edge of the Gullet Marsh, north-east of Cottonmouth Lake. Top-floor room holds the weapon.",
+      "hint": "West of Hamlet on the Pelican Valley road, where the motel's rooms face the marsh. Top-floor room holds the weapon.",
+      "tips": [
+        "Pin is the Manatee Motel itself: the motel and its safe are marked on this stretch of road, and the basemap shows the row of rooms beside it.",
+        "The Kingfishers run the place as a front, so expect company rather than an empty motel."
+      ],
       "rewards": ["Laird 350 sniper rifle", "Cash in safe (~$937–$1,066 reported)", "Loose product to sell"],
       "code": null,
       "risk": "high",
@@ -84,16 +88,16 @@
       "category": "stash",
       "region": "leonida-keys",
       "county": "mariana",
-      "position": { "x": -6408, "y": -2478, "method": "estimated", "accuracy": 400 },
+      "position": { "x": -5355, "y": -3137, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Safe with ~$3,000, a Gold KZ-59, and the safe code on the ground-floor computer.",
-      "hint": "Bobcat Key, off Watson Bay — south end of the key. Safe is upstairs in the lounge corner; read the code off the computer downstairs first.",
+      "hint": "Watson Bay, west of Hamlet — the fishing warehouse on the waterfront. Safe is upstairs in the lounge corner; read the code off the computer downstairs first.",
       "rewards": ["~$3,000 in safe (reported)", "Gold KZ-59"],
       "tips": [
         "Read the code off the ground-floor computer before going upstairs — the safe will not open otherwise.",
         "Sources disagree between 1886 and 1887; try 1886 first, then 1887.",
-        "Arrive by boat; the key has no road in.",
-        "Pin is the cove at the south end of Bobcat Key, the end of the key the guide names."
+        "Arrive by boat; the waterfront has no road in from the town side.",
+        "Pin is the Palmer Fishing Warehouse: the community markers for the warehouse and its safe (code 1886) sit on this waterfront block, where the basemap draws the quay."
       ],
       "code": "1886 (1886 / 1887 disputed between sources)",
       "risk": "high",
@@ -221,15 +225,15 @@
       "category": "stash",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": -6768, "y": 5041, "method": "estimated", "accuracy": 600 },
+      "position": { "x": -6555, "y": 4338, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Clunker 556 carbine, an upstairs safe, and a wall map listing all three Port Gellhorn codes.",
-      "hint": "Northern Port Gellhorn waterfront near the bridge to Draper Island. Enter through the east fence hole, climb the grey building's outside stairs to the room with the wall map (codes: 6823, 6969, 0300).",
+      "hint": "Port Gellhorn waterfront, on the boatworks docks. Enter through the east fence hole, climb the grey building's outside stairs to the room with the wall map (codes: 6823, 6969, 0300).",
       "rewards": ["Clunker 556 carbine", "Safe upstairs"],
       "tips": [
         "The outside stairs are the way in — the front is sealed.",
         "Read the wall map while you are here: it lists 6823, 6969 and 0300 for the whole Port Gellhorn set.",
-        "Pin is the northern rail bridge towards Draper Island, the waterfront the guide names; the basemap has no Brooks Boatworks landmark."
+        "Pin is the Brooks Boatworks docks: the boatworks and its two safes (code 6823) are marked here, and the basemap shows the quay and sheds."
       ],
       "code": "6823",
       "risk": "low",
@@ -345,7 +349,7 @@
       "category": "stash",
       "region": "vice-city",
       "county": "vice-dale",
-      "position": { "x": 1400, "y": 2400, "method": "estimated", "accuracy": 1200 },
+      "position": { "x": -1259, "y": 1202, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "San4San weed garage in La Perle. Office safe (code 4444) plus a pink Declasse Gin Tulip and the San4San KZ-59 rifle in the building.",
       "hint": "La Perle, Vice City. The safe is in the office of the San4San garage. The code is written on a note stuck to the office fridge — read it before you open anything.",
@@ -355,7 +359,7 @@
       "tips": [
         "The code is on the office fridge — you can read it without triggering the robbery.",
         "The Gin Tulip and the KZ-59 are elsewhere in the garage, not in the safe.",
-        "Pin is a region-level estimate; the guide names La Perle, not coordinates."
+        "Pin is San4San's Janjak's Garage in La Perle: the basemap shows the garage on this block and the safe inside it."
       ],
       "sources": [
         { "label": "Output Lag — safe & garage codes", "url": "https://outputlag.com/guides/gta-6-safe-garage-codes" }
@@ -365,9 +369,9 @@
       "id": "black-eagle-warehouse",
       "name": "Black Eagle warehouse — door & safe",
       "category": "weapon",
-      "region": "vice-city",
-      "county": "vice-dale",
-      "position": { "x": 900, "y": 1800, "method": "estimated", "accuracy": 1500 },
+      "region": "ambrosia",
+      "county": "leonard",
+      "position": { "x": -2593, "y": 1378, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Six-digit door and safe codes, and a Kalinga .50 pistol in the safe.",
       "hint": "The door keypad takes 789987 and the safe inside takes 031462. Two different six-digit codes — do not swap them.",
@@ -376,7 +380,8 @@
       "risk": "high",
       "tips": [
         "Both codes are six digits; the door one is the one that looks like a pattern.",
-        "Pin is a region-level estimate — the guide does not give a street address."
+        "Pin is the Black Eagle warehouse itself: the basemap shows the warehouse block here and the keypad and safe codes published for this building are the ones in this record.",
+        "The Kalinga is in the safe; the M306 TMR is in the caged room behind the forklift, same building."
       ],
       "sources": [
         { "label": "Output Lag — safe & garage codes", "url": "https://outputlag.com/guides/gta-6-safe-garage-codes" }
@@ -431,17 +436,17 @@
       "category": "stash",
       "region": "leonida-keys",
       "county": "mariana",
-      "position": { "x": -5887, "y": -2687, "method": "estimated", "accuracy": 900 },
+      "position": { "x": -4574, "y": -2931, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Security-compound safe tucked under the microwave.",
-      "hint": "Watson Bay, near Bobcat Key. The safe is under the microwave in the kitchen. The code is the last line of an email on the kitchen PC.",
+      "hint": "Watson Bay, west of Hamlet. The safe is under the microwave in the kitchen. The code is the last line of an email on the kitchen PC.",
       "rewards": ["Cash and valuables in safe"],
       "code": "1819",
       "risk": "high",
       "tips": [
         "The compound is guarded — clear it before you start reading the PC.",
         "Turn the microwave over; the safe is underneath it, not behind it.",
-        "Pin sits on Bobcat Creek between Watson Bay and Bobcat Key, the 'near Bobcat Key' side the guide names; the basemap has no landmark for the safehouse compound."
+        "Pin is the La Polilla Negra safehouse: the house and its safe (code 1819) are marked together here, on the basemap's waterfront lot."
       ],
       "sources": [
         { "label": "RaidDex — safe codes", "url": "https://raiddex.com/en/gta-6/guides/safe-codes" }
@@ -451,9 +456,9 @@
       "id": "nova-auto-junkyard",
       "name": "Nova Auto Junkyard safe",
       "category": "stash",
-      "region": "grassrivers",
+      "region": "mariana",
       "county": "mariana",
-      "position": { "x": -2982, "y": -3084, "method": "estimated", "accuracy": 1500 },
+      "position": { "x": -2484, "y": -3405, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Junkyard safe outside Hamlet. Code is memorable, which is the hint.",
       "hint": "Nova Auto Junkyard, Hamlet. Four repeated digits — the most memorable code in the game, easy to overlook because it looks too obvious.",
@@ -462,7 +467,7 @@
       "risk": "low",
       "tips": [
         "Four identical digits; if a code does not stick, look for the safe rather than the clue.",
-        "Pin is Hamlet town centre at the water tower; the guide names the town only and the basemap has no Nova Auto Junkyard landmark."
+        "Pin is the junkyard itself: the garage safe (code 7777) and the M7 operation are marked in this yard, and the basemap shows the fenced lot."
       ],
       "sources": [
         { "label": "Rock Paper Shotgun — all safe codes", "url": "https://www.rockpapershotgun.com/gta-all-6-safe-codes" }
@@ -495,9 +500,9 @@
       "id": "dino-golf-brontasaurus-bat",
       "name": "Dino Golf — Brontasaurus Bat",
       "category": "weapon",
-      "region": "grassrivers",
-      "county": "mariana",
-      "position": { "x": -2450, "y": -4400, "method": "estimated", "accuracy": 1500 },
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": -4457, "y": 3900, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Batting-cage melee weapon at the abandoned mini-golf on SR-32.",
       "hint": "Dino Golf at Frogswater, off SR-32. Walk into the batting cage on the right-hand side of the abandoned attraction; the bat is propped inside.",
@@ -506,7 +511,8 @@
       "risk": "none",
       "tips": [
         "There is no code and no fight — it is a walk-up pickup, easy to miss because the cage looks closed.",
-        "Pin is a region-level estimate; guides name Frogswater and SR-32 without coordinates."
+        "Pin is the Dino Golf course at Frogswater: the basemap draws the fairways and cages here, and the community marker for the site names the bat by the red mesh cage.",
+        "GTABase spells the weapon 'Buntosaurus'; guides write 'Brontasaurus'. Same bat."
       ],
       "sources": [
         { "label": "space4games — unique weapons", "url": "https://space4games.com/en/games-en/gta-6-unique-weapons-locations-stats" }
@@ -540,16 +546,16 @@
       "category": "weapon",
       "region": "ambrosia",
       "county": "leonard",
-      "position": { "x": -1600, "y": 4100, "method": "estimated", "accuracy": 1000 },
+      "position": { "x": -2995, "y": 3988, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "KVGA-12 'Final Chapter' automatic shotgun in the Final Chapter gang's Ambrosia territory.",
-      "hint": "Ambrosia, in the Final Chapter's area. Go in heavy — the compound is defended, and the shotgun sits inside rather than on a rack outside.",
+      "hint": "Irons Building Supply in Ambrosia, the Final Chapter's clubhouse and cocaine hub. Go in heavy — the compound is defended, and the shotgun sits inside rather than on a rack outside.",
       "rewards": ["KVGA-12 'Final Chapter' (automatic shotgun)"],
       "code": null,
       "risk": "high",
       "tips": [
         "Treat it as an assault, not a pickup: bring armour and a rifle.",
-        "Ambrosia is a named region on the map, so use the region filter to frame the search."
+        "Pin is Irons Building Supply — the yard the basemap draws with the silos — where the KVGA-12 is documented. The Final Chapter's other operation, the Hog Stars Garage, is a few hundred metres south."
       ],
       "sources": [
         { "label": "space4games — unique weapons", "url": "https://space4games.com/en/games-en/gta-6-unique-weapons-locations-stats" }
@@ -561,7 +567,7 @@
       "category": "weapon",
       "region": "grassrivers",
       "county": "mariana",
-      "position": { "x": -2500, "y": -5150, "method": "estimated", "accuracy": 700 },
+      "position": { "x": -3571, "y": -4081, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Two unique weapons in one spot: an Akulus revolver inside the hut and an SM-69 sniper on the planks outside.",
       "hint": "Wooden hut east of the abandoned crab lab in Gullet Marsh. The Akulus revolver is next to a body inside, with a phone playing a video. The SM-69 sniper is on the planks in front of the same hut, ammunition included.",
@@ -570,8 +576,9 @@
       "risk": "medium",
       "tips": [
         "Two pickups, one building — check the planks outside before you leave.",
-        "Use the crab lab outpost as the anchor; this hut is immediately east of it.",
-        "The phone by the body plays a short video; it is part of the find, not a clue."
+        "Use the crab lab outpost as the anchor; this hut is about 400 m east of it, where the swamp channels open out.",
+        "The phone by the body plays a short video; it is part of the find, not a clue.",
+        "Pin is the hunter's cabin itself: the basemap shows the wrecked hut on this swamp channel, and the Akulus and the SM-69 are both marked here."
       ],
       "sources": [
         { "label": "space4games — unique weapons", "url": "https://space4games.com/en/games-en/gta-6-unique-weapons-locations-stats" }
@@ -839,17 +846,18 @@
       "category": "vehicle",
       "region": "vice-city",
       "county": "vice-dale",
-      "position": { "x": 850, "y": 2400, "method": "estimated", "accuracy": 1200 },
+      "position": { "x": 509, "y": 1212, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Red Progen Emerus hypercar in the small garage of Vespucci Mansion, guarded.",
-      "hint": "Vespucci Island. The small garage of the mansion. Armed guards patrol the estate — fight through or sneak in.",
+      "hint": "Vespucci Mansion in the Rialto Islands. The small garage of the mansion. Armed guards patrol the estate — fight through or sneak in.",
       "rewards": ["Royal Ruby Progen Emerus"],
       "code": null,
       "risk": "high",
       "tips": [
         "Armed guards; do not stroll up the drive.",
         "It is in the small garage, not the main one.",
-        "Key Cloner needed to keep it."
+        "Key Cloner needed to keep it.",
+        "Pin is Vespucci Mansion: the mansion's own marker and its two armory safes sit within 20 m, and the car is filed at the mansion."
       ],
       "sources": [
         { "label": "6cheats — rare car locations", "url": "https://www.6cheats.com/en/guides/gta-6-rare-hidden-cars-locations" }
@@ -883,7 +891,7 @@
       "category": "vehicle",
       "region": "ambrosia",
       "county": "leonard",
-      "position": { "x": -1400, "y": 3850, "method": "estimated", "accuracy": 1200 },
+      "position": { "x": -2771, "y": 4077, "method": "reported", "accuracy": 40 },
       "verification": "community",
       "summary": "Gang-styled Gauntlet inside a biker compound on Acacia Street, Ambrosia.",
       "hint": "Hog Stars Garage, Acacia Street, Ambrosia. Armed bikers and a guard dog inside. Skip the front: climb the ladder at the back and drop in through the roof hatch, then open the vehicle exit and drive out.",
@@ -893,7 +901,8 @@
       "tips": [
         "Roof hatch is the whole plan — the front door is a firefight with a dog.",
         "You need to open the vehicle exit from inside before you can drive out.",
-        "Bring a silenced weapon for the bikers if you go loud by accident."
+        "Bring a silenced weapon for the bikers if you go loud by accident.",
+        "Pin is the Hog Stars Garage itself: the community marker for the garage is 15 m away and names this exact livery."
       ],
       "sources": [
         { "label": "6cheats — rare car locations", "url": "https://www.6cheats.com/en/guides/gta-6-rare-hidden-cars-locations" }
@@ -1021,12 +1030,12 @@
       "id": "container-picador-grassrivers",
       "name": "Caliente Picador & Royal Sanchez — container field",
       "category": "vehicle",
-      "region": "grassrivers",
+      "region": "mariana",
       "county": "mariana",
-      "position": { "x": -2700, "y": -4350, "method": "estimated", "accuracy": 1500 },
+      "position": { "x": -3920, "y": -2060, "method": "reported", "accuracy": 40 },
       "verification": "community",
-      "summary": "Two free vehicles in shipping containers in a field just above Grass Rivers: a yellow container holds the Caliente Picador, an orange one the Royal Sanchez motorcycle.",
-      "hint": "Container storage yard in the field a little above (north of) Grass Rivers, behind a broken building. Get into the broken building and push the stacked containers aside with a bulldozer until the yellow container has room to open.",
+      "summary": "Two free vehicles in shipping containers at the old trainyard in North Mariana County: a yellow container holds the Caliente Picador, an orange one the Royal Sanchez motorcycle.",
+      "hint": "Container storage yard at the old trainyard in North Mariana County, behind a broken building. Get into the broken building and push the stacked containers aside with a bulldozer until the yellow container has room to open.",
       "rewards": ["Declasse Caliente Picador", "Royal Sanchez motorcycle"],
       "code": null,
       "risk": "low",
@@ -1035,7 +1044,7 @@
         "Most guides only mention the bulldozer at this yard, but the yellow SCOOP containers at the other two spots need the Cut-Off Tool (Chapter 3, Meet the Heders). Bring it in case this yard's containers are locked too.",
         "Sources describe the containers as having no alarm.",
         "To keep either one, garage it before you switch character, then register it at a Pay 'n' Spray.",
-        "North Mariana County is the same yard to both guides; the pin is a yard-level estimate, not a container number."
+        "Pin is the trainyard itself: the basemap draws the rail lines and sheds here, and the Royal Sanchez sits in a yellow container about 40 m away — the yard this record pairs the two cars in."
       ],
       "sources": [
         { "label": "Sportskeeda — hidden container cars", "url": "https://www.sportskeeda.com/gta/all-hidden-cars-shipping-containers-gta-6-find" },

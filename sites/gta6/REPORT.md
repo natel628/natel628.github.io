@@ -599,3 +599,70 @@ ten-minute cache.
 - In the browser at 527/527: *Pelican Valley research outpost* (reported, 40 m) shows the new note;
   *Shrooms in the women's toilet* (reported, 250 m) shows it with 250 m; *Apollo Aggregates warehouse*
   (estimated, 250 m) still shows the original approximate wording.
+
+
+## 16. Thirteen curated pins the markers name exactly
+
+The crab lab in §14 was settled by matching our record against GTABase's 6,510 markers and then letting the
+basemap artwork decide. This pass ran the same test over every curated record instead of one.
+
+Method, so the next pass can repeat it: rare-token overlap between a curated `name` and a marker `name`
+(generic words such as *warehouse*, *motel*, *safe* and *garage* dropped, since on their own they match
+hundreds of markers), then the distance between our pin and the matching markers. Anything over 500 m is a
+candidate. A candidate only counts as identified when a cluster of at least two markers naming the same
+place agrees — place plus safe, or place plus gang operation plus weapon — and ideally when one of them
+reproduces a code or weapon this record already carries. Only then were the tiles cropped at level 5
+(1 px/m) around both coordinates: **if the artwork showed our pin on something the record describes, the pin
+stayed; if it showed water, a motorway or an empty field, the pin moved.** Nothing was nudged.
+
+Thirteen records passed that bar. Each now sits on its marker with `method: "reported"`, `accuracy: 40`
+(the cluster markers agree within about 30 m), a hint or tip naming the building, and a tip that says where
+the pin used to be:
+
+| Record | Pin now | Was | Moved | What proved it |
+|---|---|---|---|---|
+| Dino Golf — Brontasaurus Bat | -4457, 3900 | -2450, -4400 | 8539 m | `Buntosaurus Bat`, whose note places it "next to the red mesh cage near Dino Golf", plus the Dino Golf course and Challenge markers; the crop shows fairways and cages, the old pin a motorway junction |
+| Black Eagle warehouse | -2593, 1378 | 900, 1800 | 3518 m | marker repeats this record's own door code 789987 and safe 031462; the crop shows a warehouse block, the old pin an apartment terrace on the waterfront |
+| Janjak's Garage (San4San) | -1259, 1202 | 1400, 2400 | 2916 m | the garage marker, its safe code 4444 and a San4San KZ-59 marker all within 5 m; the crop shows an urban garage block, the old pin a motorway junction |
+| Yellow container — Caliente Picador | -3920, -2060 | -2700, -4350 | 2595 m | Picador and Royal Sanchez markers worded "old trainyard in North Mariana County" and "yellow container by the broken house"; the crop shows the rail lines and sheds, the old pin a marsh bank |
+| Final Chapter — KVGA-12 | -2995, 3988 | -1600, 4100 | 1399 m | the KVGA-12 marked at the Irons Building Supply operation; the crop shows the industrial yard with its silos, the old pin open road |
+| Devil's Rope Gauntlet — Hog Stars Garage | -2771, 4077 | -1400, 3850 | 1390 m | the Hog Stars Garage marker with this exact livery 15 m away; the crop shows the garage, the old pin a field |
+| Royal Ruby Emerus — Vespucci Mansion | 509, 1212 | 850, 2400 | 1236 m | the mansion marker, two armory safes and the car by name within 20 m; the crop shows the walled waterfront estate |
+| Palmer Fishing Warehouse safe | -5355, -3137 | -6408, -2478 | 1242 m | the warehouse marker with safe code 1886 and the La Polilla Negra weapon within 25 m; the crop shows the docks, the old pin a bare beach |
+| Manatee Motel — Laird 350 | -3011, -4117 | -2100, -4800 | 1139 m | the motel marker, its safe and a "Manatee Motel, Pelican Valley" marker within 15 m; the crop shows the room row, the old pin open water |
+| Brooks Boatworks safe | -6555, 4338 | -6768, 5041 | 735 m | the boatworks marker with safe code 6823 within 20 m; the crop shows the quay and sheds, the old pin a rail bridge |
+| Nova Auto Junkyard safe | -2484, -3405 | -2982, -3084 | 592 m | the junkyard marker with garage safe 7777 within 10 m; the crop shows the fenced lot, the old pin the town water tower |
+| Watson Bay safehouse safe | -4574, -2931 | -5887, -2687 | 1335 m | the safehouse marker with safe code 1819 within 8 m; the crop shows the house and its drive, the old pin the middle of the creek |
+| Gullet Marsh hut — Akulus & SM-69 | -3571, -4081 | -2500, -5150 | 1513 m | `Swamp Bait Akulus` ("wrecked cabin in the middle of the Pelican Valley swamp") and `Cruel Huntsman's SM-69` ("boardwalk between the two buildings of a hunter's cabin") 9 m apart; the crop shows the cabin on a swamp channel, the old pin open water |
+
+Three regions changed with the coordinates, because the new pin is in a different part of the map:
+*Dino Golf* `grassrivers` → `port-gellhorn` (Kelly County), *Black Eagle* `vice-city` → `ambrosia`
+(Leonard County, per the county landmark 25 m from the marker), and *the Picador's yard* `grassrivers` →
+`mariana`. The other ten kept their region and county. The Picador record's summary moved with it, from "a
+field just above Grass Rivers" to the old trainyard, and the Gullet Marsh hut's "immediately east of the
+crab lab" tip now reads "about 400 m east", which is what the new pin measures.
+
+### Flagged and deliberately left alone
+
+These also sit far from markers that name something similar, but the markers do not name *the same thing*,
+or the record is structural rather than a misplacement. None was moved:
+
+| Record | Why it stays |
+|---|---|
+| Vespucci Island film car (900, 2350) | No marker names a film-tribute tuner. The Vespucci Mansion markers 1.2 km away name the estate, not the car; moving on that would be a nudge. |
+| UFO abduction, Port Gellhorn (-5366, 3476) | The nearest UFO markers are `UFO Believer` 394 m away (a person, not the encounter) and `UFO Van Abduction` 2.5 km away, a different event in a different county. |
+| BURG underwater labs (-2050, -5750) | GTABase has five separate `Burg Facility` markers across the map (859, 5473; -1433, -6881; -8783, -6757; -7618, -4865; -9705, 3321). This single pin is a "start here" pointer to the Key Lento station, not a claim to be any one facility, so it needs five pins, not a move. |
+| Dog Island | No marker names Dog Island; the two `Cool Dog` markers are an NPC and a jet-ski, 1.4 km from our pin and unrelated. |
+| Hillside meteorite | No marker names it. The 135 meteorite pins in `collections.json` are a separate, bulk-reported set. |
+| Skunk Ape search (-2900, -4900) | An area, not a place: the guides disagree on the marsh, and no marker names the mission. |
+| Blue Drake Penumbra container (-6769, 2105) | 571 m from a `Maibatsu Blue Drake Penumbra` marker with no description, so there is no way to tell whether that marker is this container, a race award or a shop. Artwork shows the raceway grandstands under our pin, as the record says. |
+| M7 junkyard Hellfire (-3000, -3376) | 504 m from `Bravado Gauntlet Hellfire (Randy's request)`, a different spawn (a request reward, not the junkyard). |
+
+### Checks
+
+- `data/locations.json` parses; 76 records, 76 unique ids, every `region` resolves against `regions.json`,
+  and the 13 changed records carry `method: "reported"` with `accuracy: 40`.
+- Each of the 13 was cropped at level 5 around both its old and its new coordinate and inspected before the
+  move; the 12-record contact sheet and the hut pair were rendered in the browser from the tile pyramid
+  (not from the app) so the comparison is independent of our own map rendering.
+- `node --check js/data.js` clean; `DATA_V` 12 with `js/data.js?v=12` in `index.html`.
