@@ -225,3 +225,104 @@ So the Capri pins now sit correctly relative to the artwork but far from the Por
 - `locations.json` parses; 53 records; no duplicate ids; no unknown category, region or county.
 - `node --check` clean on `js/data.js`.
 - Not checked: the moved pins were not viewed in a browser this round.
+
+## 11. The rest of the map now sits where the basemap says it does
+
+Capri was correct after §10, but it was the only region that was. Matching every pin against the same
+gtadb.org landmark dataset (`map/data/6/landmarks.json`, 4,642 landmarks, world metres) found nine
+records 5.7–6.6 km east of Port Gellhorn, two Watson Bay records 3.1 km away in Key Lento, the Starfish
+Island garage 1.8 km north on Vice Beach, and the Hamlet container car 2 km east of Hamlet. They were all
+placed by region, not by landmark. This pass moves them, and every other record whose own text names a
+place the dataset knows, onto that landmark. **24 records moved; `DATA_V` is now `8`.**
+
+### The method, and where it stops
+
+1. **Exact name match first.** Every record title and hint was searched against the landmark labels.
+   Nineteen of the moved records land on a landmark with the same name or a name their own hint uses:
+   La Cascara Motel, Delights, the raceway, Boone Speedway, the Starlet Motel, Wild Hog Point, Vercetti
+   Estate, Sunrise RV Park, Cottonmouth Lake, Permit Keys, Wetman Bay, Bobcat Bight, Apollo Aggregates,
+   the Pegassi Residences, Red Apple Orchard, Pawn & Gun, Bobcat Key's south cove and the trailer park.
+2. **Directional landmark, then the town.** Where the guide names a landmark but gives no coordinates, the
+   pin sits on that landmark and the tip says so (Brooks Boatworks → the northern rail bridge towards
+   Draper Island; the Penumbra container → the raceway's covered grandstands). Where the guide names only
+   the town, the pin sits on the town's own landmark and the tip says that too (Nova Auto Junkyard →
+   Hamlet Water Tower).
+3. **Nothing invented.** No pin was nudged to "look better". Two records share an anchor because the
+   guides place both by it: Bandito and Hellfire at Boone Speedway, with Hellfire offset 90 m east along
+   the guide's "east of the speedway" line so the two pins do not stack exactly.
+
+### What moved
+
+| Record | Cat. | Region | Old pin | New pin | Moved | Anchored on |
+|---|---|---|---|---|---|---|
+| Apollo Aggregates warehouse | stash | vice-city | -800, -3200 | -1837, -2876 | 1.09 km | Apollo Aggregates, Peregrine Bay — region moved from mariana |
+| Kingpin Bowling safe | stash | port-gellhorn | 350, 1100 | -6350, 3367 | 7.07 km | Pawn & Gun, US-9 |
+| Brooks Boatworks | stash | port-gellhorn | 200, 1600 | -6768, 5041 | 7.77 km | northern rail bridge to Draper Island |
+| La Cascara Motel | weapon | port-gellhorn | -50, 1300 | -6860, 3970 | 7.31 km | La Cascara Motel |
+| The couch in the tree | weapon | port-gellhorn | 450, 1200 | -6799, 3947 | 7.75 km | Trailer Park |
+| Delights Cabaret office safe | stash | port-gellhorn | 250, 1450 | -6373, 3577 | 6.96 km | Delights, Interstate 404 |
+| UFO abduction on the back road | easter-egg | port-gellhorn | 600, 1500 | -5366, 3476 | 6.28 km | Starlet Motel, Historic Route 628 |
+| Annis Drifter Elegy — Qwick-Fix | vehicle | port-gellhorn | 500, 1500 | -6733, 2325 | 7.28 km | Gellhorn International Raceway |
+| Blue Drake Penumbra — container | vehicle | port-gellhorn | 560, 1560 | -6769, 2105 | 7.35 km | Covered Grandstands, raceway |
+| Reynolds Kit Car wreck 3 | vehicle | port-gellhorn | -350, 1050 | -7563, 3277 | 7.55 km | Wild Hog Point |
+| Watson Bay safehouse | stash | leonida-keys | -2950, -6500 | -5887, -2687 | 4.81 km | Bobcat Creek, W side of Watson Bay |
+| Palmer Fishing Warehouse | stash | leonida-keys | -2900, -6400 | -6408, -2478 | 5.26 km | Cove, Bobcat Key |
+| Starfish Island garage | vehicle | vice-city | 1100, 2500 | 906, 661 | 1.85 km | Vercetti Estate |
+| Muck Spreader Bandito | vehicle | mariana | -1120, -3180 | -3092, -3376 | 1.98 km | Boone Speedway, Hamlet |
+| Gauntlet Hellfire — M7 junkyard | vehicle | mariana | -1100, -3300 | -3000, -3376 | 1.90 km | Boone Speedway +90 m east |
+| Nova Auto Junkyard safe | stash | mariana | -1500, -3400 | -2982, -3084 | 1.52 km | Hamlet Water Tower |
+| Pegassi Toros — Residences | vehicle | vice-city | 1450, 2350 | -4, -959 | 3.61 km | Pegassi Residences North Tower |
+| Permit Keys wrecks | weapon | leonida-keys | -3100, -7200 | -5774, -6360 | 2.80 km | Permit Keys |
+| Wetman Bay fishing shacks | weapon | grassrivers | -2800, -5100 | -4381, -4770 | 1.62 km | Wetman Bay |
+| Glider in the treeline | weapon | mariana | -2200, -5900 | -7240, -1322 | 6.81 km | Bobcat Bight |
+| Kingfishers' Sunrise RV Park | weapon | grassrivers | -2400, -4300 | -3477, -4497 | 1.09 km | Sunrise RV Park |
+| Red Apple Orchard garage | activity | port-gellhorn | -2600, -4600 | -5831, 5269 | 10.38 km | Red Apple Orchard, Kelly County — region moved from grassrivers |
+| Pet Cemetery — Grayson | easter-egg | mount-kalaga | -3900, 5600 | -5649, 6793 | 2.12 km | Grayson — accuracy 4000 → 1000 |
+| Cottonmouth Lake trailer | stash | mariana | -2300, -4700 | -3480, -4788 | 1.18 km | Cottonmouth Lake |
+
+### Region and county corrections that came with it
+
+- **Apollo Aggregates** is a plant in **Peregrine Bay, Vice City**, not a Mariana County site; the record
+  was filed `mariana`/`mariana` and is now `vice-city`/`vice-dale`. Its hint ("east / south-east of
+  Hamlet") still reads true from the new pin — 850 m east and 330 m north of Hamlet.
+- **Red Apple Orchard** is in **Kelly County**, north-west of Port Gellhorn, not in Grassrivers; the
+  record was filed `grassrivers`/`mariana` and is now `port-gellhorn`/`kelly`. Its hint names no place at
+  all, which is how it drifted — the only Red Apple Orchard on the basemap is now the pin.
+- `data/regions.json`: the `port-gellhorn` focus still pointed at Rialto Islands (300, 1300), the old wrong
+  spot, so it moved to **-6500, 3800** (the town centre). Nothing reads `focus` yet — `js/detail.js` uses
+  only the region label — but the stale target was a trap for the next feature that does.
+
+### Pins that are still more than a kilometre off its landmark
+
+These are **flagged, not moved**, because moving them would mean inventing the place:
+
+| Record | Pin | What the guide says | Why it stays |
+|---|---|---|---|
+| Dog Island — jet-ski dog | -2700, -6500 | "the island south of Bobcat Key" | The nearest Bobcat Key landmark is **5.5 km** away. There is no Dog Island landmark on the basemap, so the pin is still in Key Lento. The most likely true spot is the water south of Bobcat Key around -6300, -2900. |
+| Meteorite at Hillside Campsite | -4200, 5800 | "east side of Mount Kalaga park, near Hillside Campsite SW of Dawson Dam" | **1.67 km** from Dawson Dam and there is no Hillside Campsite landmark. The park is 1.5 km across and the guide's only anchor is the dam, so the pin was left where the trail description puts it. |
+| Dino Golf — Brontasaurus Bat | -2450, -4400 | "Dino Golf at Frogswater, off SR-32" | The basemap has **no Frogswater and no SR-32**; the nearest landmark is 291 m away but unrelated. Unverifiable rather than wrong. |
+| BURG underwater labs | -2050, -5750 | "east of Key Lento" | **917 m** from the basemap's single "Underwater Research Station" — inside a kilometre, and that station may be one of the other four labs, so the pin stays on the Key Lento entry station as documented. |
+| Black Eagle warehouse | 900, 1800 | no address in any guide | 89 m from Vice Beach landmarks but the building itself is unidentified; the record already says the pin is region-level. |
+| Search for the Skunk Ape | -2900, -4900 | an area, not a spot | 271 m from Gullet Marsh landmarks; the record is deliberately an area pin. |
+
+Three further records sit **just inside** the kilometre line and were checked rather than moved:
+the Vespucci Island tuner and the Vespucci Mansion Emerus are 929 m and 980 m from the Rialto Islands
+their hints name (both pins are on Vice Beach, and the basemap has no Vespucci Island at all), and the
+Vitello villa is 797 m west of the Waning Sands cluster.
+
+One record looks off by the town test but is not: **Manatee Motel** is 1,083 m from Hamlet, and its hint
+puts it there deliberately — "south-west of Hamlet on the eastern edge of the Gullet Marsh, north-east of
+Cottonmouth Lake". Measured against the places it actually names, it is where it should be.
+
+### Checks
+
+- `data/locations.json` parses; **53 records**; no duplicate ids; every `region` and `county` resolves
+  against `regions.json`; every record has a hint and at least one source.
+- All 24 moved pins are **0–92 m** from the landmark named in the table above.
+- No duplicate coordinates except the pre-existing `crab-outpost-pelican-valley` / `crab-lab-karkinos`
+  pair, which are the same outpost described twice and were left alone.
+- `node --check` clean on `js/data.js`, `js/detail.js` and `js/map.js`; `data/regions.json` parses with
+  8 regions; `DATA_V` bumped to `8` with `js/data.js?v=8` in `index.html`.
+- Tips went from 137 to 153; 48 of 53 records now carry tips (was 43). A pin note naming the anchor was added to all 24 moved records.
+- Not checked: the moved pins were not viewed in a browser this round; only the data and its references
+  were validated.

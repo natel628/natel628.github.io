@@ -2,7 +2,7 @@
   "schema": "gta6.regions/1",
   "regions": [
     { "id": "vice-city",    "label": "Vice City",                       "type": "area", "county": "vice-dale", "focus": { "x": 1200,  "y": 2200,  "zoom": -1 } },
-    { "id": "port-gellhorn","label": "Port Gellhorn",                   "type": "area", "county": "kelly",     "focus": { "x": 300,   "y": 1300,  "zoom": -1 } },
+    { "id": "port-gellhorn","label": "Port Gellhorn",                   "type": "area", "county": "kelly",     "focus": { "x": -6500, "y": 3800,  "zoom": -1 } },
     { "id": "capri",        "label": "Capri",                         "type": "area", "county": "mariana",   "focus": { "x": -6680, "y": 120,   "zoom": -2 } },
     { "id": "leonida-keys", "label": "Leonida Keys",                    "type": "area", "county": "mariana",   "focus": { "x": -2600, "y": -5800, "zoom": -1 } },
     { "id": "grassrivers",  "label": "Grassrivers",                     "type": "area", "county": "mariana",   "focus": { "x": -2800, "y": -4800, "zoom": -1 } },

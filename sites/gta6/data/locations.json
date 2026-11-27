@@ -7,15 +7,18 @@
       "id": "apollo-aggregates",
       "name": "Apollo Aggregates warehouse",
       "category": "stash",
-      "region": "mariana",
-      "county": "mariana",
-      "position": { "x": -800, "y": -3200, "method": "estimated", "accuracy": 400 },
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": -1837, "y": -2876, "method": "estimated", "accuracy": 250 },
       "verification": "community",
       "summary": "About $10,000 in marked bills, two or three weapons, and a Leroy Rook collectible card.",
       "hint": "East / south-east of Hamlet. Three large rectangular pools beside the highway, long red warehouse at the bend. Grey door beside the Apollo trailer.",
       "rewards": ["~$10,000 in marked bills (reported)", "Two or three weapons", "Leroy Rook collectible card", "Sunglasses in yellow toolbox outside"],
       "code": null,
       "risk": "medium",
+      "tips": [
+        "Pin is the Apollo Aggregates plant in Peregrine Bay, the site the basemap names; the guide describes it as east / south-east of Hamlet."
+      ],
       "sources": [
         { "label": "GTA BOOM walkthrough", "url": "https://www.gtaboom.com/gta-6-apollo-aggregates-warehouse-stash-5820" },
         { "label": "GTA Vice Guides", "url": "https://gtaviceguides.com/guides/gta-6-red-warehouse-money-glitch/" }
@@ -81,7 +84,7 @@
       "category": "stash",
       "region": "leonida-keys",
       "county": "mariana",
-      "position": { "x": -2900, "y": -6400, "method": "estimated", "accuracy": 400 },
+      "position": { "x": -6408, "y": -2478, "method": "estimated", "accuracy": 400 },
       "verification": "community",
       "summary": "Safe with ~$3,000, a Gold KZ-59, and the safe code on the ground-floor computer.",
       "hint": "Bobcat Key, off Watson Bay — south end of the key. Safe is upstairs in the lounge corner; read the code off the computer downstairs first.",
@@ -89,7 +92,8 @@
       "tips": [
         "Read the code off the ground-floor computer before going upstairs — the safe will not open otherwise.",
         "Sources disagree between 1886 and 1887; try 1886 first, then 1887.",
-        "Arrive by boat; the key has no road in."
+        "Arrive by boat; the key has no road in.",
+        "Pin is the cove at the south end of Bobcat Key, the end of the key the guide names."
       ],
       "code": "1886 (1886 / 1887 disputed between sources)",
       "risk": "high",
@@ -104,13 +108,16 @@
       "category": "weapon",
       "region": "leonida-keys",
       "county": "mariana",
-      "position": { "x": -3100, "y": -7200, "method": "estimated", "accuracy": 500 },
+      "position": { "x": -5774, "y": -6360, "method": "estimated", "accuracy": 600 },
       "verification": "community",
       "summary": "Suppressed Assassin Nipper .38 and a Smuggler Gorse 425 shotgun on two separate islands.",
       "hint": "Two islands. Suppressed pistol in deck hatch on the Derelict Spy Vessel wreck at the south-east Permit Keys tip. Shotgun on the sand beside a tilted boat on the northernmost island. Boat or jet ski required.",
       "rewards": ["Assassin Nipper .38 (suppressed pistol)", "Smuggler Gorse 425 shotgun"],
       "code": null,
       "risk": "low",
+      "tips": [
+        "Pin marks the Permit Keys themselves; the spy-vessel wreck is at the south-east tip and the tilted boat on the northernmost island."
+      ],
       "sources": [
         { "label": "GTA BOOM legendary weapons", "url": "https://www.gtaboom.com/gta-6-chapter-1-legendary-weapon-locations-2ea1" },
         { "label": "games.gg weapon locations", "url": "https://games.gg/grand-theft-auto-vi/guides/grand-theft-auto-6-assassin-pistol-smuggler-shotgun-locations/" }
@@ -122,13 +129,16 @@
       "category": "weapon",
       "region": "grassrivers",
       "county": "mariana",
-      "position": { "x": -2800, "y": -5100, "method": "estimated", "accuracy": 400 },
+      "position": { "x": -4381, "y": -4770, "method": "estimated", "accuracy": 500 },
       "verification": "community",
       "summary": "Kingfishers W-22 in a case on the kitchen counter of the main shack.",
       "hint": "Middle island in Wetman Bay, west of Pelican Valley and north-west of Key Lento. The W-22 sits in a case on the kitchen counter of the salmon-red main house over the dock.",
       "rewards": ["Kingfishers W-22", "Cash in the shacks"],
       "code": null,
       "risk": "high",
+      "tips": [
+        "Pin is Wetman Bay; the salmon-red main shack is on the middle island inside the bay."
+      ],
       "sources": [
         { "label": "IGN wiki", "url": "https://www.ign.com/wikis/gta-6/Fishing_Shacks" },
         { "label": "Keengamer walkthrough", "url": "https://www.keengamer.com/articles/guides/gta-6-fishing-shacks-walkthrough-all-valuables" }
@@ -186,7 +196,7 @@
       "category": "stash",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": 350, "y": 1100, "method": "estimated", "accuracy": 300 },
+      "position": { "x": -6350, "y": 3367, "method": "estimated", "accuracy": 250 },
       "verification": "community",
       "summary": "Cash safe and a Gutterball Moreland 850 shotgun via the Kolt & Associates robbery.",
       "hint": "Southern Port Gellhorn on US-9, just south of the Pawn & Gun. Safe is in the back office. All three Port Gellhorn codes are written on the wall map at Brooks Boatworks.",
@@ -194,7 +204,8 @@
       "tips": [
         "Most guides say 0300; one says 0330. Try 0300 first.",
         "All three Port Gellhorn codes are written on the wall map at Brooks Boatworks — read them there instead of guessing.",
-        "The Gutterball shotgun is elsewhere in the building, not inside the safe."
+        "The Gutterball shotgun is elsewhere in the building, not inside the safe.",
+        "Pin is the Pawn & Gun on US-9 in southern Port Gellhorn; the bowling alley and its back-office safe are just south of it."
       ],
       "code": "0300 (0300 / 0330 disputed between sources)",
       "risk": "low",
@@ -209,14 +220,15 @@
       "category": "stash",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": 200, "y": 1600, "method": "estimated", "accuracy": 300 },
+      "position": { "x": -6768, "y": 5041, "method": "estimated", "accuracy": 600 },
       "verification": "community",
       "summary": "Clunker 556 carbine, an upstairs safe, and a wall map listing all three Port Gellhorn codes.",
       "hint": "Northern Port Gellhorn waterfront near the bridge to Draper Island. Enter through the east fence hole, climb the grey building's outside stairs to the room with the wall map (codes: 6823, 6969, 0300).",
       "rewards": ["Clunker 556 carbine", "Safe upstairs"],
       "tips": [
         "The outside stairs are the way in — the front is sealed.",
-        "Read the wall map while you are here: it lists 6823, 6969 and 0300 for the whole Port Gellhorn set."
+        "Read the wall map while you are here: it lists 6823, 6969 and 0300 for the whole Port Gellhorn set.",
+        "Pin is the northern rail bridge towards Draper Island, the waterfront the guide names; the basemap has no Brooks Boatworks landmark."
       ],
       "code": "6823",
       "risk": "low",
@@ -231,14 +243,15 @@
       "category": "weapon",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": -50, "y": 1300, "method": "estimated", "accuracy": 300 },
+      "position": { "x": -6860, "y": 3970, "method": "estimated", "accuracy": 150 },
       "verification": "community",
       "summary": "Scrapper VF5C SMG, $15,000, and a safe (code 6969) in the gated top-floor room.",
       "hint": "Western Port Gellhorn shoreline on Draper Bay, south of the rail bridge to Draper Island, near Wild Hog Point.",
       "rewards": ["Scrapper VF5C SMG", "$15,000 (reported)", "Safe (code 6969)"],
       "tips": [
         "The room is gated and guarded; clear the floor before opening the safe.",
-        "Approach from the Draper Bay shoreline, south of the rail bridge."
+        "Approach from the Draper Bay shoreline, south of the rail bridge.",
+        "Pin is the La Cascara Motel itself, on the Draper Bay shoreline south of the rail bridge."
       ],
       "code": "6969",
       "risk": "medium",
@@ -253,13 +266,16 @@
       "category": "weapon",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": 450, "y": 1200, "method": "estimated", "accuracy": 300 },
+      "position": { "x": -6799, "y": 3947, "method": "estimated", "accuracy": 800 },
       "verification": "community",
       "summary": "Couch Potato Mustang .357 revolver. Shoot the ropes to drop the couch from the tree.",
       "hint": "Tanglewood Ln in Port Gellhorn, outside a mobile home. A couch hangs from a tree — shoot the ropes to drop it, then search it.",
       "rewards": ["Couch Potato Mustang .357 revolver"],
       "code": null,
       "risk": "none",
+      "tips": [
+        "Pin marks the trailer park on Port Gellhorn's western edge; the basemap has no Tanglewood Lane landmark, so the couch hanging in the tree is the identifier."
+      ],
       "sources": [
         { "label": "MetaForge unique weapons", "url": "https://metaforge.app/gta-6/gta-6-unique-weapons-locations" },
         { "label": "Keengamer legendary weapons", "url": "https://www.keengamer.com/articles/guides/gta-6-all-8-legendary-weapon-locations-in-port-gellhorn/" }
@@ -307,13 +323,16 @@
       "category": "weapon",
       "region": "mariana",
       "county": "mariana",
-      "position": { "x": -2200, "y": -5900, "method": "estimated", "accuracy": 400 },
+      "position": { "x": -7240, "y": -1322, "method": "estimated", "accuracy": 600 },
       "verification": "community",
       "summary": "Turnt Nipper .38 pistol on a powered paratrike hung in the pines.",
       "hint": "Bobcat Bight, northern tip of the Mariana coast. A powered paratrike is hung in a pine — shoot the lines to bring it down, then take the pistol off the seat.",
       "rewards": ["Turnt Nipper .38 pistol"],
       "code": null,
       "risk": "none",
+      "tips": [
+        "Pin is Bobcat Bight on the northern Mariana coast; the paratrike hangs in the pines above the bight."
+      ],
       "sources": [
         { "label": "IGN unique weapon variants", "url": "https://www.ign.com/wikis/gta-6/Unique_Weapon_Variants" },
         { "label": "gta6bugs", "url": "http://gta6bugs.com/easter-eggs/turnt-nipper-glider" }
@@ -366,9 +385,9 @@
       "id": "red-apple-orchard",
       "name": "Red Apple Orchard garage",
       "category": "activity",
-      "region": "grassrivers",
-      "county": "mariana",
-      "position": { "x": -2600, "y": -4600, "method": "estimated", "accuracy": 1500 },
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": -5831, "y": 5269, "method": "estimated", "accuracy": 400 },
       "verification": "community",
       "summary": "Garage keypad hides the Applesauce Bobcat vehicle.",
       "hint": "The garage door runs on keypad code 360782. Punch it in and drive the Bobcat out.",
@@ -377,7 +396,7 @@
       "risk": "low",
       "tips": [
         "Six digits — the only six-digit code at this location.",
-        "Pin is a region-level estimate; verify before driving out."
+        "Pin is the Red Apple Orchard in Kelly County, north-west of Port Gellhorn; the garage is on the property."
       ],
       "sources": [
         { "label": "Output Lag — safe & garage codes", "url": "https://outputlag.com/guides/gta-6-safe-garage-codes" }
@@ -389,7 +408,7 @@
       "category": "stash",
       "region": "mariana",
       "county": "mariana",
-      "position": { "x": -2300, "y": -4700, "method": "estimated", "accuracy": 900 },
+      "position": { "x": -3480, "y": -4788, "method": "estimated", "accuracy": 800 },
       "verification": "community",
       "summary": "Free-roam safe on the sandbar island south of the lake.",
       "hint": "Trailer on the sandbar island just south of Cottonmouth Lake. The code is a five-digit one shown on the postcards beside the bed.",
@@ -399,7 +418,7 @@
       "tips": [
         "Five digits, which is unusual — do not pad it with a leading zero.",
         "Read the postcards by the bed if the safe rejects the code.",
-        "Anchor: use the Cottonmouth Lake label on the map, then look south to the sandbar."
+        "Pin is Cottonmouth Lake; the trailer is on the sandbar island just south of it."
       ],
       "sources": [
         { "label": "RaidDex — safe codes", "url": "https://raiddex.com/en/gta-6/guides/safe-codes" }
@@ -411,7 +430,7 @@
       "category": "stash",
       "region": "leonida-keys",
       "county": "mariana",
-      "position": { "x": -2950, "y": -6500, "method": "estimated", "accuracy": 800 },
+      "position": { "x": -5887, "y": -2687, "method": "estimated", "accuracy": 900 },
       "verification": "community",
       "summary": "Security-compound safe tucked under the microwave.",
       "hint": "Watson Bay, near Bobcat Key. The safe is under the microwave in the kitchen. The code is the last line of an email on the kitchen PC.",
@@ -420,7 +439,8 @@
       "risk": "high",
       "tips": [
         "The compound is guarded — clear it before you start reading the PC.",
-        "Turn the microwave over; the safe is underneath it, not behind it."
+        "Turn the microwave over; the safe is underneath it, not behind it.",
+        "Pin sits on Bobcat Creek between Watson Bay and Bobcat Key, the 'near Bobcat Key' side the guide names; the basemap has no landmark for the safehouse compound."
       ],
       "sources": [
         { "label": "RaidDex — safe codes", "url": "https://raiddex.com/en/gta-6/guides/safe-codes" }
@@ -432,7 +452,7 @@
       "category": "stash",
       "region": "mariana",
       "county": "mariana",
-      "position": { "x": -1500, "y": -3400, "method": "estimated", "accuracy": 1200 },
+      "position": { "x": -2982, "y": -3084, "method": "estimated", "accuracy": 1500 },
       "verification": "community",
       "summary": "Junkyard safe outside Hamlet. Code is memorable, which is the hint.",
       "hint": "Nova Auto Junkyard, Hamlet. Four repeated digits — the most memorable code in the game, easy to overlook because it looks too obvious.",
@@ -441,7 +461,7 @@
       "risk": "low",
       "tips": [
         "Four identical digits; if a code does not stick, look for the safe rather than the clue.",
-        "Hamlet is the anchor label on the map — the yard sits on its edge."
+        "Pin is Hamlet town centre at the water tower; the guide names the town only and the basemap has no Nova Auto Junkyard landmark."
       ],
       "sources": [
         { "label": "Rock Paper Shotgun — all safe codes", "url": "https://www.rockpapershotgun.com/gta-all-6-safe-codes" }
@@ -453,7 +473,7 @@
       "category": "stash",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": 250, "y": 1450, "method": "estimated", "accuracy": 700 },
+      "position": { "x": -6373, "y": 3577, "method": "estimated", "accuracy": 150 },
       "verification": "community",
       "summary": "Office safe in the Port Gellhorn club. The code arrives by text, not by note.",
       "hint": "Delights Cabaret, Port Gellhorn. You do not find this code in the world — Vicki texts it to you during the 'Afternoon Delight' mission. If you skipped the mission, the safe stays shut.",
@@ -462,7 +482,8 @@
       "risk": "medium",
       "tips": [
         "Mission-gated: check your phone messages if the keypad ignores you.",
-        "The code is also the year the club was founded, per in-game signage."
+        "The code is also the year the club was founded, per in-game signage.",
+        "Pin is Delights on Interstate 404, in central Port Gellhorn."
       ],
       "sources": [
         { "label": "Rock Paper Shotgun — all safe codes", "url": "https://www.rockpapershotgun.com/gta-all-6-safe-codes" },
@@ -496,7 +517,7 @@
       "category": "weapon",
       "region": "grassrivers",
       "county": "mariana",
-      "position": { "x": -2400, "y": -4300, "method": "estimated", "accuracy": 1500 },
+      "position": { "x": -3477, "y": -4497, "method": "estimated", "accuracy": 500 },
       "verification": "community",
       "summary": "Akulus 'Kingfishers' heavy revolver inside a trailer during the raid on the illegal operation.",
       "hint": "The trailer in the RV park. It appears during the Chapter 3 raid on the Kingfishers' illegal operation — the game shows 'Valuables found' when you are next to it.",
@@ -505,7 +526,8 @@
       "risk": "high",
       "tips": [
         "Chapter 3 raid only; in free roam the trailer is empty.",
-        "Search the trailers in order — the revolver is in the one that triggers the 'Valuables found' prompt."
+        "Search the trailers in order — the revolver is in the one that triggers the 'Valuables found' prompt.",
+        "Pin is Sunrise RV Park, the park the guides place the Kingfishers' trailer operation in."
       ],
       "sources": [
         { "label": "space4games — unique weapons", "url": "https://space4games.com/en/games-en/gta-6-unique-weapons-locations-stats" }
@@ -584,7 +606,7 @@
       "category": "easter-egg",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": 600, "y": 1500, "method": "estimated", "accuracy": 1500 },
+      "position": { "x": -5366, "y": 3476, "method": "estimated", "accuracy": 800 },
       "verification": "estimate",
       "summary": "Player-reported night abduction east of Port Gellhorn, near the Starlet Motel. No published trigger.",
       "hint": "Back road east of Port Gellhorn, near the Starlet Motel. Reported after Chapter 2, around 2 a.m. in-game time: follow the trail from the abandoned car into the woods.",
@@ -594,7 +616,7 @@
       "tips": [
         "Player reports only — nobody has published a reliable trigger, so treat it as a rumour.",
         "If you go looking, set the in-game clock to about 02:00 and drive the back road slowly.",
-        "Pin is a region-level estimate and the encounter is unconfirmed."
+        "Pin is the Starlet Motel on the back road east of Port Gellhorn; the encounter itself is unconfirmed."
       ],
       "sources": [
         { "label": "NovusTools — easter egg tracker (player report)", "url": "https://novustools.com/gta-6-easter-eggs/" }
@@ -746,7 +768,7 @@
       "category": "vehicle",
       "region": "vice-city",
       "county": "vice-dale",
-      "position": { "x": 1450, "y": 2350, "method": "estimated", "accuracy": 1200 },
+      "position": { "x": -4, "y": -959, "method": "estimated", "accuracy": 300 },
       "verification": "community",
       "summary": "SUV parked at the Pegassi Residences entrance on Bayside Dr.",
       "hint": "Tequesta Retreat, Bayside Drive, Vice City. Turn up around 6:30 p.m.; security is nearby.",
@@ -755,7 +777,8 @@
       "risk": "medium",
       "tips": [
         "Security patrols the entrance — grab it and go rather than lingering.",
-        "Key Cloner needed to keep it."
+        "Key Cloner needed to keep it.",
+        "Pin is the Pegassi Residences north tower at Tequesta Retreat, the address the guide gives."
       ],
       "sources": [
         { "label": "Flamenco Neon — special vehicles", "url": "https://flamenconeon.com/en/guides/gta-6-special-vehicles-rare-cars-locations" }
@@ -767,7 +790,7 @@
       "category": "vehicle",
       "region": "vice-city",
       "county": "vice-dale",
-      "position": { "x": 1100, "y": 2500, "method": "estimated", "accuracy": 1200 },
+      "position": { "x": 906, "y": 661, "method": "estimated", "accuracy": 250 },
       "verification": "community",
       "summary": "Three luxury cars in one garage, plus a fourth on the driveway.",
       "hint": "Starfish Island, Vice Beach — the mansion at the end of the long central road. The garage holds a Pegassi Vitello, a Grotti Itali RSX and a Benefactor Dubsta. The Piccia Big Cat Furia sits outside on the driveway ring.",
@@ -777,7 +800,8 @@
       "tips": [
         "Four vehicles in one visit — bring somewhere to store them or accept losing three.",
         "Check the driveway before you leave; the Furia has its own spot outside.",
-        "Key Cloner (Chapter 3) needed to keep any of them."
+        "Key Cloner (Chapter 3) needed to keep any of them.",
+        "Pin is the Vercetti Estate, the mansion at the end of Starfish Island's central road."
       ],
       "sources": [
         { "label": "gta6info — rare vehicles map", "url": "https://gta6info.app/map/rare-vehicles" },
@@ -879,7 +903,7 @@
       "category": "vehicle",
       "region": "mariana",
       "county": "mariana",
-      "position": { "x": -1100, "y": -3300, "method": "estimated", "accuracy": 1500 },
+      "position": { "x": -3000, "y": -3376, "method": "estimated", "accuracy": 900 },
       "verification": "estimate",
       "summary": "Muscle car at the M7 junkyard east of Boone Speedway, off Galena St near Hamlet.",
       "hint": "M7 junkyard east of Boone Speedway, off Galena Street, Hamlet. Available at any time.",
@@ -888,7 +912,8 @@
       "risk": "medium",
       "tips": [
         "Single-source entry — treat the exact yard as approximate until you see it.",
-        "Anchor on Boone Speedway and head east along Galena St."
+        "Anchor on Boone Speedway and head east along Galena St.",
+        "Pin sits just east of Boone Speedway, as far as the guide's 'east of the speedway' line can be placed; the basemap has no M7 landmark."
       ],
       "sources": [
         { "label": "macetesgta6 — Randy's rare car list", "url": "https://macetesgta6.com.br/en/tip/gta-6-rare-car-locations-randy/" }
@@ -900,7 +925,7 @@
       "category": "vehicle",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": 500, "y": 1500, "method": "estimated", "accuracy": 1200 },
+      "position": { "x": -6733, "y": 2325, "method": "estimated", "accuracy": 600 },
       "verification": "estimate",
       "summary": "Hidden drift car in the Qwick-Fix workshop behind the drag strip at Gellhorn International Raceway.",
       "hint": "Port Gellhorn, Gellhorn International Raceway. The workshop sits behind the drag strip — go around the back of the strip rather than through the grandstand.",
@@ -1021,7 +1046,7 @@
       "category": "vehicle",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": 560, "y": 1560, "method": "estimated", "accuracy": 800 },
+      "position": { "x": -6769, "y": 2105, "method": "estimated", "accuracy": 400 },
       "verification": "community",
       "summary": "Blue Drake Penumbra with nitrous already fitted, in a yellow SCOOP container outside the raceway building, south Port Gellhorn.",
       "hint": "South of Port Gellhorn by the race tracks — the yellow container next to the Port Gellhorn raceway building. Cut the padlock with the Cut-Off Tool.",
@@ -1032,7 +1057,8 @@
         "Cut-Off Tool required; you get it in the Chapter 3 mission Meet the Heders and keep it for good.",
         "Nitrous is already installed, so it is quick off the line.",
         "Container has no alarm.",
-        "The Drifter Elegy entry points at the workshop behind the drag strip; this container sits by the raceway building itself."
+        "The Drifter Elegy entry points at the workshop behind the drag strip; this container sits by the raceway building itself.",
+        "Pin is the raceway's covered grandstands, beside the raceway building the guide names; no coordinates are published for the container itself."
       ],
       "sources": [
         { "label": "Sportskeeda — hidden container cars", "url": "https://www.sportskeeda.com/gta/all-hidden-cars-shipping-containers-gta-6-find" },
@@ -1045,7 +1071,7 @@
       "category": "vehicle",
       "region": "mariana",
       "county": "mariana",
-      "position": { "x": -1120, "y": -3180, "method": "estimated", "accuracy": 1200 },
+      "position": { "x": -3092, "y": -3376, "method": "estimated", "accuracy": 400 },
       "verification": "community",
       "summary": "Dune buggy in one of the yellow containers on the south side of Hamlet, near Boone Speedway.",
       "hint": "South side of Hamlet. Open the yellow container beside the building with the Cut-Off Tool.",
@@ -1056,7 +1082,7 @@
         "Cut-Off Tool required (Chapter 3, Meet the Heders).",
         "Sources spell it both Muck Spreader and Muxbreeder Bandito — same vehicle.",
         "Container has no alarm.",
-        "Boone Speedway is the anchor; the containers are on the south side of Hamlet near it."
+        "Pin is Boone Speedway itself; the containers are on the south side of Hamlet beside it."
       ],
       "sources": [
         { "label": "Sportskeeda — hidden container cars", "url": "https://www.sportskeeda.com/gta/all-hidden-cars-shipping-containers-gta-6-find" },
@@ -1069,7 +1095,7 @@
       "category": "easter-egg",
       "region": "mount-kalaga",
       "county": "lummox",
-      "position": { "x": -3900, "y": 5600, "method": "estimated", "accuracy": 4000 },
+      "position": { "x": -5649, "y": 6793, "method": "estimated", "accuracy": 1000 },
       "verification": "community",
       "summary": "A clearing of tiny graves in the woods by SR-73 in southern Grayson — a Pet Sematary nod that scans as WAiNK Curiosity 19 of 35.",
       "hint": "Grayson, south-west Lummox County on SR-45. Park at Hucks Pump n Go and read the missing-pet posters on the walls, then walk round the back past the green dumpsters to the breeze-block wall with 'Ghost Trail', 'Sightings in forest' and 'Turn back' signs nailed to it. The dirt path runs up the hill on the left of the wall — follow it into the trees to the clearing.",
@@ -1083,7 +1109,7 @@
         "Second route: come down SR-73 into southern Grayson and use Focus to follow the strange animal noises to the graves.",
         "Read the posters before you climb. Dempster, Scramps, Mr. Jiggles, Brendon, Geep and Bonzo are the joke, and their names are on the stones.",
         "A player report says following a cat through the fog unlocks a zombie deer tattoo; the outlet that filmed the cemetery walked up in daylight, saw no cat, and got no tattoo. Treat the tattoo as unconfirmed.",
-        "Pin is park-level, not grave-level: Grayson sits at the south-west corner of Lummox County on the Mount Kalaga park edge, so the written directions are what will get you there."
+        "Pin is Grayson town, where the Ghost Trail starts behind the shops; the cemetery itself has no basemap landmark, so the walk from the posters is the identifier."
       ],
       "sources": [
         { "label": "Middle East Gamer — pet cemetery walkthrough", "url": "https://www.middleeastgamer.com/gta-6-pet-cemetery" },
@@ -1156,7 +1182,7 @@
       "category": "vehicle",
       "region": "port-gellhorn",
       "county": "kelly",
-      "position": { "x": -350, "y": 1050, "method": "estimated", "accuracy": 1500 },
+      "position": { "x": -7563, "y": 3277, "method": "estimated", "accuracy": 400 },
       "verification": "community",
       "summary": "Third of the five Reynolds Kit Car wrecks for Wyman's Classic Cars: an orange container on its own on the west beach of Wild Hog Point, southwest of Port Gellhorn. You scan it, you do not drive it.",
       "hint": "West of Port Gellhorn on Wild Hog Point. Drive to the end of the airstrip, turn right onto the sand road, and when the beach is directly west of you leave the road towards the water — you will find a scatter of discarded containers. The lone orange one is the car: cut it open with the Cut-Off Tool and scan the wreck inside with WAiNK.",
@@ -1169,7 +1195,7 @@
         "Cut-Off Tool required (Chapter 3, Meet the Heders); guides also call it the angle grinder.",
         "Track progress under Exploration > Find Cars for Wyman.",
         "Register the finished car at a Pay 'n' Spray for $100, or park it in a garage you own, or it stays at his scrapyard.",
-        "Pin is a beach-level estimate; the airstrip and the lone orange container are the landmarks that matter."
+        "Pin is the Wild Hog Point beach landmark; the airstrip runs about 230 m east of it."
       ],
       "sources": [
         { "label": "IGN — Reynolds Kit Car locations", "url": "https://www.ign.com/wikis/gta-6/Reynolds_Kit_Car_Locations" },
