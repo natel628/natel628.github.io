@@ -666,3 +666,48 @@ or the record is structural rather than a misplacement. None was moved:
   move; the 12-record contact sheet and the hut pair were rendered in the browser from the tile pyramid
   (not from the app) so the comparison is independent of our own map rendering.
 - `node --check js/data.js` clean; `DATA_V` 12 with `js/data.js?v=12` in `index.html`.
+
+
+## 17. Five BURG labs, five pins
+
+§16 left this one flagged rather than fixed: our single `burg-underwater-labs` pin stood for five separate
+stations that GTABase marks individually, the nearest of them 1.4 km from our pin and the furthest 12.6 km
+away. The five sit 2.2 km to 15.6 km apart, so no single coordinate could honestly
+stand for the set.
+
+The old record kept its id, because it is still the first stop: GTABase's *Burg Facility 5* is the station
+whose computer "starts the chain of finding meteorites in safes", which is exactly the Key Lento entry this
+map already described. It now sits on that marker, and the other four are new records, each on its own
+marker with its own landmark direction:
+
+| Station | Record | Position | Where | Region/county | What is there |
+|---|---|---|---|---|---|
+| Key Lento station (first stop) | `burg-underwater-labs` | -1433, -6881 | south-east of Key Lento, in open water | Mariana/mariana | Starts the chain: laptop sets the Locate Underwater Meteorite task, messages give the safe code |
+| Facility 1 — the meteorite safe | `burg-facility-1-meteorite-safe` | -8783, -6757 | west of Mile Zero Air Station, south of the Riquezas Keys | Mariana/mariana | The only meteorite, in the safe, code 80085 |
+| Facility 2 — off Little Hardin Island | `burg-facility-2-little-hardin` | 859, 5473 | south of St. Lucia Lighthouse, Little Hardin Island | Ambrosia/Leonard | Laptop that hints at the other stations; nearest of the five to a road |
+| Facility 3 — beside the Sandbars | `burg-facility-3-sandbars` | -9705, 3321 | 460 m off the Sandbars, west coast | Port Gellhorn/Kelly | Story only |
+| Facility 4 — north of the Riquezas Keys | `burg-facility-4-riquezas` | -7618, -4865 | between the Riquezas Keys and Mariana Island | Mariana/mariana | Story only |
+
+Two things moved with the split. The meteorite and its code now belong to Facility 1, the only station whose
+safe holds one (GTABase: "safe inside with a meteorite (code 80085)"); the Key Lento record keeps the task
+and the code as learned there, and says plainly that the fragment itself is elsewhere. Each record also
+carries GTABase as its coordinate source alongside the three guides, since the positions are that map's
+markers, not the guides' prose.
+
+Two discrepancies recorded rather than papered over:
+
+- **Numbering.** GTABase numbers the stations 1–5 and puts the chain-starter at 5; our guide has the chain
+  starting at Key Lento and calls the meteorite station first. Same five labs, two schemes, so every record
+  says which number GTABase gives it and tells the reader to navigate by landmark.
+- **Wild Hog Point.** One guide places a station "off Wild Hog Point in Kelly County". No marker is there —
+  the nearest of the five is 8 km away — and the fifth station is north of the Riquezas Keys, where its pin
+  now sits. Facility 4's tips say so instead of pretending the guide's line matches.
+
+### Checks
+
+- `data/locations.json` parses; 80 records, 80 unique ids, every `region` resolves against `regions.json`;
+  the five BURG records are `method: "reported"`, `accuracy: 40`.
+- The five coordinates are GTABase's `underwater` markers verbatim (859, 5473; -1433, -6881; -8783, -6757;
+  -7618, -4865; -9705, 3321), each checked against the nearest named landmark before its hint was written.
+- `node --check js/data.js` clean; `DATA_V` 14 with `js/data.js?v=14` in `index.html`; the map loads
+  531 of 531 pins locally, the four new ones among them.

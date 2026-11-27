@@ -996,31 +996,28 @@
     },
     {
       "id": "burg-underwater-labs",
-      "name": "BURG underwater research labs (five)",
+      "name": "BURG lab — Key Lento station (first stop)",
       "category": "easter-egg",
-      "region": "leonida-keys",
+      "region": "mariana",
       "county": "mariana",
-      "position": { "x": -2050, "y": -5750, "method": "estimated", "accuracy": 800 },
+      "position": { "x": -1433, "y": -6881, "method": "reported", "accuracy": 40 },
       "verification": "community",
-      "summary": "Five abandoned BURG Industries research stations on the seabed, each under an unmarked yellow platform. Their laptops tell one story, and one lab's safe holds a meteorite.",
-      "hint": "Start in open water east of Key Lento: find the yellow platform, climb down its ladder, dive under the structure and swim up through the hatch in its underside. Read the laptop, then close it — the Locate Underwater Meteorite task starts and the messages give the safe code. The other four labs are listed in the tips.",
-      "rewards": [
-        "Meteorite Fragment (safe code 80085)",
-        "Locate Underwater Meteorite task",
-        "Five of the 33 Underwater Discoveries that count toward 100%"
-      ],
-      "code": "80085",
+      "summary": "The station that starts the BURG chain: its laptop sets the Locate Underwater Meteorite task and the follow-up messages hand over the safe code used in the meteorite lab.",
+      "hint": "Open water south-east of Key Lento: find the yellow platform, climb down its ladder, dive under the structure and swim up through the hatch in its underside. Read the laptop, then close it — that starts the Locate Underwater Meteorite task and puts the safe code in your messages. The other four stations each have their own pin on this map.",
+      "rewards": ["Locate Underwater Meteorite task", "The safe code for the meteorite lab (80085)", "One of the 33 Underwater Discoveries that count toward 100%"],
+      "code": null,
       "risk": "low",
       "tips": [
-        "The five are spread around the coast, not in one place: east of Key Lento, west of Mile Zero Air Station (south of the Riquezas Keys — this is the one with the meteorite safe), off Little Hardin Island in Leonard County, off Wild Hog Point in Kelly County, and beside the Sandbars.",
-        "This pin marks the Key Lento station because it is the one to visit first: it grants the objective and the code.",
-        "Every lab is entered the same way — yellow platform on the surface, ladder down, dive underneath, swim up through the hatch in the floor.",
-        "Bring scuba gear plus a boat, or a Sea Sparrow, which lands on water and saves a long trip between sites.",
-        "Guides disagree on the facility numbers (one calls the meteorite lab Facility 1, another numbers it fourth), so navigate by the landmark rather than the number.",
-        "A second meteorite lies on the seabed outside the meteorite lab and would not respond to interaction for the guide that tried it; the interior safe is the one that works.",
-        "The mystery is unfinished: the objective can stay active after the pickup, and one guide was able to take the meteorite twice."
+        "Visit this one first: it grants the objective and the code, and the other four only become content once you have it.",
+        "The meteorite is not here — it is in the safe at Facility 1, west of Mile Zero Air Station. This pin covers the story and the code.",
+        "Every station is entered the same way: yellow platform on the surface, ladder down, dive underneath, swim up through the hatch in the floor.",
+        "Bring scuba gear plus a boat, or a Sea Sparrow, which lands on water and saves the long hop between sites.",
+        "The mystery is unfinished: the objective can stay active after the pickup, and one guide was able to take the meteorite twice.",
+        "GTABase numbers this station 5 of 5, so its number does not match the order guides visit the labs in — navigate by landmark, not number.",
+        "Pin is the community marker for the station itself, under its yellow buoy."
       ],
       "sources": [
+        { "label": "GTABase map — Burg Facility markers", "url": "https://www.gtabase.com/gta-6/map/" },
         { "label": "gta6bugs — BURG facilities & safe code", "url": "https://gta6bugs.com/easter-eggs/burg-industries-underwater-facilities-meteorite" },
         { "label": "itemlevel — all five facilities", "url": "https://itemlevel.net/gta-6-all-underwater-research-facilities-meteorite-locations/" },
         { "label": "GTA6Map — five underwater labs", "url": "https://gta6map.city/secrets/underwater-research-facilities-meteorite-mystery/" }
@@ -1676,6 +1673,111 @@
       ],
       "sources": [
         { "label": "GTABase map — Grove Street (San Andreas reference)", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-055" }
+      ]
+    },
+    {
+      "id": "burg-facility-1-meteorite-safe",
+      "name": "BURG Facility 1 — the meteorite safe",
+      "category": "easter-egg",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -8783, "y": -6757, "method": "reported", "accuracy": 40 },
+      "verification": "community",
+      "summary": "The one station of the five with a meteorite inside its safe, opened with the code from the Key Lento messages.",
+      "hint": "Far south-west, west of Mile Zero Air Station on Goose Key and south of the Riquezas Keys. Yellow platform, ladder down, dive under and up through the hatch in the floor. The safe inside takes 80085.",
+      "rewards": ["Meteorite Fragment (safe code 80085)", "The station's page of the BURG story"],
+      "code": "80085",
+      "risk": "low",
+      "tips": [
+        "80085 is the code the Key Lento laptop puts in your messages — you do not have to work it out again here.",
+        "A second meteorite lies on the seabed outside this lab and would not respond to interaction for the guide that tried it; the interior safe is the one that works.",
+        "Boat or Sea Sparrow only: the nearest land is Mile Zero Air Station, 1.9 km east.",
+        "GTABase calls this Facility 1 and marks it as the one that starts the chain, while our guide has the Key Lento station starting it. Same five labs, two numbering schemes — use the landmarks.",
+        "Pin is the community marker for the station itself, under its yellow buoy."
+      ],
+      "sources": [
+        { "label": "GTABase map — Burg Facility markers", "url": "https://www.gtabase.com/gta-6/map/" },
+        { "label": "gta6bugs — BURG facilities & safe code", "url": "https://gta6bugs.com/easter-eggs/burg-industries-underwater-facilities-meteorite" },
+        { "label": "itemlevel — all five facilities", "url": "https://itemlevel.net/gta-6-all-underwater-research-facilities-meteorite-locations/" },
+        { "label": "GTA6Map — five underwater labs", "url": "https://gta6map.city/secrets/underwater-research-facilities-meteorite-mystery/" }
+      ]
+    },
+    {
+      "id": "burg-facility-2-little-hardin",
+      "name": "BURG Facility 2 — off Little Hardin Island",
+      "category": "easter-egg",
+      "region": "ambrosia",
+      "county": "leonard",
+      "position": { "x": 859, "y": 5473, "method": "reported", "accuracy": 40 },
+      "verification": "community",
+      "summary": "The station whose laptop points at the other three or four, and the one closest to land on the north-east coast.",
+      "hint": "Off Little Hardin Island in Leonard County, on the north-east coast — the platform sits in open water south of St. Lucia Lighthouse. Yellow platform, ladder down, dive under and up through the hatch in the floor. The computer inside hints at three or four more stations around the map.",
+      "rewards": ["A laptop page of the BURG story", "One of the 33 Underwater Discoveries that count toward 100%"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "Nothing to collect here beyond the story — the laptop is the point, and it is what tells you the other stations exist.",
+        "Closest of the five to a road: leave the car at Little Hardin Island and swim or boat out.",
+        "The hatch is in the floor of the tube under the platform, not in its side.",
+        "GTABase numbers this Facility 2; guides that start at Key Lento reach it late, so the number tells you nothing about the route."
+      ],
+      "sources": [
+        { "label": "GTABase map — Burg Facility markers", "url": "https://www.gtabase.com/gta-6/map/" },
+        { "label": "gta6bugs — BURG facilities & safe code", "url": "https://gta6bugs.com/easter-eggs/burg-industries-underwater-facilities-meteorite" },
+        { "label": "itemlevel — all five facilities", "url": "https://itemlevel.net/gta-6-all-underwater-research-facilities-meteorite-locations/" },
+        { "label": "GTA6Map — five underwater labs", "url": "https://gta6map.city/secrets/underwater-research-facilities-meteorite-mystery/" }
+      ]
+    },
+    {
+      "id": "burg-facility-3-sandbars",
+      "name": "BURG Facility 3 — beside the Sandbars",
+      "category": "easter-egg",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": -9705, "y": 3321, "method": "reported", "accuracy": 40 },
+      "verification": "community",
+      "summary": "The westernmost station, in open water off the Sandbars, with a laptop page but nothing to collect.",
+      "hint": "Off the Sandbars on the far western coast of Kelly County — the platform is in open water 460 m from the sandbanks themselves. Yellow platform, ladder down, dive under and up through the hatch in the floor.",
+      "rewards": ["A laptop page of the BURG story", "One of the 33 Underwater Discoveries that count toward 100%"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "The longest trip of the five from anywhere with a road; bring a Sea Sparrow or plan a boat route along the west coast.",
+        "Wild Hog Airfield is the nearest airstrip, on the coast south-east of the platform.",
+        "Open water with strong current — surface inside the tube, not outside it.",
+        "GTABase numbers this Facility 3."
+      ],
+      "sources": [
+        { "label": "GTABase map — Burg Facility markers", "url": "https://www.gtabase.com/gta-6/map/" },
+        { "label": "gta6bugs — BURG facilities & safe code", "url": "https://gta6bugs.com/easter-eggs/burg-industries-underwater-facilities-meteorite" },
+        { "label": "itemlevel — all five facilities", "url": "https://itemlevel.net/gta-6-all-underwater-research-facilities-meteorite-locations/" },
+        { "label": "GTA6Map — five underwater labs", "url": "https://gta6map.city/secrets/underwater-research-facilities-meteorite-mystery/" }
+      ]
+    },
+    {
+      "id": "burg-facility-4-riquezas",
+      "name": "BURG Facility 4 — north of the Riquezas Keys",
+      "category": "easter-egg",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -7618, "y": -4865, "method": "reported", "accuracy": 40 },
+      "verification": "community",
+      "summary": "A story-only station in the south-west, in open water between the Riquezas Keys and Mariana Island.",
+      "hint": "North of the Riquezas Keys in the south-west, in open water between the keys and Mariana Island. Yellow platform, ladder down, dive under and up through the hatch in the floor.",
+      "rewards": ["A laptop page of the BURG story", "One of the 33 Underwater Discoveries that count toward 100%"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "One guide places one of the five off Wild Hog Point in Kelly County; no station is marked there, and the published marker for the fifth is here, north of the Riquezas Keys. Navigate by the marker.",
+        "The Riquezas Keys are the nearest land, 720 m south-east.",
+        "Story only — the laptop, no safe, no pickup.",
+        "GTABase numbers this Facility 4."
+      ],
+      "sources": [
+        { "label": "GTABase map — Burg Facility markers", "url": "https://www.gtabase.com/gta-6/map/" },
+        { "label": "gta6bugs — BURG facilities & safe code", "url": "https://gta6bugs.com/easter-eggs/burg-industries-underwater-facilities-meteorite" },
+        { "label": "itemlevel — all five facilities", "url": "https://itemlevel.net/gta-6-all-underwater-research-facilities-meteorite-locations/" },
+        { "label": "GTA6Map — five underwater labs", "url": "https://gta6map.city/secrets/underwater-research-facilities-meteorite-mystery/" }
       ]
     }
   ]
