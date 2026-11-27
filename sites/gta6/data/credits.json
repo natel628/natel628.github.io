@@ -13,6 +13,16 @@
       "requiredAttribution": "YANIS V18 \u00b7 gtadb.org and all contributors \u00b7 CC BY 4.0"
     },
     {
+      "asset": "Map tiles (in-game style)",
+      "work": "GTA VI in-game map",
+      "author": "Rockstar Games",
+      "via": "gtadb.org tile repository (github.com/rolux/gtadb.org), mirrored unmodified",
+      "license": "All rights reserved \u2014 Rockstar Games / Take-Two Interactive",
+      "sourceUrl": "https://gtadb.org",
+      "changes": "Tile images are shown unmodified and cropped by the client to the viewport. This is game artwork, offered by the community mirror under its own terms; no ownership is claimed.",
+      "notes": "Optional base map. The default community artwork (YANIS V18) is the CC BY 4.0 alternative."
+    },
+    {
       "asset": "Place positions (reference)",
       "work": "GTA VI Landmarks Data",
       "author": "GTADB.ORG and contributors",

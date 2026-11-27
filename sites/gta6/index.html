@@ -117,6 +117,12 @@
         <div id="verifyToggleGroup" class="verify-toggle-group" role="group" aria-label="Verification tier filters"></div>
       </div>
 
+      <!-- Base map -->
+      <div class="rail-section">
+        <div class="rail-section-header rail-text"><span>Base map</span></div>
+        <div id="baseMapGroup" class="verify-toggle-group" role="group" aria-label="Base map artwork"></div>
+      </div>
+
       <!-- Navigation -->
       <div class="rail-section">
         <div class="rail-section-header rail-text"><span>Navigation</span></div>
@@ -180,7 +186,7 @@
 
     <!-- Credits strip -->
     <div class="credits-strip" role="contentinfo">
-      <span>Map: <a href="https://gtadb.org" target="_blank" rel="noopener noreferrer">YANIS V18 · gtadb.org</a> CC&nbsp;BY&nbsp;4.0 · Unofficial fan project</span>
+      <span id="mapCredit">Map: <a href="https://gtadb.org" target="_blank" rel="noopener noreferrer">YANIS V18 · gtadb.org</a> CC&nbsp;BY&nbsp;4.0 · Unofficial fan project</span>
       <button id="creditsBtn" style="pointer-events:auto;font-size:.6rem;color:var(--g6-dim);text-decoration:underline;cursor:pointer;background:none;border:none" aria-label="Open credits and licences">Credits &amp; Licences</button>
     </div>
   </main>
@@ -241,15 +247,15 @@
 <!-- App JS (load order matters) -->
 <script src="js/core/dom.js?v=1"></script>
 <script src="js/core/geo.js?v=1"></script>
-<script src="js/core/state.js?v=1"></script>
+<script src="js/core/state.js?v=2"></script>
 <script src="js/core/storage.js?v=1"></script>
 <script src="js/data.js?v=1"></script>
-<script src="js/map.js?v=4"></script>
+<script src="js/map.js?v=5"></script>
 <script src="js/markers.js?v=1"></script>
 <script src="js/filters.js?v=2"></script>
 <script src="js/detail.js?v=2"></script>
 <script src="js/navigation.js?v=1"></script>
-<script src="js/app.js?v=2"></script>
+<script src="js/app.js?v=3"></script>
 
 </body>
 </html>

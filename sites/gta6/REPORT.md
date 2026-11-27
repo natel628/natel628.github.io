@@ -29,6 +29,14 @@ Verified alignment: pins sit on their piers, blocks and coastal landmarks, not i
 
 Attribution moved to `Map: YANIS V18 · gtadb.org CC BY 4.0` on the credits strip, and `data/credits.json` records the tile set, its author, the licence and the change (client-side cropping only). No coordinates were invented or re-tiered.
 
+### Base map artwork switch
+
+The same repository publishes a second pyramid on the identical grid: `day`, the in-game pause map, which goes one level deeper (z0–z6, so 2 px/m at native zoom). It is offered as **Base map → In-game** in the rail, with the choice saved in `prefs.baseMap`. Both paths share `TILE_SETS` in `js/map.js`, so only the path segment and `maxLevel` differ.
+
+Default is **Community** (YANIS V18, CC BY 4.0). The in-game option shows Rockstar's own map artwork, mirrored unmodified from the same community repository — the credits strip and `data/credits.json` switch to `© Rockstar Games` while it is active, and no ownership is claimed. Whoever maintains this site should decide whether that default suits them.
+
+Verified: toggling swaps `/yanis,18/` ⇄ `/day/`, `aria-checked` follows, the credits line updates, the choice survives a reload, and no tile request fails in either mode.
+
 ## 3. Handoff tasks closed
 
 - **Task 2 — mobile location list.** `buildLocationList` now feeds both `#locList` (rail) and the new `#mobileLocList` in the bottom sheet through a shared `_buildRows()` helper. `#mobileCount2` is updated alongside `#mobileCount`.

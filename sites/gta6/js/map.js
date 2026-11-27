@@ -12,10 +12,19 @@ G6.map = (function () {
   // z there are 2^(z+2) tiles per side and z5 is exactly 1 px per metre, so a
   // world point (x, y) sits at pixel ((x+16384)·2^(z-5), (16384-y)·2^(z-5)).
   // Files are named <z>/<z>,<y>,<x>.jpg — not the standard XYZ order.
-  var TILE_BASE = 'https://cdn.jsdelivr.net/gh/rolux/gtadb.org@main/maps/tiles/6/yanis,18';
+  var TILE_BASE = 'https://cdn.jsdelivr.net/gh/rolux/gtadb.org@main/maps/tiles/6/';
   var GRID_HALF = 16384;
   var GRID_TILE = 256;
-  var MAX_LEVEL = 5;        // the published pyramid stops at z5 (1 px/m)
+
+  // Two published pyramids share the same grid and naming. maxLevel differs:
+  // the in-game map is published up to z6 (2 px/m), the community map to z5.
+  var TILE_SETS = {
+    community: { path: 'yanis,18', maxLevel: 5 },
+    ingame:    { path: 'day',      maxLevel: 6 }
+  };
+
+  var _baseSet   = 'community';
+  var _baseLayer = null;
 
   var BaseTiles = L.GridLayer.extend({
 
@@ -23,9 +32,11 @@ G6.map = (function () {
       var tile = document.createElement('div');
       tile.className = 'g6-tile';
 
+      var set = TILE_SETS[_baseSet] || TILE_SETS.community;
+
       // Metres covered by this Leaflet tile, and the pyramid level that best fits.
       var span = GRID_TILE / Math.pow(2, coords.z);
-      var level = Math.min(Math.max(coords.z + 5, 0), MAX_LEVEL);
+      var level = Math.min(Math.max(coords.z + 5, 0), set.maxLevel);
       var ppm  = Math.pow(2, level - 5);          // gtadb pixels per metre
 
       // This tile's corner, converted into pyramid pixels.
@@ -41,7 +52,7 @@ G6.map = (function () {
       // Crop the covering tile to this slot, so any zoom level (including the
       // upscaled top of the pyramid) still lands in the right place.
       var scale = GRID_TILE / side;
-      tile.style.backgroundImage    = 'url(' + TILE_BASE + '/' + level + '/' + level +
+      tile.style.backgroundImage    = 'url(' + TILE_BASE + set.path + '/' + level + '/' + level +
                                       ',' + ty + ',' + tx + '.jpg)';
       tile.style.backgroundSize     = (GRID_TILE * scale) + 'px ' + (GRID_TILE * scale) + 'px';
       tile.style.backgroundPosition = (-(tx * GRID_TILE - gx) * scale) + 'px ' +
@@ -66,13 +77,7 @@ G6.map = (function () {
     _map.setMaxBounds(BOUNDS);
 
     // ── Base map ───────────────────────────────────────────
-    new BaseTiles({
-      tileSize: GRID_TILE,
-      minZoom:  -5,
-      maxZoom:   1,
-      noWrap:   true,
-      bounds:   BOUNDS
-    }).addTo(_map);
+    _baseLayer = createBaseLayer();
 
     _map.fitBounds(BOUNDS, { padding: [8, 8] });
 
@@ -100,6 +105,27 @@ G6.map = (function () {
     return _map;
   }
 
+  function createBaseLayer() {
+    return new BaseTiles({
+      tileSize: GRID_TILE,
+      minZoom:  -5,
+      maxZoom:   1,
+      noWrap:   true,
+      bounds:   BOUNDS
+    }).addTo(_map);
+  }
+
+  // Switch between the community artwork and the in-game map. Both pyramids use
+  // the same grid, so only the path segment changes.
+  function setBaseMap(id) {
+    if (!TILE_SETS[id] || id === _baseSet) return;
+    _baseSet = id;
+    if (_map && _baseLayer) _map.removeLayer(_baseLayer);
+    if (_map) _baseLayer = createBaseLayer();
+  }
+
+  function getBaseMap() { return _baseSet; }
+
   function getMap() { return _map; }
 
   function fitAll() {
@@ -117,7 +143,8 @@ G6.map = (function () {
   }
 
   window.G6 = G6;
-  return { init: init, getMap: getMap, fitAll: fitAll, flyTo: flyTo, invalidate: invalidate };
+  return { init: init, getMap: getMap, fitAll: fitAll, flyTo: flyTo, invalidate: invalidate,
+           setBaseMap: setBaseMap, getBaseMap: getBaseMap };
 
 })();
 

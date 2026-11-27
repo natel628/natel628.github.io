@@ -83,6 +83,10 @@
     // Verification toggle
     _buildVerifyToggle(data);
 
+    // Base map artwork toggle
+    _buildBaseMapToggle();
+    _updateCredit();
+
     // Hide-found filter
     var hideFoundBtn = document.getElementById('hideFoundBtn');
     if (hideFoundBtn) {
@@ -345,6 +349,58 @@
 
       group.appendChild(btn);
     });
+  }
+
+  function _buildBaseMapToggle() {
+    var group = document.getElementById('baseMapGroup');
+    if (!group) return;
+    group.innerHTML = '';
+
+    var options = [
+      { id: 'community', label: '\u25C8 Community', color: 'rgba(255,255,255,.5)' },
+      { id: 'ingame',    label: '\u25A3 In-game',   color: 'var(--g6-accent-2)' }
+    ];
+
+    options.forEach(function (opt) {
+      var btn = document.createElement('button');
+      btn.className = 'verify-toggle-btn';
+      btn.setAttribute('role', 'radio');
+      btn.setAttribute('aria-checked', String(G6.map.getBaseMap() === opt.id));
+      btn.style.setProperty('--tier-color', opt.color);
+      btn.textContent = opt.label;
+
+      btn.addEventListener('click', function () {
+        G6.map.setBaseMap(opt.id);
+        var s = G6.state.get();
+        G6.state.set({ prefs: Object.assign({}, s.prefs, { baseMap: opt.id }) });
+        saveProgress();
+        _syncBaseMapUI();
+        _updateCredit();
+      });
+
+      group.appendChild(btn);
+    });
+  }
+
+  function _syncBaseMapUI() {
+    var btns = document.querySelectorAll('#baseMapGroup .verify-toggle-btn');
+    var ids  = ['community', 'ingame'];
+    var cur  = G6.map.getBaseMap();
+    ids.forEach(function (id, i) {
+      if (btns[i]) btns[i].setAttribute('aria-checked', String(cur === id));
+    });
+  }
+
+  // The credits strip has to state which artwork is actually on screen.
+  var CREDITS = {
+    community: 'Map: <a href="https://gtadb.org" target="_blank" rel="noopener noreferrer">YANIS V18 \u00b7 gtadb.org</a> CC&nbsp;BY&nbsp;4.0 \u00b7 Unofficial fan project',
+    ingame:    'Map: GTA VI in-game map \u00a9&nbsp;Rockstar Games \u00b7 tiles via <a href="https://gtadb.org" target="_blank" rel="noopener noreferrer">gtadb.org</a> \u00b7 Unofficial fan project'
+  };
+
+  function _updateCredit() {
+    var el = document.getElementById('mapCredit');
+    if (!el) return;
+    el.innerHTML = CREDITS[G6.map.getBaseMap()] || CREDITS.community;
   }
 
   function _syncVerifyUI(active) {
@@ -847,8 +903,10 @@
       )
     });
 
-    // Init map
+    // Init map, then apply the saved artwork choice
     var map = G6.map.init();
+    var bootBaseMap = G6.state.get().prefs.baseMap;
+    if (bootBaseMap) G6.map.setBaseMap(bootBaseMap);
     G6.markers.init(map);
 
     // Initial filter pass

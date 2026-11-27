@@ -18,7 +18,8 @@ G6.state = (function () {
       categories:   null,     // null = all enabled
       verification: ['official', 'community', 'estimate'],
       hideFound:    false,
-      search:       ''
+      search:       '',
+      baseMap:      'community'   // 'community' (YANIS) | 'ingame'
     }
   };
 
