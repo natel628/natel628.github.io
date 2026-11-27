@@ -640,7 +640,7 @@ Three regions changed with the coordinates, because the new pin is in a differen
 (Leonard County, per the county landmark 25 m from the marker), and *the Picador's yard* `grassrivers` →
 `mariana`. The other ten kept their region and county. The Picador record's summary moved with it, from "a
 field just above Grass Rivers" to the old trainyard, and the Gullet Marsh hut's "immediately east of the
-crab lab" tip now reads "about 400 m east", which is what the new pin measures.
+crab lab" hint and tip now give the measured 392 m, which is what the new pin sits at.
 
 ### Flagged and deliberately left alone
 
