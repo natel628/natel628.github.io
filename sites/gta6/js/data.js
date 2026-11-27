@@ -13,7 +13,7 @@ G6.data = (function () {
   }
 
   function normalise(raw, catIds) {
-    var locs = Array.isArray(raw) ? raw : (raw.locations || []);
+    var locs = Array.isArray(raw) ? raw : (raw.locations || raw.collections || []);
     return locs.map(function (loc) {
       var cat = loc.category || CAT_MAP[loc.cat] || loc.cat || 'landmark';
       if (catIds.indexOf(cat) === -1) cat = 'landmark';
@@ -64,8 +64,8 @@ G6.data = (function () {
 
   // Bump DATA_V whenever the JSON in data/ changes. GitHub Pages caches files for
   // ten minutes, so without this returning visitors keep seeing the old dataset
-  // long after a deploy.
-  var DATA_V = '9';
+  // long after a deploy. Both locations.json and collections.json ride on it.
+  var DATA_V = '10';
 
   function load(basePath) {
     var base = (basePath || '.').replace(/\/$/, '');
@@ -74,12 +74,14 @@ G6.data = (function () {
       fetchJSON(base + '/data/locations.json' + v),
       fetchJSON(base + '/data/categories.json' + v),
       fetchJSON(base + '/data/regions.json' + v),
-      fetchJSON(base + '/data/credits.json' + v)
+      fetchJSON(base + '/data/credits.json' + v),
+      fetchJSON(base + '/data/collections.json' + v)
     ]).then(function (results) {
       var rawLocs   = results[0];
       var catsData  = results[1];
       var regData   = results[2];
       var creds     = results[3];
+      var rawColls  = results[4];
 
       var categories = catsData.categories || catsData;
       var catIds     = categories.map(function (c) { return c.id; });
@@ -87,7 +89,9 @@ G6.data = (function () {
       var counties   = regData.counties || [];
       var credits    = creds.entries || [];
 
-      var locations = normalise(rawLocs, catIds);
+      // Curated records first, then the bulk collectible/challenge pins, so the
+      // hand-written entries keep their order in the list and search results.
+      var locations = normalise(rawLocs, catIds).concat(normalise(rawColls, catIds));
       var index     = buildIndex(locations);
 
       return {

@@ -422,3 +422,83 @@ Islands). Neither matches our pin at **-2700, -6500**, so that flag stands.
 - Two pin pairs sit within 40 m: the pre-existing `crab-outpost-pelican-valley` / `crab-lab-karkinos`
   pair (0 m) and the new Dolores / Michael's boat pair (31 m, adjacent in the source too).
 - Not checked: the new pins were not opened in a browser this round.
+### Which ones were left out
+
+Two of the 453 published markers are duplicates of a marker four metres away, so each pair became one
+record:
+
+| Dropped | Kept | Why |
+|---|---|---|
+| Hidden package *Weed (ruins)*, -4073, 7397 | *Weed on the pallet by the ruins*, -4077, 7398 | Same crate: one marker calls it the pallet behind the yellow box, the other the weeds near the meditation spot. |
+| Meteorite *Gellhorn International Raceway*, -7360, 1681 | *Meteorite inside the beached whale*, -7356, 1682 | Same fragment on the raceway beach; one marker writes it up through the whale, the other through the two trees beside it. |
+
+Nothing was dropped for already being on the map: the closest curated records are 5 m and 12 m away and are
+different things (an acid stash beside *The couch in the tree* weapon; the Hamlet stunt jump beside a stash
+crate). The crab-lab contradiction from §12 is untouched.
+
+## 13. Hidden packages, meteorites, stunt jumps and knife flights
+
+The same GTABase payload behind §12 also carries the collectible and challenge layers. All four were
+imported whole, with the pins taken straight from the published coordinates — the frame was already proven
+to be ours in §12, so nothing was re-projected or nudged.
+
+| Layer | Published | On the map | Tier split |
+|---|---|---|---|
+| Hidden packages | 147 | **146** | 114 community, 32 estimate |
+| Meteorite fragments | 136 | **135** | 120 community, 15 estimate |
+| Stunt jumps | 130 | **130** | 92 community, 38 estimate |
+| Knife flights | 40 | **40** | 40 estimate |
+
+That is **451 new pins**; the map now holds **527 records** in total (76 curated in `data/locations.json`,
+451 bulk pins in the new `data/collections.json`). `DATA_V` is `10`.
+
+### Where the records live
+
+`locations.json` still holds only the hand-researched places. The bulk layers went into
+`data/collections.json`, which `js/data.js` fetches alongside it and concatenates after the curated
+records, so the curated entries keep their order in the list, the search index and the detail panel. Both
+files ride the same `?v=` cache-buster.
+
+Four categories were added so the layers can be filtered apart instead of piling into *Collectibles*:
+
+| Category | Colour | Pin |
+|---|---|---|
+| Hidden packages | `#e5c15a` gold | teardrop with a parcel |
+| Meteorite fragments | `#ff7a59` coral | teardrop with a cratered rock |
+| Stunt jumps | `#3fd0a0` green | shield with a ramp arrow |
+| Knife flights | `#8fa4ff` periwinkle | shield with a dart |
+
+Each got its own `categories.json` entry, `--cat-*` token and sprite symbol.
+
+### Wording
+
+Every name, hint and summary was written for this map. Hidden packages and meteorites were paraphrased
+from the one-line descriptions that ship with each marker (which way to look, which container, what the
+loot is worth); stunt jumps and knife flights carry only a place name at the source, so those records say
+what the place is and how the challenge works rather than inventing a direction. Sixteen markers publish
+no description at all — those say so in the hint instead of guessing. Two records carry a tip explaining
+the duplicate pairs above.
+
+Each record links to its own marker (`?feature=hidden-packages#hidden-package-016` and the like), and
+`data/credits.json` gained a *Collectible and challenge positions* entry. Positions are stored with
+`"method": "reported"` and an accuracy of 40 m where the marker has a photo, 250 m where it does not.
+
+### Region and county
+
+Neither field is published with the markers. Each pin was assigned the town of its nearest GTADB landmark
+(within 1.5 km; six pins had none nearby and took the neighbouring area), then the town was mapped to one
+of the eight map regions and its county, checking against the county named in the marker itself where it
+names one (the *Mariana County #4*, *Kelly County #3*, *Lummox County #12* and *Leonard County* series).
+Distribution: Vice City 116, Mount Kalaga 94, Mariana 87, Port Gellhorn 77, Leonida Keys 35, Ambrosia 23,
+Capri 16, Grassrivers 3.
+
+### Checks run
+
+- `data/collections.json` parses; 451 records, no duplicate ids against the curated 76.
+- Every category, region and county id resolves against `categories.json` and `regions.json`.
+- Every pin falls inside the tile crop (x -11000…4000, y -9000…11000), so none are silently invisible.
+- Every record has a name, a hint and a GTABase source link; the 451 positions are byte-identical to the
+  published marker coordinates.
+- `node --check js/data.js` clean after the extra fetch.
+- Loaded the map in a browser at 527/527: all 527 pins render, no marker has a missing sprite symbol, and
+  the category chips read 146 / 135 / 130 / 40.

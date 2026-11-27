@@ -19,6 +19,8 @@
   /* Category colours */
   --cat-stash:       #f0a35e;
   --cat-collectible: #b18cf0;
+  --cat-hidden-package: #e5c15a;
+  --cat-meteorite:   #ff7a59;
   --cat-easter-egg:  #ff5c8a;
   --cat-secret-mission: #8fd14f;
   --cat-weapon:      #e8536b;
@@ -26,6 +28,8 @@
   --cat-landmark:    #7fd1ff;
   --cat-safehouse:   #5ad48a;
   --cat-activity:    #ffd166;
+  --cat-stunt-jump:  #3fd0a0;
+  --cat-knife-flight:#8fa4ff;
   --cat-shop:        #8fb3d9;
 
   /* Verification tiers */

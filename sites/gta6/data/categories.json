@@ -3,13 +3,17 @@
   "categories": [
     { "id": "stash",       "label": "Stashes & Treasure",    "short": "Stashes",    "color": "#f0a35e", "glyph": "stash",       "order": 10 },
     { "id": "collectible", "label": "Collectibles",          "short": "Collect.",   "color": "#b18cf0", "glyph": "collectible", "order": 20 },
+    { "id": "hidden-package", "label": "Hidden Packages",      "short": "Packages",   "color": "#e5c15a", "glyph": "hidden-package", "order": 22 },
+    { "id": "meteorite",  "label": "Meteorite Fragments",    "short": "Meteorites", "color": "#ff7a59", "glyph": "meteorite",   "order": 24 },
     { "id": "easter-egg",  "label": "Easter Eggs & Secrets", "short": "Secrets",    "color": "#ff5c8a", "glyph": "easter-egg",  "order": 30 },
     { "id": "secret-mission", "label": "Secret Missions",       "short": "Missions",   "color": "#8fd14f", "glyph": "secret-mission", "order": 35 },
     { "id": "weapon",      "label": "Unique Weapons",        "short": "Weapons",    "color": "#e8536b", "glyph": "weapon",      "order": 40 },
     { "id": "vehicle",     "label": "Rare Vehicles",         "short": "Vehicles",   "color": "#5eead4", "glyph": "vehicle",     "order": 45 },
     { "id": "landmark",    "label": "Landmarks",             "short": "Landmarks",  "color": "#7fd1ff", "glyph": "landmark",    "order": 50 },
     { "id": "safehouse",   "label": "Safehouses",            "short": "Safehouses", "color": "#5ad48a", "glyph": "safehouse",   "order": 60 },
-    { "id": "activity",    "label": "Activities",            "short": "Activities", "color": "#ffd166", "glyph": "activity",    "order": 70 },
+        { "id": "activity",    "label": "Activities",            "short": "Activities", "color": "#ffd166", "glyph": "activity",     "order": 70 },
+    { "id": "stunt-jump",  "label": "Stunt Jumps",           "short": "Stunts",     "color": "#3fd0a0", "glyph": "stunt-jump",  "order": 65 },
+    { "id": "knife-flight","label": "Knife Flights",          "short": "Flights",    "color": "#8fa4ff", "glyph": "knife-flight","order": 67 },
     { "id": "shop",        "label": "Shops & Services",      "short": "Shops",      "color": "#8fb3d9", "glyph": "shop",        "order": 80 }
   ]
 }
