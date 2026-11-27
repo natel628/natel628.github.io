@@ -711,3 +711,52 @@ Two discrepancies recorded rather than papered over:
   -7618, -4865; -9705, 3321), each checked against the nearest named landmark before its hint was written.
 - `node --check js/data.js` clean; `DATA_V` 14 with `js/data.js?v=14` in `index.html`; the map loads
   531 of 531 pins locally, the four new ones among them.
+
+
+## 18. 531 pins at the overview, folded into counts
+
+The overview was the map's worst view: after §13 took the pin count from 76 to 527, the start zoom drew every
+pin at once and the island read as a wall of overlapping teardrops — worst in Vice City, where the packages,
+meteorites and stunt jumps sit on top of each other (36 of them inside one 1.4 km cell).
+
+`js/markers.js` now buckets visible pins into **world-pixel cells of 46 px** at the current zoom, and draws a
+count disc per bucket instead of the individual pins, above zoom −1. Details that matter:
+
+- Buckets are computed in world space, not screen space, so panning never reshuffles the discs — only a zoom
+  level change re-buckets, which is exactly when the picture should change.
+- A bucket of one is drawn as its normal pin, so isolated finds stay finds.
+- **Colour is a claim, so it is only used when it is true.** A bucket whose pins are all one category takes
+  that category's colour; a mixed bucket is grey and hollow. A disc never implies "these are all meteorites"
+  when it is not.
+- Disc size steps with the count (38 / 44 / 50 / 58 px), and a 100+ bucket prints `99+`.
+- If every pin under a disc is marked found, the disc fades and takes a ✓, so progress is legible from the
+  overview too.
+- Clicking a disc zooms **two levels in**, and a disc that survives the zoom re-reads the zoom and its
+  position at click time (a captured zoom would be stale and the click would do nothing — that bug was in
+  the first draft and is why the handler looks the way it does).
+- The selected record is always drawn as its own pin even in the densest cell, so choosing a row in the rail
+  still shows where that pin is.
+
+No clustering plugin: the rule is vanilla JS with Leaflet pinned in the page, and a grid bucket over 531
+points is about thirty lines, not a dependency.
+
+Measured in the browser on the shipped build:
+
+| Zoom | Count discs | Individual pins | Total marks |
+|---|---|---|---|
+| −5 (start) | 72 | 10 | 82 |
+| −3 | 111 | 247 | 358 |
+| −1 | 34 | 460 | 494 |
+| 1 (max) | 0 | 531 | 531 |
+
+### Checks
+
+- `node --check js/markers.js` clean.
+- Browser, starting view: 72 discs and 10 pins instead of 531 pins; screenshot inspected.
+- Click progression tested end to end in the page: −5 → −3 → −1 → 1, with the marking changing as the table
+  above says and no zoom level stuck (the stale-zoom bug above was found this way, then re-tested).
+- Selecting `gb-hidden-package-038` while the overview was on screen drew its own selected pin inside the
+  Vice City cell (pins 10 → 11).
+- Filtering to meteorites only at a clustered zoom gave 8 discs + 118 pins for 135 meteorites, so filtering
+  and bucketing compose; clearing the filter restored all 531.
+- `js/markers.js?v=4` and `css/map.css?v=4` in `index.html`. No JSON changed, so `DATA_V` stays 14.
