@@ -6,10 +6,10 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Atlanta\, GA
 X-WR-CALDESC:Upcoming events within 100 miles of Atlanta\, GA.
 BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MIC8@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T150000
-DTEND:20261126T173000
+UID:tm-LvZ18QlHz8JW9Gw3KXf1W@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
 SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
@@ -21,10 +21,10 @@ URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
  -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QlHz8JW9Gw3KXf1z@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T153000
-DTEND:20261126T180000
+UID:tm-LvZ18QlHzfb43T2F_MICr@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
 SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
@@ -36,10 +36,10 @@ URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
  -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MICo@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T153000
-DTEND:20261126T180000
+UID:tm-LvZ18QlHzfb43T2F_MICL@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
 SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
@@ -51,10 +51,10 @@ URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
  -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MIC3@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T160000
-DTEND:20261126T183000
+UID:tm-LvZ18QlHz8JW9Gw3KXf1X@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T153000
+DTEND:20261127T180000
 SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
@@ -66,10 +66,10 @@ URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
  -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QlHz8JW9Gw3KXf1y@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T163000
-DTEND:20261126T190000
+UID:tm-LvZ18QlHzfb43T2F_MICO@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T153000
+DTEND:20261127T180000
 SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
@@ -81,10 +81,10 @@ URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
  -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MICK@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T163000
-DTEND:20261126T190000
+UID:tm-LvZ18QlHzfb43T2F_MIC-@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
 SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
@@ -96,178 +96,26 @@ URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
  -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MICf@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T170000
-DTEND:20261126T193000
-SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
- ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Selfie Paradise Museum\, Douglasville
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
- -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QlHz8JW9Gw3KXf1B@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T173000
-DTEND:20261126T200000
-SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
- ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Selfie Paradise Museum\, Douglasville
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
- -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MIC4@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T173000
-DTEND:20261126T200000
-SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
- ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Selfie Paradise Museum\, Douglasville
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
- -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MICp@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T180000
-DTEND:20261126T203000
-SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
- ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Selfie Paradise Museum\, Douglasville
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
- -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QlHz8JW9Gw3KXf1D@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T183000
-DTEND:20261126T210000
-SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
- ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Selfie Paradise Museum\, Douglasville
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
- -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MIC9@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T183000
-DTEND:20261126T210000
-SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
- ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Selfie Paradise Museum\, Douglasville
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
- -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1kFZvPbMGAGu-Kq@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Test
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/test-atlanta-georgia-11-26-2026/event/20006563
- 7C3614DD\\n\\nRefreshed daily from live listings.
-LOCATION:Presence Arena\, Atlanta
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/test-atlanta-georgia-11-26-2026/event/200
- 065637C3614DD
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MICb@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
- ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Selfie Paradise Museum\, Douglasville
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
- -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_uD835c8@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T100000
-DTEND:20261127T123000
-SUMMARY:Georgia Festival of Trees
-DESCRIPTION:**FESTIVAL HOURS: 10:00AM - 6:00PM** Ages 4 and older require 
- a ticket. No Refunds. No Exchanges. Pricing\, line up\, and production se
- tup may change without notice. Ticket purchases exceeding the posted tick
- et limit\, either within a single order or across multiple orders\, may b
- e subject to order(s) b\\n\\nhttps://www.ticketmaster.com/georgia-festiva
- l-of-trees-duluth-georgia-11-27-2026/event/0E0064DED048BB50\\n\\nRefreshe
- d daily from live listings.
-LOCATION:Gas South Convention Center\, Duluth
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/georgia-festival-of-trees-duluth-georgia-
- 11-27-2026/event/0E0064DED048BB50
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MIC_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T120000
-DTEND:20261127T143000
-SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
- ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Selfie Paradise Museum\, Douglasville
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
- -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vvG1zZ_fT0N9yw@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T120000
-DTEND:20261127T143000
-SUMMARY:Public Ice Skating 12:00PM - 1:00PM Session
+UID:tm-vvG1zZ_fT006B3@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:Public Ice Skating 4:00PM - 5:00PM Session
 DESCRIPTION:Please enter through the rinkside door in the lower parking lo
  t near the Convention Center facing I-16. Public Ice skating continues as
   scheduled unless otherwise noted.\\n\\nhttps://www.ticketmaster.com/publ
- ic-ice-skating-1200pm-100pm-session-macon-georgia-11-27-2026/event/0E0065
- 4FE48D7E72\\n\\nRefreshed daily from live listings.
+ ic-ice-skating-400pm-500pm-session-macon-georgia-11-27-2026/event/0E00654
+ FE4907E92\\n\\nRefreshed daily from live listings.
 LOCATION:Macon Coliseum\, Macon
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/public-ice-skating-1200pm-100pm-session-m
- acon-georgia-11-27-2026/event/0E00654FE48D7E72
+URL:https://www.ticketmaster.com/public-ice-skating-400pm-500pm-session-ma
+ con-georgia-11-27-2026/event/0E00654FE4907E92
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MICQ@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T123000
-DTEND:20261127T150000
+UID:tm-LvZ18QlHz8JW9Gw3KXf1T@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T163000
+DTEND:20261127T190000
 SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
@@ -279,10 +127,10 @@ URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
  -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QlHzfb43T2F_MICh@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
+UID:tm-LvZ18QlHzfb43T2F_MICx@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T163000
+DTEND:20261127T190000
 SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
@@ -292,10 +140,113 @@ LOCATION:Selfie Paradise Museum\, Douglasville
 STATUS:CONFIRMED
 URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
  -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QlHzfb43T2F_MICN@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
+ ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
+ rom live listings.
+LOCATION:Selfie Paradise Museum\, Douglasville
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
+ -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QlHz8JW9Gw3KXf5Z@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T173000
+DTEND:20261127T200000
+SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
+ ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
+ rom live listings.
+LOCATION:Selfie Paradise Museum\, Douglasville
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
+ -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QlHzfb43T2F_MIC0@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T173000
+DTEND:20261127T200000
+SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
+ ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
+ rom live listings.
+LOCATION:Selfie Paradise Museum\, Douglasville
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
+ -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QlHzfb43T2F_MICP@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Holiday Portraits: Capture the Magic at Selfie Paradise Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holiday-portraits-capture-the-magic-at-self
+ ie-paradise-museum-tickets-6HVT5N?ref=ticketmaster\\n\\nRefreshed daily f
+ rom live listings.
+LOCATION:Selfie Paradise Museum\, Douglasville
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holiday-portraits-capture-the-magic-at
+ -selfie-paradise-museum-tickets-6HVT5N?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70d84@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Christopher Williams
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70d84\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:City Winery - Atlanta\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70d84
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_8Kdbnzj@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Static Dress
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/static-dress-atlanta-georgia-11-27-2026/event/
+ 0E006504C362AE1C\\n\\nRefreshed daily from live listings.
+LOCATION:The Masquerade - Hell\, Atlanta
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/static-dress-atlanta-georgia-11-27-2026/e
+ vent/0E006504C362AE1C
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_fT009B9@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Public Ice Skating 6:00PM - 7:00PM Session
+DESCRIPTION:Please enter through the rinkside door in the lower parking lo
+ t near the Convention Center facing I-16. Public Ice skating continues as
+  scheduled unless otherwise noted.\\n\\nhttps://www.ticketmaster.com/publ
+ ic-ice-skating-600pm-700pm-session-macon-georgia-11-27-2026/event/0E00654
+ FE4917E97\\n\\nRefreshed daily from live listings.
+LOCATION:Macon Coliseum\, Macon
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/public-ice-skating-600pm-700pm-session-ma
+ con-georgia-11-27-2026/event/0E00654FE4917E97
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7sfE@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:WWE Road to Survivor Series: War Games Tour
@@ -308,7 +259,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7sfE
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-o-Z@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T153000
 DTEND:20261128T180000
 SUMMARY:Georgia Bulldogs Football vs. Georgia Tech Yellow Jackets Football

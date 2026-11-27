@@ -6,63 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Denver\, CO
 X-WR-CALDESC:Upcoming events within 100 miles of Denver\, CO.
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfZUq0@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T200000
-DTEND:20261126T223000
-SUMMARY:$5 Thursdays!
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/5-thursdays-la-rumba-tickets/14036
- 764\\n\\nRefreshed daily from live listings.
-LOCATION:La Rumba\, Denver
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/5-thursdays-la-rumba-tickets/14036764
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAZz8x@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAZz8x\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Arvada Center\, Arvada
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8x
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7xpPp@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:Colorado Buffaloes Womens Volleyball vs. Iowa State Cyclones Women
- s Volleyball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7xpPp\\n\\nRefreshed daily from 
- live listings.
-LOCATION:CU Events Center\, Boulder
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7xpPp
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7PsA4@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T140000
-DTEND:20261127T163000
-SUMMARY:The Colorado Springs Philharmonic presents The Nutcracker
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7PsA4\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Pikes Peak Center\, Colorado Springs
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PsA4
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7J__I@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T180500
 DTEND:20261127T203500
 SUMMARY:Colorado Eagles vs. San Diego Gulls
@@ -75,7 +20,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J__I
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfZUGV@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Ladies Night & Noche Sonidera
@@ -91,7 +36,7 @@ URL:https://www.ticketweb.com/event/ladies-night-noche-sonidera-la-rumba-t
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70z4a@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Sam Tallent
@@ -104,7 +49,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70z4a
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7J-P@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Kinfolktales
@@ -117,7 +62,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7J-P
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_oKk7Lnw@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:E.M.E.
@@ -132,7 +77,7 @@ URL:https://www.ticketmaster.com/eme-denver-colorado-11-27-2026/event/1E00
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZyaJ@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:A Christmas Carol
@@ -145,7 +90,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZyaJ
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZz8N@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Joseph and the Amazing Technicolor Dreamcoat
@@ -158,7 +103,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZz8N
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_o3Hlmhb@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Colorado College Tigers Hockey vs. Alaska
@@ -176,7 +121,7 @@ URL:https://www.ticketmaster.com/colorado-college-tigers-hockey-vs-alaska-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7PsAp@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:The Colorado Springs Philharmonic presents The Nutcracker
@@ -189,7 +134,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PsAp
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70t_V@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Waitress (Touring)
@@ -202,7 +147,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70t_V
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv3b8@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:What a Glorious Feeling
@@ -215,7 +160,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv3b8
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfPwqd@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Joe Torry
@@ -232,7 +177,7 @@ URL:https://www.ticketweb.com/event/joe-torry-denver-improv-tickets/149727
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvO40@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Insomnium & Amorphis - Ages 16+
@@ -245,7 +190,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvO40
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7PF4I@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Joe Torry
@@ -258,7 +203,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PF4I
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfFo0V@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Hayden Coffman
@@ -274,7 +219,7 @@ URL:https://www.ticketweb.com/event/hayden-coffman-grizzly-rose-tickets/14
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAe94t@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Leftover Salmon Feat. Sam Bush with special guests Deer Creek Shar
@@ -285,5 +230,18 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:Boulder Theater\, Boulder
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1AAe94t
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAZgo4@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T200000
+DTEND:20261127T223000
+SUMMARY:Hairball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZgo4\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The Lincoln - Cheyenne\, Cheyenne
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZgo4
 END:VEVENT
 END:VCALENDAR

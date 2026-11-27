@@ -6,10 +6,10 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near New York\, NY
 X-WR-CALDESC:Upcoming events within 100 miles of New York\, NY.
 BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1i@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T144500
-DTEND:20261126T171500
+UID:tm-LvZ18Q-9tbOh8sZZvyg5G@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
 SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
@@ -20,577 +20,68 @@ URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
  m-tickets-Y5HV92?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1c@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T150000
-DTEND:20261126T173000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+UID:tm-LvZ18QEC-3xsYJhRiNbis@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
+SUMMARY:The Banksy Museum New York!
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
+ tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
+ ef=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
 STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
+URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
+ NY0?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1m@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T151500
-DTEND:20261126T174500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1R@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T153000
-DTEND:20261126T180000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1Y@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T154500
-DTEND:20261126T181500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1s@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T160000
-DTEND:20261126T183000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1w@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T161500
-DTEND:20261126T184500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1S@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T163000
-DTEND:20261126T190000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1V@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T164500
-DTEND:20261126T191500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dYZ_AL2kvWb@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T170000
-DTEND:20261126T193000
-SUMMARY:Christmas Spectacular Starring The Radio City Rockettes
-DESCRIPTION:PLEASE NOTE: Pricing is all-in and includes fees (before taxes
-  if applicable). There is a fourteen (14) ticket limit per purchaser over
-  the entire 2026 Christmas Spectacular season. The Christmas Spectacular 
- is an immersive experience that includes confetti\, pyrotechnics\, smoke 
- effects\, intense ligh\\n\\nhttps://www.ticketmaster.com/christmas-specta
- cular-starring-the-radio-city-new-york-new-york-11-26-2026/event/3C006457
- CF181F58\\n\\nRefreshed daily from live listings.
-LOCATION:Radio City Music Hall\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/christmas-spectacular-starring-the-radio-
- city-new-york-new-york-11-26-2026/event/3C006457CF181F58
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1g@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T170000
-DTEND:20261126T193000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1U@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T171500
-DTEND:20261126T194500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1M@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T173000
-DTEND:20261126T200000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfFPaf@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T173000
-DTEND:20261126T200000
-SUMMARY:David Ostwald's Louis Armstrong Eternity Band
-DESCRIPTION:Please be aware of the following age-related restrictions for 
- this event: Ages 10+.\\n\\nhttps://www.ticketweb.com/event/david-ostwalds
- -louis-armstrong-eternity-birdland-theater-tickets/14225254\\n\\nRefreshe
- d daily from live listings.
-LOCATION:Birdland Theater\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/david-ostwalds-louis-armstrong-eternit
- y-birdland-theater-tickets/14225254
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1z@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T174500
-DTEND:20261126T201500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1y@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T180000
-DTEND:20261126T203000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEtpYj9N9-laZIUw@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T181500
-DTEND:20261126T204500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEtpYj9N9-laZIUS@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T183000
-DTEND:20261126T210000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEtpYj9N9-laZIUV@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T184500
-DTEND:20261126T211500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEtpYj9N9-laZIUg@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z1r9uZruZqGZ17J_rb@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
+UID:tm-Z1r9uZruZqGZ17J_Oe@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
 SUMMARY:Chicago
 DESCRIPTION:(1) Children under 4 years old will not be admitted. (2) Herba
  l cigarettes are used on stage. (3) No weapons permitted on the premises.
   No outside food or beverages\, electric scooters\, e-bikes\, or battery-
  powered transportation devices\, except when medically necessary. All ite
  ms are subject to inspe\\n\\nhttps://www.ticketmaster.com/chicago-new-yor
- k-new-york-11-26-2026/event/Z1r9uZruZqGZ17J_rb\\n\\nRefreshed daily from 
+ k-new-york-11-27-2026/event/Z1r9uZruZqGZ17J_Oe\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Ambassador Theatre\, New York
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/chicago-new-york-new-york-11-26-2026/even
- t/Z1r9uZruZqGZ17J_rb
+URL:https://www.ticketmaster.com/chicago-new-york-new-york-11-27-2026/even
+ t/Z1r9uZruZqGZ17J_Oe
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7037Y@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
+UID:tm-Z7r9jZ1A7037s@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
 SUMMARY:Chicago - The Musical
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7037Y\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7037s\\n\\nRefreshed daily from 
  live listings.
 LOCATION:Ambassador Theatre-NY\, New York
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7037Y
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7037s
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4ZkuS@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:ANDERSON BROTHERS: THE AMERICAN SONGBOOK
-DESCRIPTION:Please be aware of the following age-related restrictions for 
- this event: Ages 10+.\\n\\nhttps://www.ticketweb.com/event/anderson-broth
- ers-the-american-songbook-birdland-jazz-club-tickets/15006373\\n\\nRefres
- hed daily from live listings.
-LOCATION:Birdland Jazz Club\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/anderson-brothers-the-american-songboo
- k-birdland-jazz-club-tickets/15006373
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1AeZk4xGkdqgnYM@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:The Further Mis-Adventures of Cliff Booth
-DESCRIPTION:Unfortunately\, the Event Organizer has had to cancel your eve
- nt. You don't need to do a thing. We'll issue a refund to the [original m
- ethod of payment](https://help.ticketmaster.com/hc/en-us/articles/9614074
- 869009) used at time of purchase\, as soon as funds are received from the
-  Event Organizer. It \\n\\nhttps://www.ticketmaster.com/the-further-misad
- ventures-of-cliff-booth-atlantic-city-new-jersey-11-26-2026/event/0200656
- 2DDD6AC37\\n\\nRefreshed daily from live listings.
-LOCATION:IMAX THEATRE at TROPICANA\, Atlantic City
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-further-misadventures-of-cliff-booth-
- atlantic-city-new-jersey-11-26-2026/event/02006562DDD6AC37
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dYZ_Als037H@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Radio City Music Hall Tour Experience
-DESCRIPTION:PLEASE NOTE: Pricing is all-in and includes fees (before taxes
-  if applicable). Please arrive early as space is limited on each tour. To
- urs generally run from 9:30 AM to 5:00 PM\, but operating hours are subje
- ct to change due to venue activity. Tour schedule and content subject to 
- change without notic\\n\\nhttps://www.ticketmaster.com/radio-city-music-h
- all-tour-experience-new-york-new-york-11-26-2026/event/3C00645AF191213C\\
- n\\nRefreshed daily from live listings.
-LOCATION:Radio City Music Hall Tour Experience\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/radio-city-music-hall-tour-experience-new
- -york-new-york-11-26-2026/event/3C00645AF191213C
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5diZ_Akosex5@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Madison Square Garden Tour Experience
-DESCRIPTION:PLEASE NOTE: Pricing is all-in and includes fees (before taxes
-  if applicable). Access to the Knicks and Rangers locker rooms may be res
- tricted due to venue activity. Tour schedule and content subject to chang
- e without notice.\\n\\nhttps://www.ticketmaster.com/madison-square-garden
- -tour-experience-new-york-new-york-11-26-2026/event/3B00645191C4288B\\n\\
- nRefreshed daily from live listings.
-LOCATION:Madison Square Garden\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/madison-square-garden-tour-experience-new
- -york-new-york-11-26-2026/event/3B00645191C4288B
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vVZbM3Xvpdq@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Classic Tour at Yankee Stadium
-DESCRIPTION:CLASSIC TOUR ENTRANCE: Classic Tour guests will enter through 
- the Hard Rock Cafe adjacent to Gate 6 (corner of 161st St. and River Ave.
- ) Please arrive 15 minutes prior to designated tour start time. Knowledge
- able and passionate guides lead each sixty (60)-minute Classic Tour. Clas
- sic Tours and Lunch\\n\\nhttps://www.ticketmaster.com/classic-tour-at-yan
- kee-stadium-bronx-new-york-11-26-2026/event/1D006374BE0560DD\\n\\nRefresh
- ed daily from live listings.
-LOCATION:Yankee Stadium\, Bronx
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/classic-tour-at-yankee-stadium-bronx-new-
- york-11-26-2026/event/1D006374BE0560DD
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vVZbMKY265o@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Glimpse of Greatness
-DESCRIPTION:TOUR ENTRANCE: Guests will enter through the Hard Rock Cafe ad
- jacent to Gate 6 (corner of 161st St. and River Ave). Glimpse of Greatnes
- s offers a quick peek inside Yankee Stadium's treasured New York Yankees 
- Museum presented by Bank of America. This self-guided experience allows g
- uests to explore th\\n\\nhttps://www.ticketmaster.com/glimpse-of-greatnes
- s-bronx-new-york-11-26-2026/event/1D006374F03C72D1\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Yankee Stadium\, Bronx
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/glimpse-of-greatness-bronx-new-york-11-26
- -2026/event/1D006374F03C72D1
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QRnuh4hp4RiEAJUP@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T193000
-DTEND:20261126T220000
-SUMMARY:Do Portugal Circus - Staten Island\, NY
+UID:tm-Z7r9jZ1AAZU_V@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
+SUMMARY:Mary Poppins
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/do-portugal-circus-staten-island-ny-tickets
- -XF257S?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Staten Island Mall - Big Top\, Staten Island
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/do-portugal-circus-staten-island-ny-ti
- ckets-XF257S?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dYZ_AL26oWj@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T200000
-DTEND:20261126T223000
-SUMMARY:Christmas Spectacular Starring The Radio City Rockettes
-DESCRIPTION:PLEASE NOTE: Pricing is all-in and includes fees (before taxes
-  if applicable). There is a fourteen (14) ticket limit per purchaser over
-  the entire 2026 Christmas Spectacular season. The Christmas Spectacular 
- is an immersive experience that includes confetti\, pyrotechnics\, smoke 
- effects\, intense ligh\\n\\nhttps://www.ticketmaster.com/christmas-specta
- cular-starring-the-radio-city-new-york-new-york-11-26-2026/event/3C006457
- CF1D1F5C\\n\\nRefreshed daily from live listings.
-LOCATION:Radio City Music Hall\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/christmas-spectacular-starring-the-radio-
- city-new-york-new-york-11-26-2026/event/3C006457CF1D1F5C
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A708PI@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T200000
-DTEND:20261126T223000
-SUMMARY:Marilyn Maye
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A708PI\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAZU_V\\n\\nRefreshed daily from 
  live listings.
-LOCATION:54 Below\, New York
+LOCATION:The Argyle Theatre at Babylon Village\, Babylon
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A708PI
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZU_V
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4Zwjd@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T200000
-DTEND:20261126T223000
-SUMMARY:Chief Adjuah
-DESCRIPTION:We do not offer any refunds\, exchanges\, or transfers on any 
- ticket purchases. All sales are final. We do not have any liability or in
- fluence on tickets purchased through a ticket reselling or 3rd party site
- . Official ticket purchases are run through TicketWeb.com only.\\n\\nhttp
- s://www.ticketweb.com/event/chief-adjuah-blue-note-jazz-club-tickets/1503
- 2703\\n\\nRefreshed daily from live listings.
-LOCATION:Blue Note Jazz Club\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/chief-adjuah-blue-note-jazz-club-ticke
- ts/15032703
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1AfFPa0@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T203000
-DTEND:20261126T230000
-SUMMARY:David Ostwald's Louis Armstrong Eternity Band
-DESCRIPTION:Please be aware of the following age-related restrictions for 
- this event: Ages 10+.\\n\\nhttps://www.ticketweb.com/event/david-ostwalds
- -louis-armstrong-eternity-birdland-theater-tickets/14225264\\n\\nRefreshe
- d daily from live listings.
-LOCATION:Birdland Theater\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/david-ostwalds-louis-armstrong-eternit
- y-birdland-theater-tickets/14225264
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4vIqS@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T210000
-DTEND:20261126T233000
-SUMMARY:Skylar Thanksgiving Holiday Two Night Stand
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/skylar-thanksgiving-holiday-two-ni
- ght-lucindas-tickets/15068773\\n\\nRefreshed daily from live listings.
-LOCATION:Lucinda's\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/skylar-thanksgiving-holiday-two-night-
- lucindas-tickets/15068773
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afux7f@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T210000
-DTEND:20261126T233000
-SUMMARY:Nick Biello Quartet
-DESCRIPTION:Please arrive on time for the show. Doors open 30 minutes in a
- dvance. Your entry is guaranteed\, but choice of seats is always first co
- me\, first served. All attractions and lineups are subject to change beyo
- nd our control. There is a required one drink minimum per person. Non-alc
- oholic options are av\\n\\nhttps://www.ticketweb.com/event/nick-biello-qu
- artet-smalls-jazz-club-tickets/14362114\\n\\nRefreshed daily from live li
- stings.
-LOCATION:Smalls Jazz Club\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/nick-biello-quartet-smalls-jazz-club-t
- ickets/14362114
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4Zk8d@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T213000
-DTEND:20261127T000000
-SUMMARY:ANDERSON BROTHERS: THE AMERICAN SONGBOOK
-DESCRIPTION:Please be aware of the following age-related restrictions for 
- this event: Ages 10+.\\n\\nhttps://www.ticketweb.com/event/anderson-broth
- ers-the-american-songbook-birdland-jazz-club-tickets/15006403\\n\\nRefres
- hed daily from live listings.
-LOCATION:Birdland Jazz Club\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/anderson-brothers-the-american-songboo
- k-birdland-jazz-club-tickets/15006403
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1A4Zwqd@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T223000
-DTEND:20261127T010000
-SUMMARY:Chief Adjuah
-DESCRIPTION:We do not offer any refunds\, exchanges\, or transfers on any 
- ticket purchases. All sales are final. We do not have any liability or in
- fluence on tickets purchased through a ticket reselling or 3rd party site
- . Official ticket purchases are run through TicketWeb.com only.\\n\\nhttp
- s://www.ticketweb.com/event/chief-adjuah-blue-note-jazz-club-tickets/1503
- 2743\\n\\nRefreshed daily from live listings.
-LOCATION:Blue Note Jazz Club\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/chief-adjuah-blue-note-jazz-club-ticke
- ts/15032743
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Afuxu7@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T223000
-DTEND:20261127T010000
-SUMMARY:Nick Biello Quartet
-DESCRIPTION:Please arrive on time for the show. Doors open 30 minutes in a
- dvance. Your entry is guaranteed\, but choice of seats is always first co
- me\, first served. All attractions and lineups are subject to change beyo
- nd our control. There is a required one drink minimum per person. Non-alc
- oholic options are av\\n\\nhttps://www.ticketweb.com/event/nick-biello-qu
- artet-smalls-jazz-club-tickets/14362344\\n\\nRefreshed daily from live li
- stings.
-LOCATION:Smalls Jazz Club\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/nick-biello-quartet-smalls-jazz-club-t
- ickets/14362344
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QENF-RM_LWf4xCrI@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T090000
-DTEND:20261127T113000
+UID:tm-LvZ18Q-9tbOh8sZZvyg5u@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T144500
+DTEND:20261127T171500
 SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
@@ -601,10 +92,113 @@ URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
  m-tickets-Y5HV92?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QENF-RM_LWf4xCrt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T091500
-DTEND:20261127T114500
+UID:tm-17GZv0G6CDmsrkr@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Philadelphia Flyers vs. Vancouver Canucks
+DESCRIPTION:By purchasing\, you are sharing your contact info and ticket s
+ ales data with the NHL and the Philadelphia Flyers. The NHL may use this 
+ info to better understand fan engagement across the league\, including to
+  enable the NHL and its Member Clubs to customize their services and adve
+ rtising. For more inf\\n\\nhttps://www.ticketmaster.com/philadelphia-flye
+ rs-vs-vancouver-canucks-philadelphia-pennsylvania-11-27-2026/event/300064
+ EEEEC5E19E\\n\\nRefreshed daily from live listings.
+LOCATION:Xfinity Mobile Arena\, Philadelphia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/philadelphia-flyers-vs-vancouver-canucks-
+ philadelphia-pennsylvania-11-27-2026/event/300064EEEEC5E19E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AYZkf3GkdQ9654@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Post Game Slap Shot - MUST HAVE TICKET TO GAME
+DESCRIPTION:Step onto the Flyers ice and take your best shot during this u
+ nforgettable opportunity! No skates or prior hockey experience required. 
+ *You must also have a ticket to the game.\\n\\nhttps://www.ticketmaster.c
+ om/post-game-slap-shot-must-have-philadelphia-pennsylvania-11-27-2026/eve
+ nt/30006512DA5C72D5\\n\\nRefreshed daily from live listings.
+LOCATION:Xfinity Mobile Arena\, Philadelphia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/post-game-slap-shot-must-have-philadelphi
+ a-pennsylvania-11-27-2026/event/30006512DA5C72D5
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AYZkf3Gkd__96K@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:High 5 Tunnel - MUST HAVE TICKET TO GAME
+DESCRIPTION:High 5 your favorite Flyers players as they take the ice to wa
+ rmups from the locker room! High 5 Tunnel guest must be between the ages 
+ of 5-14 to participate. *You must also have a ticket to the game.\\n\\nht
+ tps://www.ticketmaster.com/high-5-tunnel-must-have-ticket-philadelphia-pe
+ nnsylvania-11-27-2026/event/30006512D96571D3\\n\\nRefreshed daily from li
+ ve listings.
+LOCATION:Xfinity Mobile Arena\, Philadelphia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/high-5-tunnel-must-have-ticket-philadelph
+ ia-pennsylvania-11-27-2026/event/30006512D96571D3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AYZkf3Gkdj6EKo@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Primepoint Social Pass - MUST HAVE TICKET TO GAME
+DESCRIPTION:Primepoint Social is a premium club level hospitality space th
+ at offers a warm atmosphere\, outstanding food\, and elevated service. Th
+ is exclusive add-on provides access into the space\, where you can secure
+  a reservation and enjoy a vibrant social setting that transforms your ga
+ me day into an unforge\\n\\nhttps://www.ticketmaster.com/primepoint-socia
+ l-pass-must-have-ticket-philadelphia-pennsylvania-11-27-2026/event/300065
+ 12DC1E74D1\\n\\nRefreshed daily from live listings.
+LOCATION:Xfinity Mobile Arena\, Philadelphia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/primepoint-social-pass-must-have-ticket-p
+ hiladelphia-pennsylvania-11-27-2026/event/30006512DC1E74D1
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AYZkf3GkdjkEKu@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Blue Line Buddies - MUST HAVE TICKET TO GAME
+DESCRIPTION:Join the Flyers on-ice during the National Anthem in this unfo
+ rgettable experience! Blue Line Buddies must be between the ages of 5-14 
+ and provide their own skates and helmet to participate. *You must also ha
+ ve a ticket to the game.\\n\\nhttps://www.ticketmaster.com/blue-line-budd
+ ies-must-have-ticket-philadelphia-pennsylvania-11-27-2026/event/30006512D
+ C1A74CD\\n\\nRefreshed daily from live listings.
+LOCATION:Xfinity Mobile Arena\, Philadelphia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/blue-line-buddies-must-have-ticket-philad
+ elphia-pennsylvania-11-27-2026/event/30006512DC1A74CD
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AYZkf3GkdjtE4S@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Flyers Pregame Tours - MUST HAVE TICKET TO GAME
+DESCRIPTION:Arrive early and kick off your night with a fun\, 30-minute pr
+ egame tour! Explore key fan areas\, learn interesting facts\, and get a w
+ hole new view of the arena before puck drop. *You must also have a ticket
+  to the game.\\n\\nhttps://www.ticketmaster.com/flyers-pregame-tours-must
+ -have-ticket-philadelphia-pennsylvania-11-27-2026/event/30006512DCA67573\
+ \n\\nRefreshed daily from live listings.
+LOCATION:Xfinity Mobile Arena\, Philadelphia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/flyers-pregame-tours-must-have-ticket-phi
+ ladelphia-pennsylvania-11-27-2026/event/30006512DCA67573
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg5C@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
 SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
@@ -615,70 +209,10 @@ URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
  m-tickets-Y5HV92?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18QENF-RM_LWf4xCrn@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T093000
-DTEND:20261127T120000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QENF-RM_LWf4xCrl@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T094500
-DTEND:20261127T121500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dYZ_AL21vWn@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T100000
-DTEND:20261127T123000
-SUMMARY:Christmas Spectacular Starring The Radio City Rockettes
-DESCRIPTION:PLEASE NOTE: Pricing is all-in and includes fees (before taxes
-  if applicable). There is a fourteen (14) ticket limit per purchaser over
-  the entire 2026 Christmas Spectacular season. The Christmas Spectacular 
- is an immersive experience that includes confetti\, pyrotechnics\, smoke 
- effects\, intense ligh\\n\\nhttps://www.ticketmaster.com/christmas-specta
- cular-starring-the-radio-city-new-york-new-york-11-27-2026/event/3C006457
- CF281F6A\\n\\nRefreshed daily from live listings.
-LOCATION:Radio City Music Hall\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/christmas-spectacular-starring-the-radio-
- city-new-york-new-york-11-27-2026/event/3C006457CF281F6A
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1B@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T100000
-DTEND:20261127T123000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEC-3xsYJhRiNbiI@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T100000
-DTEND:20261127T123000
+UID:tm-LvZ18QEC-3xsYJhRiNbiw@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
 SUMMARY:The Banksy Museum New York!
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
@@ -689,405 +223,10 @@ URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
  NY0?ref=ticketmaster
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-LvZ18Qk4nbbEibYZvnO8x@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T100000
-DTEND:20261127T123000
-SUMMARY:Banksy Museum - Flexiticket
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/banksy-museum-flexiticket-tickets-F7XJ8T?re
- f=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Banksy Museum New York\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/banksy-museum-flexiticket-tickets-F7XJ
- 8T?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-k7vGF_A1t7BMf@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T100000
-DTEND:20261127T123000
-SUMMARY:The Museum At Bethel Woods: Story of 60s & Woodstock
-DESCRIPTION:Free parking. Due to high demand on concert days\, we strongly
-  recommend that you purchase your tickets in advance if you are planning 
- to visit the museum on a concert day.\\n\\nhttps://www.ticketmaster.com/t
- he-museum-at-bethel-woods-story-bethel-new-york-11-27-2026/event/00006452
- A913ADD4\\n\\nRefreshed daily from live listings.
-LOCATION:The Museum at Bethel Woods\, Bethel
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-museum-at-bethel-woods-story-bethel-n
- ew-york-11-27-2026/event/00006452A913ADD4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1D@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T101500
-DTEND:20261127T124500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1H@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T103000
-DTEND:20261127T130000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEC-3xsYJhRiNbit@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T103000
-DTEND:20261127T130000
-SUMMARY:The Banksy Museum New York!
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Banksy Museum New York\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
- NY0?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1W@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T104500
-DTEND:20261127T131500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1X@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEC-3xsYJhRiNbin@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:The Banksy Museum New York!
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Banksy Museum New York\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
- NY0?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QbKlF_lmuOZvOKET@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:Museum of Chinese in America General Admission
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/museum-of-chinese-in-america-general-admiss
- ion-tickets-PZ7R68?ref=ticketmaster\\n\\nRefreshed daily from live listin
- gs.
-LOCATION:Museum of Chinese in America\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/museum-of-chinese-in-america-general-a
- dmission-tickets-PZ7R68?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z1r9uZruZqGZ1AvZoJf@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:The Gazillion Bubble Show
-DESCRIPTION:(1) Clothing with sensitive fabrics is not recommended due to 
- bubbles blowing into the audience. (2) Everyone regardless of age needs a
-  ticket. (Laps seats are available to purchase at the box office for chil
- dren 2 and under. Lap seats are $20.) (3) No weapons permitted on the pre
- mises. No outside f\\n\\nhttps://www.ticketmaster.com/the-gazillion-bubbl
- e-show-new-york-new-york-11-27-2026/event/Z1r9uZruZqGZ1AvZoJf\\n\\nRefres
- hed daily from live listings.
-LOCATION:New World Stages - Stage 2\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-gazillion-bubble-show-new-york-new-yo
- rk-11-27-2026/event/Z1r9uZruZqGZ1AvZoJf
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAA9Ge@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:Gazillion Bubble Show
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAA9Ge\\n\\nRefreshed daily from 
- live listings.
-LOCATION:New World Stages - Stage 2\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAA9Ge
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-k7vGF_fXk4Uo5@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:Belmont Park - General Admission
-DESCRIPTION:General admission access only. No access to dining areas.\\n\\
- nhttps://www.ticketmaster.com/belmont-park-general-admission-elmont-new-y
- ork-11-27-2026/event/0000654F8657644B\\n\\nRefreshed daily from live list
- ings.
-LOCATION:Belmont Park\, Elmont
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/belmont-park-general-admission-elmont-new
- -york-11-27-2026/event/0000654F8657644B
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg1T@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T111500
-DTEND:20261127T134500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg5Z@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T113000
-DTEND:20261127T140000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEC-3xsYJhRiNbil@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T113000
-DTEND:20261127T140000
-SUMMARY:The Banksy Museum New York!
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Banksy Museum New York\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
- NY0?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z1r9uZruZqGZ1AvZ8_M@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T113000
-DTEND:20261127T140000
-SUMMARY:The Very Hungry Caterpillar Show
-DESCRIPTION:(1) Everyone regardless of age needs a ticket. (Laps seats are
-  available to purchase at the box office for infants. Lap seats are $10.)
-  (2) To help keep everyone safe\, please do not bring or consume any food
- s containing nuts in this space.Thank you for your cooperation.\\n\\nhttp
- s://www.ticketmaster.com/the-very-hungry-caterpillar-show-new-york-new-yo
- rk-11-27-2026/event/Z1r9uZruZqGZ1AvZ8_M\\n\\nRefreshed daily from live li
- stings.
-LOCATION:DR2\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-very-hungry-caterpillar-show-new-york
- -new-york-11-27-2026/event/Z1r9uZruZqGZ1AvZ8_M
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg5v@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T114500
-DTEND:20261127T141500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg5e@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T120000
-DTEND:20261127T143000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEC-3xsYJhRiNbii@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T120000
-DTEND:20261127T143000
-SUMMARY:The Banksy Museum New York!
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Banksy Museum New York\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
- NY0?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg5d@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T121500
-DTEND:20261127T144500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg57@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T123000
-DTEND:20261127T150000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEC-3xsYJhRiNbic@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T123000
-DTEND:20261127T150000
-SUMMARY:The Banksy Museum New York!
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Banksy Museum New York\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
- NY0?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg5A@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T124500
-DTEND:20261127T151500
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dYZ_AL2CoWs@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:Christmas Spectacular Starring The Radio City Rockettes
-DESCRIPTION:PLEASE NOTE: Pricing is all-in and includes fees (before taxes
-  if applicable). There is a fourteen (14) ticket limit per purchaser over
-  the entire 2026 Christmas Spectacular season. The Christmas Spectacular 
- is an immersive experience that includes confetti\, pyrotechnics\, smoke 
- effects\, intense ligh\\n\\nhttps://www.ticketmaster.com/christmas-specta
- cular-starring-the-radio-city-new-york-new-york-11-27-2026/event/3C006457
- CF391F71\\n\\nRefreshed daily from live listings.
-LOCATION:Radio City Music Hall\, New York
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/christmas-spectacular-starring-the-radio-
- city-new-york-new-york-11-27-2026/event/3C006457CF391F71
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vVZ_9ZCggyV@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:A Holly Jolly Pajama Party
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/a-holly-jolly-pajama-party-red-bank-new-jersey
- -11-27-2026/event/1D0065700ED75E74\\n\\nRefreshed daily from live listing
- s.
-LOCATION:Hackensack Meridian Health Theatre at the Count Basie Center \, R
- ed Bank
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/a-holly-jolly-pajama-party-red-bank-new-j
- ersey-11-27-2026/event/1D0065700ED75E74
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18Q-9tbOh8sZZvyg5k@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
- kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Balloon Museum NYC\, New York City
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
- m-tickets-Y5HV92?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QEC-3xsYJhRiNbim@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:The Banksy Museum New York!
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Banksy Museum New York\, New York
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
- NY0?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QRFrOegKdwehyDSD@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
+UID:tm-LvZ18QRFrOegKdwehyDSH@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
 SUMMARY:Candy Crafting at Cricket's Candy Creations at One Times Square
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
  tps://www.universe.com/events/candy-crafting-at-crickets-candy-creations-
@@ -1097,5 +236,695 @@ LOCATION:Cricket's Candy Creations\, New York
 STATUS:CONFIRMED
 URL:https://www.universe.com/events/candy-crafting-at-crickets-candy-creat
  ions-at-one-times-square-tickets-JVML6P?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z1r9uZrrZbpZ1AeaV04@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Blue Man Group - A New Holiday Surprise
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/blue-man-group-a-new-holiday-new-york-new-york
+ -11-27-2026/event/Z1r9uZrrZbpZ1AeaV04\\n\\nRefreshed daily from live list
+ ings.
+LOCATION:Lunt-Fontanne Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/blue-man-group-a-new-holiday-new-york-new
+ -york-11-27-2026/event/Z1r9uZrrZbpZ1AeaV04
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7PUq4@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Quinnipiac Bobcats Womens Ice Hockey vs. Yale Bulldogs Womens Hock
+ ey
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PUq4\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:M&T Bank Arena\, Hamden
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PUq4
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvJ79@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Now You See Me Live (Suitable for ages 5 and Over)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvJ79\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Al Hirschfeld Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvJ79
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg52@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T151500
+DTEND:20261127T174500
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AdZZ_KGkyVFshR@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T153000
+DTEND:20261127T180000
+SUMMARY:Perfect Crime
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/perfect-crime-new-york-new-york-11-27-2026/eve
+ nt/3000653E742316EF\\n\\nRefreshed daily from live listings.
+LOCATION:The Theater Center\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/perfect-crime-new-york-new-york-11-27-202
+ 6/event/3000653E742316EF
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg58@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T153000
+DTEND:20261127T180000
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QEC-3xsYJhRiNbiS@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T153000
+DTEND:20261127T180000
+SUMMARY:The Banksy Museum New York!
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
+ ef=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
+ NY0?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z1r9uZruZqGZ1AvZ8Qd@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T153000
+DTEND:20261127T180000
+SUMMARY:The Very Hungry Caterpillar Show
+DESCRIPTION:(1) Everyone regardless of age needs a ticket. (Laps seats are
+  available to purchase at the box office for infants. Lap seats are $10.)
+  (2) To help keep everyone safe\, please do not bring or consume any food
+ s containing nuts in this space.Thank you for your cooperation.\\n\\nhttp
+ s://www.ticketmaster.com/the-very-hungry-caterpillar-show-new-york-new-yo
+ rk-11-27-2026/event/Z1r9uZruZqGZ1AvZ8Qd\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:DR2\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/the-very-hungry-caterpillar-show-new-york
+ -new-york-11-27-2026/event/Z1r9uZruZqGZ1AvZ8Qd
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg5o@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T154500
+DTEND:20261127T181500
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AYZkfYGkeNO7Ps@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:Friends! The Musical Parody (New York)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/friends-the-musical-parody-new-york-new-york-n
+ ew-york-11-27-2026/event/30006530A3804971\\n\\nRefreshed daily from live 
+ listings.
+LOCATION:The Theater Center\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/friends-the-musical-parody-new-york-new-y
+ ork-new-york-11-27-2026/event/30006530A3804971
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-G5dYZ_AL25-Wc@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:Christmas Spectacular Starring The Radio City Rockettes
+DESCRIPTION:PLEASE NOTE: Pricing is all-in and includes fees (before taxes
+  if applicable). There is a fourteen (14) ticket limit per purchaser over
+  the entire 2026 Christmas Spectacular season. The Christmas Spectacular 
+ is an immersive experience that includes confetti\, pyrotechnics\, smoke 
+ effects\, intense ligh\\n\\nhttps://www.ticketmaster.com/christmas-specta
+ cular-starring-the-radio-city-new-york-new-york-11-27-2026/event/3C006457
+ CF2E1F6D\\n\\nRefreshed daily from live listings.
+LOCATION:Radio City Music Hall\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/christmas-spectacular-starring-the-radio-
+ city-new-york-new-york-11-27-2026/event/3C006457CF2E1F6D
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg53@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QEC-3xsYJhRiNbiV@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:The Banksy Museum New York!
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
+ ef=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
+ NY0?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv1AeZk4xGkdqz1sv@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:The Further Mis-Adventures of Cliff Booth
+DESCRIPTION:This event takes places on multiple dates at multiple times. P
+ lease make sure you are purchasing tickets for the correct show. We would
+  like to assure you that Tropicana Atlantic City will remain open for bus
+ iness\, and all events\, shows and movies are being presented as schedule
+ d. Should any event b\\n\\nhttps://www.ticketmaster.com/the-further-misad
+ ventures-of-cliff-booth-atlantic-city-new-jersey-11-27-2026/event/0200656
+ 2DDE0AC41\\n\\nRefreshed daily from live listings.
+LOCATION:IMAX THEATRE at TROPICANA\, Atlantic City
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/the-further-misadventures-of-cliff-booth-
+ atlantic-city-new-jersey-11-27-2026/event/02006562DDE0AC41
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg5K@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T161500
+DTEND:20261127T184500
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg5f@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T163000
+DTEND:20261127T190000
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QEC-3xsYJhRiNbig@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T163000
+DTEND:20261127T190000
+SUMMARY:The Banksy Museum New York!
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
+ ef=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
+ NY0?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg54@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T164500
+DTEND:20261127T191500
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg5p@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QEC-3xsYJhRiNbiU@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:The Banksy Museum New York!
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
+ ef=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
+ NY0?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QfqvDaNFoZZw_GKJ@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:INKwell Times Sq Harbor Club Black Friday Celebration
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/inkwell-times-sq-harbor-club-black-friday-c
+ elebration-tickets-F5HQB8?ref=ticketmaster\\n\\nRefreshed daily from live
+  listings.
+LOCATION:The INKwell Harbor-Club Rooftop\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/inkwell-times-sq-harbor-club-black-fri
+ day-celebration-tickets-F5HQB8?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z1r9uZruZqGZ17J9-I@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Oh\, Mary!
+DESCRIPTION:(1) Children under 4 years old will not be admitted. (2) No we
+ apons permitted on the premises. No outside food or beverages\, electric 
+ scooters\, e-bikes\, or battery-powered transportation devices\, except w
+ hen medically necessary. All items are subject to inspection. Anything br
+ ought into the theatre \\n\\nhttps://www.ticketmaster.com/oh-mary-new-yor
+ k-new-york-11-27-2026/event/Z1r9uZruZqGZ17J9-I\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Lyceum Theatre\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/oh-mary-new-york-new-york-11-27-2026/even
+ t/Z1r9uZruZqGZ17J9-I
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z1r9uZruZqGZ1AvZ4kZ@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Jamie Allan's Amaze
+DESCRIPTION:(1) A bright light effect is used in this production. (2) Chil
+ dren under 4 years old will not be admitted. (3) Latecomers will be seate
+ d at the discretion of management. (4) Strobe or flashing lights are used
+  in this production. (5) This production uses theatrical haze and smoke.\
+ \n\\nhttps://www.ticketmaster.com/jamie-allans-amaze-new-york-new-york-11
+ -27-2026/event/Z1r9uZruZqGZ1AvZ4kZ\\n\\nRefreshed daily from live listing
+ s.
+LOCATION:New World Stages - Stage 5\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/jamie-allans-amaze-new-york-new-york-11-2
+ 7-2026/event/Z1r9uZruZqGZ1AvZ4kZ
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z1r9uZruZqGZ1AvZfJk@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:A Kidman Carol
+DESCRIPTION:(1) A Kidman Carol contains Adult Language and Themes. (Swear 
+ words\, simulated sex acts\, etc.) (2) A simulated gun is used in this pr
+ oduction. (3) Children under 4 years old will not be admitted. (4) E-ciga
+ rettes are used on stage. (5) No weapons permitted on the premises. No ou
+ tside food or beverag\\n\\nhttps://www.ticketmaster.com/a-kidman-carol-ne
+ w-york-new-york-11-27-2026/event/Z1r9uZruZqGZ1AvZfJk\\n\\nRefreshed daily
+  from live listings.
+LOCATION:New World Stages - Stage 3\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/a-kidman-carol-new-york-new-york-11-27-20
+ 26/event/Z1r9uZruZqGZ1AvZfJk
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7-E7k@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Oh\, Mary!
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7-E7k\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Lyceum Theatre - NY\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-E7k
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AA7Y0t@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:A Kidman Carol
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AA7Y0t\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:New World Stages - Stage 3\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7Y0t
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAAkpe@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Jamie Allan
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAAkpe\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:New World Stages - Stage 5\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAkpe
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_fhSWDRe@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Peace\, Love & Lights
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/peace-love-lights-bethel-new-york-11-27-2026/e
+ vent/00006546F3F7BBC2\\n\\nRefreshed daily from live listings.
+LOCATION:Bethel Woods Center for the Arts\, Bethel
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/peace-love-lights-bethel-new-york-11-27-2
+ 026/event/00006546F3F7BBC2
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_onljPk-@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Long Island Nets vs Maine Celtics
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/long-island-nets-vs-maine-celtics-uniondale-ne
+ w-york-11-27-2026/event/0000651AAB7251A1\\n\\nRefreshed daily from live l
+ istings.
+LOCATION:Nassau Veterans Memorial Coliseum\, Uniondale
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/long-island-nets-vs-maine-celtics-unionda
+ le-new-york-11-27-2026/event/0000651AAB7251A1
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_pUcTGb_@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Treat Box at Peace\, Love & Lights
+DESCRIPTION:Treat Box (For 4 People) Santa can't eat all these treats alon
+ e! Enjoy a specially prepared snack box during your drive. Not Available 
+ for Walk-Thru Mondays.\\n\\nhttps://www.ticketmaster.com/treat-box-at-pea
+ ce-love-lights-bethel-new-york-11-27-2026/event/0000656DADFCC619\\n\\nRef
+ reshed daily from live listings.
+LOCATION:Bethel Woods Center for the Arts\, Bethel
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/treat-box-at-peace-love-lights-bethel-new
+ -york-11-27-2026/event/0000656DADFCC619
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg59@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T171500
+DTEND:20261127T194500
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfuyoV@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T171500
+DTEND:20261127T194500
+SUMMARY:Paper Moon (1973)
+DESCRIPTION:Attendance at the Williams Center involves risks associated wi
+ th live entertainment\, including loud sound\, flashing lights and strobe
+ s\, theatrical fog\, crowded spaces\, dancing\, physical contact\, slips 
+ and falls\, and exposure to communicable illnesses. These conditions may 
+ cause injury or illness. Pl\\n\\nhttps://www.ticketweb.com/event/paper-mo
+ on-1973-williams-center-cinema-tickets/14379474\\n\\nRefreshed daily from
+  live listings.
+LOCATION:Williams Center - Cinema Underground - Rutherford\, Rutherford
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/paper-moon-1973-williams-center-cinema
+ -tickets/14379474
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg5b@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T173000
+DTEND:20261127T200000
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QEC-3xsYJhRiNbiM@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T173000
+DTEND:20261127T200000
+SUMMARY:The Banksy Museum New York!
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
+ ef=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
+ NY0?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvF-I@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T173000
+DTEND:20261127T200000
+SUMMARY:Pre-Existing Condition
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvF-I\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Greenwich House Theater\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvF-I
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1Afkpqf@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T173000
+DTEND:20261127T200000
+SUMMARY:Birdland Big Band
+DESCRIPTION:Please be aware of the following age-related restrictions for 
+ this event: Ages 10+.\\n\\nhttps://www.ticketweb.com/event/birdland-big-b
+ and-birdland-jazz-club-tickets/14196754\\n\\nRefreshed daily from live li
+ stings.
+LOCATION:Birdland Jazz Club\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/birdland-big-band-birdland-jazz-club-t
+ ickets/14196754
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg5_@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T174500
+DTEND:20261127T201500
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17GZv0G65QUdJTt@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Catch Your Breath - Not Broken Enough Tour
+DESCRIPTION:Age Restrictions: ALL AGES Doors: 6PM Show: 7PM To inquire abo
+ ut accessibility accommodations beyond available purchasable accessible s
+ eating\, please email ArcherBoxOffice@livenation.com.\\n\\nhttps://www.ti
+ cketmaster.com/catch-your-breath-not-broken-enough-allentown-pennsylvania
+ -11-27-2026/event/300064B6B60E6FE9\\n\\nRefreshed daily from live listing
+ s.
+LOCATION:Archer Music Hall\, Allentown
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/catch-your-breath-not-broken-enough-allen
+ town-pennsylvania-11-27-2026/event/300064B6B60E6FE9
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18Q-9tbOh8sZZvyg5Q@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:DAYDREAM | Air Becomes Art - Balloon Museum
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/daydream-air-becomes-art-balloon-museum-tic
+ kets-Y5HV92?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Balloon Museum NYC\, New York City
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/daydream-air-becomes-art-balloon-museu
+ m-tickets-Y5HV92?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QEC-3xsYJhRiNbiz@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:The Banksy Museum New York!
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/the-banksy-museum-new-york-tickets-5PKNY0?r
+ ef=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/the-banksy-museum-new-york-tickets-5PK
+ NY0?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QR3bfTQwqjJNifyU@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Holiday Sip and Stencil Workshop
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holiday-sip-and-stencil-workshop-tickets-X2
+ 6B5D?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Banksy Museum New York\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holiday-sip-and-stencil-workshop-ticke
+ ts-X26B5D?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QRfoM50Yp7970Eb0@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Frosty's Christmas Bar - NYC Times Square 🗽🎄
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/frostys-christmas-bar-nyc-times-square-tick
+ ets-N45K1P?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:Dramma Nightclub\, New York
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/frostys-christmas-bar-nyc-times-square
+ -tickets-N45K1P?ref=ticketmaster
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_fEUY2p1@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Emmett & the Dead Ends w/ Dog House
+DESCRIPTION:State or Federal forms of ID will be required for entry.\\n\\n
+ https://www.ticketmaster.com/emmett-the-dead-ends-w-dog-new-york-new-york
+ -11-27-2026/event/00006549F6C0F58A\\n\\nRefreshed daily from live listing
+ s.
+LOCATION:Mercury Lounge\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/emmett-the-dead-ends-w-dog-new-york-new-y
+ ork-11-27-2026/event/00006549F6C0F58A
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfF7-V@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:The Polar Express
+DESCRIPTION:1. If you want to sit together with another family\, you must 
+ buy your tickets together. 2. We will make our best effort to seat you in
+  the car class you chose\, but\, it is first come first served. 3. There 
+ are no group discounts 4. Ticket fees are non-refundable under any circum
+ stance. 5. Lapsitter t\\n\\nhttps://www.ticketweb.com/event/the-polar-exp
+ ress-delaware-river-railroad-excursions-polar-tickets/14204874\\n\\nRefre
+ shed daily from live listings.
+LOCATION:Delaware River Railroad Excursions (Polar Express Train Ride)\, P
+ hillipsburg
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/the-polar-express-delaware-river-railr
+ oad-excursions-polar-tickets/14204874
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfuVuV@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Michael Weiss Trio
+DESCRIPTION:Please arrive on time for the show. Doors open 30 minutes in a
+ dvance. Your entry is guaranteed\, but choice of seats is always first co
+ me\, first served. All attractions and lineups are subject to change beyo
+ nd our control. There is a required one drink minimum per person. Non-alc
+ oholic options are av\\n\\nhttps://www.ticketweb.com/event/michael-weiss-
+ trio-mezzrow-tickets/14374374\\n\\nRefreshed daily from live listings.
+LOCATION:Mezzrow\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/michael-weiss-trio-mezzrow-tickets/143
+ 74374
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1Afuxo7@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:David Rourke Quartet
+DESCRIPTION:Please arrive on time for the show. Doors open 30 minutes in a
+ dvance. Your entry is guaranteed\, but choice of seats is always first co
+ me\, first served. All attractions and lineups are subject to change beyo
+ nd our control. There is a required one drink minimum per person. Non-alc
+ oholic options are av\\n\\nhttps://www.ticketweb.com/event/david-rourke-q
+ uartet-smalls-jazz-club-tickets/14362444\\n\\nRefreshed daily from live l
+ istings.
+LOCATION:Smalls Jazz Club\, New York
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/david-rourke-quartet-smalls-jazz-club-
+ tickets/14362444
 END:VEVENT
 END:VCALENDAR

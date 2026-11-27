@@ -6,51 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Seattle\, WA
 X-WR-CALDESC:Upcoming events within 100 miles of Seattle\, WA.
 BEGIN:VEVENT
-UID:tm-1778v0G6CBV_z4r@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T150000
-DTEND:20261126T173000
-SUMMARY:Sesame Street Live Photo Experience
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.ca/sesame-street-live-photo-experience-abbotsford-
- british-columbia-11-26-2026/event/110064EEB467855E\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Rogers Forum\, Abbotsford
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.ca/sesame-street-live-photo-experience-abbots
- ford-british-columbia-11-26-2026/event/110064EEB467855E
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1778v0G6CBs9bAI@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T150000
-DTEND:20261126T173000
-SUMMARY:Sesame Street Live: Elmo's Got the Moves
-DESCRIPTION:This show contains flashing lights\, haze (fog) and confetti\\
- n\\nhttps://www.ticketmaster.ca/sesame-street-live-elmos-got-the-abbotsfo
- rd-british-columbia-11-26-2026/event/110064EEB15D8168\\n\\nRefreshed dail
- y from live listings.
-LOCATION:Rogers Forum\, Abbotsford
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.ca/sesame-street-live-elmos-got-the-abbotsfor
- d-british-columbia-11-26-2026/event/110064EEB15D8168
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAvNG9@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T140000
-DTEND:20261127T163000
-SUMMARY:George Balanchine's The Nutcracker
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAvNG9\\n\\nRefreshed daily from 
- live listings.
-LOCATION:McCaw Hall\, Seattle
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvNG9
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-vvG1HZ_o1KqgiG@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T160000
 DTEND:20261127T183000
 SUMMARY:Get Festive With It - Tree Lighting
@@ -68,7 +25,7 @@ URL:https://www.ticketmaster.com/get-festive-with-it-tree-lighting-suquami
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZAFg@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:The Amity Affliction w/ blessthefall
@@ -81,7 +38,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZAFg
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70so0@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Gabriel Rutledge
@@ -94,7 +51,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70so0
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfoKk7@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Nate Jackson
@@ -112,7 +69,7 @@ URL:https://www.ticketweb.com/event/nate-jackson-nate-jacksons-super-funny
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7JvO-@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Wenatchee Wild vs. Kelowna Rockets
@@ -125,7 +82,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JvO-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_2Q0gD2E@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190500
 DTEND:20261127T213500
 SUMMARY:Everett Silvertips vs. Portland Winterhawks
@@ -142,7 +99,7 @@ URL:https://www.ticketmaster.com/everett-silvertips-vs-portland-winterhawk
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZebe@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:The Wizard of Oz - Musical
@@ -155,7 +112,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZebe
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvNGd@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:George Balanchine's The Nutcracker
@@ -168,7 +125,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvNGd
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_2Usj_0V@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:The Outsiders (Touring)
@@ -186,7 +143,7 @@ URL:https://www.ticketmaster.com/the-outsiders-touring-seattle-washington-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_3Xop41x@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Haley Heynderickx
@@ -204,7 +161,7 @@ URL:https://www.ticketmaster.com/haley-heynderickx-seattle-washington-11-2
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAAoGF@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Thankful Dead
@@ -217,7 +174,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAAoGF
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_KE1wqRs@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Chi Mot Dem Duy Nhat: One Night Only
@@ -233,7 +190,7 @@ URL:https://www.ticketmaster.com/chi-mot-dem-duy-nhat-one-tacoma-washingto
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvFOz@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Queen Mother - Ages 21+
@@ -246,7 +203,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvFOz
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_3CHN5DK@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T203000
 DTEND:20261127T230000
 SUMMARY:Randy Hansen- Jimi Hendrix Tribute
@@ -264,7 +221,7 @@ URL:https://www.ticketmaster.com/randy-hansen-jimi-hendrix-tribute-suquami
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Af-Jbd@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T204500
 DTEND:20261127T231500
 SUMMARY:Nite Wave present: The Cure\, Depeche Mode & New Order Tribute Nig
@@ -280,5 +237,65 @@ LOCATION:The Crocodile\, Seattle
 STATUS:CONFIRMED
 URL:https://www.ticketweb.com/event/nite-wave-present-the-cure-the-crocodi
  le-tickets/14866603
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvvGv@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T210000
+DTEND:20261127T233000
+SUMMARY:Dennett - Back to the Roadhouse Tour - Ages 21+
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvvGv\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:The Showbox\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvvGv
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1Af87jV@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T210000
+DTEND:20261127T233000
+SUMMARY:PROMISCUOUS - A 2000's CLUB BANGERS THROWBACKS PARTY
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/promiscuous-a-2000s-chop-suey-tick
+ ets/14404734\\n\\nRefreshed daily from live listings.
+LOCATION:Chop Suey\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/promiscuous-a-2000s-chop-suey-tickets/
+ 14404734
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-rZ7HnEZ1AfCvj0@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T210000
+DTEND:20261127T233000
+SUMMARY:Mad Meow Music & Clock-Out Lounge Present: 3rd Annual Blackie Frid
+ ay feat Blackie (A Tribute To Blondie)\, Cheap Scenery (vintage punk trib
+ ute)
+DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
+  valid identification indicating that they are at least 21 years of age w
+ ill not be admitted to this event\, and will not be eligible for a refund
+ .\\n\\nhttps://www.ticketweb.com/event/mad-meow-music-clock-clock-out-lou
+ nge-tickets/14381724\\n\\nRefreshed daily from live listings.
+LOCATION:Clock-Out Lounge\, Seattle
+STATUS:CONFIRMED
+URL:https://www.ticketweb.com/event/mad-meow-music-clock-clock-out-lounge-
+ tickets/14381724
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70soN@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T214500
+DTEND:20261128T001500
+SUMMARY:Gabriel Rutledge
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70soN\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Tacoma Comedy Club\, Tacoma
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70soN
 END:VEVENT
 END:VCALENDAR

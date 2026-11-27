@@ -6,87 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Asheville\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Asheville\, NC.
 BEGIN:VEVENT
-UID:tm-G5viZ_91CEanG@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T180000
-DTEND:20261126T203000
-SUMMARY:Smokies Winter Wonderland Train Ride
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/smokies-winter-wonderland-train-ride-knoxville
- -tennessee-11-26-2026/event/1B0065728E9C9A8C\\n\\nRefreshed daily from li
- ve listings.
-LOCATION:Covenant Health Park\, Knoxville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/smokies-winter-wonderland-train-ride-knox
- ville-tennessee-11-26-2026/event/1B0065728E9C9A8C
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5viZ_91uuyCC@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T180000
-DTEND:20261126T203000
-SUMMARY:Smokies Winter Wonderland Light Show
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/smokies-winter-wonderland-light-show-knoxville
- -tennessee-11-26-2026/event/1B0065728D37938E\\n\\nRefreshed daily from li
- ve listings.
-LOCATION:Covenant Health Park\, Knoxville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/smokies-winter-wonderland-light-show-knox
- ville-tennessee-11-26-2026/event/1B0065728D37938E
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_Gn_yXic@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T103000
-DTEND:20261127T130000
-SUMMARY:Disney On Ice presents Spotlight Magic!
-DESCRIPTION:- All guests age 2 & older are required to have a ticket. - No
-  costumes for guests 14 & older. - Please monitor the venue website for v
- enue policies\, including health and safety protocols\, which are subject
-  to change. - All tickets are subject to availability. - Prices are subje
- ct to change. - Visit\\n\\nhttps://www.ticketmaster.com/disney-on-ice-pre
- sents-spotlight-magic-greenville-south-carolina-11-27-2026/event/2D0064CA
- 99E7EB2D\\n\\nRefreshed daily from live listings.
-LOCATION:Bon Secours Wellness Arena \, Greenville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
- eenville-south-carolina-11-27-2026/event/2D0064CA99E7EB2D
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5viZ_ClPjxq-@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T140000
-DTEND:20261127T163000
-SUMMARY:Broadway at the Tennessee: Death Becomes Her
-DESCRIPTION:No refunds or exchanges. Event date and time subject to change
- . All ages are required to have a ticket for this event. Tickets subject 
- to cancellation if suspected brokering or violating ticket limits. The Te
- nnessee Theatre is not responsible for any tickets that are lost\, stolen
- \, or purchased throu\\n\\nhttps://www.ticketmaster.com/broadway-at-the-t
- ennessee-death-becomes-knoxville-tennessee-11-27-2026/event/1B0064EAE5722
- 761\\n\\nRefreshed daily from live listings.
-LOCATION:Tennessee Theatre\, Knoxville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/broadway-at-the-tennessee-death-becomes-k
- noxville-tennessee-11-27-2026/event/1B0064EAE5722761
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70Ubw@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T140000
-DTEND:20261127T163000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70Ubw\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubw
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_Dmcv@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T143000
 DTEND:20261127T170000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -104,7 +25,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_3Js7uIt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T180000
 DTEND:20261127T203000
 SUMMARY:Knoxville Ice Bears vs. Athens Rock Lobsters
@@ -121,7 +42,7 @@ URL:https://www.ticketmaster.com/knoxville-ice-bears-vs-athens-rock-knoxvi
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_4mL5DGT@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T180000
 DTEND:20261127T203000
 SUMMARY:Smokies Winter Wonderland Light Show
@@ -136,7 +57,7 @@ URL:https://www.ticketmaster.com/smokies-winter-wonderland-light-show-knox
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_pCuxpdb@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T180000
 DTEND:20261127T203000
 SUMMARY:Smokies Winter Wonderland Train Ride
@@ -151,7 +72,7 @@ URL:https://www.ticketmaster.com/smokies-winter-wonderland-train-ride-knox
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P419@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -164,7 +85,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P419
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oIZXcZt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Dick Vitale Invitational: West Virginia vs North Carolina
@@ -179,7 +100,7 @@ URL:https://www.ticketmaster.com/dick-vitale-invitational-west-virginia-vs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA70QK@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Charleston Sou
@@ -193,7 +114,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70QK
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Afuv87@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Echo Album Release
@@ -207,7 +128,7 @@ URL:https://www.ticketweb.com/event/echo-album-release-the-808-tickets/143
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_5KZsrhC@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:A Christmas Carol (CBT)
@@ -225,7 +146,7 @@ URL:https://www.ticketmaster.com/a-christmas-carol-cbt-knoxville-tennessee
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70UbS@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Elf the Musical
@@ -238,7 +159,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbS
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gxw90bD@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Pouya: The Foreverglades Tour
@@ -256,7 +177,7 @@ URL:https://www.ticketmaster.com/pouya-the-foreverglades-tour-charlotte-no
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_4M7oWPv@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Noodah05
@@ -274,7 +195,7 @@ URL:https://www.ticketmaster.com/noodah05-charlotte-north-carolina-11-27-2
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5viZ_ClPh3jS@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Broadway at the Tennessee: Death Becomes Her
@@ -292,7 +213,7 @@ URL:https://www.ticketmaster.com/broadway-at-the-tennessee-death-becomes-k
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1AfGbGV@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Neon Rainbow Presents: Boot Scootin' Boogie Nights
@@ -310,7 +231,7 @@ URL:https://www.ticketweb.com/event/neon-rainbow-presents-boot-scootin-the
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_WCcB@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T103000
 DTEND:20261128T130000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -328,7 +249,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_f9pmpR1@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T123000
 DTEND:20261128T150000
 SUMMARY:2026 MLS Playoffs Round 1 Game 2: Charlotte FC v Chicago Fire FC
@@ -342,8 +263,26 @@ URL:https://www.ticketmaster.com/2026-mls-playoffs-round-1-game-charlotte-
  north-carolina-11-28-2026/event/2D006545D6B96BCA
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-G5viZ_ClPLerv@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261128T140000
+DTEND:20261128T163000
+SUMMARY:Broadway at the Tennessee: Death Becomes Her
+DESCRIPTION:No refunds or exchanges. Event date and time subject to change
+ . All ages are required to have a ticket for this event. Tickets subject 
+ to cancellation if suspected brokering or violating ticket limits. The Te
+ nnessee Theatre is not responsible for any tickets that are lost\, stolen
+ \, or purchased throu\\n\\nhttps://www.ticketmaster.com/broadway-at-the-t
+ ennessee-death-becomes-knoxville-tennessee-11-28-2026/event/1B0064EAE57C2
+ 781\\n\\nRefreshed daily from live listings.
+LOCATION:Tennessee Theatre\, Knoxville
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/broadway-at-the-tennessee-death-becomes-k
+ noxville-tennessee-11-28-2026/event/1B0064EAE57C2781
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ubg@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T140000
 DTEND:20261128T163000
 SUMMARY:Elf the Musical
@@ -356,7 +295,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubg
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_XmmE@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T143000
 DTEND:20261128T170000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -374,7 +313,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_7pzrexc@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Clemson University Tigers Football vs. Univ of South Carolina Game
@@ -390,7 +329,7 @@ URL:https://www.ticketmaster.com/clemson-university-tigers-football-vs-uni
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2pX-vf_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T180000
 DTEND:20261128T203000
 SUMMARY:Charlotte Hornets vs. Brooklyn Nets
@@ -405,7 +344,7 @@ URL:https://www.ticketmaster.com/charlotte-hornets-vs-brooklyn-nets-charlo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P413@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T190000
 DTEND:20261128T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)

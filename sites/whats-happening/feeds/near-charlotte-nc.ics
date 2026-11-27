@@ -6,73 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Charlotte\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Charlotte\, NC.
 BEGIN:VEVENT
-UID:tm-G5eVZ_8QFj665@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:PEE DEE ICECATS VS EVANSVILLE THUNDERBOLTS
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/pee-dee-icecats-vs-evansville-thunderbolts-flo
- rence-south-carolina-11-26-2026/event/2D006506887071CB\\n\\nRefreshed dai
- ly from live listings.
-LOCATION:Florence Center\, Florence
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/pee-dee-icecats-vs-evansville-thunderbolt
- s-florence-south-carolina-11-26-2026/event/2D006506887071CB
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_Gn_yXic@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T103000
-DTEND:20261127T130000
-SUMMARY:Disney On Ice presents Spotlight Magic!
-DESCRIPTION:- All guests age 2 & older are required to have a ticket. - No
-  costumes for guests 14 & older. - Please monitor the venue website for v
- enue policies\, including health and safety protocols\, which are subject
-  to change. - All tickets are subject to availability. - Prices are subje
- ct to change. - Visit\\n\\nhttps://www.ticketmaster.com/disney-on-ice-pre
- sents-spotlight-magic-greenville-south-carolina-11-27-2026/event/2D0064CA
- 99E7EB2D\\n\\nRefreshed daily from live listings.
-LOCATION:Bon Secours Wellness Arena \, Greenville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
- eenville-south-carolina-11-27-2026/event/2D0064CA99E7EB2D
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_6Eu6EnF@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T140000
-DTEND:20261127T163000
-SUMMARY:Wicked (Touring)
-DESCRIPTION:Recommended for ages 8+. Please note: All patrons will require
-  a ticket to this performance\, regardless of age. Children must be at le
- ast 6 years of age to attend this performance and accompanied by an adult
- .\\n\\nhttps://www.ticketmaster.com/wicked-touring-greensboro-north-carol
- ina-11-27-2026/event/2D006479CD1E7A88\\n\\nRefreshed daily from live list
- ings.
-LOCATION:Steven Tanger Center for the Performing Arts\, Greensboro
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/wicked-touring-greensboro-north-carolina-
- 11-27-2026/event/2D006479CD1E7A88
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5eVZ_u6a2WPY@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T140000
-DTEND:20261127T163000
-SUMMARY:Premium Lounge - Wicked
-DESCRIPTION:Must accompany event ticket. All ages require a ticket for ent
- ry. Please note doors will open 1 hour ahead of show time.\\n\\nhttps://w
- ww.ticketmaster.com/premium-lounge-wicked-greensboro-north-carolina-11-27
- -2026/event/2D0064D1C93FD970\\n\\nRefreshed daily from live listings.
-LOCATION:Steven Tanger Center for the Performing Arts\, Greensboro
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/premium-lounge-wicked-greensboro-north-ca
- rolina-11-27-2026/event/2D0064D1C93FD970
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_Dmcv@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T143000
 DTEND:20261127T170000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -90,7 +25,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oC3Rbam@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T160000
 DTEND:20261127T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -108,7 +43,7 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P419@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -121,7 +56,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P419
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oIZXcZt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Dick Vitale Invitational: West Virginia vs North Carolina
@@ -136,7 +71,7 @@ URL:https://www.ticketmaster.com/dick-vitale-invitational-west-virginia-vs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oPDYV-Y@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Greensboro Swarm vs. College Park Skyhawks
@@ -151,7 +86,7 @@ URL:https://www.ticketmaster.com/greensboro-swarm-vs-college-park-skyhawks
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8QFq66r@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:PEE DEE ICECATS VS EVANSVILLE THUNDERBOLTS
@@ -166,7 +101,7 @@ URL:https://www.ticketmaster.com/pee-dee-icecats-vs-evansville-thunderbolt
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_G3-TxWO@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Dr. Seuss's How The Grinch Stole Christmas in Concert
@@ -184,7 +119,7 @@ URL:https://www.ticketmaster.com/dr-seusss-how-the-grinch-stole-charlotte-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_4nVQFjx@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Ann Brodie's Carolina Ballet Presents The Nutcracker Ballet
@@ -202,7 +137,7 @@ URL:https://www.ticketmaster.com/ann-brodies-carolina-ballet-presents-the-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ol5Dwer@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193500
 DTEND:20261127T220500
 SUMMARY:Twin City Thunderbirds Vs Blue Ridge Bobcats
@@ -217,7 +152,7 @@ URL:https://www.ticketmaster.com/twin-city-thunderbirds-vs-blue-ridge-wins
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gxw90bD@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Pouya: The Foreverglades Tour
@@ -235,7 +170,7 @@ URL:https://www.ticketmaster.com/pouya-the-foreverglades-tour-charlotte-no
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_4M7oWPv@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Noodah05
@@ -253,7 +188,7 @@ URL:https://www.ticketmaster.com/noodah05-charlotte-north-carolina-11-27-2
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_6EukEty@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Wicked (Touring)
@@ -270,7 +205,7 @@ URL:https://www.ticketmaster.com/wicked-touring-greensboro-north-carolina-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_6NZRL55@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Prelude Dining- Wicked
@@ -285,7 +220,7 @@ URL:https://www.ticketmaster.com/prelude-dining-wicked-greensboro-north-ca
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_u6aCcPL@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Premium Lounge - Wicked
@@ -300,7 +235,7 @@ URL:https://www.ticketmaster.com/premium-lounge-wicked-greensboro-north-ca
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_WCcB@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T103000
 DTEND:20261128T130000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -318,7 +253,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_f5vYy-f@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T120000
 DTEND:20261128T143000
 SUMMARY:PowHER Player Classic - Day 1
@@ -334,7 +269,7 @@ URL:https://www.ticketmaster.com/powher-player-classic-day-1-columbia-sout
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-Nb3@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T120000
 DTEND:20261128T143000
 SUMMARY:UNC Charlotte 49ers Football vs. Navy Midshipmen Football
@@ -347,7 +282,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Nb3
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_f9pmpR1@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T123000
 DTEND:20261128T150000
 SUMMARY:2026 MLS Playoffs Round 1 Game 2: Charlotte FC v Chicago Fire FC
@@ -362,7 +297,7 @@ URL:https://www.ticketmaster.com/2026-mls-playoffs-round-1-game-charlotte-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gn_XmmE@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T143000
 DTEND:20261128T170000
 SUMMARY:Disney On Ice presents Spotlight Magic!
@@ -380,7 +315,7 @@ URL:https://www.ticketmaster.com/disney-on-ice-presents-spotlight-magic-gr
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_G3xZ3WE@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Dr. Seuss's How The Grinch Stole Christmas in Concert
@@ -398,7 +333,7 @@ URL:https://www.ticketmaster.com/dr-seusss-how-the-grinch-stole-charlotte-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7qIAU@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Wake Forest Demon Deacons Football vs. Duke Blue Devils Football
@@ -411,7 +346,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qIAU
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oC3YI16@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T160000
 DTEND:20261128T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -429,7 +364,7 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2pX-vf_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T180000
 DTEND:20261128T203000
 SUMMARY:Charlotte Hornets vs. Brooklyn Nets
@@ -444,7 +379,7 @@ URL:https://www.ticketmaster.com/charlotte-hornets-vs-brooklyn-nets-charlo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P413@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T190000
 DTEND:20261128T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)

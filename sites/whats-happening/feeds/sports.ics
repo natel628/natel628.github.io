@@ -6,625 +6,299 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Sports
 X-WR-CALDESC:Upcoming sports.
 BEGIN:VEVENT
-UID:tm-16xZk40J7ZA8d7Ga@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T150000
-DTEND:20261126T173000
-SUMMARY:Mosconi Cup 2026 Press Conference
-DESCRIPTION:Join us for the official 2026 Mosconi Cup Press Conference on 
- Thursday\, 26 November\, from 3pm to 4pm at the Caribe Royale Resort in O
- rlando\, Florida. Get exclusive insights from the captains and players as
-  defending champions Team Europe and Team USA meet face to face for the f
- irst time ahead of the\\n\\nhttps://www.ticketmaster.com/mosconi-cup-2026
- -press-conference-orlando-florida-11-26-2026/event/22006564984F23B8\\n\\n
+UID:tm-vv177Z_KGkw3JEs_@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
+SUMMARY:4 Tha Culture Women's Holiday Hoops Classic Session 1
+DESCRIPTION:1 Ticket Good for 3 Games University of Richmond vs St. John's
+  University at 2:30pm University of Dayton vs Florida State University at
+  5:00pm Virginia Commonwealth University vs Coppin State University at 7:
+ 30pm Games and times are subject to change.\\n\\nhttps://www.ticketmaster
+ .com/4-tha-culture-womens-holiday-hoops-glen-allen-virginia-11-27-2026/ev
+ ent/0100653C929A7C59\\n\\nRefreshed daily from live listings.
+LOCATION:Henrico Sports and Events Center\, Glen Allen
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/4-tha-culture-womens-holiday-hoops-glen-a
+ llen-virginia-11-27-2026/event/0100653C929A7C59
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7-p_d@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
+SUMMARY:Memphis Tigers Football vs. Temple Owls Football
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7-p_d\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Simmons Bank Liberty Stadium\, Memphis
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-p_d
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7-tjK@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T143000
+DTEND:20261127T170000
+SUMMARY:New Mexico Lobos Football vs. Air Force Academy Falcons Football
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7-tjK\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:University Stadium\, Albuquerque
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-tjK
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17A8v0G62ZUeC9l@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Capitals vs Panthers
+DESCRIPTION:Capital One offers: www.capitalonearena.com/cardholderbenefits
+ \\n\\nhttps://www.ticketmaster.com/capitals-vs-panthers-washington-distri
+ ct-of-columbia-11-27-2026/event/150064F03608E5EB\\n\\nRefreshed daily fro
+ m live listings.
+LOCATION:Capital One Arena\, Washington
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/capitals-vs-panthers-washington-district-
+ of-columbia-11-27-2026/event/150064F03608E5EB
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17AOv0G61-BUV64@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Pittsburgh Steelers v Broncos: 1933 Club Pass (NOT A GAME TICKET)
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/pittsburgh-steelers-v-broncos-1933-club-pittsb
+ urgh-pennsylvania-11-27-2026/event/160064A87ADB41D5\\n\\nRefreshed daily 
+ from live listings.
+LOCATION:Acrisure Stadium\, Pittsburgh
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/pittsburgh-steelers-v-broncos-1933-club-p
+ ittsburgh-pennsylvania-11-27-2026/event/160064A87ADB41D5
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-17GZv0G6CDmsrkr@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Philadelphia Flyers vs. Vancouver Canucks
+DESCRIPTION:By purchasing\, you are sharing your contact info and ticket s
+ ales data with the NHL and the Philadelphia Flyers. The NHL may use this 
+ info to better understand fan engagement across the league\, including to
+  enable the NHL and its Member Clubs to customize their services and adve
+ rtising. For more inf\\n\\nhttps://www.ticketmaster.com/philadelphia-flye
+ rs-vs-vancouver-canucks-philadelphia-pennsylvania-11-27-2026/event/300064
+ EEEEC5E19E\\n\\nRefreshed daily from live listings.
+LOCATION:Xfinity Mobile Arena\, Philadelphia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/philadelphia-flyers-vs-vancouver-canucks-
+ philadelphia-pennsylvania-11-27-2026/event/300064EEEEC5E19E
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1ApZkoYGkdLdDRt@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Pittsburgh Steelers vs. Denver Broncos
+DESCRIPTION:Flex Schedule: Please be aware that there are certain games th
+ at are subject to flexible scheduling and the date and time of those game
+ s may be changed from what is currently reflected on the schedule and wha
+ t may appear on the ticket. For more detailed information about NFL flexi
+ ble scheduling proc\\n\\nhttps://www.ticketmaster.com/pittsburgh-steelers
+ -vs-denver-broncos-pittsburgh-pennsylvania-11-27-2026/event/16006470DF0FB
+ BE9\\n\\nRefreshed daily from live listings.
+LOCATION:Acrisure Stadium\, Pittsburgh
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/pittsburgh-steelers-vs-denver-broncos-pit
+ tsburgh-pennsylvania-11-27-2026/event/16006470DF0FBBE9
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70efa@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:West Virginia Mountaineers Womens Volleyball vs. Texas Tech Red Ra
+ ider Womens Volleyball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70efa\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Hope Coliseum\, Morgantown
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70efa
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7PUq4@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Quinnipiac Bobcats Womens Ice Hockey vs. Yale Bulldogs Womens Hock
+ ey
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7PUq4\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:M&T Bank Arena\, Hamden
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7PUq4
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7Ps_3@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Notre Dame Fighting Irish Hockey vs. Boston College Eagles Hockey
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7Ps_3\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Compton Family Ice Arena\, Notre Dame
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Ps_3
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv1AAZk4wGkeyB7U0@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:2026 NCAA DI Womens Soccer Championship - Second Round - Columbus
+DESCRIPTION:Tickets are General Admission Only. Purdue vs Houston @ 3:00 P
+ M. Ohio State vs Tennessee @ 6:00 PM. Ticket provides access to both Seco
+ nd Round games. Children under the age of 2 are Free. The first 100 Ohio 
+ State students will be granted free admission by presenting their Buck-ID
+ . Gates to Jesse Ow\\n\\nhttps://www.ticketmaster.com/2026-ncaa-di-womens
+ -soccer-championship-columbus-ohio-11-27-2026/event/05006572B9E84DA4\\n\\
+ nRefreshed daily from live listings.
+LOCATION:Jesse Owens Memorial Stadium\, Columbus
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/2026-ncaa-di-womens-soccer-championship-c
+ olumbus-ohio-11-27-2026/event/05006572B9E84DA4
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv1AAZkfAGkdiCzb6@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:DISPATCH FAMILY VALUE PACK-CBJ VS. DETROIT RED WINGS
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://am.ticketmaster.com/bluejackets/promotional-page?id=MTIx\\n\\nRefre
+ shed daily from live listings.
+LOCATION:Nationwide Arena\, Columbus
+STATUS:CONFIRMED
+URL:https://am.ticketmaster.com/bluejackets/promotional-page?id=MTIx
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv1AAZkfwGkeBlquB@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Butler Bulldogs Men's Basketball vs. Bellarmine University Knights
+  Mens Basketball
+DESCRIPTION:-Everyone\, regardless of age\, must have a ticket for admissi
+ on\, including babes in arms. Children two and under are not recommended 
+ to attend. -No Cameras/Audio/Video -No refunds or exchanges -The system w
+ ill not allow you to leave a single seat -The ticket holder grants permis
+ sion to Butler Univers\\n\\nhttps://www.ticketmaster.com/butler-bulldogs-
+ mens-basketball-vs-bellarmine-indianapolis-indiana-11-27-2026/event/05006
+ 532BAADD37A\\n\\nRefreshed daily from live listings.
+LOCATION:Hinkle Fieldhouse\, Indianapolis
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/butler-bulldogs-mens-basketball-vs-bellar
+ mine-indianapolis-indiana-11-27-2026/event/05006532BAADD37A
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1VZ_2N2Ltz5@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Tampa Bay Lightning vs. Ottawa Senators
+DESCRIPTION:Go Mobile: Tickets are mobile only. Locate your tickets in you
+ r Ticketmaster account or in the Ticketmaster app. Screenshots and printo
+ uts will not be accepted. There is a ticket limit of eight (8). All order
+ s exceeding this limit will be cancelled without notice. Bag Policy: Bags
+  larger than 12x12x\\n\\nhttps://www.ticketmaster.com/tampa-bay-lightning
+ -vs-ottawa-senators-tampa-florida-11-27-2026/event/0D0064F8CF7E9E0B\\n\\n
  Refreshed daily from live listings.
-LOCATION:Caribe Royale Orlando\, Orlando
+LOCATION:Benchmark International Arena\, Tampa
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/mosconi-cup-2026-press-conference-orlando
- -florida-11-26-2026/event/22006564984F23B8
+URL:https://www.ticketmaster.com/tampa-bay-lightning-vs-ottawa-senators-ta
+ mpa-florida-11-27-2026/event/0D0064F8CF7E9E0B
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1YZ_kwz3Icv@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T153000
-DTEND:20261126T180000
-SUMMARY:Dallas Cowboys vs. Philadelphia Eagles
+UID:tm-vvG1fZ_CMjqWLa@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:CBJ V. DETROIT RED WINGS
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/dallas-cowboys-vs-philadelphia-eagles-arlingto
- n-texas-11-26-2026/event/0C00646CB84A8B41\\n\\nRefreshed daily from live 
- listings.
-LOCATION:AT&T Stadium\, Arlington
+ tps://www.ticketmaster.com/cbj-v-detroit-red-wings-columbus-ohio-11-27-20
+ 26/event/050064EDDC77D7C9\\n\\nRefreshed daily from live listings.
+LOCATION:Nationwide Arena\, Columbus
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/dallas-cowboys-vs-philadelphia-eagles-arl
- ington-texas-11-26-2026/event/0C00646CB84A8B41
+URL:https://www.ticketmaster.com/cbj-v-detroit-red-wings-columbus-ohio-11-
+ 27-2026/event/050064EDDC77D7C9
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-vvG1OZ_CBHfUaV@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T163000
-DTEND:20261126T190000
-SUMMARY:Michigan State v Arkansas Mens Basketball
-DESCRIPTION:The 2026 CareSource Invitational will feature Arkansas vs. Mic
- higan State at Little Caesars Arena in Detroit\, MI on Thanksgiving eveni
- ng.\\n\\nhttps://www.ticketmaster.com/michigan-state-v-arkansas-mens-bask
- etball-detroit-michigan-11-26-2026/event/080064EEBC536274\\n\\nRefreshed 
- daily from live listings.
-LOCATION:Little Caesars Arena\, Detroit
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/michigan-state-v-arkansas-mens-basketball
- -detroit-michigan-11-26-2026/event/080064EEBC536274
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QIdJDtvFwMiLUxrc@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T173000
-DTEND:20261126T200000
-SUMMARY:SPLASH BASH BIRTHDAY PACKAGE
+UID:tm-Z7r9jZ1A7J4p7@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:Minnesota Wild vs. Colorado Avalanche
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/splash-bash-birthday-package-tickets-YD1TV9
- ?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Treasure Island Resort & Casino\, Welch
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/splash-bash-birthday-package-tickets-Y
- D1TV9?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QIdiVrvyMcjP-Qc3@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T173000
-DTEND:20261126T200000
-SUMMARY:21+ RESERVED LUXURY SEATING
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/21-reserved-luxury-seating-tickets-7NV451?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Treasure Island Resort & Casino\, Welch
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/21-reserved-luxury-seating-tickets-7NV
- 451?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QIdmaSnmBnFXWL4R@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T173000
-DTEND:20261126T200000
-SUMMARY:ACTIVITY POOL RESERVED LUXURY SEATING
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/activity-pool-reserved-luxury-seating-ticke
- ts-4RJ82Z?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Treasure Island Resort & Casino\, Welch
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/activity-pool-reserved-luxury-seating-
- tickets-4RJ82Z?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QIeITF5E_To_5I6a@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T173000
-DTEND:20261126T200000
-SUMMARY:CABANA SEATING
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/cabana-seating-tickets-PFX45H?ref=ticketmas
- ter\\n\\nRefreshed daily from live listings.
-LOCATION:Treasure Island Resort & Casino\, Welch
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/cabana-seating-tickets-PFX45H?ref=tick
- etmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7Psk9@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T183500
-DTEND:20261126T210500
-SUMMARY:Waterloo Black Hawks vs. Cedar Rapids Roughriders
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7Psk9\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7J4p7\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Young Arena\, Waterloo
+LOCATION:Grand Casino Arena\, Saint Paul
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Psk9
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J4p7
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-G5eVZ_8QFj665@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:PEE DEE ICECATS VS EVANSVILLE THUNDERBOLTS
+UID:tm-vv1kbZ_4v_G7wwv5@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T150000
+DTEND:20261127T173000
+SUMMARY:2026-27 Mizzou Men's Basketball v Arkansas-Pine Bluff
+DESCRIPTION:Mizzou Arena: Clear bag policy in effect. Children 2 and under
+  are admitted free.\\n\\nhttps://www.ticketmaster.com/202627-mizzou-mens-
+ basketball-v-arkansaspine-columbia-missouri-11-27-2026/event/0600655059CB
+ 204B\\n\\nRefreshed daily from live listings.
+LOCATION:Mizzou Arena\, Columbia
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/202627-mizzou-mens-basketball-v-arkansasp
+ ine-columbia-missouri-11-27-2026/event/0600655059CB204B
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7OSjP@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T153000
+DTEND:20261127T180000
+SUMMARY:Florida State Seminoles Football vs. Florida Gators Football
 DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/pee-dee-icecats-vs-evansville-thunderbolts-flo
- rence-south-carolina-11-26-2026/event/2D006506887071CB\\n\\nRefreshed dai
- ly from live listings.
-LOCATION:Florence Center\, Florence
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/pee-dee-icecats-vs-evansville-thunderbolt
- s-florence-south-carolina-11-26-2026/event/2D006506887071CB
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1AOZkf_Gke-zeG4@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Huntsville Havoc Vs. Athens Rock Lobsters
-DESCRIPTION:Clear Bag Policy - There is a CLEAR BAG only policy for Havoc 
- Games. This includes NO clutch purses\, fanny packs\, or diaper bags. Exc
- eptions to this policy will be made for all medically necessary items aft
- er proper inspection. Cashless - The VBC is a cashless venue. Cash accept
- ed for Havoc merchand\\n\\nhttps://www.ticketmaster.com/huntsville-havoc-
- vs-athens-rock-lobsters-huntsville-alabama-11-26-2026/event/20006519A1E02
- 315\\n\\nRefreshed daily from live listings.
-LOCATION:Von Braun Center Propst Arena\, Huntsville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/huntsville-havoc-vs-athens-rock-lobsters-
- huntsville-alabama-11-26-2026/event/20006519A1E02315
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7OEAk@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Texas Tech Red Raiders Football vs. TCU Horned Frogs Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7OEAk\\n\\nRefreshed daily from 
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7OSjP\\n\\nRefreshed daily from 
  live listings.
-LOCATION:Galaxy Stadium\, Lubbock
+LOCATION:Doak Campbell Stadium\, Tallahassee
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7OEAk
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7OSjP
 END:VEVENT
 BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af8zG0@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:SIDEOUTS BAGS LEAGUE SIGNUPS SEASON 2027
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/sideouts-bags-league-signups-seaso
- n-sideouts-sports-tavern-tickets/14438324\\n\\nRefreshed daily from live 
- listings.
-LOCATION:Sideouts Sports Tavern\, Island Lake
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/sideouts-bags-league-signups-season-si
- deouts-sports-tavern-tickets/14438324
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-rZ7HnEZ1Af8zuf@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:SIDEOUTS DART LEAGUE SIGNUPS SEASON 2027
-DESCRIPTION:This event is 21 and over. Any ticket holder unable to present
-  valid identification indicating that they are at least 21 years of age w
- ill not be admitted to this event\, and will not be eligible for a refund
- .\\n\\nhttps://www.ticketweb.com/event/sideouts-dart-league-signups-seaso
- n-sideouts-sports-tavern-tickets/14438354\\n\\nRefreshed daily from live 
- listings.
-LOCATION:Sideouts Sports Tavern\, Island Lake
-STATUS:CONFIRMED
-URL:https://www.ticketweb.com/event/sideouts-dart-league-signups-season-si
- deouts-sports-tavern-tickets/14438354
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vVZbM3Xvpdq@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Classic Tour at Yankee Stadium
-DESCRIPTION:CLASSIC TOUR ENTRANCE: Classic Tour guests will enter through 
- the Hard Rock Cafe adjacent to Gate 6 (corner of 161st St. and River Ave.
- ) Please arrive 15 minutes prior to designated tour start time. Knowledge
- able and passionate guides lead each sixty (60)-minute Classic Tour. Clas
- sic Tours and Lunch\\n\\nhttps://www.ticketmaster.com/classic-tour-at-yan
- kee-stadium-bronx-new-york-11-26-2026/event/1D006374BE0560DD\\n\\nRefresh
- ed daily from live listings.
-LOCATION:Yankee Stadium\, Bronx
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/classic-tour-at-yankee-stadium-bronx-new-
- york-11-26-2026/event/1D006374BE0560DD
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5vVZbMKY265o@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T190000
-DTEND:20261126T213000
-SUMMARY:Glimpse of Greatness
-DESCRIPTION:TOUR ENTRANCE: Guests will enter through the Hard Rock Cafe ad
- jacent to Gate 6 (corner of 161st St. and River Ave). Glimpse of Greatnes
- s offers a quick peek inside Yankee Stadium's treasured New York Yankees 
- Museum presented by Bank of America. This self-guided experience allows g
- uests to explore th\\n\\nhttps://www.ticketmaster.com/glimpse-of-greatnes
- s-bronx-new-york-11-26-2026/event/1D006374F03C72D1\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Yankee Stadium\, Bronx
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/glimpse-of-greatness-bronx-new-york-11-26
- -2026/event/1D006374F03C72D1
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1AAZkf7GkdneE0C@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T193000
-DTEND:20261126T220000
-SUMMARY:Fort Wayne Komets vs. Cincinnati Cyclones
-DESCRIPTION:The Ticket Account Holder\, on behalf of themselves and any mi
- nors or guests attending the event under their tickets\, irrevocably gran
- ts permission to the Team\, the League (ECHL)\, and their respective desi
- gnees\, licensees\, and agents to utilize\, reproduce\, distribute\, publ
- icly perform\, publicly displ\\n\\nhttps://www.ticketmaster.com/fort-wayn
- e-komets-vs-cincinnati-cyclones-fort-wayne-indiana-11-26-2026/event/05006
- 504EA0A790E\\n\\nRefreshed daily from live listings.
-LOCATION:Allen County War Memorial Coliseum\, Fort Wayne
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/fort-wayne-komets-vs-cincinnati-cyclones-
- fort-wayne-indiana-11-26-2026/event/05006504EA0A790E
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70P_J@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T193500
-DTEND:20261126T220500
-SUMMARY:Fort Wayne Komets vs. Cincinnati Cyclones
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70P_J\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Allen County War Memorial Coliseum\, Fort Wayne
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70P_J
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1AdZkf-GkdCawdP@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T202000
-DTEND:20261126T225000
-SUMMARY:Club Seats: Bills vs Chiefs
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://am.ticketmaster.com/bills/buy/quickbuy?id=MjU5\\n\\nRefreshed daily
-  from live listings.
-LOCATION:Highmark Stadium\, Orchard Park
-STATUS:CONFIRMED
-URL:https://am.ticketmaster.com/bills/buy/quickbuy?id=MjU5
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1AdZkosGkei_OHk@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T202000
-DTEND:20261126T225000
-SUMMARY:Buffalo Bills vs. Kansas City Chiefs
-DESCRIPTION:In order to resell tickets for events in the U.S.\, you must h
- ave a U.S. bank account. Base price includes Erie County 6% surcharge.\\n
- \\nhttps://www.ticketmaster.com/buffalo-bills-vs-kansas-city-chiefs-orcha
- rd-park-new-york-11-26-2026/event/03006471AC660F06\\n\\nRefreshed daily f
- rom live listings.
-LOCATION:Highmark Stadium\, Orchard Park
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/buffalo-bills-vs-kansas-city-chiefs-orcha
- rd-park-new-york-11-26-2026/event/03006471AC660F06
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv1AFZk4fGkdeqfyp@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T093000
-DTEND:20261127T120000
-SUMMARY:Michigan High School Football Championships - MHSAA
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/michigan-high-school-football-championships-mh
- saa-detroit-michigan-11-27-2026/event/08006554C2754E56\\n\\nRefreshed dai
- ly from live listings.
-LOCATION:Ford Field\, Detroit
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/michigan-high-school-football-championshi
- ps-mhsaa-detroit-michigan-11-27-2026/event/08006554C2754E56
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QIdJDlTvbafScUmz@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T093000
-DTEND:20261127T120000
-SUMMARY:SPLASH BASH BIRTHDAY PACKAGE
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/splash-bash-birthday-package-tickets-YD1TV9
- ?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Treasure Island Resort & Casino\, Welch
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/splash-bash-birthday-package-tickets-Y
- D1TV9?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QIdiV9lu8v36hJfz@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T093000
-DTEND:20261127T120000
-SUMMARY:21+ RESERVED LUXURY SEATING
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/21-reserved-luxury-seating-tickets-7NV451?r
- ef=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Treasure Island Resort & Casino\, Welch
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/21-reserved-luxury-seating-tickets-7NV
- 451?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QIdmaD7Hp3xUYfvt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T093000
-DTEND:20261127T120000
-SUMMARY:ACTIVITY POOL RESERVED LUXURY SEATING
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/activity-pool-reserved-luxury-seating-ticke
- ts-4RJ82Z?ref=ticketmaster\\n\\nRefreshed daily from live listings.
-LOCATION:Treasure Island Resort & Casino\, Welch
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/activity-pool-reserved-luxury-seating-
- tickets-4RJ82Z?ref=ticketmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-LvZ18QIeRU5x_kBMpCO9p@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T093000
-DTEND:20261127T120000
-SUMMARY:CABANA SEATING
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.universe.com/events/cabana-seating-tickets-PFX45H?ref=ticketmas
- ter\\n\\nRefreshed daily from live listings.
-LOCATION:Treasure Island Resort & Casino\, Welch
-STATUS:CONFIRMED
-URL:https://www.universe.com/events/cabana-seating-tickets-PFX45H?ref=tick
- etmaster
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dIZ_GluG2s_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:UTSA Roadrunners v Tulsa
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/utsa-roadrunners-v-tulsa-san-antonio-texas-11-
- 27-2026/event/3A0064CACD30FC59\\n\\nRefreshed daily from live listings.
-LOCATION:Alamodome\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/utsa-roadrunners-v-tulsa-san-antonio-texa
- s-11-27-2026/event/3A0064CACD30FC59
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-k7vGF_fXk4Uo5@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:Belmont Park - General Admission
-DESCRIPTION:General admission access only. No access to dining areas.\\n\\
- nhttps://www.ticketmaster.com/belmont-park-general-admission-elmont-new-y
- ork-11-27-2026/event/0000654F8657644B\\n\\nRefreshed daily from live list
- ings.
-LOCATION:Belmont Park\, Elmont
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/belmont-park-general-admission-elmont-new
- -york-11-27-2026/event/0000654F8657644B
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv11v8vP4tr3b4vC@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:2026 IHSAA Football State Finals presented by the Indianapolis Col
- ts
-DESCRIPTION:Lucas Oil Stadium is a completely cashless venue. NFL Clear Ba
- g Policy is in enforced. Children age five and younger admitted free. All
-  seats general admission. Gates open at 10am (one hour prior to kickoff o
- f the first game).\\n\\nhttps://www.ticketmaster.com/2026-ihsaa-football-
- state-finals-presented-indianapolis-indiana-11-27-2026/event/050065569792
- 615D\\n\\nRefreshed daily from live listings.
-LOCATION:Lucas Oil Stadium\, Indianapolis
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/2026-ihsaa-football-state-finals-presente
- d-indianapolis-indiana-11-27-2026/event/050065569792615D
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-7Z4@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:Iowa Hawkeyes Football vs. Nebraska Cornhuskers Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-7Z4\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Kinnick Stadium\, Iowa City
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-7Z4
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7Oabe@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:Ole Miss Rebels Football vs. Mississippi State Bulldogs Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7Oabe\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Vaught-Hemingway Stadium\, University
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7Oabe
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-vv178Z_4GkmEogCt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:Northwestern Wildcats Women's Basketball vs. DePaul Blue Demons Wo
- mens Basketball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/northwestern-wildcats-womens-basketball-vs-dep
- aul-evanston-illinois-11-27-2026/event/0400655BA74753A9\\n\\nRefreshed da
- ily from live listings.
-LOCATION:Welsh-Ryan Arena/McGaw Hall\, Evanston
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/northwestern-wildcats-womens-basketball-v
- s-depaul-evanston-illinois-11-27-2026/event/0400655BA74753A9
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1ApZk46GkdpdD9a@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T120000
-DTEND:20261127T143000
-SUMMARY:Louisville Cardinals Womens Basketball vs. Akron Zips Womens Baske
- tball
-DESCRIPTION:Ages 2 and under do not require a ticket. There is a clear bag
-  policy in effect for all UofL events.\\n\\nhttps://www.ticketmaster.com/
- louisville-cardinals-womens-basketball-vs-akron-louisville-kentucky-11-27
- -2026/event/16006547D60FB5C9\\n\\nRefreshed daily from live listings.
-LOCATION:KFC Yum! Center\, Louisville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/louisville-cardinals-womens-basketball-vs
- -akron-louisville-kentucky-11-27-2026/event/16006547D60FB5C9
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-Moa@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T120000
-DTEND:20261127T143000
-SUMMARY:Akron Zips Football vs. Buffalo Bulls Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-Moa\\n\\nRefreshed daily from 
- live listings.
-LOCATION:InfoCision Stadium - Summa Field\, Akron
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Moa
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7-VPx@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T120000
-DTEND:20261127T143000
-SUMMARY:Ohio Bobcats Football vs. Toledo Rockets Football
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7-VPx\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Peden Stadium\, Athens
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-VPx
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5viZ_8LYFm3D@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T120000
-DTEND:20261127T143000
-SUMMARY:Nashville Predators vs. Utah Mammoth
-DESCRIPTION:By purchasing\, you agree that the Nashville Predators will re
- ceive your contact information and ticket sales data\, and you instruct t
- he Nashville Predators to disclose this information to the NHL. The Nashv
- ille Predators will use and disclose your information as described at htt
- ps://www.nhl.com/pred\\n\\nhttps://www.ticketmaster.com/nashville-predato
- rs-vs-utah-mammoth-nashville-tennessee-11-27-2026/event/1B006507F022E4BB\
- \n\\nRefreshed daily from live listings.
-LOCATION:Bridgestone Arena\, Nashville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/nashville-predators-vs-utah-mammoth-nashv
- ille-tennessee-11-27-2026/event/1B006507F022E4BB
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-Z7r9jZ1A7xpPp@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:Colorado Buffaloes Womens Volleyball vs. Iowa State Cyclones Women
- s Volleyball
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A7xpPp\\n\\nRefreshed daily from 
- live listings.
-LOCATION:CU Events Center\, Boulder
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A7xpPp
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17AOv0G626ZI5Xq@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:Cincinnati Bearcats Women's Volleyball vs. Baylor Bears Womens Vol
- leyball
-DESCRIPTION:Fifth Third Arena follows a clear bag policy. For more informa
- tion\, visit GoBearcats.com. Fifth Third Arena has a no re-entry policy.\
- \n\\nhttps://www.ticketmaster.com/cincinnati-bearcats-womens-volleyball-v
- s-baylor-cincinnati-ohio-11-27-2026/event/160064F1C0A0BF9D\\n\\nRefreshed
-  daily from live listings.
-LOCATION:Fifth Third Arena At Shoemaker Center\, Cincinnati
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/cincinnati-bearcats-womens-volleyball-vs-
- baylor-cincinnati-ohio-11-27-2026/event/160064F1C0A0BF9D
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17AOv0G655vhn5b@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:The Clark - General Admission
-DESCRIPTION:Tickets are via mobile device only on the Churchill Downs App.
-  Contact Group Sales at 502-636-4450 or by email at groupsales@kyderby.co
- m for group bookings of 12 or more\, all-inclusive dining options\, optio
- ns not listed\, or more info. Visit kentuckyderby.com/tickets or churchil
- ldowns.com/tickets as \\n\\nhttps://www.ticketmaster.com/the-clark-genera
- l-admission-louisville-kentucky-11-27-2026/event/160064B2C16EA2D8\\n\\nRe
+UID:tm-G5vzZ_8D4p9ZJ@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T153000
+DTEND:20261127T180000
+SUMMARY:Snake River Invitational Day 1
+DESCRIPTION:Ticket grants admission to both games on DAY 1 ONLY! Re-enty i
+ s allowed into venue for this event. Get ready for three days of NCAA Div
+ ision I college men's basketball at the Snake River Invitational in the M
+ ountain America Center\, November 27-29\, 2026! The inaugural Snake River
+  Invitational brings \\n\\nhttps://www.ticketmaster.com/snake-river-invit
+ ational-day-1-idaho-falls-idaho-11-27-2026/event/1E00650ED5597026\\n\\nRe
  freshed daily from live listings.
-LOCATION:Churchill Downs\, Louisville
+LOCATION:Mountain America Center\, Idaho Falls
 STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-clark-general-admission-louisville-ke
- ntucky-11-27-2026/event/160064B2C16EA2D8
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17AOv0G65C0D_Pi@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:The Clark - Dining
-DESCRIPTION:Tickets are via mobile device only on the Churchill Downs App.
-  Contact Group Sales at 502-636-4450 or by email at groupsales@kyderby.co
- m for group bookings of 12 or more\, all-inclusive dining options\, optio
- ns not listed\, or more info. Visit kentuckyderby.com/tickets or churchil
- ldowns.com/tickets as \\n\\nhttps://www.ticketmaster.com/the-clark-dining
- -louisville-kentucky-11-27-2026/event/160064B3A4ED996C\\n\\nRefreshed dai
- ly from live listings.
-LOCATION:Churchill Downs\, Louisville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-clark-dining-louisville-kentucky-11-2
- 7-2026/event/160064B3A4ED996C
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-17AOv0G65KCLlLc@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:The Clark - Reserved Seating
-DESCRIPTION:Tickets are via mobile device only on the Churchill Downs App.
-  Contact Group Sales at 502-636-4450 or by email at groupsales@kyderby.co
- m for group bookings of 12 or more\, all-inclusive dining options\, optio
- ns not listed\, or more info. Visit kentuckyderby.com/tickets or churchil
- ldowns.com/tickets as \\n\\nhttps://www.ticketmaster.com/the-clark-reserv
- ed-seating-louisville-kentucky-11-27-2026/event/160064B4CE7EB7ED\\n\\nRef
- reshed daily from live listings.
-LOCATION:Churchill Downs\, Louisville
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/the-clark-reserved-seating-louisville-ken
- tucky-11-27-2026/event/160064B4CE7EB7ED
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-1AeFZbMGknMG7Kq@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T130000
-DTEND:20261127T153000
-SUMMARY:Mosconi Cup 2026
-DESCRIPTION:These terms conditions are in addition to host venue terms con
- ditions which can be found by visiting the website of the host venue of t
- he event for which you are purchasing tickets. Ticket pricing for each ev
- ent will be announced prior to tickets going on sale. The Promoter Organi
- zer reserves the ri\\n\\nhttps://www.ticketmaster.com/mosconi-cup-2026-or
- lando-florida-11-27-2026/event/2200637AB73044DD\\n\\nRefreshed daily from
-  live listings.
-LOCATION:Caribe Royale Orlando\, Orlando
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/mosconi-cup-2026-orlando-florida-11-27-20
- 26/event/2200637AB73044DD
+URL:https://www.ticketmaster.com/snake-river-invitational-day-1-idaho-fall
+ s-idaho-11-27-2026/event/1E00650ED5597026
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oC3Rbam@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T160000
 DTEND:20261127T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -641,8 +315,97 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
  otte-north-carolina-11-27-2026/event/2D00651392BD826E
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-1AvfZ_KGkUgJQNP@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:George Washington Mens Basketball vs. UMBC Retrievers Men's Basket
+ ball
+DESCRIPTION:The Charles E. Smith Center has implemented a no bags policy t
+ o enhance the safety of all guests and to better align GW events with ven
+ ue management best practices.\\n\\nhttps://www.ticketmaster.com/george-wa
+ shington-mens-basketball-vs-umbc-washington-district-of-columbia-11-27-20
+ 26/event/1500653DB599A8E5\\n\\nRefreshed daily from live listings.
+LOCATION:Charles E. Smith Center\, Washington
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/george-washington-mens-basketball-vs-umbc
+ -washington-district-of-columbia-11-27-2026/event/1500653DB599A8E5
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG1zZ_3XG-DAL@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:Savannah Hoops Shootout
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/savannah-hoops-shootout-savannah-georgia-11-27
+ -2026/event/0E00652F8C87B15F\\n\\nRefreshed daily from live listings.
+LOCATION:Enmarket Arena\, Savannah
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/savannah-hoops-shootout-savannah-georgia-
+ 11-27-2026/event/0E00652F8C87B15F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A70s7y@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:Kansas Jayhawks Mens Basketball vs. Villanova Wildcats Mens Basket
+ ball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A70s7y\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Allen Fieldhouse\, Lawrence
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A70s7y
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7JfA8@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T160000
+DTEND:20261127T183000
+SUMMARY:Minnesota Gophers Mens Hockey vs. Minnesota State Mankato Maverick
+ s Hockey
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7JfA8\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:3M Arena at Mariucci\, Minneapolis
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JfA8
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-1AxZkfMGkd3bUcS@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T163000
+DTEND:20261127T190000
+SUMMARY:ESPN Events Invitational - Magic Bracket
+DESCRIPTION:Ages 3 and up require a ticket for admittance.\\n\\nhttps://ww
+ w.ticketmaster.com/espn-events-invitational-magic-bracket-kissimmee-flori
+ da-11-27-2026/event/22006537D2636B73\\n\\nRefreshed daily from live listi
+ ngs.
+LOCATION:ESPN Wide World of Sports State Farm Field House\, Kissimmee
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/espn-events-invitational-magic-bracket-ki
+ ssimmee-florida-11-27-2026/event/22006537D2636B73
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vvG18Z_2e8hE-T@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T163000
+DTEND:20261127T190000
+SUMMARY:Chicago Blackhawks vs. New York Rangers
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/chicago-blackhawks-vs-new-york-rangers-chicago
+ -illinois-11-27-2026/event/040064F0906E787F\\n\\nRefreshed daily from liv
+ e listings.
+LOCATION:United Center\, Chicago
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/chicago-blackhawks-vs-new-york-rangers-ch
+ icago-illinois-11-27-2026/event/040064F0906E787F
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZMod@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T170000
 DTEND:20261127T193000
 SUMMARY:Virginia Tech Hokies Mens Basketball vs. Old Dominion Monarchs Men
@@ -655,8 +418,111 @@ STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZMod
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-Z7r9jZ1A7JFbF@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Hartford Wolfpack vs. Springfield Thunderbirds
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1A7JFbF\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:PeoplesBank Arena\, Hartford
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JFbF
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-k7vGF_onljPk-@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Long Island Nets vs Maine Celtics
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/long-island-nets-vs-maine-celtics-uniondale-ne
+ w-york-11-27-2026/event/0000651AAB7251A1\\n\\nRefreshed daily from live l
+ istings.
+LOCATION:Nassau Veterans Memorial Coliseum\, Uniondale
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/long-island-nets-vs-maine-celtics-unionda
+ le-new-york-11-27-2026/event/0000651AAB7251A1
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv11FZ_fffGNZY@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Penn State Men's Hockey Vs Princeton
+DESCRIPTION:Pegula Ice Arena opens 90 minutes prior to event time. All fan
+ s\, including infants\, are required to have a ticket for admittance. No 
+ re-entry.\\n\\nhttps://www.ticketmaster.com/penn-state-mens-hockey-vs-pri
+ nceton-university-park-pennsylvania-11-27-2026/event/0200654514323030\\n\
+ \nRefreshed daily from live listings.
+LOCATION:Pegula Ice Arena\, University Park
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/penn-state-mens-hockey-vs-princeton-unive
+ rsity-park-pennsylvania-11-27-2026/event/0200654514323030
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvaaz@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:2026 Concacaf W Championship Quarterfinals 1 & 4: USA vs SLV and J
+ AM vs CRC
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvaaz\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Texas Health Mansfield Stadium\, Mansfield
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvaaz
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvv0F@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170000
+DTEND:20261127T193000
+SUMMARY:Illinois Fighting Illini Mens Basketball vs. Western Kentucky Hill
+ toppers Mens Basketball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvv0F\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:State Farm Center\, Champaign
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvv0F
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAva8v@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170500
+DTEND:20261127T193500
+SUMMARY:Lincoln Stars vs. Sioux City Musketeers
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAva8v\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Ice Box\, Lincoln
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAva8v
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv17bZ_fGktAu1Vs@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T170500
+DTEND:20261127T193500
+SUMMARY:St. Louis Ambush vs Kansas City Comets
+DESCRIPTION:The Family Arena has a CLEAR BAG POLICY. Clear bags must be 12
+ in x 8in x 12in or smaller. Non-clear bags 10in x 8in x 10in or smaller a
+ lso permitted. Exceptions are made for diaper or medical bags. Everyone 2
+  and up MUST have a ticket. Kids 1 year and under are free on an adult's 
+ lap. Doors open 1 h\\n\\nhttps://www.ticketmaster.com/st-louis-ambush-vs-
+ kansas-city-saint-charles-missouri-11-27-2026/event/0600654A4534AD31\\n\\
+ nRefreshed daily from live listings.
+LOCATION:Family Arena\, Saint Charles
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/st-louis-ambush-vs-kansas-city-saint-char
+ les-missouri-11-27-2026/event/0600654A4534AD31
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-G5viZ_3Js7uIt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T180000
 DTEND:20261127T203000
 SUMMARY:Knoxville Ice Bears vs. Athens Rock Lobsters
@@ -672,8 +538,53 @@ URL:https://www.ticketmaster.com/knoxville-ice-bears-vs-athens-rock-knoxvi
  lle-tennessee-11-27-2026/event/1B006529B110DA29
 END:VEVENT
 BEGIN:VEVENT
+UID:tm-1AdZZ_oGkljGEUk@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Delaware Blue Coats vs. Raptors 905
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/delaware-blue-coats-vs-raptors-905-wilmington-
+ delaware-11-27-2026/event/3000651ADC327D86\\n\\nRefreshed daily from live
+  listings.
+LOCATION:Chase Fieldhouse\, Wilmington
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/delaware-blue-coats-vs-raptors-905-wilmin
+ gton-delaware-11-27-2026/event/3000651ADC327D86
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-Z7r9jZ1AAvkAt@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Indiana Hoosiers Mens Basketball vs. Bowling Green Falcons Mens Ba
+ sketball
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/event/Z7r9jZ1AAvkAt\\n\\nRefreshed daily from 
+ live listings.
+LOCATION:Simon Skjodt Assembly Hall\, Bloomington
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvkAt
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-vv1k7Z_8f-G7iY-J@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T180000
+DTEND:20261127T203000
+SUMMARY:Boston University Men's Hockey vs. University of Denver Pioneer Ho
+ ckey
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.ticketmaster.com/boston-university-mens-hockey-vs-university-bo
+ ston-massachusetts-11-27-2026/event/0100650521B30866\\n\\nRefreshed daily
+  from live listings.
+LOCATION:Agganis Arena\, Boston
+STATUS:CONFIRMED
+URL:https://www.ticketmaster.com/boston-university-mens-hockey-vs-universi
+ ty-boston-massachusetts-11-27-2026/event/0100650521B30866
+END:VEVENT
+BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7J__I@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T180500
 DTEND:20261127T203500
 SUMMARY:Colorado Eagles vs. San Diego Gulls
@@ -686,7 +597,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7J__I
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-oqv@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T183000
 DTEND:20261127T210000
 SUMMARY:Texas A&M Aggies Football vs. Texas Longhorns Football
@@ -699,7 +610,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-oqv
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oIZXcZt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Dick Vitale Invitational: West Virginia vs North Carolina
@@ -714,7 +625,7 @@ URL:https://www.ticketmaster.com/dick-vitale-invitational-west-virginia-vs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA70QK@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Charleston Sou
@@ -728,7 +639,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70QK
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oPDYV-Y@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Greensboro Swarm vs. College Park Skyhawks
@@ -743,7 +654,7 @@ URL:https://www.ticketmaster.com/greensboro-swarm-vs-college-park-skyhawks
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_8QFq66r@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:PEE DEE ICECATS VS EVANSVILLE THUNDERBOLTS
@@ -758,7 +669,7 @@ URL:https://www.ticketmaster.com/pee-dee-icecats-vs-evansville-thunderbolt
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5vzZ_o3Hlmhb@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Colorado College Tigers Hockey vs. Alaska
@@ -776,7 +687,7 @@ URL:https://www.ticketmaster.com/colorado-college-tigers-hockey-vs-alaska-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7JvO-@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Wenatchee Wild vs. Kelowna Rockets
@@ -789,7 +700,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7JvO-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-vvG1HZ_2Q0gD2E@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190500
 DTEND:20261127T213500
 SUMMARY:Everett Silvertips vs. Portland Winterhawks
@@ -806,7 +717,7 @@ URL:https://www.ticketmaster.com/everett-silvertips-vs-portland-winterhawk
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7sfE@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:WWE Road to Survivor Series: War Games Tour
@@ -819,7 +730,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7sfE
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ol5Dwer@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193500
 DTEND:20261127T220500
 SUMMARY:Twin City Thunderbirds Vs Blue Ridge Bobcats
@@ -834,7 +745,7 @@ URL:https://www.ticketmaster.com/twin-city-thunderbirds-vs-blue-ridge-wins
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_f5vYy-f@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T120000
 DTEND:20261128T143000
 SUMMARY:PowHER Player Classic - Day 1
@@ -850,7 +761,7 @@ URL:https://www.ticketmaster.com/powher-player-classic-day-1-columbia-sout
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-Nb3@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T120000
 DTEND:20261128T143000
 SUMMARY:UNC Charlotte 49ers Football vs. Navy Midshipmen Football
@@ -863,7 +774,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Nb3
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_f9pmpR1@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T123000
 DTEND:20261128T150000
 SUMMARY:2026 MLS Playoffs Round 1 Game 2: Charlotte FC v Chicago Fire FC
@@ -878,7 +789,7 @@ URL:https://www.ticketmaster.com/2026-mls-playoffs-round-1-game-charlotte-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_7pzrexc@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Clemson University Tigers Football vs. Univ of South Carolina Game
@@ -894,7 +805,7 @@ URL:https://www.ticketmaster.com/clemson-university-tigers-football-vs-uni
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7qIAU@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Wake Forest Demon Deacons Football vs. Duke Blue Devils Football
@@ -907,7 +818,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qIAU
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7qIay@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Virginia Tech Hokies Football vs. Virginia Cavaliers Football
@@ -920,7 +831,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qIay
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-o-Z@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T153000
 DTEND:20261128T180000
 SUMMARY:Georgia Bulldogs Football vs. Georgia Tech Yellow Jackets Football
@@ -933,7 +844,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-o-Z
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oC3YI16@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T160000
 DTEND:20261128T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -951,7 +862,7 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2pX-vf_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T180000
 DTEND:20261128T203000
 SUMMARY:Charlotte Hornets vs. Brooklyn Nets

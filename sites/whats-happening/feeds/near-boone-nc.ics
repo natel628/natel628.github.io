@@ -6,21 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Boone\, NC
 X-WR-CALDESC:Upcoming events within 100 miles of Boone\, NC.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1A70Ubw@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T140000
-DTEND:20261127T163000
-SUMMARY:Elf the Musical
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1A70Ubw\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Barter Theatre\, Abingdon
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubw
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-G5eVZ_oC3Rbam@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T160000
 DTEND:20261127T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -38,7 +25,7 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZMod@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T170000
 DTEND:20261127T193000
 SUMMARY:Virginia Tech Hokies Mens Basketball vs. Old Dominion Monarchs Men
@@ -52,7 +39,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZMod
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P419@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)
@@ -65,7 +52,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7P419
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oIZXcZt@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Dick Vitale Invitational: West Virginia vs North Carolina
@@ -80,7 +67,7 @@ URL:https://www.ticketmaster.com/dick-vitale-invitational-west-virginia-vs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA70QK@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:East Tennessee State Buccaneers Mens Basketball vs. Charleston Sou
@@ -94,7 +81,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA70QK
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_G3-TxWO@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Dr. Seuss's How The Grinch Stole Christmas in Concert
@@ -112,7 +99,7 @@ URL:https://www.ticketmaster.com/dr-seusss-how-the-grinch-stole-charlotte-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70UbS@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Elf the Musical
@@ -125,7 +112,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70UbS
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_ol5Dwer@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193500
 DTEND:20261127T220500
 SUMMARY:Twin City Thunderbirds Vs Blue Ridge Bobcats
@@ -140,7 +127,7 @@ URL:https://www.ticketmaster.com/twin-city-thunderbirds-vs-blue-ridge-wins
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_Gxw90bD@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Pouya: The Foreverglades Tour
@@ -158,7 +145,7 @@ URL:https://www.ticketmaster.com/pouya-the-foreverglades-tour-charlotte-no
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_4M7oWPv@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Noodah05
@@ -176,7 +163,7 @@ URL:https://www.ticketmaster.com/noodah05-charlotte-north-carolina-11-27-2
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-Nb3@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T120000
 DTEND:20261128T143000
 SUMMARY:UNC Charlotte 49ers Football vs. Navy Midshipmen Football
@@ -189,7 +176,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-Nb3
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_f9pmpR1@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T123000
 DTEND:20261128T150000
 SUMMARY:2026 MLS Playoffs Round 1 Game 2: Charlotte FC v Chicago Fire FC
@@ -204,7 +191,7 @@ URL:https://www.ticketmaster.com/2026-mls-playoffs-round-1-game-charlotte-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A70Ubg@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T140000
 DTEND:20261128T163000
 SUMMARY:Elf the Musical
@@ -217,7 +204,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A70Ubg
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_G3xZ3WE@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Dr. Seuss's How The Grinch Stole Christmas in Concert
@@ -235,7 +222,7 @@ URL:https://www.ticketmaster.com/dr-seusss-how-the-grinch-stole-charlotte-
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7qIAU@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Wake Forest Demon Deacons Football vs. Duke Blue Devils Football
@@ -248,7 +235,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qIAU
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7qIay@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T150000
 DTEND:20261128T173000
 SUMMARY:Virginia Tech Hokies Football vs. Virginia Cavaliers Football
@@ -261,7 +248,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7qIay
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_oC3YI16@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T160000
 DTEND:20261128T183000
 SUMMARY:Charlotte Checkers vs. Hershey Bears
@@ -279,7 +266,7 @@ URL:https://www.ticketmaster.com/charlotte-checkers-vs-hershey-bears-charl
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5eVZ_2pX-vf_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T180000
 DTEND:20261128T203000
 SUMMARY:Charlotte Hornets vs. Brooklyn Nets
@@ -294,7 +281,7 @@ URL:https://www.ticketmaster.com/charlotte-hornets-vs-brooklyn-nets-charlo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7P413@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261128T190000
 DTEND:20261128T213000
 SUMMARY:Diva Royale Drag Queen Show (18+ Event)

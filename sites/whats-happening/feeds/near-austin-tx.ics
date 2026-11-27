@@ -6,35 +6,8 @@ METHOD:PUBLISH
 X-WR-CALNAME:What's Happening? - Near Austin\, TX
 X-WR-CALDESC:Upcoming events within 100 miles of Austin\, TX.
 BEGIN:VEVENT
-UID:tm-Z7r9jZ1AAA48o@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261126T193000
-DTEND:20261126T220000
-SUMMARY:Buena Vista Social Club (Touring)
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/event/Z7r9jZ1AAA48o\\n\\nRefreshed daily from 
- live listings.
-LOCATION:Majestic Theatre San Antonio\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/event/Z7r9jZ1AAA48o
-END:VEVENT
-BEGIN:VEVENT
-UID:tm-G5dIZ_GluG2s_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
-DTSTART:20261127T110000
-DTEND:20261127T133000
-SUMMARY:UTSA Roadrunners v Tulsa
-DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
- tps://www.ticketmaster.com/utsa-roadrunners-v-tulsa-san-antonio-texas-11-
- 27-2026/event/3A0064CACD30FC59\\n\\nRefreshed daily from live listings.
-LOCATION:Alamodome\, San Antonio
-STATUS:CONFIRMED
-URL:https://www.ticketmaster.com/utsa-roadrunners-v-tulsa-san-antonio-texa
- s-11-27-2026/event/3A0064CACD30FC59
-END:VEVENT
-BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H2b@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T160000
 DTEND:20261127T183000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -48,7 +21,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AA7-Fe@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T170000
 DTEND:20261127T193000
 SUMMARY:Dolly Parton's Smoky Mountain Christmas Carol
@@ -61,7 +34,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AA7-Fe
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H2_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T170000
 DTEND:20261127T193000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -75,7 +48,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H2Q@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T180000
 DTEND:20261127T203000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -89,7 +62,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_Ch05GfT@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T183000
 DTEND:20261127T210000
 SUMMARY:Grief Sucks: A One Man Show By KevOnStage
@@ -104,7 +77,7 @@ URL:https://www.ticketmaster.com/grief-sucks-a-one-man-show-austin-texas-1
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1A7-oqv@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T183000
 DTEND:20261127T210000
 SUMMARY:Texas A&M Aggies Football vs. Texas Longhorns Football
@@ -117,7 +90,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1A7-oqv
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-G5dIZ_2pp49FJ@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T183500
 DTEND:20261127T210500
 SUMMARY:Trivium: Crown In The Grave
@@ -132,7 +105,7 @@ URL:https://www.etix.com/ticket/p/39655625/triviumcrown-in-the-grave-world
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAZdCo@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T183500
 DTEND:20261127T210500
 SUMMARY:Trivium: Crown In The Grave
@@ -145,7 +118,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAZdCo
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAe8fs@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Alfred Robles
@@ -158,7 +131,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAe8fs
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-1Ae0Z_pGkSPjZX2@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Loni Love
@@ -172,7 +145,7 @@ URL:https://www.ticketweb.com/event/loni-love-laugh-out-loud-comedy-club-t
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-LvZ18QnGqQOPIBqio5H2h@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:Holidays at The Rock Skating Rink
@@ -186,7 +159,7 @@ URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-rZ7HnEZ1Af78uV@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T190000
 DTEND:20261127T213000
 SUMMARY:2026 Ford Holiday River Parade & Lighting Ceremony
@@ -200,7 +173,7 @@ URL:https://www.ticketweb.com/event/2026-ford-holiday-river-parade-hard-ro
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAe8fy@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Winston Hodges
@@ -213,7 +186,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAe8fy
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAA483@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T193000
 DTEND:20261127T220000
 SUMMARY:Buena Vista Social Club (Touring)
@@ -226,7 +199,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAA483
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAeaQ7@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Poi Dog Pondering
@@ -239,7 +212,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAeaQ7
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAv7v_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Montell Fish
@@ -252,7 +225,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAv7v_
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvpu_@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Michael Martin Murphey's Cowboy Christmas
@@ -265,7 +238,7 @@ URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvpu_
 END:VEVENT
 BEGIN:VEVENT
 UID:tm-Z7r9jZ1AAvkCa@whats-happening.natel628.github.io
-DTSTAMP:20261126T170540Z
+DTSTAMP:20261127T165013Z
 DTSTART:20261127T200000
 DTEND:20261127T223000
 SUMMARY:Aaron Watson: Horse Named Texas Tour w/ special guest Jake Watson
@@ -275,5 +248,19 @@ DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
 LOCATION:Gruene Hall\, New Braunfels
 STATUS:CONFIRMED
 URL:https://www.ticketmaster.com/event/Z7r9jZ1AAvkCa
+END:VEVENT
+BEGIN:VEVENT
+UID:tm-LvZ18QnGqQOPIBqio5H2j@whats-happening.natel628.github.io
+DTSTAMP:20261127T165013Z
+DTSTART:20261127T200000
+DTEND:20261127T223000
+SUMMARY:Holidays at The Rock Skating Rink
+DESCRIPTION:Listed by Ticketmaster with no additional description.\\n\\nht
+ tps://www.universe.com/events/holidays-at-the-rock-skating-rink-tickets-8
+ B9V0M?ref=ticketmaster\\n\\nRefreshed daily from live listings.
+LOCATION:The Rock at La Cantera\, San Antonio
+STATUS:CONFIRMED
+URL:https://www.universe.com/events/holidays-at-the-rock-skating-rink-tick
+ ets-8B9V0M?ref=ticketmaster
 END:VEVENT
 END:VCALENDAR
