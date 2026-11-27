@@ -88,3 +88,5 @@ Verified: toggling swaps `/yanis,18/` ⇄ `/day/`, `aria-checked` follows, the c
 - `data/categories.json` gained `secret-mission`; `assets/icons/sprite.svg` gained `pin-secret-mission` (teardrop with an exclamation), so the new category has its own marker instead of falling back to a landmark pin.
 
 Validated: 31 records, no duplicate ids, no unknown category or region references, all records sourced. In the browser: 31 pins and 31 rows, 9 category rows, a coded entry renders its keypad code and 3 tips, a secret mission renders 4 tips and snapshots to the right sheet position.
+
+One deployment wrinkle: GitHub Pages caches `data/*.json` for ten minutes, so returning visitors kept getting the old 16-record file after the expansion shipped. `js/data.js` now requests all four data files with `?v=<DATA_V>` — **bump `DATA_V` whenever the JSON changes**, or the cache will hide the edit for up to ten minutes.
