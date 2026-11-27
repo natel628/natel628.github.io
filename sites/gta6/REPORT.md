@@ -502,3 +502,73 @@ Capri 16, Grassrivers 3.
 - `node --check js/data.js` clean after the extra fetch.
 - Loaded the map in a browser at 527/527: all 527 pins render, no marker has a missing sprite symbol, and
   the category chips read 146 / 135 / 130 / 40.
+
+## 14. The crab lab was 1.8 km from where we put it
+
+§12 ended by flagging a disagreement: GTABase put the Pelican Valley lab at **-3962, -4104**, our two crab
+records at **-2600, -5200**. Resolved here — the lab is GTABase's spot, and both records moved.
+
+### Three independent checks
+
+**1. The marker cluster.** GTABase publishes five separate markers on the same buildings, filed under
+different categories by different contributors, all within 30 m of -3962, -4104:
+
+| Marker | Category | Pin | What it says |
+|---|---|---|---|
+| Crab Lab Puzzle | easter-egg | -3962, -4104 | power and code puzzle in the abandoned swamp lab in Pelican Valley |
+| Mutated Giant Crab (research lab) | easter-egg | -3967, -4100 | a facility where they experimented on crabs |
+| Safe — Abandoned Research Lab | safe | -3954, -4094 | computer password CLEAVES, safe code **0072** |
+| Crabshack VF5 | unique-weapon | -3973, -4083 | keypad-locked shack at the abandoned research outpost |
+| SCOOP Container | scoop-container | -3949, -4111 | cut-off-tool container on the same site |
+
+That is our code (0072), our weapon (Crabshack VF5) and our story, on one island. Two more corroborate
+the site rather than the building: "Airgator Dr Sheehan's Airboat" at -3925, -4104 is described as the boat
+of a biologist working there, and the Karkinos encounter itself is 676 m away at -4454, -4567.
+
+**2. The basemap artwork.** The published pyramid is world metres with 256 px tiles at `<z>/<z>,<y>,<x>.jpg`,
+level 6 being 2 px/m. Rendering a 3×3 block of in-game tiles around each candidate, with the pin marked:
+
+- **-3962, -4104**: the crosshair lands inside a cluster of grey buildings — sheds, a jetty and a cleared
+  compound — on a small island in the Pelican Valley marsh channels.
+- **-2600, -5200**: the crosshair lands in **open water**, roughly 120 m off a bare sand key with nothing
+  built on it.
+
+One of these is a research outpost; the other is a swim.
+
+**3. The landmark dataset.** It cannot name the lab — there is no "crab", "pelican valley" or "research
+lab" landmark among the 4,552 usable entries — but it rules our old pin out cleanly: that point is 183 m
+from **Gambit Bay** and 333 m from **The Rusty Anchor, Key Lento**, i.e. sitting in the Keys tourist
+strip. The new pin is 577 m south of **Gullet Marsh, Mariana County** and inside the Pelican River marsh.
+
+One more telling detail from our own data: the *Gullet Marsh hut* record has always said its hut is
+"east of the abandoned crab lab". GTABase puts that hut's Akulus revolver and SM-69 sniper at
+-3571, -4081 and -3562, -4078 — **392 m due east of the corrected lab pin**. The old crab pin was 1.8 km
+south-east of it, so the hut's own hint only becomes true once the lab moves here.
+
+### What changed
+
+- Both records: `position` -2600, -5200 → **-3962, -4104**, `method` `estimated` → `reported`,
+  `accuracy` 400 → **40** (the marker cluster agrees to ~15 m and the artwork shows the buildings).
+- Region `mariana` → **`grassrivers`** on both, county unchanged at `mariana`. The corrected pin sits among
+  the records already filed grassrivers — Wetman Bay, the Gullet Marsh hut, Kingfishers' Sunrise RV Park,
+  the Skunk Ape search — and GTADB labels the neighbouring ground "Grassrivers, Mariana County".
+- Hints reworded so the location matches the pin (Pelican Valley marsh island just south of the Gullet
+  Marsh), and each record gained a tip stating what the pin is and where it used to be.
+- `DATA_V` is now `11`.
+
+### Still to check
+
+The **Gullet Marsh hut** itself is still pinned at -2500, -5150, **1.8 km** from the weapons GTABase puts
+at -3571, -4081. Its hint already points at the lab, and its two weapons (Akulus revolver, SM-69 sniper)
+appear there by name. That is a third record with the same regional misplacement, left untouched here
+because this pass was scoped to the two crab records; it is the next thing to fix.
+
+### Checks
+
+- `data/locations.json` parses; 76 records, no duplicate ids; both crab records now at -3962, -4104 with
+  `region` `grassrivers` and `county` `mariana`, both resolving against `regions.json`.
+- The pin is inside the tile crop, and the 3×3 tile block at level 6 was rendered and inspected for both
+  the old and new coordinates before the change was made.
+- `node --check js/data.js` clean; `DATA_V` 11 with `js/data.js?v=11` in `index.html`.
+- Re-loaded the map locally at `527 of 527`, and both crab pins now draw on the outpost island (the two
+  records share one point, as before).
