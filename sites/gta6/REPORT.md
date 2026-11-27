@@ -968,3 +968,148 @@ untouched. `DATA_V` goes to 16.
 agreement, not a verified in-game read: the building on the tiles matches the one the sources describe, but
 nothing here proves the keypad or the dream sequence. And the two baked labels remain on the community
 basemap until it is redrawn — they were never ours to remove.
+
+---
+
+## 23. 3,175 pins: the four missing kinds are in
+
+The map was 531 pins against GTABase's 6,510 — around LTF Airfield, 21 against 276. That was never a
+rendering fault: only four collections had ever been imported, and density is data.
+
+Four kinds were requested: loot boxes, safes, businesses/services, vehicle spawns. They come from the same
+snapshot the audits use (`tools/data/gtabase-markers.json`), through `tools/import-gtabase.mjs`:
+
+| GTABase kind | pins | this map's category |
+| --- | --- | --- |
+| `yellow-loot-box` | 585 | collectible |
+| `safe` | 303 | stash |
+| `standout-vehicle`, `vehicle-spawn` | 444 | vehicle |
+| `bus-stop` 287, `atm` 227, `street-food` 163, `bar` 140, `towable-atm` 127, `ev-charger` 126, `cafe-takeout` 112, `convenience-store` 73, `gas-station` 57 | 1,312 | shop |
+
+**2,644 pins imported**, six markers already had a record and were skipped, none fell outside the map crop.
+`collections.json` goes from 451 to 3,095 records (2.5 MB), the map from 531 to **3,175 pins**.
+
+**Two things decided here, not read from the source.** The category: GTABase publishes ~70 kinds and this
+map has 14 legends, so each kind is folded into the nearest one — a towable ATM is a service, not a shop
+in the retail sense, and the label says so. The region and county: the trimmed snapshot dropped GTABase's
+`town` field, so each new pin inherits the region and county of the nearest already-labelled record. That
+is a classification from position, not a reading, and it can be wrong right on a boundary — the one thing
+here worth re-doing if a fresh snapshot with `town` is ever pulled.
+
+Wording is GTABase's own marker name and description, credited on every record and in the credits modal;
+nothing was rewritten, because hand-writing 2,644 names is how errors get in. Positions are their
+published coordinates, `method: "reported"`, 40 m, exactly as the four original collections were.
+
+**Rendering had to change first.** `_renderPins` built a DOM marker for every visible record, which would
+have been 3,175 nodes at max zoom, and looked each one up with a linear scan inside a loop (O(n²) per
+render). Now:
+
+- one id index per render instead of thousands of scans;
+- only pins inside the padded viewport become markers (9–23 of them in a 1000×700 view at zoom 1 and 0 near
+the airfield, against 3,175 before), re-run on `moveend` so panning adds and drops pins;
+- cluster discs are culled the same way, so the overview draws ~140 discs for the whole state instead of
+  every cell the pins fall into.
+
+**Validator.** With 2,644 more pins, the "two pins within 20 m" warning went from 12 lines to 863 — the
+import is full of legitimate pairs (a bar and its ATM, two carts on one corner). Pairs between two bulk
+pins are now counted in one summary line; every pair involving a hand-written record is still printed in
+full, and `--proximity-all` restores the old output. No check was weakened: the pairs were warnings before
+and are warnings now.
+
+**Still missing, deliberately:** about 3,800 markers — random events (512), easter eggs (121), unique and
+ordinary weapon spawns (221), the collectible sets (cards, magazines, flamingos, street art), races and
+flights, gang operations. Those are the next four categories, not this change.
+
+Not covered: nobody has looked at the three thousand new pins on the basemap. They inherit the four
+collections' verified frame (§21 ruled out a systematic offset), but each pin's own accuracy is only as
+good as GTABase's submission — 40 m, unread by us.
+
+---
+
+## 24. No more holes, and the rest of the pins
+
+Two complaints, one cause each.
+
+**The holes when you zoom.** It was not the CDN, and the first diagnosis in this section was wrong: the
+request log showed every tile returning 200 while the screen still had bands of black. The cause was the
+crop offset.
+
+Each tile is a crop of a published artwork tile, so the image has to be pulled left/up by
+`gx − tx·256` source pixels (times the zoom scale). The sign was inverted — the arithmetic is a mirror of
+the correct one, so the offset only came out right when it was zero. And it is zero at every zoom up to
+0, because there the pyramid level equals the Leaflet zoom and a slot always lands on a tile boundary.
+At zoom 1 the community artwork (1 px/m) is upscaled 2×, one published tile covers two slots, and every
+second slot got +128 × 2 = 256 px instead of −256 px: its image was pushed completely out of the box,
+leaving the map underneath. That is the black banding in the screenshot — exactly half of the columns,
+with the pins floating in the gaps, which is why it looked like missing tiles. The in-game artwork at
+zoom 1 did not show it (its pyramid is 2 px/m, so a slot is one whole tile and the offset is 0), which is
+why the same zoom looked fine on the other basemap.
+
+One character of arithmetic, fixed in `map.js`, and the zoom is seamless at both basemaps. What made it
+hard to find is that it looked like a loading failure, and the old layer *also* failed silently in a
+different way — so both were fixed:
+
+The tiles are now `<img>` elements inside the slot, so the code sees `onload`/`onerror`:
+
+- **retry once** immediately, with `?retry=1` to bypass the cached miss;
+- **then switch host** — `raw.githubusercontent.com/rolux/gtadb.org` for the same file;
+- **then give up visibly**: the slot gets a hatched `is-missing` fill, not a black void;
+- a slot outside the artwork (the legend sheet, the map edge) gets a neutral `is-edge` fill.
+
+The retry was tested by firing a synthetic error at a live tile: it re-requested, loaded, and stayed
+clean. The give-up path was tested by firing three: the hatch appears, the img is detached first so a
+late response cannot clear it (that bug was real, and the first test caught it).
+
+Verified after the fix, on a 1440×900 window at zoom 1 over the airfield: 24 slots, 24 images, zero with a
+positive offset (the broken state), zero broken, zero hatched, 16 pins. Before the fix the same view had
+the same 24 tiles and still showed bands — which is the whole point: the counters said "fine" and the
+screen said otherwise, so the check is now the offset, not just the load.
+
+The layer also now sets `updateWhenZooming: false` and `keepBuffer: 4`, so a zoom no longer fires forty
+requests mid-animation — the burst that provoked the throttling in the first place.
+
+**More detail.** The remaining marker kinds came in through the same importer: weapons (216), easter eggs
+(95), landmarks and helipads and under-the-bridge (304), activities — random events, basketball, races,
+drone races, fishing (731), collectible sets — scoop containers, magazines, flamingos, street art (1,109).
+`collections.json` is 5,009 bulk records, and the map is **5,089 pins** (up from 3,175).
+
+Two rules keep the file honest and rerunnable:
+
+- **The importer owns its records.** A re-run deletes everything carrying `_gb.source = "gtabase-markers.json"`
+  and rebuilds it, so changing the kind table cannot leave stale pins behind.
+- **31 markers were dropped as twins.** A hand-written record without a marker link can still be the same
+  find (the guide-based pin and the community marker land on the same spot). Anything within 6 m of a
+  curated record is left to the curated record; the alternative was two pins on one doorstep.
+
+The file is written compact now — 2.8 MB pretty-printed would have cost a megabyte for nobody's benefit.
+GitHub Pages gzips it.
+
+**What the pins look like at 5,089.** Rendering was already culled to the viewport (§23); what broke was
+the mobile overview: 82 count discs covered the island completely (artifacts/detail-mobile.png). The bucket
+size and disc size now depend on viewport width — a 390 px phone buckets at 92 px and draws discs at 0.74×,
+which takes the overview from 82 discs to 27 and lets the coastline show through. Desktop keeps 46 px and
+1×.
+
+**Credits had to change, and that is the most important line here.** Until this import, the credits said
+"no GTABase text is reproduced". That stopped being true the moment 4,500 marker names and one-line
+descriptions came in. The credit entry now says what is actually the case: coordinates are facts, the
+margin wording is GTABase's, the snapshot's date and SHA-256 are recorded, and the affected records are
+identifiable by `_gb.source`. The visible credit strip reads "Markers: GTABase community map" beside the
+tile credit. Two different obligations live in that sentence and they should not be blurred.
+
+**Measured.** Boot to 5,089 pins: 1.25 s locally (domContentLoaded 704 ms), no gzip. In view at zoom 0
+over the airfield on a 1440×900 desktop: 65 pins, 20 tiles, 0 broken. On a 390×844 phone: 27 discs at
+overview, 28 pins at zoom 0, no horizontal overflow. Filtering Shops off drops 5,089 → 3,777 (exactly its
+1,312); searching "alien" returns 12 records including the airstrip record.
+
+**Max zoom now depends on the artwork.** The community pyramid is 1 px/m and the in-game one 2 px/m, but
+both basemaps were allowed to zoom to 1 — which drew the community art at 2× for no extra detail, the
+reason its labels looked oversized and soft. `TILE_SETS` now carries the deepest honest zoom (community 0,
+in-game 1), `map.setMaxZoom` is applied on init and on every switch, and a cluster click stops there too.
+Asked for zoom 1 on the community map you get 0, with one artwork pixel per screen pixel.
+
+**Still not imported:** 1,909 markers — the collectible card sets (about 500, near-identical pins), gang
+operations, and the remaining one-off kinds. That is a data decision, not a rendering limit.
+
+Not covered: the 4,558 bulk pins have never been read one by one, and the basemap has not been checked
+against the new pins in the field. Both statements were true in §23 and remain true.

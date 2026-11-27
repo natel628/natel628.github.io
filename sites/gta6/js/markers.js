@@ -12,12 +12,24 @@ G6.markers = (function () {
   var _mapRef      = null;
   var _lastLocs    = null;  // kept so zoom changes can re-bucket without a state change
   var _lastState   = null;
+  var _locIndex    = null;  // id → location, rebuilt once per render
+  var _view        = null;  // current viewport, padded; pins outside it are not built
 
   // 531 pins at once is a wall of ink, so above this zoom they are bucketed into
   // world-pixel cells (not screen cells: panning must not reshuffle them).
   var CLUSTER_MAX_ZOOM = -1;
   var CLUSTER_CELL     = 46;   // px per bucket at the current zoom level
   var CLUSTER_NEUTRAL  = '#8f99a8';
+
+  // 5,000 pins over a phone-sized map is a pile of circles that hides the
+  // island, so small viewports bucket harder and draw smaller discs. Returns
+  // the bucket size in px and the icon scale.
+  function _clusterShape() {
+    var w = _mapRef ? _mapRef.getSize().x : 1200;
+    if (w < 640)  return { cell: 92, scale: 0.74 };
+    if (w < 1000) return { cell: 66, scale: 0.86 };
+    return { cell: CLUSTER_CELL, scale: 1 };
+  }
 
   // CSS custom property colour lookup (cached after first read)
   var _colCache    = {};
@@ -81,10 +93,11 @@ G6.markers = (function () {
   // A bucket of one renders as the normal pin; anything larger renders as a
   // count disc. Coloured discs mean every pin under them shares one category;
   // grey means a mixture, so the colour never claims something untrue.
-  function _makeClusterIcon(n, cats, allFound) {
+  function _makeClusterIcon(n, cats, allFound, scale) {
     var names = Object.keys(cats);
     var color = names.length === 1 ? _catColor(names[0]) : CLUSTER_NEUTRAL;
-    var size  = n >= 100 ? 58 : n >= 25 ? 50 : n >= 10 ? 44 : 38;
+    var base  = n >= 100 ? 58 : n >= 25 ? 50 : n >= 10 ? 44 : 38;
+    var size  = Math.round(base * (scale || 1));
     var cls   = ['g6-cluster'];
     if (names.length > 1) cls.push('is-mixed');
     if (allFound)         cls.push('is-found');
@@ -108,6 +121,13 @@ G6.markers = (function () {
     return idx;
   }
 
+  // With 3,000 pins, the whole dataset is never in the DOM: only what the
+  // padded viewport covers. Panning re-runs render(), which adds the ones that
+  // came into view and drops the ones that left.
+  function _inView(latlng) {
+    return !_view || _view.contains(latlng);
+  }
+
   function _clearClusters() {
     Object.keys(_clusterMap).forEach(function (k) {
       _locLayer.removeLayer(_clusterMap[k]);
@@ -122,6 +142,8 @@ G6.markers = (function () {
     var idx        = _indexById(locations);
     var singles    = {};
     var buckets    = {};
+    var shape      = _clusterShape();
+    var cell       = shape.cell;
 
     visibleIds.forEach(function (id) {
       var loc = idx[id];
@@ -129,9 +151,10 @@ G6.markers = (function () {
       // The selected record always keeps its own pin, even inside a dense cell,
       // so picking a row in the rail still shows where that pin is.
       if (id === selectedId) { singles[id] = loc; return; }
+      if (!_inView(G6.geo.toLatLng(loc.position.x, loc.position.y))) return;
 
       var p   = _mapRef.project(G6.geo.toLatLng(loc.position.x, loc.position.y), zoom);
-      var key = Math.floor(p.x / CLUSTER_CELL) + ':' + Math.floor(p.y / CLUSTER_CELL);
+      var key = Math.floor(p.x / cell) + ':' + Math.floor(p.y / cell);
       var b   = buckets[key];
       if (!b) {
         b = buckets[key] = { n: 0, x: 0, y: 0, ids: [], cats: {}, allFound: true };
@@ -145,10 +168,13 @@ G6.markers = (function () {
     });
 
     // Buckets of one become ordinary pins; keep them out of the cluster pass.
+    // Buckets outside the viewport are dropped before any marker is built.
     Object.keys(buckets).forEach(function (key) {
       var b = buckets[key];
       if (b.n === 1) {
         singles[b.ids[0]] = idx[b.ids[0]];
+        delete buckets[key];
+      } else if (!_inView(G6.geo.toLatLng(b.x / b.n, b.y / b.n))) {
         delete buckets[key];
       }
     });
@@ -191,7 +217,7 @@ G6.markers = (function () {
       var cx  = b.x / b.n;
       var cy  = b.y / b.n;
       var lat = G6.geo.toLatLng(cx, cy);
-      var icon = _makeClusterIcon(b.n, b.cats, b.allFound);
+      var icon = _makeClusterIcon(b.n, b.cats, b.allFound, shape.scale);
       var label = b.n + ' locations \u00b7 ' +
                   (Object.keys(b.cats).length === 1 ? Object.keys(b.cats)[0].replace(/-/g, ' ')
                                                     : Object.keys(b.cats).length + ' categories') +
@@ -206,7 +232,9 @@ G6.markers = (function () {
           // Read the zoom and position at click time: a marker that survived a
           // zoom level keeps its handler, so a captured zoom would be stale.
           var from = _mapRef.getZoom();
-          _mapRef.flyTo(cm.getLatLng(), Math.min(from + 2, 1), { duration: 0.5 });
+          // Stop at whichever basemap is showing: the community art ends at 0,
+          // the in-game one at 1 (see TILE_SETS in map.js).
+          _mapRef.flyTo(cm.getLatLng(), Math.min(from + 2, _mapRef.getMaxZoom()), { duration: 0.5 });
         });
         cm.addTo(_locLayer);
         _clusterMap[key] = cm;
@@ -219,6 +247,8 @@ G6.markers = (function () {
 
     _lastLocs  = locations;
     _lastState = state;
+    _locIndex  = _indexById(locations);
+    _view      = _mapRef ? _mapRef.getBounds().pad(0.25) : null;
 
     var zoom = _mapRef ? _mapRef.getZoom() : 0;
     if (_mapRef && zoom <= CLUSTER_MAX_ZOOM) {
@@ -235,9 +265,9 @@ G6.markers = (function () {
     var selectedId = state.selectedId;
     var visibleIds = state.visibleIds || new Set();
 
-    // Remove markers no longer visible
+    // Remove markers that are filtered out or have left the viewport
     Object.keys(_markerMap).forEach(function (id) {
-      if (!visibleIds.has(id)) {
+      if (!visibleIds.has(id) || !_inView(_markerMap[id].getLatLng())) {
         _locLayer.removeLayer(_markerMap[id]);
         delete _markerMap[id];
       }
@@ -245,16 +275,14 @@ G6.markers = (function () {
 
     // Add / update visible markers
     visibleIds.forEach(function (id) {
-      var loc = null;
-      for (var i = 0; i < locations.length; i++) {
-        if (locations[i].id === id) { loc = locations[i]; break; }
-      }
+      var loc = _locIndex ? _locIndex[id] : null;
       if (!loc) return;
       if (!G6.geo.inCrop(loc.position.x, loc.position.y)) return;
 
       var isFound    = !!found[id];
       var isSelected = id === selectedId;
       var latlng     = G6.geo.toLatLng(loc.position.x, loc.position.y);
+      if (!_inView(latlng)) return;
 
       if (_markerMap[id]) {
         _markerMap[id].setIcon(_makeIcon(loc, isFound, isSelected));
@@ -341,9 +369,12 @@ G6.markers = (function () {
     _locLayer  = L.layerGroup().addTo(map);
     _custLayer = L.layerGroup().addTo(map);
 
-    // Buckets are computed per zoom level, so re-run the last render when the
-    // zoom changes (zoomSnap is 1, so this fires only on real level changes).
+    // Buckets are computed per zoom level and pins are culled to the viewport,
+    // so re-run the last render when the zoom or the viewport changes.
     map.on('zoomend', function () {
+      if (_lastLocs) render(_lastLocs, _lastState);
+    });
+    map.on('moveend', function () {
       if (_lastLocs) render(_lastLocs, _lastState);
     });
   }

@@ -154,14 +154,25 @@ for (const rec of collections) {
 
 // Pins on top of each other: legal, but almost always a sign two records are
 // the same find under two names. The crab outpost/lab pair is deliberate.
+// Bulk imports sit in clusters by nature (a bar and its ATM, two street-food
+// carts on one corner), so pairs between two bulk pins are counted, not listed;
+// every pair involving a hand-written record is still printed in full.
+const CURATED_IDS = new Set(curated.map((r) => r.id));
+const PROXIMITY_ALL = process.argv.includes('--proximity-all');
 const all = [...curated, ...collections];
+let bulkPairs = 0;
 for (let i = 0; i < all.length; i++) {
   for (let j = i + 1; j < all.length; j++) {
     const a = all[i].position, b = all[j].position;
     if (!a || !b) continue;
     const d = Math.hypot(a.x - b.x, a.y - b.y);
-    if (d <= 20) warn(`${all[i].id} / ${all[j].id}`, `${Math.round(d)} m apart`);
+    if (d > 20) continue;
+    if (!PROXIMITY_ALL && !CURATED_IDS.has(all[i].id) && !CURATED_IDS.has(all[j].id)) { bulkPairs++; continue; }
+    warn(`${all[i].id} / ${all[j].id}`, `${Math.round(d)} m apart`);
   }
+}
+if (bulkPairs > 0) {
+  warn('collections.json', `${bulkPairs} pairs of bulk pins within 20 m (normal in dense areas; run --proximity-all to list them)`);
 }
 
 // Bulk collection pins deliberately reuse names ("Meteorite, no directions

@@ -393,8 +393,8 @@
 
   // The credits strip has to state which artwork is actually on screen.
   var CREDITS = {
-    community: 'Map: <a href="https://gtadb.org" target="_blank" rel="noopener noreferrer">YANIS V18 \u00b7 gtadb.org</a> CC&nbsp;BY&nbsp;4.0 \u00b7 Unofficial fan project',
-    ingame:    'Map: GTA VI in-game map \u00a9&nbsp;Rockstar Games \u00b7 tiles via <a href="https://gtadb.org" target="_blank" rel="noopener noreferrer">gtadb.org</a> \u00b7 Unofficial fan project'
+    community: 'Map: <a href="https://gtadb.org" target="_blank" rel="noopener noreferrer">YANIS V18 \u00b7 gtadb.org</a> CC&nbsp;BY&nbsp;4.0 \u00b7 Markers: <a href="https://www.gtabase.com/gta-6/map/" target="_blank" rel="noopener noreferrer">GTABase community map</a> \u00b7 Unofficial fan project',
+    ingame:    'Map: GTA VI in-game map \u00a9&nbsp;Rockstar Games \u00b7 tiles via <a href="https://gtadb.org" target="_blank" rel="noopener noreferrer">gtadb.org</a> \u00b7 Markers: <a href="https://www.gtabase.com/gta-6/map/" target="_blank" rel="noopener noreferrer">GTABase community map</a> \u00b7 Unofficial fan project'
   };
 
   function _updateCredit() {
@@ -440,11 +440,26 @@
     var catMap = {};
     data.categories.forEach(function (c) { catMap[c.id] = c; });
 
+    // 3,175 pins is not a list. One row per pin meant an O(n²) lookup and two
+    // containers full of thousands of rows on every filter change, so the list
+    // shows the first 300 and says so; search and the category filters reach
+    // the rest. A selected pin is always listed, even past the cap.
+    var ROW_CAP = 300;
+    var byId = {};
+    data.locations.forEach(function (l) { byId[l.id] = l; });
+
+    var idsToShow = [];
     visibleIds.forEach(function (id) {
-      var loc = null;
-      for (var i = 0; i < data.locations.length; i++) {
-        if (data.locations[i].id === id) { loc = data.locations[i]; break; }
-      }
+      if (idsToShow.length < ROW_CAP && byId[id]) idsToShow.push(id);
+    });
+    if (selectedId && visibleIds.has(selectedId) && byId[selectedId] &&
+        idsToShow.indexOf(selectedId) === -1) {
+      idsToShow.unshift(selectedId);
+    }
+    var shown = idsToShow.length;
+
+    idsToShow.forEach(function (id) {
+      var loc = byId[id];
       if (!loc) return;
 
       var cat    = catMap[loc.category] || { color: '#7fd1ff', label: loc.category };
@@ -517,6 +532,14 @@
 
       container.appendChild(row);
     });
+
+    if (visibleIds.size > shown) {
+      var more = document.createElement('div');
+      more.style.cssText = 'padding:.85rem 1rem;text-align:center;color:var(--g6-muted);font-size:.72rem';
+      more.textContent = 'Showing ' + shown + ' of ' + visibleIds.size +
+                         ' — search or pick a category to narrow the list.';
+      container.appendChild(more);
+    }
   }
 
   // ── Toolbar ────────────────────────────────────────────────

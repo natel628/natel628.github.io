@@ -7,12 +7,18 @@ Plain Node (18+), no dependencies, no build step. Run them from the repo root.
 | `node sites/gta6/tools/validate.mjs` | Schema, id, category, region, county, source and marker-link check over `data/`. Exit 1 on errors, warnings on things to look at. |
 | `node sites/gta6/tools/audit-markers.mjs` | Re-runs the GTABase cross-check: verifies every linked pin against its marker and lists pins whose best same-name marker is more than 500 m away. |
 | `node sites/gta6/tools/link-markers.mjs` | Proposes (or with `--write`, records) the marker id on curated records. |
+| `node sites/gta6/tools/import-gtabase.mjs` | Adds the loot boxes, safes, services, vehicles, weapons, easter eggs, landmarks and activities from the snapshot to `data/collections.json` (`--dry-run` to preview). Owns its own records: a re-run rebuilds them, so the kind table can be edited safely. |
 | `python3 sites/gta6/tools/audit-bulk-pins.py classes` | Colour screen over the 451 bulk pins: what is under each crosshair, and how far the water ones are from dry land. |
 | `python3 sites/gta6/tools/audit-bulk-pins.py sample` | Writes the seeded 30-pin sample (`data/bulk-audit-sample.json`) — 13 packages, 10 meteorites, 7 knife flights. |
 | `python3 sites/gta6/tools/audit-bulk-pins.py sheets OUTDIR` | Contact sheets of that sample and all 130 stunt jumps, 110 m per cell, crosshair on the pin. |
 
 The bulk-pin audit needs Pillow (`pip install pillow`) because it reads the tile JPEGs; the Node tools
 stay dependency-free. Tiles are cached in `/tmp/g6tiles`.
+
+`import-gtabase.mjs` writes records the app can filter: every pin inherits the region and county of the
+nearest already-labelled record, because the trimmed snapshot has no `town` field. That is a
+classification from position (REPORT §24), and it is the one part of those records that is ours rather
+than the source's.
 
 ## Auditing the bulk import
 

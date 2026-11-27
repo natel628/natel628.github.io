@@ -43,14 +43,14 @@
       "notes": "Needs its own permission check before this map is published commercially; the pin coordinates are facts, the wording is ours."
     },
     {
-      "asset": "Collectible and challenge positions",
-      "work": "GTABase interactive GTA 6 map — hidden packages, meteorites, stunt jumps and knife flights",
+      "asset": "Bulk marker positions and names",
+      "work": "GTABase interactive GTA 6 map — hidden packages, meteorites, stunt jumps, knife flights, yellow loot boxes, safes, businesses and services, vehicle spawns, weapons, easter eggs, landmarks, activities and collectible sets",
       "author": "GTABase and its contributors",
       "via": "gtabase.com/gta-6/map",
-      "license": "Copyright GTABase — reference use only; no GTABase text is reproduced",
-      "sourceUrl": "https://www.gtabase.com/gta-6/map/?feature=hidden-packages",
-      "changes": "Pin coordinates are the published marker positions, unmodified and checked against the GTADB landmark grid (agreement within about 15 m). Names, hints and summaries were written for this map from the marker positions and their one-line descriptions; no GTABase wording is reproduced. Held separately from the curated records in data/collections.json.",
-      "notes": "Needs its own permission check before this map is published commercially."
+      "license": "Copyright GTABase — used with attribution; permission needed before commercial publication",
+      "sourceUrl": "https://www.gtabase.com/gta-6/map/",
+      "changes": "Pin coordinates are the published marker positions, unmodified and checked against the GTADB landmark grid (agreement within about 15 m). The four original collections use wording written for this map; the later import (REPORT §24) reproduces GTABase's own marker name and one-line description, because rewriting four and a half thousand names by hand is how errors get in. Region and county labels are ours, inferred from position. Snapshot date and SHA-256 are in tools/data/gtabase-markers.meta.json.",
+      "notes": "Two different obligations live here: the coordinates are facts, the margin wording is GTABase's. Their terms should be checked before this map is published commercially, and if that check says no, the affected records are the ones carrying _gb.source = \"gtabase-markers.json\"."
     },
     {
       "asset": "Map engine",

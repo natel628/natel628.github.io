@@ -12,10 +12,31 @@
 
 .leaflet-tile-pane { opacity: 1; }
 
-/* Base map tiles are divs cropped from the published pyramid tiles */
+/* Base map tiles are divs holding one cropped <img> from the published pyramid.
+   Nothing here paints a black rectangle: a tile outside the artwork is a
+   neutral edge, a tile that failed every retry is hatched. A slow CDN should
+   never look like a hole in the map. */
 .g6-tile {
-  background-repeat: no-repeat;
-  background-color: var(--g6-bg);
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.g6-tile-img {
+  position: absolute;
+  display: block;
+  max-width: none;
+  max-height: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.g6-tile.is-edge { background-color: var(--g6-surface-2); }
+
+.g6-tile.is-missing {
+  background-color: var(--g6-surface);
+  background-image: repeating-linear-gradient(45deg,
+    rgba(255,255,255,.05) 0 6px, transparent 6px 12px);
 }
 
 .leaflet-control-scale-line {
