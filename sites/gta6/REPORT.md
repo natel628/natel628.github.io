@@ -572,3 +572,30 @@ because this pass was scoped to the two crab records; it is the next thing to fi
 - `node --check js/data.js` clean; `DATA_V` 11 with `js/data.js?v=11` in `index.html`.
 - Re-loaded the map locally at `527 of 527`, and both crab pins now draw on the outpost island (the two
   records share one point, as before).
+
+## 15. Every pin states its precision, whichever way it was placed
+
+The detail panel only printed an accuracy note when `position.method` was `estimated`. That was correct
+while every record was an estimate, but §12–§14 added **453 pins with `method: "reported"`** — coordinates
+copied from a published community-map marker — and those were the only pins in the app that said nothing
+about how precise they are. The map's whole claim is that a pin never implies more accuracy than it has,
+so the panel now covers both methods:
+
+| Method | Pins | Note in the panel |
+|---|---|---|
+| `estimated` | 74 | "Pin is approximate (±N m). Use the written directions to find the exact spot." (unchanged) |
+| `reported` | 453 | "Pin is the community map's published marker (±N m), not a surveyed position — the coordinates are copied from that map, so trust the spot to about that distance rather than to the metre." |
+
+`reported` accuracy values in the data are 40 m (photo-confirmed markers), 60 m (stunt jumps), 80 m
+(knife flights) and 250 m (description-only markers); the note prints whichever the record carries, and
+falls back to 100 m if a future record omits it.
+
+`js/detail.js` is now `?v=5` in `index.html` so returning visitors get the change inside the Pages
+ten-minute cache.
+
+### Checks
+
+- `node --check js/detail.js` clean.
+- In the browser at 527/527: *Pelican Valley research outpost* (reported, 40 m) shows the new note;
+  *Shrooms in the women's toilet* (reported, 250 m) shows it with 250 m; *Apollo Aggregates warehouse*
+  (estimated, 250 m) still shows the original approximate wording.

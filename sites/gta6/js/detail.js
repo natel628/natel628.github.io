@@ -126,12 +126,22 @@ G6.detail = (function () {
       body.appendChild(tipsField);
     }
 
-    // Coordinates here are estimates; say so instead of implying GPS precision.
-    if (loc.position && loc.position.method === 'estimated') {
+    // Every pin states how precise it is, whichever way it was placed:
+    //   estimated - positioned from written directions or a region guess
+    //   reported  - coordinates copied from a published community-map marker
+    var pos = loc.position || {};
+    if (pos.method === 'estimated' || pos.method === 'reported') {
       var accNote = _el('p', '');
       accNote.style.cssText = 'font-size:.68rem;color:var(--g6-muted);margin-top:var(--sp-1)';
-      accNote.textContent = 'Pin is approximate (\u00b1' + (loc.position.accuracy || 500) +
-                            '\u202fm). Use the written directions to find the exact spot.';
+      if (pos.method === 'reported') {
+        accNote.textContent = 'Pin is the community map\u2019s published marker (\u00b1' +
+                              (pos.accuracy || 100) + '\u202fm), not a surveyed position \u2014 ' +
+                              'the coordinates are copied from that map, so trust the spot to about ' +
+                              'that distance rather than to the metre.';
+      } else {
+        accNote.textContent = 'Pin is approximate (\u00b1' + (pos.accuracy || 500) +
+                              '\u202fm). Use the written directions to find the exact spot.';
+      }
       body.appendChild(accNote);
     }
 
