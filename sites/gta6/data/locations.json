@@ -181,15 +181,17 @@
       "category": "easter-egg",
       "region": "grassrivers",
       "county": "mariana",
-      "position": { "x": -2000, "y": -4600, "method": "estimated", "accuracy": 500 },
+      "position": { "x": -2649, "y": -4151, "method": "reported", "accuracy": 40 },
       "verification": "community",
+      "marker": { "source": "gtabase", "id": "easter-egg-019", "name": "Alien Encounter (abandoned building)" },
       "summary": "Alien bunker and UFO encounter content. Keypad code is dream-derived and may differ per save.",
-      "hint": "North-east of Cottonmouth Lake and south of Hamlet, at the north end of the long airstrip. Keypad code 2314 is commonly reported but can vary.",
+      "hint": "North-east of Cottonmouth Lake and south of Hamlet, on the rise just north-east of the LTF Airfield runway's north end. Keypad code 2314 is commonly reported but can vary.",
       "rewards": ["Alien bunker access", "UFO encounter / ending content"],
       "tips": [
         "2314 is the commonly reported code but it may differ per save — if it fails, the code is dream-derived, not found in the world.",
-        "Anchor on the north end of the airstrip, then walk north-east toward the bunker.",
-        "No firm confirmation of what the bunker leads to; treat the outcome as unverified."
+        "Anchor on the north end of the LTF Airfield runway, then walk north-east about 300 m; the building stands alone on a clearing above the marsh, east of the strip.",
+        "No firm confirmation of what the bunker leads to; treat the outcome as unverified.",
+        "Pin is the abandoned building itself at -2649, -4151: the basemap draws the one grey building complex on the rise, and the community markers for the alien encounter and the comic inside it sit together here. This record used to sit 780 m east in open water."
       ],
       "code": "2314 (commonly reported — may vary per save)",
       "risk": "unknown",

@@ -925,3 +925,46 @@ the ramp was seen.
 Not covered: the 421 bulk pins outside the sample were colour-screened but not read one by one, and no pin
 was moved. Sheets: `artifacts/bulk-sample.png`, `artifacts/bulk-jumps-1..3.png`, reproducible with
 `tools/audit-bulk-pins.py sheets OUTDIR`.
+
+---
+
+## 22. The alien building, and where `T2/40` comes from
+
+A reader asked about the "baby alien" mission and sent a crop showing two cryptic labels — a green `T2/40`
+and a dark-blue `T3/78` with leader lines — over an olive-and-teal landscape with a white six-lane road and a
+large grey building. Neither string exists in `data/`. They are **painted into the Yanis v18 community
+basemap**: that artwork carries an index of trailer, content-drop and artwork screenshots, each labelled with
+a frame code and a coloured dot on the spot it was shot from. Other examples on the same map are `T4/09` by
+LTF Airfield, `A2/16` out in open water and `S0/89` in Vice City, and the legend sheet east of `x = 4050`
+heads the columns "TRAILER 2", "TRAILER 3 CONTENT DROP SCREENSHOTS" and "ARTWORKS". The in-game (`day`)
+tiles have no such labels, which is why every audit crop in this file is taken from them and why the
+Community/In-game basemap switch removes the codes for anyone who finds them confusing.
+
+There are also no mission pins on the site: the bulk import is the four collections (packages, meteorites,
+stunt jumps, knife flights) and nothing else, and the GTABase snapshot holds no marker with "baby" in its
+name. What the map does have is `alien-bunker-cottonmouth`, and checking it turned up a real error.
+
+**The record was 780 m off, in open water.** It sat at `(-2000, -4600)` as a 500 m estimate, which the
+in-game tiles show as blue in every direction. The nearest match in the snapshot is `easter-egg-019`
+"Alien Encounter (abandoned building)" at `(-2649, -4151)` — the same building the reader's crop is centred
+on, on the rise just north-east of the LTF Airfield runway, which is exactly what the record's own hint
+("at the north end of the long airstrip") describes.
+
+**The artwork at the marker agrees.** A 640 m crop (`artifacts/airfield-wide.png`) and a 260 m one
+(`artifacts/airfield-mark.png`) show one grey building complex standing alone on a cleared rise above the
+marsh, a dirt track running north-west to the road, water on the east and south, and the runway ending
+about 300 m to the south-west. Three independent markers land on the same complex: `easter-egg-019` itself,
+`comics-002` "Un Extraño Rescate" 12 m away (a comic inside the building), and `vehicle-spawn-064`
+"Mammoth Patriot '92", described as "at the far end of the abandoned building", 128 m off. The LTF Airfield
+marker (`public-transport-016`) is 298 m away — the distance the hint's "walk north-east from the airfield"
+implies.
+
+So the pin moves to `(-2649, -4151)`, `method: "reported"`, `accuracy: 40`, and the record now claims
+`easter-egg-019` the same way the other twenty do. The hint and one tip were reworded to say "north-east of
+the LTF Airfield runway's north end" instead of the vaguer "long airstrip"; the 2314-codes-vary caveat is
+untouched. `DATA_V` goes to 16.
+
+**What this does not establish.** The marker is a community submission, so this is marker-plus-artwork
+agreement, not a verified in-game read: the building on the tiles matches the one the sources describe, but
+nothing here proves the keypad or the dream sequence. And the two baked labels remain on the community
+basemap until it is redrawn — they were never ours to remove.
