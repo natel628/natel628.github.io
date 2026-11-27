@@ -1,0 +1,15 @@
+{
+  "source": "GTABase GTA VI interactive map marker list (https://www.gtabase.com/gta-6/map/), community-submitted markers mirrored for auditing",
+  "captured": "2026-11-27",
+  "count": 6510,
+  "fields": [
+    "id",
+    "name",
+    "category",
+    "x",
+    "y",
+    "description"
+  ],
+  "sha256": "ea198be8e3ab2d5afcbf7b0cd8707d45660d2af171388af41fcef2dbfbb83fab",
+  "note": "Trimmed from the site's marker payload to the fields the audits use; coordinates are in the same metre frame as data/locations.json. Refresh by replacing this file and its sha256."
+}

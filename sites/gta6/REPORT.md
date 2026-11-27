@@ -796,3 +796,70 @@ may vary per save", `955214` keeps "(reported)". The list is a reading aid for t
   6969, 7777, 44017, 80085, 360782, 789987, 955214); its filter narrows to the right row; clicking the `1819`
   row closed the dialog, selected Watson Bay safehouse and the detail panel opened on it.
 - `js/filters.js?v=3`, `js/app.js?v=7`, `css/components.css?v=3`. No JSON changed, so `DATA_V` stays 14.
+
+
+## 20. The audit is in the repo now
+
+§14–§17 were done with throwaway scripts in `artifacts/`, which is untracked: the method was reviewable in the
+report but not runnable. `sites/gta6/tools/` now holds it.
+
+| File | Role |
+|---|---|
+| `tools/validate.mjs` | One command: schema, ids, categories, regions, counties, sources, marker links, near-duplicate pins. Exit 1 on errors. |
+| `tools/audit-markers.mjs` | Re-runs the cross-check: every linked pin against its marker, plus candidates — pins whose best same-name marker is more than 500 m away. |
+| `tools/link-markers.mjs` | Proposes or writes the marker id on a record; `--set` for hand-established links. |
+| `tools/lib/markers.mjs` | Loader, tokeniser, IDF weighting, ranking — shared by both scripts. |
+| `tools/data/gtabase-markers.json` | The 6,510-marker snapshot, trimmed to id/name/category/x/y/description (1.0 MB). |
+| `tools/data/gtabase-markers.meta.json` | Where it came from, when, and its SHA-256, so a result can be tied to the snapshot it used. |
+
+**Matching rule, narrowed.** The first version let hint words score, and everything matched something: a
+"glider in the treeline" matched a rooftop loot box 5.8 km away on the word *rooftop*. Hints name the town,
+the road and half the map, so they no longer score at all — only name overlap does, weighted by inverse
+document frequency. A candidate now needs at least two shared name words and at least one of them
+distinctive (a word under ~50 markers use), which took the list from 28 rows of noise to the 11 real
+questions below.
+
+**Records carry their marker.** The 20 pins whose coordinates came from a marker now say so:
+
+```json
+"position": { "x": -3571, "y": -4081, "method": "reported", "accuracy": 40 },
+"marker": { "source": "gtabase", "id": "weapon-spawn-025", "name": "Swamp Bait Akulus" }
+```
+
+The marker name is stored beside the id so a rename in a future snapshot can still be resolved. Linking
+deliberately covers only `reported` records: an estimate that happens to sit near a marker stays an estimate
+(and shows up as a candidate), because upgrading it would be a data decision — a move or a re-tier — not a
+script decision. `link-markers.mjs --include-estimated` shows what that would look like.
+
+**What the first run said.** `validate.mjs` passed 531 records with 27 warnings, caught two `http://` source
+URLs on `gta6bugs.com` links (now `https://`, both verified 200), and flagged four records with no `tips` —
+which turned out to be correct data and an over-strict validator, so the rule became "validate when present".
+`audit-markers.mjs`: 20 linked pins, 0 errors (worst gap 18 m, the Picador), 0 drift across the 451
+collection pins, and these 11 candidates left for a human:
+
+| Distance | Record | Best same-name marker |
+|---|---|---|
+| 6,385 m | `easter-egg-nest-tower` | Easter Egg: Bird Nest on the Mast |
+| 2,538 m | `ufo-abduction-port-gellhorn` | UFO Van Abduction |
+| 1,911 m | `infernus-crosstown-garage` | Pegassi Infernus (purple) |
+| 1,865 m | `vitello-waning-sands` | Pegassi Vitello (Randy's request) |
+| 1,810 m | `dog-island-wallet` | Cool Dog on a Jet Ski |
+| 1,587 m | `toros-tequesta-retreat` | Pegassi Toros |
+| 1,348 m | `tempesta-tow-truck-event` | ATM Theft (tow truck) |
+| 1,172 m | `gauntlet-ambrosia-reservoir` | Bravado Copperheads Gauntlet |
+| 708 m | `banshee-sweetbay-inn` | Bravado Banshee |
+| 576 m | `container-penumbra-gellhorn` | Maibatsu Blue Drake Penumbra |
+| 504 m | `hellfire-m7-junkyard` | Bravado Gauntlet Hellfire (Randy's request) |
+
+They are questions, not verdicts: most are a vehicle record and a spawn marker that share a model name but
+not a place, and the artwork still decides (REPORT §16). `--strict` turns them into a failing build for
+anyone who wants that.
+
+### Checks
+
+- `node sites/gta6/tools/validate.mjs` → exit 0 (`531 records`, 15 proximity warnings, all valid).
+- `node sites/gta6/tools/audit-markers.mjs` → exit 0 (20 linked, 0 linked-marker errors, 0 collection drift,
+  11 candidates).
+- `link-markers.mjs --write` re-parsed the file before writing; `locations.json` still parses; the app loads
+  531 of 531 pins with the extra field present.
+- `DATA_V` 15 with `js/data.js?v=15`, because `locations.json` changed (the field is not shown in the UI yet).
