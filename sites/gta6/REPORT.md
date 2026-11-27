@@ -326,3 +326,99 @@ Cottonmouth Lake". Measured against the places it actually names, it is where it
 - Tips went from 137 to 153; 48 of 53 records now carry tips (was 43). A pin note naming the anchor was added to all 24 moved records.
 - Not checked: the moved pins were not viewed in a browser this round; only the data and its references
   were validated.
+
+## 12. Easter eggs from the GTABase map
+
+`data/locations.json` is now **76 records**, 30 of them easter eggs, after 23 new ones taken from the
+GTABase interactive map (gtabase.com/gta-6/map). `DATA_V` is `9`.
+
+### How the data was read
+
+The page is server-rendered but its markers are a separate obfuscated asset
+(`images/gta-6/maps/gtab-map/markers.js`). The obfuscation is a 62-character substitution over
+`0-9A-Za-z` that the site's own `map.js` reverses before `JSON.parse`; replaying it offline gave
+**6,510 markers**, of which **121** are in the `easter-egg` category — each with an id, a name, a
+description, a photo flag and an `x`/`y` pair.
+
+### Their coordinate frame is ours
+
+Before using a single coordinate the frame was checked against landmarks this map already had:
+
+| Place | GTABase | This map (GTADB landmarks) | Difference |
+|---|---|---|---|
+| La Cascara Motel | -6861, 3959 | -6860, 3970 | 11 m |
+| Pawn & Gun, Port Gellhorn | -6342, 3368 | -6350, 3367 | 8 m |
+| Boone Speedway | -3086, -3362 | -3092, -3376 | 15 m |
+| Sunrise RV Park | -3478, -4490 | -3477, -4497 | 7 m |
+| Mount Kalaga | -3430, 6371 | -3430, 6371 | 0 m |
+
+Same metres, same origin, so nothing had to be eyeballed and no conversion was needed.
+
+### What was added
+
+| Record | Pin | Tier |
+|---|---|---|
+| Exploding beached whale | -7198, 1433 | community |
+| Fountain of Youth | -6839, -63 | community |
+| Bugstar van and fumigation tent | -6666, -87 | estimate |
+| Possessed-Lucia factory | -6604, 508 | estimate |
+| Disco toilet | -6440, -1876 | community |
+| Leviathan graffiti | -6377, -6232 | community |
+| Satan at the biker campfire | -6337, 4373 | estimate |
+| Four Horses monument | -5860, 5524 | community |
+| Satanic room — Benson Real Estate | -5702, 6793 | community |
+| Burning house | -5571, 6868 | community |
+| Ghost cat | -5517, 6871 | community |
+| Super Mario question block | -4082, 7391 | community |
+| Mineshaft carcasses | -3931, 7881 | estimate |
+| Moreau fire watchtower | -3794, 7781 | estimate |
+| Hyde Island kidnap | -2550, 8459 | estimate |
+| Cloned bodies bunker | -1906, 8384 | community |
+| Hillside bunker — door code 3612 | -1799, 8522 | community |
+| Scarface chainsaw scene | 1931, 398 | community |
+| Haunted Marbelle Hotel | -648, 677 | community |
+| Piano playing old GTA themes | 553, 1400 | community |
+| Dolores the snake | -2357, -5520 | community |
+| Michael De Santa's boat | -2349, -5550 | community |
+| Grove Street cul-de-sac | -2899, -3345 | community |
+
+Every one carries its own summary, hint and tips written here — no GTABase wording is reproduced, because
+that text is theirs. Each record links back to its exact marker, and `data/credits.json` gained an entry
+for the source. **Tier follows evidence:** the 17 whose marker has a photo are `community`, the 6 that are
+description-only are `estimate`.
+
+### What was deliberately left out
+
+98 of the 121 were not added, in four groups:
+
+- **Already on this map** — their Halloween house with the Ghostbusters wagon (our Ghosts Exposed
+  Parkland), Dexter's Apartment, the Grayson zombie-deer sighting, and their crab lab, which our
+  `crab-outpost-pelican-valley` / `crab-lab-karkinos` records already cover.
+- **One joke, twelve pins** — the `#NoFlushers` QR chain appears 12 times (posters, flyers, bathroom
+  codes). Adding them all would fill the map with the same gag.
+- **One puzzle, four pins** — Vice City Portal Steps 1–3 plus Final Step are a single chain, better as one
+  record than four.
+- **Not enough to write honestly** — several markers have no description at all (for example *Killer
+  Whale* at 84, -1621) or a line that never says how to find the thing. Those stay in the backlog rather
+  than becoming a pin with invented directions.
+
+### Found while cross-checking: the crab lab disagrees
+
+GTABase puts the abandoned Pelican Valley lab — power/code puzzle, safe code **0072** — at
+**-3962, -4104**. Our two crab records sit at **-2600, -5200**, about **1.6 km** away, and describe the
+same place. One of the two is wrong; it is flagged here rather than moved, because neither position has
+been checked against the artwork yet.
+
+The Dog Island flag from §11 gained a third data point: GTABase has *Cool Dog* at **-3088, -5776** and a
+separate *Hidden Dog Island* at **-6623, 6796** (their text puts it on a beach north of the Zephyr
+Islands). Neither matches our pin at **-2700, -6500**, so that flag stands.
+
+### Checks
+
+- `data/locations.json` parses: **76 records**, 30 easter eggs, no duplicate ids, every `region` and
+  `county` resolves, every record has a hint and at least one source.
+- `node --check` clean on `js/data.js`, `js/map.js` and `js/markers.js`; `data/credits.json` parses with
+  its new entry; `DATA_V` bumped to `9` with `js/data.js?v=9` in `index.html`.
+- Two pin pairs sit within 40 m: the pre-existing `crab-outpost-pelican-valley` / `crab-lab-karkinos`
+  pair (0 m) and the new Dolores / Michael's boat pair (31 m, adjacent in the source too).
+- Not checked: the new pins were not opened in a browser this round.

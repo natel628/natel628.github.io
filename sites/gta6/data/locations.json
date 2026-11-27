@@ -1202,6 +1202,470 @@
         { "label": "PC Gamer — kit car locations", "url": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-kit-car-locations" },
         { "label": "Push Square — Wyman's classic cars", "url": "https://www.pushsquare.com/guides/gta-6-wymans-classic-car-locations" }
       ]
+    },
+    {
+      "id": "exploding-beached-whale",
+      "name": "Exploding beached whale",
+      "category": "easter-egg",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -7198, "y": 1433, "method": "estimated", "accuracy": 200 },
+      "verification": "community",
+      "summary": "A whale stranded on the Gulf shore bursts when you walk up to it, flinging cocaine bricks, a pistol and a wheelchair across the sand.",
+      "hint": "North-west coast between Capri and Port Gellhorn: follow the shoreline until you find the whale on the beach, then approach it on foot.",
+      "rewards": ["Cocaine bricks to loot", "A pistol", "A wheelchair"],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "The bang is the event — expect to take a little damage if you stand right next to it.",
+        "The bricks scatter a long way; bring a vehicle with space and sweep the beach afterwards."
+      ],
+      "sources": [
+        { "label": "GTABase map — Exploding Beached Whale", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#hidden-package-091" }
+      ]
+    },
+    {
+      "id": "fountain-of-youth-capri",
+      "name": "Fountain of Youth",
+      "category": "easter-egg",
+      "region": "capri",
+      "county": "mariana",
+      "position": { "x": -6839, "y": -63, "method": "estimated", "accuracy": 120 },
+      "verification": "community",
+      "summary": "A gazebo fountain in Capri that refills health, stamina and the third bar to their temporary maximum.",
+      "hint": "Capri, Mariana County: the fountain under the gazebo on the town's main green. Drink from it.",
+      "rewards": ["Full health, stamina and third bar (temporary ceiling)"],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "The boost raises the ceiling for the current run; it is not a permanent upgrade."
+      ],
+      "sources": [
+        { "label": "GTABase map — Fountain of Youth", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#hidden-package-129" }
+      ]
+    },
+    {
+      "id": "bugstar-van-capri",
+      "name": "Bugstar van and fumigation tent",
+      "category": "easter-egg",
+      "region": "capri",
+      "county": "mariana",
+      "position": { "x": -6666, "y": -87, "method": "estimated", "accuracy": 120 },
+      "verification": "estimate",
+      "summary": "A Bugstar pest-control van from Los Santos parked beside a fumigation tent in Capri — the GTA V exterminator front, transplanted to Leonida.",
+      "hint": "Capri: look for the tented building and the van carrying the Bugstar livery.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Scenery, not a drivable reward — the joke is the livery."
+      ],
+      "sources": [
+        { "label": "GTABase map — Easter Egg: Bugstar Van", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-014" }
+      ]
+    },
+    {
+      "id": "possessed-factory-capri",
+      "name": "Possessed-Lucia factory",
+      "category": "easter-egg",
+      "region": "capri",
+      "county": "mariana",
+      "position": { "x": -6604, "y": 508, "method": "estimated", "accuracy": 250 },
+      "verification": "estimate",
+      "summary": "A disused factory on Capri's northern edge with a paranormal set piece inside.",
+      "hint": "North Capri, Mariana County: the abandoned factory building; the scene triggers inside, not at the door.",
+      "rewards": [],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "A scripted scene rather than a pickup; there is nothing to carry out."
+      ],
+      "sources": [
+        { "label": "GTABase map — Easter Egg: Lucia Possessed", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-006" }
+      ]
+    },
+    {
+      "id": "disco-potty",
+      "name": "Disco toilet",
+      "category": "easter-egg",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -6440, "y": -1876, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "A portable toilet rigged with a disco ball and a bar: somebody threw a party in it, and the drinks are still there.",
+      "hint": "South of Capri on the coast road towards Bobcat Key: the lone portable toilet standing off the roadside.",
+      "rewards": ["Mixed drinks (consumable loot)"],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "A one-joke location; the drinks are the only thing in it."
+      ],
+      "sources": [
+        { "label": "GTABase map — Disco-Potty", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-100" }
+      ]
+    },
+    {
+      "id": "leviathan-graffiti",
+      "name": "Leviathan graffiti",
+      "category": "easter-egg",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -6377, "y": -6232, "method": "estimated", "accuracy": 250 },
+      "verification": "community",
+      "summary": "Graffiti on the southern islands insisting the Leviathan is real and lives in Leonida.",
+      "hint": "Southern Leonida Keys: the painted wall near the water, on the island marked for the rumour.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Part of the Leviathan rumour thread rather than a collectible; nothing to pick up."
+      ],
+      "sources": [
+        { "label": "GTABase map — Leviathan Graffiti", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-079" }
+      ]
+    },
+    {
+      "id": "satan-campfire-port-gellhorn",
+      "name": "Satan at the biker campfire",
+      "category": "easter-egg",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": -6337, "y": 4373, "method": "estimated", "accuracy": 300 },
+      "verification": "estimate",
+      "summary": "At midnight a biker camp outside Port Gellhorn starts a ritual: a van arrives, a portal opens and you end up fighting Satan.",
+      "hint": "Port Gellhorn, Kelly County: the biker camp on the northern side of town. Be there at midnight and drink with them.",
+      "rewards": ["Scripted boss encounter (no published loot)"],
+      "code": null,
+      "risk": "high",
+      "tips": [
+        "Time-gated: midnight only, so wait the clock out rather than driving in during the day.",
+        "It is a real fight, not a cutscene — arrive armed."
+      ],
+      "sources": [
+        { "label": "GTABase map — Easter Egg: Satan", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-005" }
+      ]
+    },
+    {
+      "id": "four-horses-monument",
+      "name": "Four Horses monument",
+      "category": "easter-egg",
+      "region": "port-gellhorn",
+      "county": "kelly",
+      "position": { "x": -5860, "y": 5524, "method": "estimated", "accuracy": 200 },
+      "verification": "community",
+      "summary": "A globe held up by four horses. Look through the lens during a lightning storm and the globe can be entered.",
+      "hint": "Kelly County, north-west of Port Gellhorn: the four horses statue with the globe. Use the lens in a thunderstorm, then fly a plane or helicopter into the globe.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Weather-gated: wait for a lightning storm before the lens does anything.",
+        "You need an aircraft to get inside once it opens."
+      ],
+      "sources": [
+        { "label": "GTABase map — Four Horses Monument (globe)", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-099" }
+      ]
+    },
+    {
+      "id": "satanic-room-benson-office",
+      "name": "Satanic room — Benson Real Estate",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -5702, "y": 6793, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "A candle-lit satanic shrine in the back of the Benson real estate office in Grayson.",
+      "hint": "Grayson, Lummox County: inside the Benson Real Estate office in town.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Pair it with the burning house and the ghost cat a few streets away — Grayson has the densest cluster of these."
+      ],
+      "sources": [
+        { "label": "GTABase map — Satanic Room (Benson Real Estate office)", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-070" }
+      ]
+    },
+    {
+      "id": "burning-house-grayson",
+      "name": "Burning house",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -5571, "y": 6868, "method": "estimated", "accuracy": 300 },
+      "verification": "community",
+      "summary": "A Grayson house that catches fire at random and is rebuilt step by step over later visits.",
+      "hint": "Grayson, Lummox County: the house on the edge of town. If it is not alight, come back another day.",
+      "rewards": [],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "The fire is random and the rebuild is gradual, so this one only shows itself across several in-game days."
+      ],
+      "sources": [
+        { "label": "GTABase map — Burning House", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-066" }
+      ]
+    },
+    {
+      "id": "ghost-cat-grayson",
+      "name": "Ghost cat",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -5517, "y": 6871, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "A cat that walks up beside the Grayson church, then vanishes.",
+      "hint": "Grayson, Lummox County: walk along the side of the church and wait for the cat to approach.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "A jump-scare, nothing to collect. The pet cemetery on the same hill is the bigger Ghost Trail secret."
+      ],
+      "sources": [
+        { "label": "GTABase map — Ghost Cat", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-101" }
+      ]
+    },
+    {
+      "id": "super-mario-block",
+      "name": "Super Mario question block",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -4082, "y": 7391, "method": "estimated", "accuracy": 200 },
+      "verification": "community",
+      "summary": "A floating question block in the Mount Kalaga backwoods that breaks open to unlock Mario and Luigi hats.",
+      "hint": "Northern Lummox County, in the Mount Kalaga woods: the block hangs over a clearing. Break it open.",
+      "rewards": ["Mario hat", "Luigi hat"],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "A wardrobe unlock rather than an item — check your outfits after breaking it."
+      ],
+      "sources": [
+        { "label": "GTABase map — Super Mario Block", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-044" }
+      ]
+    },
+    {
+      "id": "mineshaft-carcasses",
+      "name": "Mineshaft carcasses",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -3931, "y": 7881, "method": "estimated", "accuracy": 250 },
+      "verification": "estimate",
+      "summary": "A mine shaft piled with blood-soaked carcasses and fruit beside a broken ladder.",
+      "hint": "North Mount Kalaga, Lummox County: follow the mine adit until the shaft with the broken ladder.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "A scene, not a pickup; it sits close to the Moreau watchtower if you are doing the fire-tower mystery."
+      ],
+      "sources": [
+        { "label": "GTABase map — Easter Egg: Mineshaft Carcasses", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-012" }
+      ]
+    },
+    {
+      "id": "moreau-watchtower",
+      "name": "Moreau fire watchtower",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -3794, "y": 7781, "method": "estimated", "accuracy": 250 },
+      "verification": "estimate",
+      "summary": "One of the fire watchtowers whose radio plays unsettling audio after dark.",
+      "hint": "North Mount Kalaga, Lummox County: climb the watchtower and switch the radio on at night.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "The audio is the whole reward; it belongs to the fire-watchtower mystery, so visit the towers together."
+      ],
+      "sources": [
+        { "label": "GTABase map — Easter Egg: Moreau Watchtower", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-011" }
+      ]
+    },
+    {
+      "id": "hyde-island-kidnap",
+      "name": "Hyde Island kidnap",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -2550, "y": 8459, "method": "estimated", "accuracy": 400 },
+      "verification": "estimate",
+      "summary": "Setting foot on Hyde Island triggers a cutscene: a dart puts you down and you wake up as the hunted.",
+      "hint": "Hyde Island, off the far north coast of Lummox County. Approach by boat — the event fires the moment you land.",
+      "rewards": [],
+      "code": null,
+      "risk": "high",
+      "tips": [
+        "One-shot scripted hunt; go in at full health, because you start it wounded."
+      ],
+      "sources": [
+        { "label": "GTABase map — Hyde Island Kidnap Challenge", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-043" }
+      ]
+    },
+    {
+      "id": "cloned-bodies-bunker",
+      "name": "Cloned bodies bunker",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -1906, "y": 8384, "method": "estimated", "accuracy": 300 },
+      "verification": "community",
+      "summary": "A hillside bunker holding copies of Jason and Lucia, tied to The Final Flush.",
+      "hint": "North-east Lummox County: the sealed bunker in the hills above the north coast road.",
+      "rewards": [],
+      "code": null,
+      "risk": "medium",
+      "tips": [
+        "The scene depends on which protagonist you visit as.",
+        "The neighbouring bunker has a keypad door and its own code entry."
+      ],
+      "sources": [
+        { "label": "GTABase map — Cloned Bodies Bunker", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-068" }
+      ]
+    },
+    {
+      "id": "bunker-3612",
+      "name": "Hillside bunker — door code 3612",
+      "category": "easter-egg",
+      "region": "mount-kalaga",
+      "county": "lummox",
+      "position": { "x": -1799, "y": 8522, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "A keypad bunker door in the far north hills; the code is 3612.",
+      "hint": "Far north Lummox County: the bunker door set into the hillside, east of the cloned-bodies bunker.",
+      "rewards": ["Bunker interior access"],
+      "code": "3612",
+      "risk": "low",
+      "tips": [
+        "Six digits? No — 3612 is four. Type it slowly, the pad resets on a wrong entry."
+      ],
+      "sources": [
+        { "label": "GTABase map — Bunker (door code 3612)", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-064" }
+      ]
+    },
+    {
+      "id": "scarface-suite",
+      "name": "Scarface chainsaw scene",
+      "category": "easter-egg",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 1931, "y": 398, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "The Scarface chainsaw scene staged as a set piece: three men run off with a car and the hotel room is left with the chair in it.",
+      "hint": "Vice Beach, southern Vice City: the hotel block where the three men flee with the car.",
+      "rewards": [],
+      "code": null,
+      "risk": "low",
+      "tips": [
+        "A film reference, not a mission — watch it from the street."
+      ],
+      "sources": [
+        { "label": "GTABase map — Scarface", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-039" }
+      ]
+    },
+    {
+      "id": "haunted-marbelle-hotel",
+      "name": "Haunted Marbelle Hotel",
+      "category": "easter-egg",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": -648, "y": 677, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "Mannequins in the corridors, doors that open themselves and the lights cutting out — plus a basement safe whose code is written on the roof.",
+      "hint": "Vice City: the Marbelle Hotel. Read the paper on the roof for the safe code, then open the basement safe.",
+      "rewards": ["Basement safe"],
+      "code": "955214 (reported)",
+      "risk": "medium",
+      "tips": [
+        "The code comes from a paper on the roof; 955214 is the one players report, so re-read the paper if it fails."
+      ],
+      "sources": [
+        { "label": "GTABase map — Easter Egg: Haunted Marbelle Hotel", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-010" }
+      ]
+    },
+    {
+      "id": "piano-gta-themes",
+      "name": "Piano playing old GTA themes",
+      "category": "easter-egg",
+      "region": "vice-city",
+      "county": "vice-dale",
+      "position": { "x": 553, "y": 1400, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "A piano in a Rialto Islands garage that plays the Vice City (2002) theme, then GTA IV's, on a loop.",
+      "hint": "Rialto Islands, Vice City: break into the house garage — the piano is inside. Play it.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "The tunes cycle: Vice City, then GTA IV, then back to the start."
+      ],
+      "sources": [
+        { "label": "GTABase map — Piano Playing Previous GTA Themes", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-065" }
+      ]
+    },
+    {
+      "id": "dolores-the-snake",
+      "name": "Dolores the snake",
+      "category": "easter-egg",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -2357, "y": -5520, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "Dolores, a snake sitting on her eggs under a staircase in Key Lento, after Chapter 1.",
+      "hint": "Key Lento, Leonida Keys: under the exterior stairs of the building the map marks. She is not there before Chapter 1.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Chapter 1 has to be done first — she simply is not there before that."
+      ],
+      "sources": [
+        { "label": "GTABase map — Dolores the Snake", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#waink-curiosity-039" }
+      ]
+    },
+    {
+      "id": "michael-de-santa-boat",
+      "name": "Michael De Santa's boat",
+      "category": "easter-egg",
+      "region": "leonida-keys",
+      "county": "mariana",
+      "position": { "x": -2349, "y": -5550, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "The boat Michael loses in GTA V's Father/Son mission, washed up in the Keys.",
+      "hint": "Key Lento, Leonida Keys: the stranded boat by the water, a few metres from Dolores the snake.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "Scenery only — the game will not let you keep it."
+      ],
+      "sources": [
+        { "label": "GTABase map — Michael De Santa's Boat", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-030" }
+      ]
+    },
+    {
+      "id": "grove-street-hamlet",
+      "name": "Grove Street cul-de-sac",
+      "category": "easter-egg",
+      "region": "mariana",
+      "county": "mariana",
+      "position": { "x": -2899, "y": -3345, "method": "estimated", "accuracy": 150 },
+      "verification": "community",
+      "summary": "A suburban cul-de-sac in Hamlet laid out as a Grove Street nod to San Andreas.",
+      "hint": "Hamlet, Mariana County: the cul-de-sac on the edge of town, built to the San Andreas street plan.",
+      "rewards": [],
+      "code": null,
+      "risk": "none",
+      "tips": [
+        "A photo spot; there is nothing to collect."
+      ],
+      "sources": [
+        { "label": "GTABase map — Grove Street (San Andreas reference)", "url": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs#easter-egg-055" }
+      ]
     }
   ]
 }

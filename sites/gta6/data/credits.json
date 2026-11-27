@@ -33,6 +33,16 @@
       "requiredAttribution": "GTA VI Landmarks Data (CC BY 4.0) \u2014 https://map.gtadb.org"
     },
     {
+      "asset": "Easter egg positions",
+      "work": "GTABase interactive GTA 6 map — easter egg category",
+      "author": "GTABase and its contributors",
+      "via": "gtabase.com/gta-6/map",
+      "license": "Copyright GTABase — reference use only; no GTABase text is reproduced",
+      "sourceUrl": "https://www.gtabase.com/gta-6/map/?feature=easter-eggs",
+      "changes": "Positions were read from the published marker data and checked against the GTADB landmark grid before use (their frame and ours agree to within about 15 m). Every summary, hint and tip on those records was written for this map; nothing is copied from GTABase.",
+      "notes": "Needs its own permission check before this map is published commercially; the pin coordinates are facts, the wording is ours."
+    },
+    {
       "asset": "Map engine",
       "work": "Leaflet 1.9.4",
       "author": "Volodymyr Agafonkin",
