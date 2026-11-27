@@ -863,3 +863,65 @@ anyone who wants that.
 - `link-markers.mjs --write` re-parsed the file before writing; `locations.json` still parses; the app loads
   531 of 531 pins with the extra field present.
 - `DATA_V` 15 with `js/data.js?v=15`, because `locations.json` changed (the field is not shown in the UI yet).
+
+
+## 21. Bulk-pin audit: sound, with two pins to re-source
+
+The 451 bulk pins were imported from GTABase coordinates and never checked individually. This is that
+check: the colour under every pin, the distance to dry land for the wet ones, a seeded 30-pin sample read
+cell by cell, and all 130 stunt jumps read on contact sheets.
+
+**Completeness first.** The snapshot holds 453 markers in the four collections; the import holds 451. The
+two absent ones are not losses: `hidden-package-217` sits 4 m from `hidden-package-213` and
+`meteorite-025` 4 m from `meteorite-024`, and the import kept one of each pair. Every other marker in the
+four categories is present, ids unchanged.
+
+**What is under the crosshair.** Level-5 colour classification of all 451 pins:
+
+| Collection | Pins | open water | on/next to dry ground |
+|---|---|---|---|
+| Hidden packages | 146 | 10 | 136 |
+| Meteorites | 135 | 57 | 78 |
+| Stunt jumps | 130 | 17 | 113 |
+| Knife flights | 40 | 0 | 40 |
+
+The numbers are only alarming until you read the descriptions. Of the 10 wet packages, 8 are within 22 m of
+dry land (a jetty, a stranded boat, a floating box) and the other two say it outright — `hp-098` "under the
+water; floating debris marks the spot", `hp-118` "in the deck hatch of Donnie's sunken boat". Of the 57 wet
+meteorites, 31 are more than 60 m offshore, and 24 of those name the wreck, dive site or underwater facility
+in the description ("In the safe inside Underwater Facility 1. Code: 80085", "Dive under the yellow tower…
+to the sunken sub"); the rest name a crashed yacht, a broken ship or a plane's tail.
+
+Two are left over: **`meteorite-049` (-7824, 262) and `meteorite-078` (-654, 6877) have no description at
+all and sit in open water** — 049 more than 150 m from any dry pixel. Nothing in the source text justifies
+those positions, and the artwork cannot see a wreck that small. They stay on the map with their 40 m
+accuracy, but they are the only two pins this audit cannot vouch for, and they are the first thing to
+re-source if we want the collection to be provable end to end.
+
+**The 130 jumps.** 119 sit within 25 m of a paved pixel, 11 between 25 and 44 m (dirt-lot and beach ramps),
+all 17 wet ones within 22 m of dry land — causeway and bridge ramps crossing water. On the sheets every
+crosshair lands on a highway, a junction, a lay-by, a parking structure or the approach to a bridge; none is
+in open water or open country. The limit is inherent: **stunt-jump ramps and knife-flight gates are not drawn
+on the basemap**, so this confirms the pin is at a place a ramp can be, not that the ramp's pixel is right.
+That is the same standard §13 used; it is weaker than the marker-plus-artwork proof the 20 curated pins got.
+
+**The sample.** 30 pins, stratified by region inside each collection, seed 20261127, listed in
+`tools/data/bulk-audit-sample.json`. All 30 are plausible: 28 sit on or against a structure, jetty, roof,
+helipad, road or shoreline that matches the description; two packages (`hp-171`, `hp-230`) sit on open grass
+with nothing in view, which is normal for a cache hidden in vegetation but is a weaker match than the rest.
+
+**Why the frame is right.** A systematic offset is the failure mode that would not show up in any of the
+above. It is ruled out by §16: the 20 curated pins were re-anchored onto these same marker coordinates and
+checked against the artwork, landing 0–18 m from the features they name. The bulk pins are byte-identical to
+the marker list those 20 were checked against, so they inherit the same frame within the same few metres.
+
+**Verdict.** The import is sound: complete bar two deliberate duplicates, correctly framed, and every pin
+checked against the basemap either agrees with its source description or sits within the stated accuracy of
+ground where its object would be. Nothing here warrants withholding the pins. Two things to carry forward —
+`meteorite-049` and `meteorite-078` need a description or a re-source before anyone claims the meteorite set
+is verified, and the jump/knife-flight layers should keep saying "position from GTABase" rather than implying
+the ramp was seen.
+
+Not covered: the 421 bulk pins outside the sample were colour-screened but not read one by one, and no pin
+was moved. Sheets: `artifacts/bulk-sample.png`, `artifacts/bulk-jumps-1..3.png`, reproducible with
+`tools/audit-bulk-pins.py sheets OUTDIR`.

@@ -1,0 +1,187 @@
+{
+ "method": "proportional by region within each collection, seeded; 13 packages, 10 meteorites, 7 knife flights",
+ "seed": 20261127,
+ "captured": "2026-11-27",
+ "pins": [
+  {
+   "id": "gb-hidden-package-017",
+   "region": "mariana",
+   "x": -5902.0,
+   "y": -6181.0
+  },
+  {
+   "id": "gb-hidden-package-059",
+   "region": "leonida-keys",
+   "x": -4505.0,
+   "y": -3343.0
+  },
+  {
+   "id": "gb-hidden-package-117",
+   "region": "mariana",
+   "x": -5409.0,
+   "y": -7265.0
+  },
+  {
+   "id": "gb-hidden-package-144",
+   "region": "vice-city",
+   "x": -1164.0,
+   "y": -959.0
+  },
+  {
+   "id": "gb-hidden-package-145",
+   "region": "vice-city",
+   "x": -1494.0,
+   "y": -643.0
+  },
+  {
+   "id": "gb-hidden-package-146",
+   "region": "capri",
+   "x": -7313.0,
+   "y": 719.0
+  },
+  {
+   "id": "gb-hidden-package-159",
+   "region": "port-gellhorn",
+   "x": -7538.0,
+   "y": 2017.0
+  },
+  {
+   "id": "gb-hidden-package-171",
+   "region": "port-gellhorn",
+   "x": -4747.0,
+   "y": 2470.0
+  },
+  {
+   "id": "gb-hidden-package-181",
+   "region": "ambrosia",
+   "x": -491.0,
+   "y": 4469.0
+  },
+  {
+   "id": "gb-hidden-package-186",
+   "region": "mount-kalaga",
+   "x": -2443.0,
+   "y": 6475.0
+  },
+  {
+   "id": "gb-hidden-package-223",
+   "region": "port-gellhorn",
+   "x": -6494.0,
+   "y": 3872.0
+  },
+  {
+   "id": "gb-hidden-package-224",
+   "region": "leonida-keys",
+   "x": -4568.0,
+   "y": -3224.0
+  },
+  {
+   "id": "gb-hidden-package-230",
+   "region": "mount-kalaga",
+   "x": -5665.0,
+   "y": 6745.0
+  },
+  {
+   "id": "gb-meteorite-003",
+   "region": "mariana",
+   "x": -2874.0,
+   "y": -7084.0
+  },
+  {
+   "id": "gb-meteorite-013",
+   "region": "leonida-keys",
+   "x": -6108.0,
+   "y": -6497.0
+  },
+  {
+   "id": "gb-meteorite-035",
+   "region": "mount-kalaga",
+   "x": -5263.0,
+   "y": 8136.0
+  },
+  {
+   "id": "gb-meteorite-036",
+   "region": "mount-kalaga",
+   "x": -5134.0,
+   "y": 7494.0
+  },
+  {
+   "id": "gb-meteorite-061",
+   "region": "mariana",
+   "x": -3364.0,
+   "y": -7964.0
+  },
+  {
+   "id": "gb-meteorite-076",
+   "region": "mariana",
+   "x": -7633.0,
+   "y": -4826.0
+  },
+  {
+   "id": "gb-meteorite-078",
+   "region": "mount-kalaga",
+   "x": -654.0,
+   "y": 6877.0
+  },
+  {
+   "id": "gb-meteorite-083",
+   "region": "capri",
+   "x": -7692.0,
+   "y": -760.0
+  },
+  {
+   "id": "gb-meteorite-091",
+   "region": "port-gellhorn",
+   "x": -9632.0,
+   "y": 3272.0
+  },
+  {
+   "id": "gb-meteorite-126",
+   "region": "mount-kalaga",
+   "x": -1068.0,
+   "y": 7884.0
+  },
+  {
+   "id": "gb-knife-flight-003",
+   "region": "vice-city",
+   "x": 1693.6,
+   "y": 2338.9
+  },
+  {
+   "id": "gb-knife-flight-010",
+   "region": "vice-city",
+   "x": -441.2,
+   "y": 897.9
+  },
+  {
+   "id": "gb-knife-flight-011",
+   "region": "vice-city",
+   "x": -479.5,
+   "y": 541.2
+  },
+  {
+   "id": "gb-knife-flight-017",
+   "region": "vice-city",
+   "x": 1791.9,
+   "y": -233.0
+  },
+  {
+   "id": "gb-knife-flight-020",
+   "region": "vice-city",
+   "x": -818.9,
+   "y": -486.5
+  },
+  {
+   "id": "gb-knife-flight-035",
+   "region": "vice-city",
+   "x": -1195.9,
+   "y": -1973.8
+  },
+  {
+   "id": "gb-knife-flight-038",
+   "region": "vice-city",
+   "x": -1346.5,
+   "y": -2058.4
+  }
+ ]
+}
