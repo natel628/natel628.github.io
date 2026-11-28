@@ -12,10 +12,18 @@ G6.data = (function () {
     });
   }
 
-  function normalise(raw, catIds) {
+  // `sourceSet` says where the records came from. The hand-written file is one
+  // group of its own; each bulk record belongs to the GTABase feature layer it
+  // was imported from (hidden-package, safe, yellow-loot-box, …), which is what
+  // the importer names in `_gb.category`. Categories stay the map legend and are
+  // not used as groups: one category holds six different collectible sets.
+  function normalise(raw, catIds, sourceSet) {
     var locs = Array.isArray(raw) ? raw : (raw.locations || raw.collections || []);
     return locs.map(function (loc) {
       var cat = loc.category || CAT_MAP[loc.cat] || loc.cat || 'landmark';
+      var setId = sourceSet === 'curated'
+        ? 'curated'
+        : ((loc._gb && loc._gb.category) || sourceSet || 'other');
       if (catIds.indexOf(cat) === -1) cat = 'landmark';
 
       var pos = loc.position || { x: 0, y: 0, method: 'estimated', accuracy: 999 };
@@ -26,6 +34,8 @@ G6.data = (function () {
       return {
         id:           loc.id,
         name:         loc.name || '',
+        setId:        setId,
+        setLabel:     '',
         category:     cat,
         region:       loc.region || '',
         county:       loc.county || '',
@@ -64,8 +74,8 @@ G6.data = (function () {
 
   // Bump DATA_V whenever the JSON in data/ changes. GitHub Pages caches files for
   // ten minutes, so without this returning visitors keep seeing the old dataset
-  // long after a deploy. Both locations.json and collections.json ride on it.
-  var DATA_V = '18';
+  // long after a deploy. Every file in data/ rides on it.
+  var DATA_V = '19';
 
   function load(basePath) {
     var base = (basePath || '.').replace(/\/$/, '');
@@ -75,13 +85,15 @@ G6.data = (function () {
       fetchJSON(base + '/data/categories.json' + v),
       fetchJSON(base + '/data/regions.json' + v),
       fetchJSON(base + '/data/credits.json' + v),
-      fetchJSON(base + '/data/collections.json' + v)
+      fetchJSON(base + '/data/collections.json' + v),
+      fetchJSON(base + '/data/sets.json' + v)
     ]).then(function (results) {
       var rawLocs   = results[0];
       var catsData  = results[1];
       var regData   = results[2];
       var creds     = results[3];
       var rawColls  = results[4];
+      var setsData  = results[5];
 
       var categories = catsData.categories || catsData;
       var catIds     = categories.map(function (c) { return c.id; });
@@ -91,7 +103,17 @@ G6.data = (function () {
 
       // Curated records first, then the bulk collectible/challenge pins, so the
       // hand-written entries keep their order in the list and search results.
-      var locations = normalise(rawLocs, catIds).concat(normalise(rawColls, catIds));
+      var setDefs  = setsData.sets || [];
+      var setNames = {};
+      setDefs.forEach(function (s) {
+        if (s && s.id) setNames[s.id] = s.label || s.id;
+      });
+
+      var locations = normalise(rawLocs, catIds, 'curated')
+        .concat(normalise(rawColls, catIds, 'bulk'));
+      locations.forEach(function (l) {
+        l.setLabel = setNames[l.setId] || l.setId;
+      });
       var index     = buildIndex(locations);
 
       return {
@@ -100,6 +122,7 @@ G6.data = (function () {
         regions:    regions,
         counties:   counties,
         credits:    credits,
+        sets:       setDefs,
         index:      index
       };
     });

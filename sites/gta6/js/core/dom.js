@@ -89,17 +89,34 @@ G6.dom = (function () {
     return _toastHost;
   }
 
-  function toast(msg, type, duration) {
+  function toast(msg, type, duration, onUndo) {
     var host = getToastHost();
     var node = document.createElement('div');
     node.className = 'toast' + (type ? ' ' + type : '');
     node.textContent = msg;
-    host.appendChild(node);
-    setTimeout(function () {
+
+    var timer = setTimeout(function () {
       node.style.opacity = '0';
       node.style.transition = 'opacity .3s';
-      setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 320);
+      setTimeout(function () { node.remove(); }, 320);
     }, duration || 2800);
+
+    // The only action a toast carries today is Undo. It sits inside the message
+    // so it is read with it, and clicking it dismisses the toast at once.
+    if (onUndo) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'toast-action';
+      btn.textContent = 'Undo';
+      btn.addEventListener('click', function () {
+        clearTimeout(timer);
+        onUndo();
+        node.remove();
+      });
+      node.appendChild(btn);
+    }
+
+    host.appendChild(node);
   }
 
   window.G6 = G6;

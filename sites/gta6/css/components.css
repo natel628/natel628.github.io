@@ -259,6 +259,132 @@
   background: var(--cat-color, var(--g6-accent));
 }
 
+/* ── Bulk set actions ────────────────────────────────────── */
+.set-bulk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4) var(--sp-1);
+  border-top: 1px solid var(--g6-line);
+}
+
+.set-bulk-name {
+  flex: 1 0 100%;
+  font-size: .68rem;
+  color: var(--g6-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.set-bulk .filter-pill {
+  flex: 1;
+  justify-content: center;
+}
+
+.set-bulk .filter-pill:disabled {
+  opacity: .4;
+  cursor: default;
+}
+
+/* ── Set rows ────────────────────────────────────────────── */
+.set-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 19rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3) 0 var(--sp-4);
+}
+.set-row:hover { background: var(--g6-surface-2); }
+.set-row.is-active {
+  background: var(--g6-surface-2);
+  box-shadow: inset 2px 0 0 var(--set-color, var(--g6-accent));
+}
+
+.set-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 5px 0;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.set-row-top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+.set-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.set-name {
+  flex: 1;
+  min-width: 0;
+  font-size: .74rem;
+  color: var(--g6-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.set-count {
+  font-size: .64rem;
+  color: var(--g6-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.set-bar {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--g6-surface-3);
+  overflow: hidden;
+}
+
+.set-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--set-color, var(--g6-accent));
+}
+
+.set-next {
+  width: 26px; height: 26px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--g6-line-strong);
+  background: var(--g6-surface-2);
+  color: var(--g6-muted);
+  font-size: .8rem;
+  cursor: pointer;
+  transition: background var(--dur-1), color var(--dur-1);
+}
+.set-next:hover:not(:disabled) { background: var(--g6-surface-3); color: var(--g6-text); }
+.set-next:disabled { opacity: .35; cursor: default; }
+
 /* ── Verification toggle (segmented) ─────────────────────── */
 .verify-toggle-group {
   display: flex;
@@ -393,6 +519,56 @@
 #markerCount { font-weight: 600; color: var(--g6-text); }
 
 /* ── Detail panel ────────────────────────────────────────── */
+.detail-set {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3);
+  background: var(--g6-surface-2);
+  border: 1px solid var(--g6-line);
+  border-radius: var(--r-sm);
+  --set-color: var(--g6-accent);
+}
+
+.detail-set-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+
+.detail-set-name {
+  font-size: .74rem;
+  font-weight: 600;
+  color: var(--g6-text);
+}
+
+.detail-set-count {
+  font-size: .68rem;
+  color: var(--g6-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.detail-set-next {
+  margin-top: var(--sp-2);
+  width: 100%;
+  padding: 6px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--g6-line-strong);
+  background: var(--g6-surface-3);
+  color: var(--g6-text);
+  font-size: .7rem;
+  cursor: pointer;
+}
+.detail-set-next:hover:not(:disabled) { background: var(--g6-surface-2); }
+.detail-set-next:disabled { opacity: .45; cursor: default; }
+
+.detail-found-date {
+  font-size: .68rem;
+  color: var(--g6-muted);
+  margin-top: var(--sp-1);
+}
+
 .detail-header {
   display: flex;
   align-items: flex-start;
@@ -674,6 +850,18 @@
   max-width: 280px;
   text-align: center;
 }
+.toast-action {
+  margin-left: var(--sp-2);
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .toast.success { border-color: #5ad48a; color: #5ad48a; }
 .toast.error   { border-color: var(--g6-accent); color: var(--g6-accent); }
 .toast.info    { border-color: var(--g6-accent-2); color: var(--g6-accent-2); }
@@ -816,3 +1004,10 @@
   color: var(--cat-color, var(--g6-accent));
 }
 .cat-chip-dot { width: 7px; height: 7px; border-radius: 2px; background: currentColor; }
+
+/* Clear-all chip leads the sheet row so phones get the same reset as the rail */
+.cat-chip-clear {
+  color: var(--g6-accent);
+  border-color: color-mix(in srgb, var(--g6-accent) 55%, transparent);
+  font-weight: 600;
+}

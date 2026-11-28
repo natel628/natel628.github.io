@@ -1,0 +1,50 @@
+{
+  "schema": "gta6.sets/1",
+  "note": "Groups of pins, not a map legend. Each id except 'curated' is the GTABase feature layer its pins were imported from (collections.json _gb.category); the label is this site's wording. The 80 hand-written records in locations.json are the 'curated' group. Pins are counted into their set at runtime, so the counts here are deliberately absent.",
+  "sets": [
+    { "id": "curated", "label": "Curated finds", "category": null, "order": 0 },
+
+    { "id": "safe", "label": "Safes", "category": "stash", "order": 10 },
+    { "id": "treasure", "label": "Treasure", "category": "stash", "order": 11 },
+
+    { "id": "yellow-loot-box", "label": "Loot boxes", "category": "collectible", "order": 20 },
+    { "id": "scoop-container", "label": "Scoop containers", "category": "collectible", "order": 21 },
+    { "id": "cocaine-flamingo", "label": "Cocaine flamingos", "category": "collectible", "order": 22 },
+    { "id": "ahol-street-art", "label": "AHOL street art", "category": "collectible", "order": 23 },
+    { "id": "magazine", "label": "Magazines", "category": "collectible", "order": 24 },
+    { "id": "style-magazine", "label": "Style magazines", "category": "collectible", "order": 25 },
+
+    { "id": "hidden-package", "label": "Hidden packages", "category": "hidden-package", "order": 30 },
+    { "id": "meteorite", "label": "Meteorite fragments", "category": "meteorite", "order": 31 },
+    { "id": "easter-egg", "label": "Easter eggs", "category": "easter-egg", "order": 35 },
+
+    { "id": "unique-weapon", "label": "Unique weapons", "category": "weapon", "order": 40 },
+    { "id": "weapon-spawn", "label": "Weapon spawns", "category": "weapon", "order": 41 },
+
+    { "id": "standout-vehicle", "label": "Standout vehicles", "category": "vehicle", "order": 45 },
+    { "id": "vehicle-spawn", "label": "Vehicle spawns", "category": "vehicle", "order": 46 },
+
+    { "id": "under-the-bridge", "label": "Under the bridge", "category": "landmark", "order": 50 },
+    { "id": "landmark", "label": "Landmarks", "category": "landmark", "order": 51 },
+    { "id": "helipad", "label": "Helipads", "category": "landmark", "order": 52 },
+
+    { "id": "stunt-jump", "label": "Stunt jumps", "category": "stunt-jump", "order": 65 },
+    { "id": "knife-flight", "label": "Knife flights", "category": "knife-flight", "order": 67 },
+
+    { "id": "random-event", "label": "Random events", "category": "activity", "order": 70 },
+    { "id": "basketball", "label": "Basketball courts", "category": "activity", "order": 71 },
+    { "id": "drone-race", "label": "Drone races", "category": "activity", "order": 72 },
+    { "id": "race", "label": "Races", "category": "activity", "order": 73 },
+    { "id": "fishing", "label": "Fishing spots", "category": "activity", "order": 74 },
+
+    { "id": "bus-stop", "label": "Bus stops", "category": "shop", "order": 80 },
+    { "id": "atm", "label": "ATMs", "category": "shop", "order": 81 },
+    { "id": "street-food", "label": "Street food", "category": "shop", "order": 82 },
+    { "id": "bar", "label": "Bars", "category": "shop", "order": 83 },
+    { "id": "towable-atm", "label": "Towable ATMs", "category": "shop", "order": 84 },
+    { "id": "ev-charger", "label": "EV chargers", "category": "shop", "order": 85 },
+    { "id": "cafe-takeout", "label": "Cafe takeout", "category": "shop", "order": 86 },
+    { "id": "convenience-store", "label": "Convenience stores", "category": "shop", "order": 87 },
+    { "id": "gas-station", "label": "Gas stations", "category": "shop", "order": 88 }
+  ]
+}

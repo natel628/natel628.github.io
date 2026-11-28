@@ -89,12 +89,13 @@ function checkRecord(rec, where, { collection = false } = {}) {
   }
 }
 
-const [locationsFile, collectionsFile, categoriesFile, regionsFile, creditsFile] = await Promise.all([
+const [locationsFile, collectionsFile, categoriesFile, regionsFile, creditsFile, setsFile] = await Promise.all([
   read('locations.json'),
   read('collections.json'),
   read('categories.json'),
   read('regions.json'),
-  read('credits.json').catch(() => null)
+  read('credits.json').catch(() => null),
+  read('sets.json').catch(() => null)
 ]);
 
 const credits = creditsFile ? (creditsFile.entries || creditsFile.credits || []) : [];
@@ -115,6 +116,25 @@ if (!Array.isArray(credits) || credits.length === 0) {
     if (!isStr(c.asset) || !isStr(c.work)) err('credits.json', `entries[${i}] needs asset and work`);
   });
 }
+
+// Sets are the groups the rail filters by. Every imported GTABase feature needs
+// an entry or those pins land in an unnamed group; that is a data defect, not a
+// cosmetic one, so it fails the build like a bad category would.
+const sets = setsFile ? (setsFile.sets || []) : [];
+if (!sets.length) err('sets.json', 'no sets');
+const setIds = new Set();
+for (const [i, s] of sets.entries()) {
+  const where = `sets.json sets[${i}]`;
+  if (!isStr(s.id)) { err(where, 'missing id'); continue; }
+  if (!isStr(s.label)) err(where, `"${s.id}" has no label`);
+  if (setIds.has(s.id)) err(where, `duplicate set id "${s.id}"`);
+  setIds.add(s.id);
+  if (s.category !== null && s.category !== undefined && !categories.has(s.category)) {
+    err(where, `"${s.id}" names unknown category "${s.category}"`);
+  }
+  if (typeof s.order !== 'number' || !Number.isFinite(s.order)) err(where, `"${s.id}" needs a numeric order`);
+}
+if (!setIds.has('curated')) err('sets.json', 'the hand-written records need a "curated" set');
 
 const ids = new Map();
 function registerId(id, where) {
@@ -143,6 +163,8 @@ for (const rec of curated) {
   }
 }
 
+const importedKinds = new Set();
+
 for (const rec of collections) {
   const where = `collections.json ${rec.id || '(no id)'}`;
   registerId(rec.id, 'collections.json');
@@ -150,6 +172,17 @@ for (const rec of collections) {
   if (isStr(rec.category) && !categories.has(rec.category)) err(where, `unknown category "${rec.category}"`);
   if (isStr(rec.region) && !regions.has(rec.region)) err(where, `unknown region "${rec.region}"`);
   if (isStr(rec.county) && counties.size && !counties.has(rec.county)) err(where, `unknown county "${rec.county}"`);
+  if (rec._gb && isStr(rec._gb.category)) importedKinds.add(rec._gb.category);
+}
+
+// The app groups bulk pins by the feature they were imported from, so every one
+// of those features has to be named. An extra set with no pins is only a warning:
+// it shows as 0 / 0 until the next import fills it or someone prunes it.
+for (const kind of importedKinds) {
+  if (!setIds.has(kind)) err('sets.json', `no set entry for imported kind "${kind}"`);
+}
+for (const id of setIds) {
+  if (id !== 'curated' && !importedKinds.has(id)) warn('sets.json', `set "${id}" has no pins`);
 }
 
 // Pins on top of each other: legal, but almost always a sign two records are
@@ -190,6 +223,7 @@ if (locationsFile.updated !== today) {
 }
 
 console.log(`records: ${curated.length} curated + ${collections.length} collection = ${all.length}`);
+console.log(`sets: ${sets.length} (${importedKinds.size} imported features + curated)`);
 console.log(`markers linked: ${markersUsed.size}`);
 
 if (warnings.length) {

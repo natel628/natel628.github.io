@@ -16,6 +16,7 @@ G6.state = (function () {
     destination: null,
     prefs: {
       categories:   null,     // null = all enabled
+      set:          null,     // null = every set
       verification: ['official', 'community', 'estimate'],
       hideFound:    false,
       search:       '',

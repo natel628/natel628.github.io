@@ -231,12 +231,19 @@ body[data-sheet-snap="full"] #map { pointer-events: none; }
     width: var(--rail-w);
     height: 100dvh;
     transform: translateX(-100%);
-    transition: transform var(--dur-2) var(--ease);
+    /* Closed means out of the tab order and the accessibility tree, not just
+       off-screen; the delay keeps it visible until the slide-out finishes. */
+    visibility: hidden;
+    transition: transform var(--dur-2) var(--ease), visibility 0s linear var(--dur-2);
     z-index: var(--z-modal);
     box-shadow: 4px 0 24px rgba(0,0,0,.5);
   }
 
-  .rail.open { transform: translateX(0); }
+  .rail.open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--dur-2) var(--ease);
+  }
 
   .rail-text { display: initial !important; }
   .rail-section { display: flex !important; flex-direction: column; }
@@ -274,11 +281,10 @@ body[data-sheet-snap="full"] #map { pointer-events: none; }
 }
 
 /* ── Mobile (<760px) ────────────────────────────────────── */
+/* The rail stays available through the ☰ button: it is the same drawer as on a
+   tablet, and the one place the set filters live. The bottom sheet still owns
+   the location list and the detail. */
 @media (max-width: 759px) {
-  .rail {
-    display: none; /* replaced by bottom sheet */
-  }
-
   .detail-panel {
     display: none !important; /* handled by bottom sheet */
   }

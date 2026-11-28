@@ -102,6 +102,36 @@ G6.detail = (function () {
     }
     body.appendChild(metaRow);
 
+    // Which set this pin belongs to, and how far through it the player is. The
+    // button repeats the rail's jump, so a collectible run continues from the
+    // detail panel — which is the only panel a phone shows.
+    if (loc.setId) {
+      var prog    = G6.sets.progress(loc.setId);
+      var setBox  = _el('div', 'detail-set');
+      var setHead = _el('div', 'detail-set-head');
+      setHead.appendChild(_el('span', 'detail-set-name', loc.setLabel || loc.setId));
+      setHead.appendChild(_el('span', 'detail-set-count', prog.found + ' / ' + prog.total + ' found'));
+      setBox.appendChild(setHead);
+
+      var setBar  = _el('span', 'set-bar');
+      var setFill = _el('span', 'set-bar-fill');
+      setFill.style.width = (prog.total ? Math.round((prog.found / prog.total) * 100) : 0) + '%';
+      setBar.appendChild(setFill);
+      setBox.appendChild(setBar);
+
+      var setNext = _el('button', 'detail-set-next');
+      setNext.type = 'button';
+      if (prog.found >= prog.total) {
+        setNext.textContent = '\u2713 All found';
+        setNext.disabled = true;
+      } else {
+        setNext.textContent = '\u25B8 Next unfound in this set';
+        setNext.addEventListener('click', function () { G6.sets.next(loc.setId); });
+      }
+      setBox.appendChild(setNext);
+      body.appendChild(setBox);
+    }
+
     // Summary / hint
     if (loc.summary) {
       var sumField = _field('Description', loc.summary);
@@ -247,6 +277,16 @@ G6.detail = (function () {
 
     body.appendChild(actions);
 
+    // When the pin was marked found. Bulk edits stamp the same timestamp, so a
+    // set marked in one go says so rather than looking individually checked.
+    // Progress imported from the old format stored `true`, not a date.
+    if (isFound) {
+      var foundWhen = _foundDate(state.found[loc.id]);
+      var foundNote = _el('div', 'detail-found-date');
+      foundNote.textContent = foundWhen ? 'Found ' + foundWhen : 'Found (date not recorded)';
+      body.appendChild(foundNote);
+    }
+
     // ── Note ───────────────────────────────────────────────
     var noteField = _el('div', 'detail-field');
     noteField.appendChild(_label('My Note'));
@@ -268,6 +308,13 @@ G6.detail = (function () {
 
     frag.appendChild(body);
     return frag;
+  }
+
+  function _foundDate(value) {
+    if (typeof value !== 'string') return '';
+    var date = new Date(value);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
   function _field(labelText, value) {

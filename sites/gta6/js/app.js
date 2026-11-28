@@ -27,11 +27,14 @@
 
   // ── Progress ring update ───────────────────────────────────
   function updateProgressRing(found, locations) {
-    var total   = locations.length;
-    var doneIds = Object.keys(found).filter(function (id) {
-      return locations.some(function (l) { return l.id === id; });
-    });
-    var done    = doneIds.length;
+    var total = locations.length;
+
+    // Walk the data and probe `found`, which is a plain id->mark object, so the
+    // count is one pass: a pin counts only while it is still in the map, which
+    // keeps stray ids in saved progress out. Truthiness is how the sets, marks
+    // and filters already read the same object.
+    var done = locations.filter(function (l) { return found[l.id]; }).length;
+
     var pct     = total > 0 ? Math.round((done / total) * 100) : 0;
     var circ    = 2 * Math.PI * 18;  // r=18
 
@@ -77,7 +80,9 @@
       }
     }
 
-    // Category filters
+    // Set filters, then category filters: a set narrows to one named group,
+    // categories stay the cross-cutting legend filter.
+    _buildSetFilters(data);
     _buildCategoryFilters(data);
 
     // Verification toggle
@@ -106,21 +111,7 @@
     var clearFiltersBtn = document.getElementById('clearFiltersBtn');
     if (clearFiltersBtn) {
       clearFiltersBtn.addEventListener('click', function () {
-        var prefs = Object.assign({}, G6.state.get().prefs, {
-          categories:   null,
-          verification: ['official', 'community', 'estimate'],
-          hideFound:    false,
-          search:       ''
-        });
-        G6.state.set({ prefs: prefs });
-        if (searchInput) searchInput.value = '';
-        var clearBtn2 = document.getElementById('searchClear');
-        if (clearBtn2) clearBtn2.classList.remove('visible');
-        _syncHideFound(hideFoundBtn, false);
-        _syncCategoryUI(data.categories, null);
-        _syncVerifyUI(['official', 'community', 'estimate']);
-        G6.filters.update(data.locations);
-        saveProgress();
+        _clearAllFilters(data);
       });
     }
 
@@ -296,18 +287,226 @@
     });
   }
 
+  // One reset behind every clear-all control: the rail pill and the mobile
+  // sheet chip, so phones (where the rail is hidden) can clear filters too.
+  function _clearAllFilters(data) {
+    var prefs = Object.assign({}, G6.state.get().prefs, {
+      categories:   null,
+      set:          null,
+      verification: ['official', 'community', 'estimate'],
+      hideFound:    false,
+      search:       ''
+    });
+    G6.state.set({ prefs: prefs });
+    var searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    var searchClearBtn = document.getElementById('searchClear');
+    if (searchClearBtn) searchClearBtn.classList.remove('visible');
+    _syncHideFound(document.getElementById('hideFoundBtn'), false);
+    _syncCategoryUI(data.categories, null);
+    _syncVerifyUI(['official', 'community', 'estimate']);
+    G6.filters.update(data.locations);
+    saveProgress();
+  }
+
   function _syncCategoryUI(categories, activeCats) {
     categories.forEach(function (cat) {
-      var row = document.querySelector('[data-cat-id="' + cat.id + '"]');
-      if (!row) return;
       var active = !activeCats || activeCats.indexOf(cat.id) !== -1;
-      row.classList.toggle('disabled', !active);
-      row.setAttribute('aria-checked', String(active));
+      var row = document.querySelector('[data-cat-id="' + cat.id + '"]');
+      if (row) {
+        row.classList.toggle('disabled', !active);
+        row.setAttribute('aria-checked', String(active));
+      }
+      // The mobile sheet chips are a second view of the same filter, so they
+      // follow every change no matter which control made it.
+      var chip = document.querySelector('[data-chip-cat-id="' + cat.id + '"]');
+      if (chip) {
+        chip.setAttribute('aria-pressed', String(active));
+        chip.classList.toggle('active', active);
+      }
     });
   }
 
   function _countCat(locations, catId) {
     return locations.filter(function (l) { return l.category === catId; }).length;
+  }
+
+  // ── Set filters ────────────────────────────────────────────
+  // The bulk pins were imported one GTABase feature layer at a time, and that
+  // layer is a named set (Hidden packages, Safes, Loot boxes, …); the 80
+  // hand-written records are one group of their own. Each row shows how much of
+  // its set is found, filters the map when clicked, and jumps to the next
+  // unfound pin in that set — a collectible run no longer means hunting 5,089
+  // pins by hand.
+  var _setRows = [];
+
+  function _buildSetFilters(data) {
+    var container = document.getElementById('setFilters');
+    if (!container) return;
+    container.innerHTML = '';
+    _setRows = [];
+
+    var summary = G6.sets.summary();
+
+    var catColor = {};
+    data.categories.forEach(function (c) { catColor[c.id] = c.color; });
+
+    container.appendChild(_setRow({
+      id: null, label: 'All pins', color: 'var(--g6-muted)', total: summary.all.total
+    }));
+
+    (data.sets || []).slice().sort(function (a, b) {
+      return (a.order || 0) - (b.order || 0);
+    }).forEach(function (def) {
+      var color = def.id === 'curated'
+        ? 'var(--g6-accent)'
+        : (catColor[def.category] || 'var(--g6-accent)');
+      container.appendChild(_setRow({
+        id: def.id,
+        label: def.label || def.id,
+        color: color,
+        total: (summary.bySet[def.id] || { total: 0 }).total
+      }));
+    });
+
+    [['setBulkMark', G6.sets.markAllFound], ['setBulkClear', G6.sets.clearFound]]
+      .forEach(function (pair) {
+        var btn = document.getElementById(pair[0]);
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+          var setId = G6.state.get().prefs.set;
+          if (setId) pair[1](setId);
+        });
+      });
+
+    // Paint the saved progress without waiting for the first state change.
+    _syncSetProgress();
+    _syncSetUI(G6.state.get().prefs.set);
+  }
+
+  function _setRow(def) {
+    var row = document.createElement('div');
+    row.className = 'set-row';
+    row.setAttribute('data-set-id', def.id || 'all');
+    row.style.setProperty('--set-color', def.color);
+
+    var main = document.createElement('button');
+    main.type = 'button';
+    main.className = 'set-row-main';
+    main.setAttribute('aria-pressed', 'false');
+    main.setAttribute('aria-label', def.label + ' \u2014 ' + def.total + ' pins');
+
+    var top = document.createElement('span');
+    top.className = 'set-row-top';
+
+    var dot = document.createElement('span');
+    dot.className = 'set-dot';
+    dot.style.background = def.color;
+
+    var name = document.createElement('span');
+    name.className = 'set-name';
+    name.textContent = def.label;
+
+    var count = document.createElement('span');
+    count.className = 'set-count';
+    count.textContent = '0 / ' + def.total;
+
+    top.appendChild(dot);
+    top.appendChild(name);
+    top.appendChild(count);
+
+    var bar = document.createElement('span');
+    bar.className = 'set-bar';
+    var fill = document.createElement('span');
+    fill.className = 'set-bar-fill';
+    bar.appendChild(fill);
+
+    main.appendChild(top);
+    main.appendChild(bar);
+    main.addEventListener('click', function () { _applySet(def.id); });
+
+    var nextBtn = document.createElement('button');
+    nextBtn.type = 'button';
+    nextBtn.className = 'set-next';
+    nextBtn.textContent = '\u25B8';
+    nextBtn.setAttribute('aria-label', 'Next unfound in ' + def.label);
+    nextBtn.title = 'Go to the next unfound pin in ' + def.label;
+
+    if (def.id) {
+      nextBtn.addEventListener('click', function () { G6.sets.next(def.id); });
+    } else {
+      // "All pins" has no one set to tour; the per-set buttons do that.
+      nextBtn.hidden = true;
+    }
+
+    row.appendChild(main);
+    row.appendChild(nextBtn);
+
+    _setRows.push({
+      id: def.id || null, label: def.label, row: row, main: main,
+      count: count, fill: fill, next: nextBtn
+    });
+    return row;
+  }
+
+  function _applySet(setId) {
+    var s = G6.state.get();
+    // Clicking the active set clears it, so the row is its own off switch.
+    var next  = (s.prefs.set === setId) ? null : setId;
+    var prefs = Object.assign({}, s.prefs, { set: next });
+    G6.state.set({ prefs: prefs });
+    G6.filters.update(s.locations);
+    saveProgress();
+  }
+
+  function _syncSetProgress() {
+    if (!_setRows.length) return;
+
+    var summary = G6.sets.summary();
+    _setRows.forEach(function (r) {
+      var t = r.id ? (summary.bySet[r.id] || { found: 0, total: 0 }) : summary.all;
+      r.count.textContent = t.found + ' / ' + t.total;
+      r.fill.style.width  = (t.total ? Math.round((t.found / t.total) * 100) : 0) + '%';
+      if (r.next && !r.next.hidden) r.next.disabled = t.found >= t.total;
+    });
+
+    _syncSetBulk(summary);
+  }
+
+  // The bulk bar belongs to the active set, so it is only shown once one is
+  // selected — and it names that set, because the actions affect all of it.
+  function _syncSetBulk(summary) {
+    var bar = document.getElementById('setBulk');
+    if (!bar) return;
+
+    var setId = G6.state.get().prefs.set;
+    var row   = null;
+    for (var i = 0; i < _setRows.length; i++) {
+      if (_setRows[i].id === setId) { row = _setRows[i]; break; }
+    }
+
+    if (!setId || !row) { bar.hidden = true; return; }
+
+    var t = summary.bySet[setId] || { found: 0, total: 0 };
+    bar.hidden = false;
+
+    var name = document.getElementById('setBulkName');
+    if (name) name.textContent = row.label + ' \u00b7 ' + t.found + ' / ' + t.total;
+
+    var mark = document.getElementById('setBulkMark');
+    if (mark) mark.disabled = t.found >= t.total;
+
+    var clear = document.getElementById('setBulkClear');
+    if (clear) clear.disabled = t.found === 0;
+  }
+
+  function _syncSetUI(activeSet) {
+    var active = activeSet || null;
+    _setRows.forEach(function (r) {
+      var on = r.id === active;
+      r.row.classList.toggle('is-active', on);
+      r.main.setAttribute('aria-pressed', String(on));
+    });
   }
 
   function _buildVerifyToggle(data) {
@@ -325,6 +524,7 @@
       var btn = document.createElement('button');
       btn.className = 'verify-toggle-btn';
       btn.setAttribute('role', 'checkbox');
+      btn.setAttribute('data-tier', tier.id);
       btn.setAttribute('aria-checked', 'true');
       btn.style.setProperty('--tier-color', tier.color);
       btn.textContent = tier.label;
@@ -403,12 +603,13 @@
     el.innerHTML = CREDITS[G6.map.getBaseMap()] || CREDITS.community;
   }
 
+  // Scoped to the verification group: the base-map switch reuses the button
+  // class, and matching by index over every such button would flip it too.
   function _syncVerifyUI(active) {
-    var btns = document.querySelectorAll('.verify-toggle-btn');
-    btns.forEach(function (btn, i) {
-      var id = ['official', 'community', 'estimate'][i];
-      if (!id) return;
-      btn.setAttribute('aria-checked', String(active.indexOf(id) !== -1));
+    var btns = document.querySelectorAll('#verifyToggleGroup .verify-toggle-btn');
+    btns.forEach(function (btn) {
+      var id = btn.getAttribute('data-tier');
+      if (id) btn.setAttribute('aria-checked', String(active.indexOf(id) !== -1));
     });
   }
 
@@ -506,7 +707,7 @@
 
       var sub = document.createElement('div');
       sub.className = 'loc-row-sub';
-      sub.textContent = cat.label + (loc.region ? ' · ' + loc.region : '');
+      sub.textContent = (loc.setLabel || cat.label) + (loc.region ? ' · ' + loc.region : '');
 
       body.appendChild(nameRow);
       body.appendChild(sub);
@@ -640,6 +841,16 @@
     // Build category chips
     var chips = document.getElementById('sheetChips');
     if (chips) {
+      var clearChip = document.createElement('button');
+      clearChip.type = 'button';
+      clearChip.className = 'cat-chip cat-chip-clear';
+      clearChip.textContent = 'Clear all';
+      clearChip.setAttribute('aria-label', 'Clear all filters');
+      clearChip.addEventListener('click', function () { _clearAllFilters(data); });
+      chips.appendChild(clearChip);
+
+      var activeCats = G6.state.get().prefs.categories;
+
       data.categories.forEach(function (cat) {
         var chip = document.createElement('button');
         chip.className = 'cat-chip';
@@ -650,7 +861,10 @@
         dot.style.background = cat.color;
         chip.appendChild(dot);
         chip.appendChild(document.createTextNode(cat.short || cat.label));
-        chip.setAttribute('aria-pressed', 'true');
+        chip.setAttribute('data-chip-cat-id', cat.id);
+        var chipActive = !activeCats || activeCats.indexOf(cat.id) !== -1;
+        chip.setAttribute('aria-pressed', String(chipActive));
+        chip.classList.toggle('active', chipActive);
 
         chip.addEventListener('click', function () {
           var s       = G6.state.get();
@@ -663,8 +877,7 @@
           G6.state.set({ prefs: prefs });
           G6.filters.update(data.locations);
           saveProgress();
-          chip.setAttribute('aria-pressed', String(!newCats || newCats.indexOf(cat.id) !== -1));
-          chip.classList.toggle('active', !newCats || newCats.indexOf(cat.id) !== -1);
+          _syncCategoryUI(data.categories, newCats);
         });
 
         chips.appendChild(chip);
@@ -1000,6 +1213,13 @@
 
     // Update progress ring
     updateProgressRing(s.found, s.locations);
+
+    // Filter controls follow prefs no matter who changed them: the next-unfound
+    // action opens a category or a tier so its pin is really on the map.
+    _syncSetProgress();
+    _syncSetUI(s.prefs.set);
+    _syncCategoryUI(s.categories, s.prefs.categories);
+    _syncVerifyUI(s.prefs.verification);
 
     // Show / hide detail
     if (s.selectedId && !s.selectedId.startsWith('custom:')) {

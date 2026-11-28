@@ -13,9 +13,9 @@
   <!-- App CSS -->
   <link rel="stylesheet" href="css/tokens.css?v=2">
   <link rel="stylesheet" href="css/base.css?v=2">
-  <link rel="stylesheet" href="css/layout.css?v=2">
+  <link rel="stylesheet" href="css/layout.css?v=3">
   <link rel="stylesheet" href="css/map.css?v=6">
-  <link rel="stylesheet" href="css/components.css?v=3">
+  <link rel="stylesheet" href="css/components.css?v=8">
 </head>
 <body>
 
@@ -102,11 +102,24 @@
         </div>
       </div>
 
+      <!-- Sets -->
+      <div class="rail-section">
+        <div class="rail-section-header rail-text">
+          <span>Sets</span>
+        </div>
+        <div id="setFilters" class="set-list" role="group" aria-label="Pin sets"></div>
+        <div id="setBulk" class="set-bulk" hidden>
+          <span id="setBulkName" class="set-bulk-name"></span>
+          <button id="setBulkMark" class="filter-pill" type="button" aria-describedby="setBulkName">Mark all found</button>
+          <button id="setBulkClear" class="filter-pill" type="button" aria-describedby="setBulkName">Clear set</button>
+        </div>
+      </div>
+
       <!-- Categories -->
       <div class="rail-section">
         <div class="rail-section-header rail-text">
           <span>Categories</span>
-          <button id="clearFiltersBtn" class="filter-pill" style="font-size:.65rem;padding:2px 6px">Clear all</button>
+          <button id="clearFiltersBtn" type="button" class="filter-pill" style="font-size:.65rem;padding:2px 6px">Clear all</button>
         </div>
         <div id="catFilters" role="group" aria-label="Category filters"></div>
       </div>
@@ -266,17 +279,18 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
 
 <!-- App JS (load order matters) -->
-<script src="js/core/dom.js?v=1"></script>
+<script src="js/core/dom.js?v=3"></script>
 <script src="js/core/geo.js?v=1"></script>
-<script src="js/core/state.js?v=2"></script>
+<script src="js/core/state.js?v=4"></script>
 <script src="js/core/storage.js?v=1"></script>
-<script src="js/data.js?v=18"></script>
+<script src="js/data.js?v=20"></script>
 <script src="js/map.js?v=12"></script>
 <script src="js/markers.js?v=7"></script>
-<script src="js/filters.js?v=3"></script>
-<script src="js/detail.js?v=5"></script>
+<script src="js/filters.js?v=4"></script>
+<script src="js/sets.js?v=4"></script>
+<script src="js/detail.js?v=7"></script>
 <script src="js/navigation.js?v=1"></script>
-<script src="js/app.js?v=9"></script>
+<script src="js/app.js?v=15"></script>
 
 </body>
 </html>

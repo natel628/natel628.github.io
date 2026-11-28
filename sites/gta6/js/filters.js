@@ -6,12 +6,14 @@ G6.filters = (function () {
   function computeVisible(locations, prefs, found) {
     var search    = (prefs.search || '').toLowerCase().trim();
     var activeCats  = prefs.categories;   // null = all
+    var activeSet   = prefs.set || null;  // null = every set
     var activeVerif = prefs.verification  || ['official', 'community', 'estimate'];
     var hideFound   = !!prefs.hideFound;
 
     var ids = [];
     locations.forEach(function (loc) {
       if (activeCats && activeCats.indexOf(loc.category) === -1)   return;
+      if (activeSet && loc.setId !== activeSet)                     return;
       var v = loc.verification || 'community';
       if (activeVerif.indexOf(v) === -1)                           return;
       if (hideFound && found[loc.id])                               return;
@@ -19,7 +21,7 @@ G6.filters = (function () {
         // Codes and tips are searchable too: the question is usually "what is
         // 80085" or "is there a code here", not "what is this pin called".
         var haystack = [loc.name, loc.summary, loc.hint, loc.region, loc.category,
-                        loc.code || '', (loc.tips || []).join(' '),
+                        loc.setLabel || '', loc.code || '', (loc.tips || []).join(' '),
                         (loc.rewards || []).join(' ')].join(' ').toLowerCase();
         if (haystack.indexOf(search) === -1)                       return;
       }

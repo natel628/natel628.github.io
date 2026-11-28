@@ -1142,3 +1142,180 @@ operations, and the remaining one-off kinds. That is a data decision, not a rend
 
 Not covered: the 4,558 bulk pins have never been read one by one, and the basemap has not been checked
 against the new pins in the field. Both statements were true in §23 and remain true.
+
+## 25. Pins grouped into their named sets
+
+**Why.** After §24 the map held 5,089 pins with one checkbox per *category*. A category is the pin
+legend, not a collectible set: `collectible` covered six unrelated hunts (585 loot boxes, 156 scoop
+containers, 113 cocaine flamingos, 112 AHOL artworks, 96 magazines, 47 style magazines), and there was
+no way to ask "how many safes are left?" or "take me to the next one". That is the question a
+completionist actually has.
+
+**What the grouping is.** Every bulk record was imported one GTABase feature layer at a time, and the
+importer already stored that layer in `_gb.category` (34 values). That value is the set. `data.js` now
+stamps it on each location as `setId`, `data/sets.json` supplies the label, colour category and order for
+all 34 layers plus the 80 hand-written records, and nothing is regrouped by map category. Coordinates,
+positions, accuracy and verification are untouched — this is a view over the existing records.
+
+| Set | Pins | Set | Pins |
+| --- | ---: | --- | ---: |
+| Loot boxes | 585 | Bus stops | 287 |
+| Random events | 512 | ATMs | 227 |
+| Safes | 300 | Under the bridge | 202 |
+| Standout vehicles | 264 | Vehicle spawns | 180 |
+| Street food | 163 | Scoop containers | 156 |
+| Hidden packages | 146 | Bars | 140 |
+| Meteorite fragments | 135 | Stunt jumps | 130 |
+| Towable ATMs | 127 | EV chargers | 126 |
+| Cocaine flamingos | 113 | AHOL street art | 112 |
+| Cafe takeout | 112 | Unique weapons | 111 |
+
+(34 imported sets total, 5,009 bulk pins, plus **Curated finds** with the 80 hand-written records.) All
+progress numbers come from one `summary()` pass in `js/sets.js`, which feeds the rail, the detail panel
+and the jump, so the three cannot disagree.
+
+**In the UI.**
+
+- **Sets** section in the rail: one row per set with its own `found / total` and a progress bar, an
+  **All pins** row that clears the filter, and a click-to-filter row that toggles off when clicked again.
+  The 35-row list scrolls inside a 19 rem box so it does not bury the rest of the rail.
+- **Next unfound** button on every set row (and in the detail panel for the selected pin's set). It picks
+  the unfound pin in that set **closest to the map centre**, so repeated presses sweep outward from where
+  you are instead of jumping across Leonida. It skips the pin you are already on — that one is 0 m away
+  and would otherwise win every time — and it opens the category, tier and search filters that would hide
+  the target, because the button promises to take you to a pin. It flies to the deepest honest zoom.
+- **Detail panel** gained a small set block: set name, `found / total`, bar, and the same next button —
+  what you see on a phone while looking at a pin.
+- **Phone.** Below 760 px the rail was `display:none` (the bottom sheet replaced it), which also left the
+  toolbar's ☰ doing nothing. The rail is now the same drawer as on a tablet at every width, so phones get
+  the one set UI rather than a second picker to keep in sync. The jump closes the drawer, because the
+  detail panel opens behind it in the sheet.
+- The list row subtitle now names the set ("Safes · mount-kalaga") instead of the broad category, and
+  searching a set name ("loot boxes") returns its 585 pins.
+
+**Checks actually run.**
+
+- `node tools/validate.mjs` — exit 0, 5,089 records, 35 sets, all 34 imported features named. New gate:
+  any `_gb.category` without a `sets.json` entry fails; a set with no pins warns.
+- Set sums: 5,009 bulk pins map to the 34 sets, 0 unmapped, 0 empty definitions.
+- Chrome, 1440×900: 36 rows; Hidden packages → `146 of 5089`, 146 list rows, subtitle "Hidden packages ·
+  mariana", `aria-pressed="true"`; jump → the nearest unfound in-set pin at zoom 0, detail showing the
+  same `0 / 146` as the row; repeated jumps advance to different pins; marking found updates the row, bar,
+  detail and ring together; All pins restores 5,089; Curated finds gives exactly 80. The jump's tier
+  change leaves the base-map switch alone.
+- All-found state: marking a 36-pin set complete shows `36 / 36`, 100%, the ▸ disabled, and the action
+  reports "All 36 Fishing spots are marked found" instead of moving.
+- Chrome, 390×844: ☰ opens a 280 px drawer above the sheet with the set rows; Hidden packages filters to
+  `146 of 5089` with the drawer still open; the jump closes the drawer and opens the pin's detail in the
+  sheet at zoom 0; the selected set survives a reload; the overlay closes the drawer and keeps the filter;
+  the closed drawer is `visibility:hidden`, so it is not in the tab order. Chrome at 900×800: the same
+  drawer and the same set rows, Meteorites → `135 of 5089`.
+- No console errors during any of the above.
+
+Not checked: Firefox and Safari, a physical phone, and the 451 older bulk records beyond the fact that
+their `_gb.category` values all resolve to a named set.
+
+## 26. Bulk set progress, with an undo and a found date
+
+**Why.** §25 made per-set progress visible but only enterable one pin at a time. Anyone who had already
+played had hundreds of pins behind them, and a set they never intend to chase (287 bus stops, 227 ATMs)
+could only be written off by clicking each pin. That is the difference between a tracker and a report.
+
+**What it does.** A set-scoped bar sits under the set list and appears only while a set is active, because
+both actions affect the whole set: it names the set and its `found / total`, then offers **Mark all found**
+and **Clear set**.
+
+- **Mark all found** marks only the pins in that set that are not already found, each stamped with the
+  current ISO timestamp, so a set marked in one go still has real dates behind it.
+- **Clear set** removes the found flag from every found pin in that set. It never touches another set.
+- **The confirmation names the count** ("Mark all 47 pins in \"Treasure\" as found?", "Clear 1 pin in
+  \"Treasure\"?"); marking also says how many are already found, and both say no other set is affected and
+  that the change can be undone. It is the same native `confirm` used by Reset, so nothing new has to be
+  learned. A button with nothing to do (every pin found, or none found) is disabled, and the functions
+  return `false` without confirming an empty change.
+- **Undo** rides in the success toast for nine seconds and restores the previous value for each affected
+  id — a cleared pin keeps its original date, not the time of the undo. It only reverts a pin that still
+  holds the state this action left (the bulk timestamp, or still unfound), so a pin the user changed in
+  the meantime keeps the newer state. The toast component gained one optional undo callback; that is the
+  only new UI mechanism.
+- **The detail panel now says when a pin was found** — "Found 28 Nov 2026", from the stored timestamp.
+  Progress imported from the older format stored `true` instead of a date, and that shows as "Found (date
+  not recorded)" rather than a wrong date.
+
+**Deliberate limits.** The actions cover the set, not the filtered view: a search or tier filter still in
+place does not silently protect the hidden pins. The undo is a nine-second window and is not persisted —
+a reload keeps the bulk change. On desktop the rail collapses while a pin's detail is open (unchanged), so
+bulk actions are used from the rail with no pin open; on a phone the same bar is in the drawer.
+
+**Checks actually run.**
+
+- `node --check` on all JS and `node tools/validate.mjs` — exit 0, 5,089 records, 35 sets.
+- Chrome 1440×900, Treasure (47): bar hidden with no set active; selecting the set shows "Treasure · 0 /
+  47" with Clear disabled; **Mark all found** asks "Mark all 47 pins in \"Treasure\" as found? … You can
+  undo this." and yields 47/47, 47 ISO timestamps, ring `47 / 5089`, ▸ and Mark disabled, Clear enabled,
+  0 found in any other set. The detail panel for one of them said "Found Nov 27, 2026" (the VM clock
+  reads the 27th; the stored value is the 28th UTC). Undo returned 0/47 and removed the date line.
+- **Clear:** with one pin found, Clear asks "Clear 1 pin in \"Treasure\"?" and leaves 0/47; undo restored
+  1/47. With a known timestamp (`2026-01-05T10:00:00.000Z`) cleared and undone, the stored value came
+  back byte-identical — the undo does not re-stamp.
+- **Cancel:** dismissing the Mark confirmation left 0 of 46 changed; the dialog named the remaining 46.
+- **No-op:** `clearFound` on a set with nothing found returned false and changed nothing, with no dialog
+  and no toast. Legacy progress (`true`) rendered "Found (date not recorded)".
+- **Undo after another change:** two known dates cleared, one of them marked found again with a new
+  timestamp, then the clear undone — the re-marked pin kept its new date and the other came back with
+  its original one.
+- Chrome 390×844: ☰ drawer, Treasure selected, bar at 274 px wide inside the 390 px viewport; Mark all →
+  47/47; Undo → 0. No console errors beyond the existing favicon 404.
+
+Not checked: Firefox and Safari, a physical phone, a screen reader reading the undo toast while it carries
+a button, and a bulk mark of the largest set (585) as a timing measurement.
+
+## 27. "Clear all" is one reset, reachable from a phone
+
+The Categories **Clear all** pill lives in the rail, and below 760 px the rail is `display: none` because the
+bottom sheet replaces it. A phone therefore had no way to reset the category filters at all, and the sheet's
+chips were built as a second, independent view: a chip tap left the rail rows stale, and the rail's Clear all
+left the chips stale. Both resets now call one `_clearAllFilters()`, the sheet gets its own **Clear all** chip
+ahead of the categories, and `_syncCategoryUI()` updates chips and rail rows together so the two views never
+disagree. `app.js` and `components.css` version queries were bumped so the deployed copy is re-fetched.
+
+**Checks actually run.**
+
+- `node --check js/app.js` and `node tools/validate.mjs` — exit 0, 5,089 records, 35 sets.
+- Chrome 432×884 (local build): the sheet's first chip reads "Clear all"; tapping **Stashes** gave 4,730 of
+  5,089 with the chip and the rail row both marked off; tapping **Clear all** restored 5,089 with all 14
+  chips active and no rail row disabled.
+- Chrome 1440×900: the rail row toggle still filtered to 4,730 and the Categories **Clear all** pill
+  restored 5,089 with the chips following. No console errors.
+- The deployed `natel628.github.io/sites/gta6/` page at 1440, 1100–1280, 900 (drawer) and 1440 with a search
+  plus Hide Found set: the existing pill reset every filter and the map clusters returned to their unfiltered
+  counts, with no console errors. Below 760 px that page has no Clear all, which is what this change fixes.
+
+Not checked: Firefox and Safari, a physical phone, and the fix on GitHub Pages itself — the local tree is
+uncommitted, so the live site still runs the previous build.
+
+## 28. The progress ring counts the data, not the saved ids
+
+`updateProgressRing()` filtered every found id through `locations.some(...)`, so each state change could cost
+5,089 x 5,089 comparisons. A first pass counted through a `Set` of location ids; review showed the `Set` was
+doing work the data already supports — `found` is a plain id-to-mark object with O(1) lookup, so one pass over
+the locations answers the question, and counting saved keys disagreed with how everything else reads a mark.
+The count is now one line:
+
+    var done = locations.filter(function (l) { return found[l.id]; }).length;
+
+One pass, no id index allocated, and `found` is read truthily exactly as `sets.js`, `markers.js`, `filters.js`
+and `detail.js` read it. Walking the locations is also what keeps stray ids out: a saved id that is no longer a
+pin is never looked at, so nothing has to test membership.
+
+**Checks actually run.**
+
+- `node --check js/app.js` — exit 0.
+- Chrome 1440x900 on the local build, ring text compared against the count and against `G6.sets.summary().all`:
+  `{}` gave 0; one real id 1; three real ids with marks `true`, an ISO date and `true` gave 3; two stray ids 0;
+  one real plus one stray 1; one real marked `false` next to one marked `true` gave 1; every id found gave
+  5089 (100%). The sets total matched the ring in all seven cases.
+- The count with all 5,089 found takes 0.6 ms (the old scan took 106.4 ms). A full state change is 31.0 ms
+  with all found versus 33.7 ms with none — inside noise, so the ring no longer grows with progress.
+
+Not checked: Firefox and Safari, and a low-end phone.
