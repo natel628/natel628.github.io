@@ -248,6 +248,20 @@ body[data-sheet-snap="full"] #map { pointer-events: none; }
   .rail-text { display: initial !important; }
   .rail-section { display: flex !important; flex-direction: column; }
 
+  /* The 48px strip and the detail-open narrowing are desktop grid tricks. Here
+     the rail is a drawer, and the footer toggle that undoes a collapse is
+     hidden, so a rail collapsed on a wide window would open stuck at 48px. */
+  .app.rail-collapsed .rail,
+  .app.detail-open    .rail { width: var(--rail-w); }
+
+  /* Centred-padding is for the 48px strip; in a 280px drawer the brand keeps
+     its normal left alignment. */
+  .app.rail-collapsed .rail-brand,
+  .app.detail-open    .rail-brand {
+    justify-content: normal;
+    padding: var(--sp-4) var(--sp-4) var(--sp-3);
+  }
+
   .map-col { grid-column: 1; }
 
   .detail-panel {

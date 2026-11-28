@@ -444,7 +444,11 @@
     nextBtn.title = 'Go to the next unfound pin in ' + def.label;
 
     if (def.id) {
-      nextBtn.addEventListener('click', function () { G6.sets.next(def.id); });
+      nextBtn.addEventListener('click', function () {
+        G6.sets.next(def.id);
+        // next() flies the map to a pin, which the drawer would cover.
+        _setRailOpen(false);
+      });
     } else {
       // "All pins" has no one set to tour; the per-set buttons do that.
       nextBtn.hidden = true;
@@ -729,8 +733,8 @@
       function handleRowClick() {
         G6.state.set({ selectedId: id });
         // A phone or tablet picks a pin by seeing it, so the drawer gets out of
-        // the way; on desktop it is a column and nothing moves.
-        if (window.innerWidth <= 1099) _setRailOpen(false);
+        // the way; on desktop there is no drawer open and this changes nothing.
+        _setRailOpen(false);
       }
 
       row.addEventListener('click', handleRowClick);
@@ -820,7 +824,14 @@
     // Esc to close modal
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        document.querySelectorAll('.modal-backdrop').forEach(function (m) { m.classList.remove('open'); });
+        // One press dismisses one layer: a modal opened from the drawer closes
+        // on its own, and the next press takes the drawer.
+        var hadModal = false;
+        document.querySelectorAll('.modal-backdrop').forEach(function (m) {
+          if (m.classList.contains('open')) hadModal = true;
+          m.classList.remove('open');
+        });
+        if (hadModal) return;
         // The drawer is a panel over the map, so Esc dismisses it before it
         // starts clearing the selection behind it.
         var rail = document.querySelector('.rail');

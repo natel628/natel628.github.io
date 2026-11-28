@@ -119,15 +119,6 @@ G6.sets = (function () {
     G6.state.set({ selectedId: best.id });
     _save(G6.state.get());
 
-    // Tablet and phone show the rail as a drawer, which would cover the pin; the
-    // detail panel opens behind it.
-    var rail = document.querySelector('.rail');
-    if (rail && rail.classList.contains('open')) {
-      rail.classList.remove('open');
-      var overlay = document.querySelector('.rail-overlay');
-      if (overlay) overlay.classList.remove('visible');
-    }
-
     // The detail panel flies to the pin at the overview zoom; this arrives at the
     // deepest zoom the artwork has, where the pin is a pin and not a disc. It has
     // to wait for the detail panel's relayout: invalidateSize() runs on the next

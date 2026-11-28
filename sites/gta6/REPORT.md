@@ -1349,3 +1349,47 @@ overlay, Escape, and picking a location row (which closes the drawer below 1100p
 - No page errors at any width.
 
 Not checked: Firefox, Safari and a physical phone.
+
+## 30. Review of the drawer: one owner, and no desktop state leaking into it
+
+Re-reading §29 after shipping turned up four loose ends, all in the same seam — who owns the drawer's
+state, and what the desktop-only classes mean while the rail is a drawer.
+
+- `js/sets.js` still closed the drawer by hand: it removed `.rail.open` and `.rail-overlay.visible`
+  directly, so tapping a set's "next unfound" button closed the drawer but left ☰ announcing
+  `aria-expanded="true"`. `next()` is called from exactly two buttons, and only the one in the rail can
+  have the drawer open, so the close moved there and the data module stopped touching drawer DOM.
+- The row-pick caller carried an `innerWidth <= 1099` guard. `_setRailOpen(false)` is idempotent on
+  desktop (no `.open`, no overlay, a hidden button), so the branch bought nothing and is gone. Five
+  callers in `js/app.js` now go through the one helper: ☰, the overlay, Escape, picking a row and
+  Set My Position.
+- Escape stripped every modal and then went on to close the drawer in the same press, so the Codes
+  modal — which opens from inside the drawer — lost both layers at once. One press now dismisses one
+  layer.
+- Hiding `.rail-footer` below 1100px is right (it holds only the desktop ◀ collapse toggle), but it made
+  a stale `.app.rail-collapsed` unrecoverable: collapse on a wide window, then open the drawer, and the
+  rail stays 48px with its text forced visible by `.rail-text { display: initial !important }` and no
+  visible way back. `.app.detail-open` narrowed the drawer the same way whenever a pin was selected.
+  Both now resolve to `width: var(--rail-w)` inside the drawer media query, with the brand keeping its
+  normal alignment instead of the 48px strip's centring.
+
+**Checks actually run.** Chrome against the local build (no page errors at any width); `node --check`
+on `app.js` and `sets.js`, and `tools/validate.mjs`, all clean; `grep` confirms only `_setRailOpen`
+mutates the drawer now.
+
+- 432x884: closed is `left:-280`, `visibility:hidden`, footer `display:none`; ☰ opens to `left:0` with
+  `aria-expanded="true"`, the overlay up and 9 sections rendered. Tapping the map strip and Escape both
+  close it with `aria-expanded="false"`, and ☰ reopens it.
+- 432x884 with `.app.rail-collapsed` set behind a closed drawer (collapse on a wide window, then rotate):
+  the drawer opens 280px wide with the progress label visible, brand left-aligned.
+- 900x800 with a pin selected, so `.app.detail-open` is on: the drawer opens 280px wide, brand
+  left-aligned, and tapping a `.set-next` button closes it with `aria-expanded="false"` and the next pin
+  selected.
+- 1440x900: the rail is a static 317px column with the footer toggle working (317 to 48 and back, label
+  flips to "Expand sidebar"); no overlay and no drawer.
+- 1000, 1050 and 760 are drawers; the 1099 probe reads as desktop only because the emulated viewport is
+  1099.x CSS px, so `(max-width: 1099px)` is false there — not a breakpoint defect.
+- Escape with the Codes modal open inside the drawer: first press closes the modal and leaves the drawer
+  and the selection alone, second press closes the drawer and still keeps the selection.
+
+Not checked: Firefox, Safari, a physical phone, and a two-finger swipe-to-close gesture (there is none).
