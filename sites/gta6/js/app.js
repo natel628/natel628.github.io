@@ -190,11 +190,8 @@
     if (setPosBtn) {
       setPosBtn.addEventListener('click', function () {
         G6.navigation.startPlacePosition();
-        // Close rail overlay on tablet if open
-        var rail = document.querySelector('.rail');
-        if (rail) rail.classList.remove('open');
-        var overlay = document.querySelector('.rail-overlay');
-        if (overlay) overlay.classList.remove('visible');
+        // Get the drawer out of the way of the map click that follows
+        _setRailOpen(false);
       });
     }
 
@@ -287,8 +284,22 @@
     });
   }
 
+  // Below 1100px the rail is a drawer and the ☰ button is the only way into the
+  // category, set and verification filters, so one helper owns the drawer's
+  // class, its overlay and the button's state; three callers (☰, the overlay,
+  // picking a location) would otherwise leave them disagreeing.
+  function _setRailOpen(open) {
+    var rail = document.querySelector('.rail');
+    if (!rail) return;
+    rail.classList.toggle('open', open);
+    var overlay = document.querySelector('.rail-overlay');
+    if (overlay) overlay.classList.toggle('visible', open);
+    var menuBtn = document.getElementById('menuBtn');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+  }
+
   // One reset behind every clear-all control: the rail pill and the mobile
-  // sheet chip, so phones (where the rail is hidden) can clear filters too.
+  // sheet chip, so phones can clear filters too.
   function _clearAllFilters(data) {
     var prefs = Object.assign({}, G6.state.get().prefs, {
       categories:   null,
@@ -717,13 +728,9 @@
 
       function handleRowClick() {
         G6.state.set({ selectedId: id });
-        // Close drawer on tablet
-        var rail = document.querySelector('.rail');
-        if (rail && window.innerWidth <= 1099) {
-          rail.classList.remove('open');
-          var ov = document.querySelector('.rail-overlay');
-          if (ov) ov.classList.remove('visible');
-        }
+        // A phone or tablet picks a pin by seeing it, so the drawer gets out of
+        // the way; on desktop it is a column and nothing moves.
+        if (window.innerWidth <= 1099) _setRailOpen(false);
       }
 
       row.addEventListener('click', handleRowClick);
@@ -773,24 +780,19 @@
 
     if (fsBtnMob) fsBtnMob.addEventListener('click', toggleFullscreen);
 
-    // Hamburger menu (tablet/mobile)
+    // Hamburger menu: below 1100px this opens the rail as a drawer
     if (menuBtn) {
       menuBtn.addEventListener('click', function () {
-        var rail    = document.querySelector('.rail');
-        var overlay = document.querySelector('.rail-overlay');
+        var rail = document.querySelector('.rail');
         if (!rail) return;
-        var open = rail.classList.toggle('open');
-        if (overlay) overlay.classList.toggle('visible', open);
+        _setRailOpen(!rail.classList.contains('open'));
       });
     }
 
     // Rail overlay click to close
     var overlay = document.querySelector('.rail-overlay');
     if (overlay) {
-      overlay.addEventListener('click', function () {
-        document.querySelector('.rail').classList.remove('open');
-        overlay.classList.remove('visible');
-      });
+      overlay.addEventListener('click', function () { _setRailOpen(false); });
     }
 
     // Credits button
@@ -819,6 +821,13 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         document.querySelectorAll('.modal-backdrop').forEach(function (m) { m.classList.remove('open'); });
+        // The drawer is a panel over the map, so Esc dismisses it before it
+        // starts clearing the selection behind it.
+        var rail = document.querySelector('.rail');
+        if (rail && rail.classList.contains('open')) {
+          _setRailOpen(false);
+          return;
+        }
         // Also clear selection on Esc
         if (G6.state.get().selectedId) {
           G6.state.set({ selectedId: null });

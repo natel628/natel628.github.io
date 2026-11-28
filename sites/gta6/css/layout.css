@@ -271,6 +271,10 @@ body[data-sheet-snap="full"] #map { pointer-events: none; }
     display: none;
   }
   .rail-overlay.visible { display: block; }
+
+  /* The footer toggle shrinks a desktop grid column. As a drawer there is no
+     column to shrink, and pressing it hid every section and left a blank panel. */
+  .rail-footer { display: none; }
 }
 
 /* ── Tablet toolbar (760–1099px) ────────────────────────── */

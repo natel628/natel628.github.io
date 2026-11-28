@@ -1319,3 +1319,33 @@ pin is never looked at, so nothing has to test membership.
   with all found versus 33.7 ms with none — inside noise, so the ring no longer grows with progress.
 
 Not checked: Firefox and Safari, and a low-end phone.
+
+## 29. ☰ opens the rail as a drawer on a phone
+
+Below 1100px the rail is a fixed drawer that slides in from the left, and the ☰ button in the mobile
+toolbar is the only way to reach the category, set and verification filters there. The button already
+toggled `.rail.open` and the overlay, but three things around it were broken:
+
+- The button never updated `aria-expanded`, so assistive tech kept announcing it as collapsed.
+- Escape closed modals but left the drawer covering the map, and then went on to clear the selected pin
+  behind it.
+- The rail's own footer toggle (◀) is a desktop control that collapses a grid column. As a drawer there is
+  no column to collapse, and pressing it hid every `.rail-text` and `.rail-section` — a blank 280px panel
+  with no way back except reopening.
+
+`_setRailOpen(open)` now owns the class, the overlay and `aria-expanded`, and every caller uses it: ☰, the
+overlay, Escape, and picking a location row (which closes the drawer below 1100px so the pin is visible).
+`.rail-footer` is hidden below 1100px.
+
+**Checks actually run.** Chrome on the local build; `node --check js/app.js` and `tools/validate.mjs` clean:
+
+- 432x884: ☰ slides the drawer from x=-280 to x=0 with the overlay up and `aria-expanded="true"`, and the
+  drawer scrolls (36 set rows, 14 category rows). Toggling Stashes took the map 5089 to 4730 and the sheet
+  chip went off with it. Escape closed the drawer and left the selection alone. Tapping the strip outside
+  closed it. The Clear all chip restored 5089 with every chip active. Picking a location row closed the
+  drawer and selected the pin.
+- 900x800: the same open and Escape behaviour. 1440x900: the rail is still a column and its footer toggle
+  still works, and the Categories Clear all went 4730 to 5089.
+- No page errors at any width.
+
+Not checked: Firefox, Safari and a physical phone.
